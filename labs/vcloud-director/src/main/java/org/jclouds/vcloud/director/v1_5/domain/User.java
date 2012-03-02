@@ -23,24 +23,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 /**
- * 
- *                 Represents users in the vCloud system.
- *             
- * 
+ * Represents users in the vCloud system.
+ * <p/>
+ * <p/>
  * <p>Java class for User complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="User">
  *   &lt;complexContent>
@@ -70,45 +67,43 @@ import com.google.common.collect.Sets;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "User", propOrder = {
-    "fullName",
-    "emailAddress",
-    "telephone",
-    "isEnabled",
-    "isLocked",
-    "im",
-    "nameInSource",
-    "isAlertEnabled",
-    "alertEmailPrefix",
-    "alertEmail",
-    "isExternal",
-    "isDefaultCached",
-    "isGroupRole",
-    "storedVmQuota",
-    "deployedVmQuota",
-    "role",
-    "password",
-    "groupReferences"
+@XmlRootElement(name = "User")
+@XmlType(propOrder = {
+      "fullName",
+      "emailAddress",
+      "telephone",
+      "isEnabled",
+      "isLocked",
+      "im",
+      "nameInSource",
+      "isAlertEnabled",
+      "alertEmailPrefix",
+      "alertEmail",
+      "isExternal",
+      "isDefaultCached",
+      "isGroupRole",
+      "storedVmQuota",
+      "deployedVmQuota",
+      "role",
+      "password",
+      "groupReferences"
 })
 public class User
-    extends EntityType<User>
+      extends EntityType<User>
 
 {
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromUser(this);
    }
 
    public static class Builder extends EntityType.Builder<User> {
-      
+
       private String fullName;
       private String emailAddress;
       private String telephone;
@@ -153,7 +148,7 @@ public class User
       }
 
       /**
-       * @see User#getIsEnabled()
+       * @see User#isEnabled()
        */
       public Builder isEnabled(Boolean isEnabled) {
          this.isEnabled = isEnabled;
@@ -161,7 +156,7 @@ public class User
       }
 
       /**
-       * @see User#getIsLocked()
+       * @see User#isLocked()
        */
       public Builder isLocked(Boolean isLocked) {
          this.isLocked = isLocked;
@@ -169,7 +164,7 @@ public class User
       }
 
       /**
-       * @see User#getIm()
+       * @see User#getIM()
        */
       public Builder im(String im) {
          this.im = im;
@@ -185,7 +180,7 @@ public class User
       }
 
       /**
-       * @see User#getIsAlertEnabled()
+       * @see User#isAlertEnabled()
        */
       public Builder isAlertEnabled(Boolean isAlertEnabled) {
          this.isAlertEnabled = isAlertEnabled;
@@ -209,7 +204,7 @@ public class User
       }
 
       /**
-       * @see User#getIsExternal()
+       * @see User#isExternal()
        */
       public Builder isExternal(Boolean isExternal) {
          this.isExternal = isExternal;
@@ -217,7 +212,7 @@ public class User
       }
 
       /**
-       * @see User#getIsDefaultCached()
+       * @see User#isDefaultCached()
        */
       public Builder isDefaultCached(Boolean isDefaultCached) {
          this.isDefaultCached = isDefaultCached;
@@ -225,7 +220,7 @@ public class User
       }
 
       /**
-       * @see User#getIsGroupRole()
+       * @see User#isGroupRole()
        */
       public Builder isGroupRole(Boolean isGroupRole) {
          this.isGroupRole = isGroupRole;
@@ -274,25 +269,11 @@ public class User
 
 
       public User build() {
-         User user = new User(im);
-         user.setFullName(fullName);
-         user.setEmailAddress(emailAddress);
-         user.setTelephone(telephone);
-         user.setIsEnabled(isEnabled);
-         user.setIsLocked(isLocked);
-         user.setNameInSource(nameInSource);
-         user.setIsAlertEnabled(isAlertEnabled);
-         user.setAlertEmailPrefix(alertEmailPrefix);
-         user.setAlertEmail(alertEmail);
-         user.setIsExternal(isExternal);
-         user.setIsDefaultCached(isDefaultCached);
-         user.setIsGroupRole(isGroupRole);
-         user.setStoredVmQuota(storedVmQuota);
-         user.setDeployedVmQuota(deployedVmQuota);
-         user.setRole(role);
-         user.setPassword(password);
-         user.setGroupReferences(groupReferences);
-         return user;
+         return new User(href, type, links, description, tasksInProgress, id,
+               name, fullName, emailAddress, telephone, isEnabled, isLocked,
+               im, nameInSource, isAlertEnabled, alertEmailPrefix, alertEmail,
+               isExternal, isDefaultCached, isGroupRole, storedVmQuota, deployedVmQuota,
+               role, password, groupReferences);
       }
 
 
@@ -333,7 +314,7 @@ public class User
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -342,7 +323,7 @@ public class User
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -353,556 +334,327 @@ public class User
 
       @Override
       public Builder fromEntityType(EntityType<User> in) {
-          return Builder.class.cast(super.fromEntityType(in));
+         return Builder.class.cast(super.fromEntityType(in));
       }
+
       public Builder fromUser(User in) {
          return fromEntityType(in)
-            .fullName(in.getFullName())
-            .emailAddress(in.getEmailAddress())
-            .telephone(in.getTelephone())
-            .isEnabled(in.isEnabled())
-            .isLocked(in.isLocked())
-            .im(in.getIM())
-            .nameInSource(in.getNameInSource())
-            .isAlertEnabled(in.isAlertEnabled())
-            .alertEmailPrefix(in.getAlertEmailPrefix())
-            .alertEmail(in.getAlertEmail())
-            .isExternal(in.isExternal())
-            .isDefaultCached(in.isDefaultCached())
-            .isGroupRole(in.isGroupRole())
-            .storedVmQuota(in.getStoredVmQuota())
-            .deployedVmQuota(in.getDeployedVmQuota())
-            .role(in.getRole())
-            .password(in.getPassword())
-            .groupReferences(in.getGroupReferences());
+               .fullName(in.getFullName())
+               .emailAddress(in.getEmailAddress())
+               .telephone(in.getTelephone())
+               .isEnabled(in.isEnabled())
+               .isLocked(in.isLocked())
+               .im(in.getIM())
+               .nameInSource(in.getNameInSource())
+               .isAlertEnabled(in.isAlertEnabled())
+               .alertEmailPrefix(in.getAlertEmailPrefix())
+               .alertEmail(in.getAlertEmail())
+               .isExternal(in.isExternal())
+               .isDefaultCached(in.isDefaultCached())
+               .isGroupRole(in.isGroupRole())
+               .storedVmQuota(in.getStoredVmQuota())
+               .deployedVmQuota(in.getDeployedVmQuota())
+               .role(in.getRole())
+               .password(in.getPassword())
+               .groupReferences(in.getGroupReferences());
       }
+   }
+
+   @XmlElement(name = "FullName")
+   protected String fullName;
+   @XmlElement(name = "EmailAddress")
+   protected String emailAddress;
+   @XmlElement(name = "Telephone")
+   protected String telephone;
+   @XmlElement(name = "IsEnabled")
+   protected Boolean isEnabled;
+   @XmlElement(name = "IsLocked")
+   protected Boolean isLocked;
+   @XmlElement(name = "IM")
+   protected String im;
+   @XmlElement(name = "NameInSource")
+   protected String nameInSource;
+   @XmlElement(name = "IsAlertEnabled")
+   protected Boolean isAlertEnabled;
+   @XmlElement(name = "AlertEmailPrefix")
+   protected String alertEmailPrefix;
+   @XmlElement(name = "AlertEmail")
+   protected String alertEmail;
+   @XmlElement(name = "IsExternal")
+   protected Boolean isExternal;
+   @XmlElement(name = "IsDefaultCached")
+   protected Boolean isDefaultCached;
+   @XmlElement(name = "IsGroupRole")
+   protected Boolean isGroupRole;
+   @XmlElement(name = "StoredVmQuota")
+   protected Integer storedVmQuota;
+   @XmlElement(name = "DeployedVmQuota")
+   protected Integer deployedVmQuota;
+   @XmlElement(name = "Role")
+   protected Reference role;
+   @XmlElement(name = "Password")
+   protected String password;
+   @XmlElement(name = "GroupReferences")
+   protected Object /* GroupsList */ groupReferences;
+
+   public User(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+               String name, String fullName, String emailAddress, String telephone, Boolean enabled, Boolean locked,
+               String im, String nameInSource, Boolean alertEnabled, String alertEmailPrefix, String alertEmail,
+               Boolean external, Boolean defaultCached, Boolean groupRole, Integer storedVmQuota, Integer deployedVmQuota,
+               Reference role, String password, Object groupReferences) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.fullName = fullName;
+      this.emailAddress = emailAddress;
+      this.telephone = telephone;
+      isEnabled = enabled;
+      isLocked = locked;
+      this.im = checkNotNull(im, "im");
+      this.nameInSource = nameInSource;
+      isAlertEnabled = alertEnabled;
+      this.alertEmailPrefix = alertEmailPrefix;
+      this.alertEmail = alertEmail;
+      isExternal = external;
+      isDefaultCached = defaultCached;
+      isGroupRole = groupRole;
+      this.storedVmQuota = storedVmQuota;
+      this.deployedVmQuota = deployedVmQuota;
+      this.role = role;
+      this.password = password;
+      this.groupReferences = groupReferences;
    }
 
    private User() {
-      // For JAXB and builder use
-   }
-
-   private User(String im) {
-      this.im = im;
+      // For JAXB
    }
 
 
-    @XmlElement(name = "FullName")
-    protected String fullName;
-    @XmlElement(name = "EmailAddress")
-    protected String emailAddress;
-    @XmlElement(name = "Telephone")
-    protected String telephone;
-    @XmlElement(name = "IsEnabled")
-    protected Boolean isEnabled;
-    @XmlElement(name = "IsLocked")
-    protected Boolean isLocked;
-    @XmlElement(name = "IM")
-    protected String im;
-    @XmlElement(name = "NameInSource")
-    protected String nameInSource;
-    @XmlElement(name = "IsAlertEnabled")
-    protected Boolean isAlertEnabled;
-    @XmlElement(name = "AlertEmailPrefix")
-    protected String alertEmailPrefix;
-    @XmlElement(name = "AlertEmail")
-    protected String alertEmail;
-    @XmlElement(name = "IsExternal")
-    protected Boolean isExternal;
-    @XmlElement(name = "IsDefaultCached")
-    protected Boolean isDefaultCached;
-    @XmlElement(name = "IsGroupRole")
-    protected Boolean isGroupRole;
-    @XmlElement(name = "StoredVmQuota")
-    protected Integer storedVmQuota;
-    @XmlElement(name = "DeployedVmQuota")
-    protected Integer deployedVmQuota;
-    @XmlElement(name = "Role")
-    protected Reference role;
-    @XmlElement(name = "Password")
-    protected String password;
-    @XmlElement(name = "GroupReferences")
-    protected Object /* GroupsList */ groupReferences;
+   /**
+    * Gets the value of the fullName property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getFullName() {
+      return fullName;
+   }
 
-    /**
-     * Gets the value of the fullName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getFullName() {
-        return fullName;
-    }
+   /**
+    * Gets the value of the emailAddress property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getEmailAddress() {
+      return emailAddress;
+   }
 
-    /**
-     * Sets the value of the fullName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setFullName(String value) {
-        this.fullName = value;
-    }
+   /**
+    * Gets the value of the telephone property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getTelephone() {
+      return telephone;
+   }
 
-    /**
-     * Gets the value of the emailAddress property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getEmailAddress() {
-        return emailAddress;
-    }
+   /**
+    * Gets the value of the isEnabled property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isEnabled() {
+      return isEnabled;
+   }
 
-    /**
-     * Sets the value of the emailAddress property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setEmailAddress(String value) {
-        this.emailAddress = value;
-    }
+   /**
+    * Gets the value of the isLocked property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isLocked() {
+      return isLocked;
+   }
 
-    /**
-     * Gets the value of the telephone property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getTelephone() {
-        return telephone;
-    }
+   /**
+    * Gets the value of the im property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getIM() {
+      return im;
+   }
 
-    /**
-     * Sets the value of the telephone property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTelephone(String value) {
-        this.telephone = value;
-    }
+   /**
+    * Gets the value of the nameInSource property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getNameInSource() {
+      return nameInSource;
+   }
 
-    /**
-     * Gets the value of the isEnabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isEnabled() {
-        return isEnabled;
-    }
+   /**
+    * Gets the value of the isAlertEnabled property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isAlertEnabled() {
+      return isAlertEnabled;
+   }
 
-    /**
-     * Sets the value of the isEnabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsEnabled(Boolean value) {
-        this.isEnabled = value;
-    }
+   /**
+    * Gets the value of the alertEmailPrefix property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getAlertEmailPrefix() {
+      return alertEmailPrefix;
+   }
 
-    /**
-     * Gets the value of the isLocked property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isLocked() {
-        return isLocked;
-    }
+   /**
+    * Gets the value of the alertEmail property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getAlertEmail() {
+      return alertEmail;
+   }
 
-    /**
-     * Sets the value of the isLocked property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsLocked(Boolean value) {
-        this.isLocked = value;
-    }
+   /**
+    * Gets the value of the isExternal property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isExternal() {
+      return isExternal;
+   }
 
-    /**
-     * Gets the value of the im property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIM() {
-        return im;
-    }
+   /**
+    * Gets the value of the isDefaultCached property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isDefaultCached() {
+      return isDefaultCached;
+   }
 
-    /**
-     * Sets the value of the im property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIM(String value) {
-        this.im = value;
-    }
+   /**
+    * Gets the value of the isGroupRole property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isGroupRole() {
+      return isGroupRole;
+   }
 
-    /**
-     * Gets the value of the nameInSource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getNameInSource() {
-        return nameInSource;
-    }
+   /**
+    * Gets the value of the storedVmQuota property.
+    *
+    * @return possible object is
+    *         {@link Integer }
+    */
+   public Integer getStoredVmQuota() {
+      return storedVmQuota;
+   }
 
-    /**
-     * Sets the value of the nameInSource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setNameInSource(String value) {
-        this.nameInSource = value;
-    }
+   /**
+    * Gets the value of the deployedVmQuota property.
+    *
+    * @return possible object is
+    *         {@link Integer }
+    */
+   public Integer getDeployedVmQuota() {
+      return deployedVmQuota;
+   }
 
-    /**
-     * Gets the value of the isAlertEnabled property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isAlertEnabled() {
-        return isAlertEnabled;
-    }
+   /**
+    * Gets the value of the role property.
+    *
+    * @return possible object is
+    *         {@link Reference }
+    */
+   public Reference getRole() {
+      return role;
+   }
 
-    /**
-     * Sets the value of the isAlertEnabled property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsAlertEnabled(Boolean value) {
-        this.isAlertEnabled = value;
-    }
+   /**
+    * Gets the value of the password property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getPassword() {
+      return password;
+   }
 
-    /**
-     * Gets the value of the alertEmailPrefix property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getAlertEmailPrefix() {
-        return alertEmailPrefix;
-    }
-
-    /**
-     * Sets the value of the alertEmailPrefix property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setAlertEmailPrefix(String value) {
-        this.alertEmailPrefix = value;
-    }
-
-    /**
-     * Gets the value of the alertEmail property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getAlertEmail() {
-        return alertEmail;
-    }
-
-    /**
-     * Sets the value of the alertEmail property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setAlertEmail(String value) {
-        this.alertEmail = value;
-    }
-
-    /**
-     * Gets the value of the isExternal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isExternal() {
-        return isExternal;
-    }
-
-    /**
-     * Sets the value of the isExternal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsExternal(Boolean value) {
-        this.isExternal = value;
-    }
-
-    /**
-     * Gets the value of the isDefaultCached property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isDefaultCached() {
-        return isDefaultCached;
-    }
-
-    /**
-     * Sets the value of the isDefaultCached property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsDefaultCached(Boolean value) {
-        this.isDefaultCached = value;
-    }
-
-    /**
-     * Gets the value of the isGroupRole property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isGroupRole() {
-        return isGroupRole;
-    }
-
-    /**
-     * Sets the value of the isGroupRole property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsGroupRole(Boolean value) {
-        this.isGroupRole = value;
-    }
-
-    /**
-     * Gets the value of the storedVmQuota property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getStoredVmQuota() {
-        return storedVmQuota;
-    }
-
-    /**
-     * Sets the value of the storedVmQuota property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setStoredVmQuota(Integer value) {
-        this.storedVmQuota = value;
-    }
-
-    /**
-     * Gets the value of the deployedVmQuota property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
-     */
-    public Integer getDeployedVmQuota() {
-        return deployedVmQuota;
-    }
-
-    /**
-     * Sets the value of the deployedVmQuota property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
-     */
-    public void setDeployedVmQuota(Integer value) {
-        this.deployedVmQuota = value;
-    }
-
-    /**
-     * Gets the value of the role property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Reference }
-     *     
-     */
-    public Reference getRole() {
-        return role;
-    }
-
-    /**
-     * Sets the value of the role property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Reference }
-     *     
-     */
-    public void setRole(Reference value) {
-        this.role = value;
-    }
-
-    /**
-     * Gets the value of the password property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets the value of the password property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPassword(String value) {
-        this.password = value;
-    }
-
-    /**
-     * Gets the value of the groupReferences property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GroupsList }
-     *     
-     */
-    public Object /* GroupsList */ getGroupReferences() {
-        return groupReferences;
-    }
-
-    /**
-     * Sets the value of the groupReferences property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GroupsList }
-     *     
-     */
-    public void setGroupReferences(Object /* GroupsList */ value) {
-        this.groupReferences = value;
-    }
+   /**
+    * Gets the value of the groupReferences property.
+    *
+    * @return possible object is
+    *         {@link GroupsListType }
+    */
+   public Object /* GroupsList */ getGroupReferences() {
+      return groupReferences;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       User that = User.class.cast(o);
-      return equal(fullName, that.fullName) && 
-           equal(emailAddress, that.emailAddress) && 
-           equal(telephone, that.telephone) && 
-           equal(isEnabled, that.isEnabled) && 
-           equal(isLocked, that.isLocked) && 
-           equal(im, that.im) && 
-           equal(nameInSource, that.nameInSource) && 
-           equal(isAlertEnabled, that.isAlertEnabled) && 
-           equal(alertEmailPrefix, that.alertEmailPrefix) && 
-           equal(alertEmail, that.alertEmail) && 
-           equal(isExternal, that.isExternal) && 
-           equal(isDefaultCached, that.isDefaultCached) && 
-           equal(isGroupRole, that.isGroupRole) && 
-           equal(storedVmQuota, that.storedVmQuota) && 
-           equal(deployedVmQuota, that.deployedVmQuota) && 
-           equal(role, that.role) && 
-           equal(password, that.password) && 
-           equal(groupReferences, that.groupReferences);
+      return equal(fullName, that.fullName) &&
+            equal(emailAddress, that.emailAddress) &&
+            equal(telephone, that.telephone) &&
+            equal(isEnabled, that.isEnabled) &&
+            equal(isLocked, that.isLocked) &&
+            equal(im, that.im) &&
+            equal(nameInSource, that.nameInSource) &&
+            equal(isAlertEnabled, that.isAlertEnabled) &&
+            equal(alertEmailPrefix, that.alertEmailPrefix) &&
+            equal(alertEmail, that.alertEmail) &&
+            equal(isExternal, that.isExternal) &&
+            equal(isDefaultCached, that.isDefaultCached) &&
+            equal(isGroupRole, that.isGroupRole) &&
+            equal(storedVmQuota, that.storedVmQuota) &&
+            equal(deployedVmQuota, that.deployedVmQuota) &&
+            equal(role, that.role) &&
+            equal(password, that.password) &&
+            equal(groupReferences, that.groupReferences);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(fullName, 
-           emailAddress, 
-           telephone, 
-           isEnabled, 
-           isLocked, 
-           im, 
-           nameInSource, 
-           isAlertEnabled, 
-           alertEmailPrefix, 
-           alertEmail, 
-           isExternal, 
-           isDefaultCached, 
-           isGroupRole, 
-           storedVmQuota, 
-           deployedVmQuota, 
-           role, 
-           password, 
-           groupReferences);
+      return Objects.hashCode(fullName,
+            emailAddress,
+            telephone,
+            isEnabled,
+            isLocked,
+            im,
+            nameInSource,
+            isAlertEnabled,
+            alertEmailPrefix,
+            alertEmail,
+            isExternal,
+            isDefaultCached,
+            isGroupRole,
+            storedVmQuota,
+            deployedVmQuota,
+            role,
+            password,
+            groupReferences);
    }
 
    @Override

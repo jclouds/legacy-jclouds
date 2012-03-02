@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,14 +28,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents a compute capacity with units.
- *             
- * 
+ * Represents a compute capacity with units.
+ * <p/>
+ * <p/>
  * <p>Java class for ComputeCapacity complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ComputeCapacity">
  *   &lt;complexContent>
@@ -51,13 +48,10 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComputeCapacity", propOrder = {
-    "cpu",
-    "memory"
+      "cpu",
+      "memory"
 })
 public class ComputeCapacity {
    public static Builder builder() {
@@ -69,7 +63,7 @@ public class ComputeCapacity {
    }
 
    public static class Builder {
-      
+
       private CapacityWithUsage cpu;
       private CapacityWithUsage memory;
 
@@ -89,19 +83,19 @@ public class ComputeCapacity {
          return this;
       }
 
-
       public ComputeCapacity build() {
-         ComputeCapacity computeCapacity = new ComputeCapacity();
-         computeCapacity.setCpu(cpu);
-         computeCapacity.setMemory(memory);
-         return computeCapacity;
+         return new ComputeCapacity(cpu, memory);
       }
-
 
       public Builder fromComputeCapacity(ComputeCapacity in) {
          return cpu(in.getCpu())
-            .memory(in.getMemory());
+               .memory(in.getMemory());
       }
+   }
+
+   private ComputeCapacity(CapacityWithUsage cpu, CapacityWithUsage memory) {
+      this.cpu = cpu;
+      this.memory = memory;
    }
 
    private ComputeCapacity() {
@@ -109,75 +103,46 @@ public class ComputeCapacity {
    }
 
 
+   @XmlElement(name = "Cpu", required = true)
+   protected CapacityWithUsage cpu;
+   @XmlElement(name = "Memory", required = true)
+   protected CapacityWithUsage memory;
 
-    @XmlElement(name = "Cpu", required = true)
-    protected CapacityWithUsage cpu;
-    @XmlElement(name = "Memory", required = true)
-    protected CapacityWithUsage memory;
-
-    /**
-     * Gets the value of the cpu property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CapacityWithUsage }
-     *     
-     */
-    public CapacityWithUsage getCpu() {
-        return cpu;
-    }
-
-    /**
-     * Sets the value of the cpu property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CapacityWithUsage }
-     *     
-     */
-    public void setCpu(CapacityWithUsage value) {
-        this.cpu = value;
-    }
-
-    /**
-     * Gets the value of the memory property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CapacityWithUsage }
-     *     
-     */
-    public CapacityWithUsage getMemory() {
-        return memory;
-    }
-
-    /**
-     * Sets the value of the memory property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CapacityWithUsage }
-     *     
-     */
-    public void setMemory(CapacityWithUsage value) {
-        this.memory = value;
-    }
+   /**
+    * Gets the value of the cpu property.
+    *
+    * @return possible object is
+    *         {@link CapacityWithUsage }
+    */
+   public CapacityWithUsage getCpu() {
+      return cpu;
+   }
+   
+   /**
+    * Gets the value of the memory property.
+    *
+    * @return possible object is
+    *         {@link CapacityWithUsage }
+    */
+   public CapacityWithUsage getMemory() {
+      return memory;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       ComputeCapacity that = ComputeCapacity.class.cast(o);
-      return equal(cpu, that.cpu) && 
-           equal(memory, that.memory);
+      return equal(cpu, that.cpu) &&
+            equal(memory, that.memory);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(cpu, 
-           memory);
+      return Objects.hashCode(cpu,
+            memory);
    }
 
    @Override

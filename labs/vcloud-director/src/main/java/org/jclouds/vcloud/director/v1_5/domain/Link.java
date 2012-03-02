@@ -25,21 +25,22 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A link.
- *
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="LinkType"&gt;
  * </pre>
  *
  * @author Adrian Cole
  */
+@XmlRootElement(name = "Link")
 public class Link extends ReferenceType<Link> {
 
    public static final class Rel {
@@ -58,16 +59,16 @@ public class Link extends ReferenceType<Link> {
       public static final String FIRST_PAGE = "firstPage";
       public static final String CONTROL_ACCESS = "controlAccess";
 
-		/**
-		 * All acceptable {@link Link#getRel()} values.
-		 *
-		 * This list must be updated whenever a new relationship is added.
-		 */
-		public static final List<String> ALL = Arrays.asList(
-               UP, DOWN, EDIT, ADD, DELETE, REMOVE, CATALOG_ITEM, TASK_CANCEL,
-               ALTERNATE, NEXT_PAGE, PREVIOUS_PAGE, LAST_PAGE, FIRST_PAGE,
-               CONTROL_ACCESS
-         );
+      /**
+       * All acceptable {@link Link#getRel()} values.
+       * <p/>
+       * This list must be updated whenever a new relationship is added.
+       */
+      public static final List<String> ALL = Arrays.asList(
+            UP, DOWN, EDIT, ADD, DELETE, REMOVE, CATALOG_ITEM, TASK_CANCEL,
+            ALTERNATE, NEXT_PAGE, PREVIOUS_PAGE, LAST_PAGE, FIRST_PAGE,
+            CONTROL_ACCESS
+      );
    }
 
    @SuppressWarnings("unchecked")
@@ -97,11 +98,7 @@ public class Link extends ReferenceType<Link> {
 
       @Override
       public Link build() {
-         Link link = new Link(href, rel);
-         link.setId(id);
-         link.setName(name);
-         link.setType(type);
-         return link;
+         return new Link(href, id, name, type, rel);
       }
 
       /**
@@ -166,8 +163,8 @@ public class Link extends ReferenceType<Link> {
    @XmlAttribute(required = true)
    private String rel;
 
-   private Link(URI href, String rel) {
-      super(href);
+   private Link(URI href, String id, String name, String type, String rel) {
+      super(href, id, name, type);
       this.rel = checkNotNull(rel, "rel");
    }
 
@@ -180,7 +177,7 @@ public class Link extends ReferenceType<Link> {
     * name of an operation on the object, a reference to a contained or containing object, or a
     * reference to an alternate representation of the object. The relationship value implies the
     * HTTP verb to use when you use the link's href value as a request URL.
-    * 
+    *
     * @return relationship of the link to the object that contains it.
     */
    public String getRel() {

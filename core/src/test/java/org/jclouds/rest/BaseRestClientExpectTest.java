@@ -39,6 +39,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.DifferenceConstants;
+import org.custommonkey.xmlunit.DifferenceListener;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
@@ -58,14 +63,18 @@ import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
+import org.w3c.dom.Node;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -324,7 +333,9 @@ public abstract class BaseRestClientExpectTest<S> {
                return HttpResponse.builder().statusCode(500).message(
                         String.format("request %s is out of range (%s)", index, requests.size())).payload(
                         Payloads.newStringPayload(renderRequest(input))).build();
-            assertEquals(renderRequest(input), renderRequest(requests.get(index)));
+            if (!httpRequestsAreEqual(input, requests.get(index))) {
+               assertEquals(renderRequest(input), renderRequest(requests.get(index)));
+            }
             return responses.get(index);
          }
       });
@@ -342,14 +353,81 @@ public abstract class BaseRestClientExpectTest<S> {
       return requestsSendResponses(requestToResponse, createModule());
    }
 
+   protected enum HttpRequestComparisonType {
+      XML, JSON, DEFAULT;
+   }
+
+   /**
+    * How should this HttpRequest be compared with others?
+    */
+   protected HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
+      return HttpRequestComparisonType.DEFAULT;
+   }
+
+   /**
+    * Compare two requests as instructed by {@link #compareHttpRequestAsType(HttpRequest)} - default is to compare using Objects.equal
+    */
+   public boolean httpRequestsAreEqual(HttpRequest a, HttpRequest b) {
+      try {
+         switch (compareHttpRequestAsType(a)) {
+            case XML: {
+               if (a == null || b == null || a.getPayload() == null || b.getPayload() == null) {
+                  return false;
+               }
+
+               Diff diff = XMLUnit.compareXML(Strings2.toStringAndClose(a.getPayload().getInput()),
+                                              Strings2.toStringAndClose(b.getPayload().getInput()));
+               
+               // Ignoring xsi:schemaLocation and differences in namespace prefixes
+               diff.overrideDifferenceListener(new DifferenceListener() {
+                  @Override
+                  public int differenceFound(Difference difference) {
+                     if (difference.getId() == DifferenceConstants.SCHEMA_LOCATION_ID ||
+                         difference.getId() == DifferenceConstants.NAMESPACE_PREFIX_ID) {
+                        return RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
+                     }
+                     return RETURN_ACCEPT_DIFFERENCE;
+                  }
+
+                  @Override
+                  public void skippedComparison(Node node, Node node1) {
+                  }
+               });
+               
+               return diff.identical() && Objects.equal(a.getHeaders(), b.getHeaders());
+            }
+            case JSON: {
+               if (a == null || b == null || a.getPayload() == null || b.getPayload() == null) {
+                  return false;
+               }
+               JsonParser parser = new JsonParser();
+               JsonElement payloadA = parser.parse(Strings2.toStringAndClose(a.getPayload().getInput()));
+               JsonElement payloadB = parser.parse(Strings2.toStringAndClose(b.getPayload().getInput()));
+               return Objects.equal(payloadA, payloadB) && Objects.equal(a.getHeaders(), b.getHeaders());
+            }
+            default: {
+               return Objects.equal(a, b);
+            }
+         }
+      } catch (Exception e) {
+         throw Throwables.propagate(e);
+      }
+   }
+
    public S requestsSendResponses(final Map<HttpRequest, HttpResponse> requestToResponse, Module module) {
       return createClient(new Function<HttpRequest, HttpResponse>() {
          ImmutableBiMap<HttpRequest, HttpResponse> bimap = ImmutableBiMap.copyOf(requestToResponse);
 
          @Override
          public HttpResponse apply(HttpRequest input) {
-            if (!(requestToResponse.containsKey(input))) {
+            HttpResponse response = null;
+            for (HttpRequest request : requestToResponse.keySet()) {
+               if (httpRequestsAreEqual(input, request)) {
+                  response = requestToResponse.get(request);
+               }
+            }
 
+            if (response == null) {
                StringBuilder payload = new StringBuilder("\n");
                payload.append("the following request is not configured:\n");
                payload.append("----------------------------------------\n");
@@ -360,13 +438,14 @@ public abstract class BaseRestClientExpectTest<S> {
                   payload.append("----------------------------------------\n");
                   payload.append(renderRequest(request));
                }
-               return HttpResponse.builder().statusCode(500).message("no response configured for request").payload(
-                        Payloads.newStringPayload(payload.toString())).build();
+               response = HttpResponse.builder().statusCode(500).message("no response configured for request").payload(
+                           Payloads.newStringPayload(payload.toString())).build();
 
+            } else if (compareHttpRequestAsType(input) == HttpRequestComparisonType.DEFAULT) {
+               // in case hashCode/equals doesn't do a full content check
+               assertEquals(renderRequest(input), renderRequest(bimap.inverse().get(response)));
             }
-            HttpResponse response = requestToResponse.get(input);
-            // in case hashCode/equals doesn't do a full content check
-            assertEquals(renderRequest(input), renderRequest(bimap.inverse().get(response)));
+
             return response;
          }
       }, module);

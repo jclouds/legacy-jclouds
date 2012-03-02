@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -36,18 +34,18 @@ import com.google.common.collect.Sets;
 
 /**
  * iRepresents an organization.
- *
+ * <p/>
  * Unit of multi-tenancy and a top-level container. Contain vDCs, TasksList, Catalogs and Shared Network entities.
- *
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="OrgType"&gt;
  * </pre>
  *
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Org")
+@XmlRootElement(name = "Org")
 public class Org extends EntityType<Org> {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG;
 
    @SuppressWarnings("unchecked")
@@ -99,14 +97,7 @@ public class Org extends EntityType<Org> {
 
       @Override
       public Org build() {
-         Org org = new Org(href, name, fullName);
-         org.setDescription(description);
-         org.setId(id);
-         org.setType(type);
-         org.setLinks(links);
-         org.setTasksInProgress(tasksInProgress);
-         org.setIsEnabled(isEnabled);
-         return org;
+         return new Org(href, type, links, description, tasksInProgress, id, name, fullName, isEnabled);
       }
 
       /**
@@ -164,7 +155,7 @@ public class Org extends EntityType<Org> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -173,7 +164,7 @@ public class Org extends EntityType<Org> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -195,14 +186,15 @@ public class Org extends EntityType<Org> {
       // For JAXB and builder use
    }
 
-   private Org(URI href, String name, String fullName) {
-      super(href, name);
+   public Org(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, String fullName, Boolean enabled) {
+      super(href, type, links, description, tasksInProgress, id, name);
       this.fullName = fullName;
+      isEnabled = enabled;
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "FullName", required = true)
+   @XmlElement(name = "FullName", required = true)
    private String fullName;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IsEnabled")
+   @XmlElement(name = "IsEnabled")
    private Boolean isEnabled;
 
    /**
@@ -217,10 +209,6 @@ public class Org extends EntityType<Org> {
     */
    public Boolean isEnabled() {
       return isEnabled;
-   }
-
-   public void setIsEnabled(Boolean isEnabled) {
-      this.isEnabled = isEnabled;
    }
 
    @Override

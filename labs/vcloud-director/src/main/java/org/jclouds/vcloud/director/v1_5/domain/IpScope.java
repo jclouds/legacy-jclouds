@@ -19,10 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,13 +27,12 @@ import com.google.common.base.Objects;
 
 /**
  * Specify network settings like gateway, network mask, DNS servers, IP ranges, etc.
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "IpScope")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "IpScope")
 public class IpScope {
-   
+
    public static Builder builder() {
       return new Builder();
    }
@@ -46,7 +42,7 @@ public class IpScope {
    }
 
    public static class Builder {
-      
+
       private boolean isInherited;
       private String gateway;
       private String netmask;
@@ -111,7 +107,7 @@ public class IpScope {
          this.ipRanges = ipRanges;
          return this;
       }
-      
+
       /**
        * @see IpScope#getAllocatedIpAddresses()
        */
@@ -121,15 +117,7 @@ public class IpScope {
       }
 
       public IpScope build() {
-         IpScope ipScope = new IpScope(isInherited);
-         ipScope.setGateway(gateway);
-         ipScope.setNetmask(netmask);
-         ipScope.setDns1(dns1);
-         ipScope.setDns2(dns2);
-         ipScope.setDnsSuffix(dnsSuffix);
-         ipScope.setIpRanges(ipRanges);
-         ipScope.setAllocatedIpAddresses(allocatedIpAddresses);
-         return ipScope;
+         return new IpScope(isInherited, gateway, netmask, dns1, dns2, dnsSuffix, ipRanges, allocatedIpAddresses);
       }
 
       public Builder fromIpScope(IpScope in) {
@@ -142,30 +130,39 @@ public class IpScope {
                .allocatedIpAddresses(in.getAllocatedIpAddresses());
       }
    }
-   
+
    private IpScope() {
       // For JAXB and builder use
    }
 
-   private IpScope(boolean isInherited) {
-      this.isInherited = isInherited;
+   public IpScope(boolean inherited, String gateway, String netmask, String dns1, String dns2, String dnsSuffix,
+                  IpRanges ipRanges, IpAddresses allocatedIpAddresses) {
+      this.isInherited = inherited;
+      this.gateway = gateway;
+      this.netmask = netmask;
+      this.dns1 = dns1;
+      this.dns2 = dns2;
+      this.dnsSuffix = dnsSuffix;
+      this.ipRanges = ipRanges;
+      this.allocatedIpAddresses = allocatedIpAddresses;
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IsInherited")
+
+   @XmlElement(name = "IsInherited")
    private boolean isInherited;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Gateway")
+   @XmlElement(name = "Gateway")
    private String gateway;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Netmask")
+   @XmlElement(name = "Netmask")
    private String netmask;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Dns1")
+   @XmlElement(name = "Dns1")
    private String dns1;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Dns2")
+   @XmlElement(name = "Dns2")
    private String dns2;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "DnsSuffix")
+   @XmlElement(name = "DnsSuffix")
    private String dnsSuffix;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IpRanges")
+   @XmlElement(name = "IpRanges")
    private IpRanges ipRanges;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "AllocatedIpAddresses")
+   @XmlElement(name = "AllocatedIpAddresses")
    private IpAddresses allocatedIpAddresses;
 
    /**
@@ -174,16 +171,12 @@ public class IpScope {
    public boolean isInherited() {
       return isInherited;
    }
-   
+
    /**
     * @return Gateway of the network..
     */
    public String getGateway() {
       return gateway;
-   }
-   
-   public void setGateway(String gateway) {
-      this.gateway = gateway;
    }
 
    /**
@@ -192,10 +185,6 @@ public class IpScope {
    public String getNetmask() {
       return netmask;
    }
-   
-   public void setNetmask(String netmask) {
-      this.netmask = netmask;
-   }
 
    /**
     * @return Primary DNS server.
@@ -203,20 +192,12 @@ public class IpScope {
    public String getDns1() {
       return dns1;
    }
-   
-   public void setDns1(String dns1) {
-      this.dns1 = dns1;
-   }
-   
+
    /**
     * @return Secondary DNS server.
     */
    public String getDns2() {
       return dns2;
-   }
-   
-   public void setDns2(String dns2) {
-      this.dns2 = dns2;
    }
 
    /**
@@ -225,33 +206,21 @@ public class IpScope {
    public String getDnsSuffix() {
       return dnsSuffix;
    }
-   
-   public void setDnsSuffix(String dnsSuffix) {
-      this.dnsSuffix = dnsSuffix;
-   }
-   
+
    /**
     * @return IP ranges used for static pool allocation in the network.
     */
    public IpRanges getIpRanges() {
       return ipRanges;
    }
-   
-   public void setIpRanges(IpRanges ipRanges) {
-      this.ipRanges = ipRanges;
-   }
-   
+
    /**
     * @return Read-only list of allocated IP addresses in the network.
     */
    public IpAddresses getAllocatedIpAddresses() {
       return allocatedIpAddresses;
    }
-   
-   public void setAllocatedIpAddresses(IpAddresses allocatedIpAddresses) {
-      this.allocatedIpAddresses = allocatedIpAddresses;
-   }
-   
+
    @Override
    public boolean equals(Object o) {
       if (this == o)
@@ -285,5 +254,5 @@ public class IpScope {
             .add("ipRanges", ipRanges)
             .add("allocatedIpAddresses", allocatedIpAddresses).toString();
    }
-   
+
 }

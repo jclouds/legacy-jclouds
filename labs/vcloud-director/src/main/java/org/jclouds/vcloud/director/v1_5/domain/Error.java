@@ -20,10 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -33,17 +30,16 @@ import com.google.common.base.Objects;
 
 /**
  * The standard error message type used in the vCloud REST API.
- *
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="ErrorType"&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Error")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "Error")
 public class Error {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ERROR;
 
    public static Builder builder() {
@@ -103,10 +99,7 @@ public class Error {
       }
 
       public Error build() {
-         Error error = new Error(message, majorErrorCode, minorErrorCode);
-         error.setVendorSpecificErrorCode(vendorSpecificErrorCode);
-         error.setStackTrace(stackTrace);
-         return error;
+         return new Error(message, majorErrorCode, minorErrorCode, vendorSpecificErrorCode, stackTrace);
       }
 
       public Builder fromError(Error in) {
@@ -129,10 +122,12 @@ public class Error {
    @XmlAttribute
    private String stackTrace;
 
-   private Error(String message, Integer majorErrorCode, String minorErrorCode) {
+   private Error(String message, Integer majorErrorCode, String minorErrorCode, String vendorSpecificErrorCode, String stackTrace) {
       this.message = checkNotNull(message, "message");
       this.majorErrorCode = checkNotNull(majorErrorCode, "majorErrorCode");
       this.minorErrorCode = checkNotNull(minorErrorCode, "minorErrorCode");
+      this.vendorSpecificErrorCode = vendorSpecificErrorCode;
+      this.stackTrace = stackTrace;
    }
 
    private Error() {
@@ -155,7 +150,7 @@ public class Error {
 
    /**
     * Specific API error code.
-    *
+    * <p/>
     * For example - can indicate that vApp power on failed by some reason.
     */
    public String getMinorErrorCode() {
@@ -170,20 +165,12 @@ public class Error {
       return vendorSpecificErrorCode;
    }
 
-   public void setVendorSpecificErrorCode(String vendorSpecificErrorCode) {
-      this.vendorSpecificErrorCode = vendorSpecificErrorCode;
-   }
-
    /**
     * The stack trace of the exception which when examined might make problem
     * diagnostics easier.
     */
    public String getStackTrace() {
       return stackTrace;
-   }
-
-   public void setStackTrace(String stackTrace) {
-      this.stackTrace = stackTrace;
    }
 
    @Override

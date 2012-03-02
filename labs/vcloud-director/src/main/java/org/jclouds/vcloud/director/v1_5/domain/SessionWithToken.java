@@ -24,7 +24,7 @@ import com.google.common.base.Objects;
 
 /**
  * Session and its corresponding token
- * 
+ *
  * @author Adrian Cole
  */
 public class SessionWithToken {
@@ -95,7 +95,7 @@ public class SessionWithToken {
     * particular context. Although URLs have a well-known syntax and a well-understood
     * interpretation, a client should treat each token as an opaque string. The rules that govern
     * how the server constructs token strings might change in future releases.
-    * 
+    *
     * @return an opaque reference and should never be parsed
     */
    public String getToken() {

@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,10 +27,10 @@ import com.google.common.base.Objects;
 
 /**
  * Specifies router information.
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "RouterInfo")
+@XmlRootElement(name = "RouterInfo")
 public class RouterInfo {
    public static Builder builder() {
       return new Builder();
@@ -42,7 +41,7 @@ public class RouterInfo {
    }
 
    public static class Builder {
-      
+
       private String externalIp;
 
       /**
@@ -61,7 +60,7 @@ public class RouterInfo {
          return externalIp(in.getExternalIp());
       }
    }
-   
+
    private RouterInfo() {
       // For JAXB and builder use
    }
@@ -69,18 +68,18 @@ public class RouterInfo {
    private RouterInfo(String externalIp) {
       this.externalIp = externalIp;
    }
-   
-   
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "ExternalIp")
+
+
+   @XmlElement(name = "ExternalIp")
    private String externalIp;
-   
+
    /**
     * @return the external IP of the router. Applicable for NAT Routed / Fenced networks only.
     */
    public String getExternalIp() {
       return externalIp;
    }
-   
+
    @Override
    public boolean equals(Object o) {
       if (this == o)

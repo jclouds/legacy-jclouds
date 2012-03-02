@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,12 +27,12 @@ import com.google.common.base.Objects;
 
 /**
  * Represents a range of IP addresses, start and end inclusive.
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "IpRange")
+@XmlRootElement(name = "IpRange")
 public class IpRange {
-   
+
    public static Builder builder() {
       return new Builder();
    }
@@ -43,7 +42,7 @@ public class IpRange {
    }
 
    public static class Builder {
-      
+
       private String startAddress;
       private String endAddress;
 
@@ -71,7 +70,7 @@ public class IpRange {
          return startAddress(in.getStartAddress()).endAddress(in.getEndAddress());
       }
    }
-   
+
    private IpRange() {
       // For JAXB and builder use
    }
@@ -80,27 +79,26 @@ public class IpRange {
       this.startAddress = startAddress;
       this.endAddress = endAddress;
    }
-   
-   
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "StartAddress")
+
+   @XmlElement(name = "StartAddress")
    private String startAddress;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "EndAddress")
+   @XmlElement(name = "EndAddress")
    private String endAddress;
-   
+
    /**
     * @return Start address of the IP range.
     */
    public String getStartAddress() {
       return startAddress;
    }
-   
+
    /**
     * @return End address of the IP range.
     */
    public String getEndAddress() {
       return endAddress;
    }
-   
+
    @Override
    public boolean equals(Object o) {
       if (this == o)

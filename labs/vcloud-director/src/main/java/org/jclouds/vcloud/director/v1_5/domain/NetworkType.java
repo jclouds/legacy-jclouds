@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,9 +30,9 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "NetworkType")
+@XmlRootElement(name = "NetworkType")
 public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
-   
+
    public static <T extends NetworkType<T>> Builder<T> builder() {
       return new Builder<T>();
    }
@@ -47,7 +45,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
    public static class Builder<T extends NetworkType<T>> extends EntityType.Builder<T> {
 
       protected NetworkConfiguration networkConfiguration;
-      
+
       /**
        * @see NetworkType#getConfiguration()
        */
@@ -55,17 +53,10 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
          this.networkConfiguration = networkConfiguration;
          return this;
       }
-      
+
       @Override
       public NetworkType<T> build() {
-         NetworkType<T> network = new NetworkType<T>(href, name);
-         network.setConfiguration(networkConfiguration);
-         network.setDescription(description);
-         network.setId(id);
-         network.setType(type);
-         network.setLinks(links);
-         network.setTasksInProgress(tasksInProgress);
-         return network;
+         return new NetworkType<T>(href, type, links, description, tasksInProgress, id, name, networkConfiguration);
       }
 
       /**
@@ -123,7 +114,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder<T> links(Set<Link> links) {
@@ -132,7 +123,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder<T> link(Link link) {
@@ -154,15 +145,17 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
       }
    }
 
+   public NetworkType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+                      String id, String name, NetworkConfiguration networkConfiguration) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.networkConfiguration = networkConfiguration;
+   }
+
    protected NetworkType() {
       // For JAXB and builder use
    }
-   
-   protected NetworkType(URI href, String name) {
-      super(href, name);
-   }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Configuration")
+   @XmlElement(name = "Configuration")
    private NetworkConfiguration networkConfiguration;
 
    /**
@@ -171,11 +164,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
    public NetworkConfiguration getConfiguration() {
       return networkConfiguration;
    }
-   
-   public void setConfiguration(NetworkConfiguration networkConfiguration) {
-      this.networkConfiguration = networkConfiguration;
-   }
-   
+
    @Override
    public boolean equals(Object o) {
       if (!super.equals(o))

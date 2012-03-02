@@ -19,22 +19,8 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.GETTER_RETURNS_SAME_OBJ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_DEL;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_CONTAINS;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -139,8 +125,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       String newName = "new "+oldName;
       String oldDescription = media.getDescription();
       String newDescription = "new "+oldDescription;
-      media.setName(newName);
-      media.setDescription(newDescription);
+      media = media.toBuilder().name(newName).description(newDescription).build();
       
       Task updateMedia = mediaClient.updateMedia(mediaRef, media);
       Checks.checkTask(updateMedia);
@@ -155,8 +140,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       Checks.checkMediaFor(MEDIA, media);
       
-      media.setName(oldName);
-      media.setDescription(oldDescription);
+      media = media.toBuilder().name(oldName).description(oldDescription).build();
       
       updateMedia = mediaClient.updateMedia(mediaRef, media);
       Checks.checkTask(updateMedia);

@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,14 +28,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents mapping between a VM and vApp network.
- *             
- * 
+ * Represents mapping between a VM and vApp network.
+ * <p/>
+ * <p/>
  * <p>Java class for NetworkAssignment complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="NetworkAssignment">
  *   &lt;complexContent>
@@ -49,13 +46,10 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NetworkAssignment")
 public class NetworkAssignment
-   
+
 
 {
    public static Builder builder() {
@@ -67,7 +61,7 @@ public class NetworkAssignment
    }
 
    public static class Builder {
-      
+
       private String innerNetwork;
       private String containerNetwork;
 
@@ -87,19 +81,19 @@ public class NetworkAssignment
          return this;
       }
 
-
       public NetworkAssignment build() {
-         NetworkAssignment networkAssignment = new NetworkAssignment();
-         networkAssignment.setInnerNetwork(innerNetwork);
-         networkAssignment.setContainerNetwork(containerNetwork);
-         return networkAssignment;
+         return new NetworkAssignment(innerNetwork, containerNetwork);
       }
-
 
       public Builder fromNetworkAssignment(NetworkAssignment in) {
          return innerNetwork(in.getInnerNetwork())
-            .containerNetwork(in.getContainerNetwork());
+               .containerNetwork(in.getContainerNetwork());
       }
+   }
+
+   private NetworkAssignment(String innerNetwork, String containerNetwork) {
+      this.innerNetwork = innerNetwork;
+      this.containerNetwork = containerNetwork;
    }
 
    private NetworkAssignment() {
@@ -107,75 +101,46 @@ public class NetworkAssignment
    }
 
 
+   @XmlAttribute(required = true)
+   protected String innerNetwork;
+   @XmlAttribute(required = true)
+   protected String containerNetwork;
 
-    @XmlAttribute(required = true)
-    protected String innerNetwork;
-    @XmlAttribute(required = true)
-    protected String containerNetwork;
+   /**
+    * Gets the value of the innerNetwork property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getInnerNetwork() {
+      return innerNetwork;
+   }
 
-    /**
-     * Gets the value of the innerNetwork property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getInnerNetwork() {
-        return innerNetwork;
-    }
-
-    /**
-     * Sets the value of the innerNetwork property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setInnerNetwork(String value) {
-        this.innerNetwork = value;
-    }
-
-    /**
-     * Gets the value of the containerNetwork property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getContainerNetwork() {
-        return containerNetwork;
-    }
-
-    /**
-     * Sets the value of the containerNetwork property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setContainerNetwork(String value) {
-        this.containerNetwork = value;
-    }
+   /**
+    * Gets the value of the containerNetwork property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getContainerNetwork() {
+      return containerNetwork;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       NetworkAssignment that = NetworkAssignment.class.cast(o);
-      return equal(innerNetwork, that.innerNetwork) && 
-           equal(containerNetwork, that.containerNetwork);
+      return equal(innerNetwork, that.innerNetwork) &&
+            equal(containerNetwork, that.containerNetwork);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(innerNetwork, 
-           containerNetwork);
+      return Objects.hashCode(innerNetwork,
+            containerNetwork);
    }
 
    @Override

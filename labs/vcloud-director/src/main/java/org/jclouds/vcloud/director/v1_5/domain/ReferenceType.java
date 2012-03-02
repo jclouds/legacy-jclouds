@@ -22,9 +22,6 @@ import static com.google.common.base.Objects.equal;
 
 import java.net.URI;
 import java.util.Map;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import com.google.common.base.Objects;
@@ -32,16 +29,15 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A reference to a resource.
- *
+ * <p/>
  * Contains an href attribute and optional name and type attributes.
- *
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="ReferenceType"&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
 
    public static <T extends ReferenceType<T>> Builder<T> builder() {
@@ -92,11 +88,7 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
       }
 
       public ReferenceType<T> build() {
-         ReferenceType<T> reference = new ReferenceType<T>(href);
-         reference.setId(id);
-         reference.setName(name);
-         reference.setType(type);
-         return reference;
+         return new ReferenceType<T>(href, id, name, type);
       }
 
       protected Builder<T> fromReferenceType(ReferenceType<T> in) {
@@ -117,8 +109,11 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
    @XmlAttribute
    private String type;
 
-   protected ReferenceType(URI href) {
+   protected ReferenceType(URI href, String id, String name, String type) {
       this.href = href;
+      this.id = id;
+      this.name = name;
+      this.type = type;
    }
 
    protected ReferenceType() {
@@ -127,7 +122,7 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
 
    /**
     * Contains the URI to the entity.
-    *
+    * <p/>
     * An object reference, expressed in URL format. Because this URL includes the object identifier
     * portion of the id attribute value, it uniquely identifies the object, persists for the life of
     * the object, and is never reused. The value of the href attribute is a reference to a view of
@@ -135,7 +130,7 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
     * particular context. Although URLs have a well-known syntax and a well-understood
     * interpretation, a client should treat each href as an opaque string. The rules that govern how
     * the server constructs href strings might change in future releases.
-    * 
+    *
     * @return an opaque reference and should never be parsed
     */
    public URI getHref() {
@@ -144,7 +139,7 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
 
    /**
     * The resource identifier, expressed in URN format.
-    *
+    * <p/>
     * The value of this attribute uniquely identifies the resource, persists for the life of the
     * resource, and is never reused.
     */
@@ -152,40 +147,28 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
       return id;
    }
 
-   public void setId(String id) {
-      this.id = id;
-   }
-
    /**
     * Contains the name of the the entity.
-    *
+    * <p/>
     * The object type, specified as a MIME content type, of the object that the link references.
     * This attribute is present only for links to objects. It is not present for links to actions.
-    * 
+    *
     * @return type definition, type, expressed as an HTTP Content-Type
     */
    public String getName() {
       return name;
    }
 
-   public void setName(String name) {
-      this.name = name;
-   }
-
    /**
     * Contains the type of the the entity.
-    *
+    * <p/>
     * The object type, specified as a MIME content type, of the object that the link references.
     * This attribute is present only for links to objects. It is not present for links to actions.
-    * 
+    *
     * @return type definition, type, expressed as an HTTP Content-Type
     */
    public String getType() {
       return type;
-   }
-
-   public void setType(String type) {
-      this.type = type;
    }
 
    /**

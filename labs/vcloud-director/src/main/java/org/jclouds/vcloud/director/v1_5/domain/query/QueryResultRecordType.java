@@ -20,21 +20,13 @@ package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.namespace.QName;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 
@@ -44,15 +36,14 @@ import com.google.common.collect.Sets;
 
 /**
  * Base type for query result Records. Subtypes define more specific elements.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="QueryResultRecordType" /&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlSeeAlso({ QueryResultCatalogRecord.class, QueryResultNetworkRecord.class })
+@XmlSeeAlso({QueryResultCatalogRecord.class, QueryResultNetworkRecord.class})
 public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
 
    public static <T extends QueryResultRecordType<T>> Builder<T> builder() {
@@ -111,11 +102,7 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
       }
 
       public QueryResultRecordType<T> build() {
-         QueryResultRecordType<T> record = new QueryResultRecordType<T>(href);
-         record.setId(id);
-         record.setType(type);
-         record.setLinks(links);
-         return record;
+         return new QueryResultRecordType<T>(links, href, id, type);
       }
 
       public Builder<T> fromQueryResultRecordType(QueryResultRecordType<T> in) {
@@ -123,7 +110,7 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
       }
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Link")
+   @XmlElement(name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
@@ -132,9 +119,13 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
    private String id;
    @XmlAttribute
    private String type;
-   @XmlAnyAttribute
-   // XXX not sure about this
-   private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+
+   public QueryResultRecordType(Set<Link> links, URI href, String id, String type) {
+      this.links = links;
+      this.href = href;
+      this.id = id;
+      this.type = type;
+   }
 
    public QueryResultRecordType(URI href) {
       this.href = href;
@@ -151,14 +142,6 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
       return links;
    }
 
-   public void setLinks(Set<Link> links) {
-      this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-   }
-
-   public void addLink(Link link) {
-      this.links.add(checkNotNull(link, "link"));
-   }
-
    /**
     * Contains the URI to the entity. An object reference, expressed in URL format. Because this URL includes the object identifier
     * portion of the id attribute value, it uniquely identifies the object, persists for the life of the object, and is never
@@ -166,15 +149,11 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
     * the object that is valid in a particular context. Although URLs have a well-known syntax and a well-understood interpretation,
     * a client should treat each href as an opaque string. The rules that govern how the server constructs href strings might change
     * in future releases.
-    * 
+    *
     * @return an opaque reference and should never be parsed
     */
    public URI getHref() {
       return href;
-   }
-
-   public void setHref(URI href) {
-      this.href = href;
    }
 
    /**
@@ -184,32 +163,14 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
    public String getId() {
       return id;
    }
-
-   public void setId(String id) {
-      this.id = id;
-   }
-
    /**
     * Contains the type of the the entity. The object type, specified as a MIME content type, of the object that the link
     * references. This attribute is present only for links to objects. It is not present for links to actions.
-    * 
+    *
     * @return type definition, type, expressed as an HTTP Content-Type
     */
    public String getType() {
       return type;
-   }
-
-   public void setType(String type) {
-      this.type = type;
-   }
-
-   // XXX not sure about this
-
-   /**
-    * Gets a map that contains attributes that aren't bound to any typed property on this class.
-    */
-   public Map<QName, String> getOtherAttributes() {
-      return otherAttributes;
    }
 
    @Override
@@ -234,7 +195,7 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
    }
 
    protected ToStringHelper string() {
-       return Objects.toStringHelper("").add("href", href).add("id", id)
-             .add("type", type).add("links", links);
-    }
+      return Objects.toStringHelper("").add("href", href).add("id", id)
+            .add("type", type).add("links", links);
+   }
 }

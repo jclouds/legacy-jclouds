@@ -20,13 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.util.Collection;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -37,8 +33,7 @@ import com.google.common.collect.Sets;
 /**
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "TasksInProgress")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "TasksInProgress")
 public class TasksInProgress {
 
    public static Builder builder() {
@@ -86,7 +81,7 @@ public class TasksInProgress {
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Task")
+   @XmlElement(name = "Task")
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {

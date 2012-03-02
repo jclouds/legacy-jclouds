@@ -20,13 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -36,27 +32,20 @@ import com.google.common.collect.Sets;
 
 /**
  * The base type for all objects in the vCloud model.
- *
+ * <p/>
  * Has an optional list of links and href and type attributes.
- *
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="ResourceType"&gt;
  * </pre>
- * 
+ *
  * @author Adrian Cole
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ResourceType<T extends ResourceType<T>> implements URISupplier {
+public abstract class ResourceType<T extends ResourceType<T>> implements URISupplier {
 
-   public static <T extends ResourceType<T>> Builder<T> builder() {
-      return new Builder<T>();
-   }
+   public abstract Builder<T> toBuilder();
 
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromResourceType(this);
-   }
-
-   public static class Builder<T extends ResourceType<T>> {
+   public static abstract class Builder<T extends ResourceType<T>> {
 
       protected URI href;
       protected String type;
@@ -94,12 +83,7 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
          return this;
       }
 
-      public ResourceType<T> build() {
-         ResourceType<T> reference = new ResourceType<T>(href);
-         reference.setType(type);
-         reference.setLinks(links);
-         return reference;
-      }
+      public abstract ResourceType<T> build();
 
       protected Builder<T> fromResourceType(ResourceType<T> in) {
          return href(in.getHref()).type(in.getType()).links(in.getLinks());
@@ -110,11 +94,13 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
    private URI href;
    @XmlAttribute
    private String type;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Link")
+   @XmlElement(name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
 
-   protected ResourceType(URI href) {
+   protected ResourceType(URI href, String type, Set<Link> links) {
       this.href = href;
+      this.type = type;
+      this.links = links;
    }
 
    protected ResourceType() {
@@ -123,7 +109,7 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
 
    /**
     * Contains the URI to the entity.
-    *
+    * <p/>
     * An object reference, expressed in URL format. Because this URL includes the object identifier
     * portion of the id attribute value, it uniquely identifies the object, persists for the life of
     * the object, and is never reused. The value of the href attribute is a reference to a view of
@@ -131,7 +117,7 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
     * particular context. Although URLs have a well-known syntax and a well-understood
     * interpretation, a client should treat each href as an opaque string. The rules that govern how
     * the server constructs href strings might change in future releases.
-    * 
+    *
     * @return an opaque reference and should never be parsed
     */
    public URI getHref() {
@@ -148,18 +134,14 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
 
    /**
     * Contains the type of the the entity.
-    *
+    * <p/>
     * The object type, specified as a MIME content type, of the object that the link references.
     * This attribute is present only for links to objects. It is not present for links to actions.
-    * 
+    *
     * @return type definition, type, expressed as an HTTP Content-Type
     */
    public String getType() {
       return type;
-   }
-
-   public void setType(String type) {
-      this.type = type;
    }
 
    /**
@@ -167,14 +149,6 @@ public class ResourceType<T extends ResourceType<T>> implements URISupplier {
     */
    public Set<Link> getLinks() {
       return links;
-   }
-
-   public void setLinks(Set<Link> links) {
-      this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-   }
-
-   public void addLink(Link link) {
-      this.links.add(checkNotNull(link, "link"));
    }
 
    @Override

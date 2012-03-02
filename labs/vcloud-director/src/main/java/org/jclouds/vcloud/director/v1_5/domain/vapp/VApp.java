@@ -20,26 +20,28 @@ package org.jclouds.vcloud.director.v1_5.domain.vapp;
 
 /**
  * Represents a vApp.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="VApp" /&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
-public class VApp extends AbstractVAppType {
-//   
-//   @SuppressWarnings("unchecked")
-//   public static Builder builder() {
-//      return new Builder();
-//   }
-//
-//   public Builder toBuilder() {
-//      return new Builder().fromVApp(this);
-//   }
-//
-//   public static class Builder extends AbstractVAppType.Builder<VApp> {
-//      
+public class VApp extends AbstractVAppType<VApp> {
+   //   
+   @SuppressWarnings("unchecked")
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   //
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromVApp(this);
+   }
+
+   public static class Builder extends AbstractVAppType.Builder<VApp> {
+      //      
 //      private Owner owner;
 //      private Boolean inMaintenanceMode;
 //      private VAppChildren children;
@@ -78,8 +80,11 @@ public class VApp extends AbstractVAppType {
 //      }
 //
 //
-//      public VApp build() {
-//         VApp vApp = new VApp();
+      public VApp build() {
+         return new VApp();
+      }
+
+      //         VApp vApp = new VApp();
 //         vApp.setOwner(owner);
 //         vApp.setInMaintenanceMode(inMaintenanceMode);
 //         vApp.setChildren(children);
@@ -92,18 +97,20 @@ public class VApp extends AbstractVAppType {
 //      public Builder fromAbstractVAppType(AbstractVAppType<VApp> in) {
 //          return Builder.class.cast(super.fromAbstractVAppType(in));
 //      }
-//      public Builder fromVApp(VApp in) {
+      public Builder fromVApp(VApp in) {
+         return new Builder();
+      }
 //         return fromAbstractVAppType(in)
 //            .owner(in.getOwner())
 //            .inMaintenanceMode(in.getInMaintenanceMode())
 //            .children(in.getChildren())
 //            .ovfDescriptorUploaded(in.getOvfDescriptorUploaded());
 //      }
-//   }
-//
-//   private VApp() {
-//      // For JAXB and builder use
-//   }
+   }
+
+   private VApp() {
+      // For JAXB and builder use
+   }
 //
 //
 //

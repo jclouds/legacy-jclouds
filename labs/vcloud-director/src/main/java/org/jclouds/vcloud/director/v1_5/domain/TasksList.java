@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -37,15 +35,14 @@ import com.google.common.collect.Sets;
 
 /**
  * A list of tasks.
- * 
+ *
  * @author Adrian Cole
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "TasksList")
+@XmlRootElement(name = "TasksList")
 public class TasksList extends EntityType<TasksList> {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASKS_LIST;
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -77,13 +74,7 @@ public class TasksList extends EntityType<TasksList> {
 
       @Override
       public TasksList build() {
-         TasksList taskslist = new TasksList(href, name, tasks);
-         taskslist.setDescription(description);
-         taskslist.setTasksInProgress(tasksInProgress);
-         taskslist.setId(id);
-         taskslist.setType(type);
-         taskslist.setLinks(links);
-         return taskslist;
+         return new TasksList(href, type, links, description, tasksInProgress, id, name, tasks);
       }
 
       /**
@@ -141,7 +132,7 @@ public class TasksList extends EntityType<TasksList> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -150,7 +141,7 @@ public class TasksList extends EntityType<TasksList> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -172,12 +163,12 @@ public class TasksList extends EntityType<TasksList> {
       // For JAXB and builder use
    }
 
-   protected TasksList(URI href, String name, Set<Task> tasks) {
-      super(href, name);
+   public TasksList(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, Set<Task> tasks) {
+      super(href, type, links, description, tasksInProgress, id, name);
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Task")
+   @XmlElement(name = "Task")
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {

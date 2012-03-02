@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -36,16 +34,16 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents a metadata entry
- * 
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="MetadataType"&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "MetadataValue")
+@XmlRootElement(name = "MetadataValue")
 public class MetadataValue extends ResourceType<MetadataValue> {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
 
    @SuppressWarnings("unchecked")
@@ -68,15 +66,12 @@ public class MetadataValue extends ResourceType<MetadataValue> {
          this.value = value;
          return this;
       }
-      
+
       @Override
       public MetadataValue build() {
-         MetadataValue metadataValue = new MetadataValue(href, value);
-         metadataValue.setType(type);
-         metadataValue.setLinks(links);
-         return metadataValue;
+         return new MetadataValue(href, type, links, value);
       }
-      
+
       /**
        * @see ResourceType#getHref()
        */
@@ -127,15 +122,15 @@ public class MetadataValue extends ResourceType<MetadataValue> {
    }
 
    private MetadataValue() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
-   private MetadataValue(URI href, String value) {
-      super(href);
+   private MetadataValue(URI href, String type, Set<Link> links, String value) {
+      super(href, type, links);
       this.value = checkNotNull(value, "value");
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Value", required = true)
+   @XmlElement(name = "Value", required = true)
    private String value;
 
    /**
@@ -144,7 +139,7 @@ public class MetadataValue extends ResourceType<MetadataValue> {
    public String getValue() {
       return value;
    }
-   
+
    @Override
    public boolean equals(Object o) {
       if (this == o)

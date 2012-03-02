@@ -23,9 +23,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 
@@ -36,16 +34,16 @@ import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a vCloud query as references.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="QueryResultReferences" /&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
 public class QueryResultReferences<T extends ReferenceType<T>> extends ContainerType<QueryResultReferences<T>> {
@@ -63,13 +61,13 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
 
    public static class Builder<T extends ReferenceType<T>> extends ContainerType.Builder<QueryResultReferences<T>> {
 
-      protected List<T> references = Lists.newArrayList();
+      protected Set<T> references = Sets.newLinkedHashSet();
 
       /**
        * @see QueryResultReferences#getReferences()
        */
-      public Builder<T> references(List<T> references) {
-         this.references = references;
+      public Builder<T> references(Set<T> references) {
+         this.references = checkNotNull(references, "references");
          return this;
       }
 
@@ -83,19 +81,11 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
 
       @Override
       public QueryResultReferences<T> build() {
-         QueryResultReferences<T> queryResultReferences = new QueryResultReferences<T>(href);
-         queryResultReferences.setReferences(references);
-         queryResultReferences.setName(name);
-         queryResultReferences.setPage(page);
-         queryResultReferences.setPageSize(pageSize);
-         queryResultReferences.setTotal(total);
-         queryResultReferences.setType(type);
-         queryResultReferences.setLinks(links);
-         return queryResultReferences;
+         return new QueryResultReferences<T>(href, type, links, name, page, pageSize, total, references);
       }
 
       /**
-       * @see Container#getName()
+       * @see ContainerType#getName()
        */
       @Override
       public Builder<T> name(String name) {
@@ -104,7 +94,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
-       * @see Container#getPage()
+       * @see ContainerType#getPage()
        */
       @Override
       public Builder<T> page(Integer page) {
@@ -113,7 +103,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
-       * @see Container#getPageSize()
+       * @see ContainerType#getPageSize()
        */
       @Override
       public Builder<T> pageSize(Integer pageSize) {
@@ -122,7 +112,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
-       * @see Container#getTotal()
+       * @see ContainerType#getTotal()
        */
       @Override
       public Builder<T> total(Long total) {
@@ -131,7 +121,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
-       * @see ResourceType#getHref()
+       * @see ContainerType#getHref()
        */
       @Override
       public Builder<T> href(URI href) {
@@ -140,7 +130,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
-       * @see ResourceType#getType()
+       * @see ContainerType#getType()
        */
       @Override
       public Builder<T> type(String type) {
@@ -149,7 +139,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
-       * @see ResourceType#getLinks()
+       * @see ContainerType#getLinks()
        */
       @Override
       public Builder<T> links(Set<Link> links) {
@@ -158,7 +148,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
 
       /**
-       * @see ResourceType#getLinks()
+       * @see ContainerType#getLinks()
        */
       @Override
       public Builder<T> link(Link link) {
@@ -176,33 +166,26 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
       }
    }
 
+   protected QueryResultReferences(URI href, String type, Set<Link> links, String name, Integer page, Integer pageSize, Long total, Set<T> references) {
+      super(href, type, links, name, page, pageSize, total);
+      this.references = ImmutableSet.copyOf(references);
+   }
+
    protected QueryResultReferences() {
       // For JAXB and builder use
    }
 
-   protected QueryResultReferences(URI href) {
-      super(href);
-   }
-
    // NOTE add other types as they are used. probably not the best way to do this.
    @XmlElementRefs({
-       @XmlElementRef(type = CatalogReference.class)
+         @XmlElementRef(type = CatalogReference.class)
    })
-   protected List<T> references = Lists.newArrayList();
+   private Set<T> references = Sets.newLinkedHashSet();
 
    /**
     * Set of references representing query results.
     */
-   public List<T> getReferences() {
+   public Set<T> getReferences() {
       return references;
-   }
-
-   public void setReferences(List<T> references) {
-      this.references = Lists.newArrayList(checkNotNull(references, "references"));
-   }
-
-   public void addReference(T reference) {
-      this.references.add(checkNotNull(reference, "reference"));
    }
 
    @Override

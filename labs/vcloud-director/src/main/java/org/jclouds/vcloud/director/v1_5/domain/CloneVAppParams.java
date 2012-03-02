@@ -19,22 +19,19 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents parameters for copying a vApp and optionally deleting the source.
- *             
- * 
+ * Represents parameters for copying a vApp and optionally deleting the source.
+ * <p/>
+ * <p/>
  * <p>Java class for CloneVAppParams complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="CloneVAppParams">
  *   &lt;complexContent>
@@ -44,13 +41,10 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CloneVAppParams")
 public class CloneVAppParams
-    extends InstantiateVAppParamsType<CloneVAppParams>
+      extends InstantiateVAppParamsType<CloneVAppParams>
 
 {
    @SuppressWarnings("unchecked")
@@ -63,7 +57,7 @@ public class CloneVAppParams
    }
 
    public static class Builder extends InstantiateVAppParamsType.Builder<CloneVAppParams> {
-      
+
 
       public CloneVAppParams build() {
          CloneVAppParams cloneVAppParams = new CloneVAppParams();
@@ -85,7 +79,7 @@ public class CloneVAppParams
          super.name(name);
          return this;
       }
-      
+
       /**
        * @see VAppCreationParamsType#getVAppParent()
        */
@@ -117,7 +111,7 @@ public class CloneVAppParams
          super.powerOn(powerOn);
          return this;
       }
-      
+
       /**
        * @see InstantiateVAppParamsType#getSource()
        */
@@ -144,8 +138,9 @@ public class CloneVAppParams
 
       @Override
       public Builder fromInstantiateVAppParamsType(InstantiateVAppParamsType<CloneVAppParams> in) {
-          return Builder.class.cast(super.fromInstantiateVAppParamsType(in));
+         return Builder.class.cast(super.fromInstantiateVAppParamsType(in));
       }
+
       public Builder fromCloneVAppParams(CloneVAppParams in) {
          return fromInstantiateVAppParamsType(in);
       }
@@ -158,7 +153,7 @@ public class CloneVAppParams
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       CloneVAppParams that = CloneVAppParams.class.cast(o);

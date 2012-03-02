@@ -23,15 +23,14 @@ import javax.xml.bind.annotation.XmlType;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * 
- *                Container for the list of typed queries available to the
- *                requesting user.
- *             
- * 
+ * Container for the list of typed queries available to the
+ * requesting user.
+ * <p/>
+ * <p/>
  * <p>Java class for QueryList complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="QueryList">
  *   &lt;complexContent>
@@ -41,16 +40,15 @@ import com.google.common.base.Objects.ToStringHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlType(name = "QueryList")
 public class QueryList extends ContainerType<QueryList> {
-   @SuppressWarnings("unchecked")
+
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromQueryList(this);
    }
@@ -64,8 +62,9 @@ public class QueryList extends ContainerType<QueryList> {
 
       @Override
       public Builder fromContainerType(ContainerType<QueryList> in) {
-          return Builder.class.cast(super.fromContainerType(in));
+         return Builder.class.cast(super.fromContainerType(in));
       }
+
       public Builder fromQueryList(QueryList in) {
          return fromContainerType(in);
       }
@@ -78,11 +77,11 @@ public class QueryList extends ContainerType<QueryList> {
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       QueryList that = QueryList.class.cast(o);
-      return super.equals(that) ;
+      return super.equals(that);
    }
 
    @Override

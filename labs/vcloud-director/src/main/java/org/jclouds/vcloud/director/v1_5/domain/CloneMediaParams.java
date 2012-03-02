@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,15 +28,14 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents parameters for copying a media resource and optionally
- *                 deleting the source.
- *             
- * 
+ * Represents parameters for copying a media resource and optionally
+ * deleting the source.
+ * <p/>
+ * <p/>
  * <p>Java class for CloneMediaParams complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="CloneMediaParams">
  *   &lt;complexContent>
@@ -52,16 +49,13 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CloneMediaParams", propOrder = {
-    "source",
-    "isSourceDelete"
+      "source",
+      "isSourceDelete"
 })
 public class CloneMediaParams
-    extends ParamsType<CloneMediaParams>
+      extends ParamsType<CloneMediaParams>
 
 {
    @SuppressWarnings("unchecked")
@@ -74,7 +68,7 @@ public class CloneMediaParams
    }
 
    public static class Builder extends ParamsType.Builder<CloneMediaParams> {
-      
+
       private Reference source;
       private Boolean isSourceDelete;
 
@@ -87,31 +81,33 @@ public class CloneMediaParams
       }
 
       /**
-       * @see CloneMediaParams#getIsSourceDelete()
+       * @see CloneMediaParams#isSourceDelete()
        */
       public Builder isSourceDelete(Boolean isSourceDelete) {
          this.isSourceDelete = isSourceDelete;
          return this;
       }
 
-
       public CloneMediaParams build() {
-         CloneMediaParams cloneMediaParams = new CloneMediaParams();
-         cloneMediaParams.setSource(source);
-         cloneMediaParams.setIsSourceDelete(isSourceDelete);
-         return cloneMediaParams;
+         return new CloneMediaParams(description, name, source, isSourceDelete);
       }
-
 
       @Override
       public Builder fromParamsType(ParamsType<CloneMediaParams> in) {
-          return Builder.class.cast(super.fromParamsType(in));
+         return Builder.class.cast(super.fromParamsType(in));
       }
+
       public Builder fromCloneMediaParams(CloneMediaParams in) {
          return fromParamsType(in)
-            .source(in.getSource())
-            .isSourceDelete(in.isSourceDelete());
+               .source(in.getSource())
+               .isSourceDelete(in.isSourceDelete());
       }
+   }
+
+   private CloneMediaParams(String description, String name, Reference source, Boolean sourceDelete) {
+      super(description, name);
+      this.source = source;
+      isSourceDelete = sourceDelete;
    }
 
    private CloneMediaParams() {
@@ -119,75 +115,46 @@ public class CloneMediaParams
    }
 
 
+   @XmlElement(name = "Source", required = true)
+   protected Reference source;
+   @XmlElement(name = "IsSourceDelete")
+   protected Boolean isSourceDelete;
 
-    @XmlElement(name = "Source", required = true)
-    protected Reference source;
-    @XmlElement(name = "IsSourceDelete")
-    protected Boolean isSourceDelete;
+   /**
+    * Gets the value of the source property.
+    *
+    * @return possible object is
+    *         {@link Reference }
+    */
+   public Reference getSource() {
+      return source;
+   }
 
-    /**
-     * Gets the value of the source property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Reference }
-     *     
-     */
-    public Reference getSource() {
-        return source;
-    }
-
-    /**
-     * Sets the value of the source property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Reference }
-     *     
-     */
-    public void setSource(Reference value) {
-        this.source = value;
-    }
-
-    /**
-     * Gets the value of the isSourceDelete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public Boolean isSourceDelete() {
-        return isSourceDelete;
-    }
-
-    /**
-     * Sets the value of the isSourceDelete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIsSourceDelete(Boolean value) {
-        this.isSourceDelete = value;
-    }
+   /**
+    * Gets the value of the isSourceDelete property.
+    *
+    * @return possible object is
+    *         {@link Boolean }
+    */
+   public Boolean isSourceDelete() {
+      return isSourceDelete;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       CloneMediaParams that = CloneMediaParams.class.cast(o);
-      return equal(source, that.source) && 
-           equal(isSourceDelete, that.isSourceDelete);
+      return equal(source, that.source) &&
+            equal(isSourceDelete, that.isSourceDelete);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(source, 
-           isSourceDelete);
+      return Objects.hashCode(source,
+            isSourceDelete);
    }
 
    @Override

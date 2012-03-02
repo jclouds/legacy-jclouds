@@ -22,10 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -55,6 +58,21 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    protected static void setUpInjector() {
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
+   }
+
+   @Override
+   public Properties setupProperties() {
+      Properties props = new Properties();
+      props.put(Constants.PROPERTY_MAX_RETRIES, 1);
+      return props;
+   }
+   
+   @Override
+   public HttpRequestComparisonType compareHttpRequestAsType(HttpRequest input) {
+      if (input.getPayload() == null || input.getPayload().getContentMetadata().getContentLength() == 0) {
+         return HttpRequestComparisonType.DEFAULT;
+      }
+      return HttpRequestComparisonType.XML;
    }
 
    protected HttpRequest loginRequest = HttpRequest.builder()

@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -30,14 +28,13 @@ import com.google.common.base.Objects;
 
 
 /**
- * 
- *                 Represents a capacity and usage of a given resource.
- *             
- * 
+ * Represents a capacity and usage of a given resource.
+ * <p/>
+ * <p/>
  * <p>Java class for CapacityWithUsage complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="CapacityWithUsage">
  *   &lt;complexContent>
@@ -51,13 +48,10 @@ import com.google.common.base.Objects;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CapacityWithUsage", propOrder = {
-    "used",
-    "overhead"
+      "used",
+      "overhead"
 })
 public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
 
@@ -72,7 +66,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
    }
 
    public static class Builder extends CapacityType.Builder<CapacityWithUsage> {
-      
+
       private Long used;
       private Long overhead;
 
@@ -91,15 +85,10 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
          this.overhead = overhead;
          return this;
       }
-      
+
 
       public CapacityWithUsage build() {
-         CapacityWithUsage capacityWithUsage = new CapacityWithUsage(units);
-         capacityWithUsage.setUsed(used);
-         capacityWithUsage.setOverhead(overhead);
-         capacityWithUsage.setAllocated(allocated);
-         capacityWithUsage.setLimit(limit);
-         return capacityWithUsage;
+         return new CapacityWithUsage(units, allocated, limit, used, overhead);
       }
 
       /**
@@ -125,96 +114,70 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
          this.limit = limit;
          return this;
       }
-      
+
 
       @Override
       public Builder fromCapacityType(CapacityType<CapacityWithUsage> in) {
-          return Builder.class.cast(super.fromCapacityType(in));
+         return Builder.class.cast(super.fromCapacityType(in));
       }
+
       public Builder fromCapacityWithUsage(CapacityWithUsage in) {
          return fromCapacityType(in)
-            .used(in.getUsed())
-            .overhead(in.getOverhead());
+               .used(in.getUsed())
+               .overhead(in.getOverhead());
       }
    }
 
-   protected CapacityWithUsage() {
+   private CapacityWithUsage(String units, Long allocated, Long limit, Long used, Long overhead) {
+      super(units, allocated, limit);
+      this.used = used;
+      this.overhead = overhead;
+   }
+
+   private CapacityWithUsage() {
       // For JAXB and builder use
    }
 
-   public CapacityWithUsage(String units) {
-      super(units);
+   @XmlElement(name = "Used")
+   protected Long used;
+   @XmlElement(name = "Overhead")
+   protected Long overhead;
+
+   /**
+    * Gets the value of the used property.
+    *
+    * @return possible object is
+    *         {@link Long }
+    */
+   public Long getUsed() {
+      return used;
    }
 
-
-    @XmlElement(name = "Used")
-    protected Long used;
-    @XmlElement(name = "Overhead")
-    protected Long overhead;
-
-    /**
-     * Gets the value of the used property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getUsed() {
-        return used;
-    }
-
-    /**
-     * Sets the value of the used property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setUsed(Long value) {
-        this.used = value;
-    }
-
-    /**
-     * Gets the value of the overhead property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getOverhead() {
-        return overhead;
-    }
-
-    /**
-     * Sets the value of the overhead property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setOverhead(Long value) {
-        this.overhead = value;
-    }
+   /**
+    * Gets the value of the overhead property.
+    *
+    * @return possible object is
+    *         {@link Long }
+    */
+   public Long getOverhead() {
+      return overhead;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       CapacityWithUsage that = CapacityWithUsage.class.cast(o);
-      return equal(used, that.used) && 
-           equal(overhead, that.overhead);
+      return equal(used, that.used) &&
+            equal(overhead, that.overhead);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(used, 
-           overhead);
+      return Objects.hashCode(used,
+            overhead);
    }
 
    @Override
