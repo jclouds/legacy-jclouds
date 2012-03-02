@@ -57,5 +57,7 @@ public interface VirtualBoxConstants {
    
    public static final String VIRTUALBOX_DEFAULT_DIR = System.getProperty("user.home")
        + File.separator +".jclouds-vbox";
+   
+   public static final String VIRTUALBOX_PROVIDER = "virtualbox";
 
 }

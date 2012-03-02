@@ -21,25 +21,26 @@ import com.google.inject.Inject;
 @Singleton
 public class GuestAdditionsInstaller implements Predicate<String> {
 
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
+  @Resource
+  @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+  protected Logger                    logger = Logger.NULL;
 
-   private final ComputeServiceContext context;
-   private String vboxVersion;
+  private final ComputeServiceContext vboxHostContext;
+  private String                      vboxVersion;
 
-   @Inject
-   public GuestAdditionsInstaller(ComputeServiceContext context) {
-      this.context = context;
-   }
+  @Inject
+  public GuestAdditionsInstaller(ComputeServiceContext vboxHostContext) {
+    this.vboxHostContext = vboxHostContext;
+  }
 
-   @Override
-   public boolean apply(String vmName) {
-      vboxVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-      ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmName,
-            new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);
-      ExecResponse execResponse = Futures.getUnchecked(execFuture);
-      return execResponse == null ? false : execResponse.getExitStatus() == 0;
-   }
+  @Override
+  public boolean apply(String vmName) {
+    vboxVersion = Iterables.get(Splitter.on('r').split(vboxHostContext.getProviderSpecificContext().getBuildVersion()),
+        0);
+    ListenableFuture<ExecResponse> execFuture = vboxHostContext.getComputeService().submitScriptOnNode(vmName,
+        new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);
+    ExecResponse execResponse = Futures.getUnchecked(execFuture);
+    return execResponse == null ? false : execResponse.getExitStatus() == 0;
+  }
 
 }

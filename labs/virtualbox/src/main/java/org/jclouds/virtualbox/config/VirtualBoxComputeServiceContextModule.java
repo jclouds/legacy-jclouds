@@ -20,6 +20,9 @@
 package org.jclouds.virtualbox.config;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PROVIDER;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WEBSERVER_CREDENTIAL;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WEBSERVER_IDENTITY;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -32,10 +35,13 @@ import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
 import org.jclouds.byon.Node;
+import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -47,8 +53,11 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.virtualbox.Host;
 import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.domain.ExecutionType;
@@ -82,7 +91,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -148,6 +159,23 @@ public class VirtualBoxComputeServiceContextModule extends
   @Preconfiguration
   protected LoadingCache<IsoSpec, URI> preconfiguration(CacheLoader<IsoSpec, URI> cacheLoader) {
     return CacheBuilder.newBuilder().build(cacheLoader);
+  }
+
+  @Provides
+  @Host
+  @Singleton
+  protected ComputeServiceContext provideHostController() {
+    String provider = "byon";
+    String identity = "";
+    String credential = "";
+    CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
+        "host",
+        Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+            .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
+            .osVersion(System.getProperty("os.version")).group("ssh").username(System.getProperty("user.name"))
+            .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa")).build()));
+    return new ComputeServiceContextFactory().createContext(provider, identity, credential,
+        ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule));
   }
 
   @Provides
