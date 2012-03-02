@@ -17,16 +17,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.config;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.Constants;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
@@ -51,13 +49,16 @@ import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
 import org.jclouds.vcloud.director.v1_5.login.SessionAsyncClient;
 import org.jclouds.vcloud.director.v1_5.login.SessionClient;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
 /**
  * Configures the VCloudDirector connection.
