@@ -58,7 +58,6 @@ import com.google.common.collect.Sets;
  */
 @XmlType(name = "File")
 public class File extends EntityType<File> {
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -194,13 +193,11 @@ public class File extends EntityType<File> {
       this.checksum = checksum;
    }
 
+   @SuppressWarnings("unused")
    private File() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
-   private File(URI href, String name) {
-      super(href, name);
-   }
    @XmlAttribute
    protected Long size;
    @XmlAttribute

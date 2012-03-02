@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -137,7 +138,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    @XmlElement(name = "Description")
    private String description;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Tasks")
+   @XmlElement(name = "Tasks")
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;

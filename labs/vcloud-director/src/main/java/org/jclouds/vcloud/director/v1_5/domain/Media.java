@@ -48,7 +48,6 @@ public class Media extends ResourceEntityType<Media> {
       public static final List<String> ALL = Arrays.asList(ISO, FLOPPY);
    }
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }

@@ -92,8 +92,6 @@ public class CloneMediaParams
 
       public CloneMediaParams build() {
          return new CloneMediaParams(description, name, source, isSourceDelete);
-         cloneMediaParams.setName(name);
-         cloneMediaParams.setDescription(description);
       }
 
       

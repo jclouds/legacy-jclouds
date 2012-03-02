@@ -193,29 +193,6 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       }
    }
    
-   @Test
-   @Test(enabled = false)
-   public void testCloneVApp() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            new VcloudHttpRequestPrimer()
-               .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVApp")
-               .xmlFilePayload("/vdc/params/cloneVApp.xml", VCloudDirectorMediaType.CLONE_V_APP_PARAMS)
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
-            new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/vdc/cloneVApp.xml", VCloudDirectorMediaType.V_APP)
-               .httpResponseBuilder().build());
-      
-      VApp expected = cloneVApp();
-
-      // TODO: configure params
-      CloneVAppParams params = CloneVAppParams.builder()
-         
-         .build();
-      
-      assertEquals(client.getVdcClient().cloneVApp(vdcRef, params), expected);
-   }
-   
    @Test(enabled = false)
    public void testCloneVAppTemplate() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 

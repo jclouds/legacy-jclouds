@@ -22,13 +22,14 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Set;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 
 /**
@@ -99,18 +100,18 @@ public class FilesList {
       // For JAXB and builder use
    }
 
-   private FilesList(Set<File> files) {
-      this.files = ImmutableSet.copyOf(files);
+   private FilesList(List<File> files) {
+      this.files = ImmutableList.copyOf(files);
    }
 
 
    @XmlElement(name = "File", required = true)
-   protected Set<File> files = Sets.newLinkedHashSet();
+   protected List<File> files = Lists.newLinkedList();
 
    /**
     * Gets the value of the file property.
     */
-   public Set<File> getFiles() {
+   public List<File> getFiles() {
       return this.files;
    }
 
