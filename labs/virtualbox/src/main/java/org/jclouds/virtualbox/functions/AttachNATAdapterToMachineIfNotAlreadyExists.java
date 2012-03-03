@@ -23,7 +23,7 @@ import static org.virtualbox_4_1.NetworkAttachmentType.NAT;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.RedirectRule;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
@@ -32,34 +32,32 @@ import org.virtualbox_4_1.VBoxException;
 import com.google.common.base.Function;
 
 /**
- * @author Mattias Holmqvist
+ * @author Mattias Holmqvist, Andrea Turli
  */
 public class AttachNATAdapterToMachineIfNotAlreadyExists implements Function<IMachine, Void> {
 
-   private long adapterSlot;
-   private NatAdapter natAdapter;
+   private NetworkInterfaceCard networkInterfaceCard;
 
-   public AttachNATAdapterToMachineIfNotAlreadyExists(long adapterSlot, NatAdapter natAdapter) {
-      this.adapterSlot = adapterSlot;
-      this.natAdapter = natAdapter;
+   public AttachNATAdapterToMachineIfNotAlreadyExists(NetworkInterfaceCard networkInterfaceCard) {
+      this.networkInterfaceCard = networkInterfaceCard;
    }
 
    @Override
    public Void apply(@Nullable IMachine machine) {
-      INetworkAdapter networkAdapter = machine.getNetworkAdapter(adapterSlot);
-      networkAdapter.setAttachmentType(NAT);
-      for (RedirectRule rule : natAdapter.getRedirectRules()) {
+      INetworkAdapter iNetworkAdapter = machine.getNetworkAdapter(networkInterfaceCard.getSlot());
+      iNetworkAdapter.setAttachmentType(NAT);
+      for (RedirectRule rule : networkInterfaceCard.getNetworkAdapter().getRedirectRules()) {
          try {
             String ruleName = String.format("%s@%s:%s->%s:%s",rule.getProtocol(), rule.getHost(), rule.getHostPort(), 
                      rule.getGuest(), rule.getGuestPort());
-            networkAdapter.getNatDriver().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
+            iNetworkAdapter.getNatDriver().addRedirect(ruleName, rule.getProtocol(), rule.getHost(), rule.getHostPort(),
                      rule.getGuest(), rule.getGuestPort());
          } catch (VBoxException e) {
             if (!e.getMessage().contains("already exists"))
                throw e;
          }
       }
-      networkAdapter.setEnabled(true);
+      iNetworkAdapter.setEnabled(true);
       machine.saveSettings();
       return null;
    }

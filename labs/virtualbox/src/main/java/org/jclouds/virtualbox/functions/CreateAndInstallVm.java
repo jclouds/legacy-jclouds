@@ -47,11 +47,13 @@ import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.MachineState;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -91,7 +93,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       this.machineUtils = machineUtils;
       this.preConfiguration = preConfiguration;
    }
-
+   
    @Override
    public IMachine apply(MasterSpec masterSpec) {
 
@@ -137,8 +139,14 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       }
    }
 
+   /**
+    * ensureMachineHasPowerDown needs to have this delay just to ensure that the machine is completely powered off
+    * 
+    * @param vmName
+    */
    private void ensureMachineHasPowerDown(String vmName) {
-      machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
+	   while(!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
+		   machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
          @Override
          public Void apply(ISession session) {
             IProgress powerDownProgress = session.getConsole().powerDown();
@@ -146,6 +154,12 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
             return null;
          }
       });
+		   try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			Throwables.propagate(e);
+		}
+	   }
    }
 
    private void ensureMachineIsLaunched(String vmName) {
