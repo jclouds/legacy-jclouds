@@ -62,6 +62,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
@@ -186,21 +187,28 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @VisibleForTesting
    String getGroupForInstance(final RunningInstance instance) {
+      String group = parseGroupFrom(instance, instance.getGroupIds());
+      if(group == null && instance.getKeyName() != null) {
+         // when not using a generated security group, e.g. in VPC, try from key:
+         group = parseGroupFrom(instance, Sets.newHashSet(instance.getKeyName()));
+      }
+      return group;
+   }
+
+   private String parseGroupFrom(final RunningInstance instance, final Set<String> data) {
       String group = null;
       try {
-         group = Iterables.getOnlyElement(Iterables.filter(instance.getGroupIds(), new Predicate<String>() {
+         group = Iterables.getOnlyElement(Iterables.filter(data, new Predicate<String>() {
 
             @Override
             public boolean apply(String input) {
-               return input.startsWith("jclouds#") && input.endsWith("#" + instance.getRegion());
+               return input.startsWith("jclouds#") && input.contains("#" + instance.getRegion());
             }
-
-         })).substring(8).replaceAll("#" + instance.getRegion() + "$", "");
+         })).split("#")[1];
       } catch (NoSuchElementException e) {
-         logger.debug("no group parsed from %s's security groups: %s", instance.getId(), instance.getGroupIds());
+         logger.debug("no group parsed from %s's data: %s", instance.getId(), data);
       } catch (IllegalArgumentException e) {
-         logger.debug("too many groups match %s; %s's security groups: %s", "jclouds#", instance.getId(), instance
-                  .getGroupIds());
+         logger.debug("too many groups match %s; %s's data: %s", "jclouds#", instance.getId(), data);
       }
       return group;
    }
