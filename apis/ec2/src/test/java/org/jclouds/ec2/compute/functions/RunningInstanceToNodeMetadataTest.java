@@ -217,6 +217,20 @@ public class RunningInstanceToNodeMetadataTest {
                   .hardware(m1_small32().build()).location(provider).build());
    }
 
+   @Test
+   public void testGroupNameIsSetWhenCustomKeyNameIsSetAndSecurityGroupIsGenerated() {
+      checkGroupName(RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
+              .instanceState(InstanceState.RUNNING).region("us-east-1").keyName("custom-key")
+              .groupId("jclouds#groupname#us-east-1").build());
+   }
+
+   @Test
+   public void testGroupNameIsSetWhenCustomSecurityGroupIsSetAndKeyNameIsGenerated() {
+      checkGroupName(RunningInstance.builder().instanceId("id").imageId("image").instanceType("m1.small")
+              .instanceState(InstanceState.RUNNING).region("us-east-1").groupId("custom-sec")
+              .keyName("jclouds#groupname#us-east-1#23").build());
+   }
+
    protected RunningInstance firstInstanceFromResource(String resource) {
       RunningInstance server = Iterables.get(Iterables.get(DescribeInstancesResponseHandlerTest
                .parseRunningInstances(resource), 0), 0);
@@ -237,6 +251,12 @@ public class RunningInstanceToNodeMetadataTest {
       };
       LoadingCache<RegionAndName, Image> instanceToImage = CacheBuilder.newBuilder().build(getRealImage);
       return createNodeParser(hardware, locations, credentialStore, instanceToNodeState, instanceToImage);
+   }
+
+   private void checkGroupName(RunningInstance instance) {
+      assertEquals("groupname", createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
+            .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of())
+            .apply(instance).getGroup());
    }
 
    private RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
