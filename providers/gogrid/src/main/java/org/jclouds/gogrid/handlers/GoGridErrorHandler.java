@@ -60,6 +60,7 @@ public class GoGridErrorHandler implements HttpErrorHandler {
                exception = new ResourceNotFoundException(Iterables.get(errors, 0).getMessage(), exception);
                break;
             }
+            break;
          case 403:
             exception = new AuthorizationException(exception.getMessage(), exception);
             break;
