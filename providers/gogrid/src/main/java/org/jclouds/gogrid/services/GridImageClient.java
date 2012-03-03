@@ -25,15 +25,37 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.options.GetImageListOptions;
+import org.jclouds.gogrid.options.SaveImageOptions;
 
 /**
  * Manages the server images
  * 
- * @see <a href="http://wiki.gogrid.com/wiki/index.php/API#Server_Image_Methods"/>
+ * @see <a
+ *      href="http://wiki.gogrid.com/wiki/index.php/API#Server_Image_Methods"/>
  * @author Oleksiy Yarmula
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface GridImageClient {
+   /**
+    * Deletes an existing image
+    * 
+    * @param id
+    *           id of the existing image
+    */
+   ServerImage deleteById(long id);
+
+   /**
+    * This call will save a private (visible to only you) server image to your
+    * library of available images. The image will be saved from an existing
+    * server.
+    * 
+    * @param idOrName
+    *           id or name of the existing server
+    * @param friendlyName
+    *           friendly name of the image
+    * @return saved server image
+    */
+   ServerImage saveImageFromServer(String friendlyName, String idOrName, SaveImageOptions... options);
 
    /**
     * Returns all server images.
@@ -85,9 +107,9 @@ public interface GridImageClient {
    ServerImage editImageFriendlyName(String idOrName, String newFriendlyName);
 
    /**
-    * Retrieves the list of supported Datacenters to save images in. The objects will have
-    * datacenter ID, name and description. In most cases, id or name will be used for
-    * {@link #getImageList}.
+    * Retrieves the list of supported Datacenters to save images in. The objects
+    * will have datacenter ID, name and description. In most cases, id or name
+    * will be used for {@link #getImageList}.
     * 
     * @return supported datacenters
     */
