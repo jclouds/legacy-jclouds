@@ -18,15 +18,23 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import javax.annotation.Resource;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
+import org.virtualbox_4_1.ISystemProperties;
+import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.ISystemPropertiesGetMaxNetworkAdapters;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -35,6 +43,11 @@ import com.google.inject.Inject;
 
 @Singleton
 public class IMachineToSshClient implements Function<IMachine, SshClient> {
+  
+  @Resource
+  @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+  protected Logger                                                logger = Logger.NULL;
+  
    private final SshClient.Factory sshClientFactory;
 
    @Inject
@@ -44,7 +57,16 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 
    @Override
    public SshClient apply(final IMachine vm) {
-      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0l);
+     INetworkAdapter networkAdapter = null;
+      for (long i = 0 ; i < 1000 ; i++){
+        try {
+          networkAdapter = vm.getNetworkAdapter(i);
+          logger.warn("NATDRIVERREDIRECTS: "+networkAdapter.getNatDriver().getRedirects().toString());
+        } catch (Exception e) {
+          break;
+        }
+      }
+      
       SshClient client = null;
       checkState(networkAdapter != null);
       for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()) {
@@ -55,11 +77,13 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
          String targetPort = Iterables.get(stuff, 5);
          // TODO: we need a way to align the default login credentials from the iso with the
          // vmspec
+         logger.warn("PROTOCOLNUMBER: "+protocolNumber);
          if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
             client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)),
                      LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
          }
       }
+      checkNotNull(client);
       return client;
    }
 }

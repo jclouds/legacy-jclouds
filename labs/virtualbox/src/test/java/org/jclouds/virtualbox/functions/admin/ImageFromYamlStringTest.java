@@ -31,7 +31,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Andrea Turli
@@ -62,6 +62,6 @@ public class ImageFromYamlStringTest {
         return yamlFileLines.toString();
       }
     });
-    assertEquals(parser.get(), ImmutableMap.of(TEST1.getId(), TEST1));
+    assertEquals(Iterables.getFirst(parser.get().keySet(), null), TEST1);
   }
 }
