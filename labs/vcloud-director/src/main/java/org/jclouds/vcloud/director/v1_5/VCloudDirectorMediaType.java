@@ -44,7 +44,7 @@ public class VCloudDirectorMediaType {
 
    public static final String METADATA_ENTRY = "*/*"; // No media type (?) 
 
-   public static final String METADATA_VALUE = "application/vnd.vmware.vcloud.metadata.value+xml";;
+   public static final String METADATA_VALUE = "application/vnd.vmware.vcloud.metadata.value+xml";
 
    public static final String ORG = "application/vnd.vmware.vcloud.org+xml";
 
@@ -71,18 +71,64 @@ public class VCloudDirectorMediaType {
    public static final String OWNER = "application/vnd.vmware.vcloud.owner+xml";
    
    public static final String VDC = "application/vnd.vmware.vcloud.vdc+xml";
-   
-   public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
 
+   public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
+   
+   public static final String V_APP = "application/vnd.vmware.vcloud.vApp+xml";
+   
+   public static final String V_APP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   
+   public static final String CAPTURE_VAPP_PARAMS = 
+         "application/vnd.vmware.vcloud.captureVAppParams+xml";
+   
+   public static final String CLONE_MEDIA_PARAMS = 
+         "application/vnd.vmware.vcloud.cloneMediaParams+xml";
+   
+   public static final String CLONE_V_APP_PARAMS = 
+         "application/vnd.vmware.vcloud.cloneVAppParams+xml";
+   
+   public static final String CLONE_V_APP_TEMPLATE_PARAMS = 
+         "application/vnd.vmware.vcloud.cloneVAppTemplateParams+xml";
+   
+   public static final String COMPOSE_VAPP_PARAMS = 
+         "application/vnd.vmware.vcloud.composeVAppParams+xml";
+   
+   public static final String INSTANTIATE_VAPP_TEMPLATE_PARAMS = 
+         "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml";
+         
+   public static final String UPLOAD_VAPP_TEMPLATE_PARAMS = 
+         "application/vnd.vmware.vcloud.uploadVAppTemplateParams+xml";
+         
    public static final String QUERY_RESULT_RECORDS = "application/vnd.vmware.vcloud.query.records+xml";
  
    public static final String QUERY_RESULT_REFERENCES = "application/vnd.vmware.vcloud.query.references+xml";
 
-   public static final String QUERY_RESULT_ID_RECORDS = "application/vnd.vmware.vcloud.query.idrecords+xml";
-   
+   public static final String QUERY_RESULT_ID_RECORDS = "application/vnd.vmware.vcloud.query.idrecords+xml";   
+         
    public static final String CONTROL_ACCESS = "application/vnd.vmware.vcloud.controlAccess+xml";
 
+   public static final String VAPP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String GUEST_CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String NETWORK_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String NETWORK_CONFIG_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String NETWORK_CONNECTION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   
+   public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+
+   public static final String RELOCATE_TEMPLATE = "application/vnd.vmware.vcloud.relocateTemplate+xml";
+
+   public static final String LEASE_SETTINGS_SECTION =  "application/vnd.vmware.vcloud.leastSettingsSection+xml";
+   
+   public static final String ENVELOPE =  "application/vnd.???";
+   
    /**
+    * 
     * All acceptable media types.
     *
     * This list must be updated whenever a new media type constant is added.
@@ -91,8 +137,14 @@ public class VCloudDirectorMediaType {
             SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
             METADATA_VALUE, ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK,
             CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
-            MEDIA, OWNER, VDC, ADMIN_USER, QUERY_RESULT_RECORDS,
-            QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
-            CONTROL_ACCESS
+            MEDIA, OWNER, VDC, ADMIN_USER, V_APP, V_APP_TEMPLATE, 
+            CAPTURE_VAPP_PARAMS, CLONE_V_APP_PARAMS, CLONE_V_APP_TEMPLATE_PARAMS,
+            COMPOSE_VAPP_PARAMS, INSTANTIATE_VAPP_TEMPLATE_PARAMS,
+            UPLOAD_VAPP_TEMPLATE_PARAMS, 
+            QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
+            VAPP_TEMPLATE, CUSTOMIZATION_SECTION, GUEST_CUSTOMIZATION_SECTION, NETWORK_SECTION, NETWORK_CONFIG_SECTION, NETWORK_CONNECTION_SECTION,   
+         CONTROL_ACCESS
+         ,
+         LEASE_SETTINGS_SECTION, RELOCATE_TEMPLATE, ENVELOPE
       );
 }

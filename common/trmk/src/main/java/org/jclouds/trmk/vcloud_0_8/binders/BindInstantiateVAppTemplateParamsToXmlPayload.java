@@ -48,6 +48,7 @@ import org.jclouds.trmk.vcloud_0_8.endpoints.Network;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.NetworkConfig;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -67,13 +68,13 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    private final BindToStringPayload stringBinder;
    protected final Map<ResourceType, String> virtualHardwareToInstanceId = ImmutableMap.of(ResourceType.PROCESSOR, "1",
          ResourceType.MEMORY, "2", ResourceType.DISK_DRIVE, "9");
-   private final ReferenceType defaultNetwork;
+   private final Supplier<ReferenceType> defaultNetwork;
    private final String defaultFenceMode;
 
    @Inject
    public BindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
          @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
-         @Network ReferenceType network, @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
+         @Network Supplier<ReferenceType> network, @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
       this.ns = ns;
       this.schema = schema;
       this.stringBinder = stringBinder;
@@ -93,7 +94,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       SortedMap<ResourceType, String> virtualHardwareQuantity = Maps.newTreeMap();
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
-      String network = (defaultNetwork != null) ? defaultNetwork.getHref().toASCIIString() : null;
+      String network = (defaultNetwork != null) ? defaultNetwork.get().getHref().toASCIIString() : null;
       String fenceMode = defaultFenceMode;
       String networkName = name;
       if (options != null) {

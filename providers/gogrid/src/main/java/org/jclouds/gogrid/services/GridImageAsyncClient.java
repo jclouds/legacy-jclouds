@@ -19,10 +19,12 @@
 package org.jclouds.gogrid.services;
 
 import static org.jclouds.gogrid.reference.GoGridHeaders.VERSION;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_DESCRIPTION_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_FRIENDLY_NAME_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.IMAGE_KEY;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.LOOKUP_LIST_KEY;
+import static org.jclouds.gogrid.reference.GoGridQueryParams.SERVER_ID_OR_NAME_KEY;
 
 import java.util.Set;
 
@@ -40,10 +42,13 @@ import org.jclouds.gogrid.functions.ParseImageFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseImageListFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.options.GetImageListOptions;
+import org.jclouds.gogrid.options.SaveImageOptions;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -68,8 +73,7 @@ public interface GridImageAsyncClient {
    @GET
    @ResponseParser(ParseImageListFromJsonResponse.class)
    @Path("/grid/image/get")
-   ListenableFuture<Set<ServerImage>> getImagesById(
-            @BinderParam(BindIdsToQueryParams.class) Long... ids);
+   ListenableFuture<Set<ServerImage>> getImagesById(@BinderParam(BindIdsToQueryParams.class) Long... ids);
 
    /**
     * @see GridImageClient#getImagesByName
@@ -77,8 +81,7 @@ public interface GridImageAsyncClient {
    @GET
    @ResponseParser(ParseImageListFromJsonResponse.class)
    @Path("/grid/image/get")
-   ListenableFuture<Set<ServerImage>> getImagesByName(
-            @BinderParam(BindNamesToQueryParams.class) String... names);
+   ListenableFuture<Set<ServerImage>> getImagesByName(@BinderParam(BindNamesToQueryParams.class) String... names);
 
    /**
     * @see GridImageClient#editImageDescription
@@ -87,7 +90,7 @@ public interface GridImageAsyncClient {
    @ResponseParser(ParseImageFromJsonResponse.class)
    @Path("/grid/image/edit")
    ListenableFuture<ServerImage> editImageDescription(@QueryParam(IMAGE_KEY) String idOrName,
-            @QueryParam(IMAGE_DESCRIPTION_KEY) String newDescription);
+         @QueryParam(IMAGE_DESCRIPTION_KEY) String newDescription);
 
    /**
     * @see GridImageClient#editImageFriendlyName
@@ -96,7 +99,7 @@ public interface GridImageAsyncClient {
    @ResponseParser(ParseImageFromJsonResponse.class)
    @Path("/grid/image/edit")
    ListenableFuture<ServerImage> editImageFriendlyName(@QueryParam(IMAGE_KEY) String idOrName,
-            @QueryParam(IMAGE_FRIENDLY_NAME_KEY) String newFriendlyName);
+         @QueryParam(IMAGE_FRIENDLY_NAME_KEY) String newFriendlyName);
 
    /**
     * @see GridImageClient#getDatacenters
@@ -106,4 +109,22 @@ public interface GridImageAsyncClient {
    @Path("/common/lookup/list")
    @QueryParams(keys = LOOKUP_LIST_KEY, values = "datacenter")
    ListenableFuture<Set<Option>> getDatacenters();
+
+   /**
+    * @see GridImageClient#deleteById(Long)
+    */
+   @GET
+   @ResponseParser(ParseImageFromJsonResponse.class)
+   @Path("/grid/image/delete")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<ServerImage> deleteById(@QueryParam(ID_KEY) long id);
+
+   /**
+    * @see GridImageClient#saveImageFromServer
+    */
+   @GET
+   @ResponseParser(ParseImageFromJsonResponse.class)
+   @Path("/grid/image/save")
+   ListenableFuture<ServerImage> saveImageFromServer(@QueryParam(IMAGE_FRIENDLY_NAME_KEY) String friendlyName,
+         @QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName, SaveImageOptions... options);
 }

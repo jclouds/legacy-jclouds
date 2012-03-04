@@ -22,7 +22,7 @@ import java.net.URI;
 
 /**
  * A reference to a resource.
- * 
+ *
  * @author grkvlt@apache.org
  */
 public class Reference extends ReferenceType<Reference> {
@@ -41,11 +41,7 @@ public class Reference extends ReferenceType<Reference> {
 
       @Override
       public Reference build() {
-         Reference reference = new Reference(href);
-         reference.setId(id);
-         reference.setName(name);
-         reference.setType(type);
-         return reference;
+         return new Reference(href, id, name, type);
       }
 
       /**
@@ -94,8 +90,8 @@ public class Reference extends ReferenceType<Reference> {
       }
    }
 
-   protected Reference(URI href) {
-      super(href);
+   public Reference(URI href, String id, String name, String type) {
+      super(href, id, name, type);
    }
 
    protected Reference() {

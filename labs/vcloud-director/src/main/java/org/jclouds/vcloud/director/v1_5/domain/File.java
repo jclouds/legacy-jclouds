@@ -24,9 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -38,14 +35,13 @@ import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents a file to be transferred (uploaded or downloaded).
- *             
- * 
+ * Represents a file to be transferred (uploaded or downloaded).
+ * <p/>
+ * <p/>
  * <p>Java class for File complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="File">
  *   &lt;complexContent>
@@ -58,26 +54,21 @@ import com.google.common.collect.Sets;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "File")
-public class File
-    extends EntityType<File>
-
-{
+public class File extends EntityType<File> {
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromFile(this);
    }
 
    public static class Builder extends EntityType.Builder<File> {
-      
+
       private Long size;
       private Long bytesTransferred;
       private String checksum;
@@ -106,15 +97,9 @@ public class File
          return this;
       }
 
-
       public File build() {
-         File file = new File();
-         file.setSize(size);
-         file.setBytesTransferred(bytesTransferred);
-         file.setChecksum(checksum);
-         return file;
+         return new File(href, type, links, description, tasksInProgress, id, name, size, bytesTransferred, checksum);
       }
-
 
       /**
        * @see EntityType#getId()
@@ -153,7 +138,7 @@ public class File
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -162,7 +147,7 @@ public class File
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -173,14 +158,23 @@ public class File
 
       @Override
       public Builder fromEntityType(EntityType<File> in) {
-          return Builder.class.cast(super.fromEntityType(in));
+         return Builder.class.cast(super.fromEntityType(in));
       }
+
       public Builder fromFile(File in) {
          return fromEntityType(in)
-            .size(in.getSize())
-            .bytesTransferred(in.getBytesTransferred())
-            .checksum(in.getChecksum());
+               .size(in.getSize())
+               .bytesTransferred(in.getBytesTransferred())
+               .checksum(in.getChecksum());
       }
+   }
+
+   public File(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+               String name, Long size, Long bytesTransferred, String checksum) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.size = size;
+      this.bytesTransferred = bytesTransferred;
+      this.checksum = checksum;
    }
 
    private File() {
@@ -188,105 +182,62 @@ public class File
    }
 
 
+   @XmlAttribute
+   protected Long size;
+   @XmlAttribute
+   protected Long bytesTransferred;
+   @XmlAttribute
+   @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
+   @XmlSchemaType(name = "normalizedString")
+   protected String checksum;
 
-    @XmlAttribute
-    protected Long size;
-    @XmlAttribute
-    protected Long bytesTransferred;
-    @XmlAttribute
-    @XmlJavaTypeAdapter(NormalizedStringAdapter.class)
-    @XmlSchemaType(name = "normalizedString")
-    protected String checksum;
+   /**
+    * Gets the value of the size property.
+    *
+    * @return possible object is
+    *         {@link Long }
+    */
+   public Long getSize() {
+      return size;
+   }
 
-    /**
-     * Gets the value of the size property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getSize() {
-        return size;
-    }
+   /**
+    * Gets the value of the bytesTransferred property.
+    *
+    * @return possible object is
+    *         {@link Long }
+    */
+   public Long getBytesTransferred() {
+      return bytesTransferred;
+   }
 
-    /**
-     * Sets the value of the size property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setSize(Long value) {
-        this.size = value;
-    }
-
-    /**
-     * Gets the value of the bytesTransferred property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getBytesTransferred() {
-        return bytesTransferred;
-    }
-
-    /**
-     * Sets the value of the bytesTransferred property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setBytesTransferred(Long value) {
-        this.bytesTransferred = value;
-    }
-
-    /**
-     * Gets the value of the checksum property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getChecksum() {
-        return checksum;
-    }
-
-    /**
-     * Sets the value of the checksum property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setChecksum(String value) {
-        this.checksum = value;
-    }
+   /**
+    * Gets the value of the checksum property.
+    *
+    * @return possible object is
+    *         {@link String }
+    */
+   public String getChecksum() {
+      return checksum;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       File that = File.class.cast(o);
-      return equal(size, that.size) && 
-           equal(bytesTransferred, that.bytesTransferred) && 
-           equal(checksum, that.checksum);
+      return equal(size, that.size) &&
+            equal(bytesTransferred, that.bytesTransferred) &&
+            equal(checksum, that.checksum);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(size, 
-           bytesTransferred, 
-           checksum);
+      return Objects.hashCode(size,
+            bytesTransferred,
+            checksum);
    }
 
    @Override

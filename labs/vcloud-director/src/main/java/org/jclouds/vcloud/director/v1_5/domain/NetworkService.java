@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,10 +27,10 @@ import com.google.common.base.Objects;
 
 /**
  * Represents a network service
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "NetworkService")
+@XmlRootElement(name = "NetworkService")
 public class NetworkService {
 
    public static Builder builder() {
@@ -55,9 +54,7 @@ public class NetworkService {
       }
 
       public NetworkService build() {
-         NetworkService networkService = new NetworkService();
-         networkService.setEnabled(isEnabled);
-         return networkService;
+         return new NetworkService(isEnabled);
       }
 
       public Builder fromNetworkService(NetworkService in) {
@@ -65,11 +62,15 @@ public class NetworkService {
       }
    }
 
+   private NetworkService(boolean enabled) {
+      isEnabled = enabled;
+   }
+
    private NetworkService() {
       // For JAXB and builder use
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "IsEnabled")
+   @XmlElement(name = "IsEnabled")
    private boolean isEnabled;
 
    /**
@@ -77,10 +78,6 @@ public class NetworkService {
     */
    public boolean isEnabled() {
       return isEnabled;
-   }
-   
-   public void setEnabled(boolean isEnabled) {
-      this.isEnabled = isEnabled;
    }
 
    @Override

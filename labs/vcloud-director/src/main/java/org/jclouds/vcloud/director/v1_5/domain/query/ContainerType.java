@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -36,7 +35,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Container for query result sets.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="Container" /&gt;
  * </pre>
@@ -62,7 +61,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       protected Long total;
 
       /**
-       * @see Container#getName()
+       * @see ContainerType#getName()
        */
       public Builder<T> name(String name) {
          this.name = name;
@@ -70,7 +69,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see Container#getPage()
+       * @see ContainerType#getPage()
        */
       public Builder<T> page(Integer page) {
          this.page = page;
@@ -78,7 +77,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see Container#getPageSize()
+       * @see ContainerType#getPageSize()
        */
       public Builder<T> pageSize(Integer pageSize) {
          this.pageSize = pageSize;
@@ -86,7 +85,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see Container#getTotal()
+       * @see ContainerType#getTotal()
        */
       public Builder<T> total(Long total) {
          this.total = total;
@@ -95,14 +94,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
 
       @Override
       public ContainerType<T> build() {
-         ContainerType<T> container = new ContainerType<T>(href);
-         container.setName(name);
-         container.setPage(page);
-         container.setPageSize(pageSize);
-         container.setTotal(total);
-         container.setType(type);
-         container.setLinks(links);
-         return container;
+         return new ContainerType<T>(href, type, links, name, page, pageSize, total);
       }
 
       /**
@@ -151,15 +143,6 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       }
    }
 
-   protected ContainerType() {
-      // For JAXB and builder use
-   }
-
-   protected ContainerType(URI href) {
-      super(href);
-   }
-   
-
    @XmlAttribute
    protected String name;
    @XmlAttribute
@@ -169,15 +152,23 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
    @XmlAttribute
    protected Long total;
 
+   public ContainerType(URI href, String type, Set<Link> links, String name, Integer page, Integer pageSize, Long total) {
+      super(href, type, links);
+      this.name = name;
+      this.page = page;
+      this.pageSize = pageSize;
+      this.total = total;
+   }
+
+   protected ContainerType() {
+      // For JAXB and builder use
+   }
+
    /**
     * Query name that generated this result set.
     */
    public String getName() {
       return name;
-   }
-
-   public void setName(String value) {
-      this.name = value;
    }
 
    /**
@@ -187,10 +178,6 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       return page;
    }
 
-   public void setPage(Integer value) {
-      this.page = value;
-   }
-
    /**
     * Page size, as a number of records or references.
     */
@@ -198,19 +185,11 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       return pageSize;
    }
 
-   public void setPageSize(Integer value) {
-      this.pageSize = value;
-   }
-
    /**
     * Total number of records or references in the container.
     */
    public Long getTotal() {
       return total;
-   }
-
-   public void setTotal(Long value) {
-      this.total = value;
    }
 
    @Override

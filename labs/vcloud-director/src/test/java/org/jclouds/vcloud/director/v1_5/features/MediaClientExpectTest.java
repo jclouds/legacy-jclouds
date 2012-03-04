@@ -158,8 +158,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       }
    }
    
-   // TODO: fix this
-   @Test( enabled=false )
+   @Test
    public void testUpdateMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
@@ -383,7 +382,6 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .build())
          .link(Link.builder()
             .rel("remove")
-            .type("application/vnd.vmware.vcloud.metadata+xml")
             .href(URI.create("https://mycloud.greenhousedata.com/api/media/c93e5cdc-f29a-4749-8ed2-093df04cc75e"))
             .build())
          .link(Link.builder()
@@ -403,6 +401,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .build())
          .description("new test description")
          .owner(Owner.builder()
+            .type("application/vnd.vmware.vcloud.owner+xml")
             .user(Reference.builder()
                .type("application/vnd.vmware.admin.user+xml")
                .name("dan")

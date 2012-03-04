@@ -19,17 +19,18 @@
 package org.jclouds.virtualbox.functions;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.virtualbox_4_1.NetworkAdapterType.Am79C973;
 import static org.virtualbox_4_1.NetworkAttachmentType.Bridged;
 
+import org.jclouds.virtualbox.domain.NetworkAdapter;
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.NetworkAttachmentType;
 
 /**
  * @author Andrea Turli
@@ -37,51 +38,32 @@ import org.virtualbox_4_1.VBoxException;
 @Test(groups = "unit", testName = "AttachBridgedAdapterToMachineTest")
 public class AttachBridgedAdapterToMachineTest {
 
-   private String macAddress;
-   private String hostInterface;
+	private String macAddress;
+	private String hostInterface;
 
-   @Test
-   public void testApplyNetworkingToNonExistingAdapter() throws Exception {
-      Long adapterId = 0l;
-      IMachine machine = createMock(IMachine.class);
-      INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
+	@Test
+	public void testApplyNetworkingToNonExistingAdapter() throws Exception {
+		Long adapterId = 0l;
+		IMachine machine = createMock(IMachine.class);
+		INetworkAdapter iNetworkAdapter = createMock(INetworkAdapter.class);
 
-      expect(machine.getNetworkAdapter(adapterId)).andReturn(networkAdapter);
-      networkAdapter.setAttachmentType(Bridged);
-      networkAdapter.setAdapterType(Am79C973);
-      networkAdapter.setMACAddress(macAddress);
-      networkAdapter.setBridgedInterface(hostInterface);
-      networkAdapter.setEnabled(true);
-      machine.saveSettings();
+		expect(machine.getNetworkAdapter(adapterId)).andReturn(iNetworkAdapter);
+		iNetworkAdapter.setAttachmentType(Bridged);
+		iNetworkAdapter.setAdapterType(Am79C973);
+		iNetworkAdapter.setMACAddress(macAddress);
+		iNetworkAdapter.setBridgedInterface(hostInterface);
+		iNetworkAdapter.setEnabled(true);
+		machine.saveSettings();
 
-      replay(machine, networkAdapter);
+		replay(machine, iNetworkAdapter);
+		NetworkAdapter networkAdapter = NetworkAdapter.builder()
+				.networkAttachmentType(NetworkAttachmentType.Bridged).build();
+		NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
+				.builder().addNetworkAdapter(networkAdapter).build();
 
-      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface)
-            .apply(machine);
+		new AttachBridgedAdapterToMachine(networkInterfaceCard).apply(machine);
 
-      verify(machine, networkAdapter);
-   }
-
-   @Test(expectedExceptions = VBoxException.class)
-   public void testRethrowInvalidAdapterSlotException() throws Exception {
-      Long adapterId = 30l;
-      IMachine machine = createMock(IMachine.class);
-      INetworkAdapter networkAdapter = createMock(INetworkAdapter.class);
-
-      String error = "VirtualBox error: Argument slot is invalid "
-            + "(must be slot < RT_ELEMENTS(mNetworkAdapters)) (0x80070057)";
-
-      VBoxException invalidSlotException = new VBoxException(
-            createNiceMock(Throwable.class), error);
-      expect(machine.getNetworkAdapter(adapterId)).andThrow(
-            invalidSlotException);
-
-      replay(machine, networkAdapter);
-
-      new AttachBridgedAdapterToMachine(adapterId, macAddress, hostInterface)
-            .apply(machine);
-
-      verify(machine, networkAdapter);
-   }
+		verify(machine, iNetworkAdapter);
+	}
 
 }

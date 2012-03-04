@@ -19,13 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,12 +33,12 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents a media.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Media" /&gt;
  * </pre>
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Media")
+@XmlRootElement(name = "Media")
 public class Media extends ResourceEntityType<Media> {
 
    public static final class ImageType {
@@ -92,11 +90,7 @@ public class Media extends ResourceEntityType<Media> {
 
       @Override
       public Media build() {
-         Media media = new Media();
-         media.setOwner(owner);
-         media.setImageType(imageType);
-         media.setSize(size);
-         return media;
+         return new Media(href, type, links, description, tasksInProgress, id, name, files, status, owner, imageType, size);
       }
 
       /**
@@ -172,7 +166,7 @@ public class Media extends ResourceEntityType<Media> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -181,7 +175,7 @@ public class Media extends ResourceEntityType<Media> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -199,11 +193,20 @@ public class Media extends ResourceEntityType<Media> {
       }
    }
 
-   public Media() {
-      super();
+
+   public Media(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, 
+                String name, FilesList files, Integer status, Owner owner, String imageType, long size) {
+      super(href, type, links, description, tasksInProgress, id, name, files, status);
+      this.owner = owner;
+      this.imageType = imageType;
+      this.size = size;
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
+   private Media() {
+      // for JAXB
+   }
+
+   @XmlElement(name = "Owner")
    protected Owner owner;
    @XmlAttribute(required = true)
    protected String imageType;
@@ -217,10 +220,6 @@ public class Media extends ResourceEntityType<Media> {
       return owner;
    }
 
-   public void setOwner(Owner value) {
-      this.owner = value;
-   }
-
    /**
     * Gets the value of the imageType property.
     */
@@ -228,19 +227,11 @@ public class Media extends ResourceEntityType<Media> {
       return imageType;
    }
 
-   public void setImageType(String value) {
-      this.imageType = value;
-   }
-
    /**
     * Gets the value of the size property.
     */
    public long getSize() {
       return size;
-   }
-
-   public void setSize(long value) {
-      this.size = value;
    }
 
    @Override

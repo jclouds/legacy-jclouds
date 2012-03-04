@@ -20,14 +20,12 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -40,34 +38,33 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents an asynchronous or long-running task in the vCloud environment.
- *
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="TaskType"&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Task")
+@XmlRootElement(name = "Task")
 public class Task extends EntityType<Task> {
-   
-   public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
-   
-   public static class Status {
-		public static final String QUEUED = "queued";
-		public static final String PRE_RUNNING = "preRunning";
-		public static final String RUNNING = "running";
-		public static final String SUCCESS = "success";
-		public static final String ERROR = "error";
-		public static final String CANCELED = "canceled";
-		public static final String ABORTED = "aborted";
 
-		public static final List<String> ALL = Arrays.asList(
-		         QUEUED, PRE_RUNNING, RUNNING, SUCCESS,
-		         ERROR, CANCELED, ABORTED
-		   );
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
+
+   public static class Status {
+      public static final String QUEUED = "queued";
+      public static final String PRE_RUNNING = "preRunning";
+      public static final String RUNNING = "running";
+      public static final String SUCCESS = "success";
+      public static final String ERROR = "error";
+      public static final String CANCELED = "canceled";
+      public static final String ABORTED = "aborted";
+
+      public static final List<String> ALL = Arrays.asList(
+            QUEUED, PRE_RUNNING, RUNNING, SUCCESS,
+            ERROR, CANCELED, ABORTED
+      );
    }
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -190,25 +187,8 @@ public class Task extends EntityType<Task> {
 
       @Override
       public Task build() {
-         Task task = new Task(href, name);
-         task.setDescription(description);
-         task.setTasksInProgress(tasksInProgress);
-         task.setId(id);
-         task.setType(type);
-         task.setLinks(links);
-         task.setError(error);
-         task.setOrg(org);
-         task.setOwner(owner);
-         task.setUser(user);
-         task.setParams(params);
-         task.setProgress(progress);
-         task.setStatus(status);
-         task.setOperation(operation);
-         task.setOperationName(operationName);
-         task.setStartTime(startTime);
-         task.setEndTime(endTime);
-         task.setExpiryTime(expiryTime);
-         return task;
+         return new Task(href, type, links, description, tasksInProgress, id, name,
+               error, org, progress, owner, user, params, status, operation, operationName, startTime, endTime, expiryTime);
       }
 
       /**
@@ -266,7 +246,7 @@ public class Task extends EntityType<Task> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -275,7 +255,7 @@ public class Task extends EntityType<Task> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -290,30 +270,46 @@ public class Task extends EntityType<Task> {
 
       public Builder fromTask(Task in) {
          return fromEntityType(in)
-	               .error(in.getError()).org(in.getOrg()).progress(in.getProgress()).status(in.getStatus())
-	               .operation(in.getOperation()).operationName(in.getOperationName());
+               .error(in.getError()).org(in.getOrg()).progress(in.getProgress()).status(in.getStatus())
+               .operation(in.getOperation()).operationName(in.getOperationName());
       }
+   }
+
+   public Task(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+               String id, String name, Error error, Reference org, Integer progress, Reference owner,
+               Reference user, Object params, String status, String operation, String operationName,
+               Date startTime, Date endTime, Date expiryTime) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.error = error;
+      this.org = org;
+      this.progress = progress;
+      this.owner = owner;
+      this.user = user;
+      this.params = params;
+      this.status = status;
+      this.operation = operation;
+      this.operationName = operationName;
+      this.startTime = startTime;
+      this.endTime = endTime;
+      this.expiryTime = expiryTime;
    }
 
    private Task() {
       // For JAXB and builder use
    }
 
-   private Task(URI href, String name) {
-      super(href, name);
-   }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Error")
+   @XmlElement(name = "Error")
    private Error error;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Organization")
+   @XmlElement(name = "Organization")
    private Reference org;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Progress")
+   @XmlElement(name = "Progress")
    private Integer progress;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Owner")
+   @XmlElement(name = "Owner")
    private Reference owner;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "User")
+   @XmlElement(name = "User")
    private Reference user;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Params")
+   @XmlElement(name = "Params")
    private Object params;
    @XmlAttribute
    private String status;
@@ -327,16 +323,12 @@ public class Task extends EntityType<Task> {
    private Date endTime;
    @XmlAttribute
    private Date expiryTime;
-   
+
    /**
     * Represents an error information if the task failed.
     */
    public Error getError() {
       return error;
-   }
-
-   public void setError(Error error) {
-      this.error = error;
    }
 
    /**
@@ -346,19 +338,11 @@ public class Task extends EntityType<Task> {
       return org;
    }
 
-   public void setOrg(Reference org) {
-      this.org = org;
-   }
-
    /**
     * Reference to the owner of the task.
     */
    public Reference getOwner() {
       return owner;
-   }
-
-   public void setOwner(Reference owner) {
-      this.owner = owner;
    }
 
    /**
@@ -368,10 +352,6 @@ public class Task extends EntityType<Task> {
       return user;
    }
 
-   public void setUser(Reference user) {
-      this.user = user;
-   }
-
    /**
     * The parameters with which this task has been run.
     */
@@ -379,13 +359,9 @@ public class Task extends EntityType<Task> {
       return params;
    }
 
-   public void setParams(Object params) {
-      this.params = params;
-   }
-
    /**
     * The progress of a long running asynchronous task.
-    *
+    * <p/>
     * The value is between 0 - 100. Not all tasks have progress, the value is not
     * present for task which progress is not available.
     */
@@ -393,13 +369,9 @@ public class Task extends EntityType<Task> {
       return progress;
    }
 
-   public void setProgress(Integer progress) {
-      this.progress = progress;
-   }
-
    /**
     * The execution status of the task.
-    *
+    * <p/>
     * One of:
     * <ul>
     * <li>queued - The task has been queued for execution.
@@ -414,20 +386,12 @@ public class Task extends EntityType<Task> {
    public String getStatus() {
       return status;
    }
-   
-   public void setStatus(String status) {
-      this.status = status;
-   }
 
    /**
     * The display name of the operation that is tracked by this task.
     */
    public String getOperation() {
       return operation;
-   }
-
-   public void setOperation(String operation) {
-      this.operation = operation;
    }
 
    /**
@@ -437,47 +401,31 @@ public class Task extends EntityType<Task> {
       return operationName;
    }
 
-   public void setOperationName(String operationName) {
-      this.operationName = operationName;
-   }
-
    /**
     * The date and time the system started executing the task.
-    *
+    * <p/>
     * May not be present if the task hasn't been executed yet.
     */
    public Date getStartTime() {
       return startTime;
    }
 
-   public void setStartTime(Date startTime) {
-      this.startTime = startTime;
-   }
-
    /**
     * The date and time that processing of the task was completed.
-    *
+    * <p/>
     * May not be present if the task is still being executed.
     */
    public Date getEndTime() {
       return endTime;
    }
 
-   public void setEndTime(Date endTime) {
-      this.endTime = endTime;
-   }
-
    /**
     * The date and time at which the task resource will be destroyed and no longer available for retrieval.
-    *
+    * <p/>
     * May not be present if the task has not been executed or is still being executed.
     */
    public Date getExpiryTime() {
       return expiryTime;
-   }
-
-   public void setExpiryTime(Date expiryTime) {
-      this.expiryTime = expiryTime;
    }
 
    @Override

@@ -65,7 +65,6 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() {
-      String networkId = "a604f3c2-0343-453e-ae1f-cddac5b7bd94"; // TODO: inject
       networkRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.orgNetwork+xml")
             .name("")

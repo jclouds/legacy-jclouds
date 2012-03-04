@@ -41,13 +41,13 @@ import com.google.common.collect.Iterables;
 public abstract class OrgNameVDCNameResourceNameToEndpoint  implements Function<Object, URI>{
 
    protected final Supplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>> orgVDCMap;
-   protected final ReferenceType defaultOrg;
-   protected final ReferenceType defaultVDC;
+   protected final Supplier<ReferenceType> defaultOrg;
+   protected final Supplier<ReferenceType> defaultVDC;
 
    @Inject
    public OrgNameVDCNameResourceNameToEndpoint(
          Supplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>> orgVDCMap,
-         @Org ReferenceType defaultOrg, @org.jclouds.trmk.vcloud_0_8.endpoints.VDC ReferenceType defaultVDC) {
+         @Org Supplier<ReferenceType> defaultOrg, @org.jclouds.trmk.vcloud_0_8.endpoints.VDC Supplier<ReferenceType> defaultVDC) {
       this.orgVDCMap = orgVDCMap;
       this.defaultOrg = defaultOrg;
       this.defaultVDC = defaultVDC;
@@ -60,9 +60,9 @@ public abstract class OrgNameVDCNameResourceNameToEndpoint  implements Function<
       Object vDC = Iterables.get(orgVDC, 1);
       Object resource = Iterables.get(orgVDC, 2);
       if (org == null)
-         org = defaultOrg.getName();
+         org = defaultOrg.get().getName();
       if (vDC == null)
-         vDC = defaultVDC.getName();
+         vDC = defaultVDC.get().getName();
       Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>> orgToVDCs = orgVDCMap.get();
       checkState(orgToVDCs != null, "could not get map of org name to vdcs!");
       Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC> vDCs = orgToVDCs.get(org);

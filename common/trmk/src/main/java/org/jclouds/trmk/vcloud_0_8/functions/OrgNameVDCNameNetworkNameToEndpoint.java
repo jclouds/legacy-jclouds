@@ -40,7 +40,7 @@ public class OrgNameVDCNameNetworkNameToEndpoint extends OrgNameVDCNameResourceN
    @Inject
    public OrgNameVDCNameNetworkNameToEndpoint(
          Supplier<Map<String, Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>>> orgVDCMap,
-         @Org ReferenceType defaultOrg, @VDC ReferenceType defaultVDC) {
+         @Org Supplier<ReferenceType> defaultOrg, @VDC Supplier<ReferenceType> defaultVDC) {
       super(orgVDCMap, defaultOrg, defaultVDC);
    }
 

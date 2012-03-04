@@ -19,20 +19,34 @@
 package org.jclouds.gogrid.services;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.jclouds.gogrid.domain.Ip;
+import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.gogrid.domain.ServerImageState;
+import org.jclouds.gogrid.options.SaveImageOptions;
+import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
+import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "GridImageClientLiveTest")
 public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
 
@@ -43,8 +57,8 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
          assert image.getId() >= 0 : image;
          checkImage(image);
 
-         ServerImage query = Iterables.getOnlyElement(restContext.getApi().getImageServices().getImagesById(
-                  image.getId()));
+         ServerImage query = Iterables.getOnlyElement(restContext.getApi().getImageServices()
+               .getImagesById(image.getId()));
          assertEquals(query.getId(), image.getId());
 
          checkImage(query);
@@ -68,5 +82,62 @@ public class GridImageClientLiveTest extends BaseGoGridClientLiveTest {
       assert image.getType() != null : image;
       if (image.getUpdatedTime() == null)
          Logger.getAnonymousLogger().warning("image " + image.getId() + " is missing the updatedon field");
+   }
+
+   @Test
+   public void testSaveServerToImage() throws IOException {
+      RetryablePredicate<Server> serverLatestJobCompleted = new RetryablePredicate<Server>(
+            new ServerLatestJobCompleted(restContext.getApi().getJobServices()), 800, 20, TimeUnit.SECONDS);
+
+      final String nameOfServer = "Server" + String.valueOf(new Date().getTime()).substring(6);
+      ServerImage image = null;
+      try {
+         Set<Ip> availableIps = restContext.getApi().getIpServices().getUnassignedIpList();
+         Ip availableIp = Iterables.getLast(availableIps);
+
+         Server createdServer = restContext.getApi().getServerServices()
+               .addServer(nameOfServer, "5489", "1", availableIp.getIp());
+         assertNotNull(createdServer);
+         assert serverLatestJobCompleted.apply(createdServer);
+         image = restContext
+               .getApi()
+               .getImageServices()
+               .saveImageFromServer("friendlyName", createdServer.getName(),
+                     SaveImageOptions.Builder.withDescription("description"));
+         
+         assertEquals(image.getFriendlyName(), "friendlyName");
+         assertEquals(image.getDescription(), "description");
+         assertFalse(image.isPublic());
+
+         assertEventuallyImageStateEquals(image, ServerImageState.AVAILABLE);
+         
+         restContext.getApi().getImageServices().deleteById(image.getId());
+         
+         assertEventuallyImageStateEquals(image, ServerImageState.TRASH);
+         
+      } finally {
+         if (image != null)
+            try {
+               restContext.getApi().getImageServices().deleteById(image.getId());
+            } catch (Exception e) {
+               // not failing so that we can ensure server below deletes
+               e.printStackTrace();
+            }
+         // delete the server
+         restContext.getApi().getServerServices().deleteByName(nameOfServer);
+      }
+
+   }
+
+   protected void assertEventuallyImageStateEquals(ServerImage image, final ServerImageState state) {
+      assertTrue(new RetryablePredicate<ServerImage>(new Predicate<ServerImage>() {
+
+         @Override
+         public boolean apply(ServerImage input) {
+            return Iterables.getOnlyElement(restContext
+                  .getApi()
+                  .getImageServices().getImagesById(input.getId())).getState() == state;
+         }
+      }, 300, 1, TimeUnit.SECONDS).apply(image));
    }
 }

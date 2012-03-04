@@ -26,7 +26,9 @@ import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.functions.ParseImageFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseImageListFromJsonResponse;
 import org.jclouds.gogrid.options.GetImageListOptions;
+import org.jclouds.gogrid.options.SaveImageOptions;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -38,7 +40,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Oleksiy Yarmula
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "GridImageAsyncClientTest")
 public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImageAsyncClient> {
 
@@ -137,6 +140,56 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
             + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
+   }
+
+   @Test
+   public void testDeleteById() throws NoSuchMethodException, IOException {
+      Method method = GridImageAsyncClient.class.getMethod("deleteById", long.class);
+      HttpRequest httpRequest = processor.createRequest(method, 11l);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/delete?v=1.5&id=11 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseImageFromJsonResponse.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+   }
+
+   @Test
+   public void testSaveImageFromServerNoOptions() throws NoSuchMethodException, IOException {
+      Method method = GridImageAsyncClient.class.getMethod("saveImageFromServer", String.class, String.class,
+            SaveImageOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, "friendly", "serverName");
+
+      assertRequestLineEquals(httpRequest,
+            "GET https://api.gogrid.com/api/grid/image/save?v=1.5&friendlyName=friendly&server=serverName HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseImageFromJsonResponse.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+   }
+
+   @Test
+   public void testSaveImageOptions() throws NoSuchMethodException, IOException {
+      Method method = GridImageAsyncClient.class.getMethod("saveImageFromServer", String.class, String.class,
+            SaveImageOptions[].class);
+      HttpRequest httpRequest = processor.createRequest(method, "friendly", "serverName",
+            new SaveImageOptions().withDescription("fooy"));
+
+      assertRequestLineEquals(
+            httpRequest,
+            "GET https://api.gogrid.com/api/grid/image/save?v=1.5&friendlyName=friendly&server=serverName&description=fooy HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseImageFromJsonResponse.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
    }
 
    @Override

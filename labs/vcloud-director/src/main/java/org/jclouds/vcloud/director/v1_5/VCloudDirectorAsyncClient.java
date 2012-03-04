@@ -18,18 +18,23 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import org.jclouds.ovf.Network;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
 
 import com.google.inject.Provides;
-
 
 /**
  * Provides asynchronous access to VCloudDirector via their REST API.
@@ -80,4 +85,17 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    CatalogAsyncClient getMediaClient();
+   
+   /**
+    * @return asynchronous access to {@link Vdc} features
+    */
+   @Delegate
+   VdcAsyncClient getVdcClient();
+
+   /**
+    * @return asynchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} features
+    */
+   @Delegate
+   VAppTemplateAsyncClient getVAppTemplateClient();
+   
 }

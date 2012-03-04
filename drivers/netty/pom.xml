@@ -33,30 +33,6 @@
     <description>jclouds netty payload module</description>
     <packaging>bundle</packaging>
 
-    <!-- bootstrapping: need to fetch the project POM -->
-    <repositories>
-        <repository>
-            <id>jclouds-sona-snapshots-nexus</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>jboss-public-releases</id>
-            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -71,9 +47,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.netty</groupId>
+            <groupId>io.netty</groupId>
             <artifactId>netty</artifactId>
-            <version>3.2.4.Final</version>
+            <version>3.3.1.Final</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

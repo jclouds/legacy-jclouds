@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -37,16 +35,16 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents a set of metadata
- * 
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="Metadata"&gt;
  * </pre>
  *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Metadata")
+@XmlRootElement(name = "Metadata")
 public class Metadata extends ResourceType<Metadata> {
-   
+
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA;
 
    @SuppressWarnings("unchecked")
@@ -78,15 +76,12 @@ public class Metadata extends ResourceType<Metadata> {
          metadataEntries.add(checkNotNull(metadataEntry, "metadataEntry"));
          return this;
       }
-      
+
       @Override
       public Metadata build() {
-         Metadata metadata = new Metadata(href, metadataEntries);
-         metadata.setType(type);
-         metadata.setLinks(links);
-         return metadata;
+         return new Metadata(href, type, links, metadataEntries);
       }
-      
+
       /**
        * @see ResourceType#getHref()
        */
@@ -137,15 +132,16 @@ public class Metadata extends ResourceType<Metadata> {
    }
 
    private Metadata() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
-   private Metadata(URI href, Set<MetadataEntry> metadataEntries) {
-      super(href);
+   private Metadata(URI href, String type, Set<Link> links, Set<MetadataEntry> metadataEntries) {
+      super(href, type, links);
       this.metadataEntries = ImmutableSet.copyOf(metadataEntries);
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "MetadataEntry")
+
+   @XmlElement(name = "MetadataEntry")
    private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
    public Set<MetadataEntry> getMetadataEntries() {

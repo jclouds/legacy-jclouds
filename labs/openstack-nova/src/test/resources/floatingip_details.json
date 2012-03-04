@@ -1,0 +1,9 @@
+{
+    "floating_ip" : 
+        {
+            "id" : 1,
+            "ip" : "10.0.0.3",
+            "fixed_ip" : "10.0.0.2",
+            "instance_id" : 123
+        }
+}

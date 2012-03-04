@@ -39,13 +39,15 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
-import org.jclouds.virtualbox.domain.NatAdapter;
+import org.jclouds.virtualbox.domain.NetworkAdapter;
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.Function;
@@ -82,7 +84,7 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
     this.mastersLoader = masterLoader;
     this.installationKeySequence = installationKeySequence;
     this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
-    File wdFile = new File(workingDir);
+    File wdFile = new File(this.workingDir);
     if (!wdFile.exists()) {
       wdFile.mkdirs();
     }
@@ -122,6 +124,15 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
 
     VmSpec vmSpecification = VmSpec.builder().id(yamlImage.id).name(vmName).memoryMB(512).osTypeId("")
         .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
+    
+    NetworkAdapter networkAdapter = NetworkAdapter.builder()
+        .networkAttachmentType(NetworkAttachmentType.NAT)
+        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+    NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
+        .builder().addNetworkAdapter(networkAdapter).build();
+
+    NetworkSpec networkSpec = NetworkSpec.builder()
+        .addNIC(0L, networkInterfaceCard).build();
 
     MasterSpec masterSpec = MasterSpec
         .builder()
@@ -129,9 +140,7 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
         .iso(
             IsoSpec.builder().sourcePath(localIsoUrl)
                 .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
-        .network(
-            NetworkSpec.builder()
-                .natNetworkAdapter(0, NatAdapter.builder().tcpRedirectRule("127.0.0.1", 2222, "", 22).build()).build())
+        .network(networkSpec)
         .build();
 
     IMachine masterMachine = mastersLoader.apply(masterSpec);

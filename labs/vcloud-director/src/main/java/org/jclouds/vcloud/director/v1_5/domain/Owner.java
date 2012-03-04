@@ -24,9 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -36,14 +33,13 @@ import com.google.common.collect.Sets;
 
 
 /**
- * 
- *                 Represents the owner of this entity.
- *             
- * 
+ * Represents the owner of this entity.
+ * <p/>
+ * <p/>
  * <p>Java class for Owner complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Owner">
  *   &lt;complexContent>
@@ -56,14 +52,11 @@ import com.google.common.collect.Sets;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "Owner")
 @XmlType(propOrder = {"user"})
 public class Owner
-    extends ResourceType<Owner>
+      extends ResourceType<Owner>
 
 {
    @SuppressWarnings("unchecked")
@@ -71,12 +64,13 @@ public class Owner
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromOwner(this);
    }
 
    public static class Builder extends ResourceType.Builder<Owner> {
-      
+
       private Reference user;
 
       /**
@@ -89,12 +83,9 @@ public class Owner
 
 
       public Owner build() {
-         Owner owner = new Owner();
-         owner.setUser(user);
-         return owner;
+         return new Owner(href, type, links, user);
       }
 
-      
       /**
        * @see ResourceType#getHref()
        */
@@ -134,11 +125,12 @@ public class Owner
 
       @Override
       public Builder fromResourceType(ResourceType<Owner> in) {
-          return Builder.class.cast(super.fromResourceType(in));
+         return Builder.class.cast(super.fromResourceType(in));
       }
+
       public Builder fromOwner(Owner in) {
          return fromResourceType(in)
-            .user(in.getUser());
+               .user(in.getUser());
       }
    }
 
@@ -146,39 +138,28 @@ public class Owner
       // For JAXB and builder use
    }
 
+   public Owner(URI href, String type, Set<Link> links, Reference user) {
+      super(href, type, links);
+      this.user = user;
+   }
 
+   @XmlElement(name = "User", required = true)
+   protected Reference user;
 
-    @XmlElement(name = "User", required = true)
-    protected Reference user;
-
-    /**
-     * Gets the value of the user property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Reference }
-     *     
-     */
-    public Reference getUser() {
-        return user;
-    }
-
-    /**
-     * Sets the value of the user property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Reference }
-     *     
-     */
-    public void setUser(Reference value) {
-        this.user = value;
-    }
+   /**
+    * Gets the value of the user property.
+    *
+    * @return possible object is
+    *         {@link Reference }
+    */
+   public Reference getUser() {
+      return user;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       Owner that = Owner.class.cast(o);

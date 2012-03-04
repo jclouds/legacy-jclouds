@@ -55,15 +55,16 @@ public class DefaultVDC implements ImplicitLocationSupplier {
    
    @Singleton
    public static class IsDefaultVDC implements Predicate<Location> {
-      private final ReferenceType defaultVDC;
+      private final Supplier<ReferenceType> defaultVDCSupplier;
 
       @Inject
-      IsDefaultVDC(@VDC ReferenceType defaultVDC) {
-         this.defaultVDC = checkNotNull(defaultVDC, "defaultVDC");
+      IsDefaultVDC(@VDC Supplier<ReferenceType> defaultVDCSupplier) {
+         this.defaultVDCSupplier = checkNotNull(defaultVDCSupplier, "defaultVDCSupplier");
       }
 
       @Override
       public boolean apply(Location input) {
+         ReferenceType defaultVDC = defaultVDCSupplier.get();
          return input.getScope() == LocationScope.ZONE && input.getId().equals(defaultVDC.getHref().toASCIIString());
       }
 

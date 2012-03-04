@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -34,27 +32,19 @@ import com.google.common.collect.Sets;
 
 /**
  * Basic entity type in the vCloud object model.
- *
+ * <p/>
  * Includes a name, an optional description, and an optional list of links
- *
+ * <p/>
  * <pre>
  * &lt;xs:complexType name="EntityType"&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
+ * @author Adam Lowe
  */
-public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
+public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T> {
 
-   public static <T extends EntityType<T>> Builder<T> builder() {
-      return new Builder<T>();
-   }
-
-   @Override
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromEntityType(this);
-   }
-
-   public static class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
+   public static abstract class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
 
       protected String description;
       protected TasksInProgress tasksInProgress;
@@ -91,17 +81,6 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       public Builder<T> tasksInProgress(TasksInProgress tasksInProgress) {
          this.tasksInProgress = tasksInProgress;
          return this;
-      }
-
-      @Override
-      public EntityType<T> build() {
-         EntityType<T> entity = new EntityType<T>(href, name);
-         entity.setDescription(description);
-         entity.setTasksInProgress(tasksInProgress);
-         entity.setId(id);
-         entity.setType(type);
-         entity.setLinks(links);
-         return entity;
       }
 
       /**
@@ -151,22 +130,25 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
 
       public Builder<T> fromEntityType(EntityType<T> in) {
          return fromResourceType(in)
-	               .description(in.getDescription()).tasksInProgress(in.getTasksInProgress())
-	               .id(in.getId()).name(in.getName());
+               .description(in.getDescription()).tasksInProgress(in.getTasksInProgress())
+               .id(in.getId()).name(in.getName());
       }
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "Description")
+   @XmlElement(name = "Description")
    private String description;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "TasksInProgress")
+   @XmlElement(name = "TasksInProgress")
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
    @XmlAttribute(required = true)
    private String name;
 
-   protected EntityType(URI href, String name) {
-      super(href);
+   public EntityType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name) {
+      super(href, type, links);
+      this.description = description;
+      this.tasksInProgress = tasksInProgress;
+      this.id = id;
       this.name = name;
    }
 
@@ -181,10 +163,6 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       return description;
    }
 
-   public void setDescription(String description) {
-      this.description = description;
-   }
-
    /**
     * A list of queued, running, or recently completed tasks associated with this entity.
     */
@@ -192,13 +170,9 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       return tasksInProgress;
    }
 
-   public void setTasksInProgress(TasksInProgress tasksInProgress) {
-      this.tasksInProgress = tasksInProgress;
-   }
-
    /**
     * The resource identifier, expressed in URN format.
-    *
+    * <p/>
     * The value of this attribute uniquely identifies the resource, persists for the life of the
     * resource, and is never reused.
     */
@@ -206,19 +180,11 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       return id;
    }
 
-   public void setId(String id) {
-      this.id = id;
-   }
-
    /**
     * Contains the name of the the entity.
     */
    public String getName() {
       return name;
-   }
-   
-   public void setName(String name) {
-      this.name = name;
    }
 
    @Override

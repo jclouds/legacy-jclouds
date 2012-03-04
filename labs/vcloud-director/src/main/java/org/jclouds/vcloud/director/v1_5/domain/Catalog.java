@@ -19,11 +19,9 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -33,14 +31,14 @@ import com.google.common.collect.Sets;
 
 /**
  * Container for references to VappTemplate and Media objects.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="CatalogType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Catalog")
+@XmlRootElement(name = "Catalog")
 public class Catalog extends EntityType<Catalog> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG;
@@ -95,16 +93,7 @@ public class Catalog extends EntityType<Catalog> {
 
       @Override
       public Catalog build() {
-         Catalog catalog = new Catalog(href, name);
-         catalog.setOwner(owner);
-         catalog.setCatalogItems(catalogItems);
-         catalog.setIsPublished(isPublished);
-         catalog.setDescription(description);
-         catalog.setId(id);
-         catalog.setType(type);
-         catalog.setLinks(links);
-         catalog.setTasksInProgress(tasksInProgress);
-         return catalog;
+         return new Catalog(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, isPublished);
       }
 
       /**
@@ -162,7 +151,7 @@ public class Catalog extends EntityType<Catalog> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -171,7 +160,7 @@ public class Catalog extends EntityType<Catalog> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -189,12 +178,16 @@ public class Catalog extends EntityType<Catalog> {
       }
    }
 
-   private Catalog() {
-      // For JAXB and builder use
+   public Catalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+                  String name, Entity owner, CatalogItems catalogItems, Boolean published) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.owner = owner;
+      this.catalogItems = catalogItems;
+      this.isPublished = published;
    }
 
-   private Catalog(URI href, String name) {
-      super(href, name);
+   private Catalog() {
+      // For JAXB and builder use
    }
 
    @XmlElement(name = "Owner")
@@ -211,19 +204,11 @@ public class Catalog extends EntityType<Catalog> {
       return owner;
    }
 
-   public void setOwner(Entity value) {
-      this.owner = value;
-   }
-
    /**
     * Gets the value of the catalogItems property.
     */
    public CatalogItems getCatalogItems() {
       return catalogItems;
-   }
-
-   public void setCatalogItems(CatalogItems value) {
-      this.catalogItems = value;
    }
 
    /**
@@ -233,7 +218,4 @@ public class Catalog extends EntityType<Catalog> {
       return isPublished;
    }
 
-   public void setIsPublished(Boolean value) {
-      this.isPublished = value;
-   }
 }

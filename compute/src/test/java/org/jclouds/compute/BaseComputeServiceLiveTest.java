@@ -676,8 +676,8 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
                            format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
                                  JBOSS_HOME)), configureSeconds));
 
-         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7", InstallJDK.FromURL.JDK7_URL)
-               .entrySet()) {
+         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7",
+               URI.create("http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz")).entrySet()) {
             // note we cannot use nslookup until we've configured the system, as
             // it may have not been present checking the address of the download
             // host using the local node's DNS config

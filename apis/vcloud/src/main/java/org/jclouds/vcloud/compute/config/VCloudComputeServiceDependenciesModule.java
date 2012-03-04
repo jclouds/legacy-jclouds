@@ -51,6 +51,8 @@ import org.jclouds.vcloud.functions.VAppTemplatesInOrg;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -108,8 +110,16 @@ public class VCloudComputeServiceDependenciesModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public NetworkConfig networkConfig(@Network ReferenceType network, FenceMode defaultFenceMode) {
-      return new NetworkConfig(network.getName(), network.getHref(), defaultFenceMode);
+   public Supplier<NetworkConfig> networkConfig(@Network Supplier<ReferenceType> network,
+         final FenceMode defaultFenceMode) {
+      return Suppliers.compose(new Function<ReferenceType, NetworkConfig>() {
+
+         @Override
+         public NetworkConfig apply(ReferenceType input) {
+            return new NetworkConfig(input.getName(), input.getHref(), defaultFenceMode);
+         }
+
+      }, network);
    }
 
 }

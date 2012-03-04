@@ -42,8 +42,7 @@ public class InstallJDKTest {
    Statement installJDK = InstallJDK.fromURL();
 
    public void testInstallJDKUNIX() throws IOException {
-      assertEquals(InstallJDK.fromURL().render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(
-            Resources.getResource("test_install_jdk_from_url." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(InstallJDK.fromURL().render(OsFamily.UNIX), "setupPublicCurl || return 1\ninstallJDK || return 1\n");
    }
 
    public void testInstallJDKUNIXInScriptBuilderSourcesSetupPublicCurl() throws IOException {
@@ -54,12 +53,8 @@ public class InstallJDKTest {
    }
 
    public void testInstallJDKUNIXWithURL() throws IOException {
-      assertEquals(
-            InstallJDK.fromURL(URI.create("http://foo")).render(OsFamily.UNIX),
-            CharStreams.toString(
-                  Resources.newReaderSupplier(
-                        Resources.getResource("test_install_jdk_from_url." + ShellToken.SH.to(OsFamily.UNIX)),
-                        Charsets.UTF_8)).replace(InstallJDK.FromURL.JDK7_URL.toASCIIString(), "http://foo"));
+      assertEquals(InstallJDK.fromURL(URI.create("http://foo")).render(OsFamily.UNIX),
+            "setupPublicCurl || return 1\ninstallJDK http://foo || return 1\n");
    }
 
 }

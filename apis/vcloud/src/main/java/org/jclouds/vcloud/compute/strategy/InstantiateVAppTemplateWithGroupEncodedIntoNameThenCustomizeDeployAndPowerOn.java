@@ -57,6 +57,7 @@ import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 
@@ -72,13 +73,13 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
    protected final VCloudClient client;
    protected final Predicate<URI> successTester;
    protected final LoadingCache<URI, VAppTemplate> vAppTemplates;
-   protected final NetworkConfig defaultNetworkConfig;
+   protected final Supplier<NetworkConfig> defaultNetworkConfig;
    protected final String buildVersion;
 
    @Inject
    protected InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployAndPowerOn(VCloudClient client,
             Predicate<URI> successTester, LoadingCache<URI, VAppTemplate> vAppTemplates,
-            NetworkConfig defaultNetworkConfig, @Named(PROPERTY_BUILD_VERSION) String buildVersion) {
+            Supplier<NetworkConfig> defaultNetworkConfig, @Named(PROPERTY_BUILD_VERSION) String buildVersion) {
       this.client = client;
       this.successTester = successTester;
       this.vAppTemplates = vAppTemplates;
@@ -142,9 +143,9 @@ public class InstantiateVAppTemplateWithGroupEncodedIntoNameThenCustomizeDeployA
       // if we only have a disconnected network, let's add a new section for the upstream
       // TODO: remove the disconnected entry
       if (networkWithNoIpAllocation.apply(networkToConnect))
-         config = defaultNetworkConfig;
+         config = defaultNetworkConfig.get();
       else
-         config = defaultNetworkConfig.toBuilder().networkName(networkToConnect.getName()).build();
+         config = defaultNetworkConfig.get().toBuilder().networkName(networkToConnect.getName()).build();
 
       // note that in VCD 1.5, the network name after instantiation will be the same as the parent
       InstantiateVAppTemplateOptions options = addNetworkConfig(config);

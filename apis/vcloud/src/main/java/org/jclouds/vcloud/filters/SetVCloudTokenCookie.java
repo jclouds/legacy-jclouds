@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.filters;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -29,6 +28,8 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.vcloud.VCloudToken;
 
+import com.google.common.base.Supplier;
+
 /**
  * Adds the VCloud Token to the request as a cookie
  * 
@@ -37,10 +38,10 @@ import org.jclouds.vcloud.VCloudToken;
  */
 @Singleton
 public class SetVCloudTokenCookie implements HttpRequestFilter {
-   private Provider<String> vcloudTokenProvider;
+   private Supplier<String> vcloudTokenProvider;
 
    @Inject
-   public SetVCloudTokenCookie(@VCloudToken Provider<String> authTokenProvider) {
+   public SetVCloudTokenCookie(@VCloudToken Supplier<String> authTokenProvider) {
       this.vcloudTokenProvider = authTokenProvider;
    }
 

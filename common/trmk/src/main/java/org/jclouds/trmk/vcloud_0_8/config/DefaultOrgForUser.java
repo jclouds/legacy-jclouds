@@ -34,13 +34,14 @@ import org.jclouds.trmk.vcloud_0_8.suppliers.OnlyReferenceTypeFirstWithNameMatch
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class DefaultOrgForUser implements Function<String, ReferenceType> {
+public class DefaultOrgForUser implements Function<String, Supplier<ReferenceType>> {
 
    private final OnlyReferenceTypeFirstWithNameMatchingConfigurationKeyOrDefault selector;
    private final Supplier<VCloudSession> sessionSupplier;
@@ -55,10 +56,16 @@ public class DefaultOrgForUser implements Function<String, ReferenceType> {
    }
 
    @Override
-   public ReferenceType apply(String user) {
-      VCloudSession session = sessionSupplier.get();
-      checkState(session != null, "could not retrieve Session at %s", user);
-      return selector.apply(session.getOrgs().values());
+   public Supplier<ReferenceType> apply(final String user) {
+      return Suppliers.compose(new Function<VCloudSession, ReferenceType>() {
+
+         @Override
+         public ReferenceType apply(VCloudSession session) {
+            checkState(session != null, "could not retrieve Session at %s", user);
+            return selector.apply(session.getOrgs().values());
+         }
+
+      }, sessionSupplier);
    }
 
 }

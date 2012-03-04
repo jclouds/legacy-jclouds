@@ -27,6 +27,7 @@ public enum ServerImageState {
 
     AVAILABLE("Available"),
     SAVING("Saving"),
+    TRASH("Trash"),
     UNRECOGNIZED("Unknown");
 
     String type;

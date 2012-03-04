@@ -20,10 +20,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -33,10 +31,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents features of a network.
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Features")
+@XmlRootElement(name = "Features")
 public class NetworkFeatures {
 
    public static Builder builder() {
@@ -68,9 +66,7 @@ public class NetworkFeatures {
       }
 
       public NetworkFeatures build() {
-         NetworkFeatures networkFeatures = new NetworkFeatures();
-         networkFeatures.setNetworkServices(services);
-         return networkFeatures;
+         return new NetworkFeatures(services);
       }
 
       public Builder fromNetworkFeatures(NetworkFeatures in) {
@@ -82,19 +78,19 @@ public class NetworkFeatures {
       // For JAXB and builder use
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "NetworkService")
+   public NetworkFeatures(Set<NetworkService> services) {
+      this.services = services;
+   }
+
+   @XmlElement(name = "NetworkService")
    private Set<NetworkService> services = Sets.newLinkedHashSet();
 
    /**
-    * @return a Network service. May be any of DhcpService, NatService, IpsecVpnService, 
-    * DhcpService, or StaticRoutingService.
+    * @return a Network service. May be any of DhcpService, NatService, IpsecVpnService,
+    *         DhcpService, or StaticRoutingService.
     */
    public Set<NetworkService> getNetworkServices() {
       return ImmutableSet.copyOf(services);
-   }
-   
-   public void setNetworkServices(Set<NetworkService> services) {
-      this.services = Sets.newLinkedHashSet(checkNotNull(services, "services"));
    }
 
    @Override

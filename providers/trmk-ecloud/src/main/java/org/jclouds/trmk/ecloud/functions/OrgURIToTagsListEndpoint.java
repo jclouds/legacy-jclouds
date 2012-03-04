@@ -40,7 +40,7 @@ import com.google.common.base.Supplier;
 public class OrgURIToTagsListEndpoint extends OrgURIToEndpoint implements Function<Object, URI> {
    @Inject
    public OrgURIToTagsListEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultUri) {
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultUri) {
       super(orgMap, defaultUri);
    }
 

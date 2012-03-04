@@ -19,31 +19,27 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.util.Collection;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Collections;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a list of catalog item references.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="CatalogItemsType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "CatalogItems")
+@XmlRootElement(name = "CatalogItems")
 public class CatalogItems {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG_ITEMS;
@@ -58,13 +54,13 @@ public class CatalogItems {
 
    public static class Builder {
 
-      private List<Reference> catalogItems = Lists.newArrayList();
+      private Set<Reference> catalogItems = Sets.newLinkedHashSet();
 
       /**
        * @see CatalogItems#getCatalogItems()
        */
-      public Builder items(List<Reference> catalogItems) {
-         this.catalogItems = Lists.newArrayList(checkNotNull(catalogItems, "catalogItems"));
+      public Builder items(Collection<Reference> catalogItems) {
+         this.catalogItems = Sets.newLinkedHashSet(checkNotNull(catalogItems, "catalogItems"));
          return this;
       }
 
@@ -90,24 +86,16 @@ public class CatalogItems {
    }
 
    private CatalogItems(Collection<Reference> tasks) {
-      this.catalogItems = Lists.newArrayList(checkNotNull(catalogItems, "catalogItems"));
+      this.catalogItems = catalogItems;
    }
 
    @XmlElement(name = "CatalogItem")
-   private List<Reference> catalogItems = Lists.newArrayList();
+   private Set<Reference> catalogItems = Sets.newLinkedHashSet();
 
    /**
     * Gets the value of the catalogItems property.
     */
-   public List<Reference> getCatalogItems() {
-      return this.catalogItems;
-   }
-
-   public void setCatalogItems(List<Reference> catalogItems) {
-      this.catalogItems = Lists.newArrayList(checkNotNull(catalogItems, "catalogItems"));
-   }
-
-   public void addCatalogItem(Reference catalogItem) {
-      this.catalogItems.add(checkNotNull(catalogItem, "catalogItem"));
+   public Set<Reference> getCatalogItems() {
+      return Collections.unmodifiableSet(this.catalogItems);
    }
 }

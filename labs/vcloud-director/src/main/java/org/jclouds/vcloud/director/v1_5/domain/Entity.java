@@ -29,10 +29,10 @@ import com.google.common.collect.Sets;
  * An entity.
  *
  * @author grkvlt@apache.org
+ * @author Adam Lowe
  */
 public class Entity extends EntityType<Entity> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -46,13 +46,7 @@ public class Entity extends EntityType<Entity> {
 
       @Override
       public Entity build() {
-         Entity entity = new Entity(href, name);
-         entity.setDescription(description);
-         entity.setTasksInProgress(tasksInProgress);
-         entity.setId(id);
-         entity.setType(type);
-         entity.setLinks(links);
-         return entity;
+         return new Entity(href, type, links, description, tasksInProgress, id, name);
       }
 
       /**
@@ -110,7 +104,7 @@ public class Entity extends EntityType<Entity> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -119,7 +113,7 @@ public class Entity extends EntityType<Entity> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -137,21 +131,11 @@ public class Entity extends EntityType<Entity> {
       }
    }
 
-   protected Entity(URI href, String name) {
-      super(href, name);
+   private Entity(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name) {
+      super(href, type, links, description, tasksInProgress, id, name);
    }
 
-   protected Entity() {
+   private Entity() {
       // For JAXB
-   }
-
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      Entity that = Entity.class.cast(o);
-      return super.equals(that);
    }
 }

@@ -13,3 +13,4 @@ bin/
 *.iws
 *.DS_STORE
 TAGS
+.metadata/

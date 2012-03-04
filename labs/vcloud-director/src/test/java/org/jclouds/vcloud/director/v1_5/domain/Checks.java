@@ -20,8 +20,12 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_BE_WELL_FORMED_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_CONTAIN_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.testng.Assert.assertEquals;
@@ -267,19 +271,15 @@ public class Checks {
       if (config.getIpScope() != null) {
          checkIpScope(config.getIpScope());
       }
-      
       if (config.getParentNetwork() != null) {
          checkReferenceType(config.getParentNetwork());
       }
-      
       if (config.getNetworkFeatures() != null) {
          checkNetworkFeatures(config.getNetworkFeatures());
       }
-      
       if (config.getSyslogServerSettings() != null) {
          checkSyslogServerSettings(config.getSyslogServerSettings());
       }
-      
       if (config.getRouterInfo() != null) {
          checkRouterInfo(config.getRouterInfo());
       }
@@ -325,7 +325,6 @@ public class Checks {
       if (settings.getSyslogServerIp1() != null) {
          checkIpAddress(settings.getSyslogServerIp1());
       }
-      
       if (settings.getSyslogServerIp2() != null) {
          checkIpAddress(settings.getSyslogServerIp2());
       }
@@ -367,5 +366,115 @@ public class Checks {
    
    public static void checkIpAddress(String ip) {
       InetAddresses.isInetAddress(ip);
+   }
+   
+   public static void checkComputeCapacity(ComputeCapacity computeCapacity) {
+      // Check required fields
+      assertNotNull(computeCapacity.getCpu(), "The cpu attribute of a ComputeCapacity must be set");
+      checkCapacityWithUsage(computeCapacity.getCpu());
+      
+      assertNotNull(computeCapacity.getMemory(), "The memory attribute of a ComputeCapacity must be set");
+      checkCapacityWithUsage(computeCapacity.getMemory());
+   }
+
+   public static void checkCapacityWithUsage(CapacityWithUsage capacityWithUsage) {
+      // Check optional fields
+      if (capacityWithUsage.getUsed() != null) {
+         assertTrue(capacityWithUsage.getUsed() >= 0, "used must be greater than or equal to 0");
+      }
+      if (capacityWithUsage.getOverhead() != null) {
+         assertTrue(capacityWithUsage.getOverhead() >= 0, "overhead must be greater than or equal to 0");
+      }
+      
+      // Check parent type
+      checkCapacityType(capacityWithUsage);
+   }
+
+   public static void checkCapacityType(CapacityType<?> capacity) {
+      // Check required fields
+      assertNotNull(capacity.getUnits(), "The unit attribute of a CapacityWithUsage must be set");
+      
+      assertNotNull(capacity.getLimit(), "The limit attribute of a CapacityWithUsage must be set");
+      assertTrue(capacity.getLimit() >= 0, "Limit must be greater than or equal to 0");
+      
+      
+      // Check optional fields
+      if (capacity.getAllocated() != null) {
+         assertTrue(capacity.getAllocated() >= 0, "allocated must be greater than or equal to 0");
+      }
+   }
+
+   public static void checkResourceEntities(ResourceEntities resourceEntities) {
+      for (Reference resourceEntity : resourceEntities.getResourceEntities()) {
+         checkReferenceType(resourceEntity);
+      }
+   }
+
+   public static void checkAvailableNetworks(AvailableNetworks availableNetworks) {
+      for (Reference network : availableNetworks.getNetworks()) {
+         checkReferenceType(network);
+      }
+   }
+   
+   public static void checkCapabilities(Capabilities capabilities) {
+      // Check optional fields
+      if (capabilities.getSupportedHardwareVersions() != null) {
+         checkSupportedHardwareVersions(capabilities.getSupportedHardwareVersions());
+      }
+   }
+   public static void checkSupportedHardwareVersions(SupportedHardwareVersions supportedHardwareVersions) {
+      for (String supportedHardwareVersion : supportedHardwareVersions.getSupportedHardwareVersions()) {
+         // NOTE supportedHardwareVersion cannot be checked?
+      }
+   }
+
+   public static void checkMetadataFor(String client, Metadata metadata) {
+      for (MetadataEntry entry : metadata.getMetadataEntries()) {
+         // Check required fields
+         assertNotNull(entry.getKey(), 
+               String.format(OBJ_FIELD_ATTRB_REQ, client, "MetadataEntry", entry.getKey(), "key"));
+         assertNotNull(entry.getValue(), 
+               String.format(OBJ_FIELD_ATTRB_REQ, client, "MetadataEntry", entry.getValue(), "value"));
+          
+         // Check parent type
+         checkResourceType(entry);
+      }
+      
+      // Check parent type
+      checkResourceType(metadata);
+   }
+
+   public static void checkMetadataValueFor(String client, MetadataValue metadataValue) {
+      // Check required fields
+      String value = metadataValue.getValue();
+      assertNotNull(value, 
+            String.format(OBJ_FIELD_ATTRB_REQ, client, "MetadataEntry", 
+                  metadataValue.toString(), "value"));
+      assertEquals(value, "value", 
+            String.format(OBJ_FIELD_EQ, client, "metadataEntry.value", "value", value));
+      
+      // Check parent type
+      checkResourceType(metadataValue);
+   }
+
+   public static void checkVApp(VApp vApp) {
+      // TODO Auto-generated method stub
+      
+   }
+
+   public static void checkVAppTemplate(VAppTemplate template) {
+      // TODO Auto-generated method stub
+      
+   }
+
+   public static void checkMediaFor(String client, Media media) {
+      // required
+      assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, client, "imageType"));
+      Checks.checkImageType(media.getImageType());
+      assertNotNull(media.getSize(), String.format(OBJ_FIELD_REQ, client, "size"));
+      assertTrue(media.getSize() >= 0, String.format(OBJ_FIELD_GTE_0, client, "size", media.getSize()));
+      
+      // parent type
+      Checks.checkResourceEntityType(media);
    }
 }

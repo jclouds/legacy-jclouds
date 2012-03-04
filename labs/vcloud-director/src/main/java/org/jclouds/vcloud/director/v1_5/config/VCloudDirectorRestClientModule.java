@@ -42,18 +42,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.annotations.Login;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
-import org.jclouds.vcloud.director.v1_5.features.MediaAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.MediaClient;
-import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
-import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.OrgClient;
-import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.QueryClient;
-import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.TaskClient;
+import org.jclouds.vcloud.director.v1_5.features.*;
 import org.jclouds.vcloud.director.v1_5.functions.LoginUserInOrgWithPassword;
 import org.jclouds.vcloud.director.v1_5.handlers.InvalidateSessionAndRetryOn401AndLogoutOnClose;
 import org.jclouds.vcloud.director.v1_5.handlers.VCloudDirectorErrorHandler;
@@ -87,6 +76,8 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(QueryClient.class, QueryAsyncClient.class)
             .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
+            .put(VdcClient.class, VdcAsyncClient.class)
+            .put(VAppTemplateClient.class, VAppTemplateAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {

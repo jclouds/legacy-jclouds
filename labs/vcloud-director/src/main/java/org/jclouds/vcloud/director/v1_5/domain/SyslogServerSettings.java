@@ -19,23 +19,19 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 
 /**
- * Syslog server settings. If logging is configured for firewall rules, the logs 
+ * Syslog server settings. If logging is configured for firewall rules, the logs
  * will be directed to these syslog servers.
- * 
+ *
  * @author danikov
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerSettings")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "SyslogServerSettings")
 public class SyslogServerSettings {
 
    public static Builder builder() {
@@ -47,7 +43,7 @@ public class SyslogServerSettings {
    }
 
    public static class Builder {
-      
+
       private String syslogServerIp1;
       private String syslogServerIp2;
 
@@ -78,38 +74,30 @@ public class SyslogServerSettings {
          return syslogServerIp1(in.getSyslogServerIp1()).syslogServerIp2(in.getSyslogServerIp2());
       }
    }
-   
+
    private SyslogServerSettings() {
       // For JAXB and builder use
    }
-   
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerIp1")
+
+   @XmlElement(name = "SyslogServerIp1")
    private String syslogServerIp1;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "SyslogServerIp2")
+   @XmlElement(name = "SyslogServerIp2")
    private String syslogServerIp2;
-   
+
    /**
     * @return Primary syslog server.
     */
    public String getSyslogServerIp1() {
       return syslogServerIp1;
    }
-   
-   public void setSyslogServerIp1(String syslogServerIp1) {
-      this.syslogServerIp1 = syslogServerIp1;
-   }
-   
+
    /**
     * @return Secondary syslog server.
     */
    public String getSyslogServerIp2() {
       return syslogServerIp2;
    }
-   
-   public void setSyslogServerIp2(String syslogServerIp2) {
-      this.syslogServerIp2 = syslogServerIp2;
-   }
-   
+
    @Override
    public boolean equals(Object o) {
       if (this == o)

@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -35,11 +34,11 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a Network vCloud query as a record.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="QueryResultNetworkRecord" /&gt;
  * </pre>
- * 
+ *
  * @author grkvlt@apache.org
  */
 public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultNetworkRecord> {
@@ -146,19 +145,8 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
 
       @Override
       public QueryResultNetworkRecord build() {
-         QueryResultNetworkRecord queryResultNetworkRecord = new QueryResultNetworkRecord(href);
-         queryResultNetworkRecord.setName(name);
-         queryResultNetworkRecord.setIpScopeId(ipScopeId);
-         queryResultNetworkRecord.setGateway(gateway);
-         queryResultNetworkRecord.setNetmask(netmask);
-         queryResultNetworkRecord.setDns1(dns1);
-         queryResultNetworkRecord.setDns2(dns2);
-         queryResultNetworkRecord.setDnsSuffix(dnsSuffix);
-         queryResultNetworkRecord.setIsBusy(isBusy);
-         queryResultNetworkRecord.setId(id);
-         queryResultNetworkRecord.setType(type);
-         queryResultNetworkRecord.setLinks(links);
-         return queryResultNetworkRecord;
+         return new QueryResultNetworkRecord(links, href, id, type,
+               name, ipScopeId, gateway, netmask, dns1, dns2, dnsSuffix, isBusy);
       }
 
       /**
@@ -219,12 +207,21 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       }
    }
 
-   private QueryResultNetworkRecord() {
-      // For JAXB and builder use
+   public QueryResultNetworkRecord(Set<Link> links, URI href, String id, String type, String name, String ipScopeId,
+                                   String gateway, String netmask, String dns1, String dns2, String dnsSuffix, Boolean busy) {
+      super(links, href, id, type);
+      this.name = name;
+      this.ipScopeId = ipScopeId;
+      this.gateway = gateway;
+      this.netmask = netmask;
+      this.dns1 = dns1;
+      this.dns2 = dns2;
+      this.dnsSuffix = dnsSuffix;
+      isBusy = busy;
    }
 
-   private QueryResultNetworkRecord(URI href) {
-      super(href);
+   private QueryResultNetworkRecord() {
+      // For JAXB and builder use
    }
 
    @XmlAttribute
@@ -251,10 +248,6 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       return name;
    }
 
-   public void setName(String value) {
-      this.name = value;
-   }
-
    /**
     * IP scope object of this network.
     */
@@ -262,19 +255,12 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       return ipScopeId;
    }
 
-   public void setIpScopeId(String value) {
-      this.ipScopeId = value;
-   }
 
    /**
     * Gateway for the network.
     */
    public String getGateway() {
       return gateway;
-   }
-
-   public void setGateway(String value) {
-      this.gateway = value;
    }
 
    /**
@@ -284,19 +270,11 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       return netmask;
    }
 
-   public void setNetmask(String value) {
-      this.netmask = value;
-   }
-
    /**
     * Primary DNS for the network.
     */
    public String getDns1() {
       return dns1;
-   }
-
-   public void setDns1(String value) {
-      this.dns1 = value;
    }
 
    /**
@@ -306,10 +284,6 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       return dns2;
    }
 
-   public void setDns2(String value) {
-      this.dns2 = value;
-   }
-
    /**
     * DNS suffix for the network.
     */
@@ -317,19 +291,11 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       return dnsSuffix;
    }
 
-   public void setDnsSuffix(String value) {
-      this.dnsSuffix = value;
-   }
-
    /**
     * Shows whether it is busy.
     */
    public Boolean isBusy() {
       return isBusy;
-   }
-
-   public void setIsBusy(Boolean value) {
-      this.isBusy = value;
    }
 
    @Override

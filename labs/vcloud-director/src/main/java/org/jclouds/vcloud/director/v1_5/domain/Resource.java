@@ -27,12 +27,11 @@ import com.google.common.collect.Sets;
 
 /**
  * A resource.
- * 
+ *
  * @author grkvlt@apache.org
  */
 public class Resource extends ResourceType<Resource> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -46,10 +45,7 @@ public class Resource extends ResourceType<Resource> {
 
       @Override
       public Resource build() {
-         Resource reference = new Resource(href);
-         reference.setType(type);
-         reference.setLinks(links);
-         return reference;
+         return new Resource(href, type, links);
       }
 
       /**
@@ -98,11 +94,11 @@ public class Resource extends ResourceType<Resource> {
       }
    }
 
-   protected Resource(URI href) {
-      super(href);
+   private Resource(URI href, String type, Set<Link> links) {
+      super(href, type, links);
    }
 
-   protected Resource() {
+   private Resource() {
       // For JAXB
    }
 

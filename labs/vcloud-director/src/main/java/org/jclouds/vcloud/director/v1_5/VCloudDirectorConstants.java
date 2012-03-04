@@ -29,6 +29,10 @@ public class VCloudDirectorConstants {
    /** The XML namespace used by the clients. */
    public static final String VCLOUD_1_5_NS = "http://www.vmware.com/vcloud/v1.5";
 
+   public static final String VCLOUD_OVF_NS = "http://schemas.dmtf.org/ovf/envelope/1";
+
+   public static final String VCLOUD_CIM_NS = "http://schemas.dmtf.org/wbem/wscim/1/common";
+
    /** The property used to configure the timeout for task completion. */
    public static final String PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED = "jclouds.vcloud-director.timeout.task-complete";
 
@@ -51,7 +55,7 @@ public class VCloudDirectorConstants {
 
    /** TODO javadoc */
    public static final String PROPERTY_VCLOUD_DIRECTOR_XML_NAMESPACE = "jclouds.vcloud-director.xml.ns";
-
+   
    /** TODO javadoc */
    public static final String PROPERTY_VCLOUD_DIRECTOR_XML_SCHEMA = "jclouds.vcloud-director.xml.schema";
 

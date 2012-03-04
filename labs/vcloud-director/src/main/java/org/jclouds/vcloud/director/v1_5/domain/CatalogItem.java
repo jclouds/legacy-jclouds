@@ -19,31 +19,27 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * 
  * Contains a reference to a VappTemplate or Media object and related metadata.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="CatalogItemType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "CatalogItem")
+@XmlRootElement(name = "CatalogItem")
 public class CatalogItem extends EntityType<CatalogItem> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG_ITEM;
@@ -61,7 +57,7 @@ public class CatalogItem extends EntityType<CatalogItem> {
    public static class Builder extends EntityType.Builder<CatalogItem> {
 
       private Reference entity;
-      private List<Property> properties = Lists.newArrayList();
+      private Set<Property> properties = Sets.newLinkedHashSet();
 
       /**
        * @see CatalogItem#getEntity()
@@ -74,8 +70,8 @@ public class CatalogItem extends EntityType<CatalogItem> {
       /**
        * @see CatalogItem#getProperties()
        */
-      public Builder properties(List<Property> properties) {
-         this.properties = Lists.newArrayList(checkNotNull(properties, "properties"));
+      public Builder properties(Set<Property> properties) {
+         this.properties = Sets.newLinkedHashSet(checkNotNull(properties, "properties"));
          return this;
       }
 
@@ -89,14 +85,7 @@ public class CatalogItem extends EntityType<CatalogItem> {
 
       @Override
       public CatalogItem build() {
-         CatalogItem catalog = new CatalogItem(href, name, entity);
-         catalog.setProperties(properties);
-         catalog.setDescription(description);
-         catalog.setId(id);
-         catalog.setType(type);
-         catalog.setLinks(links);
-         catalog.setTasksInProgress(tasksInProgress);
-         return catalog;
+         return new CatalogItem(href, type, links, description, tasksInProgress, id, name, entity, properties);
       }
 
       /**
@@ -154,7 +143,7 @@ public class CatalogItem extends EntityType<CatalogItem> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -163,7 +152,7 @@ public class CatalogItem extends EntityType<CatalogItem> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -181,20 +170,20 @@ public class CatalogItem extends EntityType<CatalogItem> {
       }
    }
 
-   private CatalogItem() {
-      // For JAXB and builder use
+   private CatalogItem(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, Reference entity, Set<Property> properties) {
+      super(href, type, links, description, tasksInProgress, id, name);
+      this.entity = entity;
+      this.properties = properties;
    }
 
-   private CatalogItem(URI href, String name, Reference entity) {
-      super(href, name);
-      this.entity = entity;
-      this.setProperties(properties);
+   private CatalogItem() {
+      // For JAXB and builder use
    }
 
    @XmlElement(name = "Entity", required = true)
    private Reference entity;
    @XmlElement(name = "Property")
-   private List<Property> properties = Lists.newArrayList();
+   private Set<Property> properties = Sets.newLinkedHashSet();
 
    /**
     * A reference to a VappTemplate or Media object.
@@ -205,18 +194,10 @@ public class CatalogItem extends EntityType<CatalogItem> {
 
    /**
     * User-specified key/value pair.
-    *
+    * <p/>
     * This element has been superseded by the {@link Metadata} element, which is the preferred way to specify key/value pairs for objects.
     */
-   public List<Property> getProperties() {
-      return this.properties;
-   }
-
-   public void setProperties(List<Property> properties) {
-      this.properties = Lists.newArrayList(checkNotNull(properties, "properties"));
-   }
-
-   public void addProperty(Property property) {
-      this.properties.add(checkNotNull(property, "property"));
+   public Set<Property> getProperties() {
+      return Collections.unmodifiableSet(this.properties);
    }
 }

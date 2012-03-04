@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v1_1.domain;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,14 +30,17 @@ import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
 import org.jclouds.util.Multimaps2;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * A server is a virtual machine instance in the compute system. Flavor and image are requisite
- * elements when creating a server.
+ * A server is a virtual machine instance in the compute system. Flavor and
+ * image are requisite elements when creating a server.
  * 
  * @author Adrian Cole
  * @see <a href=
@@ -53,13 +57,124 @@ public class Server extends Resource {
    }
 
    public static class Builder extends Resource.Builder {
-      private Multimap<Address.Type, Address> addresses = LinkedHashMultimap.create();
+      private String tenantId;
+      private String userId;
+      private Date updated;
+      private Date created;
+      private String hostId;
+      private String accessIPv4;
+      private String accessIPv6;
+      private ServerStatus status;
+      private int progress;
+      private Resource image;
+      private Resource flavor;
+      private Map<String, String> metadata = Maps.newHashMap();
+      // TODO: get gson multimap ad
+      private Multimap<Address.Type, Address> addresses = LinkedHashMultimap
+            .create();
 
+      /**
+       * @see Server#getTenantId()
+       */
+      public Builder tenantId(String tenantId) {
+         this.tenantId = tenantId;
+         return this;
+      }
+
+      /**
+       * @see Server#getUserId()
+       */
+      public Builder userId(String userId) {
+         this.userId = userId;
+         return this;
+      }
+
+      /**
+       * @see Server#getUpdated()
+       */
+      public Builder updated(Date updated) {
+         this.updated = updated;
+         return this;
+      }
+
+      /**
+       * @see Server#getCreated()
+       */
+      public Builder created(Date created) {
+         this.created = created;
+         return this;
+      }
+      
+      /**
+       * @see Server#getHostId()
+       */
+      public Builder hostId(String hostId) {
+         this.hostId = hostId;
+         return this;
+      }
+      
+      /**
+       * @see Server#getAccessIPv4()
+       */
+      public Builder accessIPv4(String accessIPv4) {
+         this.accessIPv4 = accessIPv4;
+         return this;
+      }
+
+      /**
+       * @see Server#getAccessIPv6()
+       */
+      public Builder accessIPv6(String accessIPv6) {
+         this.accessIPv6 = accessIPv6;
+         return this;
+      }
+      
+      /**
+       * @see Server#getStatus()
+       */
+      public Builder status(ServerStatus status) {
+         this.status = status;
+         return this;
+      }
+
+      /**
+       * @see Server#getProgress()
+       */
+      public Builder progress(int progress) {
+         this.progress = progress;
+         return this;
+      }
+
+      /**
+       * @see Server#getImage()
+       */
+      public Builder image(Resource image) {
+         this.image = image;
+         return this;
+      }
+
+      /**
+       * @see Server#getImage()
+       */
+      public Builder flavor(Resource flavor) {
+         this.flavor = flavor;
+         return this;
+      }
+
+      /**
+       * @see Server#getMetadata()
+       */
+      public Builder metadata(Map<String, String> metadata) {
+         this.metadata = ImmutableMap.copyOf(metadata);
+         return this;
+      }
+      
       /**
        * @see Server#getAddresses()
        */
       public Builder addresses(Multimap<Address.Type, Address> addresses) {
-         this.addresses = ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses"));
+         this.addresses = ImmutableMultimap.copyOf(checkNotNull(addresses,
+               "addresses"));
          return this;
       }
 
@@ -67,15 +182,16 @@ public class Server extends Resource {
        * @see Server#getPrivateAddresses()
        */
       public Builder privateAddresses(Address... privateAddresses) {
-         return privateAddresses(ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses")));
+         return privateAddresses(ImmutableSet.copyOf(checkNotNull(
+               privateAddresses, "privateAddresses")));
       }
 
       /**
        * @see Server#getPrivateAddresses()
        */
       public Builder privateAddresses(Set<Address> privateAddresses) {
-         this.addresses.replaceValues(Address.Type.PRIVATE, ImmutableSet.copyOf(checkNotNull(privateAddresses,
-                  "privateAddresses")));
+         this.addresses.replaceValues(Address.Type.PRIVATE, ImmutableSet
+               .copyOf(checkNotNull(privateAddresses, "privateAddresses")));
          return this;
       }
 
@@ -83,20 +199,24 @@ public class Server extends Resource {
        * @see Server#getPublicAddresses()
        */
       public Builder publicAddresses(Address... publicAddresses) {
-         return publicAddresses(ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses")));
+         return publicAddresses(ImmutableSet.copyOf(checkNotNull(
+               publicAddresses, "publicAddresses")));
       }
 
       /**
        * @see Server#getPublicAddresses()
        */
       public Builder publicAddresses(Set<Address> publicAddresses) {
-         this.addresses.replaceValues(Address.Type.PUBLIC, ImmutableSet.copyOf(checkNotNull(publicAddresses,
-                  "publicAddresses")));
+         this.addresses.replaceValues(Address.Type.PUBLIC, ImmutableSet
+               .copyOf(checkNotNull(publicAddresses, "publicAddresses")));
          return this;
       }
 
       public Server build() {
-         return new Server(id, name, links, addresses);
+         // return new Server(id, name, links, addresses);
+         return new Server(id, name, links, tenantId, userId, updated,
+               created, hostId, accessIPv4, accessIPv6, status, progress,
+               image, flavor, addresses, metadata);
       }
 
       public Builder fromServer(Server in) {
@@ -135,15 +255,101 @@ public class Server extends Resource {
          return Builder.class.cast(super.fromResource(in));
       }
    }
-
+   
+   @SerializedName("tenant_id")
+   protected String tenantId;
+   @SerializedName("user_id")
+   protected String userId;
+   protected Date updated;
+   protected Date created;
+   protected String hostId;
+   protected String accessIPv4;
+   protected String accessIPv6;
+   protected ServerStatus status;
+   protected int progress;
+   protected Resource image;
+   protected Resource flavor;
    // TODO: get gson multimap adapter!
    protected final Map<Address.Type, Set<Address>> addresses;
+   protected Map<String, String> metadata;
+   protected String adminPass;
 
-   protected Server(String id, String name, Set<Link> links, Multimap<Address.Type, Address> addresses) {
+   protected Server(String id, String name, Set<Link> links, String tenantId,
+         String userId, Date updated, Date created, String hostId,
+         String accessIPv4, String accessIPv6, ServerStatus status,
+         int progress, Resource image, Resource flavor,
+         Multimap<Address.Type, Address> addresses, Map<String, String> metadata) {
       super(id, name, links);
-      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses")));
+      this.tenantId = tenantId;
+      this.userId = userId;
+      this.updated = updated;
+      this.created = created;
+      this.hostId = hostId;
+      this.accessIPv4 = accessIPv4;
+      this.accessIPv6 = accessIPv6;
+      this.status = status;
+      this.progress = progress;
+      this.image = image;
+      this.flavor = flavor;
+      this.metadata = Maps.newHashMap(metadata);
+      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap
+            .copyOf(checkNotNull(addresses, "addresses")));
+
    }
 
+   public String getTenantId() {
+      return this.tenantId;
+   }
+
+   public String getUserId() {
+      return this.userId;
+   }
+
+   public Date getUpdated() {
+      return this.updated;
+   }
+
+   public Date getCreated() {
+      return this.created;
+   }
+
+   public String getHostId() {
+      return this.hostId;
+   }
+
+   public String getAccessIPv4() {
+      return this.accessIPv4;
+   }
+
+   public String getAccessIPv6() {
+      return this.accessIPv6;
+   }
+
+   public ServerStatus getStatus() {
+      return this.status;
+   }
+
+   public int getProgress() {
+      return this.progress;
+   }
+
+   public Resource getImage() {
+      return this.image;
+   }
+
+   public Resource getFlavor() {
+      return this.flavor;
+   }
+
+   public Map<String, String> getMetadata() {
+      return this.metadata;
+   }
+
+   
+   public String getAdminPass() {
+     return this.adminPass;
+   }
+   
    /**
     * @return the private ip addresses assigned to the server
     */
@@ -167,8 +373,14 @@ public class Server extends Resource {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("links", links).add("addresses", addresses)
-               .toString();
+      return toStringHelper("").add("id", id).add("name", name)
+            .add("tenantId", tenantId).add("userId", userId).add("hostId", hostId)
+            .add("updated", updated).add("created", created)
+            .add("accessIPv4", accessIPv4).add("accessIPv6", accessIPv6)
+            .add("status", status).add("progress", progress)
+            .add("image", image).add("flavor", flavor)
+            .add("metadata", metadata)
+            .add("links", links).add("addresses", addresses).toString();
    }
 
 }

@@ -26,6 +26,10 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
+import org.jclouds.openstack.nova.v1_1.features.FloatingIPClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageClient;
+import org.jclouds.openstack.nova.v1_1.features.KeyPairClient;
+import org.jclouds.openstack.nova.v1_1.features.SecurityGroupClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -63,5 +67,33 @@ public interface NovaClient {
    @Delegate
    FlavorClient getFlavorClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
-   
+
+   /**
+    * Provides synchronous access to Image features.
+    */
+   @Delegate
+   ImageClient getImageClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides synchronous access to Floating IP features.
+    */
+   @Delegate
+   FloatingIPClient getFloatingIPClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides synchronous access to Security Group features.
+    */
+   @Delegate
+   SecurityGroupClient getSecurityGroupClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
+   /**
+    * Provides synchronous access to Key Pair features.
+    */
+   @Delegate
+   KeyPairClient getKeyPairClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
 }

@@ -38,18 +38,18 @@ import com.google.common.base.Supplier;
 @Singleton
 public class VDCURIToPublicIPsEndpoint implements Function<Object, URI> {
    private final Supplier<Map<URI, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>> orgVDCMap;
-   private final ReferenceType defaultVDC;
+   private final Supplier<ReferenceType> defaultVDC;
 
    @Inject
    public VDCURIToPublicIPsEndpoint(Supplier<Map<URI, ? extends org.jclouds.trmk.vcloud_0_8.domain.VDC>> orgVDCMap,
-         @VDC ReferenceType defaultVDC) {
+         @VDC Supplier<ReferenceType> defaultVDC) {
       this.orgVDCMap = orgVDCMap;
       this.defaultVDC = defaultVDC;
    }
 
    public URI apply(Object from) {
       try {
-         return orgVDCMap.get().get(from == null ? defaultVDC.getHref() : from).getPublicIps().getHref();
+         return orgVDCMap.get().get(from == null ? defaultVDC.get().getHref() : from).getPublicIps().getHref();
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("vdc " + from + " not found in " + orgVDCMap.get());
       }

@@ -1,12 +1,9 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
-
 import java.net.URI;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "CatalogReference")
+@XmlRootElement(name = "CatalogReference")
 public class CatalogReference extends ReferenceType<CatalogReference> {
 
    @SuppressWarnings("unchecked")
@@ -23,11 +20,7 @@ public class CatalogReference extends ReferenceType<CatalogReference> {
 
       @Override
       public CatalogReference build() {
-         CatalogReference reference = new CatalogReference(href);
-         reference.setId(id);
-         reference.setName(name);
-         reference.setType(type);
-         return reference;
+         return new CatalogReference(href, id, name, type);
       }
 
       /**
@@ -76,8 +69,8 @@ public class CatalogReference extends ReferenceType<CatalogReference> {
       }
    }
 
-   protected CatalogReference(URI href) {
-      super(href);
+   public CatalogReference(URI href, String id, String name, String type) {
+      super(href, id, name, type);
    }
 
    protected CatalogReference() {

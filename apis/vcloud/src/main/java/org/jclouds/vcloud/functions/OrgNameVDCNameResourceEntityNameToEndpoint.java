@@ -40,7 +40,7 @@ public class OrgNameVDCNameResourceEntityNameToEndpoint extends OrgNameVDCNameRe
    @Inject
    public OrgNameVDCNameResourceEntityNameToEndpoint(
          Supplier<Map<String, Map<String, org.jclouds.vcloud.domain.VDC>>> orgVDCMap,
-         @Org ReferenceType defaultOrg, @VDC ReferenceType defaultVDC) {
+         @Org Supplier<ReferenceType> defaultOrg, @VDC Supplier<ReferenceType> defaultVDC) {
       super(orgVDCMap, defaultOrg, defaultVDC);
    }
 

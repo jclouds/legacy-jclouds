@@ -42,12 +42,12 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, ? extends Org>> orgNameToVDCEndpoint;
-   private final ReferenceType defaultOrg;
-   private final ReferenceType defaultVDC;
+   private final Supplier<ReferenceType> defaultOrg;
+   private final Supplier<ReferenceType> defaultVDC;
 
    @Inject
    public OrgNameAndVDCNameToEndpoint(Supplier<Map<String, ? extends Org>> orgNameToVDCEndpoint,
-         @org.jclouds.trmk.vcloud_0_8.endpoints.Org ReferenceType defaultOrg, @VDC ReferenceType defaultVDC) {
+         @org.jclouds.trmk.vcloud_0_8.endpoints.Org Supplier<ReferenceType> defaultOrg, @VDC Supplier<ReferenceType> defaultVDC) {
       this.orgNameToVDCEndpoint = orgNameToVDCEndpoint;
       this.defaultOrg = defaultOrg;
       this.defaultVDC = defaultVDC;
@@ -59,9 +59,9 @@ public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
       Object org = Iterables.get(orgVdc, 0);
       Object vdc = Iterables.get(orgVdc, 1);
       if (org == null && vdc == null)
-         return defaultVDC.getHref();
+         return defaultVDC.get().getHref();
       else if (org == null)
-         org = defaultOrg.getName();
+         org = defaultOrg.get().getName();
 
       try {
          Map<String, ReferenceType> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();

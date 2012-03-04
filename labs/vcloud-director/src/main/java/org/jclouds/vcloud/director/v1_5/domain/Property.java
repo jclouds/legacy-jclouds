@@ -18,10 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
@@ -30,15 +26,14 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 /**
  * Contains key/value pair as property.
- *
+ * <p/>
  * <pre>
  * &lt;complexType name="PropertyType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "Property")
+@XmlRootElement(name = "Property")
 public class Property {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.PROPERTY;
@@ -83,9 +78,7 @@ public class Property {
       }
 
       public Property build() {
-         Property property = new Property(key);
-         property.setValue(value);
-         return property;
+         return new Property(key, value);
       }
 
       public Builder fromProperty(Property in) {
@@ -94,10 +87,11 @@ public class Property {
    }
 
    private Property() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
-   private Property(String key) {
+   private Property(String key, String value) {
+      this.value = value;
       this.key = key;
    }
 
@@ -111,10 +105,6 @@ public class Property {
     */
    public String getValue() {
       return value;
-   }
-
-   public void setValue(String value) {
-      this.value = value;
    }
 
    /**

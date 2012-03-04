@@ -159,8 +159,8 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          ListenableFuture<ExecResponse> future = client.submitScriptOnNode(first.getId(), Statements
                   .exec("while true; do true; done"), runAsRoot(false).nameTask("cpuSpinner"));
 
-         // monitoring granularity must be at least 60 seconds, so lets make sure we have data.
-         Thread.sleep(TimeUnit.MILLISECONDS.convert(61, TimeUnit.SECONDS));
+         // monitoring granularity for free tier is 5 minutes, so lets make sure we have data.
+         Thread.sleep(TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES));
 
          // stop the spinner
          future.cancel(true);

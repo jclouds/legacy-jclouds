@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import java.net.URI;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,9 +30,9 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
-@XmlRootElement(namespace = VCLOUD_1_5_NS, name = "OrgNetwork")
+@XmlRootElement(name = "OrgNetwork")
 public class OrgNetwork extends NetworkType<OrgNetwork> {
-   
+
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
@@ -49,7 +47,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
 
       private ReferenceType<?> networkPool;
       private IpAddresses allowedExternalIpAddresses;
-      
+
       /**
        * @see OrgNetwork#getNetworkPool()
        */
@@ -65,21 +63,13 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
          this.allowedExternalIpAddresses = allowedExternalIpAddresses;
          return this;
       }
-      
+
       @Override
       public OrgNetwork build() {
-         OrgNetwork network = new OrgNetwork(href, name);
-         network.setConfiguration(networkConfiguration);
-         network.setNetworkPool(networkPool);
-         network.setAllowedExternalIpAddresses(allowedExternalIpAddresses);
-         network.setDescription(description);
-         network.setId(id);
-         network.setType(type);
-         network.setLinks(links);
-         network.setTasksInProgress(tasksInProgress);
-         return network;
+         return new OrgNetwork(href, type, links, description, tasksInProgress, id, name, networkConfiguration,
+               networkPool, allowedExternalIpAddresses);
       }
-      
+
       /**
        * @see NetworkType#getConfiguration()
        */
@@ -143,7 +133,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -152,7 +142,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
       }
 
       /**
-       * @see ReferenceType#getLinks()
+       * @see EntityType#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -173,16 +163,19 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
    }
 
    private OrgNetwork() {
-      // For JAXB and builder use
-   }
-   
-   private OrgNetwork(URI href, String name) {
-      super(href, name);
+      // For JAXB
    }
 
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "NetworkPool")
+   private OrgNetwork(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+                      String id, String name, NetworkConfiguration networkConfiguration, ReferenceType<?> networkPool, IpAddresses allowedExternalIpAddresses) {
+      super(href, type, links, description, tasksInProgress, id, name, networkConfiguration);
+      this.networkPool = networkPool;
+      this.allowedExternalIpAddresses = allowedExternalIpAddresses;
+   }
+
+   @XmlElement(name = "NetworkPool")
    private ReferenceType<?> networkPool;
-   @XmlElement(namespace = VCLOUD_1_5_NS, name = "AllowedExternalIpAddresses")
+   @XmlElement(name = "AllowedExternalIpAddresses")
    private IpAddresses allowedExternalIpAddresses;
 
    /**
@@ -191,28 +184,20 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
    public ReferenceType<?> getNetworkPool() {
       return networkPool;
    }
-   
-   public void setNetworkPool(ReferenceType<?> networkPool) {
-      this.networkPool = networkPool;
-   }
-   
+
    /**
     * @return optional network pool
     */
    public IpAddresses getAllowedExternalIpAddresses() {
       return allowedExternalIpAddresses;
    }
-   
-   public void setAllowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
-      this.allowedExternalIpAddresses = allowedExternalIpAddresses;
-   }
-   
+
    @Override
    public boolean equals(Object o) {
       if (!super.equals(o))
          return false;
       OrgNetwork that = OrgNetwork.class.cast(o);
-      return super.equals(that) && equal(networkPool, that.networkPool) && 
+      return super.equals(that) && equal(networkPool, that.networkPool) &&
             equal(allowedExternalIpAddresses, that.allowedExternalIpAddresses);
    }
 
