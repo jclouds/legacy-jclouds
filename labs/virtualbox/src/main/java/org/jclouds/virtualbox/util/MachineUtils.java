@@ -30,7 +30,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -45,6 +47,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
@@ -70,6 +73,11 @@ public class MachineUtils {
       this.manager = manager;
       this.scriptRunner = scriptRunner;
       this.host = host;
+   }
+   
+   public ListenableFuture<ExecResponse> runScriptOnNode(NodeMetadata metadata, Statement statement,
+       RunScriptOptions options) {
+     return scriptRunner.submit(metadata, statement, options);
    }
 
    /**

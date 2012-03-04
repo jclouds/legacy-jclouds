@@ -19,6 +19,7 @@
 
 package org.jclouds.virtualbox;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Properties;
 
@@ -42,7 +43,11 @@ import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.MachineState;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -75,6 +80,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String guestAdditionsIso;
    protected String adminDisk;
    protected String workingDir;
+   protected String isosDir;
    protected Supplier<NodeMetadata> host;
 
    @Override
@@ -122,10 +128,14 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
               hostModule), overrides);
       Function<String, String> configProperties = context.utils().injector()
               .getInstance(ValueOfConfigurationKeyOrNull.class);
-      imageId = configProperties
-              .apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
+      imageId = "ubuntu-11.04-server-i386";
       workingDir = configProperties
               .apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
+      isosDir = workingDir+File.separator+"isos";
+      File isosDirFile = new File(isosDir);
+      if(!isosDirFile.exists()){
+        isosDirFile.mkdirs();
+      }
       host = context.utils().injector()
               .getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>() {
               }));
@@ -146,15 +156,39 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
               Splitter.on('r').split(
                       context.getProviderSpecificContext().getBuildVersion()), 0);
       adminDisk = workingDir + "/testadmin.vdi";
-      operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
+      operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso",
-              workingDir, hostVersion);
+              isosDir, hostVersion);
    }
 
    protected void undoVm(VmSpec vmSpecification) {
       machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(
               vmSpecification.getVmId(),
               new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+   }
+   
+   protected void ensureMachineHasPowerDown(String vmName) {
+     while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
+       try {
+         machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
+           @Override
+           public Void apply(ISession session) {
+             IProgress powerDownProgress = session.getConsole().powerDown();
+             powerDownProgress.waitForCompletion(-1);
+             return null;
+           }
+         });
+       } catch (RuntimeException e) {
+         // sometimes the machine might be powered of between the while test and the call to lockSessionOnMachineAndApply
+         if (e.getMessage().contains("Invalid machine state: PoweredOff")){
+           return;
+         } else if(e.getMessage().contains("VirtualBox error: The object is not ready")){
+           continue;
+         } else {
+           throw e;
+         }
+       }
+     }
    }
 
    @AfterClass(groups = "live")

@@ -63,7 +63,8 @@ public class IMachineToImage implements Function<IMachine, Image> {
       OperatingSystem os = OperatingSystem.builder().description(guestOSType.getDescription()).family(family)
             .version(version).is64Bit(guestOSType.getIs64Bit()).build();
 
-      return new ImageBuilder().id("" + from.getId()).description(from.getDescription()).operatingSystem(os).build();
+    return new ImageBuilder().id("" + from.getId()).name(from.getName()).description(from.getDescription())
+        .operatingSystem(os).build();
    }
 
 }

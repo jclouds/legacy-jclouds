@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.transform;
+import static junit.framework.Assert.assertEquals;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.Assert.assertTrue;
@@ -88,12 +89,13 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 	private Injector injector;
 	private Function<IMachine, SshClient> sshClientForIMachine;
 	private Predicate<SshClient> sshResponds;
+  private String vmName;
 
 	@Override
 	@BeforeClass(groups = "live")
 	public void setupClient() {
 		super.setupClient();
-		String vmName = VIRTUALBOX_IMAGE_PREFIX
+		this.vmName = VIRTUALBOX_IMAGE_PREFIX
 				+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass()
 						.getSimpleName());
 
@@ -136,16 +138,12 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 		undoVm(vmSpecification);
 	}
 
+	@Test
 	public void testCreateImageMachineFromIso() throws Exception {
 		IMachine imageMachine = getVmWithGuestAdditionsInstalled();
-
 		IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
 		Image newImage = iMachineToImage.apply(imageMachine);
-		// TODO add the description to the cache of the images or serialize to
-		// YAML the image desc
-		Set<? extends Image> images = context.getComputeService().listImages();
-		Iterable<String> imageIds = transform(images, extractId());
-		assertTrue(any(imageIds, equalTo(newImage.getId())));
+		assertEquals(vmName,newImage.getName());
 	}
 
 	@Test
@@ -209,27 +207,6 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 			// already created
 			return manager.get().getVBox()
 					.findMachine(masterSpec.getVmSpec().getVmId());
-		}
-	}
-
-	private void ensureMachineHasPowerDown(String vmName) {
-		while (!manager.get().getVBox().findMachine(vmName).getState()
-				.equals(MachineState.POWERED_OFF)) {
-			machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
-					new Function<ISession, Void>() {
-						@Override
-						public Void apply(ISession session) {
-							IProgress powerDownProgress = session.getConsole()
-									.powerDown();
-							powerDownProgress.waitForCompletion(-1);
-							return null;
-						}
-					});
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				Throwables.propagate(e);
-			}
 		}
 	}
 

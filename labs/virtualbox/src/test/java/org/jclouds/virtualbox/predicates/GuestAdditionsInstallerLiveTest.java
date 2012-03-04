@@ -144,16 +144,4 @@ public class GuestAdditionsInstallerLiveTest extends
 		}
 	}
 
-	private void ensureMachineHasPowerDown(String vmName) {
-		machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
-				new Function<ISession, Void>() {
-					@Override
-					public Void apply(ISession session) {
-						IProgress powerDownProgress = session.getConsole()
-								.powerDown();
-						powerDownProgress.waitForCompletion(-1);
-						return null;
-					}
-				});
-	}
 }

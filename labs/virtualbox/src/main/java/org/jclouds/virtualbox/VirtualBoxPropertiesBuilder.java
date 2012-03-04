@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.*;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
@@ -30,7 +30,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAU
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
 
 import java.io.File;
 import java.util.Properties;
@@ -58,6 +58,7 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
     properties.put(PROPERTY_ENDPOINT, "http://localhost:18083/");
     // later version not in maven, yet
     properties.put(PROPERTY_API_VERSION, "4.1.4");
+    
     properties.put(PROPERTY_BUILD_VERSION, "4.1.8r75467");
     properties.put(PROPERTY_IDENTITY, "administrator");
     properties.put(PROPERTY_CREDENTIAL, "12345");
