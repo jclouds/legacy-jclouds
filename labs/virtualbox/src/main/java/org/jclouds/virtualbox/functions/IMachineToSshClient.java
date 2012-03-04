@@ -57,18 +57,10 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 
    @Override
    public SshClient apply(final IMachine vm) {
-     INetworkAdapter networkAdapter = null;
-      for (long i = 0 ; i < 1000 ; i++){
-        try {
-          networkAdapter = vm.getNetworkAdapter(i);
-          logger.warn("NATDRIVERREDIRECTS: "+networkAdapter.getNatDriver().getRedirects().toString());
-        } catch (Exception e) {
-          break;
-        }
-      }
+     INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
       
       SshClient client = null;
-      checkState(networkAdapter != null);
+      checkNotNull(networkAdapter);
       for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()) {
          Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
          String protocolNumber = Iterables.get(stuff, 1);
@@ -77,7 +69,7 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
          String targetPort = Iterables.get(stuff, 5);
          // TODO: we need a way to align the default login credentials from the iso with the
          // vmspec
-         logger.warn("PROTOCOLNUMBER: "+protocolNumber);
+         logger.warn("PROTOCOLNUMBER: "+nameProtocolnumberAddressInboudportGuestTargetport);
          if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
             client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)),
                      LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());

@@ -20,7 +20,6 @@
 package org.jclouds.virtualbox.compute;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
@@ -32,9 +31,12 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
@@ -92,8 +94,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @Test
    public void testListHardwareProfiles() {
       Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-      assertTrue(Iterables.isEmpty(profiles));
-      // check state;
+      assertEquals(1,Iterables.size(profiles));
    }
 
    @Test
