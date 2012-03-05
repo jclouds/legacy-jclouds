@@ -23,45 +23,45 @@ import org.virtualbox_4_1.IMachine;
 
 public class Master {
 
-  private final IMachine   machine;
-  private final MasterSpec spec;
-  
-  public static Builder builder() {
-    return new Builder();
-  }
-  
-  public static class Builder {
-    private IMachine   machine;
-    private MasterSpec spec;
-    
-    public Builder machine(IMachine machine){
-      this.machine = machine;
-      return this;
-    }
-    
-    public Builder spec(MasterSpec spec){
-      this.spec = spec;
-      return this;
-    }
-    
-    public Master build(){
-      return new Master(machine,spec);
-    }
-    
-  }
+   private final IMachine machine;
+   private final MasterSpec spec;
 
-  private Master(IMachine machine, MasterSpec spec) {
-    super();
-    this.machine = machine;
-    this.spec = spec;
-  }
-  
-  public IMachine getMachine() {
-    return machine;
-  }
-  
-  public MasterSpec getSpec() {
-    return spec;
-  }
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private IMachine machine;
+      private MasterSpec spec;
+
+      public Builder machine(IMachine machine) {
+         this.machine = machine;
+         return this;
+      }
+
+      public Builder spec(MasterSpec spec) {
+         this.spec = spec;
+         return this;
+      }
+
+      public Master build() {
+         return new Master(machine, spec);
+      }
+
+   }
+
+   private Master(IMachine machine, MasterSpec spec) {
+      super();
+      this.machine = machine;
+      this.spec = spec;
+   }
+
+   public IMachine getMachine() {
+      return machine;
+   }
+
+   public MasterSpec getSpec() {
+      return spec;
+   }
 
 }

@@ -26,8 +26,8 @@ import org.virtualbox_4_1.IMachine;
 import com.google.common.base.Objects;
 
 /**
- * A complete specification of a "clone" node with networking setup
- * and the physical machine specification.
+ * A complete specification of a "clone" node with networking setup and the physical machine
+ * specification.
  */
 public class CloneSpec {
 
@@ -56,19 +56,19 @@ public class CloneSpec {
          this.networkSpec = networkSpec;
          return this;
       }
-      
-      public Builder master(IMachine master){
-        this.master = master;
-        return this;
+
+      public Builder master(IMachine master) {
+         this.master = master;
+         return this;
       }
-      
-      public Builder linked(boolean isLinked){
-        this.isLinked = isLinked;
-        return this;
+
+      public Builder linked(boolean isLinked) {
+         this.isLinked = isLinked;
+         return this;
       }
 
       public CloneSpec build() {
-         return new CloneSpec(vmSpec, networkSpec, master ,isLinked);
+         return new CloneSpec(vmSpec, networkSpec, master, isLinked);
       }
 
    }
@@ -90,36 +90,33 @@ public class CloneSpec {
    public NetworkSpec getNetworkSpec() {
       return networkSpec;
    }
-   
+
    public IMachine getMaster() {
-    return master;
-  }
-   
+      return master;
+   }
+
    public boolean isLinked() {
-    return isLinked;
-  }
+      return isLinked;
+   }
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
+      if (this == o)
+         return true;
       if (o instanceof VmSpec) {
          CloneSpec other = (CloneSpec) o;
-         return Objects.equal(vmSpec, other.vmSpec) &&
-                 Objects.equal(networkSpec, other.networkSpec);
+         return Objects.equal(vmSpec, other.vmSpec) && Objects.equal(networkSpec, other.networkSpec);
       }
       return false;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(vmSpec,networkSpec);
+      return Objects.hashCode(vmSpec, networkSpec);
    }
 
    @Override
    public String toString() {
-      return "IMachineSpec{" +
-              "vmSpec= " + vmSpec +
-              ", networkSpec= " + networkSpec +
-              '}';
+      return "IMachineSpec{" + "vmSpec= " + vmSpec + ", networkSpec= " + networkSpec + '}';
    }
 }

@@ -53,147 +53,147 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Singleton;
 
 /**
- * Defines the connection between the {@link org.virtualbox_4_1.VirtualBoxManager} implementation and the jclouds
- * {@link org.jclouds.compute.ComputeService}
+ * Defines the connection between the {@link org.virtualbox_4_1.VirtualBoxManager} implementation
+ * and the jclouds {@link org.jclouds.compute.ComputeService}
  * 
  * @author Mattias Holmqvist, Andrea Turli
  */
 @Singleton
 public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, Image, Location> {
 
-  private final Supplier<VirtualBoxManager>                             manager;
-  private final Map<Image, YamlImage>                                   images;
-  private final LoadingCache<Image, Master>                           mastersLoader;
-  private final Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator;
+   private final Supplier<VirtualBoxManager> manager;
+   private final Map<Image, YamlImage> images;
+   private final LoadingCache<Image, Master> mastersLoader;
+   private final Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator;
 
-  @Inject
-  public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
-      Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
-      Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator) {
-    this.manager = checkNotNull(manager, "manager");
-    this.images = imagesMapper.get();
-    this.mastersLoader = mastersLoader;
-    this.cloneCreator = cloneCreator;
-  }
+   @Inject
+   public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
+            Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
+            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator) {
+      this.manager = checkNotNull(manager, "manager");
+      this.images = imagesMapper.get();
+      this.mastersLoader = mastersLoader;
+      this.cloneCreator = cloneCreator;
+   }
 
-  @Override
-  public NodeAndInitialCredentials<IMachine> createNodeWithGroupEncodedIntoName(String tag, String name,
-      Template template) {
-    try {
-      Master master = mastersLoader.get(template.getImage());
-      NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
-      return cloneCreator.apply(nodeSpec);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  @Override
-  public Iterable<IMachine> listNodes() {
-    return Iterables.filter(manager.get().getVBox().getMachines(), new Predicate<IMachine>() {
-      @Override
-      public boolean apply(IMachine arg0) {
-        return !arg0.getName().startsWith(VIRTUALBOX_NODE_PREFIX);
+   @Override
+   public NodeAndInitialCredentials<IMachine> createNodeWithGroupEncodedIntoName(String tag, String name,
+            Template template) {
+      try {
+         Master master = mastersLoader.get(template.getImage());
+         NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
+         return cloneCreator.apply(nodeSpec);
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
-    });
-  }
+   }
 
-  @Override
-  public Iterable<IMachine> listHardwareProfiles() {
-    return imageMachines();
-  }
+   @Override
+   public Iterable<IMachine> listNodes() {
+      return Iterables.filter(manager.get().getVBox().getMachines(), new Predicate<IMachine>() {
+         @Override
+         public boolean apply(IMachine arg0) {
+            return !arg0.getName().startsWith(VIRTUALBOX_NODE_PREFIX);
+         }
+      });
+   }
 
-  @Override
-  public Iterable<Image> listImages() {
-    return images.keySet();
-  }
+   @Override
+   public Iterable<IMachine> listHardwareProfiles() {
+      return imageMachines();
+   }
 
-  private Iterable<IMachine> imageMachines() {
-    final Predicate<? super IMachine> imagePredicate = new Predicate<IMachine>() {
-      @Override
-      public boolean apply(@Nullable IMachine iMachine) {
-        return iMachine.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
+   @Override
+   public Iterable<Image> listImages() {
+      return images.keySet();
+   }
+
+   private Iterable<IMachine> imageMachines() {
+      final Predicate<? super IMachine> imagePredicate = new Predicate<IMachine>() {
+         @Override
+         public boolean apply(@Nullable IMachine iMachine) {
+            return iMachine.getName().startsWith(VIRTUALBOX_IMAGE_PREFIX);
+         }
+      };
+      final Iterable<IMachine> imageMachines = filter(manager.get().getVBox().getMachines(), imagePredicate);
+      return imageMachines;
+   }
+
+   @Override
+   public Iterable<Location> listLocations() {
+      // Not using the adapter to determine locations
+      return ImmutableSet.<Location> of();
+   }
+
+   @Override
+   public IMachine getNode(String vmName) {
+      return manager.get().getVBox().findMachine(vmName);
+   }
+
+   @Override
+   public void destroyNode(String vmName) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      powerDownMachine(machine);
+      machine.unregister(CleanupMode.Full);
+   }
+
+   @Override
+   public void rebootNode(String vmName) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      powerDownMachine(machine);
+      launchVMProcess(machine, manager.get().getSessionObject());
+   }
+
+   @Override
+   public void resumeNode(String vmName) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      ISession machineSession;
+      try {
+         machineSession = manager.get().openMachineSession(machine);
+         machineSession.getConsole().resume();
+         machineSession.unlockMachine();
+      } catch (Exception e) {
+         throw Throwables.propagate(e);
       }
-    };
-    final Iterable<IMachine> imageMachines = filter(manager.get().getVBox().getMachines(), imagePredicate);
-    return imageMachines;
-  }
+   }
 
-  @Override
-  public Iterable<Location> listLocations() {
-    // Not using the adapter to determine locations
-    return ImmutableSet.<Location> of();
-  }
-
-  @Override
-  public IMachine getNode(String vmName) {
-    return manager.get().getVBox().findMachine(vmName);
-  }
-
-  @Override
-  public void destroyNode(String vmName) {
-    IMachine machine = manager.get().getVBox().findMachine(vmName);
-    powerDownMachine(machine);
-    machine.unregister(CleanupMode.Full);
-  }
-
-  @Override
-  public void rebootNode(String vmName) {
-    IMachine machine = manager.get().getVBox().findMachine(vmName);
-    powerDownMachine(machine);
-    launchVMProcess(machine, manager.get().getSessionObject());
-  }
-
-  @Override
-  public void resumeNode(String vmName) {
-    IMachine machine = manager.get().getVBox().findMachine(vmName);
-    ISession machineSession;
-    try {
-      machineSession = manager.get().openMachineSession(machine);
-      machineSession.getConsole().resume();
-      machineSession.unlockMachine();
-    } catch (Exception e) {
-      throw Throwables.propagate(e);
-    }
-  }
-
-  @Override
-  public void suspendNode(String vmName) {
-    IMachine machine = manager.get().getVBox().findMachine(vmName);
-    ISession machineSession;
-    try {
-      machineSession = manager.get().openMachineSession(machine);
-      machineSession.getConsole().pause();
-      machineSession.unlockMachine();
-    } catch (Exception e) {
-      throw Throwables.propagate(e);
-    }
-  }
-
-  private void launchVMProcess(IMachine machine, ISession session) {
-    IProgress prog = machine.launchVMProcess(session, "gui", "");
-    prog.waitForCompletion(-1);
-    session.unlockMachine();
-  }
-
-  private void powerDownMachine(IMachine machine) {
-    try {
-      ISession machineSession = manager.get().openMachineSession(machine);
-      IProgress progress = machineSession.getConsole().powerDown();
-      progress.waitForCompletion(-1);
-      machineSession.unlockMachine();
-
-      while (!machine.getSessionState().equals(SessionState.Unlocked)) {
-        try {
-          System.out.println("waiting for unlocking session - session state: " + machine.getSessionState());
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-        }
+   @Override
+   public void suspendNode(String vmName) {
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      ISession machineSession;
+      try {
+         machineSession = manager.get().openMachineSession(machine);
+         machineSession.getConsole().pause();
+         machineSession.unlockMachine();
+      } catch (Exception e) {
+         throw Throwables.propagate(e);
       }
+   }
 
-    } catch (Exception e) {
-      throw Throwables.propagate(e);
-    }
-  }
+   private void launchVMProcess(IMachine machine, ISession session) {
+      IProgress prog = machine.launchVMProcess(session, "gui", "");
+      prog.waitForCompletion(-1);
+      session.unlockMachine();
+   }
+
+   private void powerDownMachine(IMachine machine) {
+      try {
+         ISession machineSession = manager.get().openMachineSession(machine);
+         IProgress progress = machineSession.getConsole().powerDown();
+         progress.waitForCompletion(-1);
+         machineSession.unlockMachine();
+
+         while (!machine.getSessionState().equals(SessionState.Unlocked)) {
+            try {
+               System.out.println("waiting for unlocking session - session state: " + machine.getSessionState());
+               Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+         }
+
+      } catch (Exception e) {
+         throw Throwables.propagate(e);
+      }
+   }
 
 }

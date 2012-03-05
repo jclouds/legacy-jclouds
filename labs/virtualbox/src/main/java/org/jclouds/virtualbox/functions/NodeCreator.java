@@ -48,57 +48,58 @@ import com.google.common.base.Supplier;
 @Singleton
 public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials<IMachine>> {
 
-  private final Supplier<VirtualBoxManager>   manager;
-  private final Function<CloneSpec, IMachine> cloner;
+   private final Supplier<VirtualBoxManager> manager;
+   private final Function<CloneSpec, IMachine> cloner;
 
-  @Inject
-  public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner, MachineUtils machineUtils) {
-    this.manager = manager;
-    this.cloner = cloner;
-  }
+   @Inject
+   public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,
+            MachineUtils machineUtils) {
+      this.manager = manager;
+      this.cloner = cloner;
+   }
 
-  @Override
-  public NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
+   @Override
+   public NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
 
-    Master master = nodeSpec.getMaster();
+      Master master = nodeSpec.getMaster();
 
-    if (master.getMachine().getCurrentSnapshot() != null) {
-      ISession session;
-      try {
-        session = manager.get().openMachineSession(master.getMachine());
-      } catch (Exception e) {
-        throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
+      if (master.getMachine().getCurrentSnapshot() != null) {
+         ISession session;
+         try {
+            session = manager.get().openMachineSession(master.getMachine());
+         } catch (Exception e) {
+            throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
+         }
+         session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
+         session.unlockMachine();
       }
-      session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
-      session.unlockMachine();
-    }
-    String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
+      String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
 
-    String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + "-" + nodeSpec.getTag() + "-"
-        + nodeSpec.getName();
+      String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + "-" + nodeSpec.getTag() + "-"
+               + nodeSpec.getName();
 
-    VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
-        .forceOverwrite(true).build();
+      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
+               .forceOverwrite(true).build();
 
-    NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
 
-    NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-        .build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+               .build();
 
-    NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
 
-    CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
-        .vm(cloneVmSpec).build();
+      CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
+               .vm(cloneVmSpec).build();
 
-    IMachine cloned = cloner.apply(cloneSpec);
+      IMachine cloned = cloner.apply(cloneSpec);
 
-    new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
+      new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
 
-    // TODO get credentials from somewhere else (they are also HC in IMachineToSshClient)
-    NodeAndInitialCredentials<IMachine> nodeAndInitialCredentials = new NodeAndInitialCredentials<IMachine>(cloned,
-        cloneName, LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
+      // TODO get credentials from somewhere else (they are also HC in IMachineToSshClient)
+      NodeAndInitialCredentials<IMachine> nodeAndInitialCredentials = new NodeAndInitialCredentials<IMachine>(cloned,
+               cloneName, LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
 
-    return nodeAndInitialCredentials;
-  }
+      return nodeAndInitialCredentials;
+   }
 }

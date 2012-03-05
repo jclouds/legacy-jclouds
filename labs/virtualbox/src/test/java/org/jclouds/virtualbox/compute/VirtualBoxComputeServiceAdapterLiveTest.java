@@ -38,70 +38,70 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
-  private VirtualBoxComputeServiceAdapter     adapter;
-  private NodeAndInitialCredentials<IMachine> machine;
+   private VirtualBoxComputeServiceAdapter adapter;
+   private NodeAndInitialCredentials<IMachine> machine;
 
-  @Override
-  public void setupClient() {
-    super.setupClient();
-    adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
-  }
+   @Override
+   public void setupClient() {
+      super.setupClient();
+      adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
+   }
 
-  @Test
-  public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
-    String group = "foo";
-    String name = "foo-ef4";
-    String machineName = VIRTUALBOX_NODE_PREFIX + "myTestId-" + group + "-" + name;
-    // get the image from
-    Image image = Iterables.get(adapter.listImages(), 0);
-    System.out.println(context.getComputeService().templateBuilder());
-    Template template = context.getComputeService().templateBuilder().fromImage(image).build();
-    machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
-    assertEquals(machine.getNode().getName(), machineName);
-    // is there a place for group?
-    // check other things, like cpu correct, mem correct, image/os is correct
-    // (as possible)
-    // TODO: what's the IP address?
-    // assert
-    // InetAddresses.isInetAddress(machine.getPrimaryBackendIpAddress()) :
-    // machine;
-    doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
-  }
+   @Test
+   public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
+      String group = "foo";
+      String name = "foo-ef4";
+      String machineName = VIRTUALBOX_NODE_PREFIX + "myTestId-" + group + "-" + name;
+      // get the image from
+      Image image = Iterables.get(adapter.listImages(), 0);
+      System.out.println(context.getComputeService().templateBuilder());
+      Template template = context.getComputeService().templateBuilder().fromImage(image).build();
+      machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
+      assertEquals(machine.getNode().getName(), machineName);
+      // is there a place for group?
+      // check other things, like cpu correct, mem correct, image/os is correct
+      // (as possible)
+      // TODO: what's the IP address?
+      // assert
+      // InetAddresses.isInetAddress(machine.getPrimaryBackendIpAddress()) :
+      // machine;
+      doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
+   }
 
-  protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
-    SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine); 
-    try {
-      ssh.connect();
-      ExecResponse hello = ssh.exec("echo hello");
-      assertEquals(hello.getOutput().trim(), "hello");
-      System.err.println(ssh.exec("df -k").getOutput());
-      System.err.println(ssh.exec("mount").getOutput());
-      System.err.println(ssh.exec("uname -a").getOutput());
-    } finally {
-      if (ssh != null)
-        ssh.disconnect();
-    }
-  }
+   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
+      SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
+      try {
+         ssh.connect();
+         ExecResponse hello = ssh.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
+         System.err.println(ssh.exec("df -k").getOutput());
+         System.err.println(ssh.exec("mount").getOutput());
+         System.err.println(ssh.exec("uname -a").getOutput());
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+   }
 
-  @Test
-  public void testListHardwareProfiles() {
-    Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-    assertEquals(1, Iterables.size(profiles));
-  }
+   @Test
+   public void testListHardwareProfiles() {
+      Iterable<IMachine> profiles = adapter.listHardwareProfiles();
+      assertEquals(1, Iterables.size(profiles));
+   }
 
-  @Test
-  public void testListImages() {
-    Iterable<Image> iMageIterable = adapter.listImages();
-    for (Image image : iMageIterable) {
-      System.out.println(image);
-    }
-    // check state;
-  }
+   @Test
+   public void testListImages() {
+      Iterable<Image> iMageIterable = adapter.listImages();
+      for (Image image : iMageIterable) {
+         System.out.println(image);
+      }
+      // check state;
+   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    if (machine != null)
-//      adapter.destroyNode(machine.getNodeId() + "");
-    super.tearDown();
-  }
+   @Override
+   protected void tearDown() throws Exception {
+      if (machine != null)
+         // adapter.destroyNode(machine.getNodeId() + "");
+         super.tearDown();
+   }
 }

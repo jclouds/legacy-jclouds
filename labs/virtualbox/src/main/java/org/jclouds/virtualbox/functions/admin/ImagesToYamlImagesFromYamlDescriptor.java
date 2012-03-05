@@ -43,42 +43,42 @@ import com.google.common.collect.Maps;
 @Singleton
 public class ImagesToYamlImagesFromYamlDescriptor implements Supplier<Map<Image, YamlImage>> {
 
-  private String yamlDescriptor;
+   private String yamlDescriptor;
 
-  @Inject
-  public ImagesToYamlImagesFromYamlDescriptor(Supplier<String> yamlDescriptorSupplier) {
-    this.yamlDescriptor = yamlDescriptorSupplier.get();
-    checkNotNull(yamlDescriptor, "yaml descriptor");
-    checkState(!yamlDescriptor.equals(""), "yaml descriptor is empty");
-  }
+   @Inject
+   public ImagesToYamlImagesFromYamlDescriptor(Supplier<String> yamlDescriptorSupplier) {
+      this.yamlDescriptor = yamlDescriptorSupplier.get();
+      checkNotNull(yamlDescriptor, "yaml descriptor");
+      checkState(!yamlDescriptor.equals(""), "yaml descriptor is empty");
+   }
 
-  /**
-   * Type-safe config class for YAML
-   * 
-   */
-  public static class Config {
-    public List<YamlImage> images;
-  }
+   /**
+    * Type-safe config class for YAML
+    * 
+    */
+   public static class Config {
+      public List<YamlImage> images;
+   }
 
-  @Override
-  public Map<Image, YamlImage> get() {
+   @Override
+   public Map<Image, YamlImage> get() {
 
-    Constructor constructor = new Constructor(Config.class);
+      Constructor constructor = new Constructor(Config.class);
 
-    TypeDescription imageDesc = new TypeDescription(YamlImage.class);
-    imageDesc.putListPropertyType("images", String.class);
-    constructor.addTypeDescription(imageDesc);
+      TypeDescription imageDesc = new TypeDescription(YamlImage.class);
+      imageDesc.putListPropertyType("images", String.class);
+      constructor.addTypeDescription(imageDesc);
 
-    Yaml yaml = new Yaml(constructor);
-    Config config = (Config) yaml.load(yamlDescriptor);
-    checkState(config != null, "missing config: class");
-    checkState(config.images != null, "missing images: collection");
+      Yaml yaml = new Yaml(constructor);
+      Config config = (Config) yaml.load(yamlDescriptor);
+      checkState(config != null, "missing config: class");
+      checkState(config.images != null, "missing images: collection");
 
-    Map<Image, YamlImage> backingMap = Maps.newLinkedHashMap();
-    for (YamlImage yamlImage : config.images) {
-      backingMap.put(YamlImage.toImage.apply(yamlImage), yamlImage);
-    }
-    return backingMap;
-  }
+      Map<Image, YamlImage> backingMap = Maps.newLinkedHashMap();
+      for (YamlImage yamlImage : config.images) {
+         backingMap.put(YamlImage.toImage.apply(yamlImage), yamlImage);
+      }
+      return backingMap;
+   }
 
 }

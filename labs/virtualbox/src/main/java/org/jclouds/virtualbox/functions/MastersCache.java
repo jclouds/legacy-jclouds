@@ -69,121 +69,120 @@ import com.google.common.collect.Maps;
  */
 public class MastersCache extends AbstractLoadingCache<Image, Master> {
 
-  private final Map<String, Master>            masters = Maps.newHashMap();
-  private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
-  private final Map<String, YamlImage>         imageMapping;
-  private final String                         workingDir;
-  private final String                         adminDisk;
-  private final String                         guestAdditionsIso;
-  private final String                         installationKeySequence;
-  private final String                         isosDir;
-  private Supplier<VirtualBoxManager>          manager;
+   private final Map<String, Master> masters = Maps.newHashMap();
+   private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
+   private final Map<String, YamlImage> imageMapping;
+   private final String workingDir;
+   private final String adminDisk;
+   private final String guestAdditionsIso;
+   private final String installationKeySequence;
+   private final String isosDir;
+   private Supplier<VirtualBoxManager> manager;
 
-  @Inject
-  public MastersCache(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
-      @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
-      @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
-      Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager) {
-    checkNotNull(version, "version");
-    checkNotNull(installationKeySequence, "installationKeySequence");
-    checkNotNull(manager, "vboxmanager");
-    this.manager = manager;
-    this.masterCreatorAndInstaller = masterLoader;
-    this.installationKeySequence = installationKeySequence;
-    this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
-    File wdFile = new File(this.workingDir);
-    if (!wdFile.exists()) {
-      wdFile.mkdirs();
-    }
-    this.isosDir = wdFile.getAbsolutePath() + File.separator + "isos";
-    this.adminDisk = workingDir + "/testadmin.vdi";
-    this.imageMapping = Maps.newLinkedHashMap();
-    for (Entry<Image, YamlImage> entry : yamlMapper.get().entrySet()) {
-      this.imageMapping.put(entry.getKey().getId(), entry.getValue());
-    }
-    this.guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir,
-        Iterables.get(Splitter.on('r').split(version), 0));
-    checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
-  }
-
-  @Override
-  public Master get(Image key) throws ExecutionException {
-    // check if we have loaded this machine before
-    if (masters.containsKey(key.getId())) {
-      return masters.get(key);
-    }
-
-    // the yaml image
-    YamlImage yamlImage = imageMapping.get(key.getId());
-
-    checkNotNull(yamlImage, "could not find yaml image for image: " + key);
-
-    // check if the iso is here, download if not
-    String localIsoUrl = getFilePathOrDownload(yamlImage.iso);
-
-    String vmName = VIRTUALBOX_IMAGE_PREFIX + yamlImage.id;
-
-    HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1).build();
-
-    StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-        .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
-
-    VmSpec vmSpecification = VmSpec.builder().id(yamlImage.id).name(vmName).memoryMB(512).osTypeId("")
-        .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
-
-    NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-
-    NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-        .build();
-
-    NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
-
-    MasterSpec masterSpec = MasterSpec
-        .builder()
-        .vm(vmSpecification)
-        .iso(
-            IsoSpec.builder().sourcePath(localIsoUrl)
-                .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
-        .network(networkSpec).build();
-    
-    IMachine masterMachine;
-    
-    // try and find a master machine in vbox
-    try {
-      masterMachine = manager.get().getVBox().findMachine(vmName);
-   } catch (VBoxException e) {
-      if (machineNotFoundException(e)) {
-        // create the master machine if it can't be found
-        masterMachine = masterCreatorAndInstaller.apply(masterSpec);
+   @Inject
+   public MastersCache(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
+            @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
+            @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
+            Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager) {
+      checkNotNull(version, "version");
+      checkNotNull(installationKeySequence, "installationKeySequence");
+      checkNotNull(manager, "vboxmanager");
+      this.manager = manager;
+      this.masterCreatorAndInstaller = masterLoader;
+      this.installationKeySequence = installationKeySequence;
+      this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
+      File wdFile = new File(this.workingDir);
+      if (!wdFile.exists()) {
+         wdFile.mkdirs();
       }
-      else {
-         throw e;
+      this.isosDir = wdFile.getAbsolutePath() + File.separator + "isos";
+      this.adminDisk = workingDir + "/testadmin.vdi";
+      this.imageMapping = Maps.newLinkedHashMap();
+      for (Entry<Image, YamlImage> entry : yamlMapper.get().entrySet()) {
+         this.imageMapping.put(entry.getKey().getId(), entry.getValue());
       }
+      this.guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir,
+               Iterables.get(Splitter.on('r').split(version), 0));
+      checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
    }
 
-    Master master = Master.builder().machine(masterMachine).spec(masterSpec).build();
+   @Override
+   public Master get(Image key) throws ExecutionException {
+      // check if we have loaded this machine before
+      if (masters.containsKey(key.getId())) {
+         return masters.get(key);
+      }
 
-    masters.put(key.getId(), master);
+      // the yaml image
+      YamlImage yamlImage = imageMapping.get(key.getId());
 
-    return master;
-  }
+      checkNotNull(yamlImage, "could not find yaml image for image: " + key);
 
-  private String getFilePathOrDownload(String httpUrl) throws ExecutionException {
-    // TODO validation
-    String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1, httpUrl.length());
-    File localFile = new File(isosDir, fileName);
-    // TODO download. for now just expect the file to be there
-    checkState(localFile.exists(), "iso file has not been downloaded: " + fileName);
-    return localFile.getAbsolutePath();
-  }
+      // check if the iso is here, download if not
+      String localIsoUrl = getFilePathOrDownload(yamlImage.iso);
 
-  @Override
-  public Master getIfPresent(Image key) {
-    if (masters.containsKey(key.getId())) {
-      return masters.get(key.getId());
-    }
-    return null;
-  }
+      String vmName = VIRTUALBOX_IMAGE_PREFIX + yamlImage.id;
+
+      HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1)
+               .build();
+
+      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
+               .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
+
+      VmSpec vmSpecification = VmSpec.builder().id(yamlImage.id).name(vmName).memoryMB(512).osTypeId("")
+               .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
+
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+               .build();
+
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+
+      MasterSpec masterSpec = MasterSpec
+               .builder()
+               .vm(vmSpecification)
+               .iso(IsoSpec.builder().sourcePath(localIsoUrl)
+                        .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName()))
+                        .build()).network(networkSpec).build();
+
+      IMachine masterMachine;
+
+      // try and find a master machine in vbox
+      try {
+         masterMachine = manager.get().getVBox().findMachine(vmName);
+      } catch (VBoxException e) {
+         if (machineNotFoundException(e)) {
+            // create the master machine if it can't be found
+            masterMachine = masterCreatorAndInstaller.apply(masterSpec);
+         } else {
+            throw e;
+         }
+      }
+
+      Master master = Master.builder().machine(masterMachine).spec(masterSpec).build();
+
+      masters.put(key.getId(), master);
+
+      return master;
+   }
+
+   private String getFilePathOrDownload(String httpUrl) throws ExecutionException {
+      // TODO validation
+      String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1, httpUrl.length());
+      File localFile = new File(isosDir, fileName);
+      // TODO download. for now just expect the file to be there
+      checkState(localFile.exists(), "iso file has not been downloaded: " + fileName);
+      return localFile.getAbsolutePath();
+   }
+
+   @Override
+   public Master getIfPresent(Image key) {
+      if (masters.containsKey(key.getId())) {
+         return masters.get(key.getId());
+      }
+      return null;
+   }
 
 }

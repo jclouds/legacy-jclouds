@@ -23,70 +23,70 @@ import org.jclouds.compute.domain.Template;
 
 public class NodeSpec {
 
-  private final Master   master;
-  private final String   name;
-  private final String   tag;
-  private final Template template;
+   private final Master master;
+   private final String name;
+   private final String tag;
+   private final Template template;
 
-  public static Builder builder() {
-    return new Builder();
-  }
+   public static Builder builder() {
+      return new Builder();
+   }
 
-  public static class Builder {
+   public static class Builder {
 
-    private Master   master;
-    private String   name;
-    private String   tag;
-    private Template template;
+      private Master master;
+      private String name;
+      private String tag;
+      private Template template;
 
-    public Builder master(Master master) {
+      public Builder master(Master master) {
+         this.master = master;
+         return this;
+      }
+
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      public Builder tag(String tag) {
+         this.tag = tag;
+         return this;
+      }
+
+      public Builder template(Template template) {
+         this.template = template;
+         return this;
+      }
+
+      public NodeSpec build() {
+         return new NodeSpec(master, name, tag, template);
+      }
+
+   }
+
+   private NodeSpec(Master master, String name, String tag, Template template) {
+      super();
       this.master = master;
-      return this;
-    }
-
-    public Builder name(String name) {
       this.name = name;
-      return this;
-    }
-
-    public Builder tag(String tag) {
       this.tag = tag;
-      return this;
-    }
-
-    public Builder template(Template template) {
       this.template = template;
-      return this;
-    }
+   }
 
-    public NodeSpec build() {
-      return new NodeSpec(master, name, tag, template);
-    }
+   public Master getMaster() {
+      return master;
+   }
 
-  }
+   public String getName() {
+      return name;
+   }
 
-  private NodeSpec(Master master, String name, String tag, Template template) {
-    super();
-    this.master = master;
-    this.name = name;
-    this.tag = tag;
-    this.template = template;
-  }
+   public String getTag() {
+      return tag;
+   }
 
-  public Master getMaster() {
-    return master;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getTag() {
-    return tag;
-  }
-
-  public Template getTemplate() {
-    return template;
-  }
+   public Template getTemplate() {
+      return template;
+   }
 
 }

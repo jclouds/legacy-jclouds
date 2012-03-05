@@ -43,22 +43,22 @@ import com.google.common.base.Supplier;
  */
 public class YamlImagesFromFileConfig implements Supplier<String> {
 
-  private String yamlFilePath;
+   private String yamlFilePath;
 
-  @Inject
-  public YamlImagesFromFileConfig(@Named(VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR) String yamlFilePath) {
-    this.yamlFilePath = yamlFilePath;
-  }
+   @Inject
+   public YamlImagesFromFileConfig(@Named(VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR) String yamlFilePath) {
+      this.yamlFilePath = yamlFilePath;
+   }
 
-  @Override
-  public String get() {
-    checkNotNull(yamlFilePath, "yaml file path");
-    File yamlFile = new File(yamlFilePath);
-    checkState(yamlFile.exists(), "yaml file does not exist at: " + yamlFilePath);
-    try {
-      return IOUtils.toString(new FileInputStream(yamlFile));
-    } catch (IOException e) {
-      throw new RuntimeException("error reading yaml file");
-    }
-  }
+   @Override
+   public String get() {
+      checkNotNull(yamlFilePath, "yaml file path");
+      File yamlFile = new File(yamlFilePath);
+      checkState(yamlFile.exists(), "yaml file does not exist at: " + yamlFilePath);
+      try {
+         return IOUtils.toString(new FileInputStream(yamlFile));
+      } catch (IOException e) {
+         throw new RuntimeException("error reading yaml file");
+      }
+   }
 }

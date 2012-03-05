@@ -32,7 +32,6 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
@@ -64,7 +63,7 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VirtualBoxClient}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
@@ -85,7 +84,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String isosDir;
    protected Supplier<NodeMetadata> host;
    protected static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
-       new DefaultCredentialsFromImageOrOverridingCredentials());
+            new DefaultCredentialsFromImageOrOverridingCredentials());
 
    @Override
    protected void setupCredentials() {
@@ -97,11 +96,10 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    protected void ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults() {
-      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder()
-              .build();
+      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder().build();
       if (!System.getProperties().containsKey("test." + provider + ".identity"))
          System.setProperty("test." + provider + ".identity",
-                 defaultVBoxProperties.getProperty(Constants.PROPERTY_IDENTITY));
+                  defaultVBoxProperties.getProperty(Constants.PROPERTY_IDENTITY));
    }
 
    @BeforeClass(groups = "live")
@@ -109,44 +107,33 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       setupCredentials();
       Properties overrides = new VirtualBoxPropertiesBuilder(setupProperties()).build();
 
-      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(
-              ImmutableMap.of(
-                      "host",
-                      Node.builder()
-                              .id("host")
-                              .name("host installing virtualbox")
-                              .hostname("localhost")
-                              .osFamily(OsFamily.LINUX.toString())
-                              .osDescription(System.getProperty("os.name"))
-                              .osVersion(System.getProperty("os.version"))
-                              .group("ssh")
-                              .username(System.getProperty("user.name"))
-                              .credentialUrl(
-                                      URI.create("file://"
-                                              + System.getProperty("user.home")
-                                              + "/.ssh/id_rsa")).build()));
+      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
+               "host",
+               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
+                        .osVersion(System.getProperty("os.version")).group("ssh")
+                        .username(System.getProperty("user.name"))
+                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
+                        .build()));
 
-      context = new ComputeServiceContextFactory().createContext(provider,
-              identity, credential, ImmutableSet.<Module>of(
-              new SLF4JLoggingModule(), new SshjSshClientModule(),
-              hostModule), overrides);
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
       Function<String, String> configProperties = context.utils().injector()
-              .getInstance(ValueOfConfigurationKeyOrNull.class);
+               .getInstance(ValueOfConfigurationKeyOrNull.class);
       imageId = "ubuntu-11.04-server-i386";
-      workingDir = configProperties
-              .apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
-      isosDir = workingDir+File.separator+"isos";
+      workingDir = configProperties.apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
+      isosDir = workingDir + File.separator + "isos";
       File isosDirFile = new File(isosDir);
-      if(!isosDirFile.exists()){
-        isosDirFile.mkdirs();
+      if (!isosDirFile.exists()) {
+         isosDirFile.mkdirs();
       }
-      host = context.utils().injector()
-              .getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>() {
-              }));
+      host = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>() {
+      }));
 
       // this will eagerly startup Jetty, note the impl will shut itself down
-      preconfigurationUri = context.utils().injector().getInstance(Key.get(new TypeLiteral<LoadingCache<IsoSpec, URI>>() {
-      }, Preconfiguration.class));
+      preconfigurationUri = context.utils().injector()
+               .getInstance(Key.get(new TypeLiteral<LoadingCache<IsoSpec, URI>>() {
+               }, Preconfiguration.class));
       // this will eagerly startup Jetty, note the impl will shut itself down
 
       manager = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<VirtualBoxManager>>() {
@@ -156,43 +143,40 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
       machineUtils = context.utils().injector().getInstance(MachineUtils.class);
 
-      hostVersion = Iterables.get(
-              Splitter.on('r').split(
-                      context.getProviderSpecificContext().getBuildVersion()), 0);
+      hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
-      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso",
-              isosDir, hostVersion);
+      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
    }
 
    protected void undoVm(VmSpec vmSpecification) {
-      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(
-              vmSpecification.getVmId(),
-              new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(),
+               new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
-   
+
    protected void ensureMachineHasPowerDown(String vmName) {
-     while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
-       try {
-         machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
-           @Override
-           public Void apply(ISession session) {
-             IProgress powerDownProgress = session.getConsole().powerDown();
-             powerDownProgress.waitForCompletion(-1);
-             return null;
-           }
-         });
-       } catch (RuntimeException e) {
-         // sometimes the machine might be powered of between the while test and the call to lockSessionOnMachineAndApply
-         if (e.getMessage().contains("Invalid machine state: PoweredOff")){
-           return;
-         } else if(e.getMessage().contains("VirtualBox error: The object is not ready")){
-           continue;
-         } else {
-           throw e;
+      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
+         try {
+            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
+               @Override
+               public Void apply(ISession session) {
+                  IProgress powerDownProgress = session.getConsole().powerDown();
+                  powerDownProgress.waitForCompletion(-1);
+                  return null;
+               }
+            });
+         } catch (RuntimeException e) {
+            // sometimes the machine might be powered of between the while test and the call to
+            // lockSessionOnMachineAndApply
+            if (e.getMessage().contains("Invalid machine state: PoweredOff")) {
+               return;
+            } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
+               continue;
+            } else {
+               throw e;
+            }
          }
-       }
-     }
+      }
    }
 
    @AfterClass(groups = "live")

@@ -30,7 +30,7 @@ import java.io.File;
 public interface VirtualBoxConstants {
 
    public static final String VIRTUALBOX_IMAGE_PREFIX = "jclouds-image-";
-   
+
    public static final String VIRTUALBOX_NODE_PREFIX = "jclouds-node-";
 
    public static final String VIRTUALBOX_PRECONFIGURATION_URL = "jclouds.virtualbox.preconfigurationurl";
@@ -38,7 +38,7 @@ public interface VirtualBoxConstants {
    public static final String VIRTUALBOX_INSTALLATION_KEY_SEQUENCE = "jclouds.virtualbox.installationkeysequence";
 
    public static final String VIRTUALBOX_WORKINGDIR = "jclouds.virtualbox.workingdir";
-   
+
    public static final String VIRTUALBOX_IMAGES_DESCRIPTOR = "jclouds.virtualbox.image.descriptor.yaml";
 
    public static final String VIRTUALBOX_MACHINE_GROUP = "jclouds.virtualbox.machinegroup";
@@ -54,10 +54,10 @@ public interface VirtualBoxConstants {
    public static final String VIRTUALBOX_WEBSERVER_IDENTITY = "jclouds.virtualbox.webserver.identity";
 
    public static final String VIRTUALBOX_WEBSERVER_CREDENTIAL = "jclouds.virtualbox.webserver.credential";
-   
-   public static final String VIRTUALBOX_DEFAULT_DIR = System.getProperty("user.home")
-       + File.separator +".jclouds-vbox";
-   
+
+   public static final String VIRTUALBOX_DEFAULT_DIR = System.getProperty("user.home") + File.separator
+            + ".jclouds-vbox";
+
    public static final String VIRTUALBOX_PROVIDER = "virtualbox";
 
 }

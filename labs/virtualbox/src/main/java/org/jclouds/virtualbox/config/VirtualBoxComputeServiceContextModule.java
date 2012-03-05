@@ -103,185 +103,166 @@ import com.google.inject.TypeLiteral;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class VirtualBoxComputeServiceContextModule extends
-    ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
+         ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
 
-  public VirtualBoxComputeServiceContextModule() {
-    super(Supplier.class, Supplier.class);
-  }
+   public VirtualBoxComputeServiceContextModule() {
+      super(Supplier.class, Supplier.class);
+   }
 
-  @Override
-  protected void configure() {
-    super.configure();
-    bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, Image, Location>>() {
-    }).to(VirtualBoxComputeServiceAdapter.class);
-    bind(new TypeLiteral<Function<IMachine, NodeMetadata>>() {
-    }).to(IMachineToNodeMetadata.class);
-    bind(new TypeLiteral<Function<Location, Location>>() {
-    }).to((Class) IdentityFunction.class);
-    bind(new TypeLiteral<Function<Image, Image>>() {
-    }).to((Class) IdentityFunction.class);
-    bind(new TypeLiteral<Function<IMachine, Hardware>>() {
-    }).to(IMachineToHardware.class);
-    bind(new TypeLiteral<Function<IMachine, Image>>() {
-    }).to(IMachineToImage.class);
-    bind(new TypeLiteral<CacheLoader<IsoSpec, URI>>() {
-    }).to((Class) StartJettyIfNotAlreadyRunning.class);
-    bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
-    }).to((Class) StartVBoxIfNotAlreadyRunning.class);
-    // the yaml config to image mapper
-    bind(new TypeLiteral<Supplier<Map<Image, YamlImage>>>() {
-    }).to((Class) ImagesToYamlImagesFromYamlDescriptor.class);
-    // the yaml config provider
-    bind(new TypeLiteral<Supplier<String>>() {
-    }).to((Class) YamlImagesFromFileConfig.class);
-    // the master machines cache
-    bind(new TypeLiteral<LoadingCache<Image, Master>>() {
-    }).to((Class) MastersCache.class);
-    // the master creating function
-    bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
-    }).to((Class) CreateAndInstallVm.class);
-    // the machine cloning function
-    bind(new TypeLiteral<Function<NodeSpec, NodeAndInitialCredentials<IMachine>>>() {
-    }).to((Class) NodeCreator.class);
-    bind(new TypeLiteral<Function<CloneSpec, IMachine>>() {
-    }).to((Class) CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.class);
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, Image, Location>>() {
+      }).to(VirtualBoxComputeServiceAdapter.class);
+      bind(new TypeLiteral<Function<IMachine, NodeMetadata>>() {
+      }).to(IMachineToNodeMetadata.class);
+      bind(new TypeLiteral<Function<Location, Location>>() {
+      }).to((Class) IdentityFunction.class);
+      bind(new TypeLiteral<Function<Image, Image>>() {
+      }).to((Class) IdentityFunction.class);
+      bind(new TypeLiteral<Function<IMachine, Hardware>>() {
+      }).to(IMachineToHardware.class);
+      bind(new TypeLiteral<Function<IMachine, Image>>() {
+      }).to(IMachineToImage.class);
+      bind(new TypeLiteral<CacheLoader<IsoSpec, URI>>() {
+      }).to((Class) StartJettyIfNotAlreadyRunning.class);
+      bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
+      }).to((Class) StartVBoxIfNotAlreadyRunning.class);
+      // the yaml config to image mapper
+      bind(new TypeLiteral<Supplier<Map<Image, YamlImage>>>() {
+      }).to((Class) ImagesToYamlImagesFromYamlDescriptor.class);
+      // the yaml config provider
+      bind(new TypeLiteral<Supplier<String>>() {
+      }).to((Class) YamlImagesFromFileConfig.class);
+      // the master machines cache
+      bind(new TypeLiteral<LoadingCache<Image, Master>>() {
+      }).to((Class) MastersCache.class);
+      // the master creating function
+      bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
+      }).to((Class) CreateAndInstallVm.class);
+      // the machine cloning function
+      bind(new TypeLiteral<Function<NodeSpec, NodeAndInitialCredentials<IMachine>>>() {
+      }).to((Class) NodeCreator.class);
+      bind(new TypeLiteral<Function<CloneSpec, IMachine>>() {
+      }).to((Class) CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.class);
 
-    // for byon
-    bind(new TypeLiteral<Function<URI, InputStream>>() {
-    }).to(SupplyFromProviderURIOrNodesProperty.class);
+      // for byon
+      bind(new TypeLiteral<Function<URI, InputStream>>() {
+      }).to(SupplyFromProviderURIOrNodesProperty.class);
 
-    bind(new TypeLiteral<Function<IMachine, SshClient>>() {
-    }).to(IMachineToSshClient.class);
+      bind(new TypeLiteral<Function<IMachine, SshClient>>() {
+      }).to(IMachineToSshClient.class);
 
-    bind(ExecutionType.class).toInstance(ExecutionType.GUI);
-    bind(LockType.class).toInstance(LockType.Write);
-  }
+      bind(ExecutionType.class).toInstance(ExecutionType.GUI);
+      bind(LockType.class).toInstance(LockType.Write);
+   }
 
-  @Provides
-  @Singleton
-  @Preconfiguration
-  protected LoadingCache<IsoSpec, URI> preconfiguration(CacheLoader<IsoSpec, URI> cacheLoader) {
-    return CacheBuilder.newBuilder().build(cacheLoader);
-  }
+   @Provides
+   @Singleton
+   @Preconfiguration
+   protected LoadingCache<IsoSpec, URI> preconfiguration(CacheLoader<IsoSpec, URI> cacheLoader) {
+      return CacheBuilder.newBuilder().build(cacheLoader);
+   }
 
-  @Provides
-  @Host
-  @Singleton
-  protected ComputeServiceContext provideHostController() {
-    String provider = "byon";
-    String identity = "";
-    String credential = "";
-    CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
-        "host",
-        Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
-            .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
-            .osVersion(System.getProperty("os.version")).group("ssh").username(System.getProperty("user.name"))
-            .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa")).build()));
-    return new ComputeServiceContextFactory().createContext(provider, identity, credential,
-        ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule));
-  }
+   @Provides
+   @Host
+   @Singleton
+   protected ComputeServiceContext provideHostController() {
+      String provider = "byon";
+      String identity = "";
+      String credential = "";
+      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
+               "host",
+               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
+                        .osVersion(System.getProperty("os.version")).group("ssh")
+                        .username(System.getProperty("user.name"))
+                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
+                        .build()));
+      return new ComputeServiceContextFactory().createContext(provider, identity, credential,
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule));
+   }
 
-  @Provides
-  @Singleton
-  protected Server providesJettyServer(@Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
-    return new Server(URI.create(preconfigurationUrl).getPort());
-  }
+   @Provides
+   @Singleton
+   protected Server providesJettyServer(@Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
+      return new Server(URI.create(preconfigurationUrl).getPort());
+   }
 
-  @Provides
-  @Singleton
-  protected Function<Supplier<NodeMetadata>, VirtualBoxManager> provideVBox() {
-    return new Function<Supplier<NodeMetadata>, VirtualBoxManager>() {
+   @Provides
+   @Singleton
+   protected Function<Supplier<NodeMetadata>, VirtualBoxManager> provideVBox() {
+      return new Function<Supplier<NodeMetadata>, VirtualBoxManager>() {
 
-      @Override
-      public VirtualBoxManager apply(Supplier<NodeMetadata> nodeSupplier) {
-        return VirtualBoxManager.createInstance(nodeSupplier.get().getId());
-      }
+         @Override
+         public VirtualBoxManager apply(Supplier<NodeMetadata> nodeSupplier) {
+            return VirtualBoxManager.createInstance(nodeSupplier.get().getId());
+         }
 
-      @Override
-      public String toString() {
-        return "createInstanceByNodeId()";
-      }
+         @Override
+         public String toString() {
+            return "createInstanceByNodeId()";
+         }
 
-    };
-  }
+      };
+   }
 
-  @Provides
-  @Singleton
-  protected Supplier defaultClient(Supplier<VirtualBoxManager> in) {
-    return in;
-  }
+   @Provides
+   @Singleton
+   protected Supplier defaultClient(Supplier<VirtualBoxManager> in) {
+      return in;
+   }
 
-  @Provides
-  @Singleton
-  protected Predicate<SshClient> sshResponds(SshResponds sshResponds, Timeouts timeouts) {
-    return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning);
-  }
+   @Provides
+   @Singleton
+   protected Predicate<SshClient> sshResponds(SshResponds sshResponds, Timeouts timeouts) {
+      return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning);
+   }
 
-  @Override
-  protected Supplier provideHardware(ComputeServiceAdapter<IMachine, IMachine, Image, Location> adapter,
-      Function<IMachine, Hardware> transformer) {
-    return Suppliers.ofInstance(Collections.singleton(new HardwareBuilder().id("").build()));
-  }
+   @Override
+   protected Supplier provideHardware(ComputeServiceAdapter<IMachine, IMachine, Image, Location> adapter,
+            Function<IMachine, Hardware> transformer) {
+      return Suppliers.ofInstance(Collections.singleton(new HardwareBuilder().id("").build()));
+   }
 
-  @Override
-  protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-    return template.osFamily(OsFamily.UBUNTU).osVersionMatches("11.04");
-  }
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(OsFamily.UBUNTU).osVersionMatches("11.04");
+   }
 
-  @Provides
-  @Singleton
-  protected Supplier<NodeMetadata> host(Supplier<LoadingCache<String, Node>> nodes, NodeToNodeMetadata converter)
-      throws ExecutionException {
-    return Suppliers.compose(Functions.compose(converter, new Function<LoadingCache<String, Node>, Node>() {
+   @Provides
+   @Singleton
+   protected Supplier<NodeMetadata> host(Supplier<LoadingCache<String, Node>> nodes, NodeToNodeMetadata converter)
+            throws ExecutionException {
+      return Suppliers.compose(Functions.compose(converter, new Function<LoadingCache<String, Node>, Node>() {
 
-      @Override
-      public Node apply(LoadingCache<String, Node> arg0) {
-        return arg0.apply("host");
-      }
-    }), nodes);
-  }
+         @Override
+         public Node apply(LoadingCache<String, Node> arg0) {
+            return arg0.apply("host");
+         }
+      }), nodes);
+   }
 
-  @VisibleForTesting
-  public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
-                                                                          .<MachineState, NodeState> builder()
-                                                                          .put(MachineState.Running, NodeState.RUNNING)
-                                                                          .put(MachineState.PoweredOff,
-                                                                              NodeState.SUSPENDED)
-                                                                          .put(MachineState.DeletingSnapshot,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.DeletingSnapshotOnline,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.DeletingSnapshotPaused,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.FaultTolerantSyncing,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.LiveSnapshotting,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.SettingUp,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.Starting, NodeState.PENDING)
-                                                                          .put(MachineState.Stopping, NodeState.PENDING)
-                                                                          .put(MachineState.Restoring,
-                                                                              NodeState.PENDING)
-                                                                          // TODO What to map these states to?
-                                                                          .put(MachineState.FirstOnline,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.FirstTransient,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.LastOnline,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.LastTransient,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.Teleported,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.TeleportingIn,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.TeleportingPausedVM,
-                                                                              NodeState.PENDING)
-                                                                          .put(MachineState.Aborted, NodeState.ERROR)
-                                                                          .put(MachineState.Stuck, NodeState.ERROR)
+   @VisibleForTesting
+   public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
+            .<MachineState, NodeState> builder().put(MachineState.Running, NodeState.RUNNING)
+            .put(MachineState.PoweredOff, NodeState.SUSPENDED)
+            .put(MachineState.DeletingSnapshot, NodeState.PENDING)
+            .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
+            .put(MachineState.DeletingSnapshotPaused, NodeState.PENDING)
+            .put(MachineState.FaultTolerantSyncing, NodeState.PENDING)
+            .put(MachineState.LiveSnapshotting, NodeState.PENDING)
+            .put(MachineState.SettingUp, NodeState.PENDING)
+            .put(MachineState.Starting, NodeState.PENDING)
+            .put(MachineState.Stopping, NodeState.PENDING)
+            .put(MachineState.Restoring, NodeState.PENDING)
+            // TODO What to map these states to?
+            .put(MachineState.FirstOnline, NodeState.PENDING).put(MachineState.FirstTransient, NodeState.PENDING)
+            .put(MachineState.LastOnline, NodeState.PENDING).put(MachineState.LastTransient, NodeState.PENDING)
+            .put(MachineState.Teleported, NodeState.PENDING).put(MachineState.TeleportingIn, NodeState.PENDING)
+            .put(MachineState.TeleportingPausedVM, NodeState.PENDING).put(MachineState.Aborted, NodeState.ERROR)
+            .put(MachineState.Stuck, NodeState.ERROR)
 
-                                                                          .put(MachineState.Null,
-                                                                              NodeState.UNRECOGNIZED).build();
+            .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
 
 }

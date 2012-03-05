@@ -39,11 +39,11 @@ import com.google.inject.Inject;
 
 @Singleton
 public class IMachineToSshClient implements Function<IMachine, SshClient> {
-  
-  @Resource
-  @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-  protected Logger                                                logger = Logger.NULL;
-  
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    private final SshClient.Factory sshClientFactory;
 
    @Inject
@@ -53,8 +53,8 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 
    @Override
    public SshClient apply(final IMachine vm) {
-     INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
-      
+      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
+
       SshClient client = null;
       checkNotNull(networkAdapter);
       for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()) {
@@ -66,8 +66,8 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
          // TODO: we need a way to align the default login credentials from the iso with the
          // vmspec
          if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-            client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)),
-                     LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
+            client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)), LoginCredentials
+                     .builder().user("toor").password("password").authenticateSudo(true).build());
          }
       }
       checkNotNull(client);
