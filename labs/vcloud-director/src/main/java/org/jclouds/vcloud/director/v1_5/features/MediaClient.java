@@ -21,12 +21,12 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to Media.
@@ -44,7 +44,7 @@ public interface MediaClient {
     * 
     * @return the media or null if not found
     */
-   Media getMedia(Reference mediaRef);
+   Media getMedia(URISupplier mediaRef);
    
    /**
     * Updates the name/description of a media.
@@ -52,57 +52,24 @@ public interface MediaClient {
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMedia(Reference mediaRef, Media media);
+   Task updateMedia(URISupplier mediaRef, Media media);
    
    /**
     * Deletes a media.
     */
-   Task deleteMedia(Reference mediaRef);
+   Task deleteMedia(URISupplier mediaRef);
    
    /**
     * Retrieves an owner.
     * 
     * @return the owner or null if not found
     */
-   Owner getOwner(Reference mediaRef);
+   Owner getOwner(URISupplier mediaRef);
    
    /**
-    * Retrieves an list of the media's metadata
-    * 
-    * @return a list of metadata
+    * @return synchronous access to {@link Metadata.Writeable} features
     */
-   Metadata getMetadata(Reference mediaRef);
-   /**
-    * Merges the metadata for a media with the information provided.
-    * 
-    * @return a task. This operation is asynchronous and the user should monitor the returned 
-    * task status in order to check when it is completed.
-    */
-   Task mergeMetadata(Reference mediaRef, Metadata metadata);
-
-   /**
-    * Retrieves a metadata value
-    * 
-    * @return the metadata value, or null if not found
-    */
-   MetadataValue getMetadataValue(Reference mediaRef, String key);
-   
-   /**
-    * Sets the metadata for the particular key for the media to the value provided. 
-    * Note: this will replace any existing metadata information
-    * 
-    * @return a task. This operation is asynchronous and the user should monitor the returned 
-    * task status in order to check when it is completed.
-    */
-   Task setMetadata(Reference mediaRef, String key, MetadataValue metadataValue);
-   
-   /**
-    * Deletes a metadata entry.
-    * 
-    * @return a task. This operation is asynchronous and the user should monitor the returned 
-    * task status in order to check when it is completed.
-    */
-   Task deleteMetadataEntry(Reference mediaRef, String key);
-   
+   @Delegate
+   MetadataClient.Writeable getMetadataClient();
 
 }
