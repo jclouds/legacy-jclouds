@@ -61,5 +61,5 @@ public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> 
 	private boolean hasBridgedAdapter(NetworkInterfaceCard nic) {
 		return nic.getNetworkAdapter().getNetworkAttachmentType()
 				.equals(NetworkAttachmentType.Bridged);
-	}	
+   }
 }
