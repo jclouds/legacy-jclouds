@@ -127,6 +127,8 @@ public class VCloudDirectorMediaType {
    
    public static final String ENVELOPE =  "application/vnd.???";
    
+   public static final String ADMIN_CATALOG = "application/vnd.vmware.admin.catalog+xml";
+   
    /**
     * 
     * All acceptable media types.
