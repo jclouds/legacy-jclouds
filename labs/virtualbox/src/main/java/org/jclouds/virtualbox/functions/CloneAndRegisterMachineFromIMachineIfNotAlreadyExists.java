@@ -118,8 +118,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 		IProgress progress = currentSnapshot.getMachine().cloneTo(
 				clonedMachine, CloneMode.MachineState, options);
 
-		if (progress.getCompleted())
-			logger.debug("clone done");
+		progress.waitForCompletion(-1);
+		logger.debug("clone done");
 
 
 		// registering

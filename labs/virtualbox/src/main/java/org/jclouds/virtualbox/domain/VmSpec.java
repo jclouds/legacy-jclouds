@@ -64,7 +64,7 @@ public class VmSpec {
       private String name;
       private String id;
       private String osTypeId = "";
-      private boolean forceOverwrite;
+      private boolean forceOverwrite = true;
       private long memory;
       private CleanupMode cleanUpMode;
 

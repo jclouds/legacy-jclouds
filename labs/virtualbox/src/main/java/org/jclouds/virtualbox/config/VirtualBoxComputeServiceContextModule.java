@@ -62,6 +62,7 @@ import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
@@ -140,7 +141,7 @@ public class VirtualBoxComputeServiceContextModule extends
     bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
     }).to((Class) CreateAndInstallVm.class);
     // the machine cloning function
-    bind(new TypeLiteral<Function<IMachine, NodeAndInitialCredentials<IMachine>>>() {
+    bind(new TypeLiteral<Function<NodeSpec, NodeAndInitialCredentials<IMachine>>>() {
     }).to((Class) NodeCreator.class);
     bind(new TypeLiteral<Function<CloneSpec, IMachine>>() {
     }).to((Class) CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.class);

@@ -19,7 +19,6 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -32,9 +31,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
-import org.virtualbox_4_1.ISystemProperties;
-import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.ISystemPropertiesGetMaxNetworkAdapters;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -69,7 +65,6 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
          String targetPort = Iterables.get(stuff, 5);
          // TODO: we need a way to align the default login credentials from the iso with the
          // vmspec
-         logger.warn("PROTOCOLNUMBER: "+nameProtocolnumberAddressInboudportGuestTargetport);
          if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
             client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)),
                      LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());

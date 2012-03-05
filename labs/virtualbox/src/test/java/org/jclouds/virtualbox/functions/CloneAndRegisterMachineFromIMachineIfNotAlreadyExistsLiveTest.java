@@ -26,6 +26,7 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.CloneSpec;
+import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
@@ -139,6 +140,11 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
 			IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
 					manager, workingDir,machineUtils).apply(cloneSpec);
 			assertEquals(clone.getName(), cloneSpec.getVmSpec().getVmName());
+			
+			new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(clone);
+			
+			// TODO ssh into the node
+			
 		} finally {
 			for (VmSpec spec : ImmutableSet.of(cloneSpec.getVmSpec(),
 					sourceMachineSpec.getVmSpec()))

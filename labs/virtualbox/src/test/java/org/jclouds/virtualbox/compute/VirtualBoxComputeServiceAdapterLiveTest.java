@@ -19,6 +19,7 @@
 
 package org.jclouds.virtualbox.compute;
 
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
@@ -31,85 +32,78 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.VmSpec;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   private VirtualBoxComputeServiceAdapter adapter;
-   private NodeAndInitialCredentials<IMachine> machine;
+  private VirtualBoxComputeServiceAdapter     adapter;
+  private NodeAndInitialCredentials<IMachine> machine;
 
-   @Override
-   public void setupClient() {
-      super.setupClient();
-      adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
-   }
+  @Override
+  public void setupClient() {
+    super.setupClient();
+    adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
+  }
 
-   private static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
-         new DefaultCredentialsFromImageOrOverridingCredentials());
+  @Test
+  public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
+    String group = "foo";
+    String name = "foo-ef4";
+    String machineName = VIRTUALBOX_NODE_PREFIX + "myTestId-" + group + "-" + name;
+    // get the image from
+    Image image = Iterables.get(adapter.listImages(), 0);
+    System.out.println(context.getComputeService().templateBuilder());
+    Template template = context.getComputeService().templateBuilder().fromImage(image).build();
+    machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
+    assertEquals(machine.getNode().getName(), machineName);
+    // is there a place for group?
+    // check other things, like cpu correct, mem correct, image/os is correct
+    // (as possible)
+    // TODO: what's the IP address?
+    // assert
+    // InetAddresses.isInetAddress(machine.getPrimaryBackendIpAddress()) :
+    // machine;
+    doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
+  }
 
-   @Test
-   public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
-      String group = "foo";
-      String name = "foo-ef4";
-      // get the image from
-      Image image = Iterables.get(adapter.listImages(),0);
-      System.out.println(context.getComputeService().templateBuilder());
-      Template template = context.getComputeService().templateBuilder().fromImage(image).build();
-      machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
-      assertEquals(machine.getNode().getName(), name);
-      assertEquals(machine.getNodeId(), machine.getNode().getId());
-      // is there a place for group?
-      // check other things, like cpu correct, mem correct, image/os is correct
-      // (as possible)
-      // TODO: what's the IP address?
-      // assert
-      // InetAddresses.isInetAddress(machine.getPrimaryBackendIpAddress()) :
-      // machine;
-      doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
+  protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
+    SshClient ssh = context.utils().sshFactory().create(new IPSocket("//TODO", 22), creds);
+    try {
+      ssh.connect();
+      ExecResponse hello = ssh.exec("echo hello");
+      assertEquals(hello.getOutput().trim(), "hello");
+      System.err.println(ssh.exec("df -k").getOutput());
+      System.err.println(ssh.exec("mount").getOutput());
+      System.err.println(ssh.exec("uname -a").getOutput());
+    } finally {
+      if (ssh != null)
+        ssh.disconnect();
+    }
+  }
 
-   }
+  @Test
+  public void testListHardwareProfiles() {
+    Iterable<IMachine> profiles = adapter.listHardwareProfiles();
+    assertEquals(1, Iterables.size(profiles));
+  }
 
-   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
-      SshClient ssh = context.utils().sshFactory().create(new IPSocket("//TODO", 22), creds);
-      try {
-         ssh.connect();
-         ExecResponse hello = ssh.exec("echo hello");
-         assertEquals(hello.getOutput().trim(), "hello");
-         System.err.println(ssh.exec("df -k").getOutput());
-         System.err.println(ssh.exec("mount").getOutput());
-         System.err.println(ssh.exec("uname -a").getOutput());
-      } finally {
-         if (ssh != null)
-            ssh.disconnect();
-      }
-   }
+  @Test
+  public void testListImages() {
+    Iterable<Image> iMageIterable = adapter.listImages();
+    for (Image image : iMageIterable) {
+      System.out.println(image);
+    }
+    // check state;
+  }
 
-   @Test
-   public void testListHardwareProfiles() {
-      Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-      assertEquals(1,Iterables.size(profiles));
-   }
-
-   @Test
-   public void testListImages() {
-      Iterable<Image> iMageIterable = adapter.listImages();
-      for (Image image : iMageIterable) {
-         System.out.println(image);
-      }
-      // check state;
-   }
-  
-   @Override
-   protected void tearDown() throws Exception {
-      if (machine != null)
-         adapter.destroyNode(machine.getNodeId() + "");
-      super.tearDown();
-   }
+  @Override
+  protected void tearDown() throws Exception {
+    if (machine != null)
+//      adapter.destroyNode(machine.getNodeId() + "");
+    super.tearDown();
+  }
 }

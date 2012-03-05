@@ -151,12 +151,15 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
     
     // try and find a master machine in vbox
     try {
-      masterMachine = manager.get().getVBox().findMachine(masterSpec.getVmSpec().getVmId());
+      masterMachine = manager.get().getVBox().findMachine(vmName);
    } catch (VBoxException e) {
-      if (machineNotFoundException(e))
+      if (machineNotFoundException(e)) {
+        // create the master machine if it can't be found
         masterMachine = masterCreatorAndInstaller.apply(masterSpec);
-      else
+      }
+      else {
          throw e;
+      }
    }
 
     Master master = Master.builder().machine(masterMachine).spec(masterSpec).build();

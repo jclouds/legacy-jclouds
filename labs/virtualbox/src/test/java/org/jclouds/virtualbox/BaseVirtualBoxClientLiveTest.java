@@ -31,7 +31,9 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -82,6 +84,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String workingDir;
    protected String isosDir;
    protected Supplier<NodeMetadata> host;
+   protected static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
+       new DefaultCredentialsFromImageOrOverridingCredentials());
 
    @Override
    protected void setupCredentials() {
