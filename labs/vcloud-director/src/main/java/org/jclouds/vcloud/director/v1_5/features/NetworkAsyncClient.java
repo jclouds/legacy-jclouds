@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
@@ -28,10 +30,8 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
-import org.jclouds.vcloud.director.v1_5.functions.URISupplierToEndpoint;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -44,13 +44,13 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface NetworkAsyncClient {
 
    /**
-    * @see NeworkClient#getNetwork(URISupplier)
+    * @see NetworkClient#getNetwork(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier networkRef);
+   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam URI networkUri);
    
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

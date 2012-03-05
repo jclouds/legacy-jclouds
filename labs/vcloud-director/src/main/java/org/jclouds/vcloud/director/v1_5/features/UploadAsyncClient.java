@@ -19,12 +19,12 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.io.File;
+import java.net.URI;
 
 import javax.ws.rs.PUT;
 
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -39,17 +39,17 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface UploadAsyncClient { // TODO: implement these operations correctly
 
    /**
-    * @see UploadClient#uploadFile(URISupplier, File)
+    * @see UploadClient#uploadFile(URI, File)
     */
    @PUT
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Object> uploadFile(URISupplier target, File file);
+   ListenableFuture<Object> uploadFile(URI uri, File file);
    
    /**
-    * @see UploadClient#uploadBigFile(URISupplier, File)
+    * @see UploadClient#uploadBigFile(URI, File)
     */
    @PUT
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Object> uploadBigFile(URISupplier target, File file);
+   ListenableFuture<Object> uploadBigFile(URI target, File file);
    
 }

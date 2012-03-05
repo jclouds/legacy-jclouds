@@ -43,7 +43,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
 
    public void testVAppTemplate() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId).acceptMedia(VAPP_TEMPLATE).httpRequestBuilder().build(),
@@ -55,20 +55,20 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      VAppTemplate template = client.getVAppTemplate(vappTemplateRef);
+      VAppTemplate template = client.getVAppTemplate(uri);
 
       assertEquals(template, exampleTemplate());
 
-      Task task = client.editVAppTemplate(vappTemplateRef, template);
+      Task task = client.editVAppTemplate(uri, template);
       assertNotNull(task);
 
-      task = client.deleteVappTemplate(vappTemplateRef);
+      task = client.deleteVappTemplate(uri);
       assertNotNull(task);
    }
 
    public void testConsolidateVAppTemplate() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/consolidate").acceptMedia(TASK).httpRequestBuilder().build(),
@@ -76,13 +76,13 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Task task = client.consolidateVappTemplate(vappTemplateRef);
+      Task task = client.consolidateVappTemplate(uri);
       assertNotNull(task);
    }
 
    public void testDisableDownloadVAppTemplate() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/disableDownload").acceptMedia(TASK).httpRequestBuilder().build(),
@@ -90,13 +90,13 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Task task = client.disableDownloadVappTemplate(vappTemplateRef);
+      Task task = client.disableDownloadVappTemplate(uri);
       assertNotNull(task);
    }
 
    public void testEnableDownloadVAppTemplate() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/enableDownload").acceptMedia(TASK).httpRequestBuilder().build(),
@@ -104,13 +104,13 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Task task = client.enableDownloadVappTemplate(vappTemplateRef);
+      Task task = client.enableDownloadVappTemplate(uri);
       assertNotNull(task);
    }
 
    public void testRelocateVAppTemplate() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/enableDownload").xmlFilePayload("/vappTemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
@@ -122,13 +122,13 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       Reference datastore = Reference.builder().href(URI.create("https://vcloud.example.com/api/admin/extension/datastore/607")).build();
       RelocateParams params = RelocateParams.builder().datastore(datastore).build();
 
-      Task task = client.relocateVappTemplate(vappTemplateRef, params);
+      Task task = client.relocateVappTemplate(uri, params);
       assertNotNull(task);
    }
 
    public void testCustomizationSection() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/customizationSection").acceptMedia(CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
@@ -138,17 +138,17 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      CustomizationSection section = client.getVAppTemplateCustomizationSection(vappTemplateRef);
+      CustomizationSection section = client.getVAppTemplateCustomizationSection(uri);
 
       assertEquals(section, exampleCustomizationSection());
 
-      Task task = client.editVAppTemplateCustomizationSection(vappTemplateRef, section);
+      Task task = client.editVAppTemplateCustomizationSection(uri, section);
       assertNotNull(task);
    }
 
    public void testGuestCustomizationSection() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/guestCustomizationSection").acceptMedia(GUEST_CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
@@ -158,17 +158,17 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      GuestCustomizationSection section = client.getVAppTemplateGuestCustomizationSection(vappTemplateRef);
+      GuestCustomizationSection section = client.getVAppTemplateGuestCustomizationSection(uri);
 
       assertEquals(section, exampleGuestCustomizationSection());
 
-      Task task = client.editVAppTemplateGuestCustomizationSection(vappTemplateRef, section);
+      Task task = client.editVAppTemplateGuestCustomizationSection(uri, section);
       assertNotNull(task);
    }
 
    public void testLeaseSettingsSection() throws ParseException {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/leaseSettingsSection").acceptMedia(LEASE_SETTINGS_SECTION).httpRequestBuilder().build(),
@@ -178,17 +178,17 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      LeaseSettingsSection section = client.getVappTemplateLeaseSettingsSection(vappTemplateRef);
+      LeaseSettingsSection section = client.getVappTemplateLeaseSettingsSection(uri);
 
       assertEquals(section, exampleLeaseSettingsSection());
 
-      Task task = client.editVappTemplateLeaseSettingsSection(vappTemplateRef, section);
+      Task task = client.editVappTemplateLeaseSettingsSection(uri, section);
       assertNotNull(task);
    }
 
    public void testVappTemplateMetadata() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(METADATA).httpRequestBuilder().build(),
@@ -198,17 +198,17 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Metadata metadata = client.getVAppTemplateMetadata(vappTemplateRef);
+      Metadata metadata = client.getVAppTemplateMetadata(uri);
 
       assertEquals(metadata, exampleMetadata());
 
-      Task task = client.editVAppTemplateMetadata(vappTemplateRef, metadata);
+      Task task = client.editVAppTemplateMetadata(uri, metadata);
       assertNotNull(task);
    }
 
    public void testVappTemplateMetadataValue() {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata/12345").acceptMedia(METADATA_ENTRY).httpRequestBuilder().build(),
@@ -220,20 +220,20 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      MetadataValue metadata = client.getVAppTemplateMetadataValue(vappTemplateRef, "12345");
+      MetadataValue metadata = client.getVAppTemplateMetadataValue(uri, "12345");
 
       assertEquals(metadata, exampleMetadataValue());
 
-      Task task = client.editVAppTemplateMetadataValue(vappTemplateRef, "12345", metadata);
+      Task task = client.editVAppTemplateMetadataValue(uri, "12345", metadata);
       assertNotNull(task);
 
-      task = client.deleteVAppTemplateMetadataValue(vappTemplateRef, "12345");
+      task = client.deleteVAppTemplateMetadataValue(uri, "12345");
       assertNotNull(task);
    }
 
    public void testNetworkConfigSection() throws ParseException {
       final String templateId = "/vAppTemplate/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
-      Reference vappTemplateRef = Reference.builder().href(URI.create(endpoint + templateId)).build();
+      URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/networkConfigSection").acceptMedia(NETWORK_CONFIG_SECTION).httpRequestBuilder().build(),
@@ -244,11 +244,11 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       assertNotNull(client);
 
-      NetworkConfigSection section = client.getVAppTemplateNetworkConfigSection(vappTemplateRef);
+      NetworkConfigSection section = client.getVAppTemplateNetworkConfigSection(uri);
 
       assertEquals(section, exampleNetworkConfigSection());
 
-      Task task = client.editVAppTemplateNetworkConfigSection(vappTemplateRef, section);
+      Task task = client.editVAppTemplateNetworkConfigSection(uri, section);
       assertNotNull(task);
    }
 

@@ -21,12 +21,14 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+
+import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -60,18 +62,20 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
 
    private OrgList orgList;
-   private Reference orgRef;
+   private URI orgURI;
    private TasksList taskList;
    private Task task;
-   private URISupplier taskRef;
+   private URI taskURI;
 
    @Test(testName = "GET /tasksList/{id}")
    public void testGetTaskList() {
       orgList = orgClient.getOrgList();
-      orgRef = Iterables.getFirst(orgList.getOrgs(), null);
+      Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
+      assertNotNull(orgRef);
+      orgURI = orgRef.getHref();
       
       // Call the method being tested
-      taskList = taskClient.getTaskList(orgRef);
+      taskList = taskClient.getTaskList(orgURI);
       
       // NOTE The environment MUST have ...
       
@@ -85,10 +89,11 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /task/{id}", dependsOnMethods = { "testGetTaskList" })
    public void testGetTask() {
-      taskRef = Iterables.getFirst(taskList.getTasks(), null);
+      Task taskRef = Iterables.getFirst(taskList.getTasks(), null);
+      taskURI = taskRef.getURI();
 
       // Call the method being tested
-      task = taskClient.getTask(taskRef);
+      task = taskClient.getTask(taskURI);
 
       // Check required elements and attributes
       checkTask(task);
@@ -97,6 +102,6 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /task/{id}/metadata/", dependsOnMethods = { "testGetTask" })
    public void testCancelTask() {
       // Call the method being tested
-      taskClient.cancelTask(taskRef);
+      taskClient.cancelTask(taskURI);
    }
 }

@@ -26,19 +26,8 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
+import org.jclouds.vcloud.director.v1_5.domain.*;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.File;
-import org.jclouds.vcloud.director.v1_5.domain.FilesList;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Owner;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksInProgress;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -73,9 +62,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
       Media expected = createMedia();
       
-      Reference vdcRef = Reference.builder().href(vdcUri).build();
-
-      assertEquals(client.getVdcClient().createMedia(vdcRef, source), expected);
+      assertEquals(client.getVdcClient().createMedia(vdcUri, source), expected);
    }
    
    @Test
@@ -96,18 +83,16 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .name("moved test media")
          .description("moved by testCloneMedia()")
          .source(Reference.builder()
-            .type("application/vnd.vmware.vcloud.media+xml")
-            .name("copied test media")
-            .id("urn:vcloud:media:da8361af-cccd-4103-a71c-493513c49094")
-            .href(URI.create("https://mycloud.greenhousedata.com/api/media/da8361af-cccd-4103-a71c-493513c49094"))
-            .build())
+               .type("application/vnd.vmware.vcloud.media+xml")
+               .name("copied test media")
+               .id("urn:vcloud:media:da8361af-cccd-4103-a71c-493513c49094")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/media/da8361af-cccd-4103-a71c-493513c49094"))
+               .build())
          .isSourceDelete(false)
          .build();
       Media expected = cloneMedia();
       
-      Reference vdcRef = Reference.builder().href(vdcUri).build();
-
-      assertEquals(client.getVdcClient().cloneMedia(vdcRef, params), expected);
+      assertEquals(client.getVdcClient().cloneMedia(vdcUri, params), expected);
    }
    
    @Test
@@ -124,10 +109,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .httpResponseBuilder().build());
       
       Media expected = getMedia();
-      
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
-
-      assertEquals(client.getMediaClient().getMedia(mediaRef), expected);
+      assertEquals(client.getMediaClient().getMedia(mediaUri), expected);
    }
    
    @Test
@@ -148,11 +130,9 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .majorErrorCode(400)
             .minorErrorCode("BAD_REQUEST")
             .build();
-      
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
- 
+       
       try {
-         client.getMediaClient().getMedia(mediaRef);
+         client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -179,11 +159,9 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
-      
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
- 
+       
       try {
-         client.getMediaClient().getMedia(mediaRef);
+         client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -210,11 +188,9 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
-      
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
- 
+       
       try {
-         client.getMediaClient().getMedia(mediaRef);
+         client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -239,9 +215,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       Media update = updateMedia();
       Task expected = updateMediaTask();
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
-
-      assertEquals(client.getMediaClient().updateMedia(mediaRef, update), expected);
+      
+      assertEquals(client.getMediaClient().updateMedia(mediaUri, update), expected);
    }
    
    @Test
@@ -258,9 +233,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .httpResponseBuilder().build());
       
       Task expected = deleteMediaTask();
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
 
-      assertEquals(client.getMediaClient().deleteMedia(mediaRef), expected);
+      assertEquals(client.getMediaClient().deleteMedia(mediaUri), expected);
    }
    
    @Test
@@ -276,11 +250,10 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/metadata.xml", VCloudDirectorMediaType.METADATA)
                .httpResponseBuilder().build());
       
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
       
       Metadata expected = metadata();
 
-      assertEquals(client.getMediaClient().getMetadataClient().getMetadata(mediaRef), expected);
+      assertEquals(client.getMediaClient().getMetadataClient().getMetadata(mediaUri), expected);
    }
    
    @Test
@@ -297,11 +270,10 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/mergeMetadataTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
       Metadata inputMetadata = metadata();
       Task expectedTask = mergeMetadataTask();
 
-      assertEquals(client.getMediaClient().getMetadataClient().mergeMetadata(mediaRef, inputMetadata), expectedTask);
+      assertEquals(client.getMediaClient().getMetadataClient().mergeMetadata(mediaUri, inputMetadata), expectedTask);
    }
    
    public void testGetMetadataValue() {
@@ -318,9 +290,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       MetadataValue expected = metadataValue();
       
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
 
-      assertEquals(client.getMediaClient().getMetadataClient().getMetadataValue(mediaRef, "key"), expected);
+      assertEquals(client.getMediaClient().getMetadataClient().getMetadataValue(mediaUri, "key"), expected);
    }
    
    @Test
@@ -337,12 +308,11 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/setMetadataValueTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
       MetadataValue inputMetadataValue = MetadataValue.builder().value("value").build();
       
       Task expectedTask = setMetadataEntryTask();
 
-      assertEquals(client.getMediaClient().getMetadataClient().setMetadata(mediaRef, "key", inputMetadataValue), expectedTask);
+      assertEquals(client.getMediaClient().getMetadataClient().setMetadata(mediaUri, "key", inputMetadataValue), expectedTask);
    }
    
    @Test
@@ -358,10 +328,9 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/deleteMetadataEntryTask.xml", VCloudDirectorMediaType.TASK)
                .httpResponseBuilder().build());
       
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
       Task expectedTask = deleteMetadataEntryTask();
 
-      assertEquals(client.getMediaClient().getMetadataClient().deleteMetadataEntry(mediaRef, "key"), expectedTask);
+      assertEquals(client.getMediaClient().getMetadataClient().deleteMetadataEntry(mediaUri, "key"), expectedTask);
    }
    
    @Test
@@ -379,9 +348,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       Owner expected = owner();
       
-      Reference mediaRef = Reference.builder().href(mediaUri).build();
-
-      assertEquals(client.getMediaClient().getOwner(mediaRef), expected);
+      assertEquals(client.getMediaClient().getOwner(mediaUri), expected);
    }
    
    private static Media createMedia() {
@@ -482,10 +449,10 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .id("urn:vcloud:media:794eb334-754e-4917-b5a0-5df85cbd61d1")
          .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
          .link(Link.builder()
-            .rel("up")
-            .type("application/vnd.vmware.vcloud.vdc+xml")
-            .href(URI.create("https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"))
-            .build())
+               .rel("up")
+               .type("application/vnd.vmware.vcloud.vdc+xml")
+               .href(URI.create("https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"))
+               .build())
          .link(Link.builder()
             .rel("catalogItem")
             .type("application/vnd.vmware.vcloud.catalogItem+xml")

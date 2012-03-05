@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -25,7 +26,6 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to Org.
@@ -57,7 +57,7 @@ public interface OrgClient {
     * 
     * @return the org or null if not found
     */
-   Org getOrg(URISupplier orgRef);
+   Org getOrg(URI orgRef);
    
    /**
     * @return synchronous access to {@link Metadata.Readable} features

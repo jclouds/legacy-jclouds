@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -26,7 +27,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to Media.
@@ -44,7 +44,7 @@ public interface MediaClient {
     * 
     * @return the media or null if not found
     */
-   Media getMedia(URISupplier mediaRef);
+   Media getMedia(URI mediaUri);
    
    /**
     * Updates the name/description of a media.
@@ -52,19 +52,19 @@ public interface MediaClient {
     * @return a task. This operation is asynchronous and the user should monitor the returned 
     * task status in order to check when it is completed.
     */
-   Task updateMedia(URISupplier mediaRef, Media media);
+   Task updateMedia(URI mediaUri, Media media);
    
    /**
     * Deletes a media.
     */
-   Task deleteMedia(URISupplier mediaRef);
+   Task deleteMedia(URI mediaUri);
    
    /**
     * Retrieves an owner.
     * 
     * @return the owner or null if not found
     */
-   Owner getOwner(URISupplier mediaRef);
+   Owner getOwner(URI mediaUri);
    
    /**
     * @return synchronous access to {@link Metadata.Writeable} features

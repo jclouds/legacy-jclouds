@@ -18,11 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -37,7 +33,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -60,26 +55,21 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    protected NetworkClient networkClient;
  
-   private Reference networkRef;
+   private URI networkURI;
    
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() {
-      networkRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.orgNetwork+xml")
-            .name("")
-            .href(URI.create(endpoint+"/network/"+networkId)) 
-            .id(networkId)
-            .build();
+      networkURI = URI.create(endpoint+"/network/"+networkId);
       networkClient = context.getApi().getNetworkClient();
    }
 
    @Test(testName = "GET /network/{id}")
    public void testGetNetwork() {
       // required for testing
-      assertNotNull(networkRef, String.format(REF_REQ_LIVE, NETWORK));
+      assertNotNull(networkURI, String.format(REF_REQ_LIVE, NETWORK));
        
-      OrgNetwork network = networkClient.getNetwork(networkRef);
+      OrgNetwork network = networkClient.getNetwork(networkURI);
       assertNotNull(network, String.format(OBJ_REQ_LIVE, NETWORK));
       assertTrue(!network.getDescription().equals("DO NOT USE"), "Network isn't to be used for testing");
        
@@ -100,7 +90,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata")
    public void testGetMetadata() {
-      Metadata metadata = networkClient.getMetadataClient().getMetadata(networkRef);
+      Metadata metadata = networkClient.getMetadataClient().getMetadata(networkURI);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
             String.format(OBJ_FIELD_REQ_LIVE, NETWORK, "metadata.entries"));
@@ -122,7 +112,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata/{key}")
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = networkClient.getMetadataClient().getMetadataValue(networkRef, "key");
+      MetadataValue metadataValue = networkClient.getMetadataClient().getMetadataValue(networkURI, "key");
        
       // Check parent type
       checkResourceType(metadataValue);

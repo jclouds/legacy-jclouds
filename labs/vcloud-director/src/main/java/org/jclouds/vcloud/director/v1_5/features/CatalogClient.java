@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -25,7 +26,6 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to {@link Catalog} objects.
@@ -43,10 +43,10 @@ public interface CatalogClient {
     * GET /catalog/{id}
     * </pre>
     *
-    * @param catalogRef the reference for the catalog
+    * @param catalogUri the reference for the catalog
     * @return a catalog
     */
-   Catalog getCatalog(URISupplier catalogRef);
+   Catalog getCatalog(URI catalogUri);
 
    /**
     * Creates a catalog item in a catalog.
@@ -55,11 +55,11 @@ public interface CatalogClient {
     * POST /catalog/{id}/catalogItems
     * </pre>
     *
-    * @param catalogRef the reference for the catalog
+    * @param catalogUri the URI of the catalog
     * @param item the catalog item to create
     * @return the created catalog item
     */
-   CatalogItem addCatalogItem(URISupplier catalogRef, CatalogItem item);
+   CatalogItem addCatalogItem(URI catalogUri, CatalogItem item);
 
    /**
     * Retrieves a catalog item.
@@ -71,7 +71,7 @@ public interface CatalogClient {
     * @param catalogItemRef the reference for the catalog item
     * @return the catalog item
     */
-   CatalogItem getCatalogItem(URISupplier catalogItemRef);
+   CatalogItem getCatalogItem(URI catalogItemRef);
 
    /**
     * Modifies a catalog item.
@@ -84,7 +84,7 @@ public interface CatalogClient {
     * @param catalogItem the catalog item
     * @return the updated catalog item
     */
-   CatalogItem updateCatalogItem(URISupplier catalogItemRef, CatalogItem catalogItem);
+   CatalogItem updateCatalogItem(URI catalogItemRef, CatalogItem catalogItem);
 
    /**
     * Deletes a catalog item.
@@ -95,7 +95,7 @@ public interface CatalogClient {
     *
     * @param catalogItemRef the reference for the catalog item
     */
-   void deleteCatalogItem(URISupplier catalogItemRef);
+   void deleteCatalogItem(URI catalogItemRef);
 
    /**
     * @return synchronous access to {@link Metadata.Writeable} features
