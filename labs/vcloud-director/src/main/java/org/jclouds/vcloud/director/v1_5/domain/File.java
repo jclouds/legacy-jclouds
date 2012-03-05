@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.adapters.NormalizedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 
@@ -57,7 +58,6 @@ import com.google.common.collect.Sets;
  */
 @XmlType(name = "File")
 public class File extends EntityType<File> {
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -99,14 +99,30 @@ public class File extends EntityType<File> {
 
       public File build() {
          return new File(href, type, links, description, tasksInProgress, id, name, size, bytesTransferred, checksum);
+
       }
 
+      /**
+       * @see EntityType#getName()
+       */
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
+      
+      /**
+       * @see EntityType#getDescription()
+       */
+      public Builder description(String description) {
+         super.description(description);
+         return this;
+      }
       /**
        * @see EntityType#getId()
        */
       @Override
       public Builder id(String id) {
-         this.id = id;
+         super.id(id);
          return this;
       }
 
@@ -115,7 +131,7 @@ public class File extends EntityType<File> {
        */
       @Override
       public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+         super.tasksInProgress (tasksInProgress);
          return this;
       }
 
@@ -124,7 +140,7 @@ public class File extends EntityType<File> {
        */
       @Override
       public Builder href(URI href) {
-         this.href = href;
+         super.href(href);
          return this;
       }
 
@@ -177,10 +193,10 @@ public class File extends EntityType<File> {
       this.checksum = checksum;
    }
 
+   @SuppressWarnings("unused")
    private File() {
-      // For JAXB and builder use
+      // For JAXB
    }
-
 
    @XmlAttribute
    protected Long size;
@@ -228,24 +244,26 @@ public class File extends EntityType<File> {
       if (o == null || getClass() != o.getClass())
          return false;
       File that = File.class.cast(o);
-      return equal(size, that.size) &&
+      return super.equals(that) &&
+           equal(size, that.size) && 
             equal(bytesTransferred, that.bytesTransferred) &&
             equal(checksum, that.checksum);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(size,
+      return Objects.hashCode(super.hashCode(),
+           size, 
             bytesTransferred,
             checksum);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public ToStringHelper string() {
+      return super.string()
             .add("size", size)
             .add("bytesTransferred", bytesTransferred)
-            .add("checksum", checksum).toString();
+            .add("checksum", checksum);
    }
 
 }

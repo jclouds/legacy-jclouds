@@ -31,12 +31,10 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -55,7 +53,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "apitests", "user" }, testName = "VdcClientLiveTest")
+@Test(groups = { "live", "user", "vdc" }, testName = "VdcClientLiveTest")
 public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "vdc";
@@ -73,8 +71,8 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       vdcRef = Reference.builder()
             .type("application/vnd.vmware.vcloud.vdc+xml")
             .name("")
-            .href(URI.create(endpoint+"/vdc/"+vDCId)) 
-            .id(vDCId)
+            .href(URI.create(endpoint+"/vdc/"+vdcId)) 
+            .id(vdcId)
             .build();
       vdcClient = context.getApi().getVdcClient();
    }
@@ -138,23 +136,6 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build());
       
       Checks.checkVAppTemplate(template);
-      
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
-   }
-   
-   @Test(testName = "POST /vdc/{id}/action/cloneMedia")
-   public void testCloneMedia() {
-      Reference mediaSource = null; // TODO: media reference
-      Media media = vdcClient.cloneMedia(vdcRef, CloneMediaParams.builder()
-            .source(mediaSource)
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.isSourceDelete(true)
-            .build());
-      
-      Checks.checkMediaFor(VDC, media);
       
       // TODO: await task to complete
       // TODO: make assertions that the task was successful
@@ -260,27 +241,9 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // TODO: make assertions that the task was successful
    }
    
-   @Test(testName = "POST /vdc/{id}/media")
-   public void testCreateMedia() {
-      Media media = vdcClient.createMedia(vdcRef, Media.builder()
-            .name("")
-            .imageType(Media.ImageType.ISO)
-            .size(0)
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.isSourceDelete(true)
-            .build());
-      
-      Checks.checkMediaFor(VDC, media);
-      
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
-   }
-   
-   @Test(testName = "GET /network/{id}/metadata")
+   @Test(testName = "GET /network/{id}/metadata", enabled = false)
    public void testGetMetadata() {
-      Metadata metadata = vdcClient.getMetadata(vdcRef);
+      Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcRef);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
             String.format(OBJ_FIELD_REQ_LIVE, VDC, "metadata.entries"));
@@ -288,9 +251,9 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(VDC, metadata);
    }
    
-   @Test(testName = "GET /network/{id}/metadata/{key}")
+   @Test(testName = "GET /network/{id}/metadata/{key}", enabled = false)
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = vdcClient.getMetadataValue(vdcRef, "key");
+      MetadataValue metadataValue = vdcClient.getMetadataClient().getMetadataValue(vdcRef, "key");
       
       Checks.checkMetadataValueFor(VDC, metadataValue);
    }

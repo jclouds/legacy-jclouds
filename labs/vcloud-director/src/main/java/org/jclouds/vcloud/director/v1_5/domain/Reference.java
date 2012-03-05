@@ -88,6 +88,10 @@ public class Reference extends ReferenceType<Reference> {
       public Builder fromReference(Reference in) {
          return fromReferenceType(in);
       }
+      
+      public Builder fromEntity(EntityType<?> in) {
+         return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
+      }
    }
 
    public Reference(URI href, String id, String name, String type) {

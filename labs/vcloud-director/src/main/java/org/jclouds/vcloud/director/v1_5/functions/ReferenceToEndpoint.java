@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 /**
  * @author grkvlt@apache.org
  */
+@Deprecated
 public class ReferenceToEndpoint implements Function<Object, URI> {
 
    @Override

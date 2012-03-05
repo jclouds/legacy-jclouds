@@ -48,7 +48,6 @@ public class Media extends ResourceEntityType<Media> {
       public static final List<String> ALL = Arrays.asList(ISO, FLOPPY);
    }
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -243,6 +242,17 @@ public class Media extends ResourceEntityType<Media> {
       Media that = Media.class.cast(o);
       return super.equals(that) &&
             equal(this.owner, that.owner) && equal(this.imageType, that.imageType) && equal(this.size, that.size);
+   }
+   
+   @Override
+   public boolean clone(Object o) {
+      if (this == o)
+         return false;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      Media that = Media.class.cast(o);
+      return super.clone(that) && 
+            equal(this.imageType, that.imageType) && equal(this.size, that.size);
    }
 
    @Override

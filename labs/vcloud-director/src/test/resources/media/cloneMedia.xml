@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Media xmlns="http://www.vmware.com/vcloud/v1.5" size="175163392" imageType="iso" status="0" name="copied test media-copy-671136ae-b8f0-4389-bca6-50e9c42268f2" id="urn:vcloud:media:a6b023f2-7f90-4e89-a24d-56e0eba83a5a" type="application/vnd.vmware.vcloud.media+xml" href="https://mycloud.greenhousedata.com/api/media/a6b023f2-7f90-4e89-a24d-56e0eba83a5a" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://mycloud.greenhousedata.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"/>
+    <Link rel="remove" href="https://mycloud.greenhousedata.com/api/media/a6b023f2-7f90-4e89-a24d-56e0eba83a5a"/>
+    <Description>copied by testCloneMedia()</Description>
+    <Tasks>
+        <Task status="running" startTime="2012-03-02T04:58:48.754-07:00" operationName="vdcCopyMedia" operation="Copying Media File copied test media-copy-671136ae-b8f0-4389-bca6-50e9c42268f2(a6b023f2-7f90-4e89-a24d-56e0eba83a5a)" expiryTime="2012-05-31T04:58:48.754-06:00" name="task" id="urn:vcloud:task:7e4f6baf-7ef0-43ea-93cc-62cc329afb5d" type="application/vnd.vmware.vcloud.task+xml" href="https://mycloud.greenhousedata.com/api/task/7e4f6baf-7ef0-43ea-93cc-62cc329afb5d">
+            <Link rel="task:cancel" href="https://mycloud.greenhousedata.com/api/task/7e4f6baf-7ef0-43ea-93cc-62cc329afb5d/action/cancel"/>
+            <Owner type="application/vnd.vmware.vcloud.media+xml" name="copied test media-copy-671136ae-b8f0-4389-bca6-50e9c42268f2" href="https://mycloud.greenhousedata.com/api/media/a6b023f2-7f90-4e89-a24d-56e0eba83a5a"/>
+            <User type="application/vnd.vmware.admin.user+xml" name="acole" href="https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"/>
+            <Organization type="application/vnd.vmware.vcloud.org+xml" name="cloudsoft" href="https://mycloud.greenhousedata.com/api/org/c076f90a-397a-49fa-89b8-b294c1599cd0"/>
+        </Task>
+    </Tasks>
+    <Owner type="application/vnd.vmware.vcloud.owner+xml">
+        <User type="application/vnd.vmware.admin.user+xml" name="acole" href="https://mycloud.greenhousedata.com/api/admin/user/c090335b-708c-4c1c-9e3d-89560d002120"/>
+    </Owner>
+</Media>

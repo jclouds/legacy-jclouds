@@ -55,7 +55,7 @@ import com.google.common.base.Objects;
       "description"
 })
 @XmlSeeAlso({
-    CaptureVAppParams.class,
+//    CaptureVAppParams.class, // FIXME!
     CloneVAppTemplateParams.class,
     CloneMediaParams.class,
     UploadVAppTemplateParams.class

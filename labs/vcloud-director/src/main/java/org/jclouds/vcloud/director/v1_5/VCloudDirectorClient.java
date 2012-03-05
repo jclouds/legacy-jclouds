@@ -35,6 +35,7 @@ import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
+import org.jclouds.vcloud.director.v1_5.features.UploadClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 
@@ -96,7 +97,13 @@ public interface VCloudDirectorClient {
    @Delegate
    VdcClient getVdcClient();
 
-   /*
+   /**
+    * @return synchronous access to {@link Upload} features
+    */
+   @Delegate
+   UploadClient getUploadClient();
+   
+   /**
     * @return synchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} features
     */
    @Delegate

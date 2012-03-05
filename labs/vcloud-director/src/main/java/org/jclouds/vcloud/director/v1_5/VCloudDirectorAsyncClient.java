@@ -31,6 +31,7 @@ import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
 
@@ -91,6 +92,13 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    VdcAsyncClient getVdcClient();
+
+   /**
+    * @return asynchronous access to Upload features
+    */
+   @Delegate
+   UploadAsyncClient getUploadClient();
+   
 
    /**
     * @return asynchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} features

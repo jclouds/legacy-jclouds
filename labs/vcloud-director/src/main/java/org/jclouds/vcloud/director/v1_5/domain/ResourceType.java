@@ -160,6 +160,15 @@ public abstract class ResourceType<T extends ResourceType<T>> implements URISupp
       ResourceType<?> that = ResourceType.class.cast(o);
       return equal(this.href, that.href) && equal(this.links, that.links) && equal(this.type, that.type);
    }
+   
+   public boolean clone(Object o) {
+      if (this == o)
+         return false;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      ResourceType<?> that = ResourceType.class.cast(o);
+      return equal(this.type, that.type);
+   }
 
    @Override
    public int hashCode() {

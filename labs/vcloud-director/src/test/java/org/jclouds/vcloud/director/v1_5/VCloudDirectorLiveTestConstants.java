@@ -70,5 +70,7 @@ public class VCloudDirectorLiveTestConstants {
    public static final String CONDITION_FMT = "ERR-121: The %s field must be %s: '%s'";
 
    public static final String CORRECT_VALUE_OBJECT_FMT = "ERR-122: The %s field of the %s must be '%s': '%s'";
+   
+   public static final String OBJ_FIELD_CLONE = "ERR-123: %s %s must be a clone of \"%s\" (%s)";
 
 }
