@@ -149,7 +149,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
                   @Override
                   public VCloudSession get() {
                      try {
-                        return login.login().get(10, TimeUnit.SECONDS);
+                        return login.login().get();
                      } catch (Exception e) {
                         propagate(e);
                         assert false : e;
