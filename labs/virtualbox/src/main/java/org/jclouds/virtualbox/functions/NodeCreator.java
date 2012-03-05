@@ -50,13 +50,11 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
   private final Supplier<VirtualBoxManager>   manager;
   private final Function<CloneSpec, IMachine> cloner;
-  private MachineUtils machineUtils;
 
   @Inject
   public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner, MachineUtils machineUtils) {
     this.manager = manager;
     this.cloner = cloner;
-    this.machineUtils = machineUtils;
   }
 
   @Override
@@ -94,8 +92,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
         .vm(cloneVmSpec).build();
 
     IMachine cloned = cloner.apply(cloneSpec);
-
-    new AttachNicToMachine(cloneName, machineUtils).apply(networkInterfaceCard);
 
     new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
 

@@ -22,7 +22,6 @@ package org.jclouds.virtualbox.functions;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
@@ -31,6 +30,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
+import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CloneMode;
@@ -96,6 +96,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 
 	private IMachine cloneMachine(CloneSpec cloneSpec) {
 	  VmSpec vmSpec = cloneSpec.getVmSpec();
+	  NetworkSpec networkSpec = cloneSpec.getNetworkSpec();
 	  boolean isLinkedClone = cloneSpec.isLinked();
 	  IMachine master = cloneSpec.getMaster();
 		String settingsFile = manager.get().getVBox()
@@ -120,22 +121,15 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 
 		progress.waitForCompletion(-1);
 		logger.debug("clone done");
-
+		
 		// registering
 		manager.get().getVBox().registerMachine(clonedMachine);
-
-		// Bridged#
-//		for (NetworkInterfaceCard nic : cloneSpec.getNetworkSpec().getNetworkInterfaceCards()){
-//			ensureBridgedNetworkingIsAppliedToMachine(clonedMachine.getName(), nic);
-//		}
 		
+	// Networking
+    for (NetworkInterfaceCard networkInterfaceCard : networkSpec.getNetworkInterfaceCards()) {
+       new AttachNicToMachine(vmSpec.getVmName(), machineUtils).apply(networkInterfaceCard);
+    }
+
 		return clonedMachine;
-	}
-
-	private void ensureBridgedNetworkingIsAppliedToMachine(String vmName,
-			NetworkInterfaceCard nic) {
-		
-		machineUtils.writeLockMachineAndApply(vmName,
-				new AttachBridgedAdapterToMachine(nic));
 	}
 }
