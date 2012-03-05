@@ -179,8 +179,13 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"),
-            getStandardPayloadResponse("/org/orgMetadata.xml", VCloudDirectorMediaType.METADATA));
+            new VcloudHttpRequestPrimer()
+               .apiCommand("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .xmlFilePayload("/org/orgMetadata.xml", VCloudDirectorMediaType.METADATA)
+               .httpResponseBuilder().build());
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -202,9 +207,14 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
    public void testGetOrgMetadataValue() {
       URI orgUri = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY"),
-            getStandardPayloadResponse("/org/orgMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE));
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            new VcloudHttpRequestPrimer()
+               .apiCommand("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .xmlFilePayload("/org/orgMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE)
+               .httpResponseBuilder().build());
       
       MetadataValue expected = metadataValue();
 

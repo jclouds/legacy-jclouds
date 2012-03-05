@@ -148,8 +148,13 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       URI networkUri = URI.create(endpoint + "/network/55a677cf-ab3f-48ae-b880-fab90421980c");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-            getStandardRequest("GET", "/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata"),
-            getStandardPayloadResponse("/network/metadata.xml", VCloudDirectorMediaType.METADATA));
+            new VcloudHttpRequestPrimer()
+               .apiCommand("GET", "/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .xmlFilePayload("/network/metadata.xml", VCloudDirectorMediaType.METADATA)
+               .httpResponseBuilder().build());
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
