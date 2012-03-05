@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,45 +24,57 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.collect.Sets;
 
+
 /**
- * Container for references to VappTemplate and Media objects.
- * <p/>
+ * 
+ *                 Admin representation of the container for meta data (key-value pair) associated to different
+ *                 entities in the system.
+ *             
+ * 
+ * <p>Java class for AdminCatalog complex type.
+ * 
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ * 
  * <pre>
- * &lt;complexType name="CatalogType" /&gt;
+ * &lt;complexType name="AdminCatalog">
+ *   &lt;complexContent>
+ *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}CatalogType">
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/>
+ *     &lt;/extension>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
- *
- * @author grkvlt@apache.org
+ * 
+ * 
  */
-@XmlRootElement(name = "Catalog")
-public class Catalog extends CatalogType<Catalog> {
-
-   public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG;
-
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "AdminCatalog")
+public class AdminCatalog extends CatalogType<AdminCatalog> {
+   
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
-   @Override
    public Builder toBuilder() {
-      return new Builder().fromCatalog(this);
+      return new Builder().fromAdminCatalog(this);
    }
 
-   public static class Builder extends CatalogType.Builder<Catalog> {
-
-      @Override
-      public Catalog build() {
-         return new Catalog(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, isPublished);
+   public static class Builder extends CatalogType.Builder<AdminCatalog> {
+      
+      public AdminCatalog build() {
+         AdminCatalog adminCatalog = new AdminCatalog();
+         return adminCatalog;
       }
       
       /**
-       * @see Catalog#getOwner()
+       * @see CatalogType#getOwner()
        */
       public Builder owner(Entity owner) {
          super.owner(owner);
@@ -69,7 +82,7 @@ public class Catalog extends CatalogType<Catalog> {
       }
 
       /**
-       * @see Catalog#getCatalogItems()
+       * @see CatalogType#getCatalogItems()
        */
       public Builder catalogItems(CatalogItems catalogItems) {
          super.catalogItems(catalogItems);
@@ -77,7 +90,7 @@ public class Catalog extends CatalogType<Catalog> {
       }
 
       /**
-       * @see Catalog#isPublished()
+       * @see CatalogType#isPublished()
        */
       public Builder isPublished(Boolean isPublished) {
          super.isPublished(isPublished);
@@ -85,13 +98,13 @@ public class Catalog extends CatalogType<Catalog> {
       }
 
       /**
-       * @see Catalog#isPublished()
+       * @see CatalogType#isPublished()
        */
       public Builder published() {
-         super.isPublished(isPublished);
+         super.published();
          return this;
       }
-
+      
       /**
        * @see EntityType#getName()
        */
@@ -165,22 +178,15 @@ public class Catalog extends CatalogType<Catalog> {
       }
 
       @Override
-      public Builder fromCatalogType(CatalogType<Catalog> in) {
-         return Builder.class.cast(super.fromCatalogType(in));
+      public Builder fromCatalogType(CatalogType<AdminCatalog> in) {
+          return Builder.class.cast(super.fromCatalogType(in));
       }
-
-      public Builder fromCatalog(Catalog in) {
-         return fromCatalogType(in).owner(in.getOwner()).catalogItems(in.getCatalogItems()).isPublished(in.isPublished());
+      public Builder fromAdminCatalog(AdminCatalog in) {
+         return fromCatalogType(in);
       }
    }
 
-   public Catalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
-                  String name, Entity owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, published);
-   }
-
-   @SuppressWarnings("unused")
-   private Catalog() {
-      // for JAXB
+   private AdminCatalog() {
+      // For JAXB
    }
 }
