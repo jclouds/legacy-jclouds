@@ -49,8 +49,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see NetworkClient
  * @author danikov
  */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface MetadataAsyncClient {
+   @RequestFilters(AddVCloudAuthorizationToRequest.class)
    public static interface Readable extends MetadataAsyncClient {
       /**
        * @see MetadataClient.Readable#getMetadata(URISupplier)
@@ -74,6 +74,7 @@ public interface MetadataAsyncClient {
             @PathParam("key") String key);
    }
    
+   @RequestFilters(AddVCloudAuthorizationToRequest.class)
    public static interface Writable extends Readable {
       /**
        * @see MetadataClient.Writable#mergeMetadata(URISupplier, Metadata))
