@@ -329,7 +329,7 @@ public class Checks {
    public static void checkNetworkFeatures(NetworkFeatures features) {
       // Check optional fields
       if (features.getNetworkServices() != null) {
-         for (NetworkService service : features.getNetworkServices()) {
+         for (NetworkServiceType service : features.getNetworkServices()) {
             checkNetworkService(service);
          }
       }
@@ -352,7 +352,7 @@ public class Checks {
       checkIpAddress(routerInfo.getExternalIp());
    }
    
-   public static void checkNetworkService(NetworkService service) {
+   public static void checkNetworkService(NetworkServiceType service) {
       // NOTE isEnabled cannot be checked
    }
    

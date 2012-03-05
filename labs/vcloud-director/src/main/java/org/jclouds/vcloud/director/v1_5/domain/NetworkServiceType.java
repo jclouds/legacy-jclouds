@@ -21,52 +21,58 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import com.google.common.base.Objects;
 
 /**
  * Represents a network service
  *
- * @author danikov
+ * @author Adam Lowe
  */
-@XmlRootElement(name = "NetworkService")
-public class NetworkService {
+@XmlSeeAlso({
+   DhcpService.class,
+   IpsecVpnService.class,
+   FirewallService.class,
+   DhcpService.class,
+   StaticRoutingService.class,
+   NatService.class
+})
+public class NetworkServiceType<T extends NetworkServiceType<T>> {
 
    public static Builder builder() {
       return new Builder();
    }
 
    public Builder toBuilder() {
-      return new Builder().fromNetworkService(this);
+      return new Builder().fromNetworkServiceType(this);
    }
 
-   public static class Builder {
-
-      private boolean isEnabled;
+   public static class Builder<T extends NetworkServiceType<T>> {
+      protected boolean isEnabled;
 
       /**
-       * @see NetworkService#isEnabled()
+       * @see NetworkServiceType#isEnabled()
        */
-      public Builder enabled(boolean isEnabled) {
+      public Builder<T> enabled(boolean isEnabled) {
          this.isEnabled = isEnabled;
          return this;
       }
 
-      public NetworkService build() {
-         return new NetworkService(isEnabled);
+      public NetworkServiceType<T> build() {
+         return new NetworkServiceType<T>(isEnabled);
       }
 
-      public Builder fromNetworkService(NetworkService in) {
+      public Builder<T> fromNetworkServiceType(NetworkServiceType<T> in) {
          return enabled(in.isEnabled());
       }
    }
 
-   private NetworkService(boolean enabled) {
+   protected NetworkServiceType(boolean enabled) {
       isEnabled = enabled;
    }
 
-   private NetworkService() {
+   protected NetworkServiceType() {
       // For JAXB and builder use
    }
 
@@ -86,7 +92,7 @@ public class NetworkService {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      NetworkService that = NetworkService.class.cast(o);
+      NetworkServiceType that = NetworkServiceType.class.cast(o);
       return equal(isEnabled, that.isEnabled);
    }
 
@@ -97,6 +103,10 @@ public class NetworkService {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("").add("isEnabled", isEnabled).toString();
+      return string().toString();
+   }
+
+   protected Objects.ToStringHelper string() {
+      return Objects.toStringHelper("").add("isEnabled", isEnabled);
    }
 }

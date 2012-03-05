@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -88,7 +89,7 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
    public static class Builder extends ResourceEntityType.Builder<VAppTemplate> {
       private Owner owner;
       private Set<VAppTemplate> children = Sets.newLinkedHashSet();
-      private Set<SectionType> sections = Sets.newLinkedHashSet();
+      private Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
       private String vAppScopedLocalId;
       private Boolean ovfDescriptorUploaded;
       private Boolean goldMaster;
@@ -112,8 +113,8 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
       /**
        * @see VAppTemplate#getSections()
        */
-      public Builder sections(Set<SectionType> sections) {
-         this.sections = sections;
+      public Builder sections(Set<? extends SectionType<?>> sections) {
+         this.sections = checkNotNull(sections, "sections");
          return this;
       }
 
@@ -258,7 +259,7 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
    @XmlElementRef
    protected VAppTemplateChildren children = VAppTemplateChildren.builder().build();
    @XmlElementRef
-   protected Set<SectionType> sections = Sets.newLinkedHashSet();
+   protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
    @XmlElement(name = "VAppScopedLocalId")
    protected String vAppScopedLocalId;
    @XmlAttribute
@@ -267,7 +268,8 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
    protected Boolean goldMaster;
 
    private VAppTemplate(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
-                        String id, String name, FilesList files, Integer status, Owner owner, Set<VAppTemplate> children, Set<SectionType> sections, String vAppScopedLocalId, Boolean ovfDescriptorUploaded, Boolean goldMaster) {
+                        String id, String name, FilesList files, Integer status, Owner owner, Set<VAppTemplate> children,
+                        Set<? extends SectionType<?>> sections, String vAppScopedLocalId, Boolean ovfDescriptorUploaded, Boolean goldMaster) {
       super(href, type, links, description, tasksInProgress, id, name, files, status);
       this.owner = owner;
       this.children = VAppTemplateChildren.builder().vms(children).build();
@@ -305,20 +307,6 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
     * Contains ovf sections for vApp template.
     * Gets the value of the section property.
     * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the section property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getSection().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
     * Objects of the following type(s) are allowed in the list
     * {@link JAXBElement }{@code <}{@link SectionType }{@code >}
     * {@link JAXBElement }{@code <}{@link VirtualHardwareSection }{@code >}
@@ -339,8 +327,8 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
     * {@link JAXBElement }{@code <}{@link DiskSection }{@code >}
     * {@link JAXBElement }{@code <}{@link InstallSection }{@code >}
     */
-   public Set<SectionType> getSections() {
-      return this.sections;
+   public Set<? extends SectionType<?>> getSections() {
+      return Collections.unmodifiableSet(this.sections);
    }
 
    /**

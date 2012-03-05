@@ -73,7 +73,7 @@ public interface VAppTemplateAsyncClient {
     */
    @POST
    @Consumes(TASK)
-   @Path("/consolidate")
+   @Path("/action/consolidate")
    @JAXBResponseParser
    ListenableFuture<Task> consolidateVappTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
@@ -113,7 +113,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(CUSTOMIZATION_SECTION)
    @Path("/customizationSection")
    @JAXBResponseParser
-   CustomizationSection getVAppTemplateCustomizationSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   ListenableFuture<CustomizationSection> getVAppTemplateCustomizationSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
     * @see VAppTemplateClient#editVAppTemplateCustomizationSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.CustomizationSection)
@@ -133,7 +133,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(GUEST_CUSTOMIZATION_SECTION)
    @Path("/guestCustomizationSection")
    @JAXBResponseParser
-   GuestCustomizationSection getVAppTemplateGuestCustomizationSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   ListenableFuture<GuestCustomizationSection> getVAppTemplateGuestCustomizationSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
     * @see VAppTemplateClient#editVAppTemplateGuestCustomizationSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection)
@@ -143,7 +143,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/guestCustomizationSection")
    @JAXBResponseParser
-   Task editVAppTemplateGuestCustomizationSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   ListenableFuture<Task> editVAppTemplateGuestCustomizationSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                   @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
    /**
@@ -153,7 +153,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(LEASE_SETTINGS_SECTION)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
-   LeaseSettingsSection getVappTemplateLeaseSettingsSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   ListenableFuture<LeaseSettingsSection> getVappTemplateLeaseSettingsSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
     * @see VAppTemplateClient#editVappTemplateLeaseSettingsSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection)
@@ -167,109 +167,122 @@ public interface VAppTemplateAsyncClient {
                                                                @BinderParam(BindToXMLPayload.class) LeaseSettingsSection settingsSection);
 
    /**
-    * @see VAppTemplateClient#getMetadataForVappTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
+    * @see VAppTemplateClient#getVAppTemplateMetadata(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
     */
    @GET
    @Consumes(METADATA)
    @Path("/metadata")
    @JAXBResponseParser
-   ListenableFuture<Metadata> getMetadataForVappTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   ListenableFuture<Metadata> getVAppTemplateMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    @PUT
    @Produces(METADATA)
    @Consumes(TASK)
    @Path("/metadata")
    @JAXBResponseParser
-   ListenableFuture<Task> editMetadataForVappTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   ListenableFuture<Task> editVAppTemplateMetadata(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                       @BinderParam(BindToXMLPayload.class) Metadata metadata);
 
    /**
-    * @see VAppTemplateClient#editMetadataEntryForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, String, org.jclouds.vcloud.director.v1_5.domain.MetadataEntry)
+    * @see VAppTemplateClient#getVAppTemplateMetadataValue(org.jclouds.vcloud.director.v1_5.domain.URISupplier, String)
     */
    @GET
    @Consumes(METADATA_ENTRY)
    @Path("/metadata/{key}")
-   ListenableFuture<MetadataEntry> getMetadataEntryForVAppTemplateAndKey(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   @JAXBResponseParser
+   ListenableFuture<MetadataValue> getVAppTemplateMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                                          @PathParam("key") String key);
 
    /**
-    * @see VAppTemplateClient#editMetadataEntryForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, String, org.jclouds.vcloud.director.v1_5.domain.MetadataEntry)
+    * @see VAppTemplateClient#editVAppTemplateMetadataValue(org.jclouds.vcloud.director.v1_5.domain.URISupplier, String, org.jclouds.vcloud.director.v1_5.domain.MetadataValue)
     */
    @PUT
    @Produces(METADATA_ENTRY)
    @Consumes(TASK)
    @Path("/metadata/{key}")
-   ListenableFuture<Task> editMetadataEntryForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   @JAXBResponseParser
+   ListenableFuture<Task> editVAppTemplateMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                            @PathParam("key") String key,
-                                                           @BinderParam(BindToXMLPayload.class) MetadataEntry entry);
+                                                           @BinderParam(BindToXMLPayload.class) MetadataValue value);
 
    /**
-    * @see VAppTemplateClient#deleteMetadataEntryForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, String)
+    * @see VAppTemplateClient#deleteVAppTemplateMetadataValue(URISupplier, String) 
     */
    @DELETE
    @Consumes(TASK)
    @Path("/metadata/{key}")
-   ListenableFuture<Task> deleteMetadataEntryForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   @JAXBResponseParser
+   ListenableFuture<Task> deleteVAppTemplateMetadataValue(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                              @PathParam("key") String key);
 
    /**
-    * @see VAppTemplateClient#getNetworkConfigSectionForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
+    * @see VAppTemplateClient#getVAppTemplateNetworkConfigSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
     */
    @GET
    @Consumes(NETWORK_CONFIG_SECTION)
    @Path("/networkConfigSection")
-   ListenableFuture<NetworkConfigSection> getNetworkConfigSectionForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   @JAXBResponseParser
+   ListenableFuture<NetworkConfigSection> getVAppTemplateNetworkConfigSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
-    * @see VAppTemplateClient#editNetworkConfigSectionForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection)
+    * @see VAppTemplateClient#editVAppTemplateNetworkConfigSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection)
     */
    @PUT
    @Produces(NETWORK_CONFIG_SECTION)
    @Consumes(TASK)
    @Path("/networkConfigSection")
-   ListenableFuture<Task> editNetworkConfigSectionForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   @JAXBResponseParser
+   ListenableFuture<Task> editVAppTemplateNetworkConfigSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                                   @BinderParam(BindToXMLPayload.class) NetworkConfigSection section);
 
    /**
-    * @see VAppTemplateClient#getNetworkConnectionSectionForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
+    * @see VAppTemplateClient#getVAppTemplateNetworkConnectionSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
     */
    @GET
    @Consumes(NETWORK_CONNECTION_SECTION)
    @Path("/networkConnectionSection")
-   ListenableFuture<NetworkConnectionSection> getNetworkConnectionSectionForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   @JAXBResponseParser
+   ListenableFuture<NetworkConnectionSection> getVAppTemplateNetworkConnectionSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
-    * @see VAppTemplateClient#editNetworkConnectionSectionForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection)
+    * @see VAppTemplateClient#editVAppTemplateNetworkConnectionSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier, org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection)
     */
    @PUT
    @Produces(NETWORK_CONNECTION_SECTION)
    @Consumes(TASK)
    @Path("/networkConnectionSection")
-   ListenableFuture<Task> editNetworkConnectionSectionForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   @JAXBResponseParser
+   ListenableFuture<Task> editVAppTemplateNetworkConnectionSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                                       @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
 
    /**
-    * @see VAppTemplateClient#getNetworkSectionForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
+    * @see VAppTemplateClient#getVAppTemplateNetworkSection(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
     */
    @GET
    @Consumes(NETWORK_SECTION)
    @Path("/networkSection")
-   ListenableFuture<NetworkSection> getNetworkSectionForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   @JAXBResponseParser
+   ListenableFuture<NetworkSection> getVAppTemplateNetworkSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
+   /**
+    * @see VAppTemplateClient#editVAppTemplateNetworkSection(URISupplier, NetworkSection) 
+    */
    @PUT
    @Produces(NETWORK_SECTION)
    @Consumes(TASK)
    @Path("/networkSection")
-   ListenableFuture<Task> editNetworkSectionForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
+   @JAXBResponseParser
+   ListenableFuture<Task> editVAppTemplateNetworkSection(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                             @BinderParam(BindToXMLPayload.class) NetworkSection section);
 
    /**
-    * @see VAppTemplateClient#getOvfForVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
+    * @see VAppTemplateClient#getVAppTemplateOvf(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
     */
    @GET
    @Consumes(ENVELOPE)
    @Path("/ovf")
-   ListenableFuture<Envelope> getOvfForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
+   @JAXBResponseParser
+   ListenableFuture<Envelope> getVAppTemplateOvf(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
     * @see VAppTemplateClient#getOwnerOfVAppTemplate(org.jclouds.vcloud.director.v1_5.domain.URISupplier)
@@ -277,6 +290,7 @@ public interface VAppTemplateAsyncClient {
    @GET
    @Consumes(OWNER)
    @Path("/owner")
+   @JAXBResponseParser
    ListenableFuture<Owner> getOwnerOfVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
@@ -285,6 +299,7 @@ public interface VAppTemplateAsyncClient {
    @GET
    @Consumes(PRODUCT_SECTION_LIST)
    @Path("/productSections")
+   @JAXBResponseParser
    ListenableFuture<ProductSectionList> getProductSectionsForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference);
 
    /**
@@ -294,6 +309,7 @@ public interface VAppTemplateAsyncClient {
    @Produces(PRODUCT_SECTION_LIST)
    @Consumes(TASK)
    @Path("/productSections")
+   @JAXBResponseParser
    ListenableFuture<Task> editProductSectionsForVAppTemplate(@EndpointParam(parser = ReferenceToEndpoint.class) URISupplier templateReference,
                                                              @BinderParam(BindToXMLPayload.class) ProductSectionList sections);
 

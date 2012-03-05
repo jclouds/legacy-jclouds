@@ -146,7 +146,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the requested metadata
     */
-   Metadata getMetadataForVappTemplate(URISupplier templateReference);
+   Metadata getVAppTemplateMetadata(URISupplier templateReference);
 
    /**
     * Merges the metadata for a vApp Template with the information provided.
@@ -154,7 +154,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   Task editMetadataForVappTemplate(URISupplier templateReference, Metadata metadata);
+   Task editVAppTemplateMetadata(URISupplier templateReference, Metadata metadata);
 
    /**
     * Consolidates a VM
@@ -162,7 +162,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   MetadataEntry getMetadataEntryForVAppTemplateAndKey(URISupplier templateReference, String key);
+   MetadataValue getVAppTemplateMetadataValue(URISupplier templateReference, String key);
 
    /**
     * Consolidates a VM
@@ -170,7 +170,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   Task editMetadataEntryForVAppTemplate(URISupplier templateReference, String key, MetadataEntry entry);
+   Task editVAppTemplateMetadataValue(URISupplier templateReference, String key, MetadataValue value);
 
    /**
     * Consolidates a VM
@@ -178,7 +178,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   Task deleteMetadataEntryForVAppTemplate(URISupplier templateReference, String key);
+   Task deleteVAppTemplateMetadataValue(URISupplier templateReference, String key);
 
    /**
     * Retrieves the network config section of a vApp or vApp template.
@@ -186,7 +186,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the network config section requested
     */
-   NetworkConfigSection getNetworkConfigSectionForVAppTemplate(URISupplier templateReference);
+   NetworkConfigSection getVAppTemplateNetworkConfigSection(URISupplier templateReference);
 
    /**
     * Modifies the network config section of a vApp or vApp template.
@@ -194,7 +194,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   Task editNetworkConfigSectionForVAppTemplate(URISupplier templateReference, NetworkConfigSection section);
+   Task editVAppTemplateNetworkConfigSection(URISupplier templateReference, NetworkConfigSection section);
 
    /**
     * Retrieves the network connection section of a vApp or vApp template.
@@ -202,7 +202,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the network connection section requested
     */
-   NetworkConnectionSection getNetworkConnectionSectionForVAppTemplate(URISupplier templateReference);
+   NetworkConnectionSection getVAppTemplateNetworkConnectionSection(URISupplier templateReference);
 
    /**
     * Modifies the network connection section of a vApp or vApp template.
@@ -210,7 +210,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   Task editNetworkConnectionSectionForVAppTemplate(URISupplier templateReference, NetworkConnectionSection section);
+   Task editVAppTemplateNetworkConnectionSection(URISupplier templateReference, NetworkConnectionSection section);
 
    /**
     * Retrieves the network section of a vApp or vApp template.
@@ -218,7 +218,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the network section requested
     */
-   NetworkSection getNetworkSectionForVAppTemplate(URISupplier templateReference);
+   NetworkSection getVAppTemplateNetworkSection(URISupplier templateReference);
 
    /**
     * Modifies the network section of a vApp or vApp template.
@@ -226,7 +226,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   Task editNetworkSectionForVAppTemplate(URISupplier templateReference, NetworkSection section);
+   Task editVAppTemplateNetworkSection(URISupplier templateReference, NetworkSection section);
 
    /**
     * Retrieves an OVF descriptor of a vApp template.
@@ -234,7 +234,7 @@ public interface VAppTemplateClient {
     * @param templateReference the reference to the template
     * @return the task performing the action
     */
-   Envelope getOvfForVAppTemplate(URISupplier templateReference);
+   Envelope getVAppTemplateOvf(URISupplier templateReference);
 
    /**
     * Retrieves vApp template owner.
