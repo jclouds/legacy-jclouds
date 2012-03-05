@@ -16,37 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.functions;
 
-import java.util.concurrent.TimeUnit;
+import java.net.URI;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+
 /**
- * Provides synchronous access to Network.
- * <p/>
- * 
- * @see NetworkAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author danikov
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface NetworkClient {
+public class URISupplierToEndpoint implements Function<Object, URI> {
 
-   /**
-    * Retrieves a network.
-    * 
-    * @return the network or null if not found
-    */
-   OrgNetwork getNetwork(URISupplier networkRef);
-   
-   /**
-    * @return synchronous access to {@link Metadata.Readable} features
-    */
-   @Delegate
-   MetadataClient.Readable getMetadataClient();
+   @Override
+   public URI apply(Object input) {
+      Preconditions.checkNotNull(input);
+      Preconditions.checkArgument(input instanceof URISupplier);
+      URISupplier provider = (URISupplier) input;
+      return provider.getURI();
+	};
 }

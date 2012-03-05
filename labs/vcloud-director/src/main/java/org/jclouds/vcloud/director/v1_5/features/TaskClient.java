@@ -18,13 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to {@link Task} objects.
@@ -45,7 +44,7 @@ public interface TaskClient {
     * @param orgId the unique id for the organization
     * @return a list of tasks
     */
-   TasksList getTaskList(Reference orgRef);
+   TasksList getTaskList(URISupplier orgRef);
 
    /**
     * Retrieves a task.
@@ -56,7 +55,7 @@ public interface TaskClient {
     * 
     * @return the task or null if not found
     */
-   Task getTask(URI taskUri);
+   Task getTask(URISupplier taskUri);
 
    /**
     * Cancels a task.
@@ -65,5 +64,5 @@ public interface TaskClient {
     * POST /task/{id}/action/cancel
     * </pre>
     */
-   void cancelTask(URI taskUri);
+   void cancelTask(URISupplier taskUri);
 }

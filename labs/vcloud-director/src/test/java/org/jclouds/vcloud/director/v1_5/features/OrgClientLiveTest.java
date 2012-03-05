@@ -45,7 +45,7 @@ import com.google.common.collect.Iterables;
 * 
 * @author grkvlt@apache.org
 */
-@Test(groups = { "live", "api", "user" }, singleThreaded = true, testName = "OrgClientLiveTest")
+@Test(groups = { "live", "user", "org" }, singleThreaded = true, testName = "OrgClientLiveTest")
 public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
@@ -97,7 +97,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /org/{id}/metadata/", dependsOnMethods = { "testGetOrg" })
    public void testGetOrgMetadata() {
       // Call the method being tested
-      Metadata metadata = orgClient.getOrgMetadata(orgRef);
+      Metadata metadata = orgClient.getMetadataClient().getMetadata(orgRef);
       
       // NOTE The environment MUST have at one metadata entry for the first organisation configured
       
@@ -110,7 +110,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
-      MetadataValue value = orgClient.getOrgMetadataValue(orgRef, "KEY");
+      MetadataValue value = orgClient.getMetadataClient().getMetadataValue(orgRef, "KEY");
       
       // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE" )'
 

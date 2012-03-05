@@ -65,7 +65,7 @@ import com.google.common.collect.Sets;
  */
 @XmlType(name = "CaptureVAppParams", propOrder = {
       "source",
-      "section"
+      "sections"
 })
 public class CaptureVAppParams
       extends ParamsType<CaptureVAppParams>

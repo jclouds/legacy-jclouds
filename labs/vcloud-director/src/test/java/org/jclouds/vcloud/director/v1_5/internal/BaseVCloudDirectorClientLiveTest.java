@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
@@ -29,6 +28,7 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -51,24 +51,21 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    protected String catalogName;
-   protected String mediaId;
    protected String vAppTemplateId;
    protected String networkId;
-   protected String vDCId;
+   protected String vdcId;
 
    @Override
    protected Properties setupProperties() {
       Properties overrides= super.setupProperties();
       if (catalogName != null)
          overrides.setProperty(provider + ".catalog-name", catalogName);
-      if (mediaId != null)
-         overrides.setProperty(provider + ".media-id", mediaId);
       if (vAppTemplateId != null)
          overrides.setProperty(provider + ".vapptemplate-id", vAppTemplateId);
       if (networkId != null)
          overrides.setProperty(provider + ".network-id", networkId);
-      if (vDCId != null)
-         overrides.setProperty(provider + ".vcd-id", vDCId);
+      if (vdcId != null)
+         overrides.setProperty(provider + ".vdc-id", vdcId);
       return overrides;
    }
    
@@ -77,7 +74,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    public abstract void setupRequiredClients();
 
    /** Injected by {@link #setupContext} */
-   public Predicate<URI> retryTaskSuccess;
+   public Predicate<URISupplier> retryTaskSuccess;
 
    @Override
    @BeforeClass(groups = { "live" })
@@ -85,10 +82,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       super.setupCredentials();
 
       catalogName = System.getProperty("test." + provider + ".catalog-name");
-      mediaId = System.getProperty("test." + provider + ".media-id");
       vAppTemplateId = System.getProperty("test." + provider + ".vapptemplate-id");
       networkId = System.getProperty("test." + provider + ".network-id");
-      vDCId = System.getProperty("test." + provider + ".vdc-id");
+      vdcId = System.getProperty("test." + provider + ".vdc-id");
    }
    
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
@@ -103,7 +99,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
 
       TaskSuccess taskSuccess = context.utils().injector().getInstance(TaskSuccess.class);
-      retryTaskSuccess = new RetryablePredicate<URI>(taskSuccess, 1000L);
+      retryTaskSuccess = new RetryablePredicate<URISupplier>(taskSuccess, 1000L);
    }
 
    protected void tearDown() {

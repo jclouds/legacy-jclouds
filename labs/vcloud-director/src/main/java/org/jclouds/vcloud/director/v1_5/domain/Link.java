@@ -58,6 +58,7 @@ public class Link extends ReferenceType<Link> {
       public static final String LAST_PAGE = "lastPage";
       public static final String FIRST_PAGE = "firstPage";
       public static final String CONTROL_ACCESS = "controlAccess";
+      public static final String UPLOAD_DEFAULT = "upload:default";
 
       /**
        * All acceptable {@link Link#getRel()} values.
@@ -67,7 +68,7 @@ public class Link extends ReferenceType<Link> {
       public static final List<String> ALL = Arrays.asList(
             UP, DOWN, EDIT, ADD, DELETE, REMOVE, CATALOG_ITEM, TASK_CANCEL,
             ALTERNATE, NEXT_PAGE, PREVIOUS_PAGE, LAST_PAGE, FIRST_PAGE,
-            CONTROL_ACCESS
+               CONTROL_ACCESS, UPLOAD_DEFAULT
       );
    }
 

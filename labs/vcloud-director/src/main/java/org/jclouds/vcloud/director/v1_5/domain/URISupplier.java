@@ -32,4 +32,16 @@ public interface URISupplier {
     * @see ReferenceType#getHref()
     */
    public URI getURI();
+   
+   public static class SingleURI {
+      public static URISupplier fromURI(final URI uri) {
+         return new URISupplier(){
+            @Override
+            public URI getURI() {
+               return uri;
+            }
+         };
+      }
+   }
+   
 }

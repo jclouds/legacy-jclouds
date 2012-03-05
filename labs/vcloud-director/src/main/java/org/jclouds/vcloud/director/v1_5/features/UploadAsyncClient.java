@@ -18,50 +18,38 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.util.concurrent.TimeUnit;
+import java.io.File;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import javax.ws.rs.PUT;
+
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides synchronous access to Org.
- * <p/>
- * 
- * @see OrgAsyncClient
- * @author Adrian Cole
+
+ * @see UploadClient
+ * @author danikov
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface OrgClient {
+@RequestFilters(AddVCloudAuthorizationToRequest.class)
+public interface UploadAsyncClient { // TODO: implement these operations correctly
 
    /**
-    * Retrieves a list of organizations.
-    *
-    * <pre>
-    * GET /org
-    * </pre>
-    * 
-    * @return a list of organizations
+    * @see UploadClient#uploadFile(URISupplier, File)
     */
-   OrgList getOrgList();
-
-   /**
-    * Retrieves an organization.
-    *
-    * <pre>
-    * GET /org/{id}
-    * </pre>
-    * 
-    * @return the org or null if not found
-    */
-   Org getOrg(URISupplier orgRef);
+   @PUT
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Object> uploadFile(URISupplier target, File file);
    
    /**
-    * @return synchronous access to {@link Metadata.Readable} features
+    * @see UploadClient#uploadBigFile(URISupplier, File)
     */
-   @Delegate
-   MetadataClient.Readable getMetadataClient();
+   @PUT
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Object> uploadBigFile(URISupplier target, File file);
+   
 }

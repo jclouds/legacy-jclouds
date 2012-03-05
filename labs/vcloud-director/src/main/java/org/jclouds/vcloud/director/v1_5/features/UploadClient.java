@@ -18,50 +18,31 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
- * Provides synchronous access to Org.
+ * Provides synchronous access to Upload.
  * <p/>
  * 
- * @see OrgAsyncClient
- * @author Adrian Cole
+ * @see UploadAsyncClient
+ * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
+ * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface OrgClient {
+public interface UploadClient {
 
    /**
-    * Retrieves a list of organizations.
-    *
-    * <pre>
-    * GET /org
-    * </pre>
-    * 
-    * @return a list of organizations
+    * Uploads a file.
     */
-   OrgList getOrgList();
-
-   /**
-    * Retrieves an organization.
-    *
-    * <pre>
-    * GET /org/{id}
-    * </pre>
-    * 
-    * @return the org or null if not found
-    */
-   Org getOrg(URISupplier orgRef);
+   void uploadFile(URISupplier target, File file);
    
    /**
-    * @return synchronous access to {@link Metadata.Readable} features
+    * Uploads a file using ranged PUTs.
     */
-   @Delegate
-   MetadataClient.Readable getMetadataClient();
+   void uploadBigFile(URISupplier target, File file);
+   
 }

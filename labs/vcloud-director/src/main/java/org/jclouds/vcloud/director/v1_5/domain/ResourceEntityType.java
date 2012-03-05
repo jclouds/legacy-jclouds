@@ -167,6 +167,16 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
       ResourceEntityType<?> that = ResourceEntityType.class.cast(o);
       return super.equals(that) && equal(this.files, that.files) && equal(this.status, that.status);
    }
+   
+   @Override
+   public boolean clone(Object o) {
+      if (this == o)
+         return false;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      ResourceEntityType<?> that = ResourceEntityType.class.cast(o);
+      return super.clone(that) && equal(this.files, that.files);
+   }
 
    @Override
    public int hashCode() {

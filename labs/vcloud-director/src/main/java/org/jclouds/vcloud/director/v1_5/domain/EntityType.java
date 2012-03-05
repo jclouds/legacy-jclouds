@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -137,7 +138,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    @XmlElement(name = "Description")
    private String description;
-   @XmlElement(name = "TasksInProgress")
+   @XmlElement(name = "Tasks")
    private TasksInProgress tasksInProgress;
    @XmlAttribute
    private String id;
@@ -197,6 +198,16 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       return super.equals(that) &&
             equal(this.id, that.id) && equal(this.description, that.description) &&
             equal(this.tasksInProgress, that.tasksInProgress) && equal(this.name, that.name);
+   }
+   
+   @Override
+   public boolean clone(Object o) {
+      if (this == o)
+         return false;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      EntityType<?> that = EntityType.class.cast(o);
+      return super.clone(that);
    }
 
    @Override
