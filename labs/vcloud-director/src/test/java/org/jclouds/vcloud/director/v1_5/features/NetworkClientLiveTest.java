@@ -100,7 +100,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata")
    public void testGetMetadata() {
-      Metadata metadata = networkClient.getMetadata(networkRef);
+      Metadata metadata = networkClient.getMetadataClient().getMetadata(networkRef);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
             String.format(OBJ_FIELD_REQ_LIVE, NETWORK, "metadata.entries"));
@@ -122,7 +122,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata/{key}")
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = networkClient.getMetadataValue(networkRef, "key");
+      MetadataValue metadataValue = networkClient.getMetadataClient().getMetadataValue(networkRef, "key");
        
       // Check parent type
       checkResourceType(metadataValue);

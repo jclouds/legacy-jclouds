@@ -21,14 +21,13 @@ package org.jclouds.vcloud.director.v1_5.features;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
@@ -65,23 +64,8 @@ public interface OrgAsyncClient {
    ListenableFuture<Org> getOrg(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier orgRef);
    
    /**
-    * @see OrgClient#getMetadata(ReferenceType)
+    * @return asynchronous access to {@link Metadata.Readable} features
     */
-   @GET
-   @Path("/metadata")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getOrgMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier orgRef);
-
-   /**
-    * @see OrgClient#getMetadataEntry(ReferenceType, String)
-    */
-   @GET
-   @Path("/metadata/{key}")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataValue> getOrgMetadataValue(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier orgRef,
-         @PathParam("key") String key);
+   @Delegate
+   MetadataAsyncClient.Readable getMetadataClient();
 }

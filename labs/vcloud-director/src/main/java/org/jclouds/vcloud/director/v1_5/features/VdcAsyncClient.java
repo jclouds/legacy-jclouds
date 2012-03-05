@@ -22,10 +22,10 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -40,7 +40,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -166,24 +165,9 @@ public interface VdcAsyncClient {
          @BinderParam(BindToXMLPayload.class) Media media);
     
    /**
-    * @see VdcClient#getMetadata(URISupplier)
+    * @return asynchronous access to {@link Metadata.Readable} features
     */
-   @GET
-   @Path("/metadata")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef);
- 
-   /**
-    * @see VdcClient#getMetadataEntry(URISupplier, String)
-    */
-   @GET
-   @Path("/metadata/{key}")
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef ,
-         @PathParam("key") String key);
+   @Delegate
+   MetadataAsyncClient.Readable getMetadataClient();
     
 }

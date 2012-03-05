@@ -21,8 +21,8 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
@@ -60,24 +60,8 @@ public interface OrgClient {
    Org getOrg(URISupplier orgRef);
    
    /**
-    * Retrieves an list of the organization's metadata
-    *
-    * <pre>
-    * GET /org/{id}/metadata
-    * </pre>
-    * 
-    * @return a list of metadata
+    * @return synchronous access to {@link Metadata.Readable} features
     */
-   Metadata getOrgMetadata(URISupplier orgRef);
-
-   /**
-    * Retrieves a metadata entry.
-    *
-    * <pre>
-    * GET /org/{id}/metadata{key}
-    * </pre>
-    * 
-    * @return the metadata entry or null if not found
-    */
-   MetadataValue getOrgMetadataValue(URISupplier orgRef, String key);
+   @Delegate
+   MetadataClient.Readable getMetadataClient();
 }

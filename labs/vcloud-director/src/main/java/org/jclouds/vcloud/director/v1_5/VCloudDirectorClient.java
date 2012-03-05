@@ -24,7 +24,6 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -32,13 +31,12 @@ import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
-import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 
 import com.google.inject.Provides;
@@ -106,11 +104,6 @@ public interface VCloudDirectorClient {
    UploadClient getUploadClient();
    
    /**
-    * @return synchronous access to {@link Metadata} features
-    */
-   @Delegate
-   MetadataClient getMetadataClient();
-   /*
     * @return synchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} features
     */
    @Delegate

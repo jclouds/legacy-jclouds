@@ -243,7 +243,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata", enabled = false)
    public void testGetMetadata() {
-      Metadata metadata = vdcClient.getMetadata(vdcRef);
+      Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcRef);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
             String.format(OBJ_FIELD_REQ_LIVE, VDC, "metadata.entries"));
@@ -253,7 +253,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata/{key}", enabled = false)
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = vdcClient.getMetadataValue(vdcRef, "key");
+      MetadataValue metadataValue = vdcClient.getMetadataClient().getMetadataValue(vdcRef, "key");
       
       Checks.checkMetadataValueFor(VDC, metadataValue);
    }

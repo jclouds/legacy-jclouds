@@ -349,7 +349,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       Metadata expected = metadata();
 
-      assertEquals(client.getMediaClient().getMetadata(mediaRef), expected);
+      assertEquals(client.getVdcClient().getMetadataClient().getMetadata(mediaRef), expected);
    }
    
    @Test(enabled = false)
@@ -369,7 +369,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       Reference mediaRef = Reference.builder().href(vdcUri).build();
 
-      assertEquals(client.getVdcClient().getMetadataValue(mediaRef, "key"), expected);
+      assertEquals(client.getVdcClient().getMetadataClient().getMetadataValue(mediaRef, "key"), expected);
    }
 
    public static Vdc getVdc() {

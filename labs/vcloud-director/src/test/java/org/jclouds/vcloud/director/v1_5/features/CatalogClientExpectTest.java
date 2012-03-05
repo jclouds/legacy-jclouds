@@ -149,7 +149,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .entries(ImmutableSet.of(metadataEntry()))
             .build();
       
-      assertEquals(client.getCatalogClient().getCatalogMetadata(catalogRef), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadata(catalogRef), expected);
    }
 
    @Test
@@ -178,7 +178,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       
       MetadataValue expected = metadataValue();
       
-      assertEquals(client.getCatalogClient().getCatalogMetadataValue(catalogRef, "KEY"), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadataValue(catalogRef, "KEY"), expected);
    }
    
    @Test
@@ -301,7 +301,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .entries(ImmutableSet.of(itemMetadataEntry()))
             .build();
       
-      assertEquals(client.getCatalogClient().getCatalogItemMetadata(catalogItemReference), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadata(catalogItemReference), expected);
    }
 
    @Test
@@ -333,7 +333,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       
       Task expected = mergeMetadataTask();
       
-      assertEquals(client.getCatalogClient().mergeCatalogItemMetadata(catalogItemReference, metadata), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().mergeMetadata(catalogItemReference, metadata), expected);
    }
 
    @Test
@@ -362,7 +362,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       
       MetadataValue expected = itemMetadataValue();
       
-      assertEquals(client.getCatalogClient().getCatalogItemMetadataValue(catalogItemReference, "KEY"), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadataValue(catalogItemReference, "KEY"), expected);
    }
 
    @Test
@@ -394,7 +394,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       
       Task expected = setMetadataValueTask();
       
-      assertEquals(client.getCatalogClient().setCatalogItemMetadataValue(catalogItemReference, "KEY", value), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().setMetadata(catalogItemReference, "KEY", value), expected);
    }
 
    @Test
@@ -423,7 +423,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       
       Task expected = deleteMetadataEntryTask();
       
-      assertEquals(client.getCatalogClient().deleteCatalogItemMetadataValue(catalogItemReference, "KEY"), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().deleteMetadataEntry(catalogItemReference, "KEY"), expected);
    }
 
    public static final Catalog catalog() {

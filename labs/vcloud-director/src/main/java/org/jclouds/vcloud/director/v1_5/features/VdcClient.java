@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
@@ -29,7 +30,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -144,17 +144,9 @@ public interface VdcClient {
    Media createMedia(URISupplier vdcRef, Media media);
    
    /**
-    * Retrieves an list of the vdc's metadata
-    * 
-    * @return a list of metadata
+    * @return synchronous access to {@link Metadata.Readable} features
     */
-   Metadata getMetadata(URISupplier vdcRef);
-
-   /**
-    * Retrieves a metadata value
-    * 
-    * @return the metadata value, or null if not found
-    */
-   MetadataValue getMetadataValue(URISupplier vdcRef, String key);
+   @Delegate
+   MetadataClient.Readable getMetadataClient();
 
 }

@@ -164,7 +164,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
        Reference networkRef = Reference.builder().href(networkUri).build();
  
-       assertEquals(client.getNetworkClient().getMetadata(networkRef), expected);
+       assertEquals(client.getNetworkClient().getMetadataClient().getMetadata(networkRef), expected);
    }
    
    @Test(enabled=false) // No metadata in exemplar xml...
@@ -181,7 +181,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       Reference networkRef = Reference.builder().href(networkUri).build();
 
-      assertEquals(client.getNetworkClient().getMetadataValue(networkRef, "KEY"), expected);
+      assertEquals(client.getNetworkClient().getMetadataClient().getMetadataValue(networkRef, "KEY"), expected);
    }
 
    public static OrgNetwork orgNetwork() {

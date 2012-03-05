@@ -21,11 +21,10 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
@@ -61,31 +60,6 @@ public interface CatalogClient {
     * @return the created catalog item
     */
    CatalogItem addCatalogItem(URISupplier catalogRef, CatalogItem item);
-
-   /**
-    * Returns the metadata associated with the catalog.
-    *
-    * <pre>
-    * GET /catalog/{id}/metadata
-    * </pre>
-    *
-    * @param catalogRef the reference for the catalog
-    * @return the catalog metadata
-    */
-   Metadata getCatalogMetadata(URISupplier catalogRef);
-
-   /**
-    * Returns the metadata associated with the catalog for the specified key.
-    *
-    * <pre>
-    * GET /catalog/{id}/metadata/{key}
-    * </pre>
-    *
-    * @param catalogRef the reference for the catalog
-    * @param key the metadata entry key
-    * @return the catalog metadata value
-    */
-   MetadataValue getCatalogMetadataValue(URISupplier catalogRef, String key);
 
    /**
     * Retrieves a catalog item.
@@ -124,67 +98,8 @@ public interface CatalogClient {
    void deleteCatalogItem(URISupplier catalogItemRef);
 
    /**
-    * Returns the metadata associated with the catalog item.
-    *
-    * <pre>
-    * GET /catalogItem/{id}/metadata
-    * </pre>
-    *
-    * @param catalogItemRef the reference for the catalog item
-    * @return the catalog item metadata
+    * @return synchronous access to {@link Metadata.Writeable} features
     */
-   Metadata getCatalogItemMetadata(URISupplier catalogItemRef);
-
-   /**
-    * Merges the metadata for a catalog item with the information provided.
-    *
-    * <pre>
-    * POST /catalogItem/{id}/metadata
-    * </pre>
-    *
-    * @param catalogItemRef the reference for the catalog item
-    * @param catalogItemMetadata the metadata for the catalog item
-    * @return a task for the merge operation
-    */
-   Task mergeCatalogItemMetadata(URISupplier catalogItemRef, Metadata catalogItemMetadata);
-
-   /**
-    * Returns the metadata associated with the catalog item for the specified key.
-    *
-    * <pre>
-    * GET /catalog/{id}/metadata/{key}
-    * </pre>
-    *
-    * @param catalogItemRef the reference for the catalog item
-    * @param key the metadata entry key
-    * @return the catalog item metadata value
-    */
-   MetadataValue getCatalogItemMetadataValue(URISupplier catalogItemRef, String key);
-
-   /**
-    * Sets the metadata for the particular key for the catalog item to the value provided.
-    *
-    * <pre>
-    * PUT /catalog/{id}/metadata/{key}
-    * </pre>
-    *
-    * @param catalogItemRef the reference for the catalog item
-    * @param key the metadata entry key
-    * @param value the metadata value
-    * @return a task for the set operation
-    */
-   Task setCatalogItemMetadataValue(URISupplier catalogItemRef, String key, MetadataValue value);
-
-   /**
-    * Deletes the metadata for the particular key for the catalog item.
-    *
-    * <pre>
-    * DELETE /catalog/{id}/metadata/{key}
-    * </pre>
-    *
-    * @param catalogItemRef the reference for the catalog item
-    * @param key the metadata entry key
-    * @return a task for the delete operation
-    */
-   Task deleteCatalogItemMetadataValue(URISupplier catalogItemRef, String key);
+   @Delegate
+   MetadataClient.Writeable getMetadataClient();
 }

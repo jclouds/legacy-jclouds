@@ -60,7 +60,7 @@ public interface MetadataAsyncClient {
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-      ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier parent);
+      ListenableFuture<Metadata> getMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier parentRef);
       
       /**
        * @see MetadataClient.Readable#getMetadataEntry(URISupplier, String)
@@ -70,7 +70,7 @@ public interface MetadataAsyncClient {
       @Consumes
       @JAXBResponseParser
       @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-      ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier parent ,
+      ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier parentRef ,
             @PathParam("key") String key);
    }
    
@@ -84,7 +84,7 @@ public interface MetadataAsyncClient {
       @Produces(VCloudDirectorMediaType.METADATA)
       @JAXBResponseParser
       @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-      ListenableFuture<Task> mergeMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier mediaRef,
+      ListenableFuture<Task> mergeMetadata(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier parentRef,
             @BinderParam(BindToXMLPayload.class) Metadata metadata);
 
       

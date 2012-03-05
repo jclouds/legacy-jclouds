@@ -47,7 +47,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "user", "media" }, singleThreaded = true, testName = "MediaClientExpectTest")
+@Test(groups = { "unit", "media" }, singleThreaded = true, testName = "MediaClientExpectTest")
 public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    @Test
@@ -280,7 +280,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       Metadata expected = metadata();
 
-      assertEquals(client.getMediaClient().getMetadata(mediaRef), expected);
+      assertEquals(client.getMediaClient().getMetadataClient().getMetadata(mediaRef), expected);
    }
    
    @Test
@@ -301,7 +301,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       Metadata inputMetadata = metadata();
       Task expectedTask = mergeMetadataTask();
 
-      assertEquals(client.getMediaClient().mergeMetadata(mediaRef, inputMetadata), expectedTask);
+      assertEquals(client.getMediaClient().getMetadataClient().mergeMetadata(mediaRef, inputMetadata), expectedTask);
    }
    
    public void testGetMetadataValue() {
@@ -320,7 +320,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       Reference mediaRef = Reference.builder().href(mediaUri).build();
 
-      assertEquals(client.getMediaClient().getMetadataValue(mediaRef, "key"), expected);
+      assertEquals(client.getMediaClient().getMetadataClient().getMetadataValue(mediaRef, "key"), expected);
    }
    
    @Test
@@ -342,7 +342,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       
       Task expectedTask = setMetadataEntryTask();
 
-      assertEquals(client.getMediaClient().setMetadata(mediaRef, "key", inputMetadataValue), expectedTask);
+      assertEquals(client.getMediaClient().getMetadataClient().setMetadata(mediaRef, "key", inputMetadataValue), expectedTask);
    }
    
    @Test
@@ -361,7 +361,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       Reference mediaRef = Reference.builder().href(mediaUri).build();
       Task expectedTask = deleteMetadataEntryTask();
 
-      assertEquals(client.getMediaClient().deleteMetadataEntry(mediaRef, "key"), expectedTask);
+      assertEquals(client.getMediaClient().getMetadataClient().deleteMetadataEntry(mediaRef, "key"), expectedTask);
    }
    
    @Test

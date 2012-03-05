@@ -195,7 +195,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
        Reference orgRef = Reference.builder().href(orgUri).build();
  
-       assertEquals(client.getOrgClient().getOrgMetadata(orgRef), expected);
+       assertEquals(client.getOrgClient().getMetadataClient().getMetadata(orgRef), expected);
    }
    
    @Test
@@ -210,7 +210,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
       Reference orgRef = Reference.builder().href(orgUri).build();
 
-      assertEquals(client.getOrgClient().getOrgMetadataValue(orgRef, "KEY"), expected);
+      assertEquals(client.getOrgClient().getMetadataClient().getMetadataValue(orgRef, "KEY"), expected);
    }
 
    public static Org org() {

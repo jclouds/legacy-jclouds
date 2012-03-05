@@ -34,32 +34,33 @@ import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
  * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author danikov
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface MetadataClient {
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Readable extends MetadataClient {
       /**
        * Retrieves an list of metadata
        * 
        * @return a list of metadata
        */
-      Metadata getMetadata(URISupplier vdcRef);
+      Metadata getMetadata(URISupplier parentRef);
       
       /**
        * Retrieves a metadata value
        * 
        * @return the metadata value, or null if not found
        */
-      MetadataValue getMetadataValue(URISupplier vdcRef, String key);
+      MetadataValue getMetadataValue(URISupplier parentRef, String key);
    }
    
-   public static interface Writable extends Readable {
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+   public static interface Writeable extends Readable {
       /**
        * Merges the metadata for a media with the information provided.
        * 
        * @return a task. This operation is asynchronous and the user should monitor the returned 
        * task status in order to check when it is completed.
        */
-      Task mergeMetadata(URISupplier mediaRef, Metadata metadata);
+      Task mergeMetadata(URISupplier parentRef, Metadata metadata);
 
       /**
        * Sets the metadata for the particular key for the media to the value provided. 
@@ -68,7 +69,7 @@ public interface MetadataClient {
        * @return a task. This operation is asynchronous and the user should monitor the returned 
        * task status in order to check when it is completed.
        */
-      Task setMetadata(URISupplier mediaRef, String key, MetadataValue metadataValue);
+      Task setMetadata(URISupplier parentRef, String key, MetadataValue metadataValue);
       
       /**
        * Deletes a metadata entry.
@@ -76,6 +77,6 @@ public interface MetadataClient {
        * @return a task. This operation is asynchronous and the user should monitor the returned 
        * task status in order to check when it is completed.
        */
-      Task deleteMetadataEntry(URISupplier mediaRef, String key);
+      Task deleteMetadataEntry(URISupplier parentRef, String key);
    }
 }

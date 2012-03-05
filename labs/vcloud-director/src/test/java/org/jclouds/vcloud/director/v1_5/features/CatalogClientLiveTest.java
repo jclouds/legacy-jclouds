@@ -150,7 +150,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    // NOTE for this test to work, we need to be able to create metadata on a Catalog, specifically { "KEY", "VALUE" }
    @Test(testName = "GET /catalog/{id}/metadata", dependsOnMethods = { "testGetCatalog" }, enabled = false)
    public void testGetCatalogMetadata() {
-      catalogMetadata = catalogClient.getCatalogMetadata(catalogRef);
+      catalogMetadata = catalogClient.getMetadataClient().getMetadata(catalogRef);
       checkMetadata(catalogMetadata);
    }
 
@@ -163,7 +163,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             return input.getKey().equals("KEY");
          }
       });
-      MetadataValue metadataValue = catalogClient.getCatalogMetadataValue(catalogRef, "KEY");
+      MetadataValue metadataValue = catalogClient.getMetadataClient().getMetadataValue(catalogRef, "KEY");
       assertEquals(metadataValue.getValue(), existingMetadataEntry.getValue(),
             String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", existingMetadataEntry.getValue(), metadataValue.getValue()));
       checkMetadataValue(metadataValue);
@@ -172,7 +172,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /catalogItem/{id}/metadata", dependsOnMethods = { "testGetCatalogItem" })
    public void testGetCatalogItemMetadata() {
       resetCatalogItemMetadata(catalogItemRef);
-      catalogItemMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);
+      catalogItemMetadata = catalogClient.getMetadataClient().getMetadata(catalogItemRef);
       assertEquals(catalogItemMetadata.getMetadataEntries().size(), 1, String.format(MUST_EXIST_FMT, "MetadataEntry", "CatalogItem"));
       checkMetadata(catalogItemMetadata);
    }
@@ -184,22 +184,22 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .entry(MetadataEntry.builder().entry("VEGIMITE", "VALUE").build())
             .build();
 
-      Task mergeCatalogItemMetadata = catalogClient.mergeCatalogItemMetadata(catalogItemRef, newMetadata);
+      Task mergeCatalogItemMetadata = catalogClient.getMetadataClient().mergeMetadata(catalogItemRef, newMetadata);
       checkTask(mergeCatalogItemMetadata);
       assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata),
             String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
       
-      Metadata mergedCatalogItemMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);
+      Metadata mergedCatalogItemMetadata = catalogClient.getMetadataClient().getMetadata(catalogItemRef);
       // XXX
       assertEquals(mergedCatalogItemMetadata.getMetadataEntries().size(), catalogItemMetadata.getMetadataEntries().size() + 1,
             "Should have added another MetadataEntry to the CatalogItem");
       
-      MetadataValue keyMetadataValue = catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
+      MetadataValue keyMetadataValue = catalogClient.getMetadataClient().getMetadataValue(catalogItemRef, "KEY");
       // XXX
       assertEquals(keyMetadataValue.getValue(), "MARMALADE", "The Value of the MetadataValue for KEY should have changed");
       checkMetadataValue(keyMetadataValue);
       
-      MetadataValue newKeyMetadataValue = catalogClient.getCatalogItemMetadataValue(catalogItemRef, "VEGIMITE");
+      MetadataValue newKeyMetadataValue = catalogClient.getMetadataClient().getMetadataValue(catalogItemRef, "VEGIMITE");
       // XXX
       assertEquals(newKeyMetadataValue.getValue(), "VALUE", "The Value of the MetadataValue for NEW_KEY should have been set");
       checkMetadataValue(newKeyMetadataValue);
@@ -215,7 +215,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             return input.getKey().equals("KEY");
          }
       });
-      MetadataValue metadataValue = catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
+      MetadataValue metadataValue = catalogClient.getMetadataClient().getMetadataValue(catalogItemRef, "KEY");
       assertEquals(existingMetadataEntry.getValue(), metadataValue.getValue());
       checkMetadataValue(metadataValue);
    }
@@ -224,13 +224,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testSetCatalogItemMetadataValue() {
       MetadataValue newMetadataValue = MetadataValue.builder().value("NEW").build();
 
-      Task setCatalogItemMetadataValue = catalogClient.setCatalogItemMetadataValue(catalogItemRef, "KEY", newMetadataValue);
+      Task setCatalogItemMetadataValue = catalogClient.getMetadataClient().setMetadata(catalogItemRef, "KEY", newMetadataValue);
       checkTask(setCatalogItemMetadataValue);
       Checks.checkTask(setCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
       
-      MetadataValue updatedMetadataValue = catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
+      MetadataValue updatedMetadataValue = catalogClient.getMetadataClient().getMetadataValue(catalogItemRef, "KEY");
       assertEquals(updatedMetadataValue.getValue(), newMetadataValue.getValue(),
                String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", newMetadataValue.getValue(), updatedMetadataValue.getValue()));
       checkMetadataValue(updatedMetadataValue);
@@ -238,13 +238,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "DELETE /catalog/{id}/metadata/{key}", dependsOnMethods = { "testSetCatalogItemMetadataValue" })
    public void testDeleteCatalogItemMetadataValue() {
-      Task deleteCatalogItemMetadataValue = catalogClient.deleteCatalogItemMetadataValue(catalogItemRef, "KEY");
+      Task deleteCatalogItemMetadataValue = catalogClient.getMetadataClient().deleteMetadataEntry(catalogItemRef, "KEY");
       checkTask(deleteCatalogItemMetadataValue);
       Checks.checkTask(deleteCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
       try {
-	      catalogClient.getCatalogItemMetadataValue(catalogItemRef, "KEY");
+	      catalogClient.getMetadataClient().getMetadataValue(catalogItemRef, "KEY");
 	      fail("The CatalogItem MetadataValue for KEY should have been deleted");
       } catch (VCloudDirectorException vcde) {
          Error error = vcde.getError();
@@ -256,18 +256,18 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    private void deleteAllCatalogItemMetadata(ReferenceType<?> catalogItemRef) {
-      Metadata currentMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);
+      Metadata currentMetadata = catalogClient.getMetadataClient().getMetadata(catalogItemRef);
       for (MetadataEntry currentMetadataEntry : currentMetadata.getMetadataEntries()) {
-         catalogClient.deleteCatalogItemMetadataValue(catalogItemRef, currentMetadataEntry.getKey());
+         catalogClient.getMetadataClient().deleteMetadataEntry(catalogItemRef, currentMetadataEntry.getKey());
       }
-      Metadata emptyMetadata = catalogClient.getCatalogItemMetadata(catalogItemRef);
+      Metadata emptyMetadata = catalogClient.getMetadataClient().getMetadata(catalogItemRef);
       assertTrue(emptyMetadata.getMetadataEntries().isEmpty(), "The catalogItem Metadata should be empty");
    }
 
    private void resetCatalogItemMetadata(ReferenceType<?> catalogItemRef) {
       deleteAllCatalogItemMetadata(catalogItemRef);
       Metadata newMetadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
-      Task mergeCatalogItemMetadata = catalogClient.mergeCatalogItemMetadata(catalogItemRef, newMetadata);
+      Task mergeCatalogItemMetadata = catalogClient.getMetadataClient().mergeMetadata(catalogItemRef, newMetadata);
       Checks.checkTask(mergeCatalogItemMetadata);
       assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata), 
             String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));

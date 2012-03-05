@@ -21,8 +21,8 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
@@ -45,17 +45,8 @@ public interface NetworkClient {
    OrgNetwork getNetwork(URISupplier networkRef);
    
    /**
-    * Retrieves an list of the network's metadata
-    * 
-    * @return a list of metadata
+    * @return synchronous access to {@link Metadata.Readable} features
     */
-   Metadata getMetadata(URISupplier networkRef);
-
-   /**
-    * Retrieves a metadata value
-    * 
-    * @return the metadata value, or null if not found
-    */
-   MetadataValue getMetadataValue(URISupplier networkRef, String key);
-
+   @Delegate
+   MetadataClient.Readable getMetadataClient();
 }

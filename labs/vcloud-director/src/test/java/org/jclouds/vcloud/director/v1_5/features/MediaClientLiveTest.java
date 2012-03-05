@@ -175,7 +175,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMediaFor(MEDIA, media);
       assertTrue(media.clone(oldMedia), "");
       
-      mediaClient.setMetadata(media, "key", MetadataValue.builder().value("value").build());
+      mediaClient.getMetadataClient().setMetadata(media, "key", MetadataValue.builder().value("value").build());
       
       media = vdcClient.cloneMedia(vdcRef, CloneMediaParams.builder()
             .source(Reference.builder().fromEntity(media).build())
@@ -232,7 +232,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /media/{id}/metadata",
          dependsOnMethods = { "testGetMedia" }, enabled = false)
    public void testGetMetadata() {
-      metadata = mediaClient.getMetadata(media);
+      metadata = mediaClient.getMetadataClient().getMetadata(media);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()),
             String.format(OBJ_FIELD_REQ_LIVE, MEDIA, "metadata.entries"));
@@ -249,10 +249,10 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .entries(inputEntries)
             .build();
       
-      Task mergeMetadata = mediaClient.mergeMetadata(media, inputMetadata);
+      Task mergeMetadata = mediaClient.getMetadataClient().mergeMetadata(media, inputMetadata);
       Checks.checkTask(mergeMetadata);
       assertTrue(retryTaskSuccess.apply(mergeMetadata), String.format(TASK_COMPLETE_TIMELY, "mergeMetadata(new)"));
-      metadata = mediaClient.getMetadata(media);
+      metadata = mediaClient.getMetadataClient().getMetadata(media);
       Checks.checkMetadataFor(MEDIA, metadata);
       checkMetadataContainsEntries(metadata, inputEntries);
       
@@ -265,10 +265,10 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .entries(inputEntries)
             .build();
       
-      mergeMetadata = mediaClient.mergeMetadata(media, inputMetadata);
+      mergeMetadata = mediaClient.getMetadataClient().mergeMetadata(media, inputMetadata);
       Checks.checkTask(mergeMetadata);
       assertTrue(retryTaskSuccess.apply(mergeMetadata), String.format(TASK_COMPLETE_TIMELY, "mergeMetadata(modify)"));
-      metadata = mediaClient.getMetadata(media);
+      metadata = mediaClient.getMetadataClient().getMetadata(media);
       Checks.checkMetadataFor(MEDIA, metadata);
       checkMetadataContainsEntries(metadata, inputEntries);
       
@@ -296,7 +296,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /media/{id}/metadata/{key}",
          dependsOnMethods = { "testMergeMetadata" }, enabled = false)
    public void testGetMetadataValue() {
-      metadataValue = mediaClient.getMetadataValue(media, "key");
+      metadataValue = mediaClient.getMetadataClient().getMetadataValue(media, "key");
       Checks.checkMetadataValueFor(MEDIA, metadataValue);
    }
    
@@ -306,18 +306,18 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       metadataEntryValue = "newValue";
       MetadataValue newValue = MetadataValue.builder().value(metadataEntryValue).build();
       
-      Task setMetadataEntry = mediaClient.setMetadata(media, "key", newValue);
+      Task setMetadataEntry = mediaClient.getMetadataClient().setMetadata(media, "key", newValue);
       Checks.checkTask(setMetadataEntry);
       assertTrue(retryTaskSuccess.apply(setMetadataEntry),
             String.format(TASK_COMPLETE_TIMELY, "setMetadataEntry"));
-      metadataValue = mediaClient.getMetadataValue(media, "key");
+      metadataValue = mediaClient.getMetadataClient().getMetadataValue(media, "key");
       Checks.checkMetadataValueFor(MEDIA, metadataValue);
    }
    
    @Test(testName = "DELETE /media/{id}/metadata/{key}",
          dependsOnMethods = { "testSetMetadataValue" }, enabled = false )
    public void testDeleteMetadata() {
-      Task deleteMetadataEntry = mediaClient.deleteMetadataEntry(media, "testKey");
+      Task deleteMetadataEntry = mediaClient.getMetadataClient().deleteMetadataEntry(media, "testKey");
       Checks.checkTask(deleteMetadataEntry);
       assertTrue(retryTaskSuccess.apply(deleteMetadataEntry),
             String.format(TASK_COMPLETE_TIMELY, "deleteMetadataEntry"));
@@ -329,7 +329,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
       
       try {
-         metadataValue = mediaClient.getMetadataValue(media, "testKey");
+         metadataValue = mediaClient.getMetadataClient().getMetadataValue(media, "testKey");
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -344,7 +344,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                "metadataEntry", metadataValue.toString()));
       }
       
-      metadataValue = mediaClient.getMetadataValue(media, "key");
+      metadataValue = mediaClient.getMetadataClient().getMetadataValue(media, "key");
       Checks.checkMetadataValueFor(MEDIA, metadataValue);
       
       media = mediaClient.getMedia(media);
