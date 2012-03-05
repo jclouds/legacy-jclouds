@@ -185,12 +185,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          if (utils.trustAllCerts())
             sslCon.setSSLSocketFactory(untrustedSSLContextProvider.get().getSocketFactory());
       }
-      if (utils.getConnectionTimeout() > 0) {
-         connection.setConnectTimeout(utils.getConnectionTimeout());
-      }
-      if (utils.getSocketOpenTimeout() > 0) {
-         connection.setReadTimeout(utils.getSocketOpenTimeout());
-      }
+      connection.setConnectTimeout(utils.getConnectionTimeout());
+      connection.setReadTimeout(utils.getSocketOpenTimeout());
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);
       // do not follow redirects since https redirects don't work properly
