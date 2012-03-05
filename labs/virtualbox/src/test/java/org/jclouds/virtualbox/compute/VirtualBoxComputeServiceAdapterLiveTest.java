@@ -26,12 +26,10 @@ import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
-import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.functions.IMachineToSshClient;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 
@@ -71,7 +69,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
   }
 
   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
-    SshClient ssh = context.utils().sshFactory().create(new IPSocket("//TODO", 22), creds);
+    SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine); 
     try {
       ssh.connect();
       ExecResponse hello = ssh.exec("echo hello");

@@ -35,6 +35,7 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
@@ -49,11 +50,13 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
   private final Supplier<VirtualBoxManager>   manager;
   private final Function<CloneSpec, IMachine> cloner;
+  private MachineUtils machineUtils;
 
   @Inject
-  public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner) {
+  public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner, MachineUtils machineUtils) {
     this.manager = manager;
     this.cloner = cloner;
+    this.machineUtils = machineUtils;
   }
 
   @Override
@@ -79,18 +82,20 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
     VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
         .forceOverwrite(true).build();
 
-    NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.Bridged)
-        .build();
+    NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
 
     NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
         .build();
 
-    NetworkSpec cloneNetworkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+    NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
 
-    CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine())
-        .network(cloneNetworkSpec).vm(cloneVmSpec).build();
+    CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
+        .vm(cloneVmSpec).build();
 
     IMachine cloned = cloner.apply(cloneSpec);
+
+    new AttachNicToMachine(cloneName, machineUtils).apply(networkInterfaceCard);
 
     new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
 

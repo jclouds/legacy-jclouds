@@ -121,14 +121,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 		progress.waitForCompletion(-1);
 		logger.debug("clone done");
 
-
 		// registering
 		manager.get().getVBox().registerMachine(clonedMachine);
 
 		// Bridged#
-		for (NetworkInterfaceCard nic : cloneSpec.getNetworkSpec().getNetworkInterfaceCards()){
-			ensureBridgedNetworkingIsAppliedToMachine(clonedMachine.getName(), nic);
-		}
+//		for (NetworkInterfaceCard nic : cloneSpec.getNetworkSpec().getNetworkInterfaceCards()){
+//			ensureBridgedNetworkingIsAppliedToMachine(clonedMachine.getName(), nic);
+//		}
 		
 		return clonedMachine;
 	}
