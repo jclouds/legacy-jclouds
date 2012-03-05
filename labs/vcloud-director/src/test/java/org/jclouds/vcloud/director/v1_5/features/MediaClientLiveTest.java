@@ -108,17 +108,20 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       Checks.checkMediaFor(MEDIA, media);
       
-      assertNotNull(media.getFiles(), "");
-      assertTrue(media.getFiles().getFiles().size() == 1, "");
+      assertNotNull(media.getFiles(), String.format(OBJ_FIELD_REQ, MEDIA, "files"));
+      assertTrue(media.getFiles().getFiles().size() == 1, String.format(OBJ_FIELD_EQ, MEDIA, "files.size()", "1", 
+            media.getFiles().getFiles().size()));
       File uploadFile = Iterables.getFirst(media.getFiles().getFiles(), null);
-      assertNotNull(uploadFile, "");
-      assertTrue(equal(uploadFile.getSize(), sourceMedia.getSize()), "");
+      assertNotNull(uploadFile, String.format(OBJ_FIELD_REQ, MEDIA, "files.first"));
+      assertTrue(equal(uploadFile.getSize(), sourceMedia.getSize()), String.format(OBJ_FIELD_EQ, MEDIA, "uploadFile.size()",
+            sourceMedia.getSize(), uploadFile.getSize()));
       
       Set<Link> links = uploadFile.getLinks();
-      assertNotNull(links, "");
-      assertTrue(links.size() == 1, "");
+      assertNotNull(links, String.format(OBJ_FIELD_REQ, MEDIA, "uploadFile.links"));
+      assertTrue(links.size() == 1, String.format(OBJ_FIELD_EQ, MEDIA, "uploadfile.links.size()", "1", 
+            links.size()));
       Link uploadLink = Iterables.getFirst(links, null);
-      assertTrue(equal(uploadLink.getRel(), Link.Rel.UPLOAD_DEFAULT), "");
+      assertTrue(equal(uploadLink.getRel(), Link.Rel.UPLOAD_DEFAULT), String.format(OBJ_FIELD_REQ, MEDIA, "uploadFile.links.first"));
       
       fail(); //TODO upload file and assert it succeeds
       context.getApi().getUploadClient().uploadFile(uploadLink, sourceFile);
@@ -173,7 +176,8 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
       
       Checks.checkMediaFor(MEDIA, media);
-      assertTrue(media.clone(oldMedia), "");
+      assertTrue(media.clone(oldMedia), String.format(OBJ_FIELD_CLONE, MEDIA, "copied media", 
+            media.toString(), oldMedia.toString()));
       
       mediaClient.getMetadataClient().setMetadata(media, "key", MetadataValue.builder().value("value").build());
       
@@ -196,7 +200,8 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
       
       Checks.checkMediaFor(MEDIA, media);
-      assertTrue(media.clone(oldMedia), "");
+      assertTrue(media.clone(oldMedia), String.format(OBJ_FIELD_CLONE, MEDIA, "moved media", 
+            media.toString(), oldMedia.toString()));
    }
    
    @Test(testName = "PUT /media/{id}",
