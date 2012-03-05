@@ -403,7 +403,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .method("DELETE")
             .endpoint(URI.create(endpoint + "/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df/metadata/KEY"))
             .headers(ImmutableMultimap.<String, String> builder()
-                              .put("Accept", "*/*")
+                              .put("Accept", "application/vnd.vmware.vcloud.task+xml")
                               .put("x-vcloud-authorization", token)
                               .build())
             .build();
