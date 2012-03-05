@@ -22,6 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
@@ -101,11 +102,9 @@ public class CaptureVAppParams
          return this;
       }
 
-
       public CaptureVAppParams build() {
          return new CaptureVAppParams(description, name, source, sections);
       }
-
 
       @Override
       public Builder fromParamsType(ParamsType<CaptureVAppParams> in) {
@@ -133,7 +132,6 @@ public class CaptureVAppParams
       this.sections = ImmutableSet.copyOf(sections);
    }
 
-
    @XmlElement(name = "Source", required = true)
    protected Reference source;
    @XmlElementRef
@@ -151,22 +149,9 @@ public class CaptureVAppParams
 
    /**
     * An ovf:Section to configure the captured vAppTemplate.
-    * Gets the value of the section property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the section property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getSection().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
+    *
+    *  Gets the value of the section property.
+    *    
     * Objects of the following type(s) are allowed in the list
     * {@link JAXBElement }{@code <}{@link Section> }{@code >}
     * {@link JAXBElement }{@code <}{@link VirtualHardwareSection > }{@code >}
@@ -188,7 +173,7 @@ public class CaptureVAppParams
     * {@link JAXBElement }{@code <}{@link InstallSection> }{@code >}
     */
    public Set<? extends Section<?>> getSections() {
-      return this.sections;
+      return Collections.unmodifiableSet(this.sections);
    }
 
    @Override

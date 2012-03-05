@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -55,7 +56,7 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlType(name = "ProductSectionList", propOrder = {
-      "productSection"
+      "productSections"
 })
 public class ProductSectionList
       extends ResourceType<ProductSectionList>
@@ -76,9 +77,9 @@ public class ProductSectionList
       private Set<ProductSection> productSections = Sets.newLinkedHashSet();
 
       /**
-       * @see ProductSectionList#getProductSection()
+       * @see ProductSectionList#getProductSections()
        */
-      public Builder productSection(Set<ProductSection> productSections) {
+      public Builder productSections(Set<ProductSection> productSections) {
          this.productSections = checkNotNull(productSections, "productSection");
          return this;
       }
@@ -88,7 +89,6 @@ public class ProductSectionList
          ProductSectionList productSectionList = new ProductSectionList(productSections);
          return productSectionList;
       }
-
 
       /**
        * @see ResourceType#getHref()
@@ -134,7 +134,7 @@ public class ProductSectionList
 
       public Builder fromProductSectionList(ProductSectionList in) {
          return fromResourceType(in)
-               .productSection(in.getProductSection());
+               .productSections(in.getProductSections());
       }
    }
 
@@ -142,19 +142,19 @@ public class ProductSectionList
       // For JAXB and builder use
    }
 
-   private ProductSectionList(Set<ProductSection> productSection) {
-      this.productSection = ImmutableSet.copyOf(productSection);
+   private ProductSectionList(Set<ProductSection> productSections) {
+      this.productSections = ImmutableSet.copyOf(productSections);
    }
 
 
    @XmlElement(name = "ProductSection", namespace = "http://schemas.dmtf.org/ovf/envelope/1")
-   protected Set<ProductSection> productSection = Sets.newLinkedHashSet();
+   protected Set<ProductSection> productSections = Sets.newLinkedHashSet();
 
    /**
     * Gets the value of the productSection property.
     */
-   public Set<ProductSection> getProductSection() {
-      return this.productSection;
+   public Set<ProductSection> getProductSections() {
+      return Collections.unmodifiableSet(this.productSections);
    }
 
    @Override
@@ -164,18 +164,18 @@ public class ProductSectionList
       if (o == null || getClass() != o.getClass())
          return false;
       ProductSectionList that = ProductSectionList.class.cast(o);
-      return equal(productSection, that.productSection);
+      return equal(productSections, that.productSections);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(productSection);
+      return Objects.hashCode(productSections);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper("")
-            .add("productSection", productSection).toString();
+            .add("productSections", productSections).toString();
    }
 
 }

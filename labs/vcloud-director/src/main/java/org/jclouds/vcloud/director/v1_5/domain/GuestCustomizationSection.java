@@ -237,7 +237,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       }
 
       /**
-       * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getLink()
+       * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getLinks()
        */
       public Builder links(Set<Link> links) {
          this.links = checkNotNull(links, "links");
@@ -285,7 +285,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
                .resetPasswordRequired(in.isResetPasswordRequired())
                .customizationScript(in.getCustomizationScript())
                .computerName(in.getComputerName())
-               .links(in.getLink())
+               .links(in.getLinks())
                .href(in.getHref())
                .type(in.getType());
       }
@@ -528,7 +528,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
     * Objects of the following type(s) are allowed in the list
     * {@link Link }
     */
-   public Set<Link> getLink() {
+   public Set<Link> getLinks() {
       return Collections.unmodifiableSet(this.links);
    }
 

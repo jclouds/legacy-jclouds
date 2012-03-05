@@ -24,18 +24,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 
@@ -88,8 +90,8 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
       private Set<Link> links = Sets.newLinkedHashSet();
       private Integer deploymentLeaseInSeconds;
       private Integer storageLeaseInSeconds;
-      private XMLGregorianCalendar deploymentLeaseExpiration;
-      private XMLGregorianCalendar storageLeaseExpiration;
+      private Date deploymentLeaseExpiration;
+      private Date storageLeaseExpiration;
       private URI href;
       private String type;
 
@@ -120,7 +122,7 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
       /**
        * @see LeaseSettingsSection#getDeploymentLeaseExpiration()
        */
-      public Builder deploymentLeaseExpiration(XMLGregorianCalendar deploymentLeaseExpiration) {
+      public Builder deploymentLeaseExpiration(Date deploymentLeaseExpiration) {
          this.deploymentLeaseExpiration = deploymentLeaseExpiration;
          return this;
       }
@@ -128,7 +130,7 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
       /**
        * @see LeaseSettingsSection#getStorageLeaseExpiration()
        */
-      public Builder storageLeaseExpiration(XMLGregorianCalendar storageLeaseExpiration) {
+      public Builder storageLeaseExpiration(Date storageLeaseExpiration) {
          this.storageLeaseExpiration = storageLeaseExpiration;
          return this;
       }
@@ -200,10 +202,10 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
    protected Integer storageLeaseInSeconds;
    @XmlElement(name = "DeploymentLeaseExpiration")
    @XmlSchemaType(name = "dateTime")
-   protected XMLGregorianCalendar deploymentLeaseExpiration;
+   protected Date deploymentLeaseExpiration;
    @XmlElement(name = "StorageLeaseExpiration")
    @XmlSchemaType(name = "dateTime")
-   protected XMLGregorianCalendar storageLeaseExpiration;
+   protected Date storageLeaseExpiration;
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
    protected URI href;
@@ -211,10 +213,10 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
    protected String type;
 
    private LeaseSettingsSection(@Nullable String info, @Nullable Boolean required, Set<Link> links, Integer deploymentLeaseInSeconds,
-                                Integer storageLeaseInSeconds, XMLGregorianCalendar deploymentLeaseExpiration,
-                                XMLGregorianCalendar storageLeaseExpiration, URI href, String type) {
+                                Integer storageLeaseInSeconds, Date deploymentLeaseExpiration,
+                                Date storageLeaseExpiration, URI href, String type) {
       super(info, required);
-      this.links = links;
+      this.links = ImmutableSet.copyOf(links);
       this.deploymentLeaseInSeconds = deploymentLeaseInSeconds;
       this.storageLeaseInSeconds = storageLeaseInSeconds;
       this.deploymentLeaseExpiration = deploymentLeaseExpiration;
@@ -229,23 +231,6 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
 
    /**
     * Gets the value of the link property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the link property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getLink().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Link }
     */
    public Set<Link> getLinks() {
       return Collections.unmodifiableSet(this.links);
@@ -273,21 +258,15 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
 
    /**
     * Gets the value of the deploymentLeaseExpiration property.
-    *
-    * @return possible object is
-    *         {@link XMLGregorianCalendar }
     */
-   public XMLGregorianCalendar getDeploymentLeaseExpiration() {
+   public Date getDeploymentLeaseExpiration() {
       return deploymentLeaseExpiration;
    }
 
    /**
     * Gets the value of the storageLeaseExpiration property.
-    *
-    * @return possible object is
-    *         {@link XMLGregorianCalendar }
     */
-   public XMLGregorianCalendar getStorageLeaseExpiration() {
+   public Date getStorageLeaseExpiration() {
       return storageLeaseExpiration;
    }
 

@@ -21,6 +21,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -85,7 +87,7 @@ public class IpRanges {
    private Set<IpRange> ipRanges = Sets.newLinkedHashSet();
 
    public Set<IpRange> getIpRanges() {
-      return ImmutableSet.copyOf(ipRanges);
+      return Collections.unmodifiableSet(ipRanges);
    }
 
    @Override

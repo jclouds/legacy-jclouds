@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -173,7 +174,7 @@ public class CatalogItem extends EntityType<CatalogItem> {
    private CatalogItem(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, Reference entity, Set<Property> properties) {
       super(href, type, links, description, tasksInProgress, id, name);
       this.entity = entity;
-      this.properties = properties;
+      this.properties = ImmutableSet.copyOf(properties);
    }
 
    private CatalogItem() {

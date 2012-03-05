@@ -61,17 +61,17 @@ import com.google.common.collect.Sets;
       "configuration",
       "isDeployed"
 })
-public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> extends ResourceType<T> {
-   public static <T extends VAppNetworkConfiguration<T>> Builder<T> builder() {
-      return new Builder<T>();
+public class VAppNetworkConfiguration extends ResourceType<VAppNetworkConfiguration> {
+   public static <T extends VAppNetworkConfiguration> Builder builder() {
+      return new Builder();
    }
 
    @Override
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromVAppNetworkConfiguration(this);
+   public Builder toBuilder() {
+      return new Builder().fromVAppNetworkConfiguration(this);
    }
 
-   public static class Builder<T extends VAppNetworkConfiguration<T>> extends ResourceType.Builder<T> {
+   public static class Builder extends ResourceType.Builder<VAppNetworkConfiguration> {
 
       private String description;
       private NetworkConfiguration configuration;
@@ -81,7 +81,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
       /**
        * @see VAppNetworkConfiguration#getDescription()
        */
-      public Builder<T> description(String description) {
+      public Builder description(String description) {
          this.description = description;
          return this;
       }
@@ -89,7 +89,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
       /**
        * @see VAppNetworkConfiguration#getConfiguration()
        */
-      public Builder<T> configuration(NetworkConfiguration configuration) {
+      public Builder configuration(NetworkConfiguration configuration) {
          this.configuration = configuration;
          return this;
       }
@@ -97,7 +97,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
       /**
        * @see VAppNetworkConfiguration#isDeployed()
        */
-      public Builder<T> isDeployed(Boolean isDeployed) {
+      public Builder isDeployed(Boolean isDeployed) {
          this.isDeployed = isDeployed;
          return this;
       }
@@ -105,14 +105,14 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
       /**
        * @see VAppNetworkConfiguration#getNetworkName()
        */
-      public Builder<T> networkName(String networkName) {
+      public Builder networkName(String networkName) {
          this.networkName = networkName;
          return this;
       }
 
 
-      public VAppNetworkConfiguration<T> build() {
-         return new VAppNetworkConfiguration<T>(href, type, links,
+      public VAppNetworkConfiguration build() {
+         return new VAppNetworkConfiguration(href, type, links,
                description, configuration, isDeployed, networkName);
       }
 
@@ -121,7 +121,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
        * @see ResourceType#getHref()
        */
       @Override
-      public Builder<T> href(URI href) {
+      public Builder href(URI href) {
          super.href(href);
          return this;
       }
@@ -130,7 +130,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
        * @see ResourceType#getType()
        */
       @Override
-      public Builder<T> type(String type) {
+      public Builder type(String type) {
          super.type(type);
          return this;
       }
@@ -139,7 +139,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
        * @see ResourceType#getLinks()
        */
       @Override
-      public Builder<T> links(Set<Link> links) {
+      public Builder links(Set<Link> links) {
          super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
          return this;
       }
@@ -148,7 +148,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
        * @see ResourceType#getLinks()
        */
       @Override
-      public Builder<T> link(Link link) {
+      public Builder link(Link link) {
          super.link(link);
          return this;
       }
@@ -157,11 +157,11 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
        * {@inheritDoc}
        */
       @SuppressWarnings("unchecked")
-      public Builder<T> fromResourceType(ResourceType<T> in) {
+      public Builder fromResourceType(ResourceType<VAppNetworkConfiguration> in) {
          return Builder.class.cast(super.fromResourceType(in));
       }
 
-      public Builder<T> fromVAppNetworkConfiguration(VAppNetworkConfiguration<T> in) {
+      public Builder fromVAppNetworkConfiguration(VAppNetworkConfiguration in) {
          return fromResourceType(in)
                .description(in.getDescription())
                .configuration(in.getConfiguration())
@@ -238,7 +238,7 @@ public class VAppNetworkConfiguration<T extends VAppNetworkConfiguration<T>> ext
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      VAppNetworkConfiguration<?> that = VAppNetworkConfiguration.class.cast(o);
+      VAppNetworkConfiguration that = VAppNetworkConfiguration.class.cast(o);
       return equal(description, that.description) &&
             equal(configuration, that.configuration) &&
             equal(isDeployed, that.isDeployed) &&

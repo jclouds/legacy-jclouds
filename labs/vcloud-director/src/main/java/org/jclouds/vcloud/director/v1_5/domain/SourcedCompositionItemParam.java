@@ -20,7 +20,9 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -107,7 +109,7 @@ public class SourcedCompositionItemParam {
        * @see SourcedCompositionItemParam#getNetworkAssignments()
        */
       public Builder networkAssignments(Set<NetworkAssignment> networkAssignments) {
-         this.networkAssignments = networkAssignments;
+         this.networkAssignments = checkNotNull(networkAssignments, "networkAssignments");
          return this;
       }
 
@@ -189,26 +191,9 @@ public class SourcedCompositionItemParam {
 
    /**
     * Gets the value of the networkAssignment property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the networkAssignment property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getNetworkAssignment().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link NetworkAssignment }
     */
    public Set<NetworkAssignment> getNetworkAssignments() {
-      return this.networkAssignments;
+      return Collections.unmodifiableSet(this.networkAssignments);
    }
 
    /**

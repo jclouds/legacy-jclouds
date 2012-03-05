@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -52,7 +53,7 @@ public class TasksInProgress {
        * @see TasksInProgress#getTasks()
        */
       public Builder tasks(Set<Task> tasks) {
-         this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
+         this.tasks = checkNotNull(tasks, "tasks");
          return this;
       }
 
@@ -73,11 +74,11 @@ public class TasksInProgress {
       }
    }
 
-   protected TasksInProgress() {
+   private TasksInProgress() {
       // For JAXB and builder use
    }
 
-   protected TasksInProgress(Collection<Task> tasks) {
+   private TasksInProgress(Collection<Task> tasks) {
       this.tasks = ImmutableSet.copyOf(tasks);
    }
 
@@ -85,7 +86,7 @@ public class TasksInProgress {
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {
-      return ImmutableSet.copyOf(tasks);
+      return Collections.unmodifiableSet(tasks);
    }
 
    @Override

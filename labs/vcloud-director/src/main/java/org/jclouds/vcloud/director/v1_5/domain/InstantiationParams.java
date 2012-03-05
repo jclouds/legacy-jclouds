@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
@@ -105,27 +106,13 @@ public class InstantiationParams {
    }
 
 
-   @XmlElementRef(name = "Section", namespace = "http://schemas.dmtf.org/ovf/envelope/1", type = JAXBElement.class)
+   @XmlElementRef
    protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
 
    /**
     * An ovf:Section to configure for instantiation.
     * <p/>
     * Gets the value of the section property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the section property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getSection().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
     * <p/>
     * Objects of the following type(s) are allowed in the list
     * {@link JAXBElement }{@code <}{@link SectionType }{@code >}
@@ -148,7 +135,7 @@ public class InstantiationParams {
     * {@link JAXBElement }{@code <}{@link InstallSection }{@code >}
     */
    public Set<? extends SectionType<?>> getSections() {
-      return this.sections;
+      return Collections.unmodifiableSet(this.sections);
    }
 
    @Override

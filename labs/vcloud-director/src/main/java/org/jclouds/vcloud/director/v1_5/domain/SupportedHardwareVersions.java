@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 
@@ -100,7 +101,7 @@ public class SupportedHardwareVersions {
    }
 
    private SupportedHardwareVersions(Set<String> supportedHardwareVersions) {
-      this.supportedHardwareVersions = supportedHardwareVersions;
+      this.supportedHardwareVersions = ImmutableSet.copyOf(supportedHardwareVersions);
    }
 
 
