@@ -68,6 +68,9 @@ public class BaseVPDCClientLiveTest extends BaseVersionedServiceLiveTest {
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();
       overrides.setProperty(VPDCConstants.PROPERTY_VPDC_VDC_EMAIL, email);
+      // unlimited timeouts
+      overrides.setProperty("jclouds.connection-timeout", "0");
+      overrides.setProperty("jclouds.so-timeout", "0");
       return overrides;
    }
 
