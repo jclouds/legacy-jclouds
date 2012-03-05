@@ -25,6 +25,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAU
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
+import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
 import java.io.File;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.NetworkAdapter;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
@@ -49,6 +51,8 @@ import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -63,25 +67,28 @@ import com.google.common.collect.Maps;
  * @author dralves
  * 
  */
-public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
+public class MastersCache extends AbstractLoadingCache<Image, Master> {
 
-  private final Map<String, IMachine>          masters = Maps.newHashMap();
-  private final Function<MasterSpec, IMachine> mastersLoader;
+  private final Map<String, Master>            masters = Maps.newHashMap();
+  private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
   private final Map<String, YamlImage>         imageMapping;
   private final String                         workingDir;
   private final String                         adminDisk;
   private final String                         guestAdditionsIso;
   private final String                         installationKeySequence;
   private final String                         isosDir;
+  private Supplier<VirtualBoxManager>          manager;
 
   @Inject
-  public MasterImages(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
+  public MastersCache(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
       @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
       @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
-      Supplier<Map<Image, YamlImage>> yamlMapper) {
+      Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager) {
     checkNotNull(version, "version");
     checkNotNull(installationKeySequence, "installationKeySequence");
-    this.mastersLoader = masterLoader;
+    checkNotNull(manager, "vboxmanager");
+    this.manager = manager;
+    this.masterCreatorAndInstaller = masterLoader;
     this.installationKeySequence = installationKeySequence;
     this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
     File wdFile = new File(this.workingDir);
@@ -100,12 +107,11 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
   }
 
   @Override
-  public IMachine get(Image key) throws ExecutionException {
+  public Master get(Image key) throws ExecutionException {
+    // check if we have loaded this machine before
     if (masters.containsKey(key.getId())) {
       return masters.get(key);
     }
-
-    checkNotNull(key, "key");
 
     // the yaml image
     YamlImage yamlImage = imageMapping.get(key.getId());
@@ -124,15 +130,14 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
 
     VmSpec vmSpecification = VmSpec.builder().id(yamlImage.id).name(vmName).memoryMB(512).osTypeId("")
         .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
-    
-    NetworkAdapter networkAdapter = NetworkAdapter.builder()
-        .networkAttachmentType(NetworkAttachmentType.NAT)
-        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-    NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-        .builder().addNetworkAdapter(networkAdapter).build();
 
-    NetworkSpec networkSpec = NetworkSpec.builder()
-        .addNIC(0L, networkInterfaceCard).build();
+    NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+
+    NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+        .build();
+
+    NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
 
     MasterSpec masterSpec = MasterSpec
         .builder()
@@ -140,12 +145,25 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
         .iso(
             IsoSpec.builder().sourcePath(localIsoUrl)
                 .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName())).build())
-        .network(networkSpec)
-        .build();
+        .network(networkSpec).build();
+    
+    IMachine masterMachine;
+    
+    // try and find a master machine in vbox
+    try {
+      masterMachine = manager.get().getVBox().findMachine(masterSpec.getVmSpec().getVmId());
+   } catch (VBoxException e) {
+      if (machineNotFoundException(e))
+        masterMachine = masterCreatorAndInstaller.apply(masterSpec);
+      else
+         throw e;
+   }
 
-    IMachine masterMachine = mastersLoader.apply(masterSpec);
-    masters.put(key.getId(), masterMachine);
-    return masterMachine;
+    Master master = Master.builder().machine(masterMachine).spec(masterSpec).build();
+
+    masters.put(key.getId(), master);
+
+    return master;
   }
 
   private String getFilePathOrDownload(String httpUrl) throws ExecutionException {
@@ -158,7 +176,7 @@ public class MasterImages extends AbstractLoadingCache<Image, IMachine> {
   }
 
   @Override
-  public IMachine getIfPresent(Image key) {
+  public Master getIfPresent(Image key) {
     if (masters.containsKey(key.getId())) {
       return masters.get(key.getId());
     }

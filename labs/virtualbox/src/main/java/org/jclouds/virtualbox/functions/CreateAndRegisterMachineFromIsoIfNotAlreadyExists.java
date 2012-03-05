@@ -20,6 +20,7 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
 import java.io.File;
 import java.util.Set;
@@ -91,11 +92,6 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
          else
             throw e;
       }
-   }
-
-   private boolean machineNotFoundException(VBoxException e) {
-      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ") ||
-            e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
    private IMachine createMachine(IVirtualBox vBox, MasterSpec machineSpec) {

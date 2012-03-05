@@ -50,8 +50,8 @@ import com.google.inject.Injector;
 /**
  * @author Andrea Turli
  */
-@Test(groups = "live", singleThreaded = true, testName = "CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest")
-public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
+@Test(groups = "live", singleThreaded = true, testName = "CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest")
+public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest extends
 		BaseVirtualBoxClientLiveTest {
 
 	private static final boolean IS_LINKED_CLONE = true;
@@ -60,6 +60,10 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 	private MasterSpec sourceMachineSpec;
 
 	private CleanupMode mode = CleanupMode.Full;
+
+  private VmSpec clonedVmSpec;
+
+  private NetworkSpec cloneNetworkSpec;
 
 	@Override
 	@BeforeClass(groups = "live")
@@ -101,19 +105,20 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 
 		NetworkAdapter networkAdapter = NetworkAdapter.builder()
 				.networkAttachmentType(NetworkAttachmentType.Bridged).build();
+		
 		NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
 				.builder().addNetworkAdapter(networkAdapter).build();
 
-		NetworkSpec networkSpec = NetworkSpec.builder()
+		this.cloneNetworkSpec = NetworkSpec.builder()
 				.addNIC(0L, networkInterfaceCard).build();
+		
 		sourceMachineSpec = MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec)
-				.network(networkSpec).build();
+				.network(cloneNetworkSpec).build();
 
-		VmSpec clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName)
+		this.clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName)
 				.memoryMB(512).cleanUpMode(mode).forceOverwrite(true).build();
 
-		cloneSpec = CloneSpec.builder().vm(clonedVmSpec).network(networkSpec)
-				.build();
+		
 
 	}
 
@@ -121,7 +126,9 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 	public void testCloneMachineFromAnotherMachine() throws Exception {
 		try {
 			IMachine source = getSourceNode();
-
+      CloneSpec cloneSpec = CloneSpec.builder().vm(clonedVmSpec).network(cloneNetworkSpec).master(source)
+          .linked(IS_LINKED_CLONE)
+	        .build();
 			if (source.getCurrentSnapshot() != null) {
 				ISession session = manager.get().openMachineSession(source);
 				session.getConsole().deleteSnapshot(
@@ -130,8 +137,7 @@ public class CloneAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 			}
 
 			IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
-					manager, workingDir, cloneSpec, IS_LINKED_CLONE,
-					machineUtils).apply(source);
+					manager, workingDir,machineUtils).apply(cloneSpec);
 			assertEquals(clone.getName(), cloneSpec.getVmSpec().getVmName());
 		} finally {
 			for (VmSpec spec : ImmutableSet.of(cloneSpec.getVmSpec(),

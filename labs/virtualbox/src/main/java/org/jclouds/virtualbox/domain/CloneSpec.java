@@ -19,9 +19,11 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.virtualbox_4_1.IMachine;
+
+import com.google.common.base.Objects;
 
 /**
  * A complete specification of a "clone" node with networking setup
@@ -31,6 +33,8 @@ public class CloneSpec {
 
    private final VmSpec vmSpec;
    private final NetworkSpec networkSpec;
+   private final IMachine master;
+   private final boolean isLinked;
 
    public static Builder builder() {
       return new Builder();
@@ -40,6 +44,8 @@ public class CloneSpec {
 
       private VmSpec vmSpec;
       private NetworkSpec networkSpec;
+      private IMachine master;
+      private boolean isLinked;
 
       public Builder vm(VmSpec vmSpec) {
          this.vmSpec = vmSpec;
@@ -50,18 +56,31 @@ public class CloneSpec {
          this.networkSpec = networkSpec;
          return this;
       }
+      
+      public Builder master(IMachine master){
+        this.master = master;
+        return this;
+      }
+      
+      public Builder linked(boolean isLinked){
+        this.isLinked = isLinked;
+        return this;
+      }
 
       public CloneSpec build() {
-         return new CloneSpec(vmSpec, networkSpec);
+         return new CloneSpec(vmSpec, networkSpec, master ,isLinked);
       }
 
    }
 
-   public CloneSpec(VmSpec vmSpec, NetworkSpec networkSpec) {
+   public CloneSpec(VmSpec vmSpec, NetworkSpec networkSpec, IMachine master, boolean isLinked) {
       checkNotNull(vmSpec, "vmSpec");
       checkNotNull(networkSpec, "networkSpec");
+      checkNotNull(master, "master");
       this.vmSpec = vmSpec;
       this.networkSpec = networkSpec;
+      this.master = master;
+      this.isLinked = isLinked;
    }
 
    public VmSpec getVmSpec() {
@@ -71,6 +90,14 @@ public class CloneSpec {
    public NetworkSpec getNetworkSpec() {
       return networkSpec;
    }
+   
+   public IMachine getMaster() {
+    return master;
+  }
+   
+   public boolean isLinked() {
+    return isLinked;
+  }
 
    @Override
    public boolean equals(Object o) {

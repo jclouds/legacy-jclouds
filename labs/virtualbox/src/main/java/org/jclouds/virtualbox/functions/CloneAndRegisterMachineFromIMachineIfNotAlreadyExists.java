@@ -52,7 +52,7 @@ import com.google.inject.Inject;
  * @author Andrea Turli
  */
 public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
-		Function<IMachine, IMachine> {
+		Function<CloneSpec, IMachine> {
 
 	@Resource
 	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -60,24 +60,20 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 
 	private final Supplier<VirtualBoxManager> manager;
 	private final String workingDir;
-	private final CloneSpec cloneSpec;
-	private final boolean isLinkedClone;
 	private final MachineUtils machineUtils;
 	
 	@Inject
 	public CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(
 			Supplier<VirtualBoxManager> manager,
 			@Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir,
-			CloneSpec cloneSpec, boolean isLinkedClone, MachineUtils machineUtils) {
+			MachineUtils machineUtils) {
 		this.manager = manager;
 		this.workingDir = workingDir;
-		this.cloneSpec = cloneSpec;
-		this.isLinkedClone = isLinkedClone;
 		this.machineUtils = machineUtils;
 	}
 
 	@Override
-	public IMachine apply(@Nullable IMachine master) {
+	public IMachine apply(CloneSpec cloneSpec) {
 		VmSpec vmSpec = cloneSpec.getVmSpec();
 		try {
 			manager.get().getVBox().findMachine(vmSpec.getVmName());
@@ -85,7 +81,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 					+ " is already registered.");
 		} catch (VBoxException e) {
 			if (machineNotFoundException(e))
-				return cloneMachine(vmSpec, master);
+				return cloneMachine(cloneSpec);
 			else
 				throw e;
 		}
@@ -98,7 +94,10 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements
 						"Could not find a registered machine with UUID {");
 	}
 
-	private IMachine cloneMachine(VmSpec vmSpec, IMachine master) {
+	private IMachine cloneMachine(CloneSpec cloneSpec) {
+	  VmSpec vmSpec = cloneSpec.getVmSpec();
+	  boolean isLinkedClone = cloneSpec.isLinked();
+	  IMachine master = cloneSpec.getMaster();
 		String settingsFile = manager.get().getVBox()
 				.composeMachineFilename(vmSpec.getVmName(), workingDir);
 		IMachine clonedMachine = manager

@@ -20,9 +20,6 @@
 package org.jclouds.virtualbox.config;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PROVIDER;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WEBSERVER_CREDENTIAL;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WEBSERVER_IDENTITY;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -60,16 +57,19 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.Host;
 import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
+import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
+import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
-import org.jclouds.virtualbox.functions.MasterImages;
+import org.jclouds.virtualbox.functions.MastersCache;
 import org.jclouds.virtualbox.functions.NodeCreator;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
 import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
@@ -134,14 +134,16 @@ public class VirtualBoxComputeServiceContextModule extends
     bind(new TypeLiteral<Supplier<String>>() {
     }).to((Class) YamlImagesFromFileConfig.class);
     // the master machines cache
-    bind(new TypeLiteral<LoadingCache<Image, IMachine>>() {
-    }).to((Class) MasterImages.class);
+    bind(new TypeLiteral<LoadingCache<Image, Master>>() {
+    }).to((Class) MastersCache.class);
     // the master creating function
     bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
     }).to((Class) CreateAndInstallVm.class);
     // the machine cloning function
     bind(new TypeLiteral<Function<IMachine, NodeAndInitialCredentials<IMachine>>>() {
     }).to((Class) NodeCreator.class);
+    bind(new TypeLiteral<Function<CloneSpec, IMachine>>() {
+    }).to((Class) CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.class);
 
     // for byon
     bind(new TypeLiteral<Function<URI, InputStream>>() {

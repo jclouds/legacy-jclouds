@@ -64,7 +64,7 @@ public class MasterSpec {
 
    }
 
-   public MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec) {
+   private MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec) {
       checkNotNull(vmSpec, "vmSpec");
       checkNotNull(isoSpec, "isoSpec");
       checkNotNull(networkSpec, "networkSpec");

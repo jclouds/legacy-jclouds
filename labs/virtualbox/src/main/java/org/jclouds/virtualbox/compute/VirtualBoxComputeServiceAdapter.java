@@ -29,11 +29,12 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.virtualbox.domain.Master;
+import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -62,13 +63,13 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
   private final Supplier<VirtualBoxManager>                             manager;
   private final Map<Image, YamlImage>                                   images;
-  private final LoadingCache<Image, IMachine>                           mastersLoader;
-  private final Function<IMachine, NodeAndInitialCredentials<IMachine>> cloneCreator;
+  private final LoadingCache<Image, Master>                           mastersLoader;
+  private final Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator;
 
   @Inject
   public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
-      Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, IMachine> mastersLoader,
-      Function<IMachine, NodeAndInitialCredentials<IMachine>> cloneCreator) {
+      Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
+      Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator) {
     this.manager = checkNotNull(manager, "manager");
     this.images = imagesMapper.get();
     this.mastersLoader = mastersLoader;
@@ -79,8 +80,9 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
   public NodeAndInitialCredentials<IMachine> createNodeWithGroupEncodedIntoName(String tag, String name,
       Template template) {
     try {
-      IMachine master = mastersLoader.get(template.getImage());
-      return cloneCreator.apply(master);
+      Master master = mastersLoader.get(template.getImage());
+      NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
+      return cloneCreator.apply(nodeSpec);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
