@@ -118,6 +118,12 @@ public class FirewallService extends NetworkServiceType<FirewallService> {
                .logDefaultAction(in.isLogDefaultAction())
                .firewallRules(in.getFirewallRules());
       }
+      
+      @Override
+      public Builder enabled(boolean isEnabled) {
+         this.isEnabled = isEnabled;
+         return this;
+      }
    }
 
    private FirewallService(boolean enabled, String defaultAction, Boolean logDefaultAction, Set<FirewallRule> firewallRules) {

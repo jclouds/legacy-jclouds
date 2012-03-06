@@ -106,7 +106,6 @@ public class DhcpService extends NetworkServiceType<DhcpService> {
          this.isEnabled = enabled;
          return this;
       }
-
    }
 
    @XmlElement(name = "DefaultLeaseTime")

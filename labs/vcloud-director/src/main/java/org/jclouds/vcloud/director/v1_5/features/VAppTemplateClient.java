@@ -38,7 +38,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves a vApp template (can be used also to retrieve a VM from a vApp Template).
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the requested template
     */
    VAppTemplate getVAppTemplate(URI templateUri);
@@ -46,8 +46,8 @@ public interface VAppTemplateClient {
    /**
     * Modifies only the name/description of a vApp template.
     *
-    * @@param templateUri the URI of the template
-    * @param template          the template containing the new name and/or description
+    * @param templateUri the URI of the template
+    * @param template    the template containing the new name and/or description
     * @return the task performing the action
     */
    Task editVAppTemplate(URI templateUri, VAppTemplate template);
@@ -55,7 +55,7 @@ public interface VAppTemplateClient {
    /**
     * Deletes a vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task deleteVappTemplate(URI templateUri);
@@ -63,7 +63,7 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task consolidateVappTemplate(URI templateUri);
@@ -71,7 +71,7 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task disableDownloadVappTemplate(URI templateUri);
@@ -79,7 +79,7 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM,
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task enableDownloadVappTemplate(URI templateUri);
@@ -87,7 +87,8 @@ public interface VAppTemplateClient {
    /**
     * Relocates a virtual machine in a vApp template to a different datastore.    *
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
+    * @param params      contains the reference to the new datastore
     * @return the task performing the action
     */
    Task relocateVappTemplate(URI templateUri, RelocateParams params);
@@ -95,7 +96,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves the customization section of a vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    CustomizationSection getVAppTemplateCustomizationSection(URI templateUri);
@@ -103,15 +104,16 @@ public interface VAppTemplateClient {
    /**
     * Modifies the vApp template customization information.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
+    * @param section     the new configuration to apply
     * @return the task performing the action
     */
-   Task editVAppTemplateCustomizationSection(URI templateUri, CustomizationSection sectionType);
+   Task editVAppTemplateCustomizationSection(URI templateUri, CustomizationSection section);
 
    /**
     * Retrieves the Guest Customization Section of a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    GuestCustomizationSection getVAppTemplateGuestCustomizationSection(URI templateUri);
@@ -119,15 +121,16 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
+    * @param section     the new configuration to apply
     * @return the task performing the action
     */
-   Task editVAppTemplateGuestCustomizationSection(URI templateUri, GuestCustomizationSection sectionType);
+   Task editVAppTemplateGuestCustomizationSection(URI templateUri, GuestCustomizationSection section);
 
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    LeaseSettingsSection getVappTemplateLeaseSettingsSection(URI templateUri);
@@ -135,15 +138,16 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
+    * @param section     the new configuration to apply
     * @return the task performing the action
     */
-   Task editVappTemplateLeaseSettingsSection(URI templateUri, LeaseSettingsSection settingsSection);
+   Task editVappTemplateLeaseSettingsSection(URI templateUri, LeaseSettingsSection section);
 
    /**
     * Retrieves the metadata associated with a vApp Template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the requested metadata
     */
    Metadata getVAppTemplateMetadata(URI templateUri);
@@ -151,7 +155,7 @@ public interface VAppTemplateClient {
    /**
     * Merges the metadata for a vApp Template with the information provided.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task editVAppTemplateMetadata(URI templateUri, Metadata metadata);
@@ -159,7 +163,7 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    MetadataValue getVAppTemplateMetadataValue(URI templateUri, String key);
@@ -167,7 +171,7 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task editVAppTemplateMetadataValue(URI templateUri, String key, MetadataValue value);
@@ -175,7 +179,7 @@ public interface VAppTemplateClient {
    /**
     * Consolidates a VM
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task deleteVAppTemplateMetadataValue(URI templateUri, String key);
@@ -183,7 +187,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves the network config section of a vApp or vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the network config section requested
     */
    NetworkConfigSection getVAppTemplateNetworkConfigSection(URI templateUri);
@@ -191,7 +195,8 @@ public interface VAppTemplateClient {
    /**
     * Modifies the network config section of a vApp or vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
+    * @param section     the new configuration to apply
     * @return the task performing the action
     */
    Task editVAppTemplateNetworkConfigSection(URI templateUri, NetworkConfigSection section);
@@ -199,7 +204,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves the network connection section of a vApp or vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the network connection section requested
     */
    NetworkConnectionSection getVAppTemplateNetworkConnectionSection(URI templateUri);
@@ -207,7 +212,8 @@ public interface VAppTemplateClient {
    /**
     * Modifies the network connection section of a vApp or vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
+    * @param section     the new configuration to apply
     * @return the task performing the action
     */
    Task editVAppTemplateNetworkConnectionSection(URI templateUri, NetworkConnectionSection section);
@@ -215,7 +221,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves the network section of a vApp or vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the network section requested
     */
    NetworkSection getVAppTemplateNetworkSection(URI templateUri);
@@ -223,7 +229,8 @@ public interface VAppTemplateClient {
    /**
     * Modifies the network section of a vApp or vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
+    * @param section     the new configuration to apply
     * @return the task performing the action
     */
    Task editVAppTemplateNetworkSection(URI templateUri, NetworkSection section);
@@ -231,7 +238,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves an OVF descriptor of a vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Envelope getVAppTemplateOvf(URI templateUri);
@@ -239,7 +246,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves vApp template owner.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the owner of the vApp template
     */
    Owner getOwnerOfVAppTemplate(URI templateUri);
@@ -247,7 +254,7 @@ public interface VAppTemplateClient {
    /**
     * Retrieves VAppTemplate/VM product sections
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the product sections
     */
    ProductSectionList getProductSectionsForVAppTemplate(URI templateUri);
@@ -255,7 +262,7 @@ public interface VAppTemplateClient {
    /**
     * Modifies the product sections of a vApp or vApp template.
     *
-    * @@param templateUri the URI of the template
+    * @param templateUri the URI of the template
     * @return the task performing the action
     */
    Task editProductSectionsForVAppTemplate(URI templateUri, ProductSectionList sections);

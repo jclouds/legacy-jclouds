@@ -56,10 +56,12 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "Owner")
 @XmlType(propOrder = {"user"})
-public class Owner
-      extends ResourceType<Owner>
+public class Owner extends ResourceType<Owner> {
 
+<<<<<<< HEAD
 {
+=======
+>>>>>>> VCloud Director 1.5: Adding VAppTemplateClient error handling tests and fixing bug in NetworkService.isEnabled
    public static Builder builder() {
       return new Builder();
    }

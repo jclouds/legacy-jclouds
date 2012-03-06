@@ -118,6 +118,12 @@ public class IpsecVpnService extends NetworkServiceType<IpsecVpnService> {
                .publicIpAddress(in.getPublicIpAddress())
                .ipsecVpnTunnels(in.getIpsecVpnTunnels());
       }
+
+      @Override
+      public Builder enabled(boolean isEnabled) {
+         this.isEnabled = isEnabled;
+         return this;
+      }
    }
 
    private IpsecVpnService(boolean enabled, String externalIpAddress, String publicIpAddress, List<IpsecVpnTunnel> ipsecVpnTunnel) {

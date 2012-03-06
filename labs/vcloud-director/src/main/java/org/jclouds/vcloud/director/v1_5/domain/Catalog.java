@@ -174,18 +174,9 @@ public class Catalog extends CatalogType<Catalog> {
       }
    }
 
-<<<<<<< HEAD
    public Catalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
                   String name, Owner owner, CatalogItems catalogItems, Boolean published) {
       super(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, published);
-=======
-   private Catalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
-                  String name, Entity owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasksInProgress, id, name);
-      this.owner = owner;
-      this.catalogItems = catalogItems;
-      this.isPublished = published;
->>>>>>> VCloud Director 1.5: Adjusting misleading comments and consistently using @XmlReference only for substitution groups
    }
 
    @SuppressWarnings("unused")

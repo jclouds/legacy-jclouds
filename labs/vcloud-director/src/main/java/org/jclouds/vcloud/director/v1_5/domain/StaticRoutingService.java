@@ -96,6 +96,12 @@ public class StaticRoutingService extends NetworkServiceType<StaticRoutingServic
          return fromNetworkServiceType(in)
                .staticRoutes(in.getStaticRoutes());
       }
+
+      @Override
+      public Builder enabled(boolean isEnabled) {
+         this.isEnabled = isEnabled;
+         return this;
+      }
    }
 
    private StaticRoutingService(boolean enabled, List<StaticRoute> staticRoutes) {
