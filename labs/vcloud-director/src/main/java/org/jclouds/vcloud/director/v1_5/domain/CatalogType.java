@@ -52,14 +52,14 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
 
    public static class Builder<T extends CatalogType<T>> extends EntityType.Builder<T> {
 
-      protected Entity owner;
+      protected Owner owner;
       protected CatalogItems catalogItems;
       protected Boolean isPublished;
 
       /**
        * @see CatalogType#getOwner()
        */
-      public Builder<T> owner(Entity owner) {
+      public Builder<T> owner(Owner owner) {
          this.owner = owner;
          return this;
       }
@@ -177,7 +177,7 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
    }
 
    public CatalogType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
-                  String name, Entity owner, CatalogItems catalogItems, Boolean published) {
+                  String name, Owner owner, CatalogItems catalogItems, Boolean published) {
       super(href, type, links, description, tasksInProgress, id, name);
       this.owner = owner;
       this.catalogItems = catalogItems;
@@ -189,7 +189,7 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
    }
 
    @XmlElement(name = "Owner")
-   private Entity owner;
+   private Owner owner;
    @XmlElement(name = "CatalogItems")
    private CatalogItems catalogItems;
    @XmlElement(name = "IsPublished")
@@ -198,7 +198,7 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
    /**
     * Gets the value of the owner property.
     */
-   public Entity getOwner() {
+   public Owner getOwner() {
       return owner;
    }
 

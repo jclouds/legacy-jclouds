@@ -63,7 +63,7 @@ public class Catalog extends CatalogType<Catalog> {
       /**
        * @see Catalog#getOwner()
        */
-      public Builder owner(Entity owner) {
+      public Builder owner(Owner owner) {
          super.owner(owner);
          return this;
       }
@@ -175,7 +175,7 @@ public class Catalog extends CatalogType<Catalog> {
    }
 
    public Catalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
-                  String name, Entity owner, CatalogItems catalogItems, Boolean published) {
+                  String name, Owner owner, CatalogItems catalogItems, Boolean published) {
       super(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, published);
    }
 

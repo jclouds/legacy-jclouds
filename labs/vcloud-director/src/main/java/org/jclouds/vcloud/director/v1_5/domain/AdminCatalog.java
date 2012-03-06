@@ -26,7 +26,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.collect.Sets;
 
@@ -54,7 +54,7 @@ import com.google.common.collect.Sets;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AdminCatalog")
+@XmlRootElement(name = "AdminCatalog")
 public class AdminCatalog extends CatalogType<AdminCatalog> {
    
    @SuppressWarnings("unchecked")
@@ -69,14 +69,13 @@ public class AdminCatalog extends CatalogType<AdminCatalog> {
    public static class Builder extends CatalogType.Builder<AdminCatalog> {
       
       public AdminCatalog build() {
-         AdminCatalog adminCatalog = new AdminCatalog();
-         return adminCatalog;
+         return new AdminCatalog(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, isPublished);
       }
       
       /**
        * @see CatalogType#getOwner()
        */
-      public Builder owner(Entity owner) {
+      public Builder owner(Owner owner) {
          super.owner(owner);
          return this;
       }
@@ -186,7 +185,13 @@ public class AdminCatalog extends CatalogType<AdminCatalog> {
       }
    }
 
+   @SuppressWarnings("unused")
    private AdminCatalog() {
       // For JAXB
+   }
+   
+   public AdminCatalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+         String name, Owner owner, CatalogItems catalogItems, Boolean published) {
+      super(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, published);
    }
 }

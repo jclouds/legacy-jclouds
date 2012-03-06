@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -59,7 +60,6 @@ public class Owner
       extends ResourceType<Owner>
 
 {
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -134,6 +134,7 @@ public class Owner
       }
    }
 
+   @SuppressWarnings("unused")
    private Owner() {
       // For JAXB and builder use
    }
