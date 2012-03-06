@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v1_1.features;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
+import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -37,6 +39,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -78,9 +81,55 @@ public interface SecurityGroupAsyncClient {
     */
    @POST
    @Path("/os-security-groups")
+   @SelectJson("security_group")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Payload("name {name}\n")
-   @Produces(MediaType.TEXT_PLAIN)
-   ListenableFuture<SecurityGroup> createSecurityGroup(@PayloadParam("name") String name);
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"security_group\":%7B\"name\":\"{name}\",\"description\":\"{description}\"%7D%7D")
+   ListenableFuture<SecurityGroup> createSecurityGroup(@PayloadParam("name") String name,
+		   @PayloadParam("description") String description);
+
+
+   /**
+    * @see SecurityGroupClient#deleteSecurityGroup
+    */
+   @DELETE
+   @Path("/os-security-groups/{id}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes
+   @Produces(MediaType.APPLICATION_JSON)
+   ListenableFuture<Boolean> deleteSecurityGroup(@PathParam("id") String id);
+
+
+   /**
+    * @see SecurityGroupClient#createSecurityGroupRule
+    */
+   @POST
+   @Path("/os-security-group-rules")
+   @SelectJson("security_group_rule")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"security_group_rule\":%7B\"ip_protocol\":\"{ip_protocol}\"," +
+		   "\"from_port\":\"{from_port}\",\"to_port\":\"{to_port}\"," +
+		   "\"cidr\":\"{cidr}\",\"group_id\":\"{group_id}\",\"parent_group_id\":\"{parent_group_id}\"%7D%7D")
+   ListenableFuture<SecurityGroupRule> createSecurityGroupRule(
+		   @PayloadParam("ip_protocol") String ip_protocol,
+		   @PayloadParam("from_port") String from_port,
+		   @PayloadParam("to_port") String to_port,
+		   @PayloadParam("cidr") String cidr,
+		   @PayloadParam("group_id") String group_id,
+		   @PayloadParam("parent_group_id") String parent_group_id);
+
+
+   /**
+    * @see SecurityGroupClient#deleteSecurityGroupRule
+    */
+   @DELETE
+   @Path("/os-security-group-rules/{security_group_rule_ID}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Consumes
+   @Produces(MediaType.APPLICATION_JSON)
+   ListenableFuture<Boolean> deleteSecurityGroupRule(@PathParam("security_group_rule_ID") String security_group_rule_ID);
 
 }

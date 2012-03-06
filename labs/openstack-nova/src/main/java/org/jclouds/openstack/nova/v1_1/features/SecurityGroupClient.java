@@ -21,20 +21,10 @@ package org.jclouds.openstack.nova.v1_1.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-
-import com.google.common.util.concurrent.ListenableFuture;
+import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 
 /**
  * Provides synchronous access to Security Groups.
@@ -65,6 +55,28 @@ public interface SecurityGroupClient {
     * 
     * @return a new Security Group
     */
-   SecurityGroup createSecurityGroup(String name);
+   SecurityGroup createSecurityGroup(String name, String description);
+
+   /**
+    * Delete a Security Group.
+    *
+    * @return
+    */
+   Boolean deleteSecurityGroup(String id);
+
+   /**
+    * Create a Security Group Rule.
+    *
+    * @return a new Security Group Rule
+    */
+   SecurityGroupRule createSecurityGroupRule(String ip_protocol, String from_port, String to_port, String cidr,
+		   String group_id, String parent_group_id);
+
+   /**
+    * Delete a Security Group Rule.
+    *
+    * @return
+    */
+   Boolean deleteSecurityGroupRule(String id);
 
 }
