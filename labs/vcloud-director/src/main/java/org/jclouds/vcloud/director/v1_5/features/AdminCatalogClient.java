@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
 
 /**
  * Provides synchronous access to {@link AdminCatalog} objects.
@@ -56,4 +57,24 @@ public interface AdminCatalogClient {
     * @return the updated catalog
     */
    AdminCatalog updateCatalog(URI catalogRef, AdminCatalog catalog);
+   
+   /**
+    * Retrieves the owner of a catalog.
+    * 
+    * <pre>
+    * GET /admin/catalog/{id}/owner
+    * </pre>
+    * 
+    * @return the owner or null if not found
+    */
+   Owner getOwner(URI catalogRef);
+   
+   /**
+    * Changes owner for catalog.
+    * 
+    * <pre>
+    * PUT /admin/catalog/{id}/owner
+    * </pre>
+    */
+   void setOwner(URI catalogRef, Owner newOwner);
 }
