@@ -35,7 +35,7 @@ import org.virtualbox_4_1.IMachine;
 
 import com.google.common.collect.Iterables;
 
-@Test(groups = "plive", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest", enabled = false)
+@Test(groups = "plive", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private VirtualBoxComputeServiceAdapter adapter;
@@ -47,7 +47,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
    }
 
-   @Test(enabled = false)
+   @Test
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "foo-ef4";
@@ -83,13 +83,13 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       }
    }
 
-   @Test(enabled = false)
+   @Test
    public void testListHardwareProfiles() {
       Iterable<IMachine> profiles = adapter.listHardwareProfiles();
       assertEquals(1, Iterables.size(profiles));
    }
 
-   @Test(enabled = false)
+   @Test
    public void testListImages() {
       Iterable<Image> iMageIterable = adapter.listImages();
       for (Image image : iMageIterable) {

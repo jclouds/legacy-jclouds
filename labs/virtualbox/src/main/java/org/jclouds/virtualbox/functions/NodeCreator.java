@@ -89,7 +89,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
 
-      CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
+      CloneSpec cloneSpec = CloneSpec.builder().linked(false).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
 
       IMachine cloned = cloner.apply(cloneSpec);

@@ -123,7 +123,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
       NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
       ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"),
-               RunScriptOptions.NONE);
+               RunScriptOptions.Builder.runAsRoot(true));
       ExecResponse execResponse = Futures.getUnchecked(execFuture);
       checkState(execResponse.getExitCode() == 0);
 
