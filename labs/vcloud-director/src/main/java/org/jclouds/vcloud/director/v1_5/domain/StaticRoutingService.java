@@ -71,13 +71,13 @@ public class StaticRoutingService extends NetworkServiceType<StaticRoutingServic
 
    public static class Builder extends NetworkServiceType.Builder<StaticRoutingService> {
 
-      private List<StaticRoute> staticRoutes;
+      private List<StaticRoute> staticRoutes = ImmutableList.of();
 
       /**
        * @see StaticRoutingService#getStaticRoutes()
        */
       public Builder staticRoutes(List<StaticRoute> staticRoutes) {
-         this.staticRoutes = checkNotNull(staticRoutes, "staticRoutes");
+         this.staticRoutes = ImmutableList.copyOf(checkNotNull(staticRoutes, "staticRoutes"));
          return this;
       }
 

@@ -53,7 +53,7 @@ public class TasksInProgress {
        * @see TasksInProgress#getTasks()
        */
       public Builder tasks(Set<Task> tasks) {
-         this.tasks = checkNotNull(tasks, "tasks");
+         this.tasks = ImmutableSet.copyOf(checkNotNull(tasks, "tasks"));
          return this;
       }
 

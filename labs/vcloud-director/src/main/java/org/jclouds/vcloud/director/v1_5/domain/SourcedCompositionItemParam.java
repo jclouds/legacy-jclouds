@@ -109,7 +109,7 @@ public class SourcedCompositionItemParam {
        * @see SourcedCompositionItemParam#getNetworkAssignments()
        */
       public Builder networkAssignments(Set<NetworkAssignment> networkAssignments) {
-         this.networkAssignments = checkNotNull(networkAssignments, "networkAssignments");
+         this.networkAssignments = ImmutableSet.copyOf(checkNotNull(networkAssignments, "networkAssignments"));
          return this;
       }
 

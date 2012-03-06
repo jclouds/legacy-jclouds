@@ -73,7 +73,7 @@ public class ResourceEntities {
        * @see ResourceEntities#getResourceEntities()
        */
       public Builder resourceEntities(Set<Reference> resourceEntities) {
-         this.resourceEntities = Sets.newLinkedHashSet(checkNotNull(resourceEntities, "resourceEntities"));
+         this.resourceEntities = ImmutableSet.copyOf(checkNotNull(resourceEntities, "resourceEntities"));
          return this;
       }
 

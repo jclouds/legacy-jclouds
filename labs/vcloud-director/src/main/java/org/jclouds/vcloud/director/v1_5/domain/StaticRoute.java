@@ -72,7 +72,7 @@ public class StaticRoute {
       private String name;
       private String network;
       private String nextHopIp;
-      private String _interface;
+      private String theInterface;
 
       /**
        * @see StaticRoute#getName()
@@ -101,20 +101,20 @@ public class StaticRoute {
       /**
        * @see StaticRoute#getInterface()
        */
-      public Builder _interface(String _interface) {
-         this._interface = _interface;
+      public Builder setInterface(String theInterface) {
+         this.theInterface = theInterface;
          return this;
       }
 
       public StaticRoute build() {
-         return new StaticRoute(name, network, nextHopIp, _interface);
+         return new StaticRoute(name, network, nextHopIp, theInterface);
       }
 
       public Builder fromStaticRoute(StaticRoute in) {
          return name(in.getName())
                .network(in.getNetwork())
                .nextHopIp(in.getNextHopIp())
-               ._interface(in.getInterface());
+               .setInterface(in.getInterface());
       }
    }
 
