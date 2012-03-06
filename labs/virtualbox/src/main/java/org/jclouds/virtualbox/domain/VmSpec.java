@@ -18,13 +18,16 @@
  */
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-import org.virtualbox_4_1.CleanupMode;
-
-import java.util.*;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.virtualbox_4_1.CleanupMode;
+
+import com.google.common.base.Objects;
 
 /**
  * A description of a Virtual Machine in VirtualBox.
@@ -39,7 +42,8 @@ public class VmSpec {
    private final Set<StorageController> controllers;
    private final CleanupMode cleanupMode;
 
-   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite, Set<StorageController> controllers, CleanupMode cleanupMode) {
+   public VmSpec(String vmId, String vmName, String osTypeId, long memory, boolean forceOverwrite,
+            Set<StorageController> controllers, CleanupMode cleanupMode) {
       this.vmId = checkNotNull(vmId, "vmId");
       this.vmName = checkNotNull(vmName, "vmName");
       this.osTypeId = checkNotNull(osTypeId, "osTypeId");
@@ -61,7 +65,7 @@ public class VmSpec {
       private String name;
       private String id;
       private String osTypeId = "";
-      private boolean forceOverwrite;
+      private boolean forceOverwrite = true;
       private long memory;
       private CleanupMode cleanUpMode;
 
@@ -138,16 +142,14 @@ public class VmSpec {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
+      if (this == o)
+         return true;
       if (o instanceof VmSpec) {
          VmSpec other = (VmSpec) o;
-         return Objects.equal(vmId, other.vmId) &&
-                 Objects.equal(vmName, other.vmName) &&
-                 Objects.equal(osTypeId, other.osTypeId) &&
-                 Objects.equal(memory, other.memory) &&
-                 Objects.equal(forceOverwrite, other.forceOverwrite) &&
-                 Objects.equal(controllers, other.controllers) &&
-                 Objects.equal(cleanupMode, other.cleanupMode);
+         return Objects.equal(vmId, other.vmId) && Objects.equal(vmName, other.vmName)
+                  && Objects.equal(osTypeId, other.osTypeId) && Objects.equal(memory, other.memory)
+                  && Objects.equal(forceOverwrite, other.forceOverwrite)
+                  && Objects.equal(controllers, other.controllers) && Objects.equal(cleanupMode, other.cleanupMode);
       }
       return false;
    }
@@ -159,14 +161,8 @@ public class VmSpec {
 
    @Override
    public String toString() {
-      return "VmSpecification{" +
-              "vmName='" + vmName + '\'' +
-              ", osTypeId='" + osTypeId + '\'' +
-              ", memory='" + memory + '\'' +
-              ", vmId='" + vmId + '\'' +
-              ", forceOverwrite=" + forceOverwrite +
-              ", controllers=" + controllers +
-              ", cleanupMode=" + cleanupMode +
-              '}';
+      return "VmSpecification{" + "vmName='" + vmName + '\'' + ", osTypeId='" + osTypeId + '\'' + ", memory='" + memory
+               + '\'' + ", vmId='" + vmId + '\'' + ", forceOverwrite=" + forceOverwrite + ", controllers="
+               + controllers + ", cleanupMode=" + cleanupMode + '}';
    }
 }

@@ -19,16 +19,10 @@
 
 package org.jclouds.virtualbox;
 
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import java.io.File;
+import java.net.URI;
+import java.util.Properties;
+
 import org.jclouds.Constants;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.config.CacheNodeStoreModule;
@@ -37,7 +31,8 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
+import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -49,14 +44,26 @@ import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.jaxws.MachineState;
 
-import java.net.URI;
-import java.util.Properties;
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VirtualBoxClient}
- *
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
@@ -72,9 +79,11 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String hostVersion;
    protected String operatingSystemIso;
    protected String guestAdditionsIso;
-   protected String adminDisk;
    protected String workingDir;
+   protected String isosDir;
    protected Supplier<NodeMetadata> host;
+   protected static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
+            new DefaultCredentialsFromImageOrOverridingCredentials());
 
    @Override
    protected void setupCredentials() {
@@ -86,52 +95,44 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    protected void ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults() {
-      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder()
-              .build();
+      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder().build();
       if (!System.getProperties().containsKey("test." + provider + ".identity"))
          System.setProperty("test." + provider + ".identity",
-                 defaultVBoxProperties.getProperty(Constants.PROPERTY_IDENTITY));
+                  defaultVBoxProperties.getProperty(Constants.PROPERTY_IDENTITY));
    }
 
    @BeforeClass(groups = "live")
    public void setupClient() {
       setupCredentials();
-      Properties overrides = setupProperties();
+      Properties overrides = new VirtualBoxPropertiesBuilder(setupProperties()).build();
 
-      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(
-              ImmutableMap.of(
-                      "host",
-                      Node.builder()
-                              .id("host")
-                              .name("host installing virtualbox")
-                              .hostname("localhost")
-                              .osFamily(OsFamily.LINUX.toString())
-                              .osDescription(System.getProperty("os.name"))
-                              .osVersion(System.getProperty("os.version"))
-                              .group("ssh")
-                              .username(System.getProperty("user.name"))
-                              .credentialUrl(
-                                      URI.create("file://"
-                                              + System.getProperty("user.home")
-                                              + "/.ssh/id_rsa")).build()));
+      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
+               "host",
+               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
+                        .osVersion(System.getProperty("os.version")).group("ssh")
+                        .username(System.getProperty("user.name"))
+                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
+                        .build()));
 
-      context = new ComputeServiceContextFactory().createContext(provider,
-              identity, credential, ImmutableSet.<Module>of(
-              new SLF4JLoggingModule(), new SshjSshClientModule(),
-              hostModule), overrides);
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
       Function<String, String> configProperties = context.utils().injector()
-              .getInstance(ValueOfConfigurationKeyOrNull.class);
-      imageId = configProperties
-              .apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
-      workingDir = configProperties
-              .apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
-      host = context.utils().injector()
-              .getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>() {
-              }));
+               .getInstance(ValueOfConfigurationKeyOrNull.class);
+      imageId = "ubuntu-11.04-server-i386";
+      workingDir = configProperties.apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
+      isosDir = workingDir + File.separator + "isos";
+      File isosDirFile = new File(isosDir);
+      if (!isosDirFile.exists()) {
+         isosDirFile.mkdirs();
+      }
+      host = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>() {
+      }));
 
       // this will eagerly startup Jetty, note the impl will shut itself down
-      preconfigurationUri = context.utils().injector().getInstance(Key.get(new TypeLiteral<LoadingCache<IsoSpec, URI>>() {
-      }, Preconfiguration.class));
+      preconfigurationUri = context.utils().injector()
+               .getInstance(Key.get(new TypeLiteral<LoadingCache<IsoSpec, URI>>() {
+               }, Preconfiguration.class));
       // this will eagerly startup Jetty, note the impl will shut itself down
 
       manager = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<VirtualBoxManager>>() {
@@ -141,19 +142,43 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
       machineUtils = context.utils().injector().getInstance(MachineUtils.class);
 
-      hostVersion = Iterables.get(
-              Splitter.on('r').split(
-                      context.getProviderSpecificContext().getBuildVersion()), 0);
-      adminDisk = workingDir + "/testadmin.vdi";
-      operatingSystemIso = String.format("%s/%s.iso", workingDir, imageId);
-      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso",
-              workingDir, hostVersion);
+      hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
+      operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
+      guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
    }
 
    protected void undoVm(VmSpec vmSpecification) {
-      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(
-              vmSpecification.getVmId(),
-              new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(),
+               new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+   }
+
+   protected void ensureMachineHasPowerDown(String vmName) {
+      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
+         try {
+            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
+               @Override
+               public Void apply(ISession session) {
+                  IProgress powerDownProgress = session.getConsole().powerDown();
+                  powerDownProgress.waitForCompletion(-1);
+                  return null;
+               }
+            });
+         } catch (RuntimeException e) {
+            // sometimes the machine might be powered of between the while test and the call to
+            // lockSessionOnMachineAndApply
+            if (e.getMessage().contains("Invalid machine state: PoweredOff")) {
+               return;
+            } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
+               continue;
+            } else {
+               throw e;
+            }
+         }
+      }
+   }
+   
+   public String adminDisk(String vmName) {
+      return workingDir + File.separator + vmName + ".vdi";
    }
 
    @AfterClass(groups = "live")

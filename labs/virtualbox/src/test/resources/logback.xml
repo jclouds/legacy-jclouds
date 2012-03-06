@@ -31,9 +31,16 @@
             <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
         </layout>
     </appender>
+    
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%-4r [%thread] %-5level - %msg%n</Pattern>
+        </encoder>
+    </appender>
 
     <root>
-        <level value="warn" />
+        <level value="debug" />
+        <appender-ref ref="CONSOLE" />
     </root>
 
     <logger name="org.jclouds">

@@ -19,14 +19,15 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-import org.virtualbox_4_1.NATProtocol;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.virtualbox_4_1.NATProtocol;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a NAT network adapter in VirtualBox.

@@ -16,39 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.virtualbox.predicates;
 
-import javax.annotation.Resource;
+package org.jclouds.virtualbox;
 
-import org.jclouds.logging.Logger;
-import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.google.common.base.Predicate;
+import javax.inject.Qualifier;
 
 /**
+ * Signals the annotated target pertains to the vbox host and not to one of the nodes.
  * 
- * @author Adrian Cole
+ * @author dralves
+ * 
  */
-public class SshResponds implements Predicate<SshClient> {
-   @Resource
-   protected Logger logger = Logger.NULL;
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface Host {
 
-   @Override
-   public boolean apply(SshClient client) {
-
-      try {
-         client.connect();
-         if (client.exec("id").getExitStatus() == 0) {
-            return true;
-         }
-      } catch (SshException e) {
-         logger.trace("No response from ssh daemon connecting to %s: %s", client, e.getMessage());
-      } finally {
-        if (client != null) {
-         client.disconnect();
-        }
-      }
-      return false;
-   }
 }

@@ -27,6 +27,7 @@ import java.util.List;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
+
 /**
  * Describes the network configuration for a VirtualBox machine.
  */

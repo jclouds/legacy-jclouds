@@ -23,6 +23,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECO
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -31,11 +32,16 @@ import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
 import org.jclouds.byon.Node;
+import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -44,16 +50,30 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.virtualbox.Host;
 import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
+import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.Master;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NodeSpec;
+import org.jclouds.virtualbox.domain.YamlImage;
+import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
+import org.jclouds.virtualbox.functions.CreateAndInstallVm;
 import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
+import org.jclouds.virtualbox.functions.MastersCache;
+import org.jclouds.virtualbox.functions.NodeCreator;
+import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
+import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.predicates.SshResponds;
@@ -72,7 +92,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -81,7 +103,7 @@ import com.google.inject.TypeLiteral;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class VirtualBoxComputeServiceContextModule extends
-        ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
+         ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
 
    public VirtualBoxComputeServiceContextModule() {
       super(Supplier.class, Supplier.class);
@@ -106,6 +128,24 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to((Class) StartJettyIfNotAlreadyRunning.class);
       bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
       }).to((Class) StartVBoxIfNotAlreadyRunning.class);
+      // the yaml config to image mapper
+      bind(new TypeLiteral<Supplier<Map<Image, YamlImage>>>() {
+      }).to((Class) ImagesToYamlImagesFromYamlDescriptor.class);
+      // the yaml config provider
+      bind(new TypeLiteral<Supplier<String>>() {
+      }).to((Class) YamlImagesFromFileConfig.class);
+      // the master machines cache
+      bind(new TypeLiteral<LoadingCache<Image, Master>>() {
+      }).to((Class) MastersCache.class);
+      // the master creating function
+      bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
+      }).to((Class) CreateAndInstallVm.class);
+      // the machine cloning function
+      bind(new TypeLiteral<Function<NodeSpec, NodeAndInitialCredentials<IMachine>>>() {
+      }).to((Class) NodeCreator.class);
+      bind(new TypeLiteral<Function<CloneSpec, IMachine>>() {
+      }).to((Class) CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.class);
+
       // for byon
       bind(new TypeLiteral<Function<URI, InputStream>>() {
       }).to(SupplyFromProviderURIOrNodesProperty.class);
@@ -115,14 +155,32 @@ public class VirtualBoxComputeServiceContextModule extends
 
       bind(ExecutionType.class).toInstance(ExecutionType.GUI);
       bind(LockType.class).toInstance(LockType.Write);
-
    }
-   
+
    @Provides
    @Singleton
    @Preconfiguration
    protected LoadingCache<IsoSpec, URI> preconfiguration(CacheLoader<IsoSpec, URI> cacheLoader) {
       return CacheBuilder.newBuilder().build(cacheLoader);
+   }
+
+   @Provides
+   @Host
+   @Singleton
+   protected ComputeServiceContext provideHostController() {
+      String provider = "byon";
+      String identity = "";
+      String credential = "";
+      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
+               "host",
+               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
+                        .osVersion(System.getProperty("os.version")).group("ssh")
+                        .username(System.getProperty("user.name"))
+                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
+                        .build()));
+      return new ComputeServiceContextFactory().createContext(provider, identity, credential,
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule));
    }
 
    @Provides
@@ -140,7 +198,6 @@ public class VirtualBoxComputeServiceContextModule extends
          public VirtualBoxManager apply(Supplier<NodeMetadata> nodeSupplier) {
             return VirtualBoxManager.createInstance(nodeSupplier.get().getId());
          }
-
 
          @Override
          public String toString() {
@@ -163,6 +220,12 @@ public class VirtualBoxComputeServiceContextModule extends
    }
 
    @Override
+   protected Supplier provideHardware(ComputeServiceAdapter<IMachine, IMachine, Image, Location> adapter,
+            Function<IMachine, Hardware> transformer) {
+      return Suppliers.ofInstance(Collections.singleton(new HardwareBuilder().id("").build()));
+   }
+
+   @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(OsFamily.UBUNTU).osVersionMatches("11.04");
    }
@@ -170,7 +233,7 @@ public class VirtualBoxComputeServiceContextModule extends
    @Provides
    @Singleton
    protected Supplier<NodeMetadata> host(Supplier<LoadingCache<String, Node>> nodes, NodeToNodeMetadata converter)
-           throws ExecutionException {
+            throws ExecutionException {
       return Suppliers.compose(Functions.compose(converter, new Function<LoadingCache<String, Node>, Node>() {
 
          @Override
@@ -182,22 +245,24 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @VisibleForTesting
    public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
-           .<MachineState, NodeState>builder().put(MachineState.Running, NodeState.RUNNING).put(
-                   MachineState.PoweredOff, NodeState.SUSPENDED)
-           .put(MachineState.DeletingSnapshot, NodeState.PENDING).put(MachineState.DeletingSnapshotOnline,
-                   NodeState.PENDING).put(MachineState.DeletingSnapshotPaused, NodeState.PENDING).put(
-                   MachineState.FaultTolerantSyncing, NodeState.PENDING).put(MachineState.LiveSnapshotting,
-                   NodeState.PENDING).put(MachineState.SettingUp, NodeState.PENDING).put(MachineState.Starting,
-                   NodeState.PENDING).put(MachineState.Stopping, NodeState.PENDING).put(MachineState.Restoring,
-                   NodeState.PENDING)
-                   // TODO What to map these states to?
-           .put(MachineState.FirstOnline, NodeState.PENDING).put(MachineState.FirstTransient, NodeState.PENDING).put(
-                   MachineState.LastOnline, NodeState.PENDING).put(MachineState.LastTransient, NodeState.PENDING)
-           .put(MachineState.Teleported, NodeState.PENDING).put(MachineState.TeleportingIn, NodeState.PENDING).put(
-                   MachineState.TeleportingPausedVM, NodeState.PENDING)
+            .<MachineState, NodeState> builder().put(MachineState.Running, NodeState.RUNNING)
+            .put(MachineState.PoweredOff, NodeState.SUSPENDED)
+            .put(MachineState.DeletingSnapshot, NodeState.PENDING)
+            .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
+            .put(MachineState.DeletingSnapshotPaused, NodeState.PENDING)
+            .put(MachineState.FaultTolerantSyncing, NodeState.PENDING)
+            .put(MachineState.LiveSnapshotting, NodeState.PENDING)
+            .put(MachineState.SettingUp, NodeState.PENDING)
+            .put(MachineState.Starting, NodeState.PENDING)
+            .put(MachineState.Stopping, NodeState.PENDING)
+            .put(MachineState.Restoring, NodeState.PENDING)
+            // TODO What to map these states to?
+            .put(MachineState.FirstOnline, NodeState.PENDING).put(MachineState.FirstTransient, NodeState.PENDING)
+            .put(MachineState.LastOnline, NodeState.PENDING).put(MachineState.LastTransient, NodeState.PENDING)
+            .put(MachineState.Teleported, NodeState.PENDING).put(MachineState.TeleportingIn, NodeState.PENDING)
+            .put(MachineState.TeleportingPausedVM, NodeState.PENDING).put(MachineState.Aborted, NodeState.ERROR)
+            .put(MachineState.Stuck, NodeState.ERROR)
 
-           .put(MachineState.Aborted, NodeState.ERROR).put(MachineState.Stuck, NodeState.ERROR)
-
-           .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
+            .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
 
 }

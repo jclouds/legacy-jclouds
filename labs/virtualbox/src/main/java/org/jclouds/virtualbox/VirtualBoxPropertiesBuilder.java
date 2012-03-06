@@ -19,18 +19,23 @@
 
 package org.jclouds.virtualbox;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.*;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_IMAGE_AUTHENTICATE_SUDO;
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_IMAGE_LOGIN_USER;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
 
 import java.io.File;
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
-import static org.jclouds.compute.reference.ComputeServiceConstants.*;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
 
 /**
  * Builds properties for VirtualBox integration.
@@ -53,32 +58,36 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(PROPERTY_ENDPOINT, "http://localhost:18083/");
       // later version not in maven, yet
       properties.put(PROPERTY_API_VERSION, "4.1.4");
+
       properties.put(PROPERTY_BUILD_VERSION, "4.1.8r75467");
       properties.put(PROPERTY_IDENTITY, "administrator");
       properties.put(PROPERTY_CREDENTIAL, "12345");
 
-      properties.put(PROPERTY_IMAGE_ID, "ubuntu-11.04-server-i386");
       properties.put(PROPERTY_IMAGE_LOGIN_USER, "toor:password");
       properties.put(PROPERTY_IMAGE_AUTHENTICATE_SUDO, "true");
 
-      properties.put(VIRTUALBOX_ISO_URL, "http://releases.ubuntu.com/11.04/ubuntu-11.04-server-i386.iso");
       properties.put(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
                + "/install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL "
-               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us "
-               + "hostname=" + "HOSTNAME "
+               + "debian-installer=en_US auto locale=en_US kbd-chooser/method=us " + "hostname=" + "HOSTNAME "
                + "fb=false debconf/frontend=noninteractive "
                + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
                + "initrd=/install/initrd.gz -- <Enter>");
-      
-      properties.put(VIRTUALBOX_WORKINGDIR, System.getProperty("user.home") + File.separator
-               + System.getProperty("test.virtualbox.workingDir", "jclouds-virtualbox-test"));
+
+      properties.put(
+               VIRTUALBOX_WORKINGDIR,
+               System.getProperty("user.home") + File.separator
+                        + System.getProperty("test.virtualbox.workingDir", ".jclouds-vbox"));
+
+      // allow to set the descriptor as a sysprop but default to just setting a default file path.
+      // The configured supplier
+      // must be able to handle the chosen option.
+      properties.put(
+               VIRTUALBOX_IMAGES_DESCRIPTOR,
+               System.getProperty("test.virtualbox.image.descriptor.yaml", VIRTUALBOX_DEFAULT_DIR + File.separator
+                        + "images.yaml"));
 
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:8080/src/test/resources/preseed.cfg");
-      
-      
-
 
       return properties;
    }
-
 }

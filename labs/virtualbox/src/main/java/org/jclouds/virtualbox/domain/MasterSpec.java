@@ -19,13 +19,13 @@
 
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Objects;
+
 /**
- * A complete specification of a "master" node, including the ISO, networking setup
- * and the physical machine specification.
+ * A complete specification of a "master" node, including the ISO, networking setup and the physical
+ * machine specification.
  */
 public class MasterSpec {
 
@@ -64,7 +64,7 @@ public class MasterSpec {
 
    }
 
-   public MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec) {
+   private MasterSpec(VmSpec vmSpec, IsoSpec isoSpec, NetworkSpec networkSpec) {
       checkNotNull(vmSpec, "vmSpec");
       checkNotNull(isoSpec, "isoSpec");
       checkNotNull(networkSpec, "networkSpec");
@@ -87,27 +87,23 @@ public class MasterSpec {
 
    @Override
    public boolean equals(Object o) {
-      if (this == o) return true;
+      if (this == o)
+         return true;
       if (o instanceof VmSpec) {
          MasterSpec other = (MasterSpec) o;
-         return Objects.equal(vmSpec, other.vmSpec) &&
-                 Objects.equal(isoSpec, other.isoSpec) &&
-                 Objects.equal(networkSpec, other.networkSpec);
+         return Objects.equal(vmSpec, other.vmSpec) && Objects.equal(isoSpec, other.isoSpec)
+                  && Objects.equal(networkSpec, other.networkSpec);
       }
       return false;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(vmSpec,isoSpec,networkSpec);
+      return Objects.hashCode(vmSpec, isoSpec, networkSpec);
    }
 
    @Override
    public String toString() {
-      return "IMachineSpec{" +
-              "vmSpec=" + vmSpec +
-              ", isoSpec=" + isoSpec +
-              ", networkSpec=" + networkSpec +
-              '}';
+      return "IMachineSpec{" + "vmSpec=" + vmSpec + ", isoSpec=" + isoSpec + ", networkSpec=" + networkSpec + '}';
    }
 }

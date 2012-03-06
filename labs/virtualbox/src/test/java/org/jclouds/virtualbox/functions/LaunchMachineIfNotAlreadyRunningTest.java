@@ -18,14 +18,18 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.*;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VirtualBoxManager;
 
 @Test(groups = "unit", testName = "LaunchMachineIfNotAlreadyRunningTest")
 public class LaunchMachineIfNotAlreadyRunningTest {
