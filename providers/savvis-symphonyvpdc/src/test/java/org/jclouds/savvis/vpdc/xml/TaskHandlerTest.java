@@ -60,7 +60,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
             .startTime(dateService.iso8601DateParse("2010-05-26T08:08:08.000+08:00"))
             .status(Task.Status.SUCCESS)
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/task/21-1002"))
+            .href(URI.create("https://api.savvis.net/rest/api/v0.8/task/21-1002"))
             .owner(
                   ResourceImpl
                         .builder()
@@ -68,7 +68,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mockVpdc8")
                         .type("application/vnd.vmware.vcloud.vdc+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
                         .build())
             .result(
                      ResourceImpl
@@ -77,7 +77,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mock_vpdc_item_007")
                         .type("application/vnd.vmware.vcloud.vApp+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"))
                         .build()).build();
       assertEquals(result.toString(), expects.toString());
 
@@ -94,7 +94,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
             .startTime(dateService.iso8601DateParse("2010-05-26T08:08:08.000+08:00"))
             .status(Task.Status.SUCCESS)
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/task/21-1002"))
+            .href(URI.create("https://api.savvis.net/rest/api/v0.8/task/21-1002"))
             .owner(
                   ResourceImpl
                         .builder()
@@ -102,7 +102,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mockVpdc8")
                         .type("application/vnd.vmware.vcloud.vdc+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
                         .build())
             .result(
                   ResourceImpl
@@ -111,7 +111,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mock_vpdc_item_008")
                         .type("application/vnd.vmware.vcloud.vApp+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/vdc/2736/vmdk/1234567"))
+                              .create("https://api.savvis.net/rest/api/v0.8/vdc/2736/vmdk/1234567"))
                         .build()).build();
       assertEquals(result.toString(), expects.toString());
 
@@ -127,7 +127,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
             .startTime(dateService.iso8601DateParse("2010-05-26T08:08:08.000+08:00"))
             .status(Task.Status.RUNNING)
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/task/6904"))
+            .href(URI.create("https://api.savvis.net/rest/api/v0.8/task/6904"))
             .owner(
                   ResourceImpl
                         .builder()
@@ -135,7 +135,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mockVpdc8")
                         .type("application/vnd.vmware.vcloud.vdc+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
                         .build())
             .result(
                   ResourceImpl
@@ -144,7 +144,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mock_vpdc_item_007")
                         .type("application/vnd.vmware.vcloud.catalogItem+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"))
                         .build()).build();
 
       assertEquals(result.toString(), expects.toString());
@@ -160,7 +160,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
             .id("113927-1005")
             .startTime(dateService.iso8601DateParse("2011-03-24T20:37:34.000Z"))
             .status(Task.Status.QUEUED)
-            .href(URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/task/113927-1005"))
+            .href(URI.create("https://api.savvis.net/rest/api/v0.8/task/113927-1005"))
             .owner(
                   ResourceImpl
                         .builder()
@@ -168,7 +168,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("Foo")
                         .type("application/vnd.vmware.vcloud.vdc+xml")
                         .href(URI
-                              .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/4253"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/4253"))
                         .build())
             .result(
                   ResourceImpl
@@ -177,7 +177,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("adriancole")
                         .type("application/vnd.vmware.vcloud.vApp+xml")
                         .href(URI
-                              .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/4253/vApp/1005"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/4253/vApp/1005"))
                         .build()).build();
       assertEquals(result.toString(), expects.toString());
       assertEquals(result.getError(), null);
@@ -195,7 +195,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
             .endTime(dateService.iso8601DateParse("2010-05-26T08:09:09.000+08:00"))
             .status(Task.Status.ERROR)
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/task/6904-123"))
+            .href(URI.create("https://api.savvis.net/rest/api/v0.8/task/6904-123"))
             .owner(
                   ResourceImpl
                         .builder()
@@ -203,7 +203,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mockVpdc8")
                         .type("application/vnd.vmware.vcloud.vdc+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"))
                         .build())
             .result(
                   ResourceImpl
@@ -212,7 +212,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                         .name("mock_vpdc_item_007")
                         .type("application/vnd.vmware.vcloud.vApp+xml")
                         .href(URI
-                              .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"))
+                              .create("https://api.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"))
                         .build()).build();
       assertEquals(result.toString(), expects.toString());
 
@@ -251,7 +251,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
             .endTime(dateService.iso8601DateParse("2010-05-26T08:09:09.000+08:00"))
             .status(Task.Status.NONE)
             .type("application/vnd.vmware.vcloud.task+xml")
-            .href(URI.create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/task/3904-1002"))
+            .href(URI.create("https://api.savvis.net/rest/api/v0.8/task/3904-1002"))
             .error(
                   TaskError
                         .builder()

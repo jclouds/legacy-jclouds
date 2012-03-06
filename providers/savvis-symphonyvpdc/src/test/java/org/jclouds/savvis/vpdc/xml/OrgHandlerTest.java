@@ -52,7 +52,7 @@ public class OrgHandlerTest {
                   .name("100000.0")
                   .description("SAVVISStation Integration Testing")
                   .vDC(new Link("2736", "demo_vpdcname", "application/vnd.vmware.vcloud.vdc+xml", URI
-                        .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"),
+                        .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736"),
                         "down")).build().toString());
 
    }

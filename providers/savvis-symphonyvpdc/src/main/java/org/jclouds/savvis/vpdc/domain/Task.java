@@ -30,7 +30,7 @@ import org.jclouds.javax.annotation.Nullable;
  * and returns its URL to the client. The client can use this URL in a subsequent GET request to
  * obtain the current status of the task.
  * 
- * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/getTask.html" />
+ * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/getTask.html" />
  */
 public class Task extends ResourceImpl {
    public static Builder builder() {

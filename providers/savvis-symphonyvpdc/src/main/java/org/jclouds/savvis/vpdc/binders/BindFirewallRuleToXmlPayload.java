@@ -110,7 +110,7 @@ public class BindFirewallRuleToXmlPayload extends BindToStringPayload implements
             .a("xmlns:rasd", "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData")
             .a("xmlns:vssd", "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData")
             .a("xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1")
-            .a("xmlns:svvs", "http://schemas.api.sandbox.symphonyVPDC.savvis.net/vpdci");
+            .a("xmlns:svvs", "http://schemas.api.sandbox.savvis.net/vpdci");
       return rootBuilder;
    }
 

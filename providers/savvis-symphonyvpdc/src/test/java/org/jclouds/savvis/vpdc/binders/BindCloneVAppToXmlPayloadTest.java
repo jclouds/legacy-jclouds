@@ -36,7 +36,7 @@ public class BindCloneVAppToXmlPayloadTest {
 
    public void test() throws IOException {
       String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml"));
-      URI vAppURI = URI.create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001");
+      URI vAppURI = URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001");
       
       String xml = new BindCloneVMToXmlPayload().generateXml(vAppURI, "clonedvm", "VM Tier01");
       System.out.println(xml);

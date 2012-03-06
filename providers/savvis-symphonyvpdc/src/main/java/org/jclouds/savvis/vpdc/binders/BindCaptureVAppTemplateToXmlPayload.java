@@ -97,7 +97,7 @@ public class BindCaptureVAppTemplateToXmlPayload extends BindToStringPayload imp
 
    protected XMLBuilder buildRoot() throws ParserConfigurationException, FactoryConfigurationError {
       XMLBuilder rootBuilder = XMLBuilder.create("CaptureVAppParams")
-            .a("xmlns", "http://schemas.api.sandbox.symphonyVPDC.savvis.net/vpdci")
+            .a("xmlns", "http://schemas.api.sandbox.savvis.net/vpdci")
             .a("name", "CaptureTemplate");
       return rootBuilder;
    }

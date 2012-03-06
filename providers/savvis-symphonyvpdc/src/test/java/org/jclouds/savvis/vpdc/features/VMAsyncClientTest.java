@@ -64,11 +64,11 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
       });
 
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22"), VMSpec.builder().name(
+               .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22"), VMSpec.builder().name(
                "DemoHost-1").networkTierName("VM Tier01").operatingSystem(os).build());
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/ HTTP/1.1");
+               "GET https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/vm-default.xml")),
                "application/xml", false);
@@ -96,7 +96,7 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
       HttpRequest request = processor.createRequest(method, "11", "22", VMSpec.builder().operatingSystem(os).name(
                "DemoHost-1").networkTierName("VM Tier01").build());
 
-      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/ HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/vm-default.xml")),
                "application/xml", false);
@@ -110,10 +110,10 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
    
    public void testCaptureVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMAsyncClient.class.getMethod("captureVApp", String.class, String.class, URI.class);
-      HttpRequest request = processor.createRequest(method, "100000.0", "2736", URI.create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"));
+      HttpRequest request = processor.createRequest(method, "100000.0", "2736", URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"));
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/action/captureVApp HTTP/1.1");
+               "POST https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/action/captureVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/capture-vapp-template-default.xml")),
               "application/xml", false);
@@ -126,10 +126,10 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
    
    public void testCloneVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMAsyncClient.class.getMethod("cloneVApp", URI.class, String.class, String.class);
-      HttpRequest request = processor.createRequest(method, URI.create("https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"), "clonedvm", "VM Tier01");
+      HttpRequest request = processor.createRequest(method, URI.create("https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001"), "clonedvm", "VM Tier01");
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001/action/cloneVApp HTTP/1.1");
+               "POST https://api.savvis.net/vpdc/v1.0/org/100000.0/vdc/2736/vApp/1001/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml")),
               "application/xml", false);
@@ -154,11 +154,11 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
       });
 
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22"), ImmutableSet.of(VMSpec
+               .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22"), ImmutableSet.of(VMSpec
                .builder().name("Test VM").networkTierName("VM Tier01").operatingSystem(os).build()));
 
       assertRequestLineEquals(request,
-               "GET https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/ HTTP/1.1");
+               "GET https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/vm-multiple-default.xml")),
                "application/xml", false);
@@ -187,7 +187,7 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
       HttpRequest request = processor.createRequest(method, "11", "22", ImmutableSet.of(VMSpec.builder()
                .operatingSystem(os).name("Test VM").networkTierName("VM Tier01").build()));
 
-      assertRequestLineEquals(request, "GET https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/ HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/vm-multiple-default.xml")),
                "application/xml", false);
@@ -204,7 +204,7 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
       HttpRequest request = processor.createRequest(method, "11", "22", "33");
 
       assertRequestLineEquals(request,
-               "DELETE https://api.symphonyvpdc.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33 HTTP/1.1");
+               "DELETE https://api.savvis.net/vpdc/v1.0/org/11/vdc/22/vApp/33 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -218,10 +218,10 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
    public void testRemoveVM() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMAsyncClient.class.getMethod("removeVM", URI.class);
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+               .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
 
       assertRequestLineEquals(request,
-               "DELETE https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33 HTTP/1.1");
+               "DELETE https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -235,10 +235,10 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
    public void testPowerOffVM() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMAsyncClient.class.getMethod("powerOffVM", URI.class);
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+               .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
+               "POST https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOff HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -252,10 +252,10 @@ public class VMAsyncClientTest extends BaseVPDCAsyncClientTest<VMAsyncClient> {
    public void testPowerOnVM() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VMAsyncClient.class.getMethod("powerOnVM", URI.class);
       HttpRequest request = processor.createRequest(method, URI
-               .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
+               .create("https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33"));
 
       assertRequestLineEquals(request,
-               "POST https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
+               "POST https://api.savvis.net/rest/api/v0.8/org/11/vdc/22/vApp/33/action/powerOn HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 

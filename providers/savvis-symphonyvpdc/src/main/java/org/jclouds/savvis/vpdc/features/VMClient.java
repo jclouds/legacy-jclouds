@@ -30,7 +30,7 @@ import org.jclouds.savvis.vpdc.domain.VMSpec;
  * Provides access to Symphony VPDC resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/" />
+ * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/" />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)

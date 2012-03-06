@@ -20,16 +20,14 @@ package org.jclouds.savvis.vpdc.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -43,13 +41,10 @@ import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.AsyncClientFactory;
-import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.savvis.vpdc.VPDCAsyncClient;
 import org.jclouds.savvis.vpdc.VPDCClient;
-import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.internal.VCloudSession;
 import org.jclouds.savvis.vpdc.features.BrowsingAsyncClient;
 import org.jclouds.savvis.vpdc.features.BrowsingClient;
@@ -61,13 +56,16 @@ import org.jclouds.savvis.vpdc.features.VMAsyncClient;
 import org.jclouds.savvis.vpdc.features.VMClient;
 import org.jclouds.savvis.vpdc.handlers.VPDCErrorHandler;
 import org.jclouds.savvis.vpdc.internal.LoginAsyncClient;
+import org.jclouds.savvis.vpdc.internal.LoginClient;
 import org.jclouds.savvis.vpdc.internal.VCloudToken;
 import org.jclouds.savvis.vpdc.location.FirstNetwork;
 import org.jclouds.savvis.vpdc.predicates.TaskSuccess;
 import org.jclouds.util.Strings2;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
@@ -81,36 +79,56 @@ import com.google.inject.TypeLiteral;
  * 
  */
 public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsyncClient> {
-   @Provides
-   @Singleton
-   protected LoginAsyncClient provideVCloudVersions(AsyncClientFactory factory) {
-      return factory.create(LoginAsyncClient.class);
+   @Override
+   protected void configure() {
+      super.configure();
+      bindClientAndAsyncClient(binder(), LoginClient.class, LoginAsyncClient.class);
    }
 
    @VCloudToken
    @Provides
-   String provideVCloudToken(Supplier<VCloudSession> cache) {
-      return checkNotNull(cache.get().getVCloudToken(), "No token present in session");
+   @Singleton
+   protected Supplier<String> provideVCloudToken(Supplier<VCloudSession> cache) {
+      return Suppliers.compose(new Function<VCloudSession, String>() {
+
+         @Override
+         public String apply(VCloudSession input) {
+            return checkNotNull(input.getVCloudToken(), "No token present in session");
+         }
+
+      }, cache);
    }
 
    @Provides
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
-   protected Set<org.jclouds.savvis.vpdc.domain.Resource> provideOrgs(Supplier<VCloudSession> cache,
-            @Named(PROPERTY_IDENTITY) String user) {
-      VCloudSession discovery = cache.get();
-      checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
-      return discovery.getOrgs();
+   protected Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> provideOrgs(Supplier<VCloudSession> cache,
+            @Named(PROPERTY_IDENTITY) final String user) {
+      return Suppliers.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
+
+         @Override
+         public Set<org.jclouds.savvis.vpdc.domain.Resource> apply(VCloudSession input) {
+            checkState(input.getOrgs().size() > 0, "No orgs present for user: " + user);
+            return input.getOrgs();
+         }
+
+      }, cache);
    }
 
    @Provides
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
-   protected String provideDefaultOrgId(@org.jclouds.savvis.vpdc.internal.Org Set<Resource> orgs) {
-      return Iterables.get(orgs, 0).getId();
-   }
+   protected Supplier<String> provideDefaultOrgId(
+            @org.jclouds.savvis.vpdc.internal.Org Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> orgs) {
+      return Suppliers.compose(new Function<Set<org.jclouds.savvis.vpdc.domain.Resource>, String>() {
 
-   protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+         @Override
+         public String apply(Set<org.jclouds.savvis.vpdc.domain.Resource> input) {
+            return Iterables.get(input, 0).getId();
+         }
+
+      }, orgs);
+   }
 
    @Provides
    @Singleton
@@ -142,19 +160,13 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final LoginAsyncClient login) {
+            final LoginClient login) {
       return new MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
                new Supplier<VCloudSession>() {
 
                   @Override
                   public VCloudSession get() {
-                     try {
-                        return login.login().get();
-                     } catch (Exception e) {
-                        propagate(e);
-                        assert false : e;
-                        return null;
-                     }
+                     return login.login();
                   }
 
                });
@@ -166,10 +178,11 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(VPDCErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(VPDCErrorHandler.class);
    }
-   
+
    @Override
    protected void installLocations() {
       super.installLocations();
       bind(ImplicitLocationSupplier.class).to(FirstNetwork.class).in(Scopes.SINGLETON);
    }
+
 }

@@ -22,12 +22,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
@@ -39,7 +40,7 @@ public class SetVCloudTokenCookieTest {
 
    @BeforeTest
    void setUp() {
-      filter = new SetVCloudTokenCookie(new Provider<String>() {
+      filter = new SetVCloudTokenCookie(new Supplier<String>() {
          public String get() {
             return "token";
          }

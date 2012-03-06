@@ -50,7 +50,7 @@ public class OrgListHandlerTest {
       Set<Resource> result = factory.create(injector.getInstance(OrgListHandler.class)).parse(is);
       assertEquals(result, ImmutableSet.of(new ResourceImpl("100000.0", "SAVVISStation Integration Testing",
             "application/vnd.vmware.vcloud.org+xml", URI
-                  .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0"))));
+                  .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0"))));
 
    }
 }
