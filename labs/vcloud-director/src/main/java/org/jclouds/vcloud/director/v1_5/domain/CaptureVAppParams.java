@@ -25,7 +25,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
@@ -154,24 +153,24 @@ public class CaptureVAppParams
     *  Gets the value of the section property.
     *    
     * Objects of the following type(s) are allowed in the list
-    * {@link JAXBElement }{@code <}{@link Section> }{@code >}
-    * {@link JAXBElement }{@code <}{@link VirtualHardwareSection > }{@code >}
-    * {@link JAXBElement }{@code <}{@link LeaseSettingsSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link EulaSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link RuntimeInfoSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link AnnotationSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link DeploymentOptionSection > }{@code >}
-    * {@link JAXBElement }{@code <}{@link StartupSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link ResourceAllocationSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link NetworkConnectionSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link CustomizationSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link ProductSection > }{@code >}
-    * {@link JAXBElement }{@code <}{@link GuestCustomizationSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link OperatingSystemSection > }{@code >}
-    * {@link JAXBElement }{@code <}{@link NetworkConfigSection> }{@code >}
-    * {@link JAXBElement }{@code <}{@link NetworkSection > }{@code >}
-    * {@link JAXBElement }{@code <}{@link DiskSection > }{@code >}
-    * {@link JAXBElement }{@code <}{@link InstallSection> }{@code >}
+    * {@code <}{@link Section> }{@code >}
+    * {@code <}{@link VirtualHardwareSection > }{@code >}
+    * {@code <}{@link LeaseSettingsSection> }{@code >}
+    * {@code <}{@link EulaSection> }{@code >}
+    * {@code <}{@link RuntimeInfoSection> }{@code >}
+    * {@code <}{@link AnnotationSection> }{@code >}
+    * {@code <}{@link DeploymentOptionSection > }{@code >}
+    * {@code <}{@link StartupSection> }{@code >}
+    * {@code <}{@link ResourceAllocationSection> }{@code >}
+    * {@code <}{@link NetworkConnectionSection> }{@code >}
+    * {@code <}{@link CustomizationSection> }{@code >}
+    * {@code <}{@link ProductSection > }{@code >}
+    * {@code <}{@link GuestCustomizationSection> }{@code >}
+    * {@code <}{@link OperatingSystemSection > }{@code >}
+    * {@code <}{@link NetworkConfigSection> }{@code >}
+    * {@code <}{@link NetworkSection > }{@code >}
+    * {@code <}{@link DiskSection > }{@code >}
+    * {@code <}{@link InstallSection> }{@code >}
     */
    public Set<? extends Section<?>> getSections() {
       return Collections.unmodifiableSet(this.sections);
