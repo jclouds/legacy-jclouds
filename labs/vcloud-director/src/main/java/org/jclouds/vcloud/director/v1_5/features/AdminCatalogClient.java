@@ -18,11 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to {@link AdminCatalog} objects.
@@ -43,5 +43,5 @@ public interface AdminCatalogClient {
     * @param catalogRef the reference for the catalog
     * @return a catalog
     */
-   AdminCatalog getCatalog(URISupplier catalogRef);
+   AdminCatalog getCatalog(URI catalogRef);
 }
