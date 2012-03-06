@@ -35,7 +35,7 @@ import org.virtualbox_4_1.IMachine;
 
 import com.google.common.collect.Iterables;
 
-@Test(groups = "plive", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private VirtualBoxComputeServiceAdapter adapter;
