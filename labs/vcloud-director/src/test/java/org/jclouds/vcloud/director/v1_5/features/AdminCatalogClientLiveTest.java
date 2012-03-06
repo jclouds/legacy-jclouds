@@ -18,8 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static com.google.common.base.Objects.equal;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
@@ -38,6 +41,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live", "admin", "catalog" }, singleThreaded = true, testName = "CatalogClientLiveTest")
 public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+   
+   public static final String CATALOG = "admin catalog";
 
    /*
     * Convenience references to API clients.
@@ -65,5 +70,43 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       catalog = catalogClient.getCatalog(catalogRef.getURI());
       
       Checks.checkAdminCatalog(catalog);
+   }
+   
+   @Test(testName = "PUT /admin/catalog/{id}", dependsOnMethods = { "testGetCatalog" })
+   public void testUpdateCatalog() {
+      String oldName = catalog.getName();
+      String newName = "new "+oldName;
+      String oldDescription = catalog.getDescription();
+      String newDescription = "new "+oldDescription;
+      // TODO: can we update/manage catalogItems directly like this? or does it just do a merge (like metadata)
+//      CatalogItems oldCatalogItems = catalog.getCatalogItems();
+//      CatalogItems newCatalogItems = CatalogItems.builder().build();
+      
+      try {
+         catalog = catalog.toBuilder()
+               .name(newName)
+               .description(newDescription)
+//               .catalogItems(newCatalogItems)
+               .build();
+         
+         catalog = catalogClient.updateCatalog(catalog.getURI(), catalog);
+         
+         assertTrue(equal(catalog.getName(), newName), String.format(OBJ_FIELD_UPDATABLE, CATALOG, "name"));
+         assertTrue(equal(catalog.getDescription(), newDescription),
+               String.format(OBJ_FIELD_UPDATABLE, CATALOG, "description"));
+//         assertTrue(equal(catalog.getCatalogItems(), newCatalogItems), String.format(OBJ_FIELD_UPDATABLE, CATALOG, "catalogItems"));
+         
+         //TODO negative tests?
+         
+         Checks.checkAdminCatalog(catalog);
+      } finally {
+         catalog = catalog.toBuilder()
+               .name(oldName)
+               .description(oldDescription)
+//               .catalogItems(oldCatalogItems)
+               .build();
+         
+         catalog = catalogClient.updateCatalog(catalog.getURI(), catalog);
+      }
    }
 }
