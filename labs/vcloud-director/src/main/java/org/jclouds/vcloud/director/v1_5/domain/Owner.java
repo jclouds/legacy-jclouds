@@ -19,18 +19,17 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Set;
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.net.URI;
+import java.util.Set;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**
@@ -58,10 +57,6 @@ import com.google.common.collect.Sets;
 @XmlType(propOrder = {"user"})
 public class Owner extends ResourceType<Owner> {
 
-<<<<<<< HEAD
-{
-=======
->>>>>>> VCloud Director 1.5: Adding VAppTemplateClient error handling tests and fixing bug in NetworkService.isEnabled
    public static Builder builder() {
       return new Builder();
    }
