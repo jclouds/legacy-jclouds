@@ -111,7 +111,7 @@ public class ParamsType<T extends ParamsType<T>> {
    }
 
    protected ParamsType() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

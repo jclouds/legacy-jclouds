@@ -110,7 +110,7 @@ public class Session {
    }
 
    private Session() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private Session(String user, String org, URI href, Set<Link> links) {

@@ -74,11 +74,8 @@ import com.google.common.base.Objects;
       "isOperational",
       "errorDetails"
 })
-public class IpsecVpnTunnel
+public class IpsecVpnTunnel {
 
-
-{
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -91,7 +88,7 @@ public class IpsecVpnTunnel
 
       private String name;
       private String description;
-      private IpsecVpnPeerType ipsecVpnPeer;
+      private IpsecVpnPeerType<?> ipsecVpnPeer;
       private String peerIpAddress;
       private String peerNetworkAddress;
       private String peerNetworkMask;
@@ -121,7 +118,7 @@ public class IpsecVpnTunnel
       /**
        * @see IpsecVpnTunnel#getIpsecVpnPeer()
        */
-      public Builder ipsecVpnPeer(IpsecVpnPeerType ipsecVpnPeer) {
+      public Builder ipsecVpnPeer(IpsecVpnPeerType<?> ipsecVpnPeer) {
          this.ipsecVpnPeer = ipsecVpnPeer;
          return this;
       }
@@ -221,7 +218,7 @@ public class IpsecVpnTunnel
       }
    }
 
-   private IpsecVpnTunnel(String name, String description, IpsecVpnPeerType ipsecVpnPeer, String peerIpAddress,
+   private IpsecVpnTunnel(String name, String description, IpsecVpnPeerType<?> ipsecVpnPeer, String peerIpAddress,
                           String peerNetworkAddress, String peerNetworkMask, String sharedSecret, String encryptionProtocol, int mtu, boolean enabled, Boolean operational, String errorDetails) {
       this.name = name;
       this.description = description;
@@ -238,7 +235,7 @@ public class IpsecVpnTunnel
    }
 
    private IpsecVpnTunnel() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "Name", required = true)
@@ -246,7 +243,7 @@ public class IpsecVpnTunnel
    @XmlElement(name = "Description")
    protected String description;
    @XmlElementRef
-   protected IpsecVpnPeerType ipsecVpnPeer;
+   protected IpsecVpnPeerType<?> ipsecVpnPeer;
    @XmlElement(name = "PeerIpAddress", required = true)
    protected String peerIpAddress;
    @XmlElement(name = "PeerNetworkAddress", required = true)
@@ -268,9 +265,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the name property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getName() {
       return name;
@@ -278,9 +272,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the description property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getDescription() {
       return description;
@@ -289,15 +280,12 @@ public class IpsecVpnTunnel
    /**
     * Details about the peer network.
     */
-   public IpsecVpnPeerType getIpsecVpnPeer() {
+   public IpsecVpnPeerType<?> getIpsecVpnPeer() {
       return ipsecVpnPeer;
    }
 
    /**
     * Gets the value of the peerIpAddress property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getPeerIpAddress() {
       return peerIpAddress;
@@ -305,9 +293,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the peerNetworkAddress property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getPeerNetworkAddress() {
       return peerNetworkAddress;
@@ -315,9 +300,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the peerNetworkMask property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getPeerNetworkMask() {
       return peerNetworkMask;
@@ -325,9 +307,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the sharedSecret property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getSharedSecret() {
       return sharedSecret;
@@ -335,9 +314,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the encryptionProtocol property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getEncryptionProtocol() {
       return encryptionProtocol;
@@ -359,9 +335,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the isOperational property.
-    *
-    * @return possible object is
-    *         {@link Boolean }
     */
    public Boolean isOperational() {
       return isOperational;
@@ -369,9 +342,6 @@ public class IpsecVpnTunnel
 
    /**
     * Gets the value of the errorDetails property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getErrorDetails() {
       return errorDetails;

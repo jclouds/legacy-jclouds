@@ -99,7 +99,7 @@ public class ComputeCapacity {
    }
 
    private ComputeCapacity() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

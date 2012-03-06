@@ -80,7 +80,7 @@ public class OrgList {
    }
 
    private OrgList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private OrgList(Set<Reference> orgs) {

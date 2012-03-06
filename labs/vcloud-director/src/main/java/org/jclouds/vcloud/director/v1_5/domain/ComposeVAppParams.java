@@ -136,7 +136,7 @@ public class ComposeVAppParams
    }
 
    private ComposeVAppParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

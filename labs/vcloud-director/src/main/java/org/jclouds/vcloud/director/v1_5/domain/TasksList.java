@@ -161,7 +161,7 @@ public class TasksList extends EntityType<TasksList> {
    }
 
    protected TasksList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    public TasksList(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, Set<Task> tasks) {

@@ -132,7 +132,7 @@ public class NetworkConfiguration {
    }
 
    private NetworkConfiguration() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "IpScope")

@@ -133,7 +133,7 @@ public class IpsecVpnRemotePeer extends IpsecVpnManagedPeerType<IpsecVpnRemotePe
    }
 
    private IpsecVpnRemotePeer() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "VcdUrl", required = true)

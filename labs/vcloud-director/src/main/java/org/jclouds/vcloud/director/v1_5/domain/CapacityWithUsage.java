@@ -135,7 +135,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
    }
 
    private CapacityWithUsage() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "Used")

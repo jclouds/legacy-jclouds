@@ -137,7 +137,7 @@ public class InstantiateVAppParams
    }
 
    protected InstantiateVAppParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @Override

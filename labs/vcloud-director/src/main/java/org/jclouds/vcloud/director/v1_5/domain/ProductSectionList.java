@@ -139,7 +139,7 @@ public class ProductSectionList
    }
 
    private ProductSectionList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private ProductSectionList(Set<ProductSection> productSections) {

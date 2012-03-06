@@ -161,7 +161,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
    }
 
    protected ContainerType() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    /**

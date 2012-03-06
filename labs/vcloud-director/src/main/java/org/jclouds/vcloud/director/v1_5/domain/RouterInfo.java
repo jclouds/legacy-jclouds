@@ -62,7 +62,7 @@ public class RouterInfo {
    }
 
    private RouterInfo() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private RouterInfo(String externalIp) {

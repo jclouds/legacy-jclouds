@@ -178,7 +178,7 @@ public class CatalogItem extends EntityType<CatalogItem> {
    }
 
    private CatalogItem() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "Entity", required = true)

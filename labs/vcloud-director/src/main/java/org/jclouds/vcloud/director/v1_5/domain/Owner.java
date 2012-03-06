@@ -136,7 +136,7 @@ public class Owner
 
    @SuppressWarnings("unused")
    private Owner() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    public Owner(URI href, String type, Set<Link> links, Reference user) {

@@ -260,7 +260,8 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(primaryNetworkConnectionIndex,
+      return Objects.hashCode(super.hashCode(),
+            primaryNetworkConnectionIndex,
             networkConnections,
             links,
             href,

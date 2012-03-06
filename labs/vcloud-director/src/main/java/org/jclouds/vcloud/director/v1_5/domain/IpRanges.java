@@ -22,9 +22,9 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlElementRef;
+
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
@@ -76,14 +76,14 @@ public class IpRanges {
    }
 
    private IpRanges() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private IpRanges(Set<IpRange> ipRanges) {
       this.ipRanges = ImmutableSet.copyOf(ipRanges);
    }
 
-   @XmlElementRef
+   @XmlElement(name = "IpRange")
    private Set<IpRange> ipRanges = Sets.newLinkedHashSet();
 
    public Set<IpRange> getIpRanges() {

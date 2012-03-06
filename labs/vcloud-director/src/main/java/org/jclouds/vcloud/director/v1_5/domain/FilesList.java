@@ -98,7 +98,7 @@ public class FilesList {
    }
 
    private FilesList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private FilesList(List<File> files) {

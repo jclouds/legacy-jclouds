@@ -63,6 +63,6 @@ public class IpsecVpnThirdPartyPeer extends IpsecVpnUnmanagedPeerType<IpsecVpnTh
    }
 
    private IpsecVpnThirdPartyPeer() {
-      // For JAXB and builder use
+      // for JAXB
    }
 }

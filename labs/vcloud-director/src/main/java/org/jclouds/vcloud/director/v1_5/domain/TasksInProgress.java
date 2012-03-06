@@ -75,7 +75,7 @@ public class TasksInProgress {
    }
 
    private TasksInProgress() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private TasksInProgress(Collection<Task> tasks) {

@@ -53,7 +53,7 @@ public class IpAddresses {
        * @see IpAddresses#getIpAddresses()
        */
       public Builder ipAddresses(Set<String> ipAddresses) {
-         this.ipAddresses.addAll(checkNotNull(ipAddresses, "ipAddresses"));
+         this.ipAddresses = Sets.newLinkedHashSet(checkNotNull(ipAddresses, "ipAddresses"));
          return this;
       }
 
@@ -75,7 +75,7 @@ public class IpAddresses {
    }
 
    private IpAddresses() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private IpAddresses(Set<String> orgs) {

@@ -154,7 +154,7 @@ public class NatVmRule {
    }
 
    private NatVmRule() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

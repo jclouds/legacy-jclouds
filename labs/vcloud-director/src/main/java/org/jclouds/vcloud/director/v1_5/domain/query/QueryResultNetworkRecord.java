@@ -221,7 +221,7 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
    }
 
    private QueryResultNetworkRecord() {
-      // For JAXB and builder use
+      // Qfor JAXB
    }
 
    @XmlAttribute

@@ -96,7 +96,7 @@ public class ResourceEntities {
    }
 
    private ResourceEntities() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private ResourceEntities(Set<Reference> resourceEntity) {

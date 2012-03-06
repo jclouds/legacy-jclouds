@@ -104,7 +104,7 @@ public class StaticRoutingService extends NetworkServiceType<StaticRoutingServic
    }
 
    private StaticRoutingService() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "StaticRoute")

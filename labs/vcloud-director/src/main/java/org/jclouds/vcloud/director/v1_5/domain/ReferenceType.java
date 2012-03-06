@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.equal;
 import java.net.URI;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -38,6 +39,10 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author grkvlt@apache.org
  */
+@XmlSeeAlso({
+      CatalogReference.class,
+      Reference.class
+})
 public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
 
    public static <T extends ReferenceType<T>> Builder<T> builder() {

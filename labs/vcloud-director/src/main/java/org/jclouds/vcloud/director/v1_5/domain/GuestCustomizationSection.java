@@ -341,7 +341,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
    }
 
    private GuestCustomizationSection() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

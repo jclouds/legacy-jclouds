@@ -128,7 +128,7 @@ public class FirewallService extends NetworkServiceType<FirewallService> {
    }
 
    private FirewallService() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "DefaultAction")

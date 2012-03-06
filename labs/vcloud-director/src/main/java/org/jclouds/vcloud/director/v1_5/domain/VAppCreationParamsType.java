@@ -172,7 +172,7 @@ public class VAppCreationParamsType<T extends VAppCreationParamsType<T>>
    }
 
    protected VAppCreationParamsType() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    /**

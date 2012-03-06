@@ -254,9 +254,9 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
       }
    }
 
-   @XmlElementRef
+   @XmlElement(name = "Owner")
    protected Owner owner;
-   @XmlElementRef
+   @XmlElement(name = "Children")
    protected VAppTemplateChildren children = VAppTemplateChildren.builder().build();
    @XmlElementRef
    protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();

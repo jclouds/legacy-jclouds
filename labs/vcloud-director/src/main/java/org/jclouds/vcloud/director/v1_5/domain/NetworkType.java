@@ -152,7 +152,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
    }
 
    protected NetworkType() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "Configuration")

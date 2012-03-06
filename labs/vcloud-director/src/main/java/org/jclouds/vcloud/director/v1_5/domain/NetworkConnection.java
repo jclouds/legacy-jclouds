@@ -180,7 +180,7 @@ public class NetworkConnection {
    }
 
    private NetworkConnection() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

@@ -98,7 +98,7 @@ public class InstantiationParams {
    }
 
    private InstantiationParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private InstantiationParams(Set<? extends SectionType<?>> sections) {

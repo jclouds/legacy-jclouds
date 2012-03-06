@@ -395,7 +395,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
                   .build())
             .parentNetwork(Reference.builder().href(URI.create("http://vcloud.example.com/api/v1.0/network/54")).type("application/vnd.vmware.vcloud.network+xml").name("Internet").build())
             .fenceMode("natRouted")
-            .features(NetworkFeatures.builder().services(ImmutableSet.<NetworkServiceType>of(firewallService, natService)).build())
+            .features(NetworkFeatures.builder().services(ImmutableSet.of(firewallService, natService)).build())
             .build();
       
       return NetworkConfigSection.builder()

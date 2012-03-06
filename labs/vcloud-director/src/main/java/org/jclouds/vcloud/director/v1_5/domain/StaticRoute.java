@@ -126,7 +126,7 @@ public class StaticRoute {
    }
 
    private StaticRoute() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private StaticRoute(String _interface) {

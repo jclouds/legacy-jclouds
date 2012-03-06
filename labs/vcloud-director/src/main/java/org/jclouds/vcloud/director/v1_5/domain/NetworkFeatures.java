@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlElement;
+
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -49,12 +49,12 @@ public class NetworkFeatures {
 
    public static class Builder {
 
-      private Set<NetworkServiceType> services = Sets.newLinkedHashSet();
+      private Set<NetworkServiceType<?>> services = Sets.newLinkedHashSet();
 
       /**
        * @see NetworkFeatures#getNetworkServices()
        */
-      public Builder services(Set<NetworkServiceType> services) {
+      public Builder services(Set<? extends NetworkServiceType<?>> services) {
          this.services = Sets.newLinkedHashSet(checkNotNull(services, "services"));
          return this;
       }
@@ -62,7 +62,7 @@ public class NetworkFeatures {
       /**
        * @see NetworkFeatures#getNetworkServices()
        */
-      public Builder service(NetworkServiceType service) {
+      public Builder service(NetworkServiceType<?> service) {
          services.add(checkNotNull(service, "service"));
          return this;
       }
@@ -77,21 +77,21 @@ public class NetworkFeatures {
    }
 
    private NetworkFeatures() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
-   public NetworkFeatures(Set<NetworkServiceType> services) {
+   public NetworkFeatures(Set<? extends NetworkServiceType<?>> services) {
       this.services = ImmutableSet.copyOf(services);
    }
 
    @XmlElementRef
-   private Set<NetworkServiceType> services = Sets.newLinkedHashSet();
+   private Set<? extends NetworkServiceType<?>> services = Sets.newLinkedHashSet();
 
    /**
     * @return a Network service. May be any of DhcpService, NatService, IpsecVpnService,
     *         DhcpService, or StaticRoutingService.
     */
-   public Set<NetworkServiceType> getNetworkServices() {
+   public Set<? extends NetworkServiceType<?>> getNetworkServices() {
       return Collections.unmodifiableSet(services);
    }
 

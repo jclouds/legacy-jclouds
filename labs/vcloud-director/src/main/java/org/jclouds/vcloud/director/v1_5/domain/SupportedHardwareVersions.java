@@ -97,7 +97,7 @@ public class SupportedHardwareVersions {
    }
 
    private SupportedHardwareVersions() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private SupportedHardwareVersions(Set<String> supportedHardwareVersions) {

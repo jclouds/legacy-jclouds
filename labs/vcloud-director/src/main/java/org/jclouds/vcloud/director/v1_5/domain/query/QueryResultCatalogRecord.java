@@ -252,7 +252,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
    }
 
    private QueryResultCatalogRecord() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

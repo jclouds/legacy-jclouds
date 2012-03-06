@@ -295,7 +295,7 @@ public class Task extends EntityType<Task> {
    }
 
    private Task() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

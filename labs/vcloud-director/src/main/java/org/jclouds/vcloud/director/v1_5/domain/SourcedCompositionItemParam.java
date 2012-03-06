@@ -144,7 +144,7 @@ public class SourcedCompositionItemParam {
    }
 
    private SourcedCompositionItemParam() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "Source", required = true)

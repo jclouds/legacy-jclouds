@@ -22,7 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
-import javax.xml.bind.annotation.XmlElementRef;
+
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -116,7 +117,7 @@ public class DiskSection extends SectionType<DiskSection> {
 
    }
 
-   @XmlElementRef
+   @XmlElement(name = "Disk")
    private Set<Disk> disks;
 
    private DiskSection(@Nullable String info, @Nullable Boolean required, Iterable<Disk> disks) {

@@ -78,7 +78,7 @@ public class CatalogsList {
    }
 
    private CatalogsList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private CatalogsList(Set<Reference> tasks) {

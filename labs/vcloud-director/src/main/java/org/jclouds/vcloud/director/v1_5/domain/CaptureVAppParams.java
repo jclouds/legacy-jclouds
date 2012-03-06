@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Set;
+
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -125,7 +126,7 @@ public class CaptureVAppParams
    }
 
    private CaptureVAppParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private CaptureVAppParams(Set<? extends Section<?>> sections) {

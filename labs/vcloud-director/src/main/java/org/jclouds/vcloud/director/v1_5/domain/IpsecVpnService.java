@@ -64,7 +64,7 @@ import com.google.common.collect.Lists;
       "ipsecVpnTunnels"
 })
 public class IpsecVpnService extends NetworkServiceType<IpsecVpnService> {
-   @SuppressWarnings("unchecked")
+
    public static Builder builder() {
       return new Builder();
    }
@@ -128,7 +128,7 @@ public class IpsecVpnService extends NetworkServiceType<IpsecVpnService> {
    }
 
    private IpsecVpnService() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "ExternalIpAddress")
@@ -172,24 +172,27 @@ public class IpsecVpnService extends NetworkServiceType<IpsecVpnService> {
       if (o == null || getClass() != o.getClass())
          return false;
       IpsecVpnService that = IpsecVpnService.class.cast(o);
-      return equal(externalIpAddress, that.externalIpAddress) &&
+      return super.equals(that) && 
+            equal(externalIpAddress, that.externalIpAddress) &&
             equal(publicIpAddress, that.publicIpAddress) &&
             equal(ipsecVpnTunnels, that.ipsecVpnTunnels);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(externalIpAddress,
+      return Objects.hashCode(
+            super.hashCode(),
+            externalIpAddress,
             publicIpAddress,
             ipsecVpnTunnels);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   protected Objects.ToStringHelper string() {
+      return super.string()
             .add("externalIpAddress", externalIpAddress)
             .add("publicIpAddress", publicIpAddress)
-            .add("ipsecVpnTunnels", ipsecVpnTunnels).toString();
+            .add("ipsecVpnTunnels", ipsecVpnTunnels);
    }
 
 }

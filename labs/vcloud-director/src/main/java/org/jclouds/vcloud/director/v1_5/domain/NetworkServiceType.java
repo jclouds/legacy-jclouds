@@ -28,6 +28,7 @@ import com.google.common.base.Objects;
 /**
  * Represents a network service
  *
+ * @author danikov
  * @author Adam Lowe
  */
 @XmlSeeAlso({
@@ -38,17 +39,10 @@ import com.google.common.base.Objects;
    StaticRoutingService.class,
    NatService.class
 })
-public class NetworkServiceType<T extends NetworkServiceType<T>> {
+public abstract class NetworkServiceType<T extends NetworkServiceType<T>> {
+   public abstract Builder<T> toBuilder();
 
-   public static Builder builder() {
-      return new Builder();
-   }
-
-   public Builder toBuilder() {
-      return new Builder().fromNetworkServiceType(this);
-   }
-
-   public static class Builder<T extends NetworkServiceType<T>> {
+   public static abstract class Builder<T extends NetworkServiceType<T>> {
       protected boolean isEnabled;
 
       /**
@@ -59,9 +53,7 @@ public class NetworkServiceType<T extends NetworkServiceType<T>> {
          return this;
       }
 
-      public NetworkServiceType<T> build() {
-         return new NetworkServiceType<T>(isEnabled);
-      }
+      public abstract NetworkServiceType<T> build();
 
       public Builder<T> fromNetworkServiceType(NetworkServiceType<T> in) {
          return enabled(in.isEnabled());
@@ -73,7 +65,7 @@ public class NetworkServiceType<T extends NetworkServiceType<T>> {
    }
 
    protected NetworkServiceType() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "IsEnabled")

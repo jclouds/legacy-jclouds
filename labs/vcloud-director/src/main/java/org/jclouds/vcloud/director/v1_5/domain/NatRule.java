@@ -141,7 +141,7 @@ public class NatRule {
    }
 
    private NatRule() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "Description")
