@@ -236,8 +236,8 @@ public class Checks {
 
    public static void checkCatalogType(CatalogType<?> catalog) {
       // Check optional elements/attributes
-      Entity owner = catalog.getOwner();
-      if (owner != null) checkEntityType(owner);
+      Owner owner = catalog.getOwner();
+      if (owner != null) checkOwner(owner);
       CatalogItems catalogItems = catalog.getCatalogItems();
       if (catalogItems != null) {
          for (Reference catalogItemReference : catalogItems.getCatalogItems()) {
@@ -248,6 +248,16 @@ public class Checks {
       
       // Check parent type
       checkEntityType(catalog);
+   }
+
+   private static void checkOwner(Owner owner) {
+       // Check optional elements/attributes
+      if (owner.getUser() != null) {
+         checkReferenceType(owner.getUser());
+      }
+      
+     // Check parent type
+      checkResourceType(owner);
    }
 
    public static void checkCatalogItem(CatalogItem catalogItem) {
