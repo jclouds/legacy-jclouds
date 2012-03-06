@@ -26,6 +26,7 @@ import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.*;
@@ -42,6 +43,10 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = {"unit", "user"}, testName = "VAppTemplateClientExpectTest")
 public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
+   public VAppTemplateClientExpectTest() {
+      TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
+   }
+   
    public void testVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -186,7 +191,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vappTemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vapptemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
       ).getVAppTemplateClient();
 
@@ -205,7 +210,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vappTemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vapptemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
       Reference datastore = Reference.builder().href(URI.create("https://vcloud.example.com/api/admin/extension/datastore/607")).build();
