@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,11 +32,8 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
-import org.jclouds.vcloud.director.v1_5.functions.URISupplierToEndpoint;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -55,13 +54,13 @@ public interface OrgAsyncClient {
    ListenableFuture<OrgList> getOrgList();
 
    /**
-    * @see OrgClient#getOrg(ReferenceType)
+    * @see OrgClient#getOrg(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Org> getOrg(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier orgRef);
+   ListenableFuture<Org> getOrg(@EndpointParam URI orgUri);
    
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

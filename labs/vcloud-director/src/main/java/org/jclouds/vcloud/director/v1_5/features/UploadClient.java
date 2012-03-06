@@ -19,10 +19,10 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import java.io.File;
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to Upload.
@@ -38,11 +38,11 @@ public interface UploadClient {
    /**
     * Uploads a file.
     */
-   void uploadFile(URISupplier target, File file);
+   void uploadFile(URI uri, File file);
    
    /**
     * Uploads a file using ranged PUTs.
     */
-   void uploadBigFile(URISupplier target, File file);
+   void uploadBigFile(URI uri, File file);
    
 }

@@ -22,12 +22,14 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -100,7 +102,7 @@ public abstract class ResourceType<T extends ResourceType<T>> implements URISupp
    protected ResourceType(URI href, String type, Set<Link> links) {
       this.href = href;
       this.type = type;
-      this.links = links;
+      this.links = ImmutableSet.copyOf(links);
    }
 
    protected ResourceType() {
@@ -148,7 +150,7 @@ public abstract class ResourceType<T extends ResourceType<T>> implements URISupp
     * Set of optional links to an entity or operation associated with this object.
     */
    public Set<Link> getLinks() {
-      return links;
+      return Collections.unmodifiableSet(links);
    }
 
    @Override

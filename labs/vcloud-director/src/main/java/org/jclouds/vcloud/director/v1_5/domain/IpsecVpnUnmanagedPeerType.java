@@ -16,27 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.functions;
+package org.jclouds.vcloud.director.v1_5.domain;
 
-import java.net.URI;
-
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
-
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * @author grkvlt@apache.org
  */
-@Deprecated
-public class ReferenceToEndpoint implements Function<Object, URI> {
-
-   @Override
-   public URI apply(Object input) {
-      Preconditions.checkNotNull(input);
-      Preconditions.checkArgument(input instanceof URISupplier);
-      URISupplier reference = (URISupplier) input;
-      return reference.getURI();
-	};
+@XmlSeeAlso(
+      IpsecVpnThirdPartyPeer.class
+)
+public abstract class IpsecVpnUnmanagedPeerType<T extends IpsecVpnUnmanagedPeerType<T>> extends IpsecVpnPeerType<T> {
 }

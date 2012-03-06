@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -109,7 +110,7 @@ public class Session {
    }
 
    private Session() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private Session(String user, String org, URI href, Set<Link> links) {
@@ -129,7 +130,7 @@ public class Session {
    private URI href;
 
    public Set<Link> getLinks() {
-      return ImmutableSet.copyOf(links);
+      return Collections.unmodifiableSet(links);
    }
 
    /**

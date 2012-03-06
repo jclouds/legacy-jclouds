@@ -89,7 +89,7 @@ public abstract class SectionType<T extends SectionType<T>> {
    @XmlElement(name = "Info")
    private String info;
    @XmlAttribute(namespace = VCLOUD_OVF_NS)
-   private boolean required;
+   private Boolean required;
 
    protected SectionType(@Nullable String info, @Nullable Boolean required) {
       this.info = info;

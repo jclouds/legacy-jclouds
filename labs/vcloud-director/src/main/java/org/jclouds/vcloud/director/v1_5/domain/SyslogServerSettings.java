@@ -76,7 +76,7 @@ public class SyslogServerSettings {
    }
 
    private SyslogServerSettings() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "SyslogServerIp1")

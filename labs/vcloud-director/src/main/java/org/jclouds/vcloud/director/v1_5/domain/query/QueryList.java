@@ -71,7 +71,7 @@ public class QueryList extends ContainerType<QueryList> {
    }
 
    private QueryList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @Override

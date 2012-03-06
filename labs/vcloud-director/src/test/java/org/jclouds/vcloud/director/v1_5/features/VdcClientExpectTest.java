@@ -26,27 +26,8 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.AvailableNetworks;
-import org.jclouds.vcloud.director.v1_5.domain.Capabilities;
-import org.jclouds.vcloud.director.v1_5.domain.CapacityWithUsage;
-import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComputeCapacity;
+import org.jclouds.vcloud.director.v1_5.domain.*;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntities;
-import org.jclouds.vcloud.director.v1_5.domain.SupportedHardwareVersions;
-import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -59,17 +40,12 @@ import org.testng.annotations.Test;
 @Test(groups = { "unit", "user", "vdc" }, singleThreaded = true, testName = "VdcClientExpectTest")
 public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
-   private Reference vdcRef;
+   private URI vdcURI;
    
    @BeforeClass
    public void before() {
       String vdcId = "e9cd3387-ac57-4d27-a481-9bee75e0690f";
-      vdcRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.vdc+xml")
-            .name("")
-            .href(URI.create(endpoint+"/vdc/"+vdcId)) 
-            .id(vdcId)
-            .build();
+      vdcURI = URI.create(endpoint+"/vdc/"+vdcId);
    }
    
    @Test
@@ -85,12 +61,11 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       Vdc expected = getVdc();
 
-      assertEquals(client.getVdcClient().getVdc(vdcRef), expected);
+      assertEquals(client.getVdcClient().getVdc(vdcURI), expected);
    }
 
    @Test
    public void testResponse400ForInvalidVdcId() {
-      URI vdcUri = URI.create(endpoint + "/vdc/NOTAUUID");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -106,22 +81,17 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .majorErrorCode(400)
             .minorErrorCode("BAD_REQUEST")
             .build();
-      
-      Reference vdcRef = Reference.builder().href(vdcUri).build();
 
       try {
-         client.getVdcClient().getVdc(vdcRef);
+         client.getVdcClient().getVdc(URI.create(endpoint + "/vdc/NOTAUUID"));
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
       }
    }
 
    @Test
    public void testResponse403ForFakeVdcId() {
-      URI vdcUri = URI.create(endpoint + "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
       
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -138,15 +108,11 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
       
-      Reference vdcRef = Reference.builder().href(vdcUri).build();
-
       try {
-         client.getVdcClient().getVdc(vdcRef);
+         client.getVdcClient().getVdc(URI.create(endpoint + "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"));
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
       }
    }
    
@@ -169,7 +135,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          
          .build();
       
-      assertEquals(client.getVdcClient().captureVApp(vdcRef, params), expected);
+      assertEquals(client.getVdcClient().captureVApp(vdcURI, params), expected);
    }
    
    @Test(enabled = false)
@@ -191,12 +157,10 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .build();
 
       try {
-         client.getVdcClient().captureVApp(vdcRef, null);
+         client.getVdcClient().captureVApp(vdcURI, null);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
       }
    }
    
@@ -219,7 +183,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          
          .build();
       
-      assertEquals(client.getVdcClient().cloneVApp(vdcRef, params), expected);
+      assertEquals(client.getVdcClient().cloneVApp(vdcURI, params), expected);
    }
    
    @Test(enabled = false)
@@ -241,7 +205,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          
          .build();
       
-      assertEquals(client.getVdcClient().cloneVAppTemplate(vdcRef, params), expected);
+      assertEquals(client.getVdcClient().cloneVAppTemplate(vdcURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -263,7 +227,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          
          .build();
       
-      assertEquals(client.getVdcClient().composeVApp(vdcRef, params), expected);
+      assertEquals(client.getVdcClient().composeVApp(vdcURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -285,7 +249,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          
          .build();
       
-      assertEquals(client.getVdcClient().instantiateVApp(vdcRef, params), expected);
+      assertEquals(client.getVdcClient().instantiateVApp(vdcURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -307,7 +271,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          
          .build();
       
-      assertEquals(client.getVdcClient().uploadVAppTemplate(vdcRef, params), expected);
+      assertEquals(client.getVdcClient().uploadVAppTemplate(vdcURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -329,27 +293,25 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
          
          .build();
       
-      assertEquals(client.getVdcClient().createMedia(vdcRef, createMedia), expected);
+      assertEquals(client.getVdcClient().createMedia(vdcURI, createMedia), expected);
    }
 
    @Test(enabled = false)
    public void testGetMetadata() {
       URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
       
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
-               .apiCommand("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata")
-               .acceptAnyMedia()
-               .httpRequestBuilder().build(), 
+                  .apiCommand("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata")
+                  .acceptAnyMedia()
+                  .httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/vdc/metadata.xml", VCloudDirectorMediaType.METADATA)
-               .httpResponseBuilder().build());
-      
-      Reference mediaRef = Reference.builder().href(vdcUri).build();
-      
+                  .xmlFilePayload("/vdc/metadata.xml", VCloudDirectorMediaType.METADATA)
+                  .httpResponseBuilder().build());
+            
       Metadata expected = metadata();
 
-      assertEquals(client.getVdcClient().getMetadataClient().getMetadata(mediaRef), expected);
+      assertEquals(client.getVdcClient().getMetadataClient().getMetadata(vdcUri), expected);
    }
    
    @Test(enabled = false)
@@ -366,10 +328,8 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                .httpResponseBuilder().build());
       
       MetadataValue expected = metadataValue();
-      
-      Reference mediaRef = Reference.builder().href(vdcUri).build();
-
-      assertEquals(client.getVdcClient().getMetadataClient().getMetadataValue(mediaRef, "key"), expected);
+     
+      assertEquals(client.getVdcClient().getMetadataClient().getMetadataValue(vdcUri, "key"), expected);
    }
 
    public static Vdc getVdc() {

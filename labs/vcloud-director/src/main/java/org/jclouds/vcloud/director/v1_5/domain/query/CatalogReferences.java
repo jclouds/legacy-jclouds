@@ -77,7 +77,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see CatalogReference#getName()
+       * @see CatalogReferences#getName()
        */
       @Override
       public Builder name(String name) {
@@ -86,7 +86,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see CatalogReference#getPage()
+       * @see CatalogReferences#getPage()
        */
       @Override
       public Builder page(Integer page) {
@@ -95,7 +95,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see CatalogReference#getPageSize()
+       * @see CatalogReferences#getPageSize()
        */
       @Override
       public Builder pageSize(Integer pageSize) {
@@ -104,7 +104,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see CatalogReference#getTotal()
+       * @see CatalogReferences#getTotal()
        */
       @Override
       public Builder total(Long total) {
@@ -113,7 +113,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see CatalogReference#getHref()
+       * @see CatalogReferences#getHref()
        */
       @Override
       public Builder href(URI href) {
@@ -131,7 +131,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see CatalogReference#getLinks()
+       * @see CatalogReferences#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
@@ -140,7 +140,7 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
       }
 
       /**
-       * @see CatalogReference#getLinks()
+       * @see CatalogReferences#getLinks()
        */
       @Override
       public Builder link(Link link) {
@@ -163,6 +163,6 @@ public class CatalogReferences extends QueryResultReferences<CatalogReference> {
    }
 
    protected CatalogReferences() {
-      // For JAXB and builder use
+      // for JAXB
    }
 }

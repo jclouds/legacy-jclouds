@@ -171,7 +171,7 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>>
       }
    }
 
-   public InstantiateVAppParamsType(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
+   protected InstantiateVAppParamsType(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
                                     Boolean deploy, Boolean powerOn, Reference source, Boolean sourceDelete, Boolean linkedClone) {
       super(description, name, vAppParent, instantiationParams, deploy, powerOn);
       this.source = source;
@@ -180,16 +180,16 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>>
    }
 
    protected InstantiateVAppParamsType() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 
    @XmlElement(name = "Source", required = true)
-   protected Reference source;
+   private Reference source;
    @XmlElement(name = "IsSourceDelete")
-   protected Boolean isSourceDelete;
+   private Boolean isSourceDelete;
    @XmlAttribute
-   protected Boolean linkedClone;
+   private Boolean linkedClone;
 
    /**
     * Gets the value of the source property.

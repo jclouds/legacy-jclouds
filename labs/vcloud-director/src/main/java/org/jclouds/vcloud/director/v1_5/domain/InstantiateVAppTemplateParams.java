@@ -148,7 +148,7 @@ public class InstantiateVAppTemplateParams
    }
 
    private InstantiateVAppTemplateParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

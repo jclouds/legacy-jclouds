@@ -132,7 +132,7 @@ public class IpScope {
    }
 
    private IpScope() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
    public IpScope(boolean inherited, String gateway, String netmask, String dns1, String dns2, String dnsSuffix,

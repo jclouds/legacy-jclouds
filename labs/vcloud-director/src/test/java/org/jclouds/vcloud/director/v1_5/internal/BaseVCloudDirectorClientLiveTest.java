@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
@@ -28,7 +29,7 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -74,7 +75,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    public abstract void setupRequiredClients();
 
    /** Injected by {@link #setupContext} */
-   public Predicate<URISupplier> retryTaskSuccess;
+   public Predicate<Task> retryTaskSuccess;
 
    @Override
    @BeforeClass(groups = { "live" })
@@ -99,7 +100,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
                ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
 
       TaskSuccess taskSuccess = context.utils().injector().getInstance(TaskSuccess.class);
-      retryTaskSuccess = new RetryablePredicate<URISupplier>(taskSuccess, 1000L);
+      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, 1000L);
    }
 
    protected void tearDown() {

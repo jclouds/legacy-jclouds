@@ -44,9 +44,9 @@ public class NetworkConfiguration {
 
    public static class Builder {
       private IpScope ipScope;
-      private ReferenceType<?> parentNetwork;
+      private Reference parentNetwork;
       private String fenceMode;
-      private boolean retainNetInfoAcrossDeployments;
+      private Boolean retainNetInfoAcrossDeployments;
       private NetworkFeatures features;
       private SyslogServerSettings syslogServerSettings;
       private RouterInfo routerInfo;
@@ -62,7 +62,7 @@ public class NetworkConfiguration {
       /**
        * @see NetworkConfiguration#getParentNetwork()
        */
-      public Builder parentNetwork(ReferenceType<?> parentNetwork) {
+      public Builder parentNetwork(Reference parentNetwork) {
          this.parentNetwork = parentNetwork;
          return this;
       }
@@ -120,7 +120,7 @@ public class NetworkConfiguration {
       }
    }
 
-   public NetworkConfiguration(IpScope ipScope, ReferenceType<?> parentNetwork, String fenceMode, boolean retainNetInfoAcrossDeployments,
+   public NetworkConfiguration(IpScope ipScope, Reference parentNetwork, String fenceMode, Boolean retainNetInfoAcrossDeployments,
                                NetworkFeatures features, SyslogServerSettings syslogServerSettings, RouterInfo routerInfo) {
       this.ipScope = ipScope;
       this.parentNetwork = parentNetwork;
@@ -132,17 +132,17 @@ public class NetworkConfiguration {
    }
 
    private NetworkConfiguration() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "IpScope")
    private IpScope ipScope;
    @XmlElement(name = "ParentNetwork")
-   private ReferenceType<?> parentNetwork;
+   private Reference parentNetwork;
    @XmlElement(name = "FenceMode")
    private String fenceMode;
    @XmlElement(name = "RetainNetInfoAcrossDeployments")
-   private boolean retainNetInfoAcrossDeployments = false;
+   private Boolean retainNetInfoAcrossDeployments;
    @XmlElement(name = "Features")
    private NetworkFeatures features;
    @XmlElement(name = "SyslogServerSettings")
@@ -162,7 +162,7 @@ public class NetworkConfiguration {
    /**
     * @return reference to parent network.
     */
-   public ReferenceType<?> getParentNetwork() {
+   public Reference getParentNetwork() {
       return parentNetwork;
    }
 
@@ -212,7 +212,8 @@ public class NetworkConfiguration {
       if (o == null || getClass() != o.getClass())
          return false;
       NetworkConfiguration that = NetworkConfiguration.class.cast(o);
-      return equal(ipScope, that.ipScope) && equal(parentNetwork, that.parentNetwork) &&
+      return equal(ipScope, that.ipScope) && 
+            equal(parentNetwork, that.parentNetwork) &&
             equal(fenceMode, that.fenceMode) &&
             equal(retainNetInfoAcrossDeployments, that.retainNetInfoAcrossDeployments) &&
             equal(features, that.features) &&

@@ -23,11 +23,13 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 
@@ -98,7 +100,7 @@ public class AvailableNetworks {
    protected Set<Reference> networks = Sets.newLinkedHashSet();
 
    private AvailableNetworks(Set<Reference> networks) {
-      this.networks = networks;
+      this.networks = ImmutableSet.copyOf(networks);
    }
 
    private AvailableNetworks() {
@@ -109,7 +111,7 @@ public class AvailableNetworks {
     * Gets the value of the network property.
     */
    public Set<Reference> getNetworks() {
-      return this.networks;
+      return Collections.unmodifiableSet(this.networks);
    }
 
    @Override

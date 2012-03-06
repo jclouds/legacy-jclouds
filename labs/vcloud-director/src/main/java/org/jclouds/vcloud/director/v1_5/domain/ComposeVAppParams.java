@@ -22,6 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -57,7 +58,7 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlType(name = "ComposeVAppParams", propOrder = {
-      "sourcedItem",
+      "sourcedItems",
       "allEULAsAccepted"
 })
 @XmlSeeAlso({
@@ -78,15 +79,15 @@ public class ComposeVAppParams
 
    public static class Builder extends VAppCreationParamsType.Builder<ComposeVAppParams> {
 
-      private Set<SourcedCompositionItemParam> sourcedItem = Sets.newLinkedHashSet();
+      private Set<SourcedCompositionItemParam> sourcedItems = Sets.newLinkedHashSet();
       private Boolean allEULAsAccepted;
       private Boolean linkedClone;
 
       /**
-       * @see ComposeVAppParams#getSourcedItem()
+       * @see ComposeVAppParams#getSourcedItems()
        */
-      public Builder sourcedItem(Set<SourcedCompositionItemParam> sourcedItem) {
-         this.sourcedItem = checkNotNull(sourcedItem, "sourcedItem");
+      public Builder sourcedItems(Set<SourcedCompositionItemParam> sourcedItems) {
+         this.sourcedItems = checkNotNull(sourcedItems, "sourcedItems");
          return this;
       }
 
@@ -109,7 +110,7 @@ public class ComposeVAppParams
 
       public ComposeVAppParams build() {
          return new ComposeVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn,
-               sourcedItem, allEULAsAccepted, linkedClone);
+               sourcedItems, allEULAsAccepted, linkedClone);
       }
 
 
@@ -120,27 +121,27 @@ public class ComposeVAppParams
 
       public Builder fromComposeVAppParams(ComposeVAppParams in) {
          return fromVAppCreationParamsType(in)
-               .sourcedItem(in.getSourcedItem())
+               .sourcedItems(in.getSourcedItems())
                .allEULAsAccepted(in.isAllEULAsAccepted())
                .linkedClone(in.isLinkedClone());
       }
    }
 
    public ComposeVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
-                            Boolean deploy, Boolean powerOn, Set<SourcedCompositionItemParam> sourcedItem, Boolean allEULAsAccepted, Boolean linkedClone) {
+                            Boolean deploy, Boolean powerOn, Set<SourcedCompositionItemParam> sourcedItems, Boolean allEULAsAccepted, Boolean linkedClone) {
       super(description, name, vAppParent, instantiationParams, deploy, powerOn);
-      this.sourcedItem = ImmutableSet.copyOf(sourcedItem);
+      this.sourcedItems = ImmutableSet.copyOf(sourcedItems);
       this.allEULAsAccepted = allEULAsAccepted;
       this.linkedClone = linkedClone;
    }
 
    private ComposeVAppParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 
    @XmlElement(name = "SourcedItem")
-   protected Set<SourcedCompositionItemParam> sourcedItem = Sets.newLinkedHashSet();
+   protected Set<SourcedCompositionItemParam> sourcedItems = Sets.newLinkedHashSet();
    @XmlElement(name = "AllEULAsAccepted")
    protected Boolean allEULAsAccepted;
    @XmlAttribute
@@ -148,26 +149,9 @@ public class ComposeVAppParams
 
    /**
     * Gets the value of the sourcedItem property.
-    * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the sourcedItem property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getSourcedItem().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link SourcedCompositionItemParam }
     */
-   public Set<SourcedCompositionItemParam> getSourcedItem() {
-      return this.sourcedItem;
+   public Set<SourcedCompositionItemParam> getSourcedItems() {
+      return Collections.unmodifiableSet(this.sourcedItems);
    }
 
    /**
@@ -201,14 +185,14 @@ public class ComposeVAppParams
       if (o == null || getClass() != o.getClass())
          return false;
       ComposeVAppParams that = ComposeVAppParams.class.cast(o);
-      return equal(sourcedItem, that.sourcedItem) &&
+      return equal(sourcedItems, that.sourcedItems) &&
             equal(allEULAsAccepted, that.allEULAsAccepted) &&
             equal(linkedClone, that.linkedClone);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(sourcedItem,
+      return Objects.hashCode(sourcedItems,
             allEULAsAccepted,
             linkedClone);
    }
@@ -216,7 +200,7 @@ public class ComposeVAppParams
    @Override
    public String toString() {
       return Objects.toStringHelper("")
-            .add("sourcedItem", sourcedItem)
+            .add("sourcedItem", sourcedItems)
             .add("allEULAsAccepted", allEULAsAccepted)
             .add("linkedClone", linkedClone).toString();
    }

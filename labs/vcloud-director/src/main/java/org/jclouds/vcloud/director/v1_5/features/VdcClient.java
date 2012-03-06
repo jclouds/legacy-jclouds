@@ -18,23 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
-import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.*;
 
 /**
  * Provides synchronous access to a vDC.
@@ -52,7 +41,7 @@ public interface VdcClient {
     * 
     * @return the vdc or null if not found
     */
-   Vdc getVdc(URISupplier vdcRef);
+   Vdc getVdc(URI vdcUri);
    
    /**
     * Captures a vApp into vApp template. 
@@ -61,7 +50,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VAppTemplate captureVApp(URISupplier vdcRef, CaptureVAppParams params);
+   VAppTemplate captureVApp(URI vdcUri, CaptureVAppParams params);
    
    /**
     * Clones a media into new one. 
@@ -70,7 +59,7 @@ public interface VdcClient {
     * @return a Media resource which will contain a task. 
     * The user should monitor the contained task status in order to check when it is completed.
     */
-   Media cloneMedia(URISupplier vdcRef, CloneMediaParams params);
+   Media cloneMedia(URI vdcUri, CloneMediaParams params);
    
    /**
     * Clones a vApp into new one. The status of vApp will be in UNRESOLVED(0) until the clone task is finished.
@@ -78,7 +67,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VApp cloneVApp(URISupplier vdcRef, CloneVAppParams params);
+   VApp cloneVApp(URI vdcUri, CloneVAppParams params);
    
    /**
     * Clones a vApp template into new one. 
@@ -87,7 +76,7 @@ public interface VdcClient {
     * @return a VAppTemplate resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the VAppTemplate.
     */
-   VAppTemplate cloneVAppTemplate(URISupplier vdcRef, CloneVAppTemplateParams params);
+   VAppTemplate cloneVAppTemplate(URI vdcUri, CloneVAppTemplateParams params);
    
    /**
     * Composes a new vApp using VMs from other vApps or vApp templates. The vCloud API supports 
@@ -111,7 +100,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VApp composeVApp(URISupplier vdcRef, ComposeVAppParams params);
+   VApp composeVApp(URI vdcUri, ComposeVAppParams params);
    
    /**
     * Instantiate a vApp template into a new vApp. 
@@ -120,7 +109,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VApp instantiateVApp(URISupplier vdcRef, InstantiateVAppParamsType<?> params);
+   VApp instantiateVApp(URI vdcUri, InstantiateVAppParamsType<?> params);
    
    /**
     * Uploading vApp template to a vDC. The operation is separate on several steps: 
@@ -134,14 +123,14 @@ public interface VdcClient {
     * @return a VAppTemplate resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the VAppTemplate.
     */
-   VAppTemplate uploadVAppTemplate(URISupplier vdcRef, UploadVAppTemplateParams params);
+   VAppTemplate uploadVAppTemplate(URI vdcUri, UploadVAppTemplateParams params);
    
    /**
     * Creates a media (and present upload link for the floppy/iso file).
     * 
     * @return The response will return a link to transfer site to be able to continue with uploading the media.
     */
-   Media createMedia(URISupplier vdcRef, Media media);
+   Media createMedia(URI vdcUri, Media media);
    
    /**
     * @return synchronous access to {@link Metadata.Readable} features

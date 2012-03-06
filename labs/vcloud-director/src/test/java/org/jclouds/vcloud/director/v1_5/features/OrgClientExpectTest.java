@@ -79,7 +79,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
 
       Org expected = org();
 
-      assertEquals(client.getOrgClient().getOrg(org), expected);
+      assertEquals(client.getOrgClient().getOrg(org.getHref()), expected);
    }
 
    @Test
@@ -92,9 +92,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       Org expected = org();
 
-      Reference orgRef = Reference.builder().href(orgUri).build();
-
-      assertEquals(client.getOrgClient().getOrg(orgRef), expected);
+      assertEquals(client.getOrgClient().getOrg(orgUri), expected);
    }
 
    @Test
@@ -111,9 +109,8 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .minorErrorCode("BAD_REQUEST")
             .build();
 
-      Reference orgRef = Reference.builder().href(orgUri).build();
       try {
-         client.getOrgClient().getOrg(orgRef);
+         client.getOrgClient().getOrg(orgUri);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -136,10 +133,8 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
 
-      Reference orgRef = Reference.builder().href(orgUri).build();
-
       try {
-         client.getOrgClient().getOrg(orgRef);
+         client.getOrgClient().getOrg(orgUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -162,10 +157,8 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
 
-      Reference orgRef = Reference.builder().href(orgUri).build();
-
       try {
-         client.getOrgClient().getOrg(orgRef);
+         client.getOrgClient().getOrg(orgUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -197,10 +190,8 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                   .build())
             .entries(ImmutableSet.of(metadataEntry()))
             .build();
-
-       Reference orgRef = Reference.builder().href(orgUri).build();
  
-       assertEquals(client.getOrgClient().getMetadataClient().getMetadata(orgRef), expected);
+       assertEquals(client.getOrgClient().getMetadataClient().getMetadata(orgUri), expected);
    }
    
    @Test
@@ -218,9 +209,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       
       MetadataValue expected = metadataValue();
 
-      Reference orgRef = Reference.builder().href(orgUri).build();
-
-      assertEquals(client.getOrgClient().getMetadataClient().getMetadataValue(orgRef, "KEY"), expected);
+      assertEquals(client.getOrgClient().getMetadataClient().getMetadataValue(orgUri, "KEY"), expected);
    }
 
    public static Org org() {

@@ -22,6 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -72,7 +73,7 @@ public class ResourceEntities {
        * @see ResourceEntities#getResourceEntities()
        */
       public Builder resourceEntities(Set<Reference> resourceEntities) {
-         this.resourceEntities = checkNotNull(resourceEntities, "resourceEntities");
+         this.resourceEntities = ImmutableSet.copyOf(checkNotNull(resourceEntities, "resourceEntities"));
          return this;
       }
 
@@ -95,7 +96,7 @@ public class ResourceEntities {
    }
 
    private ResourceEntities() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private ResourceEntities(Set<Reference> resourceEntity) {
@@ -110,7 +111,7 @@ public class ResourceEntities {
     * Gets the value of the resourceEntity property.
     */
    public Set<Reference> getResourceEntities() {
-      return this.resourceEntities;
+      return Collections.unmodifiableSet(this.resourceEntities);
    }
 
    @Override

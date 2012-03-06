@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -160,7 +161,7 @@ public class TasksList extends EntityType<TasksList> {
    }
 
    protected TasksList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    public TasksList(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, Set<Task> tasks) {
@@ -172,7 +173,7 @@ public class TasksList extends EntityType<TasksList> {
    private Set<Task> tasks = Sets.newLinkedHashSet();
 
    public Set<Task> getTasks() {
-      return ImmutableSet.copyOf(tasks);
+      return Collections.unmodifiableSet(tasks);
    }
 
    @Override

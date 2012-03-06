@@ -72,7 +72,7 @@ public class IpRange {
    }
 
    private IpRange() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private IpRange(String startAddress, String endAddress) {

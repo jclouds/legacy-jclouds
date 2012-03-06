@@ -1,0 +1,19 @@
+<GuestCustomizationSection type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"
+                           href="http://vcloud.example.com/api/v1.5/vAppTemplate/vAppTemplate-12/guestCustomizationSection/"
+                           xmlns="http://www.vmware.com/vcloud/v1.5"
+                           xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
+                           ovf:required="false">
+    <ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+    <Enabled>false</Enabled>
+    <ChangeSid>false</ChangeSid>
+    <VirtualMachineId>4</VirtualMachineId>
+    <JoinDomainEnabled>false</JoinDomainEnabled>
+    <UseOrgSettings>false</UseOrgSettings>
+    <AdminPasswordEnabled>false</AdminPasswordEnabled>
+    <AdminPasswordAuto>true</AdminPasswordAuto>
+    <ResetPasswordRequired>false</ResetPasswordRequired>
+    <CustomizationScript>ls</CustomizationScript>
+    <ComputerName>ubuntu10-x86</ComputerName>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"
+          href="http://vcloud.example.com/api/v1.5/vAppTemplate/vAppTemplate-12/guestCustomizationSection/"/>
+</GuestCustomizationSection>

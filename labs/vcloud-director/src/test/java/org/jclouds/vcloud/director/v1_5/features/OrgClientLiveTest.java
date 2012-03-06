@@ -27,6 +27,9 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOrg;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkReferenceType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+
+import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
@@ -65,7 +68,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
 
    private OrgList orgList;
-   private Reference orgRef;
+   private URI orgURI;
    private Org org;
 
    @Test(testName = "GET /org/")
@@ -86,10 +89,13 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /org/{id}", dependsOnMethods = { "testGetOrgList" })
    public void testGetOrg() {
-      orgRef = Iterables.getFirst(orgList.getOrgs(), null);
-
+      Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
+      assertNotNull(orgRef);
+      
+      orgURI = orgRef.getURI();
+      
       // Call the method being tested
-      org = orgClient.getOrg(orgRef);
+      org = orgClient.getOrg(orgURI);
 
       checkOrg(org);
    }
@@ -97,7 +103,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /org/{id}/metadata/", dependsOnMethods = { "testGetOrg" })
    public void testGetOrgMetadata() {
       // Call the method being tested
-      Metadata metadata = orgClient.getMetadataClient().getMetadata(orgRef);
+      Metadata metadata = orgClient.getMetadataClient().getMetadata(orgURI);
       
       // NOTE The environment MUST have at one metadata entry for the first organisation configured
       
@@ -110,7 +116,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
-      MetadataValue value = orgClient.getMetadataClient().getMetadataValue(orgRef, "KEY");
+      MetadataValue value = orgClient.getMetadataClient().getMetadataValue(orgURI, "KEY");
       
       // NOTE The environment MUST have configured the metadata entry as '{ key="KEY", value="VALUE" )'
 

@@ -19,18 +19,17 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Set;
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.net.URI;
+import java.util.Set;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 
 /**
@@ -56,10 +55,8 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "Owner")
 @XmlType(propOrder = {"user"})
-public class Owner
-      extends ResourceType<Owner>
+public class Owner extends ResourceType<Owner> {
 
-{
    public static Builder builder() {
       return new Builder();
    }
@@ -136,7 +133,7 @@ public class Owner
 
    @SuppressWarnings("unused")
    private Owner() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    public Owner(URI href, String type, Set<Link> links, Reference user) {

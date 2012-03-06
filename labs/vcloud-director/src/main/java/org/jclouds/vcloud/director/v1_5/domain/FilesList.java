@@ -22,6 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -97,7 +98,7 @@ public class FilesList {
    }
 
    private FilesList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private FilesList(List<File> files) {
@@ -112,7 +113,7 @@ public class FilesList {
     * Gets the value of the file property.
     */
    public List<File> getFiles() {
-      return this.files;
+      return Collections.unmodifiableList(this.files);
    }
 
    @Override

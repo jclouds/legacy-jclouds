@@ -44,10 +44,8 @@ import com.google.common.base.Objects;
  */
 @XmlType(name = "CloneVAppParams")
 public class CloneVAppParams
-      extends InstantiateVAppParamsType<CloneVAppParams>
+      extends InstantiateVAppParamsType<CloneVAppParams> {
 
-{
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -58,10 +56,8 @@ public class CloneVAppParams
 
    public static class Builder extends InstantiateVAppParamsType.Builder<CloneVAppParams> {
 
-
       public CloneVAppParams build() {
-         CloneVAppParams cloneVAppParams = new CloneVAppParams();
-         return cloneVAppParams;
+         return new CloneVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, source, isSourceDelete, linkedClone);
       }
 
       /**
@@ -97,7 +93,7 @@ public class CloneVAppParams
       }
 
       /**
-       * @see VAppCreationParamsType#getDeploy()
+       * @see VAppCreationParamsType#isDeploy()
        */
       public Builder deploy(Boolean deploy) {
          super.deploy(deploy);
@@ -105,7 +101,7 @@ public class CloneVAppParams
       }
 
       /**
-       * @see VAppCreationParamsType#getPowerOn()
+       * @see VAppCreationParamsType#isPowerOn()
        */
       public Builder powerOn(Boolean powerOn) {
          super.powerOn(powerOn);
@@ -121,7 +117,7 @@ public class CloneVAppParams
       }
 
       /**
-       * @see InstantiateVAppParamsType#getIsSourceDelete()
+       * @see InstantiateVAppParamsType#isSourceDelete()
        */
       public Builder isSourceDelete(Boolean isSourceDelete) {
          super.isSourceDelete(isSourceDelete);
@@ -129,7 +125,7 @@ public class CloneVAppParams
       }
 
       /**
-       * @see InstantiateVAppParamsType#getLinkedClone()
+       * @see InstantiateVAppParamsType#isLinkedClone()
        */
       public Builder linkedClone(Boolean linkedClone) {
          super.linkedClone(linkedClone);
@@ -146,28 +142,12 @@ public class CloneVAppParams
       }
    }
 
+   private CloneVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn, Reference source, Boolean sourceDelete, Boolean linkedClone) {
+      super(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
+   }
+
    private CloneVAppParams() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o)
-         return true;
-      if (o == null || getClass() != o.getClass())
-         return false;
-      CloneVAppParams that = CloneVAppParams.class.cast(o);
-      return super.equals(that);
-   }
-
-   @Override
-   public int hashCode() {
-      return super.hashCode() + Objects.hashCode("");
-   }
-
-   @Override
-   public String toString() {
-      return Objects.toStringHelper("").toString();
-   }
-
-}
+ }

@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -105,8 +106,7 @@ public class Metadata extends ResourceType<Metadata> {
        */
       @Override
       public Builder links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -145,7 +145,7 @@ public class Metadata extends ResourceType<Metadata> {
    private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
    public Set<MetadataEntry> getMetadataEntries() {
-      return ImmutableSet.copyOf(metadataEntries);
+      return Collections.unmodifiableSet(metadataEntries);
    }
 
    @Override

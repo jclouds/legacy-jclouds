@@ -22,6 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -103,7 +104,7 @@ public class VAppTemplateChildren {
     * Gets the value of the vm property.
     */
    public Set<VAppTemplate> getVms() {
-      return this.vms;
+      return Collections.unmodifiableSet(this.vms);
    }
 
    @Override
