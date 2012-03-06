@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
@@ -27,6 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -98,5 +101,28 @@ public class CatalogsList {
    public Set<Reference> getCatalogItems() {
       return this.catalogReferences;
    }
+   
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      CatalogsList that = CatalogsList.class.cast(o);
+      return equal(this.catalogReferences, that.catalogReferences);
+   }
+   
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(catalogReferences);
+   }
 
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("catalogReferences", catalogReferences);
+   }
 }
