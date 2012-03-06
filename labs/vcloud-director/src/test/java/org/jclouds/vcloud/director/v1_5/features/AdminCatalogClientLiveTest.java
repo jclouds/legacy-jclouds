@@ -19,18 +19,21 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.GETTER_RETURNS_SAME_OBJ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
@@ -143,6 +146,32 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
                .build();
          
          catalog = catalogClient.updateCatalog(catalog.getURI(), catalog);
+      }
+   }
+   
+   @Test(testName = "DELETE /admin/catalog/{id}",
+         dependsOnMethods = { "testUpdateCatalog" }, enabled = false )
+   public void testDeleteCatalog() {
+      catalogClient.deleteCatalog(catalogRef.getURI());
+      
+      Error expected = Error.builder()
+            .message("???")
+            .majorErrorCode(403)
+            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+            .build();
+      
+      try {
+         catalog = catalogClient.getCatalog(catalogRef.getURI());
+         fail("Should give HTTP 403 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+         catalog = null;
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+      
+      if (catalog != null) { // guard against NPE on the .toStrings
+         assertNull(catalog, String.format(OBJ_DEL, CATALOG, catalog.toString()));
       }
    }
 }

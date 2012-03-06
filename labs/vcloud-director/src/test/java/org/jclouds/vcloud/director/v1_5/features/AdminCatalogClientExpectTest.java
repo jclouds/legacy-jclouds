@@ -118,6 +118,19 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
       client.getAdminCatalogClient().setOwner(catalogRef.getURI(), newOwner);
    }
    
+   @Test
+   public void testDeleteCatalog() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            new VcloudHttpRequestPrimer()
+               .apiCommand("DELETE", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .httpResponseBuilder().statusCode(204).build());
+      
+      client.getAdminCatalogClient().deleteCatalog(catalogRef.getURI());
+   }
+   
    public static final AdminCatalog catalog() {
       return AdminCatalog.builder()
          .name("QunyingTestCatalog")

@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -66,6 +67,15 @@ public interface AdminCatalogAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<AdminCatalog> updateCatalog(@EndpointParam URI catalogRef, 
          @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
+   
+   /**
+    * @see AdminClient#deleteCatalog(URI)
+    */
+   @DELETE
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Void> deleteCatalog(@EndpointParam URI catalogRef);
    
    /**
     * @see AdminClient#getOwner(URI)
