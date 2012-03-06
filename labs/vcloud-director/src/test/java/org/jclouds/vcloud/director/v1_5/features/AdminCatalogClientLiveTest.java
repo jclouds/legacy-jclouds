@@ -19,8 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.GETTER_RETURNS_SAME_OBJ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -28,6 +31,7 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -55,6 +59,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
     */
    private ReferenceType<?> catalogRef;
    private AdminCatalog catalog;
+   private Owner owner;
 
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
@@ -72,7 +77,38 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       Checks.checkAdminCatalog(catalog);
    }
    
-   @Test(testName = "PUT /admin/catalog/{id}", dependsOnMethods = { "testGetCatalog" })
+   @Test(testName = "GET /admin/catalog/{id}/owner",
+         dependsOnMethods = { "testGetCatalog" })
+   public void testGetCatalogOwner() {
+      owner = catalogClient.getOwner(catalog.getURI());
+      Checks.checkOwner(owner);
+   }
+   
+   @Test(testName = "PUT /admin/catalog/{id}/owner",
+         dependsOnMethods = { "testGetCatalog" })
+   public void updateCatalogOwner() {
+      Owner oldOwner = owner;
+      Owner newOwner = Owner.builder() // TODO auto-find a new owner?
+            .type("application/vnd.vmware.vcloud.owner+xml")
+            .user(Reference.builder()
+                  .type("application/vnd.vmware.admin.user+xml")
+                  .name("adk@cloudsoftcorp.com")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
+                  .build())
+            .build(); 
+      
+      try {
+         catalogClient.setOwner(catalog.getURI(), newOwner);
+         owner = catalogClient.getOwner(catalog.getURI());
+         Checks.checkOwner(owner);
+         assertTrue(equal(owner, newOwner), String.format(OBJ_FIELD_UPDATABLE, CATALOG, "owner"));
+      } finally {
+         catalogClient.setOwner(catalog.getURI(), oldOwner);
+         owner = catalogClient.getOwner(catalog.getURI());
+      }
+   }
+   
+   @Test(testName = "PUT /admin/catalog/{id}", dependsOnMethods = { "testGetCatalogOwner" })
    public void testUpdateCatalog() {
       String oldName = catalog.getName();
       String newName = "new "+oldName;
