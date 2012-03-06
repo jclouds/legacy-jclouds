@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AdminCatalog name="new QunyingTestCatalog" id="urn:vcloud:catalog:7212e451-76e1-4631-b2de-ba1dfd8080e4" type="application/vnd.vmware.admin.catalog+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Link rel="up" type="application/vnd.vmware.admin.organization+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.catalog+xml" href="https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogItems"/>
+    <Link rel="edit" type="application/vnd.vmware.admin.catalog+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
+    <Link rel="remove" href="https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"/>
+    <Description>new Testing</Description>
+    <Owner type="application/vnd.vmware.vcloud.owner+xml">
+        <User type="application/vnd.vmware.admin.user+xml" name="qunying.huang@enstratus.com" href="https://vcloudbeta.bluelock.com/api/admin/user/967d317c-4273-4a95-b8a4-bf63b78e9c69"/>
+    </Owner>
+    <CatalogItems>
+        <CatalogItem type="application/vnd.vmware.vcloud.catalogItem+xml" name="image" href="https://vcloudbeta.bluelock.com/api/catalogItem/67a469a1-aafe-4b5b-bb31-a6202ad8961f"/>
+        <CatalogItem type="application/vnd.vmware.vcloud.catalogItem+xml" name="ubuntu10" href="https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"/>
+        <CatalogItem type="application/vnd.vmware.vcloud.catalogItem+xml" name="imageTesting" href="https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"/>
+        <CatalogItem type="application/vnd.vmware.vcloud.catalogItem+xml" name="TestCase" href="https://vcloudbeta.bluelock.com/api/catalogItem/f7598606-aea4-41d7-8f67-2090e28e7876"/>
+    </CatalogItems>
+    <IsPublished>false</IsPublished>
+</AdminCatalog>

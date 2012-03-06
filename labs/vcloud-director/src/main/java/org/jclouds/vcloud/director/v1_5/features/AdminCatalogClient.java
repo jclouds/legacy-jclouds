@@ -44,4 +44,16 @@ public interface AdminCatalogClient {
     * @return a catalog
     */
    AdminCatalog getCatalog(URI catalogRef);
+   
+   /**
+    * Modifies a catalog. A catalog could be published or unpublished. The IsPublished property is treated as a 
+    * read only value by the server. In order to control publishing settings use the 'publish' action must be used.
+    * 
+    * <pre>
+    * PUT /admin/catalog/{id}
+    * </pre>
+    * 
+    * @return the updated catalog
+    */
+   AdminCatalog updateCatalog(URI catalogRef, AdminCatalog catalog);
 }
