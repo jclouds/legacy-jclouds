@@ -18,18 +18,18 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_EXIST_FMT;
-import static org.testng.Assert.assertEquals;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.testng.Assert.assertNotNull;
+
+import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
-import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Iterables;
 
 /**
  * Tests live behavior of {@link AdminCatalogClient}.
@@ -44,7 +44,6 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
     */
 
    private AdminCatalogClient catalogClient;
-   private QueryClient queryClient;
 
    /*
     * Shared state between dependant tests.
@@ -55,16 +54,15 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       catalogClient = context.getApi().getAdminCatalogClient();
-      queryClient = context.getApi().getQueryClient();
+      catalogRef = Reference.builder()
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+         .build();
    }
 
-   @Test(testName = "GET /catalog/{id}")
+   @Test(testName = "GET /admin/catalog/{id}")
    public void testGetCatalog() {
-      // TODO use property from default property set
-      CatalogReferences catalogReferences = queryClient.catalogReferencesQuery(String.format("name==%s", catalogName));
-      assertEquals(Iterables.size(catalogReferences.getReferences()), 1, String.format(MUST_EXIST_FMT, catalogName, "Catalog"));
-      catalogRef = Iterables.getOnlyElement(catalogReferences.getReferences());
-      catalog = catalogClient.getCatalog(catalogRef);
+      assertNotNull(catalogRef, String.format(REF_REQ_LIVE, "Catalog"));
+      catalog = catalogClient.getCatalog(catalogRef.getURI());
       
       Checks.checkAdminCatalog(catalog);
    }
