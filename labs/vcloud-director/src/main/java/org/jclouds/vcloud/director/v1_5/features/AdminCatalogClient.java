@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 
 /**
  * Provides synchronous access to {@link AdminCatalog} objects.
@@ -86,4 +87,9 @@ public interface AdminCatalogClient {
     * </pre>
     */
    void setOwner(URI catalogRef, Owner newOwner);
+   
+   /**
+    * Publish a catalog. Publishing a catalog makes the catalog visible to all organizations in a vCloud.
+    */
+   void publishCatalog(URI catalogRef, PublishCatalogParams params);
 }
