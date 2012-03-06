@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
+import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
@@ -84,7 +85,7 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    CatalogClient getCatalogClient();
-
+   
    /**
     * @return synchronous access to {@link Media} features
     */
@@ -108,5 +109,11 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    VAppTemplateClient getVAppTemplateClient();
+   
+   /**
+    * @return synchronous access to {@link Catalog} features
+    */
+   @Delegate
+   AdminCatalogClient getAdminCatalogClient();
 
 }

@@ -20,10 +20,10 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_BE_WELL_FORMED_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_CONTAIN_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
@@ -228,11 +228,16 @@ public class Checks {
       // Check parent type
       checkEntityType(org);
    }
+   
+   public static void checkAdminCatalog(AdminCatalog catalog) {
+      // Check parent type
+      checkCatalogType(catalog);
+   }
 
-   public static void checkCatalog(Catalog catalog) {
+   public static void checkCatalogType(CatalogType<?> catalog) {
       // Check optional elements/attributes
-      Entity owner = catalog.getOwner();
-      if (owner != null) checkEntityType(owner);
+      Owner owner = catalog.getOwner();
+      if (owner != null) checkOwner(owner);
       CatalogItems catalogItems = catalog.getCatalogItems();
       if (catalogItems != null) {
          for (Reference catalogItemReference : catalogItems.getCatalogItems()) {
@@ -243,6 +248,16 @@ public class Checks {
       
       // Check parent type
       checkEntityType(catalog);
+   }
+
+   private static void checkOwner(Owner owner) {
+       // Check optional elements/attributes
+      if (owner.getUser() != null) {
+         checkReferenceType(owner.getUser());
+      }
+      
+     // Check parent type
+      checkResourceType(owner);
    }
 
    public static void checkCatalogItem(CatalogItem catalogItem) {

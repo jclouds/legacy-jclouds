@@ -85,6 +85,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(UploadClient.class, UploadAsyncClient.class)
             .put(MetadataClient.Readable.class, MetadataAsyncClient.Readable.class)
             .put(MetadataClient.Writeable.class, MetadataAsyncClient.Writable.class)
+            .put(AdminCatalogClient.class, AdminCatalogAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {

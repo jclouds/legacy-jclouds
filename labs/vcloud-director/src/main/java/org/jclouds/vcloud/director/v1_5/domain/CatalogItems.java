@@ -18,16 +18,20 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 /**
@@ -85,7 +89,7 @@ public class CatalogItems {
       // For JAXB and builder use
    }
 
-   private CatalogItems(Collection<Reference> tasks) {
+   private CatalogItems(Set<Reference> catalogItems) {
       this.catalogItems = catalogItems;
    }
 
@@ -97,5 +101,29 @@ public class CatalogItems {
     */
    public Set<Reference> getCatalogItems() {
       return Collections.unmodifiableSet(this.catalogItems);
+   }
+   
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      CatalogItems that = CatalogItems.class.cast(o);
+      return equal(this.catalogItems, that.catalogItems);
+   }
+   
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(catalogItems);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("catalogItems", catalogItems);
    }
 }
