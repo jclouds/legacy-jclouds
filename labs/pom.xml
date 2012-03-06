@@ -39,5 +39,6 @@
        <module>opsource-servers</module>
        <module>elb</module>
        <module>aws-elb</module>
+       <module>savvis-symphonyvpdc</module>
     </modules>
 </project>
