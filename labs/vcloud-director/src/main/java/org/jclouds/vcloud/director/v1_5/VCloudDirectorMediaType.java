@@ -131,6 +131,8 @@ public class VCloudDirectorMediaType {
    
    public static final String ADMIN_ORGANIZATION = "application/vnd.vmware.admin.organization+xml";
    
+   public static final String PUBLISH_CATALOG_PARAMS = "application/vnd.vmware.admin.publishCatalogParams+xml";
+   
    /**
     * 
     * All acceptable media types.
@@ -148,6 +150,7 @@ public class VCloudDirectorMediaType {
             QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
             CONTROL_ACCESS, VAPP_TEMPLATE, CUSTOMIZATION_SECTION, GUEST_CUSTOMIZATION_SECTION, 
             NETWORK_SECTION, NETWORK_CONFIG_SECTION, NETWORK_CONNECTION_SECTION,   
-            CLONE_MEDIA_PARAMS, LEASE_SETTINGS_SECTION, RELOCATE_TEMPLATE, ENVELOPE
+            CLONE_MEDIA_PARAMS, LEASE_SETTINGS_SECTION, RELOCATE_TEMPLATE, ENVELOPE,
+            PUBLISH_CATALOG_PARAMS
       );
 }
