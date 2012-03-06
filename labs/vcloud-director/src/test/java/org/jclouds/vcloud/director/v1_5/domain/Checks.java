@@ -250,7 +250,7 @@ public class Checks {
       checkEntityType(catalog);
    }
 
-   private static void checkOwner(Owner owner) {
+   public static void checkOwner(Owner owner) {
        // Check optional elements/attributes
       if (owner.getUser() != null) {
          checkReferenceType(owner.getUser());

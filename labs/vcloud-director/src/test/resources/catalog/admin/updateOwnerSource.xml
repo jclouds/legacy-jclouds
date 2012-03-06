@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Owner type="application/vnd.vmware.vcloud.owner+xml" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <User type="application/vnd.vmware.admin.user+xml" name="adk@cloudsoftcorp.com" href="https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"/>
+</Owner>

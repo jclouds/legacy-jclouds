@@ -23,6 +23,7 @@ import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
@@ -33,6 +34,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -65,8 +67,28 @@ public interface AdminCatalogAsyncClient {
    ListenableFuture<AdminCatalog> updateCatalog(@EndpointParam URI catalogRef, 
          @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
    
+   /**
+    * @see AdminClient#getOwner(URI)
+    */
+   @GET
+   @Path("/owner")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Owner> getOwner(@EndpointParam URI catalogRef);
+   
+   /**
+    * @see AdminClient#setOwner(URI, Owner)
+    */
+   @PUT
+   @Path("/owner")
+   @Consumes
+   @Produces(VCloudDirectorMediaType.OWNER)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Void> setOwner(@EndpointParam URI catalogRef,
+         @BinderParam(BindToXMLPayload.class) Owner newOwner);
+   
 // DELETE /admin/catalog/{id}
 // POST /admin/catalog/{id}/action/publish
-// GET /admin/catalog/{id}/owner
-// PUT /admin/catalog/{id}/owner
 }

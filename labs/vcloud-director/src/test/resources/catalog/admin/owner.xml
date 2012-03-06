@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Owner xmlns="http://www.vmware.com/vcloud/v1.5" type="application/vnd.vmware.vcloud.owner+xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.catalog+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
+    <Link rel="edit" type="application/vnd.vmware.vcloud.owner+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner"/>
+    <User type="application/vnd.vmware.admin.user+xml" name="qunying.huang@enstratus.com" href="https://vcloudbeta.bluelock.com/api/admin/user/967d317c-4273-4a95-b8a4-bf63b78e9c69"/>
+</Owner>
