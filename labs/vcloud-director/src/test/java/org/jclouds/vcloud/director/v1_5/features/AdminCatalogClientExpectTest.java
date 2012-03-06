@@ -28,6 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItems;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -116,6 +117,24 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             .build();
       
       client.getAdminCatalogClient().setOwner(catalogRef.getURI(), newOwner);
+   }
+   
+   @Test
+   public void testPublishCatalog() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            new VcloudHttpRequestPrimer()
+               .apiCommand("POST", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/action/publish")
+               .xmlFilePayload("/catalog/admin/publishCatalogParams.xml", VCloudDirectorMediaType.PUBLISH_CATALOG_PARAMS)
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .httpResponseBuilder().statusCode(204).build());
+      
+      PublishCatalogParams params = PublishCatalogParams.builder()
+            .isPublished(true)
+            .build();
+      
+      client.getAdminCatalogClient().publishCatalog(catalogRef.getURI(), params);
    }
    
    @Test

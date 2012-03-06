@@ -19,9 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -35,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -98,7 +97,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
                   .name("adk@cloudsoftcorp.com")
                   .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
                   .build())
-            .build(); 
+            .build();
       
       try {
          catalogClient.setOwner(catalog.getURI(), newOwner);
@@ -149,8 +148,26 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       }
    }
    
-   @Test(testName = "DELETE /admin/catalog/{id}",
+   @Test(testName = "POST /admin/catalog/{id}/action/publish",
          dependsOnMethods = { "testUpdateCatalog" }, enabled = false )
+   public void testPublishCatalog() {
+      assertTrue(!catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
+            CATALOG, "isPublished", false, catalog.isPublished()));
+      
+      PublishCatalogParams params = PublishCatalogParams.builder()
+         .isPublished(true)
+         .build();
+      
+      catalogClient.publishCatalog(catalogRef.getURI(), params);
+      catalog = catalogClient.getCatalog(catalogRef.getURI());
+      
+      assertTrue(catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
+            CATALOG, "isPublished", true, catalog.isPublished()));
+      
+   }
+   
+   @Test(testName = "DELETE /admin/catalog/{id}",
+         dependsOnMethods = { "testPublishCatalog" }, enabled = false )
    public void testDeleteCatalog() {
       catalogClient.deleteCatalog(catalogRef.getURI());
       
