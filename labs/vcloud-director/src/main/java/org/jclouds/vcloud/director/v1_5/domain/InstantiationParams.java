@@ -113,24 +113,24 @@ public class InstantiationParams {
     * Gets the value of the section property.
     * <p/>
     * Objects of the following type(s) are allowed in the list
-    * {@code <}{@link SectionType }{@code >}
-    * {@code <}{@link VirtualHardwareSection }{@code >}
-    * {@code <}{@link LeaseSettingsSection }{@code >}
-    * {@code <}{@link EulaSection }{@code >}
-    * {@code <}{@link RuntimeInfoSection }{@code >}
-    * {@code <}{@link AnnotationSection }{@code >}
-    * {@code <}{@link DeploymentOptionSection }{@code >}
-    * {@code <}{@link StartupSection }{@code >}
-    * {@code <}{@link ResourceAllocationSection }{@code >}
-    * {@code <}{@link NetworkConnectionSection }{@code >}
-    * {@code <}{@link CustomizationSection }{@code >}
-    * {@code <}{@link ProductSection }{@code >}
-    * {@code <}{@link GuestCustomizationSection }{@code >}
-    * {@code <}{@link org.jclouds.ovf.OperatingSystemSection }{@code >}
-    * {@code <}{@link NetworkConfigSection }{@code >}
-    * {@code <}{@link NetworkSection }{@code >}
-    * {@code <}{@link DiskSection }{@code >}
-    * {@code <}{@link InstallSection }{@code >}
+    * {@link SectionType }
+    * {@link VirtualHardwareSection }
+    * {@link LeaseSettingsSection }
+    * {@link EulaSection }
+    * {@link RuntimeInfoSection }
+    * {@link AnnotationSection }
+    * {@link DeploymentOptionSection }
+    * {@link StartupSection }
+    * {@link ResourceAllocationSection }
+    * {@link NetworkConnectionSection }
+    * {@link CustomizationSection }
+    * {@link ProductSection }
+    * {@link GuestCustomizationSection }
+    * {@link org.jclouds.ovf.OperatingSystemSection }
+    * {@link NetworkConfigSection }
+    * {@link NetworkSection }
+    * {@link DiskSection }
+    * {@link InstallSection }
     */
    public Set<? extends SectionType<?>> getSections() {
       return Collections.unmodifiableSet(this.sections);
