@@ -44,7 +44,6 @@ public class GuestAdditionsInstaller implements Predicate<IMachine> {
   @Override
   public boolean apply(IMachine machine) {
     String vboxVersion = Iterables.get(Splitter.on('r').split(manager.get().getVBox().getVersion()), 0);
-    System.out.println("VERSION: " + vboxVersion);
     ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(machine),
         new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);
     ExecResponse execResponse = Futures.getUnchecked(execFuture);

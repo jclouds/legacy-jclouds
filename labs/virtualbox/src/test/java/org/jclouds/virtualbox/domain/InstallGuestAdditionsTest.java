@@ -35,7 +35,7 @@ import com.google.common.io.Resources;
 
 @Test(groups = "unit")
 public class InstallGuestAdditionsTest {
-   @Test
+   @Test(enabled = false)
    public void testUnixByItself() throws IOException {
       InstallGuestAdditions statement = new InstallGuestAdditions("4.1.6");
       assertEquals(statement.render(OsFamily.UNIX),
@@ -44,7 +44,7 @@ public class InstallGuestAdditionsTest {
                   Charsets.UTF_8)));
    }
 
-   @Test
+   @Test(enabled = false)
    public void testUnixInInitScript() throws IOException {
       Statement statement = InitScript.builder().name("install_guest_additions")
             .run(new InstallGuestAdditions("4.1.6")).build();

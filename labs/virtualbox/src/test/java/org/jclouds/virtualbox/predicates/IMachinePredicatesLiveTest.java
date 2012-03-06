@@ -23,6 +23,8 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE
 import static org.jclouds.virtualbox.predicates.IMachinePredicates.isLinkedClone;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Set;
+
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.HardDisk;
@@ -112,8 +114,10 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
 
   @BeforeMethod
   @AfterMethod
-  void cleanUpVms() {
-    for (VmSpec spec : ImmutableSet.of(cloneSpec.getVmSpec(), masterMachineSpec.getVmSpec()))
-      this.undoVm(spec);
-  }
+   void cleanUpVms() {
+      Set<VmSpec> specs = cloneSpec != null ? ImmutableSet.of(cloneSpec.getVmSpec(), masterMachineSpec.getVmSpec())
+               : ImmutableSet.of(masterMachineSpec.getVmSpec());
+      for (VmSpec spec : specs)
+         this.undoVm(spec);
+   }
 }

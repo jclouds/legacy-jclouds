@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static junit.framework.Assert.assertEquals;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.testng.Assert.assertTrue;
 
 import java.util.Map;
 
@@ -143,14 +142,13 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
          checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh",
                   machine.getName());
 
-         assertTrue(machineUtils.lockSessionOnMachineAndApply(machine.getName(), LockType.Shared,
-                  new Function<ISession, Boolean>() {
+         String vboxVersion = Iterables.get(
+                  Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
+         assertEquals(vboxVersion, machineUtils.lockSessionOnMachineAndApply(machine.getName(), LockType.Shared,
+                  new Function<ISession, String>() {
                      @Override
-                     public Boolean apply(ISession session) {
-                        String vboxVersion = Iterables.get(
-                                 Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-                        return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestAdd/Version")
-                                 .equals(vboxVersion);
+                     public String apply(ISession session) {
+                        return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestAdd/Version");
                      }
                   }));
       } finally {

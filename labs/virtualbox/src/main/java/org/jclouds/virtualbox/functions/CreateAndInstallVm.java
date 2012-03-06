@@ -111,6 +111,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
       configureOsInstallationWithKeyboardSequence(vmName, installationKeySequence);
       SshClient client = sshClientForIMachine.apply(vm);
+      
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
 
       checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
@@ -122,10 +123,13 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
 
       NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
-      ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"),
-               RunScriptOptions.Builder.runAsRoot(true));
-      ExecResponse execResponse = Futures.getUnchecked(execFuture);
-      checkState(execResponse.getExitCode() == 0);
+      
+      // TODO for now this is executed on installModuleAssistantIfNeeded as a workaround to some transient execution issue.
+//      ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"),
+//               RunScriptOptions.NONE);
+      
+//      ExecResponse execResponse = Futures.getUnchecked(execFuture);
+//      checkState(execResponse.getExitCode() == 0);
 
       logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
 
