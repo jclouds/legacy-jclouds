@@ -27,6 +27,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItems;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -47,7 +48,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/admin/catalog/catalog.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
+            .xmlFilePayload("/catalog/admin/catalog.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
             .httpResponseBuilder().build());
 
       AdminCatalog expected = catalog();
@@ -58,19 +59,29 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             .href(URI.create(endpoint + "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
             .build();
       
-      assertEquals(client.getCatalogClient().getCatalog(catalogRef), expected);
+      assertEquals(client.getAdminCatalogClient().getCatalog(catalogRef.getURI()), expected);
    }
-
+   
    public static final AdminCatalog catalog() {
       return AdminCatalog.builder()
          .name("QunyingTestCatalog")
-         .type("application/vnd.vmware.vcloud.catalog+xml")
          .id("urn:vcloud:catalog:7212e451-76e1-4631-b2de-ba1dfd8080e4")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+         .type("application/vnd.vmware.admin.catalog+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
          .link(Link.builder()
                .rel("up")
-               .type("application/vnd.vmware.vcloud.org+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+               .type("application/vnd.vmware.admin.organization+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
+               .build())
+         .link(Link.builder()
+               .rel("alternate")
+               .type("application/vnd.vmware.vcloud.catalog+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+               .build())
+         .link(Link.builder()
+               .rel("down")
+               .type("application/vnd.vmware.vcloud.owner+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner"))
                .build())
          .link(Link.builder()
                .rel("add")
@@ -78,11 +89,34 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/catalogItems"))
                .build())
          .link(Link.builder()
+               .rel("edit")
+               .type("application/vnd.vmware.admin.catalog+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+               .build())
+         .link(Link.builder()
+               .rel("remove")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+               .build())
+         .link(Link.builder()
                .rel("down")
                .type("application/vnd.vmware.vcloud.metadata+xml")
                .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
                .build())
+         .description("Testing")
+         .owner(Owner.builder()
+               .type("application/vnd.vmware.vcloud.owner+xml")
+               .user(Reference.builder()
+                     .type("application/vnd.vmware.admin.user+xml")
+                     .name("qunying.huang@enstratus.com")
+                     .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/967d317c-4273-4a95-b8a4-bf63b78e9c69"))
+                     .build())
+               .build())
          .catalogItems(CatalogItems.builder()
+               .item(Reference.builder()
+                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
+                     .name("image")
+                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/67a469a1-aafe-4b5b-bb31-a6202ad8961f"))
+                     .build())
                .item(Reference.builder()
                      .type("application/vnd.vmware.vcloud.catalogItem+xml")
                      .name("ubuntu10")
@@ -93,9 +127,13 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                      .name("imageTesting")
                      .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
                      .build())
+               .item(Reference.builder()
+                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
+                     .name("TestCase")
+                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/f7598606-aea4-41d7-8f67-2090e28e7876"))
+                     .build())
                .build())
-         .description("Testing")
+         .isPublished(false)
          .build();
    }
-
 }
