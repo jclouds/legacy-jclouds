@@ -79,7 +79,6 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected String hostVersion;
    protected String operatingSystemIso;
    protected String guestAdditionsIso;
-   protected String adminDisk;
    protected String workingDir;
    protected String isosDir;
    protected Supplier<NodeMetadata> host;
@@ -144,7 +143,6 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       machineUtils = context.utils().injector().getInstance(MachineUtils.class);
 
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-      adminDisk = workingDir + "/testadmin.vdi";
       operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
    }
@@ -177,6 +175,10 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
             }
          }
       }
+   }
+   
+   public String adminDisk(String vmName) {
+      return workingDir + File.separator + vmName + ".vdi";
    }
 
    @AfterClass(groups = "live")

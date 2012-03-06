@@ -73,7 +73,6 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
    private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
    private final Map<String, YamlImage> imageMapping;
    private final String workingDir;
-   private final String adminDisk;
    private final String guestAdditionsIso;
    private final String installationKeySequence;
    private final String isosDir;
@@ -96,7 +95,6 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
          wdFile.mkdirs();
       }
       this.isosDir = wdFile.getAbsolutePath() + File.separator + "isos";
-      this.adminDisk = workingDir + "/testadmin.vdi";
       this.imageMapping = Maps.newLinkedHashMap();
       for (Entry<Image, YamlImage> entry : yamlMapper.get().entrySet()) {
          this.imageMapping.put(entry.getKey().getId(), entry.getValue());
@@ -122,6 +120,8 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
       String localIsoUrl = getFilePathOrDownload(yamlImage.iso);
 
       String vmName = VIRTUALBOX_IMAGE_PREFIX + yamlImage.id;
+
+      String adminDisk = workingDir + File.separator + vmName + ".vdi";
 
       HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1)
                .build();

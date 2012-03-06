@@ -78,8 +78,8 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
                .bus(StorageBus.IDE)
                .attachISO(0, 0, operatingSystemIso)
                .attachHardDisk(
-                        HardDisk.builder().diskpath(adminDisk).controllerPort(0).deviceSlot(1).autoDelete(true).build())
-               .attachISO(1, 1, guestAdditionsIso).build();
+                        HardDisk.builder().diskpath(adminDisk(sourceName)).controllerPort(0).deviceSlot(1)
+                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
 
       VmSpec sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName).osTypeId("").memoryMB(512)
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();

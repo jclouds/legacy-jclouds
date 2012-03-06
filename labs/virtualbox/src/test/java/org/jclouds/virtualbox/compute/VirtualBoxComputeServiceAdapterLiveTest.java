@@ -35,7 +35,7 @@ import org.virtualbox_4_1.IMachine;
 
 import com.google.common.collect.Iterables;
 
-@Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
+@Test(groups = "plive", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest", enabled = false)
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
 
    private VirtualBoxComputeServiceAdapter adapter;
@@ -47,7 +47,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
    }
 
-   @Test
+   @Test(enabled = false)
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "foo-ef4";
@@ -83,13 +83,13 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       }
    }
 
-   @Test
+   @Test(enabled = false)
    public void testListHardwareProfiles() {
       Iterable<IMachine> profiles = adapter.listHardwareProfiles();
       assertEquals(1, Iterables.size(profiles));
    }
 
-   @Test
+   @Test(enabled = false)
    public void testListImages() {
       Iterable<Image> iMageIterable = adapter.listImages();
       for (Image image : iMageIterable) {
@@ -101,7 +101,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @Override
    protected void tearDown() throws Exception {
       if (machine != null)
-         // adapter.destroyNode(machine.getNodeId() + "");
-         super.tearDown();
+         adapter.destroyNode(machine.getNodeId() + "");
+      super.tearDown();
    }
 }

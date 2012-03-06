@@ -91,8 +91,8 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       this.vmName = VIRTUALBOX_IMAGE_PREFIX
                + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
-      HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1)
-               .build();
+      HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk(vmName)).autoDelete(true).controllerPort(0)
+               .deviceSlot(1).build();
       StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
                .attachISO(0, 0, operatingSystemIso).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
       vmSpecification = VmSpec.builder().id(vmName).name(vmName).memoryMB(512).osTypeId("").controller(ideController)

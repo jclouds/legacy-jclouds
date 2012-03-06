@@ -51,28 +51,23 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 
 	private String ideControllerName;
 	private CleanupMode mode;
-	private StorageController ideController;
 
 	@Override
 	public void setupClient() {
 		super.setupClient();
 		ideControllerName = "IDE Controller";
 		mode = CleanupMode.Full;
-		ideController = StorageController
-				.builder()
-				.name(ideControllerName)
-				.bus(StorageBus.IDE)
-				.attachISO(0, 0, operatingSystemIso)
-				.attachHardDisk(
-						HardDisk.builder().diskpath(adminDisk)
-								.controllerPort(0).deviceSlot(1).build())
-				.attachISO(1, 1, guestAdditionsIso).build();
 	}
 
 	@Test
 	public void testCreateNewMachine() throws Exception {
 		String vmName = "jclouds-test-create-1-node";
 		String vmId = UUID.randomUUID().toString();
+		
+      StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso)
+               .attachHardDisk(HardDisk.builder().diskpath(adminDisk(vmName)).controllerPort(0).deviceSlot(1).build())
+               .attachISO(1, 1, guestAdditionsIso).build();
 
 		VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
 				.controller(ideController).cleanUpMode(mode).osTypeId("Debian")
@@ -110,6 +105,11 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 	public void testCreateNewMachineWithBadOsType() throws Exception {
 		String vmName = "jclouds-test-create-2-node";
 		String vmId = UUID.randomUUID().toString();
+		
+		StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+	               .attachISO(0, 0, operatingSystemIso)
+	               .attachHardDisk(HardDisk.builder().diskpath(adminDisk(vmName)).controllerPort(0).deviceSlot(1).build())
+	               .attachISO(1, 1, guestAdditionsIso).build();
 
 		VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
 				.controller(ideController).cleanUpMode(mode)
