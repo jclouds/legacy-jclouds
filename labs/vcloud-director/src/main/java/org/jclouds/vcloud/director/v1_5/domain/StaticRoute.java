@@ -56,7 +56,7 @@ import com.google.common.base.Objects;
       "name",
       "network",
       "nextHopIp",
-      "_interface"
+      "theInterface"
 })
 public class StaticRoute {
 
@@ -118,20 +118,17 @@ public class StaticRoute {
       }
    }
 
-   private StaticRoute(String name, String network, String nextHopIp, String _interface) {
+   private StaticRoute(String name, String network, String nextHopIp, String theInterface) {
       this.name = checkNotNull(name, "name");
       this.network = checkNotNull(network, "network");
       this.nextHopIp = checkNotNull(nextHopIp, "nextHopIp");
-      this._interface = checkNotNull(_interface, "interface");
+      this.theInterface = checkNotNull(theInterface, "interface");
    }
 
    private StaticRoute() {
       // for JAXB
    }
 
-   private StaticRoute(String _interface) {
-      this._interface = _interface;
-   }
 
    @XmlElement(name = "Name", required = true)
    protected String name;
@@ -140,7 +137,7 @@ public class StaticRoute {
    @XmlElement(name = "NextHopIp", required = true)
    protected String nextHopIp;
    @XmlElement(name = "Interface", required = true)
-   protected String _interface;
+   protected String theInterface;
 
    /**
     * Gets the value of the name property.
@@ -179,7 +176,7 @@ public class StaticRoute {
     *         {@link String }
     */
    public String getInterface() {
-      return _interface;
+      return theInterface;
    }
 
    @Override
@@ -192,7 +189,7 @@ public class StaticRoute {
       return equal(name, that.name) &&
             equal(network, that.network) &&
             equal(nextHopIp, that.nextHopIp) &&
-            equal(_interface, that._interface);
+            equal(theInterface, that.theInterface);
    }
 
    @Override
@@ -200,7 +197,7 @@ public class StaticRoute {
       return Objects.hashCode(name,
             network,
             nextHopIp,
-            _interface);
+            theInterface);
    }
 
    @Override
@@ -209,6 +206,6 @@ public class StaticRoute {
             .add("name", name)
             .add("network", network)
             .add("nextHopIp", nextHopIp)
-            .add("_interface", _interface).toString();
+            .add("interface", theInterface).toString();
    }
 }
