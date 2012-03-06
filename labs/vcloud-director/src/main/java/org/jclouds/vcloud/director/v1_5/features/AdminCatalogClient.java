@@ -59,6 +59,15 @@ public interface AdminCatalogClient {
    AdminCatalog updateCatalog(URI catalogRef, AdminCatalog catalog);
    
    /**
+    * Deletes a catalog. The catalog could be deleted if it is either published or unpublished.
+    * 
+    * <pre>
+    * DELETE /admin/catalog/{id}
+    * </pre>
+    */
+   void deleteCatalog(URI catalogRef);
+   
+   /**
     * Retrieves the owner of a catalog.
     * 
     * <pre>
