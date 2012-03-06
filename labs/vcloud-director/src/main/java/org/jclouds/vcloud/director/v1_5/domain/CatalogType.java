@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -38,7 +37,6 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author danikov
  */
-@XmlRootElement(name = "Catalog")
 public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
 
    public static <T extends CatalogType<T>> Builder<T> builder() {

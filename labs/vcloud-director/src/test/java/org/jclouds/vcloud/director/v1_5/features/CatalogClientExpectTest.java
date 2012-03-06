@@ -460,6 +460,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       		                  .build())
       		            .build())
       		      .description("Testing")
+      		      .isPublished(false)
       		      .build();
    }
 
