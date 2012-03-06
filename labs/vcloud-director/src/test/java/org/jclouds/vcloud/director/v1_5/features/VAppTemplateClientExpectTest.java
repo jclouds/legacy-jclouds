@@ -26,6 +26,7 @@ import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.*;
@@ -42,6 +43,10 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = {"unit", "user"}, testName = "VAppTemplateClientExpectTest")
 public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
+   public VAppTemplateClientExpectTest() {
+      TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
+   }
+   
    public void testVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
