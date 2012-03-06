@@ -3,11 +3,11 @@
   <vApp:Description>ServiceProfileName = Balanced; ServiceLocation = North America; Email = jim@company.com;</vApp:Description>
   <vApp:OfferingTag>Deployed</vApp:OfferingTag>
   <vApp:ResourceEntities>
-    <vApp:ResourceEntity name="DemoHost-1" type="application/vnd.vmware.vcloud.vApp+xml" href="https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001"/>
-    <vApp:ResourceEntity name="DemoHost-2" type="application/vnd.vmware.vcloud.vApp+xml" href="https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"/>
-    <vApp:ResourceEntity name="DemoHost-3" type="application/vnd.vmware.vcloud.vApp+xml" href="https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1003"/>
-    <vApp:ResourceEntity name="CustomerTemplateName" type="application/vnd.vmware.vcloud.vAppTemplate+xml" href="https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vAppTemplate/1234"/>
-    <vApp:ResourceEntity name="firewall" type="api.symphonyvpdc.savvis.net+xml" href="https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/FirewallService"/>
+    <vApp:ResourceEntity name="DemoHost-1" type="application/vnd.vmware.vcloud.vApp+xml" href="https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001"/>
+    <vApp:ResourceEntity name="DemoHost-2" type="application/vnd.vmware.vcloud.vApp+xml" href="https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002"/>
+    <vApp:ResourceEntity name="DemoHost-3" type="application/vnd.vmware.vcloud.vApp+xml" href="https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1003"/>
+    <vApp:ResourceEntity name="CustomerTemplateName" type="application/vnd.vmware.vcloud.vAppTemplate+xml" href="https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vAppTemplate/1234"/>
+    <vApp:ResourceEntity name="firewall" type="api.savvis.net+xml" href="https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/FirewallService"/>
   </vApp:ResourceEntities>
   <vApp:AvailableNetworks/>
 </vApp:Vdc>

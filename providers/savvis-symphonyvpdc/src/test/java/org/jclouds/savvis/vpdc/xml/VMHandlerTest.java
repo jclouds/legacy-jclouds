@@ -62,7 +62,7 @@ public class VMHandlerTest {
                .type("application/vnd.vmware.vcloud.vApp+xml")
                .href(
                         URI
-                                 .create("https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001"))
+                                 .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001"))
                .networkConfigSection(
                         NetworkConfigSection.builder().network("VM Tier01").gateway("0.0.0.0").netmask("0.0.0.0").info(
                                  "MAC=00:00:00:00:00:00").fenceMode("allowInOut").dhcp(true).internalToExternalNATRule(

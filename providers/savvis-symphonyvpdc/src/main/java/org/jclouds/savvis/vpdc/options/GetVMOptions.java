@@ -33,7 +33,7 @@ package org.jclouds.savvis.vpdc.options;
  * <code>
  * 
  * @author Adrian Cole
- * @see <a href= "https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/getVAppPowerState.html"
+ * @see <a href= "https://api.sandbox.savvis.net/doc/spec/api/getVAppPowerState.html"
  *      />
  */
 public class GetVMOptions {

@@ -16,32 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.savvis.vpdc.functions;
+package org.jclouds.savvis.vpdc.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
-import org.jclouds.savvis.vpdc.internal.Org;
-
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.savvis.vpdc.domain.internal.VCloudSession;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class DefaultOrgIfNull implements Function<Object, String> {
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface LoginClient {
 
-   private final Supplier<String> defaultOrg;
-
-   @Inject
-   public DefaultOrgIfNull(@Org Supplier<String> defaultOrg) {
-      this.defaultOrg = checkNotNull(defaultOrg, "defaultOrg");
-   }
-
-   public String apply(Object from) {
-      return from == null ? defaultOrg.get() : from.toString();
-   }
-
+   /**
+    * This request returns a token to use in subsequent requests. After 30 minutes of inactivity,
+    * the token expires and you have to request a new token with this call.
+    */
+   VCloudSession login();
 }

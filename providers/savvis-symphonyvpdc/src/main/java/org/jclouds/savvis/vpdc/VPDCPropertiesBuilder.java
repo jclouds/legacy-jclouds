@@ -19,6 +19,7 @@
 package org.jclouds.savvis.vpdc;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED;
 
@@ -36,7 +37,8 @@ public class VPDCPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://api.symphonyvpdc.savvis.net/vpdc");
+      properties.setProperty(PROPERTY_BUILD_VERSION, "2.3");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://api.savvis.net/vpdc");
       properties.setProperty(PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED, 600l * 1000l + "");
       return properties;
    }

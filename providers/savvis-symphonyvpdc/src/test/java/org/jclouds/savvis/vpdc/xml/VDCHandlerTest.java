@@ -63,31 +63,31 @@ public class VDCHandlerTest {
                                           "DemoHost-1",
                                           VCloudMediaType.VAPP_XML,
                                           URI
-                                                   .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001")),
+                                                   .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001")),
                                  new ResourceImpl(
                                           "1002",
                                           "DemoHost-2",
                                           VCloudMediaType.VAPP_XML,
                                           URI
-                                                   .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002")),
+                                                   .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1002")),
                                  new ResourceImpl(
                                           "1003",
                                           "DemoHost-3",
                                           VCloudMediaType.VAPP_XML,
                                           URI
-                                                   .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1003")),
+                                                   .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1003")),
                                  new ResourceImpl(
                                           "1234",
                                           "CustomerTemplateName",
                                           VCloudMediaType.VAPPTEMPLATE_XML,
                                           URI
-                                                   .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vAppTemplate/1234")),
+                                                   .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vAppTemplate/1234")),
                                  new ResourceImpl(
                                           "FirewallService",
                                           "firewall",
-                                          "api.symphonyvpdc.savvis.net+xml",
+                                          "api.savvis.net+xml",
                                           URI
-                                                   .create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/FirewallService"))));
+                                                   .create("https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/FirewallService"))));
       assertEquals(result.getAvailableNetworks(), ImmutableSet.of());
    }
 
@@ -102,16 +102,16 @@ public class VDCHandlerTest {
       assertEquals(result.getStatus(), Status.DEPLOYED);
       assertEquals(result.getResourceEntities(), ImmutableSet.of(new ResourceImpl("1001", "Host1",
                VCloudMediaType.VAPP_XML, URI
-                        .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1001")),
+                        .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1001")),
                new ResourceImpl("1002", "Host2", VCloudMediaType.VAPP_XML, URI
-                        .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1002")),
+                        .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1002")),
                new ResourceImpl("1003", "Host3", VCloudMediaType.VAPP_XML, URI
-                        .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1003")),
+                        .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1003")),
                new ResourceImpl("1004", "Host4", VCloudMediaType.VAPP_XML, URI
-                        .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1004"))));
+                        .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/vApp/1004"))));
       assertEquals(result.getAvailableNetworks(), ImmutableSet.of(ResourceImpl.builder().id("VM-Tier01").name(
                "VM Tier01").type(VCloudMediaType.NETWORK_XML).href(
-               URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/network/VM-Tier01"))
+               URI.create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/1619/network/VM-Tier01"))
                .build()));
 
    }
@@ -127,10 +127,10 @@ public class VDCHandlerTest {
       assertEquals(result.getStatus(), Status.FAILED);
       assertEquals(result.getResourceEntities(), ImmutableSet.of(new ResourceImpl("1001", "Host1",
                VCloudMediaType.VAPP_XML, URI
-                        .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/1641/vApp/1001"))));
+                        .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/1641/vApp/1001"))));
       assertEquals(result.getAvailableNetworks(), ImmutableSet.of(ResourceImpl.builder().id("VM-Tier01").name(
                "VM Tier01").type(VCloudMediaType.NETWORK_XML).href(
-               URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/1641/network/VM-Tier01"))
+               URI.create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/1641/network/VM-Tier01"))
                .build()));
 
    }
@@ -155,7 +155,7 @@ public class VDCHandlerTest {
                                           .id("1001")
                                           .href(
                                                    URI
-                                                            .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1001"))
+                                                            .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1001"))
                                           .build(),
                                  ResourceImpl
                                           .builder()
@@ -164,7 +164,7 @@ public class VDCHandlerTest {
                                           .id("1037")
                                           .href(
                                                    URI
-                                                            .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1037"))
+                                                            .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1037"))
                                           .build(),
                                  ResourceImpl
                                           .builder()
@@ -173,7 +173,7 @@ public class VDCHandlerTest {
                                           .id("1038")
                                           .href(
                                                    URI
-                                                            .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1038"))
+                                                            .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1038"))
                                           .build(),
                                  ResourceImpl
                                           .builder()
@@ -182,11 +182,11 @@ public class VDCHandlerTest {
                                           .id("1039")
                                           .href(
                                                    URI
-                                                            .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1039"))
+                                                            .create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/vApp/1039"))
                                           .build()));
       assertEquals(result.getAvailableNetworks(), ImmutableSet.of(ResourceImpl.builder().id("VM-Tier01").name(
                "VM Tier01").type(VCloudMediaType.NETWORK_XML).href(
-               URI.create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/network/VM-Tier01"))
+               URI.create("https://api.savvis.net/rest/api/v0.8/org/606677.0/vdc/2555/network/VM-Tier01"))
                .build()));
 
    }

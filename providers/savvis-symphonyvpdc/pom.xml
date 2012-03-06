@@ -33,24 +33,10 @@
     <description>jclouds components to access Savvis Symphony VPDC</description>
     <packaging>bundle</packaging>
     
-    <!-- bootstrapping: need to fetch the project POM -->
-    <repositories>
-        <repository>
-            <id>jclouds-sonatype-snapshots-nexus</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>    
-    </repositories>
-    
     <properties>
-        <test.savvis-symphonyvpdc.endpoint>https://api.symphonyvpdc.savvis.net/vpdc</test.savvis-symphonyvpdc.endpoint>
+        <test.savvis-symphonyvpdc.endpoint>https://api.savvis.net/vpdc</test.savvis-symphonyvpdc.endpoint>
         <test.savvis-symphonyvpdc.api-version>1.0</test.savvis-symphonyvpdc.api-version>
-        <test.savvis-symphonyvpdc.build-version />
+        <test.savvis-symphonyvpdc.build-version>2.3</test.savvis-symphonyvpdc.build-version>
         <test.savvis-symphonyvpdc.identity>FIXME</test.savvis-symphonyvpdc.identity>
         <test.savvis-symphonyvpdc.credential>FIXME</test.savvis-symphonyvpdc.credential>
         <test.savvis-symphonyvpdc.image-id />

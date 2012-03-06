@@ -35,7 +35,7 @@ import org.jclouds.savvis.vpdc.features.VMClient;
  * <p/>
  * 
  * @see VPDCAsyncClient
- * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/index.html" />
+ * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/index.html" />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
@@ -76,7 +76,7 @@ public interface VPDCClient {
     * /savvis-symphonyvpdc/predefined_operatingsystems.json}
     * 
     * @return the operating systems that are predefined in the provider
-    * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/addSingleVM.html" />
+    * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/addSingleVM.html" />
     */
    Set<CIMOperatingSystem> listPredefinedOperatingSystems();
 }

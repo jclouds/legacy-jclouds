@@ -94,7 +94,7 @@ public class SavvisSymphonyVPDCProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("https://api.symphonyvpdc.savvis.net/doc/spec/api/index.html");
+      return URI.create("https://api.savvis.net/doc/spec/api/index.html");
    }
 
    /**

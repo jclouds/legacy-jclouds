@@ -40,7 +40,7 @@ import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.ResourceImpl;
 import org.jclouds.savvis.vpdc.domain.internal.VCloudSession;
 import org.jclouds.savvis.vpdc.filters.SetVCloudTokenCookie;
-import org.jclouds.savvis.vpdc.internal.LoginAsyncClient;
+import org.jclouds.savvis.vpdc.internal.LoginClient;
 import org.jclouds.savvis.vpdc.reference.VCloudMediaType;
 import org.jclouds.savvis.vpdc.reference.VPDCConstants;
 
@@ -77,13 +77,13 @@ public abstract class BaseVPDCAsyncClientTest<T> extends RestClientTest<T> {
 
       @Override
       protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-               final LoginAsyncClient login) {
+               final LoginClient login) {
          return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
 
             @Override
             public Set<Resource> getOrgs() {
                return ImmutableSet.<Resource> of(new ResourceImpl("1", "org", VCloudMediaType.ORG_XML, URI
-                        .create("https://api.symphonyvpdc.savvis.net/rest/api/v0.8/org/1")));
+                        .create("https://api.savvis.net/rest/api/v0.8/org/1")));
             }
 
             @Override

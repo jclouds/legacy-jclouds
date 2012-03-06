@@ -36,7 +36,7 @@ import com.google.inject.Provides;
  * <p/>
  * 
  * @see VPDCClient
- * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/index.html" />
+ * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/index.html" />
  * @author Adrian Cole
  */
 public interface VPDCAsyncClient {
@@ -78,7 +78,7 @@ public interface VPDCAsyncClient {
     * /savvis-symphonyvpdc/predefined_operatingsystems.json}
     * 
     * @return the operating systems that are predefined in the provider
-    * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/addSingleVM.html" />
+    * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/addSingleVM.html" />
     */
    @Provides
    Set<CIMOperatingSystem> listPredefinedOperatingSystems();

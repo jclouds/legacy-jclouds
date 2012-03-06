@@ -44,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Symphony VPDC resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://api.sandbox.symphonyvpdc.savvis.net/doc/spec/api/index.html" />
+ * @see <a href="https://api.sandbox.savvis.net/doc/spec/api/index.html" />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)

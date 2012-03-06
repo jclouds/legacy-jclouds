@@ -1,11 +1,11 @@
 <vApp:VApp xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:vApp="http://www.vmware.com/vcloud/v0.8"
            xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
-           xmlns:vApps="http://schemas.api.sandbox.symphonyVPDC.savvis.net/vpdci"
+           xmlns:vApps="http://schemas.api.sandbox.savvis.net/vpdci"
            xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
            xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
-           xmlns:svvs="http://schemas.api.sandbox.symphonyVPDC.savvis.net/vpdci" status="4" name="znHost2"
+           xmlns:svvs="http://schemas.api.sandbox.savvis.net/vpdci" status="4" name="znHost2"
            type="application/vnd.vmware.vcloud.vApp+xml"
-           href="https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001">
+           href="https://api.sandbox.savvis.net/rest/api/v0.8/org/100000.0/vdc/2736/vApp/1001">
     <ovf:NetworkSection>
         <ovf:Info>The list of logical networks</ovf:Info>
         <ovf:Network ovf:name="VM Tier01">

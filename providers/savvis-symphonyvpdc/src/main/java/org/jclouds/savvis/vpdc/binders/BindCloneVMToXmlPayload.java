@@ -106,7 +106,7 @@ public class BindCloneVMToXmlPayload extends BindToStringPayload implements MapB
 	      		.a("name", newVAppName)
 	      		.a("deploy" , "true")
 	      		.a("powerOn" , "true")
-	            .a("xsi:schemaLocation", "http://www.vmware.com/vcloud/v0.8 https://api.symphonyvpdc.savvis.net/ns/vcloud.xsd");
+	            .a("xsi:schemaLocation", "http://www.vmware.com/vcloud/v0.8 https://api.savvis.net/ns/vcloud.xsd");
 	      return rootBuilder;
 	   }
 
