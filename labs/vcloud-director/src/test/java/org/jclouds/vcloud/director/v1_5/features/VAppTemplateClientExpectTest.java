@@ -186,7 +186,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vappTemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vapptemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
       ).getVAppTemplateClient();
 
@@ -205,7 +205,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vappTemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/relocate").xmlFilePayload("/vapptemplate/relocateParams.xml", RELOCATE_TEMPLATE).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
       Reference datastore = Reference.builder().href(URI.create("https://vcloud.example.com/api/admin/extension/datastore/607")).build();
