@@ -20,14 +20,12 @@ package org.jclouds.vcloud.director.v1_5.domain.cim;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 
 /**
  * 
@@ -238,7 +236,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
        * @see ResourceAllocationSettingData#getConnections
        */
       public Builder connections(List<String> connections) {
-         this.connections.addAll(checkNotNull(connections, "connections"));
+         this.connections = Lists.newArrayList(checkNotNull(connections, "connections"));
          return this;
       }
 
@@ -246,7 +244,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
        * @see ResourceAllocationSettingData#getHostResources
        */
       public Builder hostResources(List<String> hostResources) {
-         this.hostResources.addAll(checkNotNull(hostResources, "hostResources"));
+         this.hostResources = Lists.newArrayList(checkNotNull(hostResources, "hostResources"));
          return this;
       }
 
@@ -665,7 +663,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
     * network or switch port.
     */
    public List<String> getConnections() {
-      return connections;
+      return Collections.unmodifiableList(connections);
    }
 
    /**
@@ -687,7 +685,7 @@ public class ResourceAllocationSettingData extends ManagedElement {
     * based on host resources that are identified by element values.
     */
    public List<String> getHostResources() {
-      return hostResources;
+      return Collections.unmodifiableList(hostResources);
    }
 
    @Override

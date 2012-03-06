@@ -172,13 +172,11 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
    }
 
    protected QueryResultReferences() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    // NOTE add other types as they are used. probably not the best way to do this.
-   @XmlElementRefs({
-         @XmlElementRef(type = CatalogReference.class)
-   })
+   @XmlElementRef
    private Set<T> references = Sets.newLinkedHashSet();
 
    /**

@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,7 +38,7 @@ import com.google.common.base.Predicate;
  * @author grkvlt@apache.org
  */
 @Singleton
-public class TaskSuccess implements Predicate<URISupplier> {
+public class TaskSuccess implements Predicate<Task> {
 
    private final TaskClient taskClient;
 
@@ -50,10 +52,12 @@ public class TaskSuccess implements Predicate<URISupplier> {
 
    /** @see Predicate#apply(Object) */
    @Override
-   public boolean apply(URISupplier taskRef) {
-      logger.trace("looking for status on task %s", taskRef);
+   public boolean apply(Task task) {
+      logger.trace("looking for status on task %s", task);
 
-      Task task = taskClient.getTask(taskRef);
+      // TODO shouldn't we see if it's already done before getting it from API server?
+      task = taskClient.getTask(task.getURI());
+      
       // perhaps task isn't available, yet
       if (task == null) return false;
       logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());

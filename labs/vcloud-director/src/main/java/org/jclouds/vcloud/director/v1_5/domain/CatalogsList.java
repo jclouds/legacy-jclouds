@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -62,16 +63,8 @@ public class CatalogsList {
       /**
        * @see CatalogsList#getCatalogItems()
        */
-      public Builder catalogs(Collection<Reference> catalogReferences) {
-         this.catalogReferences = Sets.newLinkedHashSet(checkNotNull(catalogReferences, "catalogReferences"));
-         return this;
-      }
-
-      /**
-       * @see CatalogsList#getCatalogItems()
-       */
-      public Builder catalog(Reference catalog) {
-         this.catalogReferences.add(checkNotNull(catalog, "catalog"));
+      public Builder catalogs(Set<Reference> catalogReferences) {
+         this.catalogReferences = checkNotNull(catalogReferences, "catalogReferences");
          return this;
       }
 
@@ -85,7 +78,7 @@ public class CatalogsList {
    }
 
    private CatalogsList() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private CatalogsList(Set<Reference> tasks) {
@@ -99,7 +92,7 @@ public class CatalogsList {
     * Gets the value of the catalogReferences property.
     */
    public Set<Reference> getCatalogItems() {
-      return this.catalogReferences;
+      return Collections.unmodifiableSet(this.catalogReferences);
    }
    
    @Override

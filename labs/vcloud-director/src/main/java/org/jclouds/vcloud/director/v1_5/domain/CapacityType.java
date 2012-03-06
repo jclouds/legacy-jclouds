@@ -119,7 +119,7 @@ public class CapacityType<T extends CapacityType<T>> {
    }
 
    protected CapacityType() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    @XmlElement(name = "Units", required = true)

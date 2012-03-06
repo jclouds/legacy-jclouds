@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -74,7 +75,7 @@ public class IpAddresses {
    }
 
    private IpAddresses() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private IpAddresses(Set<String> orgs) {
@@ -85,7 +86,7 @@ public class IpAddresses {
    private Set<String> ipAddresses = Sets.newLinkedHashSet();
 
    public Set<String> getIpAddresses() {
-      return ImmutableSet.copyOf(ipAddresses);
+      return Collections.unmodifiableSet(ipAddresses);
    }
 
    @Override

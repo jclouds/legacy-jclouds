@@ -27,17 +27,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.IpAddresses;
-import org.jclouds.vcloud.director.v1_5.domain.IpRange;
-import org.jclouds.vcloud.director.v1_5.domain.IpRanges;
-import org.jclouds.vcloud.director.v1_5.domain.IpScope;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
+import org.jclouds.vcloud.director.v1_5.domain.*;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -60,10 +50,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             getStandardPayloadResponse("/network/network.xml", VCloudDirectorMediaType.ORG_NETWORK));
       
       OrgNetwork expected = orgNetwork();
-
-      Reference networkRef = Reference.builder().href(networkUri).build();
-
-      assertEquals(client.getNetworkClient().getNetwork(networkRef), expected);
+      assertEquals(client.getNetworkClient().getNetwork(networkUri), expected);
    }
 
    @Test
@@ -80,9 +67,8 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .minorErrorCode("BAD_REQUEST")
             .build();
 
-      Reference networkRef = Reference.builder().href(networkUri).build();
       try {
-         client.getNetworkClient().getNetwork(networkRef);
+         client.getNetworkClient().getNetwork(networkUri);
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -105,10 +91,8 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
 
-      Reference networkRef = Reference.builder().href(networkUri).build();
-
       try {
-         client.getNetworkClient().getNetwork(networkRef);
+         client.getNetworkClient().getNetwork(networkUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -131,10 +115,8 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
 
-      Reference networkRef = Reference.builder().href(networkUri).build();
-
       try {
-         client.getNetworkClient().getNetwork(networkRef);
+         client.getNetworkClient().getNetwork(networkUri);
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -166,10 +148,8 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
                   .build())
             .entries(ImmutableSet.of(MetadataEntry.builder().entry("key", "value").build()))
             .build();
-
-       Reference networkRef = Reference.builder().href(networkUri).build();
  
-       assertEquals(client.getNetworkClient().getMetadataClient().getMetadata(networkRef), expected);
+       assertEquals(client.getNetworkClient().getMetadataClient().getMetadata(networkUri), expected);
    }
    
    @Test(enabled=false) // No metadata in exemplar xml...
@@ -184,9 +164,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .entry("key", "value")
             .build();
 
-      Reference networkRef = Reference.builder().href(networkUri).build();
-
-      assertEquals(client.getNetworkClient().getMetadataClient().getMetadataValue(networkRef, "KEY"), expected);
+      assertEquals(client.getNetworkClient().getMetadataClient().getMetadataValue(networkUri, "KEY"), expected);
    }
 
    public static OrgNetwork orgNetwork() {

@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,11 +38,8 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
-import org.jclouds.vcloud.director.v1_5.functions.URISupplierToEndpoint;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -58,7 +57,7 @@ public interface CatalogAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Catalog> getCatalog(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier catalogRef);
+   ListenableFuture<Catalog> getCatalog(@EndpointParam URI catalogUri);
 
    /**
     * Creates a catalog item in a catalog.
@@ -69,7 +68,7 @@ public interface CatalogAsyncClient {
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<CatalogItem> addCatalogItem(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier catalogRef,
+   ListenableFuture<CatalogItem> addCatalogItem(@EndpointParam URI catalogUri,
          @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
    
    /**
@@ -79,7 +78,7 @@ public interface CatalogAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<CatalogItem> getCatalogItem(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier catalogItemRef);
+   ListenableFuture<CatalogItem> getCatalogItem(@EndpointParam URI catalogItemUri);
 
    /**
     * Modifies a catalog item.
@@ -89,7 +88,7 @@ public interface CatalogAsyncClient {
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<CatalogItem> updateCatalogItem(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier catalogItemRef,
+   ListenableFuture<CatalogItem> updateCatalogItem(@EndpointParam URI catalogItemUri,
          @BinderParam(BindToXMLPayload.class)  CatalogItem catalogItem);
 
    /**
@@ -99,10 +98,10 @@ public interface CatalogAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Void> deleteCatalogItem(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier catalogItemRef);
+   ListenableFuture<Void> deleteCatalogItem(@EndpointParam URI catalogItemUri);
 
    /**
-    * @return asynchronous access to {@link Metadata.Writeable} features
+    * @return asynchronous access to {@link Writable} features
     */
    @Delegate
    MetadataAsyncClient.Writable getMetadataClient();

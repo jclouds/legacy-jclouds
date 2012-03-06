@@ -47,8 +47,8 @@ public class OrgReferenceToTaskListEndpoint implements Function<Object, URI> {
    @Override
    public URI apply(Object input) {
       Preconditions.checkNotNull(input);
-      Preconditions.checkArgument(input instanceof URISupplier);
-      URISupplier reference = (URISupplier) input;
+      Preconditions.checkArgument(input instanceof URI);
+      URI reference = (URI) input;
       Org org = client.getOrg(reference);
       for (Link link : org.getLinks()) {
          if (link.getType().equals(VCloudDirectorMediaType.TASKS_LIST)) {

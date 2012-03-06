@@ -19,8 +19,14 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.google.common.base.Objects;
 
 
 /**
@@ -43,13 +49,38 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;/complexType>
  * </pre>
  */
-@XmlType(name = "RelocateParams", propOrder = {
+@XmlRootElement(name = "RelocateParams")
+@XmlType(propOrder = {
       "datastore"
 })
 public class RelocateParams {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder {
+      private Reference datastore;
+
+      public Builder datastore(Reference dataStore) {
+         this.datastore = dataStore;
+         return this;
+      }
+
+      public RelocateParams build() {
+         return new RelocateParams(datastore);
+      }
+   }
 
    @XmlElement(name = "Datastore", required = true)
-   protected ReferenceType<?> datastore;
+   private Reference datastore;
+
+   private RelocateParams(Reference datastore) {
+      this.datastore = checkNotNull(datastore);
+   }
+   
+   private RelocateParams() {
+      // for JAXB
+   }
 
    /**
     * Gets the value of the datastore property.
@@ -59,5 +90,26 @@ public class RelocateParams {
     */
    public ReferenceType<?> getDatastore() {
       return datastore;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      RelocateParams that = RelocateParams.class.cast(o);
+      return equal(datastore, that.datastore);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(datastore);
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("")
+            .add("datastore", datastore).toString();
    }
 }

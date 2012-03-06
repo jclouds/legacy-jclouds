@@ -21,8 +21,10 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
-import javax.xml.bind.annotation.XmlElement;
+
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
@@ -47,12 +49,12 @@ public class NetworkFeatures {
 
    public static class Builder {
 
-      private Set<NetworkService> services = Sets.newLinkedHashSet();
+      private Set<NetworkServiceType<?>> services = Sets.newLinkedHashSet();
 
       /**
        * @see NetworkFeatures#getNetworkServices()
        */
-      public Builder services(Set<NetworkService> services) {
+      public Builder services(Set<? extends NetworkServiceType<?>> services) {
          this.services = Sets.newLinkedHashSet(checkNotNull(services, "services"));
          return this;
       }
@@ -60,7 +62,7 @@ public class NetworkFeatures {
       /**
        * @see NetworkFeatures#getNetworkServices()
        */
-      public Builder service(NetworkService service) {
+      public Builder service(NetworkServiceType<?> service) {
          services.add(checkNotNull(service, "service"));
          return this;
       }
@@ -75,22 +77,22 @@ public class NetworkFeatures {
    }
 
    private NetworkFeatures() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
-   public NetworkFeatures(Set<NetworkService> services) {
-      this.services = services;
+   public NetworkFeatures(Set<? extends NetworkServiceType<?>> services) {
+      this.services = ImmutableSet.copyOf(services);
    }
 
-   @XmlElement(name = "NetworkService")
-   private Set<NetworkService> services = Sets.newLinkedHashSet();
+   @XmlElementRef
+   private Set<? extends NetworkServiceType<?>> services = Sets.newLinkedHashSet();
 
    /**
     * @return a Network service. May be any of DhcpService, NatService, IpsecVpnService,
     *         DhcpService, or StaticRoutingService.
     */
-   public Set<NetworkService> getNetworkServices() {
-      return ImmutableSet.copyOf(services);
+   public Set<? extends NetworkServiceType<?>> getNetworkServices() {
+      return Collections.unmodifiableSet(services);
    }
 
    @Override

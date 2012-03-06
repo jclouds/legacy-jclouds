@@ -69,13 +69,8 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       Catalog expected = catalog();
 
-      Reference catalogRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalog+xml")
-            .name("QunyingTestCatalog")
-            .href(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-            .build();
-      
-      assertEquals(client.getCatalogClient().getCatalog(catalogRef), expected);
+      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4");      
+      assertEquals(client.getCatalogClient().getCatalog(catalogURI), expected);
    }
 
    @Test
@@ -97,11 +92,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-      Reference catalogRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalog+xml")
-            .name("QunyingTestCatalog")
-            .href(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-            .build();
+      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"); 
       
       CatalogItem newItem = CatalogItem.builder()
             .name("newCatalogItem")
@@ -111,7 +102,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       CatalogItem expected = createdCatalogItem();
       
-      assertEquals(client.getCatalogClient().addCatalogItem(catalogRef, newItem), expected);
+      assertEquals(client.getCatalogClient().addCatalogItem(catalogURI, newItem), expected);
    }
 
    @Test
@@ -132,11 +123,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
 
-      Reference catalogRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalog+xml")
-            .name("QunyingTestCatalog")
-            .href(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-            .build();
+      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4");
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -149,7 +136,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .entries(ImmutableSet.of(metadataEntry()))
             .build();
       
-      assertEquals(client.getCatalogClient().getMetadataClient().getMetadata(catalogRef), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadata(catalogURI), expected);
    }
 
    @Test
@@ -170,15 +157,11 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
 
-      Reference catalogRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalog+xml")
-            .name("QunyingTestCatalog")
-            .href(URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-            .build();
+      URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4");
       
       MetadataValue expected = metadataValue();
       
-      assertEquals(client.getCatalogClient().getMetadataClient().getMetadataValue(catalogRef, "KEY"), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadataValue(catalogURI, "KEY"), expected);
    }
    
    @Test
@@ -199,15 +182,11 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-		Reference catalogItemReference =	Reference.builder()
-			      .type("application/vnd.vmware.vcloud.catalogItem+xml")
-			      .name("ubuntu10")
-			      .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-			      .build();
+		URI catalogItemURI =	URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
 			
 		CatalogItem expected = catalogItem();
 		
-		assertEquals(client.getCatalogClient().getCatalogItem(catalogItemReference), expected);
+		assertEquals(client.getCatalogClient().getCatalogItem(catalogItemURI), expected);
    }
 
    @Test
@@ -229,15 +208,10 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-      Reference catalogItemReference = Reference.builder()
-               .type("application/vnd.vmware.vcloud.catalogItem+xml")
-               .name("ubuntu10")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-               .build();
-         
+      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");         
       CatalogItem expected = catalogItem();
       
-      assertEquals(client.getCatalogClient().updateCatalogItem(catalogItemReference, expected), expected);
+      assertEquals(client.getCatalogClient().updateCatalogItem(catalogItemURI, expected), expected);
    }
    
    @Test
@@ -257,13 +231,9 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-      Reference catalogItemReference = Reference.builder()
-               .type("application/vnd.vmware.vcloud.catalogItem+xml")
-               .name("ubuntu10")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-               .build();
+      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
          
-      client.getCatalogClient().deleteCatalogItem(catalogItemReference);
+      client.getCatalogClient().deleteCatalogItem(catalogItemURI);
    }
 
    @Test
@@ -284,11 +254,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-      Reference catalogItemReference = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalogItem+xml")
-            .name("ubuntu10")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .build();
+      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
       
       Metadata expected = Metadata.builder()
             .type("application/vnd.vmware.vcloud.metadata+xml")
@@ -301,7 +267,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .entries(ImmutableSet.of(itemMetadataEntry()))
             .build();
       
-      assertEquals(client.getCatalogClient().getMetadataClient().getMetadata(catalogItemReference), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadata(catalogItemURI), expected);
    }
 
    @Test
@@ -323,17 +289,13 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-      Reference catalogItemReference = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalogItem+xml")
-            .name("ubuntu10")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .build();
+      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
  
       Metadata metadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
       
       Task expected = mergeMetadataTask();
       
-      assertEquals(client.getCatalogClient().getMetadataClient().mergeMetadata(catalogItemReference, metadata), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().mergeMetadata(catalogItemURI, metadata), expected);
    }
 
    @Test
@@ -353,16 +315,12 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .build();
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
-      
-      Reference catalogItemReference = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalogItem+xml")
-            .name("ubuntu10")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .build();
+
+      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
       
       MetadataValue expected = itemMetadataValue();
       
-      assertEquals(client.getCatalogClient().getMetadataClient().getMetadataValue(catalogItemReference, "KEY"), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().getMetadataValue(catalogItemURI, "KEY"), expected);
    }
 
    @Test
@@ -384,17 +342,13 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-      Reference catalogItemReference = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalogItem+xml")
-            .name("ubuntu10")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .build();
+      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
       
       MetadataValue value = MetadataValue.builder().value("KITTENS").build();
       
       Task expected = setMetadataValueTask();
       
-      assertEquals(client.getCatalogClient().getMetadataClient().setMetadata(catalogItemReference, "KEY", value), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().setMetadata(catalogItemURI, "KEY", value), expected);
    }
 
    @Test
@@ -415,15 +369,11 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-      Reference catalogItemReference = Reference.builder()
-            .type("application/vnd.vmware.vcloud.catalogItem+xml")
-            .name("ubuntu10")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-            .build();
+      URI catalogItemURI = URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
       
       Task expected = deleteMetadataEntryTask();
       
-      assertEquals(client.getCatalogClient().getMetadataClient().deleteMetadataEntry(catalogItemReference, "KEY"), expected);
+      assertEquals(client.getCatalogClient().getMetadataClient().deleteMetadataEntry(catalogItemURI, "KEY"), expected);
    }
 
    public static final Catalog catalog() {

@@ -16,25 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.functions;
+package org.jclouds.vcloud.director.v1_5.domain;
 
-import java.net.URI;
-
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
-
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
- * @author danikov
  */
-public class URISupplierToEndpoint implements Function<Object, URI> {
-
-   @Override
-   public URI apply(Object input) {
-      Preconditions.checkNotNull(input);
-      Preconditions.checkArgument(input instanceof URISupplier);
-      URISupplier provider = (URISupplier) input;
-      return provider.getURI();
-	};
+@XmlSeeAlso({
+      IpsecVpnLocalPeer.class,
+      IpsecVpnRemotePeer.class,
+      IpsecVpnThirdPartyPeer.class
+})
+public abstract class IpsecVpnPeerType<T extends IpsecVpnPeerType<T>> {
 }

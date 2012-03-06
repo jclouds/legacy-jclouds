@@ -81,7 +81,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
    public static class Builder extends SectionType.Builder<NetworkConfigSection> {
 
       private Set<Link> links = Sets.newLinkedHashSet();
-      private Set<VAppNetworkConfiguration<?>> networkConfigs = Sets.newLinkedHashSet();
+      private Set<VAppNetworkConfiguration> networkConfigs = Sets.newLinkedHashSet();
       private URI href;
       private String type;
 
@@ -96,7 +96,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       /**
        * @see NetworkConfigSection#getNetworkConfigs()
        */
-      public Builder networkConfig(Set<VAppNetworkConfiguration<?>> networkConfigs) {
+      public Builder networkConfigs(Set<VAppNetworkConfiguration> networkConfigs) {
          this.networkConfigs = checkNotNull(networkConfigs, "networkConfigs");
          return this;
       }
@@ -125,7 +125,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       public Builder fromNetworkConfigSection(NetworkConfigSection in) {
          return fromSection(in)
                .links(in.getLinks())
-               .networkConfig(in.getNetworkConfigs())
+               .networkConfigs(in.getNetworkConfigs())
                .href(in.getHref())
                .type(in.getType());
       }
@@ -157,16 +157,16 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
    }
 
    @XmlElement(name = "Link")
-   protected Set<Link> links;
+   protected Set<Link> links = Sets.newLinkedHashSet();
    @XmlElement(name = "NetworkConfig")
-   protected Set<VAppNetworkConfiguration<?>> networkConfigs;
+   protected Set<VAppNetworkConfiguration> networkConfigs = Sets.newLinkedHashSet();
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
    protected URI href;
    @XmlAttribute
    protected String type;
 
-   public NetworkConfigSection(@Nullable String info, @Nullable Boolean required, Set<Link> links, Set<VAppNetworkConfiguration<?>> networkConfigs,
+   public NetworkConfigSection(@Nullable String info, @Nullable Boolean required, Set<Link> links, Set<VAppNetworkConfiguration> networkConfigs,
                                URI href, String type) {
       super(info, required);
       this.links = ImmutableSet.copyOf(links);
@@ -189,7 +189,7 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
    /**
     * Gets the value of the networkConfig property.
     */
-   public Set<VAppNetworkConfiguration<?>> getNetworkConfigs() {
+   public Set<VAppNetworkConfiguration> getNetworkConfigs() {
       return Collections.unmodifiableSet(this.networkConfigs);
    }
 

@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -83,7 +84,7 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
    public static class Builder extends SectionType.Builder<NetworkConnectionSection> {
 
       private Integer primaryNetworkConnectionIndex;
-      private Set<NetworkConnection> networkConnection = Sets.newLinkedHashSet();
+      private Set<NetworkConnection> networkConnections = Sets.newLinkedHashSet();
       private Set<Link> links = Sets.newLinkedHashSet();
       private URI href;
       private String type;
@@ -99,8 +100,8 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
       /**
        * @see NetworkConnectionSection#getNetworkConnections()
        */
-      public Builder networkConnection(Set<NetworkConnection> networkConnection) {
-         this.networkConnection = checkNotNull(networkConnection, "networkConnection");
+      public Builder networkConnections(Set<NetworkConnection> networkConnections) {
+         this.networkConnections = checkNotNull(networkConnections, "networkConnection");
          return this;
       }
 
@@ -130,14 +131,14 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
 
 
       public NetworkConnectionSection build() {
-         return new NetworkConnectionSection(info, required, primaryNetworkConnectionIndex, networkConnection, links, href, type);
+         return new NetworkConnectionSection(info, required, primaryNetworkConnectionIndex, networkConnections, links, href, type);
 
       }
 
       public Builder fromNetworkConnectionSection(NetworkConnectionSection in) {
          return fromSection(in)
                .primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex())
-               .networkConnection(in.getNetworkConnections())
+               .networkConnections(in.getNetworkConnections())
                .links(in.getLinks())
                .href(in.getHref())
                .type(in.getType());
@@ -212,7 +213,7 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
     * {@link NetworkConnection }
     */
    public Set<NetworkConnection> getNetworkConnections() {
-      return this.networkConnections;
+      return Collections.unmodifiableSet(this.networkConnections);
    }
 
    /**
@@ -222,7 +223,7 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
     * {@link Link }
     */
    public Set<Link> getLinks() {
-      return this.links;
+      return Collections.unmodifiableSet(this.links);
    }
 
    /**
@@ -259,7 +260,8 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(primaryNetworkConnectionIndex,
+      return Objects.hashCode(super.hashCode(),
+            primaryNetworkConnectionIndex,
             networkConnections,
             links,
             href,

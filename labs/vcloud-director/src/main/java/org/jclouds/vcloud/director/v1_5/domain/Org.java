@@ -183,7 +183,7 @@ public class Org extends EntityType<Org> {
    }
 
    private Org() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    public Org(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, String fullName, Boolean enabled) {

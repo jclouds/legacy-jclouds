@@ -43,7 +43,10 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@XmlSeeAlso({QueryResultCatalogRecord.class, QueryResultNetworkRecord.class})
+@XmlSeeAlso({
+      QueryResultCatalogRecord.class,
+      QueryResultNetworkRecord.class}
+)
 public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
 
    public static <T extends QueryResultRecordType<T>> Builder<T> builder() {

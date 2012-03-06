@@ -38,9 +38,6 @@ import com.google.common.collect.Sets;
  */
 public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends BaseEnvelope<V, E>> {
 
-   /**
-    * {@inheritDoc}
-    */
    public abstract Builder<V, E> toBuilder();
 
    public static abstract class Builder<V extends BaseVirtualSystem<V>, E extends BaseEnvelope<V, E>> {
@@ -109,9 +106,6 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
          return this;
       }
 
-      /**
-       * {@inheritDoc}
-       */
       @SuppressWarnings("unchecked")
       public abstract E build() ;
 

@@ -39,7 +39,8 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class ThrowVCloudErrorOn4xx implements Function<Exception, Object> {
    @Inject
-   private ThrowVCloudErrorOn4xx() { }
+   private ThrowVCloudErrorOn4xx() {
+   }
 
    @Override
    public Object apply(Exception from) {

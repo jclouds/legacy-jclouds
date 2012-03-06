@@ -18,13 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 
 /**
  * Provides synchronous access to Upload.
@@ -42,14 +42,14 @@ public interface MetadataClient {
        * 
        * @return a list of metadata
        */
-      Metadata getMetadata(URISupplier parentRef);
+      Metadata getMetadata(URI uri);
       
       /**
        * Retrieves a metadata value
        * 
        * @return the metadata value, or null if not found
        */
-      MetadataValue getMetadataValue(URISupplier parentRef, String key);
+      MetadataValue getMetadataValue(URI uri, String key);
    }
    
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
@@ -60,7 +60,7 @@ public interface MetadataClient {
        * @return a task. This operation is asynchronous and the user should monitor the returned 
        * task status in order to check when it is completed.
        */
-      Task mergeMetadata(URISupplier parentRef, Metadata metadata);
+      Task mergeMetadata(URI uri, Metadata metadata);
 
       /**
        * Sets the metadata for the particular key for the media to the value provided. 
@@ -69,7 +69,7 @@ public interface MetadataClient {
        * @return a task. This operation is asynchronous and the user should monitor the returned 
        * task status in order to check when it is completed.
        */
-      Task setMetadata(URISupplier parentRef, String key, MetadataValue metadataValue);
+      Task setMetadata(URI uri, String key, MetadataValue metadataValue);
       
       /**
        * Deletes a metadata entry.
@@ -77,6 +77,6 @@ public interface MetadataClient {
        * @return a task. This operation is asynchronous and the user should monitor the returned 
        * task status in order to check when it is completed.
        */
-      Task deleteMetadataEntry(URISupplier parentRef, String key);
+      Task deleteMetadataEntry(URI uri, String key);
    }
 }

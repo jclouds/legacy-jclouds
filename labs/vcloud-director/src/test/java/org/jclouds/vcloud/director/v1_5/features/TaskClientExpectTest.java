@@ -32,7 +32,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -86,9 +85,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
               .task(taskTwo())
               .build();
 
-      Reference orgRef = Reference.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")).build();
-      
-      assertEquals(client.getTaskClient().getTaskList(orgRef), expected);
+      assertEquals(client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")), expected);
    }
 
    @Test
@@ -126,10 +123,8 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .minorErrorCode("BAD_REQUEST")
             .build();
 
-      Reference orgRef = Reference.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/org/NOTAUUID")).build();
-      
       try {
-         client.getTaskClient().getTaskList(orgRef);
+         client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/NOTAUUID"));
          fail("Should give HTTP 400 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
@@ -173,10 +168,8 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 				.minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
 				.build();
 
-      Reference orgRef = Reference.builder().href(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")).build();
-
 		try {
-			client.getTaskClient().getTaskList(orgRef);
+			client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"));
 			fail("Should give HTTP 403 error");
 		} catch (VCloudDirectorException vde) {
 			assertEquals(vde.getError(), expected);
@@ -203,7 +196,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
-      URISupplier taskUri = URISupplier.SingleURI.fromURI(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"));
+      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
       
       Task expected = taskOne();
 
@@ -227,7 +220,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
-      URISupplier taskUri = URISupplier.SingleURI.fromURI(URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b"));
+      URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
       
       client.getTaskClient().cancelTask(taskUri);
    }

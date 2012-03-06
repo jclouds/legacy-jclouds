@@ -129,7 +129,7 @@ public class CloneMediaParams
    }
 
    private CloneMediaParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

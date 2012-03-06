@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelocateParams
+        xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Datastore
+            href="https://vcloud.example.com/api/admin/extension/datastore/607"/>
+</RelocateParams>

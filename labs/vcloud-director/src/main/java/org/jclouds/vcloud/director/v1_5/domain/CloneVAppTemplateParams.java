@@ -111,7 +111,7 @@ public class CloneVAppTemplateParams
    }
 
    private CloneVAppTemplateParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

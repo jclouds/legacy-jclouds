@@ -109,21 +109,21 @@ public class VCloudDirectorMediaType {
 
    public static final String VAPP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
 
-   public static final String CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.customizationSection+xml";
 
-   public static final String GUEST_CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String GUEST_CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.guestCustomizationSection+xml";
 
-   public static final String NETWORK_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String NETWORK_SECTION = "application/vnd.vmware.vcloud.networkSection+xml";
 
-   public static final String NETWORK_CONFIG_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String NETWORK_CONFIG_SECTION = "application/vnd.vmware.vcloud.networkConfigSection+xml";
 
-   public static final String NETWORK_CONNECTION_SECTION = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String NETWORK_CONNECTION_SECTION = "application/vnd.vmware.vcloud.networkConnectionSection+xml";
    
-   public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.productSection+xml";
 
    public static final String RELOCATE_TEMPLATE = "application/vnd.vmware.vcloud.relocateTemplate+xml";
 
-   public static final String LEASE_SETTINGS_SECTION =  "application/vnd.vmware.vcloud.leastSettingsSection+xml";
+   public static final String LEASE_SETTINGS_SECTION =  "application/vnd.vmware.vcloud.leaseSettingsSection+xml";
    
    public static final String ENVELOPE =  "application/vnd.???";
    

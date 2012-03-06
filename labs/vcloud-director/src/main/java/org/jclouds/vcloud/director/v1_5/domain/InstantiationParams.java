@@ -22,10 +22,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
-import javax.xml.bind.JAXBElement;
+
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
@@ -97,7 +96,7 @@ public class InstantiationParams {
    }
 
    private InstantiationParams() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    private InstantiationParams(Set<? extends SectionType<?>> sections) {
@@ -105,7 +104,7 @@ public class InstantiationParams {
    }
 
 
-   @XmlElementRef(name = "Section", namespace = "http://schemas.dmtf.org/ovf/envelope/1", type = JAXBElement.class)
+   @XmlElementRef
    protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
 
    /**
@@ -113,42 +112,28 @@ public class InstantiationParams {
     * <p/>
     * Gets the value of the section property.
     * <p/>
-    * <p/>
-    * This accessor method returns a reference to the live list,
-    * not a snapshot. Therefore any modification you make to the
-    * returned list will be present inside the JAXB object.
-    * This is why there is not a <CODE>set</CODE> method for the section property.
-    * <p/>
-    * <p/>
-    * For example, to add a new item, do as follows:
-    * <pre>
-    *    getSection().add(newItem);
-    * </pre>
-    * <p/>
-    * <p/>
-    * <p/>
     * Objects of the following type(s) are allowed in the list
-    * {@link JAXBElement }{@code <}{@link SectionType }{@code >}
-    * {@link JAXBElement }{@code <}{@link VirtualHardwareSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link LeaseSettingsSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link EulaSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link RuntimeInfoSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link AnnotationSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link DeploymentOptionSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link StartupSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link ResourceAllocationSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link NetworkConnectionSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link CustomizationSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link ProductSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link GuestCustomizationSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link org.jclouds.ovf.OperatingSystemSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link NetworkConfigSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link NetworkSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link DiskSection }{@code >}
-    * {@link JAXBElement }{@code <}{@link InstallSection }{@code >}
+    * {@link SectionType }
+    * {@link VirtualHardwareSection }
+    * {@link LeaseSettingsSection }
+    * {@link EulaSection }
+    * {@link RuntimeInfoSection }
+    * {@link AnnotationSection }
+    * {@link DeploymentOptionSection }
+    * {@link StartupSection }
+    * {@link ResourceAllocationSection }
+    * {@link NetworkConnectionSection }
+    * {@link CustomizationSection }
+    * {@link ProductSection }
+    * {@link GuestCustomizationSection }
+    * {@link org.jclouds.ovf.OperatingSystemSection }
+    * {@link NetworkConfigSection }
+    * {@link NetworkSection }
+    * {@link DiskSection }
+    * {@link InstallSection }
     */
    public Set<? extends SectionType<?>> getSections() {
-      return this.sections;
+      return Collections.unmodifiableSet(this.sections);
    }
 
    @Override

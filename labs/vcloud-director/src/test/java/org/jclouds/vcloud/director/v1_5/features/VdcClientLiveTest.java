@@ -18,30 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.*;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -63,26 +47,21 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    protected VdcClient vdcClient;
 
-   private Reference vdcRef;
+   private URI vdcURI;
    
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() {
-      vdcRef = Reference.builder()
-            .type("application/vnd.vmware.vcloud.vdc+xml")
-            .name("")
-            .href(URI.create(endpoint+"/vdc/"+vdcId)) 
-            .id(vdcId)
-            .build();
+      vdcURI = URI.create(endpoint+"/vdc/"+vdcId);
       vdcClient = context.getApi().getVdcClient();
    }
    
    @Test(testName = "GET /vdc/{id}")
    public void testGetVdc() {
       // required for testing
-      assertNotNull(vdcRef, String.format(REF_REQ_LIVE, VDC));
+      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
        
-      Vdc vdc = vdcClient.getVdc(vdcRef);
+      Vdc vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
       assertTrue(!vdc.getDescription().equals("DO NOT USE"), "vDC isn't to be used for testing");
        
@@ -127,12 +106,12 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "POST /vdc/{id}/action/captureVApp", enabled = false)
    public void testCaptureVApp() {
       Reference templateSource = null; // TODO: vApp reference
-      VAppTemplate template = vdcClient.captureVApp(vdcRef, CaptureVAppParams.builder()
+      VAppTemplate template = vdcClient.captureVApp(vdcURI, CaptureVAppParams.builder()
             .source(templateSource)
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.sections(sections) // TODO: ovf sections
+                  // TODO: test optional params
+                  //.name("")
+                  //.description("")
+                  //.sections(sections) // TODO: ovf sections
             .build());
       
       Checks.checkVAppTemplate(template);
@@ -144,21 +123,21 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "POST /vdc/{id}/action/cloneVApp", enabled = false)
    public void testCloneVApp() {
       Reference vAppSource = null; // TODO: vApp reference
-      VApp vApp = vdcClient.cloneVApp(vdcRef, CloneVAppParams.builder()
+      VApp vApp = vdcClient.cloneVApp(vdcURI, CloneVAppParams.builder()
             .source(vAppSource)
-            // TODO: test optional params
-            //.name("") 
-            //.description("")
-            //.deploy(true)
-            //.isSourceDelete(true)
-            //.powerOn(true)
-            //.instantiationParams(InstantiationParams.builder()
-            //      .sections(sections) // TODO: ovf sections? various tests?
-            //      .build())
-            
-            // Reserved. Unimplemented params; may test eventually when implemented
-            //.vAppParent(vAppParentRef)
-            //.linkedClone(true)
+                  // TODO: test optional params
+                  //.name("") 
+                  //.description("")
+                  //.deploy(true)
+                  //.isSourceDelete(true)
+                  //.powerOn(true)
+                  //.instantiationParams(InstantiationParams.builder()
+                  //      .sections(sections) // TODO: ovf sections? various tests?
+                  //      .build())
+
+                  // Reserved. Unimplemented params; may test eventually when implemented
+                  //.vAppParent(vAppParentRef)
+                  //.linkedClone(true)
             .build());
       
       Checks.checkVApp(vApp);
@@ -170,13 +149,13 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "POST /vdc/{id}/action/cloneVAppTemplate", enabled = false)
    public void testCloneVAppTemplate() {
       Reference templateSource = null; // TODO: vAppTemplate reference
-      VAppTemplate template = vdcClient.cloneVAppTemplate(vdcRef, CloneVAppTemplateParams.builder()
+      VAppTemplate template = vdcClient.cloneVAppTemplate(vdcURI, CloneVAppTemplateParams.builder()
             .source(templateSource)
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.isSourceDelete(true)
-            //.sections(sections) // TODO: ovf sections
+                  // TODO: test optional params
+                  //.name("")
+                  //.description("")
+                  //.isSourceDelete(true)
+                  //.sections(sections) // TODO: ovf sections
             .build());
       
       Checks.checkVAppTemplate(template);
@@ -187,7 +166,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "POST /vdc/{id}/action/composeVApp", enabled = false)
    public void testComposeVApp() {
-      VApp vApp = vdcClient.composeVApp(vdcRef, ComposeVAppParams.builder()
+      VApp vApp = vdcClient.composeVApp(vdcURI, ComposeVAppParams.builder()
             // TODO: test optional params
             //.name("") 
             //.description("")
@@ -197,7 +176,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             //.instantiationParams(InstantiationParams.builder()
             //      .sections(sections) // TODO: ovf sections? various tests?
             //      .build())
-            
+
             // Reserved. Unimplemented params; may test eventually when implemented
             //.linkedClone()
             .build());
@@ -211,12 +190,12 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "POST /vdc/{id}/action/instantiateVAppTemplate", enabled = false)
    public void testInstantiateVAppTemplate() {
       Reference templateSource = null; // TODO: vApp or vAppTemplate reference
-      VApp vApp = vdcClient.instantiateVApp(vdcRef, InstantiateVAppParams.builder()
+      VApp vApp = vdcClient.instantiateVApp(vdcURI, InstantiateVAppParams.builder()
             .source(templateSource)
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.isSourceDelete(true)
+                  // TODO: test optional params
+                  //.name("")
+                  //.description("")
+                  //.isSourceDelete(true)
             .build());
       
       Checks.checkVApp(vApp);
@@ -227,7 +206,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "POST /vdc/{id}/action/uploadVAppTemplate", enabled = false)
    public void testUploadVAppTemplate() {
-      VAppTemplate template = vdcClient.uploadVAppTemplate(vdcRef, UploadVAppTemplateParams.builder()
+      VAppTemplate template = vdcClient.uploadVAppTemplate(vdcURI, UploadVAppTemplateParams.builder()
             // TODO: test optional params
             //.name("")
             //.description("")
@@ -243,7 +222,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata", enabled = false)
    public void testGetMetadata() {
-      Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcRef);
+      Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
             String.format(OBJ_FIELD_REQ_LIVE, VDC, "metadata.entries"));
@@ -253,7 +232,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /network/{id}/metadata/{key}", enabled = false)
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = vdcClient.getMetadataClient().getMetadataValue(vdcRef, "key");
+      MetadataValue metadataValue = vdcClient.getMetadataClient().getMetadataValue(vdcURI, "key");
       
       Checks.checkMetadataValueFor(VDC, metadataValue);
    }

@@ -32,6 +32,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -86,11 +87,11 @@ public class CatalogItems {
    }
 
    private CatalogItems() {
-      // For JAXB and builder use
+      // For JAXB
    }
 
    private CatalogItems(Set<Reference> catalogItems) {
-      this.catalogItems = catalogItems;
+      this.catalogItems = ImmutableSet.copyOf(catalogItems);
    }
 
    @XmlElement(name = "CatalogItem")

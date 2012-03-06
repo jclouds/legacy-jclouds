@@ -97,7 +97,7 @@ public class NetworkAssignment
    }
 
    private NetworkAssignment() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
 

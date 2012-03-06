@@ -140,7 +140,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
    }
 
    private MetadataEntry() {
-      // For JAXB and builder use
+      // for JAXB
    }
 
    public MetadataEntry(URI href, String type, Set<Link> links, String key, String value) {

@@ -1,0 +1,64 @@
+<NetworkConfigSection
+        xmlns="http://www.vmware.com/vcloud/v1.5"
+        xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
+    <ovf:Info>Configuration parameters for logical networks</ovf:Info>
+    <NetworkConfig networkName="vAppNetwork">
+        <Configuration>
+            <IpScope>
+                <IsInherited>false</IsInherited>
+                <Gateway>10.147.56.253</Gateway>
+                <Netmask>255.255.255.0</Netmask>
+                <Dns1>10.147.115.1</Dns1>
+                <Dns2>10.147.115.2</Dns2>
+                <DnsSuffix>example.com</DnsSuffix>
+                <IpRanges>
+                    <IpRange>
+                        <StartAddress>10.147.56.1</StartAddress>
+                        <EndAddress>10.147.56.1</EndAddress>
+                    </IpRange>
+                </IpRanges>
+            </IpScope>
+            <ParentNetwork type="application/vnd.vmware.vcloud.network+xml" name="Internet"
+                           href="http://vcloud.example.com/api/v1.0/network/54"/>
+            <FenceMode>natRouted</FenceMode>
+            <Features>
+                <FirewallService>
+                    <IsEnabled>true</IsEnabled>
+                    <FirewallRule>
+                        <IsEnabled>true</IsEnabled>
+                        <Description>FTP Rule</Description>
+                        <Policy>allow</Policy>
+                        <Protocols>
+                            <Tcp>true</Tcp>
+                        </Protocols>
+                        <Port>21</Port>
+                        <DestinationIp>10.147.115.1</DestinationIp>
+                    </FirewallRule>
+                    <FirewallRule>
+                        <IsEnabled>true</IsEnabled>
+                        <Description>SSH Rule</Description>
+                        <Policy>allow</Policy>
+                        <Protocols>
+                            <Tcp>true</Tcp>
+                        </Protocols>
+                        <Port>22</Port>
+                        <DestinationIp>10.147.115.1</DestinationIp>
+                    </FirewallRule>
+                </FirewallService>
+                <NatService>
+                    <IsEnabled>true</IsEnabled>
+                    <NatType>ipTranslation</NatType>
+                    <Policy>allowTraffic</Policy>
+                    <NatRule>
+                        <OneToOneVmRule>
+                            <MappingMode>manual</MappingMode>
+                            <ExternalIpAddress>64.100.10.1</ExternalIpAddress>
+                            <VAppScopedVmId>20ea086f-1a6a-4fb2-8e2e-23372facf7de</VAppScopedVmId>
+                            <VmNicId>0</VmNicId>
+                        </OneToOneVmRule>
+                    </NatRule>
+                </NatService>
+            </Features>
+        </Configuration>
+    </NetworkConfig>
+</NetworkConfigSection>

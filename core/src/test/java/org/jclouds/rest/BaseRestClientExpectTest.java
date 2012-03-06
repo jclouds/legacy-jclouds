@@ -43,6 +43,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceConstants;
 import org.custommonkey.xmlunit.DifferenceListener;
+import org.custommonkey.xmlunit.NodeDetail;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
@@ -378,12 +379,21 @@ public abstract class BaseRestClientExpectTest<S> {
                Diff diff = XMLUnit.compareXML(Strings2.toStringAndClose(a.getPayload().getInput()),
                                               Strings2.toStringAndClose(b.getPayload().getInput()));
                
-               // Ignoring xsi:schemaLocation and differences in namespace prefixes
+               // Ignoring whitespace in elements that have other children, xsi:schemaLocation and differences in namespace prefixes
                diff.overrideDifferenceListener(new DifferenceListener() {
                   @Override
-                  public int differenceFound(Difference difference) {
-                     if (difference.getId() == DifferenceConstants.SCHEMA_LOCATION_ID ||
-                         difference.getId() == DifferenceConstants.NAMESPACE_PREFIX_ID) {
+                  public int differenceFound(Difference diff) {
+                     if (diff.getId() == DifferenceConstants.SCHEMA_LOCATION_ID ||
+                         diff.getId() == DifferenceConstants.NAMESPACE_PREFIX_ID) {
+                        return RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
+                     }
+                     if (diff.getId() == DifferenceConstants.TEXT_VALUE_ID) {
+                        for (NodeDetail detail : ImmutableSet.of(diff.getControlNodeDetail(), diff.getTestNodeDetail())) {
+                           if (detail.getNode().getParentNode().getChildNodes().getLength() < 2 ||
+                               !detail.getValue().trim().isEmpty()) {
+                              return RETURN_ACCEPT_DIFFERENCE;
+                           }
+                        }
                         return RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
                      }
                      return RETURN_ACCEPT_DIFFERENCE;

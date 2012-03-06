@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.vcloud.director.v1_5.features;
- 
+
+import java.net.URI;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -32,22 +34,9 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
-import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.*;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
-import org.jclouds.vcloud.director.v1_5.functions.URISupplierToEndpoint;
 
 import com.google.common.util.concurrent.ListenableFuture;
  
@@ -60,16 +49,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface VdcAsyncClient {
  
    /**
-    * @see VdcClient#getVdc(URISupplier)
+    * @see VdcClient#getVdc(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Vdc> getVdc(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef);
+   ListenableFuture<Vdc> getVdc(@EndpointParam URI vdcURI);
    
    /**
-    * @see VdcClient#captureVApp(URISupplier, CaptureVAppParams)
+    * @see VdcClient#captureVApp(URI, CaptureVAppParams)
     */
    @POST
    @Path("/action/captureVApp")
@@ -77,11 +66,11 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VAppTemplate> captureVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<VAppTemplate> captureVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CaptureVAppParams params);
    
    /**
-    * @see VdcClient#cloneMedia(URISupplier, CloneMediaParams)
+    * @see VdcClient#cloneMedia(URI, CloneMediaParams)
     */
    @POST
    @Path("/action/cloneMedia")
@@ -89,11 +78,11 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Media> cloneMedia(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<Media> cloneMedia(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
    
    /**
-    * @see VdcClient#cloneVApp(URISupplier, CloneVAppParams)
+    * @see VdcClient#cloneVApp(URI, CloneVAppParams)
     */
    @POST
    @Path("/action/cloneVApp")
@@ -101,11 +90,11 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.CLONE_V_APP_PARAMS) //TODO fix these etc.
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VApp> cloneVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<VApp> cloneVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CloneVAppParams params);
    
    /**
-    * @see VdcClient#cloneVAppTemplate(URISupplier, CloneVAppTemplateParams)
+    * @see VdcClient#cloneVAppTemplate(URI, CloneVAppTemplateParams)
     */
    @POST
    @Path("/action/cloneVAppTemplate")
@@ -113,11 +102,11 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.CLONE_V_APP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CloneVAppTemplateParams params);
    
    /**
-    * @see VdcClient#composeVApp(URISupplier, ComposeVAppParams)
+    * @see VdcClient#composeVApp(URI, ComposeVAppParams)
     */
    @POST
    @Path("/action/composeVApp")
@@ -125,11 +114,11 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VApp> composeVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<VApp> composeVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) ComposeVAppParams params);
    
    /**
-    * @see VdcClient#instantiateVApp(URISupplier, InstantiateVAppParamsType)
+    * @see VdcClient#instantiateVApp(URI, InstantiateVAppParamsType)
     */
    @POST
    @Path("/action/instantiateVApp")
@@ -137,11 +126,11 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VApp> instantiateVApp(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<VApp> instantiateVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) InstantiateVAppParamsType<?> params);
    
    /**
-    * @see VdcClient#uploadVAppTemplate(URISupplier, UploadVAppTemplateParams)
+    * @see VdcClient#uploadVAppTemplate(URI, UploadVAppTemplateParams)
     */
    @POST
    @Path("/action/uploadVAppTemplate")
@@ -149,11 +138,11 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.UPLOAD_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VAppTemplate> uploadVAppTemplate(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<VAppTemplate> uploadVAppTemplate(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) UploadVAppTemplateParams params);
    
    /**
-    * @see VdcClient#createMedia(URISupplier, Media)
+    * @see VdcClient#createMedia(URI, Media)
     */
    @POST
    @Path("/media")
@@ -161,7 +150,7 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Media> createMedia(@EndpointParam(parser = URISupplierToEndpoint.class) URISupplier vdcRef,
+   ListenableFuture<Media> createMedia(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) Media media);
     
    /**
