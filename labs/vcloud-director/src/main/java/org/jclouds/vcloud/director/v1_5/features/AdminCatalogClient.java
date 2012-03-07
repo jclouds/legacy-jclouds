@@ -92,4 +92,7 @@ public interface AdminCatalogClient {
     * Publish a catalog. Publishing a catalog makes the catalog visible to all organizations in a vCloud.
     */
    void publishCatalog(URI catalogRef, PublishCatalogParams params);
+   
+   //TODO: lot of work to pass in a single boolean, would like to polymorphically include something like:
+   //void publishCatalog(URI catalogRef)
 }
