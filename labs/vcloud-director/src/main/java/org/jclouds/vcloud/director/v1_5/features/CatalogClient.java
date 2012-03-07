@@ -25,6 +25,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
+import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 
 /**
@@ -46,7 +47,7 @@ public interface CatalogClient {
     * @param catalogUri the reference for the catalog
     * @return a catalog
     */
-   Catalog getCatalog(URI catalogUri);
+   CatalogType<?> getCatalog(URI catalogUri);
 
    /**
     * Creates a catalog item in a catalog.

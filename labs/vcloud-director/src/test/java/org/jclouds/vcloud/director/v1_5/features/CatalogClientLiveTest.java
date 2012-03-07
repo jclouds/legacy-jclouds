@@ -34,8 +34,8 @@ import static org.testng.Assert.fail;
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
+import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
@@ -74,7 +74,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private ReferenceType<?> catalogRef;
    private ReferenceType<?> catalogItemRef;
    private ReferenceType<?> newCatalogItemRef;
-   private Catalog catalog;
+   private CatalogType<?> catalog;
    private CatalogItem catalogItem;
    private CatalogItem newCatalogItem;
    private Metadata catalogMetadata;
@@ -123,7 +123,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /catalogItem/{id}", dependsOnMethods = { "testAddCatalogItem" }, enabled = false)
    public void testUpdateCatalogItem() {
-      Catalog catalog = catalogClient.getCatalog(catalogRef.getHref());
+      CatalogType<?> catalog = catalogClient.getCatalog(catalogRef.getHref());
       newCatalogItemRef = Iterables.find(catalog.getCatalogItems().getCatalogItems(), new Predicate<Reference>() {
          @Override
          public boolean apply(Reference input) {

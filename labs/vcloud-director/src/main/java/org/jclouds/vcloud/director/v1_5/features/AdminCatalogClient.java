@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 
 /**
  * Provides synchronous access to {@link AdminCatalog} objects.
@@ -32,7 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Owner;
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AdminCatalogClient {
+public interface AdminCatalogClient extends CatalogClient {
 
    /**
     * Retrieves a catalog.
@@ -44,6 +45,7 @@ public interface AdminCatalogClient {
     * @param catalogRef the reference for the catalog
     * @return a catalog
     */
+   @Override
    AdminCatalog getCatalog(URI catalogRef);
    
    /**
@@ -86,4 +88,12 @@ public interface AdminCatalogClient {
     * </pre>
     */
    void setOwner(URI catalogRef, Owner newOwner);
+   
+   /**
+    * Publish a catalog. Publishing a catalog makes the catalog visible to all organizations in a vCloud.
+    */
+   void publishCatalog(URI catalogRef, PublishCatalogParams params);
+   
+   //TODO: lot of work to pass in a single boolean, would like to polymorphically include something like:
+   //void publishCatalog(URI catalogRef)
 }
