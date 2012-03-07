@@ -109,6 +109,24 @@ public class Group extends EntityType<Group> {
          return new Group(href, type, links, description, tasksInProgress, id, name, 
                nameInSource, usersList, role);
       }
+      
+      /**
+       * @see EntityType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         super.name(name);
+         return this;
+      }
+      
+      /**
+       * @see EntityType#getDescription()
+       */
+      @Override
+      public Builder description(String idname) {
+         super.description(name);
+         return this;
+      }
 
       /**
        * @see EntityType#getId()
