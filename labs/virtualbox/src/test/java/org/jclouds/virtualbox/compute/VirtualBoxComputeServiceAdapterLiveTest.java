@@ -22,6 +22,8 @@ package org.jclouds.virtualbox.compute;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 import static org.testng.Assert.assertEquals;
 
+import javax.inject.Inject;
+
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Image;
@@ -37,34 +39,21 @@ import com.google.common.collect.Iterables;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
-
+   @Inject
    private VirtualBoxComputeServiceAdapter adapter;
+
    private NodeAndInitialCredentials<IMachine> machine;
 
-   @Override
-   public void setupClient() {
-      super.setupClient();
-      adapter = context.utils().injector().getInstance(VirtualBoxComputeServiceAdapter.class);
-   }
-
    @Test
-   public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
+   public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
       String group = "foo";
       String name = "foo-ef4";
       String machineName = VIRTUALBOX_NODE_PREFIX + "myTestId-" + group + "-" + name;
-      // get the image from
-      Image image = Iterables.get(adapter.listImages(), 0);
-      System.out.println(context.getComputeService().templateBuilder());
-      Template template = context.getComputeService().templateBuilder().fromImage(image).build();
+
+      Template template = context.getComputeService().templateBuilder().build();
       machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
+      
       assertEquals(machine.getNode().getName(), machineName);
-      // is there a place for group?
-      // check other things, like cpu correct, mem correct, image/os is correct
-      // (as possible)
-      // TODO: what's the IP address?
-      // assert
-      // InetAddresses.isInetAddress(machine.getPrimaryBackendIpAddress()) :
-      // machine;
       doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
    }
 
@@ -87,15 +76,14 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    public void testListHardwareProfiles() {
       Iterable<IMachine> profiles = adapter.listHardwareProfiles();
       assertEquals(1, Iterables.size(profiles));
+      //TODO: check state;
    }
 
    @Test
    public void testListImages() {
       Iterable<Image> iMageIterable = adapter.listImages();
-      for (Image image : iMageIterable) {
-         System.out.println(image);
-      }
-      // check state;
+      assertEquals(1, Iterables.size(iMageIterable));
+      //TODO: check state;
    }
 
    @Override

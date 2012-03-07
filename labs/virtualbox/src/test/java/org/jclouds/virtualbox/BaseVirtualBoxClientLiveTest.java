@@ -23,6 +23,9 @@ import java.io.File;
 import java.net.URI;
 import java.util.Properties;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jclouds.Constants;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.config.CacheNodeStoreModule;
@@ -31,9 +34,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
-import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
@@ -57,9 +58,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VirtualBoxClient}
@@ -71,19 +70,37 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    public BaseVirtualBoxClientLiveTest() {
       provider = "virtualbox";
    }
-
+   
    protected ComputeServiceContext context;
+   
+   @Inject
    protected Supplier<VirtualBoxManager> manager;
+   
+   @Inject
+   void eagerlyStartManager(Supplier<VirtualBoxManager> manager){
+      this.manager = manager;
+      manager.get();
+   }
+   
+   @Inject
    protected MachineUtils machineUtils;
+
+   // this will eagerly startup Jetty, note the impl will shut itself down
+   @Inject
+   @Preconfiguration
    protected LoadingCache<IsoSpec, URI> preconfigurationUri;
+   
    protected String hostVersion;
    protected String operatingSystemIso;
    protected String guestAdditionsIso;
+   @Inject
+   @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR)
    protected String workingDir;
    protected String isosDir;
+   @Inject
    protected Supplier<NodeMetadata> host;
-   protected static final PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate = new PrioritizeCredentialsFromTemplate(
-            new DefaultCredentialsFromImageOrOverridingCredentials());
+   @Inject
+   protected PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
 
    @Override
    protected void setupCredentials() {
@@ -117,31 +134,14 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
-      Function<String, String> configProperties = context.utils().injector()
-               .getInstance(ValueOfConfigurationKeyOrNull.class);
+      context.utils().injector().injectMembers(this);
+      
       imageId = "ubuntu-11.04-server-i386";
-      workingDir = configProperties.apply(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR);
       isosDir = workingDir + File.separator + "isos";
       File isosDirFile = new File(isosDir);
       if (!isosDirFile.exists()) {
          isosDirFile.mkdirs();
       }
-      host = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<NodeMetadata>>() {
-      }));
-
-      // this will eagerly startup Jetty, note the impl will shut itself down
-      preconfigurationUri = context.utils().injector()
-               .getInstance(Key.get(new TypeLiteral<LoadingCache<IsoSpec, URI>>() {
-               }, Preconfiguration.class));
-      // this will eagerly startup Jetty, note the impl will shut itself down
-
-      manager = context.utils().injector().getInstance(Key.get(new TypeLiteral<Supplier<VirtualBoxManager>>() {
-      }));
-      // this will eagerly startup vbox
-      manager.get();
-
-      machineUtils = context.utils().injector().getInstance(MachineUtils.class);
-
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
