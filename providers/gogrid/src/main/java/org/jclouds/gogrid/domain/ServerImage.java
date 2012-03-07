@@ -18,9 +18,13 @@
  */
 package org.jclouds.gogrid.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.toStringHelper;
+
 import java.util.Date;
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.common.primitives.Longs;
 import com.google.gson.annotations.SerializedName;
 
@@ -53,10 +57,9 @@ public class ServerImage implements Comparable<ServerImage> {
    public ServerImage() {
    }
 
-   public ServerImage(long id, String name, String friendlyName, String description, Option os,
-            Option architecture, ServerImageType type, ServerImageState state, double price,
-            String location, boolean active, boolean aPublic, Date createdTime, Date updatedTime,
-            Set<BillingToken> billingTokens, Customer owner) {
+   public ServerImage(long id, String name, String friendlyName, String description, Option os, Option architecture,
+            ServerImageType type, ServerImageState state, double price, String location, boolean active,
+            boolean aPublic, Date createdTime, Date updatedTime, Set<BillingToken> billingTokens, Customer owner) {
       this.id = id;
       this.name = name;
       this.friendlyName = friendlyName;
@@ -142,88 +145,38 @@ public class ServerImage implements Comparable<ServerImage> {
    }
 
    @Override
-   public boolean equals(Object o) {
-      if (this == o)
+   public boolean equals(Object object) {
+      if (this == object) {
          return true;
-      if (o == null || getClass() != o.getClass())
+      }
+      if (object instanceof ServerImage) {
+         final ServerImage other = ServerImage.class.cast(object);
+         return equal(id, other.id) && equal(name, other.name);
+      } else {
          return false;
-
-      ServerImage that = (ServerImage) o;
-
-      if (id != that.id)
-         return false;
-      if (isActive != that.isActive)
-         return false;
-      if (isPublic != that.isPublic)
-         return false;
-      if (Double.compare(that.price, price) != 0)
-         return false;
-      if (architecture != null ? !architecture.equals(that.architecture)
-               : that.architecture != null)
-         return false;
-      if (billingTokens != null ? !billingTokens.equals(that.billingTokens)
-               : that.billingTokens != null)
-         return false;
-      if (!createdTime.equals(that.createdTime))
-         return false;
-      if (description != null ? !description.equals(that.description) : that.description != null)
-         return false;
-      if (friendlyName != null ? !friendlyName.equals(that.friendlyName)
-               : that.friendlyName != null)
-         return false;
-      if (location != null ? !location.equals(that.location) : that.location != null)
-         return false;
-      if (!name.equals(that.name))
-         return false;
-      if (!os.equals(that.os))
-         return false;
-      if (owner != null ? !owner.equals(that.owner) : that.owner != null)
-         return false;
-      if (!state.equals(that.state))
-         return false;
-      if (!type.equals(that.type))
-         return false;
-      if (updatedTime != null ? !updatedTime.equals(that.updatedTime) : that.updatedTime != null)
-         return false;
-
-      return true;
+      }
    }
 
    @Override
    public int hashCode() {
-      int result;
-      long temp;
-      result = (int) (id ^ (id >>> 32));
-      result = 31 * result + name.hashCode();
-      result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
-      result = 31 * result + (description != null ? description.hashCode() : 0);
-      result = 31 * result + os.hashCode();
-      result = 31 * result + type.hashCode();
-      result = 31 * result + state.hashCode();
-      temp = price != +0.0d ? Double.doubleToLongBits(price) : 0L;
-      result = 31 * result + (int) (temp ^ (temp >>> 32));
-      result = 31 * result + (location != null ? location.hashCode() : 0);
-      result = 31 * result + (isActive ? 1 : 0);
-      result = 31 * result + (isPublic ? 1 : 0);
-      result = 31 * result + createdTime.hashCode();
-      result = 31 * result + (updatedTime != null ? updatedTime.hashCode() : 0);
-      result = 31 * result + (billingTokens != null ? billingTokens.hashCode() : 0);
-      result = 31 * result + (owner != null ? owner.hashCode() : 0);
-      return result;
+      return Objects.hashCode(id, name);
    }
 
    @Override
-   public int compareTo(ServerImage o) {
-      return Longs.compare(id, o.getId());
+   public int compareTo(ServerImage that) {
+      if (that == null)
+         return 1;
+      if (this == that)
+         return 0;
+      return Longs.compare(id, that.getId());
    }
 
    @Override
    public String toString() {
-      return "ServerImage{" + "id=" + id + ", name='" + name + '\'' + ", friendlyName='"
-               + friendlyName + '\'' + ", description='" + description + '\'' + ", os=" + os
-               + ", architecture=" + architecture + ", type=" + type + ", state=" + state
-               + ", price=" + price + ", location='" + location + '\'' + ", isActive=" + isActive
-               + ", isPublic=" + isPublic + ", createdTime=" + createdTime + ", updatedTime="
-               + updatedTime + ", billingTokens=" + billingTokens + ", owner=" + owner + '}';
+      return toStringHelper("").add("id", id).add("name", name).add("friendlyName", friendlyName).add("friendlyName",
+               friendlyName).add("description", description).add("os", os).add("architecture", architecture).add(
+               "type", type).add("state", state).add("price", price).add("location", location)
+               .add("isActive", isActive).add("isPublic", isPublic).add("createdTime", createdTime).add("updatedTime",
+                        updatedTime).add("billingTokens", billingTokens).add("owner", owner).toString();
    }
 }
