@@ -260,7 +260,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private void deleteAllCatalogItemMetadata(URI catalogItemURI) {
       Metadata currentMetadata = catalogClient.getMetadataClient().getMetadata(catalogItemURI);
       for (MetadataEntry currentMetadataEntry : currentMetadata.getMetadataEntries()) {
-         catalogClient.getMetadataClient().deleteMetadataEntry(catalogItemURI, currentMetadataEntry.getKey());
+         retryTaskSuccess.apply(catalogClient.getMetadataClient().deleteMetadataEntry(catalogItemURI, currentMetadataEntry.getKey()));
       }
       Metadata emptyMetadata = catalogClient.getMetadataClient().getMetadata(catalogItemURI);
       assertTrue(emptyMetadata.getMetadataEntries().isEmpty(), "The catalogItem Metadata should be empty");
