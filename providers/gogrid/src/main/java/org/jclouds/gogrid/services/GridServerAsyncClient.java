@@ -44,16 +44,16 @@ import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
-import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
-import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponse;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
@@ -76,7 +76,8 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#getServerList(org.jclouds.gogrid.options.GetServerListOptions...)
     */
    @GET
-   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @SelectJson("list")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Path("/grid/server/list")
    ListenableFuture<Set<Server>> getServerList(GetServerListOptions... getServerListOptions);
 
@@ -84,7 +85,7 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#getServersByName(String...)
     */
    @GET
-   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @SelectJson("list")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersByName(
@@ -94,7 +95,7 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#getServersById(Long...)
     */
    @GET
-   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @SelectJson("list")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersById(
@@ -121,7 +122,8 @@ public interface GridServerAsyncClient {
     *      org.jclouds.gogrid.options.AddServerOptions...)
     */
    @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
+   @SelectJson("list")
+   @OnlyElement
    @Path("/grid/server/add")
    ListenableFuture<Server> addServer(@QueryParam(NAME_KEY) String name,
             @QueryParam(IMAGE_KEY) String image, @QueryParam(SERVER_RAM_KEY) String ram,
@@ -131,7 +133,8 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#power(String, org.jclouds.gogrid.domain.PowerCommand)
     */
    @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
+   @SelectJson("list")
+   @OnlyElement
    @Path("/grid/server/power")
    ListenableFuture<Server> power(
          @QueryParam(SERVER_ID_OR_NAME_KEY) String idOrName,
@@ -141,7 +144,8 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#deleteById(Long)
     */
    @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
+   @SelectJson("list")
+   @OnlyElement
    @Path("/grid/server/delete")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Server> deleteById(@QueryParam(ID_KEY) long id);
@@ -150,7 +154,8 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#deleteByName(String)
     */
    @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
+   @SelectJson("list")
+   @OnlyElement
    @Path("/grid/server/delete")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Server> deleteByName(@QueryParam(NAME_KEY) String name);
@@ -187,7 +192,8 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#editServerDescription
     */
    @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
+   @SelectJson("list")
+   @OnlyElement
    @Path("/grid/server/edit")
    ListenableFuture<Server> editServerDescription(@QueryParam("id") long id,
             @QueryParam("description") String newDescription);
@@ -196,7 +202,8 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#editServerRam
     */
    @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
+   @SelectJson("list")
+   @OnlyElement
    @Path("/grid/server/edit")
    ListenableFuture<Server> editServerRam(@QueryParam("id") long id,
             @QueryParam("server.ram") String ram);
@@ -205,7 +212,8 @@ public interface GridServerAsyncClient {
     * @see GridServerClient#editServerType
     */
    @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
+   @SelectJson("list")
+   @OnlyElement
    @Path("/grid/server/edit")
    ListenableFuture<Server> editServerType(@QueryParam("id") long id,
             @QueryParam("server.type") String newType);

@@ -32,7 +32,7 @@ import java.util.SortedSet;
  * 
  * @author Oleksiy Yarmula
  */
-class GenericResponseContainer<T> {
+public class GenericResponseContainer<T> {
 
    private Summary summary;
    private String status;
