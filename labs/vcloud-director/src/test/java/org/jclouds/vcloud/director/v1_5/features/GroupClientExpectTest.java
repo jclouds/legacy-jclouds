@@ -43,7 +43,7 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .href(URI.create(endpoint + "/admin/group/???"))
          .build();
    
-   @Test
+   @Test(enabled = false)
    public void testGetGroup() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
