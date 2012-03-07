@@ -20,6 +20,7 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
 import java.io.File;
 import java.util.Set;
@@ -69,8 +70,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    private final String workingDir;
 
    @Inject
-   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Supplier<VirtualBoxManager> manager, MachineUtils machineUtils,
-            @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir) {
+   public CreateAndRegisterMachineFromIsoIfNotAlreadyExists(Supplier<VirtualBoxManager> manager,
+            MachineUtils machineUtils, @Named(VirtualBoxConstants.VIRTUALBOX_WORKINGDIR) String workingDir) {
       this.manager = manager;
       this.machineUtils = machineUtils;
       this.workingDir = workingDir;
@@ -91,11 +92,6 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
          else
             throw e;
       }
-   }
-
-   private boolean machineNotFoundException(VBoxException e) {
-      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ") ||
-            e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
    private IMachine createMachine(IVirtualBox vBox, MasterSpec machineSpec) {
@@ -128,7 +124,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
 
       // Networking
       for (NetworkInterfaceCard networkInterfaceCard : networkSpec.getNetworkInterfaceCards()) {
-    	   new AttachNicToMachine(vmName, machineUtils).apply(networkInterfaceCard);
+         new AttachNicToMachine(vmName, machineUtils).apply(networkInterfaceCard);
       }
    }
 
@@ -136,22 +132,21 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
       Set<IsoImage> dvds = controller.getIsoImages();
       for (IsoImage dvd : dvds) {
          String dvdSource = dvd.getSourcePath();
-         final IMedium dvdMedium = manager.get().getVBox().openMedium(dvdSource, DeviceType.DVD, AccessMode.ReadOnly,
-                  vmSpecification.isForceOverwrite());
+         final IMedium dvdMedium = manager.get().getVBox()
+                  .openMedium(dvdSource, DeviceType.DVD, AccessMode.ReadOnly, vmSpecification.isForceOverwrite());
          ensureMachineDevicesAttached(vmName, dvdMedium, dvd.getDeviceDetails(), controller.getName());
       }
    }
 
    private void ensureMachineDevicesAttached(String vmName, IMedium medium, DeviceDetails deviceDetails,
             String controllerName) {
-      machineUtils.writeLockMachineAndApply(vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails, medium,
-              controllerName));
+      machineUtils.writeLockMachineAndApply(vmName, new AttachMediumToMachineIfNotAlreadyAttached(deviceDetails,
+               medium, controllerName));
    }
 
    private String missingIDEControllersMessage(VmSpec vmSpecification) {
       return String
-               .format(
-                        "First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s",
+               .format("First controller is not an IDE controller. Please verify that the VM spec is a correct master node: %s",
                         vmSpecification);
    }
 
@@ -175,7 +170,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExists implements Functi
    }
 
    public void ensureMachineHasStorageControllerNamed(String vmName, StorageController storageController) {
-      machineUtils.writeLockMachineAndApply(vmName, new AddIDEControllerIfNotExists(checkNotNull(
-              storageController, "storageController")));
+      machineUtils.writeLockMachineAndApply(vmName,
+               new AddIDEControllerIfNotExists(checkNotNull(storageController, "storageController")));
    }
 }

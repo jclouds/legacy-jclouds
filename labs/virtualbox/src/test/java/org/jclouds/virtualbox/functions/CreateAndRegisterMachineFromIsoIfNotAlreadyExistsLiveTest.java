@@ -23,15 +23,24 @@ import static org.testng.Assert.fail;
 
 import java.util.UUID;
 
-import com.google.inject.Injector;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.*;
+import org.jclouds.virtualbox.domain.ErrorCode;
+import org.jclouds.virtualbox.domain.HardDisk;
+import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NetworkAdapter;
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
 import org.virtualbox_4_1.VBoxException;
+
+import com.google.inject.Injector;
 
 /**
  * @author Mattias Holmqvist
@@ -42,28 +51,23 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 
 	private String ideControllerName;
 	private CleanupMode mode;
-	private StorageController ideController;
 
 	@Override
 	public void setupClient() {
 		super.setupClient();
 		ideControllerName = "IDE Controller";
 		mode = CleanupMode.Full;
-		ideController = StorageController
-				.builder()
-				.name(ideControllerName)
-				.bus(StorageBus.IDE)
-				.attachISO(0, 0, operatingSystemIso)
-				.attachHardDisk(
-						HardDisk.builder().diskpath(adminDisk)
-								.controllerPort(0).deviceSlot(1).build())
-				.attachISO(1, 1, guestAdditionsIso).build();
 	}
 
 	@Test
 	public void testCreateNewMachine() throws Exception {
 		String vmName = "jclouds-test-create-1-node";
 		String vmId = UUID.randomUUID().toString();
+		
+      StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso)
+               .attachHardDisk(HardDisk.builder().diskpath(adminDisk(vmName)).controllerPort(0).deviceSlot(1).build())
+               .attachISO(1, 1, guestAdditionsIso).build();
 
 		VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
 				.controller(ideController).cleanUpMode(mode).osTypeId("Debian")
@@ -101,6 +105,11 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 	public void testCreateNewMachineWithBadOsType() throws Exception {
 		String vmName = "jclouds-test-create-2-node";
 		String vmId = UUID.randomUUID().toString();
+		
+		StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+	               .attachISO(0, 0, operatingSystemIso)
+	               .attachHardDisk(HardDisk.builder().diskpath(adminDisk(vmName)).controllerPort(0).deviceSlot(1).build())
+	               .attachISO(1, 1, guestAdditionsIso).build();
 
 		VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
 				.controller(ideController).cleanUpMode(mode)

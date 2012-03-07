@@ -18,10 +18,11 @@
  */
 package org.jclouds.virtualbox.domain;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.virtualbox_4_1.NATProtocol;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Objects;
 
 /**
  * @author Mattias Holmqvist

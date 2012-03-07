@@ -18,29 +18,41 @@
  */
 package org.jclouds.virtualbox.util;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
-import org.jclouds.compute.callables.RunScriptOnNode;
-import org.jclouds.compute.callables.RunScriptOnNode.Factory;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.logging.Logger;
-import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.util.Throwables2;
-import org.jclouds.virtualbox.functions.MutableMachine;
-import org.virtualbox_4_1.*;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
+import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.domain.Statements.findPid;
+import static org.jclouds.scriptbuilder.domain.Statements.kill;
+import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
-import static org.jclouds.scriptbuilder.domain.Statements.*;
+import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.callables.RunScriptOnNode.Factory;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.util.Throwables2;
+import org.jclouds.virtualbox.functions.MutableMachine;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VBoxException;
+import org.virtualbox_4_1.VirtualBoxManager;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Inject;
 
 /**
  * Utilities for executing functions on a VirtualBox machine.
- *
+ * 
  * @author Adrian Cole, Mattias Holmqvist, Andrea Turli
  */
 
@@ -56,51 +68,59 @@ public class MachineUtils {
    private final Supplier<NodeMetadata> host;
 
    @Inject
-   public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner, Supplier<NodeMetadata> host) {
+   public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner,
+            Supplier<NodeMetadata> host) {
       super();
       this.manager = manager;
       this.scriptRunner = scriptRunner;
       this.host = host;
    }
 
-   /**
-    * Locks the machine and executes the given function using the machine
-    * matching the given id. Since the machine is locked it is possible to
-    * perform some modifications to the IMachine.
-    * <p/>
-    * Unlocks the machine before returning.
-    *
-    * @param machineId the id of the machine
-    * @param function  the function to execute
-    * @return the result from applying the function to the machine.
-    */
-   public <T> T writeLockMachineAndApply(final String machineId, final Function<IMachine, T> function) {
-      return lockSessionOnMachineAndApply(machineId, LockType.Write,
-              new Function<ISession, T>() {
-
-                 @Override
-                 public T apply(ISession session) {
-                    return function.apply(session.getMachine());
-                 }
-
-                 @Override
-                 public String toString() {
-                    return function.toString();
-                 }
-
-              });
+   public ListenableFuture<ExecResponse> runScriptOnNode(NodeMetadata metadata, Statement statement,
+            RunScriptOptions options) {
+      return scriptRunner.submit(metadata, statement, options);
    }
 
    /**
-    * Locks the machine and executes the given function using the current
-    * session. Since the machine is locked it is possible to perform some
-    * modifications to the IMachine.
+    * Locks the machine and executes the given function using the machine matching the given id.
+    * Since the machine is locked it is possible to perform some modifications to the IMachine.
     * <p/>
     * Unlocks the machine before returning.
-    *
-    * @param type      the kind of lock to use when initially locking the machine.
-    * @param machineId the id of the machine
-    * @param function  the function to execute
+    * 
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
+    * @return the result from applying the function to the machine.
+    */
+   public <T> T writeLockMachineAndApply(final String machineId, final Function<IMachine, T> function) {
+      return lockSessionOnMachineAndApply(machineId, LockType.Write, new Function<ISession, T>() {
+
+         @Override
+         public T apply(ISession session) {
+            return function.apply(session.getMachine());
+         }
+
+         @Override
+         public String toString() {
+            return function.toString();
+         }
+
+      });
+   }
+
+   /**
+    * Locks the machine and executes the given function using the current session. Since the machine
+    * is locked it is possible to perform some modifications to the IMachine.
+    * <p/>
+    * Unlocks the machine before returning.
+    * 
+    * @param type
+    *           the kind of lock to use when initially locking the machine.
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
     * @return the result from applying the function to the session.
     */
    public <T> T lockSessionOnMachineAndApply(String machineId, LockType type, Function<ISession, T> function) {
@@ -112,9 +132,8 @@ public class MachineUtils {
             session.unlockMachine();
          }
       } catch (VBoxException e) {
-         throw new RuntimeException(String.format(
-                 "error applying %s to %s with %s lock: %s", function, machineId,
-                 type, e.getMessage()), e);
+         throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
+                  type, e.getMessage()), e);
       }
    }
 
@@ -125,25 +144,24 @@ public class MachineUtils {
    private void unlockMachine(final String machineId) {
       IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
       if (immutableMachine.getSessionState().equals(SessionState.Locked)) {
-         Statement kill = newStatementList(call("default"),
-                 findPid(immutableMachine.getSessionPid().toString()), kill());
-         scriptRunner
-                 .create(host.get(), kill,
-                         runAsRoot(false).wrapInInitScript(false)).init().call();
+         Statement kill = newStatementList(call("default"), findPid(immutableMachine.getSessionPid().toString()),
+                  kill());
+         scriptRunner.create(host.get(), kill, runAsRoot(false).wrapInInitScript(false)).init().call();
       }
    }
 
    /**
-    * Unlocks the machine and executes the given function using the machine
-    * matching the given id. Since the machine is unlocked it is possible to
-    * delete the IMachine.
+    * Unlocks the machine and executes the given function using the machine matching the given id.
+    * Since the machine is unlocked it is possible to delete the IMachine.
     * <p/>
     * <p/>
-    * <h3>Note!</h3> Currently, this can only unlock the machine, if the lock
-    * was created in the current session.
-    *
-    * @param machineId the id of the machine
-    * @param function  the function to execute
+    * <h3>Note!</h3> Currently, this can only unlock the machine, if the lock was created in the
+    * current session.
+    * 
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
     * @return the result from applying the function to the machine.
     */
    public <T> T unlockMachineAndApply(final String machineId, final Function<IMachine, T> function) {
@@ -154,31 +172,28 @@ public class MachineUtils {
          return function.apply(immutableMachine);
 
       } catch (VBoxException e) {
-         throw new RuntimeException(String.format(
-                 "error applying %s to %s: %s", function, machineId,
-                 e.getMessage()), e);
+         throw new RuntimeException(String.format("error applying %s to %s: %s", function, machineId, e.getMessage()),
+                  e);
       }
    }
 
    /**
-    * Unlocks the machine and executes the given function, if the machine is
-    * registered. Since the machine is unlocked it is possible to delete the
-    * machine.
+    * Unlocks the machine and executes the given function, if the machine is registered. Since the
+    * machine is unlocked it is possible to delete the machine.
     * <p/>
-    *
-    * @param machineId the id of the machine
-    * @param function  the function to execute
+    * 
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
     * @return the result from applying the function to the session.
     */
-   public <T> T unlockMachineAndApplyOrReturnNullIfNotRegistered(String machineId,
-                                                                 Function<IMachine, T> function) {
+   public <T> T unlockMachineAndApplyOrReturnNullIfNotRegistered(String machineId, Function<IMachine, T> function) {
       try {
          return unlockMachineAndApply(machineId, function);
       } catch (RuntimeException e) {
-         VBoxException vbex = Throwables2.getFirstThrowableOfType(e,
-                 VBoxException.class);
-         if (vbex != null
-                 && vbex.getMessage().indexOf("not find a registered") == -1)
+         VBoxException vbex = Throwables2.getFirstThrowableOfType(e, VBoxException.class);
+         if (vbex != null && vbex.getMessage().indexOf("not find a registered") == -1)
             throw e;
          return null;
       }
@@ -204,4 +219,8 @@ public class MachineUtils {
       }.apply(immutableMachine);
    }
 
+   public static boolean machineNotFoundException(VBoxException e) {
+      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ")
+               || e.getMessage().contains("Could not find a registered machine with UUID {");
+   }
 }

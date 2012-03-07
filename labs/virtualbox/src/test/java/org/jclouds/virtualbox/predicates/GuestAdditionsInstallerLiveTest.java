@@ -68,16 +68,14 @@ public class GuestAdditionsInstallerLiveTest extends
 				+ CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass()
 						.getSimpleName());
 
-		StorageController ideController = StorageController
-				.builder()
-				.name("IDE Controller")
-				.bus(StorageBus.IDE)
-				.attachISO(0, 0, operatingSystemIso)
-				.attachHardDisk(
-						HardDisk.builder().diskpath(adminDisk)
-								.controllerPort(0).deviceSlot(1)
-								.autoDelete(true).build())
-				.attachISO(1, 1, guestAdditionsIso).build();
+      StorageController ideController = StorageController
+               .builder()
+               .name("IDE Controller")
+               .bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso)
+               .attachHardDisk(
+                        HardDisk.builder().diskpath(adminDisk(sourceName)).controllerPort(0).deviceSlot(1)
+                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
 
 		VmSpec sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName)
 				.osTypeId("").memoryMB(512).cleanUpMode(CleanupMode.Full)
@@ -144,16 +142,4 @@ public class GuestAdditionsInstallerLiveTest extends
 		}
 	}
 
-	private void ensureMachineHasPowerDown(String vmName) {
-		machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
-				new Function<ISession, Void>() {
-					@Override
-					public Void apply(ISession session) {
-						IProgress powerDownProgress = session.getConsole()
-								.powerDown();
-						powerDownProgress.waitForCompletion(-1);
-						return null;
-					}
-				});
-	}
 }

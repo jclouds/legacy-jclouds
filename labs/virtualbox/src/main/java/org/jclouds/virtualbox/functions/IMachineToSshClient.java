@@ -18,11 +18,15 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.annotation.Resource;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.virtualbox_4_1.IMachine;
@@ -35,6 +39,11 @@ import com.google.inject.Inject;
 
 @Singleton
 public class IMachineToSshClient implements Function<IMachine, SshClient> {
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    private final SshClient.Factory sshClientFactory;
 
    @Inject
@@ -44,9 +53,10 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 
    @Override
    public SshClient apply(final IMachine vm) {
-      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0l);
+      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
+
       SshClient client = null;
-      checkState(networkAdapter != null);
+      checkNotNull(networkAdapter);
       for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()) {
          Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
          String protocolNumber = Iterables.get(stuff, 1);
@@ -56,10 +66,11 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
          // TODO: we need a way to align the default login credentials from the iso with the
          // vmspec
          if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-            client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)),
-                     LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
+            client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)), LoginCredentials
+                     .builder().user("toor").password("password").authenticateSudo(true).build());
          }
       }
+      checkNotNull(client);
       return client;
    }
 }
