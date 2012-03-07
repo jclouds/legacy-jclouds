@@ -48,7 +48,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
-public interface AdminCatalogAsyncClient {
+public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
 
    /**
     * @see AdminClient#getCatalog(URI)
@@ -57,6 +57,7 @@ public interface AdminCatalogAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @Override
    ListenableFuture<AdminCatalog> getCatalog(@EndpointParam URI catalogRef);
 
    /**

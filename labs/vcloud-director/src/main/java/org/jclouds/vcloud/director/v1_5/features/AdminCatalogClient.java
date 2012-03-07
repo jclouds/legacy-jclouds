@@ -33,7 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AdminCatalogClient {
+public interface AdminCatalogClient extends CatalogClient {
 
    /**
     * Retrieves a catalog.
@@ -45,6 +45,7 @@ public interface AdminCatalogClient {
     * @param catalogRef the reference for the catalog
     * @return a catalog
     */
+   @Override
    AdminCatalog getCatalog(URI catalogRef);
    
    /**
