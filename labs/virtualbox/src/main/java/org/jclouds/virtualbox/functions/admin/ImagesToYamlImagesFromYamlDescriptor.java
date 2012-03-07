@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.virtualbox.domain.YamlImage;
+import org.yaml.snakeyaml.Loader;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -69,7 +70,9 @@ public class ImagesToYamlImagesFromYamlDescriptor implements Supplier<Map<Image,
       imageDesc.putListPropertyType("images", String.class);
       constructor.addTypeDescription(imageDesc);
 
-      Yaml yaml = new Yaml(constructor);
+      // Issue 855: testng is rev-locking us to snakeyaml 1.6
+      // we have to use old constructor until this is fixed
+      Yaml yaml = new Yaml(new Loader(constructor));
       Config config = (Config) yaml.load(yamlDescriptor);
       checkState(config != null, "missing config: class");
       checkState(config.images != null, "missing images: collection");
