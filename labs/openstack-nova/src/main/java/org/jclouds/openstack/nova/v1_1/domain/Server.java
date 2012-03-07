@@ -354,14 +354,24 @@ public class Server extends Resource {
     * @return the private ip addresses assigned to the server
     */
    public Set<Address> getPrivateAddresses() {
-      return ImmutableSet.copyOf(addresses.get(Address.Type.PRIVATE));
+       Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
+       if (privateAddresses == null) {
+           return ImmutableSet.<Address> of();
+       } else {
+           return ImmutableSet.copyOf(privateAddresses);
+       }
    }
 
    /**
     * @return the public ip addresses assigned to the server
     */
    public Set<Address> getPublicAddresses() {
-      return ImmutableSet.copyOf(addresses.get(Address.Type.PUBLIC));
+       Set<Address> publicAddrs = addresses.get(Address.Type.PUBLIC);
+	   if (publicAddrs == null) {
+		   return ImmutableSet.<Address> of();
+	   } else {
+		   return ImmutableSet.copyOf(publicAddrs);
+	   }
    }
 
    /**
