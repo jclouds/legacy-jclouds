@@ -26,9 +26,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItems;
+import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
@@ -67,7 +67,7 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogRequest, catalogResponse);
 
-      Catalog expected = catalog();
+      CatalogType<?> expected = catalog();
 
       URI catalogURI = URI.create(endpoint + "/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4");      
       assertEquals(client.getCatalogClient().getCatalog(catalogURI), expected);
@@ -376,8 +376,9 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       assertEquals(client.getCatalogClient().getMetadataClient().deleteMetadataEntry(catalogItemURI, "KEY"), expected);
    }
 
-   public static final Catalog catalog() {
-      return Catalog.builder()
+   @SuppressWarnings("unchecked")
+   public static final CatalogType<?> catalog() {
+      return CatalogType.<CatalogType>builder()
       		      .name("QunyingTestCatalog")
       		      .type("application/vnd.vmware.vcloud.catalog+xml")
       		      .id("urn:vcloud:catalog:7212e451-76e1-4631-b2de-ba1dfd8080e4")
