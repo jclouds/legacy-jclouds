@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 
 import org.jclouds.rest.annotations.EndpointParam;
@@ -32,21 +33,29 @@ import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
-
-/**
- * @see GroupClient
- * @author danikov
- */
-@RequestFilters(AddVCloudAuthorizationToRequest.class)
-public interface GroupAsyncClient {
    
    /**
-    * @see GroupClient#getGroup(URI)
+    * @see GroupClient
+    * @author danikov
     */
-   @GET
-   @Consumes
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Group> getGroup(@EndpointParam URI groupUri);
-   
+   @RequestFilters(AddVCloudAuthorizationToRequest.class)
+   public interface GroupAsyncClient {
+      
+      /**
+       * @see GroupClient#getGroup(URI)
+       */
+      @GET
+      @Consumes
+      @JAXBResponseParser
+      @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+      ListenableFuture<Group> getGroup(@EndpointParam URI groupUri);
+      
+      /**
+       * @see GroupClient#deleteGroup(URI)
+       */
+      @DELETE
+      @Consumes
+      @JAXBResponseParser
+      @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+      ListenableFuture<Void> deleteGroup(@EndpointParam URI groupRef);
 }
