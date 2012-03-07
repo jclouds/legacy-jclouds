@@ -21,6 +21,8 @@ package org.jclouds.vcloud.director.v1_5.internal;
 import java.net.URI;
 import java.util.Properties;
 
+import javax.inject.Inject;
+
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
@@ -29,13 +31,23 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Org;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Module;
 
 /**
@@ -51,56 +63,69 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       provider = "vcloud-director";
    }
 
-   protected String catalogName;
-   protected String vAppTemplateId;
-   protected String networkId;
-   protected String vdcId;
-
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides= super.setupProperties();
-      if (catalogName != null)
-         overrides.setProperty(provider + ".catalog-name", catalogName);
-      if (vAppTemplateId != null)
-         overrides.setProperty(provider + ".vapptemplate-id", vAppTemplateId);
-      if (networkId != null)
-         overrides.setProperty(provider + ".network-id", networkId);
-      if (vdcId != null)
-         overrides.setProperty(provider + ".vdc-id", vdcId);
-      return overrides;
-   }
-   
-   @BeforeClass(inheritGroups = true)
    // NOTE Implement as required to populate xxxClient fields, or NOP
    public abstract void setupRequiredClients();
 
-   /** Injected by {@link #setupContext} */
    public Predicate<Task> retryTaskSuccess;
 
-   @Override
-   @BeforeClass(groups = { "live" })
-   protected void setupCredentials() {
-      super.setupCredentials();
-
-      catalogName = System.getProperty("test." + provider + ".catalog-name");
-      vAppTemplateId = System.getProperty("test." + provider + ".vapptemplate-id");
-      networkId = System.getProperty("test." + provider + ".network-id");
-      vdcId = System.getProperty("test." + provider + ".vdc-id");
+   @Inject
+   protected void initTaskSuccess(TaskSuccess taskSuccess) {
+      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, 1000L);
    }
-   
-   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
 
+   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
+   protected Session session;
 
    @BeforeClass(groups = { "live" })
    public void setupContext() {
       setupCredentials();
       Properties overrides = setupProperties();
 
-      context = new RestContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      context = new RestContextFactory().createContext(provider, identity, credential, ImmutableSet.<Module> of(
+               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      session = context.getApi().getCurrentSession();
+      context.utils().injector().injectMembers(this);
+      initTestParametersFromPropertiesOrLazyDiscover();
+      setupRequiredClients();
+   }
 
-      TaskSuccess taskSuccess = context.utils().injector().getInstance(TaskSuccess.class);
-      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, 1000L);
+   protected String catalogName;
+   // TODO: change to URI, not id
+   protected String vAppTemplateId;
+   protected URI networkURI;
+   protected URI vdcURI;
+
+   @SuppressWarnings("unchecked")
+   protected void initTestParametersFromPropertiesOrLazyDiscover() {
+      vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
+
+      catalogName = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-name"));
+      
+      // TODO: change properties to URI, not id
+      String vdcId = Strings.emptyToNull(System.getProperty("test." + provider + ".vdc-id"));
+      if (vdcId != null)
+         vdcURI = URI.create(endpoint + "/vdc/" + vdcId);
+      String networkId = Strings.emptyToNull(System.getProperty("test." + provider + ".network-id"));
+      if (networkId != null)
+         networkURI = URI.create(endpoint + "/network/" + networkId);
+      
+      if (Iterables.any(Lists.newArrayList(vAppTemplateId, catalogName, networkURI, vdcURI), Predicates.isNull())) {
+         Org thisOrg = context.getApi().getOrgClient().getOrg(
+                  Iterables.find(context.getApi().getOrgClient().getOrgList().getOrgs(),
+                           ReferenceTypePredicates.<Reference> nameEquals(session.getOrg())).getHref());
+
+         if (vdcURI == null)
+            vdcURI = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.VDC)).getHref();
+
+         if (networkURI == null)
+            networkURI = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
+
+         if (catalogName == null)
+            catalogName = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getName();
+      }
    }
 
    protected void tearDown() {

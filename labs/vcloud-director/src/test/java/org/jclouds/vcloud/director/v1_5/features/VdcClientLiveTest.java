@@ -18,14 +18,30 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.*;
+import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -52,7 +68,6 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() {
-      vdcURI = URI.create(endpoint+"/vdc/"+vdcId);
       vdcClient = context.getApi().getVdcClient();
    }
    

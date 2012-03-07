@@ -54,13 +54,10 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience reference to API client.
     */
    protected NetworkClient networkClient;
- 
-   private URI networkURI;
-   
+    
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() {
-      networkURI = URI.create(endpoint+"/network/"+networkId);
       networkClient = context.getApi().getNetworkClient();
    }
 
