@@ -18,8 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.testng.Assert.assertEquals;
+
 import java.net.URI;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -33,8 +39,29 @@ import org.testng.annotations.Test;
 public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    private Reference groupRef = Reference.builder()
-         .type("application/vnd.vmware.vcloud.catalog+xml")
+         .type("application/vnd.vmware.vcloud.group+xml")
          .name("???")
          .href(URI.create(endpoint + "/admin/group/???"))
          .build();
+   
+   @Test
+   public void testUpdateGroup() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/group/???")
+            .xmlFilePayload("/group/admin/updateGroupSource.xml", VCloudDirectorMediaType.GROUP)
+            .acceptMedia(VCloudDirectorMediaType.GROUP)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/group/updateGroup.xml", VCloudDirectorMediaType.GROUP)
+            .httpResponseBuilder().build());
+
+      Group expected = updateGroup();
+
+      assertEquals(client.getGroupClient().updateGroup(groupRef.getURI(), expected), expected);
+   }
+   
+   public static Group updateGroup() {
+      return null; // TODO chain onto group() then toBuilder() and modify?
+   }
 }

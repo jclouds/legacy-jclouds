@@ -18,9 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static com.google.common.base.Objects.equal;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
+import static org.testng.Assert.assertTrue;
+
 import java.net.URI;
 
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -28,11 +34,11 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests live behavior of {@link AdminCatalogClient}.
+ * Tests live behavior of {@link AdminGroupClient}.
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "group" }, singleThreaded = true, testName = "CatalogClientLiveTest")
+@Test(groups = { "live", "admin", "group" }, singleThreaded = true, testName = "GroupClientLiveTest")
 public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String GROUP = "admin group";
@@ -53,7 +59,40 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void setupRequiredClients() {
       groupClient = context.getApi().getGroupClient();
       groupRef = Reference.builder()
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/???"))
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/group/???"))
          .build();
+   }
+   
+   @Test(testName = "PUT /admin/group/{id}") // TODO: depends on?
+   public void updateGroup() {
+      String oldName = group.getName();
+      String newName = "new "+oldName;
+      String oldDescription = group.getDescription();
+      String newDescription = "new "+oldDescription;
+      //TODO: check other modifiables
+      
+      try {
+         group = group.toBuilder()
+               .name(newName)
+               .description(newDescription)
+               .build();
+         
+         group = groupClient.updateGroup(group.getURI(), group);
+         
+         assertTrue(equal(group.getName(), newName), String.format(OBJ_FIELD_UPDATABLE, GROUP, "name"));
+         assertTrue(equal(group.getDescription(), newDescription),
+               String.format(OBJ_FIELD_UPDATABLE, GROUP, "description"));
+         
+         //TODO negative tests?
+         
+         Checks.checkGroup(group);
+      } finally {
+         group = group.toBuilder()
+               .name(oldName)
+               .description(oldDescription)
+               .build();
+         
+         group = groupClient.updateGroup(group.getURI(), group);
+      }
    }
 }
