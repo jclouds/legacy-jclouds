@@ -24,7 +24,6 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
@@ -49,7 +48,7 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", "/admin/group/???")
-            .xmlFilePayload("/group/admin/updateGroupSource.xml", VCloudDirectorMediaType.GROUP)
+            .xmlFilePayload("/group/updateGroupSource.xml", VCloudDirectorMediaType.GROUP)
             .acceptMedia(VCloudDirectorMediaType.GROUP)
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
