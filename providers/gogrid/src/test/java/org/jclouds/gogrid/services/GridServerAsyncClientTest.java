@@ -24,9 +24,6 @@ import java.lang.reflect.Method;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.functions.ParseCredentialsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
-import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
-import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
-import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
@@ -40,33 +37,11 @@ import com.google.inject.TypeLiteral;
 /**
  * Tests behavior of {@code GridServerAsyncClient}
  * 
- * @author Oleksiy Yarmula
+ * @author Oleksiy Yarmula, Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "GridServerAsyncClientTest")
 public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridServerAsyncClient> {
-
-   @Test
-   public void testGetServerListNoOptions() throws NoSuchMethodException, IOException {
-      Method method = GridServerAsyncClient.class.getMethod("getServerList", GetServerListOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method);
-
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/list?v=1.6 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/list?"
-               + "v=1.6&sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
-   }
 
    @Test
    public void testGetServerListWithOptions() throws NoSuchMethodException, IOException {
@@ -79,9 +54,8 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
@@ -101,7 +75,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
@@ -123,7 +96,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerListFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
@@ -136,58 +108,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertPayloadEquals(httpRequest, null, null, false);
    }
 
-   @Test
-   public void testAddServerNoOptions() throws NoSuchMethodException, IOException {
-      Method method = GridServerAsyncClient.class.getMethod("addServer", String.class, String.class, String.class,
-               String.class, AddServerOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "serverName", "img55",
-               "memory", "127.0.0.1");
-
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/add?v=1.6&"
-               + "name=serverName&server.ram=memory&image=img55&ip=127.0.0.1 " + "HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-
-      assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/add?"
-               + "v=1.6&name=serverName&server.ram=memory&" + "image=img55&ip=127.0.0.1&"
-               + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
-   }
-
-   @Test
-   public void testAddServerOptions() throws NoSuchMethodException, IOException {
-      Method method = GridServerAsyncClient.class.getMethod("addServer", String.class, String.class, String.class,
-               String.class, AddServerOptions[].class);
-      HttpRequest httpRequest = processor.createRequest(method, "serverName", "img55",
-               "memory", "127.0.0.1", new AddServerOptions().asSandboxType().withDescription("fooy"));
-
-      assertRequestLineEquals(
-               httpRequest,
-               "GET https://api.gogrid.com/api/grid/server/add?v=1.6&name=serverName&server.ram=memory&image=img55&ip=127.0.0.1&isSandbox=true&description=fooy HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(httpRequest);
-      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-
-      assertRequestLineEquals(
-               httpRequest,
-               "GET https://api.gogrid.com/api/grid/server/add?v=1.6&name=serverName&server.ram=memory&image=img55&ip=127.0.0.1&isSandbox=true&description=fooy&sig=3f446f171455fbb5574aecff4997b273&api_key=foo HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "");
-      assertPayloadEquals(httpRequest, null, null, false);
-   }
 
    @Test
    public void testPowerServer() throws NoSuchMethodException, IOException {
@@ -200,7 +120,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -223,7 +142,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -299,7 +217,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -322,7 +239,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -345,7 +261,6 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseServerFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
