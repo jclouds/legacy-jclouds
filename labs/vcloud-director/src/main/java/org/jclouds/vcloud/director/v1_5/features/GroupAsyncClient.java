@@ -18,8 +18,24 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Produces;
+
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @see GroupClient
@@ -27,5 +43,14 @@ import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface GroupAsyncClient {
-   
+   /**
+    * @see GroupClient#updateGroup(URI, Group)
+    */
+   @PUT
+   @Consumes(VCloudDirectorMediaType.GROUP)
+   @Produces(VCloudDirectorMediaType.GROUP)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Group> updateCatalog(@EndpointParam URI groupRef, 
+         @BinderParam(BindToXMLPayload.class) Group group);
 }
