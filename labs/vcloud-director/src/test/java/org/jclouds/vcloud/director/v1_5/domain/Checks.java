@@ -485,11 +485,43 @@ public class Checks {
    public static void checkMediaFor(String client, Media media) {
       // required
       assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, client, "imageType"));
-      Checks.checkImageType(media.getImageType());
+      checkImageType(media.getImageType());
       assertNotNull(media.getSize(), String.format(OBJ_FIELD_REQ, client, "size"));
       assertTrue(media.getSize() >= 0, String.format(OBJ_FIELD_GTE_0, client, "size", media.getSize()));
       
       // parent type
-      Checks.checkResourceEntityType(media);
+      checkResourceEntityType(media);
+   }
+   
+   public static void checkGroupsList(GroupsList groupsList) {
+      // Check optional fields
+      if (groupsList.getGroups() != null) {
+         for (Reference group : groupsList.getGroups()) {
+            checkReferenceType(group);
+         }
+      }
+   }
+   
+   public static void checkGroup(Group group) {
+      // Check optional fields
+      // NOTE nameInSource cannot be checked
+      if (group.getUsersList() != null) {
+         checkUsersList(group.getUsersList());
+      }
+      if (group.getRole() != null) {
+         checkReferenceType(group.getRole());
+      }
+      
+      // parent type
+      checkEntityType(group);
+   }
+
+   public static void checkUsersList(UsersList usersList) {
+      // Check optional fields
+      if (usersList.getUsers() != null) {
+         for (Reference user : usersList.getUsers()) {
+            checkReferenceType(user);
+         }
+      }
    }
 }
