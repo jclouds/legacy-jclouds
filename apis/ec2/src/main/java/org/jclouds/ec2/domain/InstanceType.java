@@ -47,11 +47,22 @@ public class InstanceType {
     * <li>1.7 GB memory</li>
     * <li>1 EC2 Compute Unit (1 virtual core with 1 EC2 Compute Unit)</li>
     * <li>160 GB instance storage (150 GB plus 10 GB root partition)</li>
-    * <li>32-bit platform</li>
+    * <li>32-bit or 64-bit platform</li>
     * <li>I/O Performance: Moderate</li>
     * </ul>
     */
    public static final String M1_SMALL = "m1.small";
+   /**
+    * Medium Instance
+    * <ul>
+    * <li>3.75 GB memory</li>
+    * <li>2 EC2 Compute Unit (1 virtual core with 2 EC2 Compute Unit)</li>
+    * <li>410 GB instance storage</li>
+    * <li>32-bit or 64-bit platform</li>
+    * <li>I/O Performance: Moderate</li>
+    * </ul>
+    */
+   public static final String M1_MEDIUM = "m1.medium";
    /**
     * Large Instance
     * <ul>
