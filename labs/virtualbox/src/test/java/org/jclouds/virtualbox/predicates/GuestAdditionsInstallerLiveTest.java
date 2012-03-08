@@ -40,7 +40,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.NetworkAttachmentType;
@@ -96,10 +95,10 @@ public class GuestAdditionsInstallerLiveTest extends
 				.networkAttachmentType(NetworkAttachmentType.NAT)
 				.tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
 		NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-				.builder().addNetworkAdapter(networkAdapter).build();
+				.builder().slot(0L).addNetworkAdapter(networkAdapter).build();
 
 		NetworkSpec networkSpec = NetworkSpec.builder()
-				.addNIC(0L, networkInterfaceCard).build();
+				.addNIC(networkInterfaceCard).build();
 		sourceMachineSpec = MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec)
 				.network(networkSpec).build();
 
@@ -123,11 +122,10 @@ public class GuestAdditionsInstallerLiveTest extends
 					}));
 		} finally {
 			for (VmSpec spec : ImmutableSet.of(sourceMachineSpec.getVmSpec())) {
-				ensureMachineHasPowerDown(spec.getVmName());
+				machineController.ensureMachineIsPoweredOff(spec.getVmName());
 				undoVm(spec);
 			}
 		}
-
 	}
 
 	private IMachine getVmWithGuestAdditionsInstalled() {

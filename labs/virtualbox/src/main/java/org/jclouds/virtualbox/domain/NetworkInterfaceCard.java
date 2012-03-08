@@ -18,91 +18,93 @@
  */
 package org.jclouds.virtualbox.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
 
 public class NetworkInterfaceCard {
 
-	private final long slot;
-	private final NetworkAdapter networkAdapter;
-	private final String hostInterfaceName;
+   private final long slot;
+   private final NetworkAdapter networkAdapter;
+   private final String hostInterfaceName;
 
-	
-	public NetworkInterfaceCard(long slot, NetworkAdapter networkAdapter, String hostInterfaceName) {
-		this.slot = checkNotNull(slot, "slot");
-		this.networkAdapter = checkNotNull(networkAdapter, "networkAdapter");
-		this.hostInterfaceName = hostInterfaceName;
-	}
+   public NetworkInterfaceCard(long slot, NetworkAdapter networkAdapter, String hostInterfaceName) {
+      this.slot = checkNotNull(slot, "slot");
+      this.networkAdapter = checkNotNull(networkAdapter, "networkAdapter");
+      this.hostInterfaceName = hostInterfaceName;
+   }
 
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	public static class Builder {
-		
-		private long slot;
-		private NetworkAdapter networkAdapter;
-		private String hostInterfaceName;
-		
-		public Builder slot(long slot) {
-			this.slot = slot;
-			return this;
-		}
-		
-		public Builder addNetworkAdapter(
-				NetworkAdapter networkAdapter) {
-			this.networkAdapter = networkAdapter;
-			return this;
-		}
-		
-		public Builder addHostInterfaceName(
-				String hostInterfaceName) {
-			this.hostInterfaceName = hostInterfaceName;
-			return this;
-		}		
-		
-		public NetworkInterfaceCard build() {
-			return new NetworkInterfaceCard(slot, networkAdapter, hostInterfaceName);
-		}
-	}
+   public static Builder builder() {
+      return new Builder();
+   }
 
-	public long getSlot() {
-		return slot;
-	}
-	
-	public NetworkAdapter getNetworkAdapter() {
-		return networkAdapter;
-	}
-	
-	public String getHostInterfaceName() {
-		return hostInterfaceName;
-	}		
-	
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o instanceof NetworkInterfaceCard) {
-			NetworkInterfaceCard other = (NetworkInterfaceCard) o;
-			return Objects.equal(slot,
-					other.slot) &&
-					Objects.equal(networkAdapter, other.networkAdapter);
-		}
-		return false;
-	}
+   public static class Builder {
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(slot, networkAdapter);
-	}
+      private long slot;
+      private NetworkAdapter networkAdapter;
+      private String hostInterfaceName;
 
-	@Override
-	public String toString() {
-		return "NetworkInterfaceCard{" + "slot= "+ 
-				slot + 
-				"networkAdapter= " + networkAdapter +
-				'}';
-	}
+      public Builder slot(long slot) {
+<<<<<<< HEAD
+         checkArgument(slot >= 0 && slot < 4, "must be 0, 1, 2, 3: %s", slot);
+=======
+>>>>>>> 21a347b... issue 384: clone machine with bridged interface working
+         this.slot = slot;
+         return this;
+      }
+
+      public Builder addNetworkAdapter(NetworkAdapter networkAdapter) {
+         this.networkAdapter = networkAdapter;
+         return this;
+      }
+
+      public Builder addHostInterfaceName(String hostInterfaceName) {
+         this.hostInterfaceName = hostInterfaceName;
+         return this;
+      }
+
+      public NetworkInterfaceCard build() {
+         return new NetworkInterfaceCard(slot, networkAdapter, hostInterfaceName);
+      }
+   }
+
+   public long getSlot() {
+      return slot;
+   }
+
+   public NetworkAdapter getNetworkAdapter() {
+      return networkAdapter;
+   }
+
+   public String getHostInterfaceName() {
+      return hostInterfaceName;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o instanceof NetworkInterfaceCard) {
+         NetworkInterfaceCard other = (NetworkInterfaceCard) o;
+         return Objects.equal(slot, other.slot) && Objects.equal(networkAdapter, other.networkAdapter)
+               && Objects.equal(hostInterfaceName, other.hostInterfaceName);
+
+      }
+      return false;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(slot, networkAdapter, hostInterfaceName);
+   }
+
+   @Override
+   public String toString() {
+      return "NetworkInterfaceCard{slot=" + slot + 
+            ", networkAdapter=" + networkAdapter + 
+            ", hostInterfaceName=" + hostInterfaceName + 
+            "}";
+   }
 
 }

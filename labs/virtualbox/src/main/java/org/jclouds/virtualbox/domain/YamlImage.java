@@ -27,6 +27,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.domain.LoginCredentials;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -139,10 +140,11 @@ public class YamlImage {
          OsFamily family = parseOsFamilyOrUnrecognized(arg0.os_family);
 
          OperatingSystem operatingSystem = OperatingSystem.builder().description(arg0.os_description).family(family)
-                  .version(arg0.os_version).is64Bit(arg0.os_64bit).build();
+               .version(arg0.os_version).is64Bit(arg0.os_64bit).build();
 
          return new ImageBuilder().id(arg0.id).name(arg0.name).description(arg0.description)
-                  .operatingSystem(operatingSystem).build();
+               .defaultCredentials(new LoginCredentials(arg0.username, arg0.credential, arg0.credential_url, true))
+               .operatingSystem(operatingSystem).build();
       }
    };
 
