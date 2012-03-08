@@ -65,6 +65,27 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
    }
    
+   @Test(enabled = false)
+   public void testUpdateGroup() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/group/???")
+            .xmlFilePayload("/group/updateGroupSource.xml", VCloudDirectorMediaType.GROUP)
+            .acceptMedia(VCloudDirectorMediaType.GROUP)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/group/updateGroup.xml", VCloudDirectorMediaType.GROUP)
+            .httpResponseBuilder().build());
+
+      Group expected = updateGroup();
+
+      assertEquals(client.getGroupClient().updateGroup(groupRef.getURI(), expected), expected);
+   }
+   
+   public static Group updateGroup() {
+      return null; // TODO chain onto group() then toBuilder() and modify?
+   }
+   
    @Test
    public void testDeleteGroup() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 

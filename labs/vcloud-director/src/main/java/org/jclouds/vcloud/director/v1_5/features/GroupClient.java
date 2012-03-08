@@ -44,6 +44,16 @@ public interface GroupClient {
     * @return a group
     */
    Group getGroup(URI groupUri);
+   /**
+    * Modifies a group.
+    * 
+    * <pre>
+    * PUT /admin/group/{id}
+    * </pre>
+    * 
+    * @return the updated group
+    */
+   Group updateGroup(URI groupRef, Group group);
 
    /**
     * Deletes a group.
