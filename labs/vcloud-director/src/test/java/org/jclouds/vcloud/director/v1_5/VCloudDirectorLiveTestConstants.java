@@ -23,9 +23,9 @@ package org.jclouds.vcloud.director.v1_5;
  */
 public class VCloudDirectorLiveTestConstants {
 
-   /* Error codes from 100 to 199 reflect parsing and other errors in domain objects. */
+   public static final String OK = "ERR-200: ok";
 
-   public static final String OK = "ERR-100: ok";
+   /* Error codes from 100 to 199 reflect parsing and other errors in domain objects. */
 
    public static final String REF_REQ_LIVE = "ERR-101: %s reference required to perform live tests";
 
@@ -74,5 +74,11 @@ public class VCloudDirectorLiveTestConstants {
    public static final String OBJ_FIELD_CLONE = "ERR-123: %s %s must be a clone of \"%s\" (%s)";
    
    public static final String OBJ_FIELD_EMPTY_TO_DELETE = "ERR-124: %s must have no %s to be deleted (%s)";
+
+   /* Error codes from 300 to 399 reflect entities and their links and relationship errors. */ 
+   
+   public static final String ENTITY_NON_NULL = "ERR-301: The %s entity must not be null";
+
+   public static final String ENTITY_EQUAL = "ERR-302: The two %s entities must be equal";
 
 }

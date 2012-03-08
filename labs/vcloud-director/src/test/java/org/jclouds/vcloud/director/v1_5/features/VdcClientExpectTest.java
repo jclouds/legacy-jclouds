@@ -18,8 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -189,11 +188,11 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVAppTemplate")
-               .xmlFilePayload("/vdc/params/cloneVApp.xml", VCloudDirectorMediaType.CLONE_V_APP_PARAMS)
+               .xmlFilePayload("/vdc/params/cloneVApp.xml", VCloudDirectorMediaType.CLONE_VAPP_PARAMS)
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/vdc/cloneVApp.xml", VCloudDirectorMediaType.V_APP)
+               .xmlFilePayload("/vdc/cloneVApp.xml", VCloudDirectorMediaType.VAPP)
                .httpResponseBuilder().build());
       
       VApp expected = cloneVApp();
@@ -211,11 +210,11 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVAppTemplate")
-               .xmlFilePayload("/vdc/params/cloneVAppTemplate.xml", VCloudDirectorMediaType.CLONE_V_APP_TEMPLATE_PARAMS)
+               .xmlFilePayload("/vdc/params/cloneVAppTemplate.xml", VCloudDirectorMediaType.CLONE_VAPP_TEMPLATE_PARAMS)
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/vdc/cloneVAppTemplate.xml", VCloudDirectorMediaType.V_APP_TEMPLATE)
+               .xmlFilePayload("/vdc/cloneVAppTemplate.xml", VCloudDirectorMediaType.VAPP_TEMPLATE)
                .httpResponseBuilder().build());
       
       VAppTemplate expected = cloneVAppTemplate();
@@ -237,7 +236,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/vdc/composeVApp.xml", VCloudDirectorMediaType.V_APP)
+               .xmlFilePayload("/vdc/composeVApp.xml", VCloudDirectorMediaType.VAPP)
                .httpResponseBuilder().build());
       
       VApp expected = composeVApp();
@@ -259,7 +258,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/vdc/instantiateVAppTemplate.xml", VCloudDirectorMediaType.V_APP)
+               .xmlFilePayload("/vdc/instantiateVAppTemplate.xml", VCloudDirectorMediaType.VAPP)
                .httpResponseBuilder().build());
       
       VApp expected = instantiateVAppTemplate();
@@ -281,7 +280,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                .acceptAnyMedia()
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
-               .xmlFilePayload("/vdc/uploadVAppTemplate.xml", VCloudDirectorMediaType.V_APP_TEMPLATE)
+               .xmlFilePayload("/vdc/uploadVAppTemplate.xml", VCloudDirectorMediaType.VAPP_TEMPLATE)
                .httpResponseBuilder().build());
       
       VAppTemplate expected = uploadVAppTemplate();

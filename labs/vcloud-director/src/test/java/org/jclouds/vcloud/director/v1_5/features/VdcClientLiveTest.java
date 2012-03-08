@@ -18,14 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
+import static org.testng.Assert.*;
 
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
@@ -125,7 +120,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                   //.sections(sections) // TODO: ovf sections
             .build());
       
-      Checks.checkVAppTemplate(template);
+      checkVAppTemplate(template);
       
       // TODO: await task to complete
       // TODO: make assertions that the task was successful
