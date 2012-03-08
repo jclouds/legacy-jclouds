@@ -89,6 +89,8 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /task/{id}", dependsOnMethods = { "testGetTaskList" })
    public void testGetTask() {
+      //TODO: upload media or something so you can get a fresh cancellable task?
+      
       Task taskRef = Iterables.getFirst(taskList.getTasks(), null);
       taskURI = taskRef.getURI();
 

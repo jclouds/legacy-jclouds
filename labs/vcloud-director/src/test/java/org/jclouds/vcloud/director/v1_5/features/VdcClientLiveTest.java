@@ -27,8 +27,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
@@ -62,8 +60,6 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience reference to API client.
     */
    protected VdcClient vdcClient;
-
-   private URI vdcURI;
    
    @BeforeClass(inheritGroups = true)
    @Override
