@@ -18,6 +18,7 @@
  */
 package org.jclouds.ssh;
 
+import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -50,8 +51,23 @@ public interface SshClient {
    void put(String path, Payload contents);
 
    Payload get(String path);
-
+   
+   /**
+    * Execute a process and block until it is complete
+    * 
+    * @param command command line to invoke
+    * @return output of the command
+    */
    ExecResponse exec(String command);
+
+   /**
+    * Execute a process and allow the user to interact with it
+    * 
+    * @param command command line to invoke
+    * @return reference to the running process
+    * @since 1.5.0
+    */
+   ExecChannel execChannel(String command);
 
    void connect();
 

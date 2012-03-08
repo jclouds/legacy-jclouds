@@ -20,12 +20,16 @@ package org.jclouds.sshj;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
@@ -39,6 +43,8 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Suppliers;
+import com.google.common.io.Closeables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -106,7 +112,22 @@ public class SshjSshClientLiveTest {
             public void put(String path, String contents) {
 
             }
+            
+            @Override
+            public ExecChannel execChannel(String command) {
+               if (command.equals("hostname")) {
+                  return new ExecChannel(new ByteArrayOutputStream(), new ByteArrayInputStream(sshHost.getBytes()),
+                           new ByteArrayInputStream(new byte[] {}), Suppliers.ofInstance(0), new Closeable() {
 
+                              @Override
+                              public void close() {
+
+                              }
+
+                           });
+               }
+               throw new RuntimeException("command " + command + " not stubbed");
+            }
          };
       } else {
          Injector i = Guice.createInjector(new SshjSshClientModule(), new SLF4JLoggingModule());
@@ -147,5 +168,16 @@ public class SshjSshClientLiveTest {
       assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
                : sshHost);
    }
-
+   
+   public void testExecChannelHostname() throws IOException {
+      ExecChannel response = setupClient().execChannel("hostname");
+      try {
+         assertEquals(Strings2.toStringAndClose(response.getError()), "");
+         assertEquals(Strings2.toStringAndClose(response.getOutput()).trim(), "localhost".equals(sshHost) ? InetAddress
+                  .getLocalHost().getHostName() : sshHost);
+      } finally {
+         Closeables.closeQuietly(response);
+      }
+      assertEquals(response.getExitStatus().get(), new Integer(0));
+   }
 }

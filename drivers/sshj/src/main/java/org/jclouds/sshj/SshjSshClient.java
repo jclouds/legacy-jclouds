@@ -30,6 +30,7 @@ import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -46,6 +47,7 @@ import net.schmizz.sshj.common.IOUtils;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.PTYMode;
 import net.schmizz.sshj.connection.channel.direct.Session;
+import net.schmizz.sshj.connection.channel.direct.SessionChannel;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.sftp.SFTPException;
@@ -56,6 +58,7 @@ import net.schmizz.sshj.userauth.keyprovider.OpenSSHKeyFile;
 import net.schmizz.sshj.xfer.InMemorySourceFile;
 
 import org.apache.commons.io.input.ProxyInputStream;
+import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
@@ -71,7 +74,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
+import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -499,6 +504,59 @@ public class SshjSshClient implements SshClient {
       return acquire(new ExecConnection(command));
    }
 
+
+   class ExecChannelConnection implements Connection<ExecChannel> {
+      private final String command;
+      private SessionChannel session;
+
+      ExecChannelConnection(String command) {
+         this.command = checkNotNull(command, "command");
+      }
+
+      @Override
+      public void clear() {
+         if (session != null)
+            Closeables.closeQuietly(session);
+      }
+
+      @Override
+      public ExecChannel create() throws Exception {
+         try {
+            session = SessionChannel.class.cast(acquire(execConnection()));
+            Command output = session.exec(command);
+            output.join(timeoutMillis, TimeUnit.SECONDS);
+            return new ExecChannel(session.getOutputStream(), session.getInputStream(), session.getErrorStream(),
+                     new Supplier<Integer>() {
+
+                        @Override
+                        public Integer get() {
+                           return session.getExitStatus();
+                        }
+
+                     }, new Closeable() {
+
+                        @Override
+                        public void close() throws IOException {
+                           clear();
+                        }
+
+                     });
+         } finally {
+            clear();
+         }
+      }
+
+      @Override
+      public String toString() {
+         return "ExecChannel(command=[" + command + "])";
+      }
+   }
+
+   @Override
+   public ExecChannel execChannel(String command) {
+      return acquire(new ExecChannelConnection(command));
+   }
+   
    @Override
    public String getHostAddress() {
       return this.host;

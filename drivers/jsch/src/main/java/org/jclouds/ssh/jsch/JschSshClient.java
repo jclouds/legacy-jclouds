@@ -30,6 +30,7 @@ import static org.jclouds.crypto.CryptoStreams.md5;
 import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 import static org.jclouds.crypto.SshKeys.sha1PrivateKey;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
@@ -41,6 +42,7 @@ import javax.inject.Named;
 
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
@@ -57,6 +59,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
 import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 import com.jcraft.jsch.ChannelExec;
@@ -125,7 +128,7 @@ public class JschSshClient implements SshClient {
    private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
    public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket, int timeout,
-         String username, String password, byte[] privateKey) {
+            String username, String password, byte[] privateKey) {
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
       checkArgument(password != null || privateKey != null, "you must specify a password or a key");
@@ -138,10 +141,10 @@ public class JschSshClient implements SshClient {
       if (privateKey == null) {
          this.toString = String.format("%s:pw[%s]@%s:%d", username, hex(md5(password.getBytes())), host, port);
       } else {
-          String fingerPrint = fingerprintPrivateKey(new String(privateKey));
-          String sha1 = sha1PrivateKey(new String(privateKey));
-          this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", username, fingerPrint, sha1, host,
-                 port);
+         String fingerPrint = fingerprintPrivateKey(new String(privateKey));
+         String sha1 = sha1PrivateKey(new String(privateKey));
+         this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", username, fingerPrint, sha1, host,
+                  port);
       }
    }
 
@@ -181,7 +184,8 @@ public class JschSshClient implements SshClient {
          } else {
             // jsch wipes out your private key
             if (CredentialUtils.isPrivateKeyEncrypted(privateKey)) {
-               throw new IllegalArgumentException("JschSshClientModule does not support private keys that require a passphrase");
+               throw new IllegalArgumentException(
+                        "JschSshClientModule does not support private keys that require a passphrase");
             }
             jsch.addIdentity(username, Arrays.copyOf(privateKey, privateKey.length), null, emptyPassPhrase);
          }
@@ -323,8 +327,8 @@ public class JschSshClient implements SshClient {
 
    @VisibleForTesting
    boolean shouldRetry(Exception from) {
-      Predicate<Throwable> predicate = retryAuth ?  Predicates.<Throwable>or(retryPredicate, instanceOf(AuthorizationException.class))
-            : retryPredicate;
+      Predicate<Throwable> predicate = retryAuth ? Predicates.<Throwable> or(retryPredicate,
+               instanceOf(AuthorizationException.class)) : retryPredicate;
       if (any(getCausalChain(from), predicate))
          return true;
       if (!retryableMessages.equals(""))
@@ -343,7 +347,7 @@ public class JschSshClient implements SshClient {
                @Override
                public boolean apply(Throwable arg0) {
                   return (arg0.toString().indexOf(input) != -1)
-                             || (arg0.getMessage() != null && arg0.getMessage().indexOf(input) != -1);
+                           || (arg0.getMessage() != null && arg0.getMessage().indexOf(input) != -1);
                }
 
             });
@@ -361,7 +365,7 @@ public class JschSshClient implements SshClient {
       if (e.getMessage() != null && e.getMessage().indexOf("Auth fail") != -1)
          throw new AuthorizationException("(" + toString() + ") " + message, e);
       throw e instanceof SshException ? SshException.class.cast(e) : new SshException(
-            "(" + toString() + ") " + message, e);
+               "(" + toString() + ") " + message, e);
    }
 
    @Override
@@ -465,6 +469,62 @@ public class JschSshClient implements SshClient {
    @Override
    public String getUsername() {
       return this.username;
+   }
+
+
+   class ExecChannelConnection implements Connection<ExecChannel> {
+      private final String command;
+      private ChannelExec executor = null;
+
+      ExecChannelConnection(String command) {
+         this.command = checkNotNull(command, "command");
+      }
+
+      @Override
+      public void clear() {
+         if (executor != null)
+            executor.disconnect();
+      }
+
+      @Override
+      public ExecChannel create() throws Exception {
+         checkConnected();
+         String channel = "exec";
+         executor = (ChannelExec) session.openChannel(channel);
+         executor.setPty(true);
+         executor.setCommand(command);
+         ByteArrayOutputStream error = new ByteArrayOutputStream();
+         executor.setErrStream(error);
+         executor.connect();
+         return new ExecChannel(executor.getOutputStream(), executor.getInputStream(), executor.getErrStream(),
+                  new Supplier<Integer>() {
+
+                     @Override
+                     public Integer get() {
+                        int exitStatus = executor.getExitStatus();
+                        return exitStatus != -1 ? exitStatus : null;
+                     }
+
+                  }, new Closeable() {
+
+                     @Override
+                     public void close() throws IOException {
+                        clear();
+                     }
+
+                  });
+      }
+
+      @Override
+      public String toString() {
+         return "ExecChannel(command=[" + command + "])";
+      }
+   };
+
+   
+   @Override
+   public ExecChannel execChannel(String command) {
+      return acquire(new ExecChannelConnection(command));
    }
 
 }
