@@ -31,9 +31,9 @@ import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A reference to a resource.
- * <p/>
+ *
  * Contains an href attribute and optional name and type attributes.
- * <p/>
+ * <p>
  * <pre>
  * &lt;xs:complexType name="ReferenceType"&gt;
  * </pre>

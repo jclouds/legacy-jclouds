@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -38,11 +39,11 @@ import com.google.common.collect.Sets;
 
 /**
  * Basic entity type in the vCloud object model.
- * <p/>
+ *
  * Includes a name, an optional description, and an optional list of links
- * <p/>
+ *
  * <pre>
- * &lt;xs:complexType name="EntityType"&gt;
+ * &lt;xs:complexType name="EntityType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
@@ -167,25 +168,27 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       /**
        * @see ResourceType#getLinks()
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
+         if (checkNotNull(links, "links").size() > 0)
+            this.links = Sets.newLinkedHashSet(links);
+         return this;
       }
 
       /**
        * @see ResourceType#getLinks()
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> link(Link link) {
-         return Builder.class.cast(super.link(link));
+         if (links == null)
+            links = Sets.newLinkedHashSet();
+         this.links.add(checkNotNull(link, "link"));
+         return this;
       }
 
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromResourceType(ResourceType<T> in) {
          return Builder.class.cast(super.fromResourceType(in));
@@ -228,6 +231,10 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       return description;
    }
 
+   public void setDescription(String description) {
+      this.description = description;
+   }
+
    /**
     * A list of queued, running, or recently completed tasks associated with this entity.
     */
@@ -250,6 +257,10 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
     */
    public String getName() {
       return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 
    @Override
@@ -276,7 +287,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(description, tasks, id, name);
+      return Objects.hashCode(super.hashCode(), description, tasks, id, name);
    }
 
    @Override

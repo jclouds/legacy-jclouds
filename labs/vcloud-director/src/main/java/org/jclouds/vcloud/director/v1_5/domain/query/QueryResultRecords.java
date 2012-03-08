@@ -19,8 +19,8 @@
 
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
 
 import java.net.URI;
 import java.util.Set;
@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.EntityType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 
 import com.google.common.base.Objects;
@@ -39,7 +38,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a vCloud query as records.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="QueryResultRecords" /&gt;
  * </pre>
@@ -198,7 +197,7 @@ public class QueryResultRecords<T extends QueryResultRecordType<T>> extends Cont
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(records);
+      return Objects.hashCode(super.hashCode(), records);
    }
 
    @Override

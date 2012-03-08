@@ -36,7 +36,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Container for query result sets.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Container" /&gt;
  * </pre>
@@ -207,7 +207,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(name, page, pageSize, total);
+      return Objects.hashCode(super.hashCode(), name, page, pageSize, total);
    }
 
    @Override

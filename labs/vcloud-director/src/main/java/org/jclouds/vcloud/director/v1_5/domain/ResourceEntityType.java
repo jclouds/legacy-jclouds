@@ -19,29 +19,108 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorRuntimeException;
+import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType.Builder;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Base type that represents a resource entity such as a vApp template or virtual media.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="ResourceEntity" &gt;
+ * &lt;complexType name="ResourceEntity" /&gt;
  * </pre>
  *
  * @author danikov
  * @author Adam Lowe
+ * @author grkvlt@apache.org
  */
 public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityType<T> {
 
+   public static enum Status {
+      
+      FAILED_CREATION(-1, "The object could not be created.", true, true, true),
+      UNRESOLVED(0, "The object is unresolved.", true, true, true),
+      RESOLVED(1, "The object is resolved.", true, true, true),
+      DEPLOYED(2, "The object is deployed.", false, false, false),
+      SUSPENDED(3, "The object is suspended.", false, true, true),
+      POWERED_ON(4, "The object is powered on.", false, true, true),
+      WAITING_FOR_INPUT(5, "The object is waiting for user input.", false, true, true),
+      UNKNOWN(6, "The object is in an unknown state.", true, true, true),
+      UNRECOGNIZED(7, "The object is in an unrecognized state.", true, true, true),
+      POWERED_OFF(8, "The object is powered off.", true, true, true),
+      INCONSISTENT_STATE(9, "The object is in an inconsistent state.", false, true, true),
+      MIXED(10, "Children do not all have the same status.", true, true, false),
+      UPLOAD_OVF_PENDING(11, "Upload initiated, OVF descriptor pending.", true, false, false),
+      UPLOAD_COPYING(12, "Upload initiated, copying contents.", true, false, false),
+      UPLOAD_DISK_PENDING(13, "Upload initiated , disk contents pending.", true, false, false),
+      UPLOAD_QUARANTINED(14, "Upload has been quarantined.", true, false, false),
+      UPLOAD_QUARANTINE_EXPIRED(15, "Upload quarantine period has expired.", true, false, false);
+      
+      private Integer value;
+      private String description;
+      private boolean vAppTemplate;
+      private boolean vApp;
+      private boolean vm;
+      
+      private Status(int value, String description, boolean vAppTemplate, boolean vApp, boolean vm) {
+         this.value = value;
+         this.description = description;
+         this.vAppTemplate = vAppTemplate;
+         this.vApp = vApp;
+         this.vm = vm;
+      }
+
+      public Integer getValue() {
+         return value;
+      }
+
+      public String getDescription() {
+         return description;
+      }
+
+      public boolean isVAppTemplate() {
+         return vAppTemplate;
+      }
+
+      public boolean isVApp() {
+         return vApp;
+      }
+
+      public boolean isVm() {
+         return vm;
+      }
+
+      public static Status fromValue(final int value) {
+         Optional<Status> found = Iterables.tryFind(Arrays.asList(values()), new Predicate<Status>() {
+            @Override
+            public boolean apply(Status status) {
+               return status.getValue() == value;
+            }
+         });
+         if (found.isPresent()) {
+            return found.get();
+         } else {
+            throw new VCloudDirectorRuntimeException(String.format("Illegal status value '%d'", value));
+         }
+      }
+   }
+       
    public static abstract class Builder<T extends ResourceEntityType<T>> extends EntityType.Builder<T> {
       protected FilesList files;
       protected Integer status;
@@ -99,29 +178,33 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
       }
 
       /**
-       * @see ResourceEntityType#getLinks()
+       * @see EntityType#getLinks()
        */
+      @Override
       public Builder<T> links(Set<Link> links) {
-         super.links(links);
+         if (checkNotNull(links, "links").size() > 0)
+            this.links = Sets.newLinkedHashSet(links);
          return this;
       }
 
       /**
-       * @see ResourceEntityType#getLinks()
+       * @see EntityType#getLinks()
        */
+      @Override
       public Builder<T> link(Link link) {
-         super.link(link);
+         if (links == null)
+            links = Sets.newLinkedHashSet();
+         this.links.add(checkNotNull(link, "link"));
          return this;
       }
 
-      @SuppressWarnings("unchecked")
       @Override
-      public Builder<T> fromResourceType(ResourceType<T> in) {
-         return Builder.class.cast(super.fromResourceType(in));
+      public Builder<T> fromEntityType(EntityType<T> in) {
+         return Builder.class.cast(super.fromEntityType(in));
       }
 
       public Builder<T> fromResourceEntityType(ResourceEntityType<T> in) {
-         return fromResourceType(in).files(in.getFiles()).status(in.getStatus());
+         return fromEntityType(in).files(in.getFiles()).status(in.getStatus());
       }
    }
 
@@ -177,7 +260,7 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(files, status);
+      return Objects.hashCode(super.hashCode(), files, status);
    }
 
    @Override

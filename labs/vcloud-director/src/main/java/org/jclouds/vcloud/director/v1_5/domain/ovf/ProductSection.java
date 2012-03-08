@@ -91,8 +91,8 @@ public class ProductSection extends SectionType<ProductSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<ProductSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<ProductSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

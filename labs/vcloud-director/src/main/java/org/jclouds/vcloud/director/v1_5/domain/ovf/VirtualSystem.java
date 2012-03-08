@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -50,25 +50,22 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
        */
       @Override
       public VirtualSystem build() {
-         return new VirtualSystem(id, info, required, name, operatingSystem, virtualHardwareSections, productSections,
-               additionalSections);
+         return new VirtualSystem(id, info, required, name, operatingSystem, virtualHardwareSections, productSections, additionalSections);
       }
 
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
-      public Builder additionalSection(String name, SectionType additionalSection) {
+      public Builder additionalSection(String name, SectionType<?> additionalSection) {
          return Builder.class.cast(super.additionalSection(name, additionalSection));
       }
 
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
-      public Builder additionalSections(Multimap<String, SectionType> additionalSections) {
+      public Builder additionalSections(Multimap<String, SectionType<?>> additionalSections) {
          return Builder.class.cast(super.additionalSections(additionalSections));
       }
 
@@ -76,8 +73,8 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<VirtualSystem> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<VirtualSystem> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**
@@ -164,7 +161,7 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
 
    private VirtualSystem(String id, String info, @Nullable Boolean required, String name, OperatingSystemSection operatingSystem,
                         Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
-                        Iterable<? extends ProductSection> productSections, Multimap<String, SectionType> additionalSections) {
+                        Iterable<? extends ProductSection> productSections, Multimap<String, SectionType<?>> additionalSections) {
       super(id, info, required, name, operatingSystem, virtualHardwareSections, productSections, additionalSections);
    }
    

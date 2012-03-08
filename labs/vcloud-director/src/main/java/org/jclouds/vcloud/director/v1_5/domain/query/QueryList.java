@@ -25,25 +25,17 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * Container for the list of typed queries available to the
  * requesting user.
- * <p/>
- * <p/>
- * <p>Java class for QueryList complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="QueryList">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}ContainerType">
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="QueryList" /&gt;
  * </pre>
+ *
+ * @author grkvlt@apache.org
  */
 @XmlType(name = "QueryList")
 public class QueryList extends ContainerType<QueryList> {
 
+   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -55,6 +47,7 @@ public class QueryList extends ContainerType<QueryList> {
 
    public static class Builder extends ContainerType.Builder<QueryList> {
 
+      @Override
       public QueryList build() {
          QueryList queryList = new QueryList();
          return queryList;

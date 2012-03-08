@@ -446,7 +446,7 @@ public class Task extends EntityType<Task> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(error, org, progress, status, operation, operationName,
+      return Objects.hashCode(super.hashCode(), error, org, progress, status, operation, operationName,
             startTime, endTime, expiryTime);
    }
 

@@ -41,13 +41,13 @@ import com.google.common.collect.Sets;
 public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends SectionType<T> {
 
    public static abstract class Builder<T extends BaseVirtualSystem<T>> extends SectionType.Builder<T> {
+
       protected String id;
       protected String name;
       protected OperatingSystemSection operatingSystem;
       protected Set<VirtualHardwareSection> virtualHardwareSections = Sets.newLinkedHashSet();
       protected Set<ProductSection> productSections = Sets.newLinkedHashSet();
-      @SuppressWarnings("unchecked")
-      protected Multimap<String, SectionType> additionalSections = LinkedHashMultimap.create();
+      protected Multimap<String, SectionType<?>> additionalSections = LinkedHashMultimap.create();
 
       /**
        * @see BaseVirtualSystem#getName
@@ -109,8 +109,7 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       /**
        * @see BaseVirtualSystem#getAdditionalSections
        */
-      @SuppressWarnings("unchecked")
-      public Builder<T> additionalSection(String name, SectionType additionalSection) {
+      public Builder<T> additionalSection(String name, SectionType<?> additionalSection) {
          this.additionalSections.put(checkNotNull(name, "name"), checkNotNull(additionalSection, "additionalSection"));
          return this;
       }
@@ -118,9 +117,8 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       /**
        * @see BaseVirtualSystem#getAdditionalSections
        */
-      @SuppressWarnings("unchecked")
-      public Builder<T> additionalSections(Multimap<String, SectionType> additionalSections) {
-         this.additionalSections = ImmutableMultimap.<String, SectionType> copyOf(checkNotNull(additionalSections,
+      public Builder<T> additionalSections(Multimap<String, SectionType<?>> additionalSections) {
+         this.additionalSections = ImmutableMultimap.<String, SectionType<?>> copyOf(checkNotNull(additionalSections,
                   "additionalSections"));
          return this;
       }
@@ -132,9 +130,10 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       public abstract BaseVirtualSystem<T> build();
 
       public Builder<T> fromVirtualSystem(BaseVirtualSystem<T> in) {
-         return fromSection(in).id(in.getId()).name(in.getName())
-                  .operatingSystemSection(in.getOperatingSystemSection()).virtualHardwareSections(
-                           in.getVirtualHardwareSections()).productSections(in.getProductSections())
+         return fromSectionType(in).id(in.getId()).name(in.getName())
+                  .operatingSystemSection(in.getOperatingSystemSection())
+                  .virtualHardwareSections(in.getVirtualHardwareSections())
+                  .productSections(in.getProductSections())
                   .additionalSections(in.getAdditionalSections());
       }
 
@@ -142,8 +141,8 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<T> fromSection(SectionType<T> in) {
-         return (Builder<T>) super.fromSection(in);
+      public Builder<T> fromSectionType(SectionType<T> in) {
+         return (Builder<T>) super.fromSectionType(in);
       }
 
       /**
@@ -161,13 +160,11 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
    private OperatingSystemSection operatingSystem;
    private Set<VirtualHardwareSection> virtualHardwareSections;
    private Set<ProductSection> productSections;
-   @SuppressWarnings("unchecked")
-   private Multimap<String, SectionType> additionalSections;
+   private Multimap<String, SectionType<?>> additionalSections;
 
-   @SuppressWarnings("unchecked")
    protected BaseVirtualSystem(String id, String info, @Nullable Boolean required, String name, OperatingSystemSection operatingSystem,
             Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
-            Iterable<? extends ProductSection> productSections, Multimap<String, SectionType> additionalSections) {
+            Iterable<? extends ProductSection> productSections, Multimap<String, SectionType<?>> additionalSections) {
       super(info, required);
       this.id = id;
       this.name = name;
@@ -210,8 +207,7 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       return productSections;
    }
 
-   @SuppressWarnings("unchecked")
-   public Multimap<String, SectionType> getAdditionalSections() {
+   public Multimap<String, SectionType<?>> getAdditionalSections() {
       return additionalSections;
    }
 
@@ -236,6 +232,7 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
             && Objects.equal(additionalSections, other.additionalSections);
    }
 
+   @Override
    protected Objects.ToStringHelper string() {
       return super.string().add("id", id).add("name", name)
             .add("operatingSystem", operatingSystem).add("virtualHardwareSections", virtualHardwareSections)

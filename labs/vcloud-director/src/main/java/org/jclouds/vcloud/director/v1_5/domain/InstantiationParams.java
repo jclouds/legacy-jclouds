@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
 
 import java.util.Collections;
 import java.util.Set;
@@ -28,42 +27,23 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.DeploymentOptionSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
-
 /**
  * Represents a list of ovf:Section to configure for instantiating a VApp.
- * <p/>
- * <p/>
- * <p>Java class for InstantiationParams complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * 
  * <pre>
- * &lt;complexType name="InstantiationParams">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}VCloudExtensibleType">
- *       &lt;sequence>
- *         &lt;element ref="{http://schemas.dmtf.org/ovf/envelope/1}Section" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="InstantiationParams" /&gt;
  * </pre>
+ * 
+ * @author grkvlt@apache.org
  */
-@XmlType(name = "InstantiationParams", propOrder = {
-      "section"
-})
+@XmlType(name = "InstantiationParams")
 public class InstantiationParams {
+
    public static Builder builder() {
       return new Builder();
    }
@@ -73,7 +53,7 @@ public class InstantiationParams {
    }
 
    public static class Builder {
-     private Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
+      private Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
 
       /**
        * @see InstantiationParams#getSections()
@@ -83,12 +63,10 @@ public class InstantiationParams {
          return this;
       }
 
-
       public InstantiationParams build() {
          InstantiationParams instantiationParams = new InstantiationParams(sections);
          return instantiationParams;
       }
-
 
       public Builder fromInstantiationParams(InstantiationParams in) {
          return sections(in.getSections());
@@ -103,34 +81,33 @@ public class InstantiationParams {
       this.sections = sections;
    }
 
-
    @XmlElementRef
    protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
 
    /**
-    * An ovf:Section to configure for instantiation.
-    * <p/>
-    * Gets the value of the section property.
-    * <p/>
+    * An {@code ovf:Section} to configure for instantiation.
+    *
     * Objects of the following type(s) are allowed in the list
-    * {@link SectionType }
-    * {@link VirtualHardwareSection }
-    * {@link LeaseSettingsSection }
-    * {@link EulaSection }
-    * {@link RuntimeInfoSection }
-    * {@link AnnotationSection }
-    * {@link DeploymentOptionSection }
-    * {@link StartupSection }
-    * {@link ResourceAllocationSection }
-    * {@link NetworkConnectionSection }
-    * {@link CustomizationSection }
-    * {@link ProductSection }
-    * {@link GuestCustomizationSection }
-    * {@link org.jclouds.ovf.OperatingSystemSection }
-    * {@link NetworkConfigSection }
-    * {@link NetworkSection }
-    * {@link DiskSection }
-    * {@link InstallSection }
+    * <ul>
+    * <li>{@link SectionType}
+    * <li>{@link VirtualHardwareSection}
+    * <li>{@link LeaseSettingsSection}
+    * <li>{@link EulaSection}
+    * <li>{@link RuntimeInfoSection}
+    * <li>{@link AnnotationSection}
+    * <li>{@link DeploymentOptionSection}
+    * <li>{@link StartupSection}
+    * <li>{@link ResourceAllocationSection}
+    * <li>{@link NetworkConnectionSection}
+    * <li>{@link CustomizationSection}
+    * <li>{@link ProductSection}
+    * <li>{@link GuestCustomizationSection}
+    * <li>{@link OperatingSystemSection}
+    * <li>{@link NetworkConfigSection}
+    * <li>{@link NetworkSection}
+    * <li>{@link DiskSection}
+    * <li>{@link InstallSection}
+    * </ul>
     */
    public Set<? extends SectionType<?>> getSections() {
       return Collections.unmodifiableSet(this.sections);
@@ -153,8 +130,6 @@ public class InstantiationParams {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("")
-            .add("sections", sections).toString();
+      return Objects.toStringHelper("").add("sections", sections).toString();
    }
-
 }

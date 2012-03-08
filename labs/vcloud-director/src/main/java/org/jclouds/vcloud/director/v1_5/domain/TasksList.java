@@ -170,7 +170,7 @@ public class TasksList extends ResourceType<TasksList> implements Set<Task> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(delegate(), name);
+      return Objects.hashCode(super.hashCode(), delegate(), name);
    }
 
    private Set<Task> delegate() {

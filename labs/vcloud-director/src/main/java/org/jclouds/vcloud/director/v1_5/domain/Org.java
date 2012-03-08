@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -34,10 +35,10 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
 /**
- * iRepresents an organization.
- * <p/>
+ * Represents an organization.
+ *
  * Unit of multi-tenancy and a top-level container. Contain vDCs, TasksList, Catalogs and Shared Network entities.
- * <p/>
+ *
  * <pre>
  * &lt;xs:complexType name="OrgType"&gt;
  * </pre>
@@ -53,6 +54,7 @@ public class Org extends EntityType<Org> {
       return new ConcreteBuilder();
    }
 
+   @Override
    public NewBuilder<?> toNewBuilder() {
       return new ConcreteBuilder().fromOrg(this);
    }
@@ -172,18 +174,30 @@ public class Org extends EntityType<Org> {
          this.id = id;
          return this;
       }
-
+      
       /**
        * @see EntityType#getTasks()
        */
       @Override
       public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
+         if (checkNotNull(tasks, "tasks").size() > 0)
+            this.tasks = Sets.newLinkedHashSet(tasks);
          return this;
       }
 
       /**
-       * @see ReferenceType#getHref()
+       * @see EntityType#getTasks()
+       */
+      @Override
+      public Builder task(Task task) {
+         if (tasks == null)
+            tasks = Sets.newLinkedHashSet();
+         this.tasks.add(checkNotNull(task, "task"));
+         return this;
+      }
+
+      /**
+       * @see ResourceType#getHref()
        */
       @Override
       public Builder href(URI href) {
@@ -192,7 +206,7 @@ public class Org extends EntityType<Org> {
       }
 
       /**
-       * @see ReferenceType#getType()
+       * @see ResourceType#getType()
        */
       @Override
       public Builder type(String type) {
@@ -201,19 +215,22 @@ public class Org extends EntityType<Org> {
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         if (checkNotNull(links, "links").size() > 0)
+            this.links = Sets.newLinkedHashSet(links);
          return this;
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder link(Link link) {
+         if (links == null)
+            links = Sets.newLinkedHashSet();
          this.links.add(checkNotNull(link, "link"));
          return this;
       }
@@ -232,12 +249,12 @@ public class Org extends EntityType<Org> {
       // for JAXB
    }
 
-   public Org(URI href, String type, Set<Link> links, String description, 
-         Set<Task> tasksInProgress, String id, String name, 
+   public Org(URI href, String type, @Nullable Set<Link> links, String description, 
+         @Nullable Set<Task> tasks, String id, String name, 
          String fullName, Boolean enabled) {
-      super(href, type, links, description, tasksInProgress, id, name);
+      super(href, type, links, description, tasks, id, name);
       this.fullName = fullName;
-      isEnabled = enabled;
+      this.isEnabled = enabled;
    }
 
    @XmlElement(name = "FullName", required = true)
@@ -253,7 +270,7 @@ public class Org extends EntityType<Org> {
    }
 
    /**
-    * Full name of the organization.
+    * Is the organization enabled.
     */
    public Boolean isEnabled() {
       return isEnabled;
@@ -271,7 +288,7 @@ public class Org extends EntityType<Org> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(fullName, isEnabled);
+      return Objects.hashCode(super.hashCode(), fullName, isEnabled);
    }
 
    @Override

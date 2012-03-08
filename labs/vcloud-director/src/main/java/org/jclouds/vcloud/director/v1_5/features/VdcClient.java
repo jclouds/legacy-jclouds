@@ -38,7 +38,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 
 /**
  * Provides synchronous access to a vDC.
- * <p/>
  * 
  * @see VdcAsyncClient
  * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />

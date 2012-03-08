@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,49 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.common.base.Objects;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType.Builder;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents vApp template instantiation parameters.
- * <p/>
- * <p/>
- * <p>Java class for InstantiateVAppTemplateParams complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="InstantiateVAppTemplateParams">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}InstantiateVAppParamsType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.vmware.com/vcloud/v1.5}AllEULAsAccepted" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="InstantiateVAppTemplateParams" /&gt;
  * </pre>
  */
-@XmlType(name = "InstantiateVAppTemplateParams", propOrder = {
-      "allEULAsAccepted"
-})
-public class InstantiateVAppTemplateParams
-      extends InstantiateVAppParamsType<InstantiateVAppTemplateParams> {
+@XmlType(name = "InstantiateVAppTemplateParams")
+public class InstantiateVAppTemplateParams extends InstantiateVAppParamsType<InstantiateVAppTemplateParams> {
 
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromInstantiateVAppTemplateParams(this);
    }
@@ -75,13 +60,78 @@ public class InstantiateVAppTemplateParams
          return this;
       }
 
+      @Override
       public InstantiateVAppTemplateParams build() {
-         return new InstantiateVAppTemplateParams(description, name, vAppParent, instantiationParams, deploy, powerOn, source, isSourceDelete, linkedClone, allEULAsAccepted);
+         return new InstantiateVAppTemplateParams(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone, allEULAsAccepted);
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#getSource()
+       */
+      @Override
+      public Builder source(ReferenceType<?> source) {
+         this.source = source;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isSourceDelete()
+       */
+      @Override
+      public Builder isSourceDelete(Boolean sourceDelete) {
+         this.sourceDelete = sourceDelete;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isSourceDelete()
+       */
+      @Override
+      public Builder sourceDelete() {
+         this.sourceDelete = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isSourceDelete()
+       */
+      @Override
+      public Builder notSourceDelete() {
+         this.sourceDelete = Boolean.FALSE;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isLinkedClone()
+       */
+      @Override
+      public Builder isLinkedClone(Boolean linkedClone) {
+         this.linkedClone = linkedClone;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isLinkedClone()
+       */
+      @Override
+      public Builder linkedClone() {
+         this.linkedClone = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isLinkedClone()
+       */
+      @Override
+      public Builder notLinkedClone() {
+         this.linkedClone = Boolean.FALSE;
+         return this;
       }
 
       /**
        * @see ParamsType#getDescription()
        */
+      @Override
       public Builder description(String description) {
          super.description(description);
          return this;
@@ -90,6 +140,7 @@ public class InstantiateVAppTemplateParams
       /**
        * @see ParamsType#getName()
        */
+      @Override
       public Builder name(String name) {
          super.name(name);
          return this;
@@ -98,32 +149,72 @@ public class InstantiateVAppTemplateParams
       /**
        * @see VAppCreationParamsType#getVAppParent()
        */
+      @Override
       public Builder vAppParent(Reference vAppParent) {
-         super.vAppParent(vAppParent);
+         this.vAppParent = vAppParent;
          return this;
       }
 
       /**
        * @see VAppCreationParamsType#getInstantiationParams()
        */
+      @Override
       public Builder instantiationParams(InstantiationParams instantiationParams) {
-         super.instantiationParams(instantiationParams);
+         this.instantiationParams = instantiationParams;
          return this;
       }
 
       /**
        * @see VAppCreationParamsType#isDeploy()
        */
+      @Override
       public Builder deploy(Boolean deploy) {
-         super.deploy(deploy);
+         this.deploy = deploy;
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#isDeploy()
+       */
+      @Override
+      public Builder deploy() {
+         this.deploy = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#isDeploy()
+       */
+      @Override
+      public Builder notDeploy() {
+         this.deploy = Boolean.FALSE;
          return this;
       }
 
       /**
        * @see VAppCreationParamsType#isPowerOn()
        */
+      @Override
       public Builder powerOn(Boolean powerOn) {
-         super.powerOn(powerOn);
+         this.powerOn = powerOn;
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#isPowerOn()
+       */
+      @Override
+      public Builder powerOn() {
+         this.powerOn = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#isPowerOn()
+       */
+      @Override
+      public Builder notPowerOn() {
+         this.powerOn = Boolean.FALSE;
          return this;
       }
 
@@ -136,18 +227,17 @@ public class InstantiateVAppTemplateParams
       }
 
       public Builder fromInstantiateVAppTemplateParams(InstantiateVAppTemplateParams in) {
-         return fromInstantiateVAppParamsType(in)
-               .allEULAsAccepted(in.isAllEULAsAccepted());
+         return fromInstantiateVAppParamsType(in).allEULAsAccepted(in.isAllEULAsAccepted());
       }
    }
 
    public InstantiateVAppTemplateParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
-                                        Boolean deploy, Boolean powerOn, Reference source, Boolean sourceDelete, Boolean linkedClone, Boolean allEULAsAccepted) {
+                                        Boolean deploy, Boolean powerOn, ReferenceType<?> source, Boolean sourceDelete, Boolean linkedClone, Boolean allEULAsAccepted) {
       super(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
       this.allEULAsAccepted = allEULAsAccepted;
    }
 
-   private InstantiateVAppTemplateParams() {
+   protected InstantiateVAppTemplateParams() {
       // for JAXB
    }
 
@@ -161,9 +251,6 @@ public class InstantiateVAppTemplateParams
     * element is missing, empty, or set to false
     * and one or more EulaSection elements are
     * present.
-    *
-    * @return possible object is
-    *         {@link Boolean }
     */
    public Boolean isAllEULAsAccepted() {
       return allEULAsAccepted;
@@ -176,18 +263,16 @@ public class InstantiateVAppTemplateParams
       if (o == null || getClass() != o.getClass())
          return false;
       InstantiateVAppTemplateParams that = InstantiateVAppTemplateParams.class.cast(o);
-      return equal(allEULAsAccepted, that.allEULAsAccepted);
+      return super.equals(that) && equal(this.allEULAsAccepted, that.allEULAsAccepted);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(allEULAsAccepted);
+      return Objects.hashCode(super.hashCode(), allEULAsAccepted);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
-            .add("allEULAsAccepted", allEULAsAccepted).toString();
+   public ToStringHelper string() {
+      return super.string().add("allEULAsAccepted", allEULAsAccepted);
    }
-
 }

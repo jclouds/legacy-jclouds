@@ -271,7 +271,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       }
 
       public Builder fromGuestCustomizationSection(GuestCustomizationSection in) {
-         return fromSection(in)
+         return fromSectionType(in)
                .enabled(in.isEnabled())
                .changeSid(in.isChangeSid())
                .virtualMachineId(in.getVirtualMachineId())
@@ -295,8 +295,8 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<GuestCustomizationSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<GuestCustomizationSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

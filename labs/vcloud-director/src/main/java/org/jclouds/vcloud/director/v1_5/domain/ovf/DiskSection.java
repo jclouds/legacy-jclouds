@@ -95,8 +95,8 @@ public class DiskSection extends SectionType<DiskSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<DiskSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<DiskSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
       
       /**
