@@ -32,6 +32,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 
@@ -48,28 +49,13 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
       String group = "foo";
       String name = "foo-ef4";
-      String machineName = VIRTUALBOX_NODE_PREFIX + "myTestId-" + group + "-" + name;
+      String machineName = VIRTUALBOX_NODE_PREFIX + "default-ubuntu-11.04-i386-" + group + "-" + name;
 
       Template template = context.getComputeService().templateBuilder().build();
       machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
       
       assertEquals(machine.getNode().getName(), machineName);
       doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
-   }
-
-   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
-      SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
-      try {
-         ssh.connect();
-         ExecResponse hello = ssh.exec("echo hello");
-         assertEquals(hello.getOutput().trim(), "hello");
-         System.err.println(ssh.exec("df -k").getOutput());
-         System.err.println(ssh.exec("mount").getOutput());
-         System.err.println(ssh.exec("uname -a").getOutput());
-      } finally {
-         if (ssh != null)
-            ssh.disconnect();
-      }
    }
 
    @Test
@@ -85,7 +71,23 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       assertEquals(1, Iterables.size(iMageIterable));
       //TODO: check state;
    }
+   
+   protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
+      SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
+      try {
+         ssh.connect();
+         ExecResponse hello = ssh.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
+         System.err.println(ssh.exec("df -k").getOutput());
+         System.err.println(ssh.exec("mount").getOutput());
+         System.err.println(ssh.exec("uname -a").getOutput());
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+   }
 
+   @AfterClass
    @Override
    protected void tearDown() throws Exception {
       if (machine != null)

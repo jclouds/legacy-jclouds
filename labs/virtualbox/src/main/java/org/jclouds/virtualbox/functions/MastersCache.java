@@ -28,15 +28,20 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKI
 import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
@@ -69,20 +74,26 @@ import com.google.common.collect.Maps;
  */
 public class MastersCache extends AbstractLoadingCache<Image, Master> {
 
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    private final Map<String, Master> masters = Maps.newHashMap();
    private final Function<MasterSpec, IMachine> masterCreatorAndInstaller;
    private final Map<String, YamlImage> imageMapping;
    private final String workingDir;
-   private final String guestAdditionsIso;
    private final String installationKeySequence;
    private final String isosDir;
    private Supplier<VirtualBoxManager> manager;
+   private Function<URI, File> isoDownloader;
+   private String version;
 
    @Inject
    public MastersCache(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
             @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
             @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
-            Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager) {
+            Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager,
+            Function<URI, File> isoDownloader) {
       checkNotNull(version, "version");
       checkNotNull(installationKeySequence, "installationKeySequence");
       checkNotNull(manager, "vboxmanager");
@@ -90,26 +101,36 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
       this.masterCreatorAndInstaller = masterLoader;
       this.installationKeySequence = installationKeySequence;
       this.workingDir = workingDir == null ? VIRTUALBOX_DEFAULT_DIR : workingDir;
-      File wdFile = new File(this.workingDir);
-      if (!wdFile.exists()) {
-         wdFile.mkdirs();
-      }
-      this.isosDir = wdFile.getAbsolutePath() + File.separator + "isos";
+      this.isosDir = workingDir + File.separator + "isos";
       this.imageMapping = Maps.newLinkedHashMap();
       for (Entry<Image, YamlImage> entry : yamlMapper.get().entrySet()) {
          this.imageMapping.put(entry.getKey().getId(), entry.getValue());
       }
-      this.guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir,
-               Iterables.get(Splitter.on('r').split(version), 0));
-      checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
+      this.version = Iterables.get(Splitter.on('r').split(version), 0);
+      this.isoDownloader = isoDownloader;
+   }
+   
+   @PostConstruct
+   public void createCacheDirStructure() {
+      if (!new File(workingDir).exists()) {
+         new File(workingDir, "isos").mkdirs();
+      }
    }
 
    @Override
-   public Master get(Image key) throws ExecutionException {
+   public synchronized Master get(Image key) throws ExecutionException {
       // check if we have loaded this machine before
       if (masters.containsKey(key.getId())) {
          return masters.get(key);
       }
+
+      String guestAdditionsFileName = String.format("VBoxGuestAdditions_%s.iso", version);
+      String guestAdditionsIso = String.format("%s/%s", isosDir, guestAdditionsFileName);
+      String guestAdditionsUri = "http://download.virtualbox.org/virtualbox/" + version + "/" + guestAdditionsFileName;
+      if (!new File(guestAdditionsIso).exists()) {
+         getFilePathOrDownload(guestAdditionsUri);
+      }
+      checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
 
       // the yaml image
       YamlImage yamlImage = imageMapping.get(key.getId());
@@ -169,10 +190,12 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
    }
 
    private String getFilePathOrDownload(String httpUrl) throws ExecutionException {
-      // TODO validation
       String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1, httpUrl.length());
       File localFile = new File(isosDir, fileName);
-      // TODO download. for now just expect the file to be there
+      if (!localFile.exists()) {
+         logger.debug("iso not found in cache, downloading: %s", httpUrl);
+         localFile = isoDownloader.apply(URI.create(httpUrl));
+      }
       checkState(localFile.exists(), "iso file has not been downloaded: " + fileName);
       return localFile.getAbsolutePath();
    }

@@ -20,11 +20,11 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,11 +52,17 @@ public class YamlImagesFromFileConfig implements Supplier<String> {
 
    @Override
    public String get() {
-      checkNotNull(yamlFilePath, "yaml file path");
-      File yamlFile = new File(yamlFilePath);
-      checkState(yamlFile.exists(), "yaml file does not exist at: " + yamlFilePath);
       try {
-         return IOUtils.toString(new FileInputStream(yamlFile));
+         File yamlFile = new File(yamlFilePath);
+         String yamlDesc = null;
+         // if the yaml file does not exist just use default-images.yaml
+         if (!yamlFile.exists()) {
+            yamlDesc = IOUtils.toString(new InputStreamReader(getClass().getResourceAsStream("/default-images.yaml")));
+         } else {
+            yamlDesc = IOUtils.toString(new FileInputStream(yamlFile));
+         }
+         checkNotNull(yamlDesc, "yaml descriptor");
+         return yamlDesc;
       } catch (IOException e) {
          throw new RuntimeException("error reading yaml file");
       }
