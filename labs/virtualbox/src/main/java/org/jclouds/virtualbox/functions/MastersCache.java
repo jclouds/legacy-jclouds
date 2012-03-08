@@ -143,6 +143,7 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
       String vmName = VIRTUALBOX_IMAGE_PREFIX + yamlImage.id;
 
       String adminDisk = workingDir + File.separator + vmName + ".vdi";
+      
 
       HardDisk hardDisk = HardDisk.builder().diskpath(adminDisk).autoDelete(true).controllerPort(0).deviceSlot(1)
                .build();
@@ -156,10 +157,10 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
                .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
 
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().slot(0L).addNetworkAdapter(networkAdapter)
                .build();
 
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
       MasterSpec masterSpec = MasterSpec
                .builder()

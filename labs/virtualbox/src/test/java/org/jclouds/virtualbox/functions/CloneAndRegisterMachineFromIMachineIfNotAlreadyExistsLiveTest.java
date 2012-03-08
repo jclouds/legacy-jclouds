@@ -41,7 +41,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
 
@@ -96,14 +95,14 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.Bridged)
                .build();
 
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().slot(0L).addNetworkAdapter(networkAdapter)
                .build();
 
-      this.cloneNetworkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+      cloneNetworkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
       sourceMachineSpec = MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec).network(cloneNetworkSpec).build();
 
-      this.clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(mode)
+      clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(mode)
                .forceOverwrite(true).build();
 
    }
@@ -118,20 +117,11 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
          cloneSpec = CloneSpec.builder().vm(clonedVmSpec).network(cloneNetworkSpec).master(source)
                   .linked(IS_LINKED_CLONE).build();
 
-         if (source.getCurrentSnapshot() != null) {
-            ISession session = manager.get().openMachineSession(source);
-            session.getConsole().deleteSnapshot(source.getCurrentSnapshot().getId());
-            session.unlockMachine();
-         }
-
          IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
                   .apply(cloneSpec);
          assertEquals(clone.getName(), cloneSpec.getVmSpec().getVmName());
 
          new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(clone);
-
-         // TODO ssh into the node
-
       } finally {
          Set<VmSpec> specs = cloneSpec == null ? ImmutableSet.of(sourceMachineSpec.getVmSpec()) : ImmutableSet.of(
                   cloneSpec.getVmSpec(), sourceMachineSpec.getVmSpec());

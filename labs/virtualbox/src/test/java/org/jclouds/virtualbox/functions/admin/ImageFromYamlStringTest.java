@@ -62,6 +62,9 @@ public class ImageFromYamlStringTest {
         return yamlFileLines.toString();
       }
     });
-    assertEquals(Iterables.getFirst(parser.get().keySet(), null), TEST1);
+    assertEquals(Iterables.getFirst(parser.get().keySet(), null).getId(), TEST1.getId());
+    assertEquals(Iterables.getFirst(parser.get().keySet(), null).getName(), TEST1.getName());
+    assertEquals(Iterables.getFirst(parser.get().keySet(), null).getDescription(), TEST1.getDescription());
+    assertEquals(Iterables.getFirst(parser.get().keySet(), null).getOperatingSystem(), TEST1.getOperatingSystem());
   }
 }

@@ -5,7 +5,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.callables.RunScriptOnNode.Factory;
+import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -39,19 +39,23 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
    private final Supplier<VirtualBoxManager> manager;
    private final ExecutionType executionType;
    private final MachineUtils machineUtils;
+   private final RunScriptOnNode.Factory runScriptOnNodeFactory;
+   private final Supplier<NodeMetadata> nodeMetadataSupplier;
    // TODO remove this hardcoded value
-   private String vboxVersion = "4.1.6";
+   private String vboxVersion = "4.1.8";
 
    @Inject
    public GuestAdditionsInstaller(ComputeServiceContext context, Supplier<VirtualBoxManager> manager,
          CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists,
          Predicate<SshClient> installGuestAdditionsViaSshResponds, Function<IMachine, SshClient> sshClientForIMachine,
-         ExecutionType executionType, MachineUtils machineUtils, Factory runScriptOnNodeFactory,
-         Supplier<NodeMetadata> guest) {
+         ExecutionType executionType, MachineUtils machineUtils, RunScriptOnNode.Factory runScriptOnNodeFactory,
+         Supplier<NodeMetadata> nodeMetadataSupplier) {
       this.context = context;
       this.manager = manager;
       this.executionType = executionType;
       this.machineUtils = machineUtils;
+      this.nodeMetadataSupplier = nodeMetadataSupplier;
+      this.runScriptOnNodeFactory = runScriptOnNodeFactory;
    }
 
    @Override
@@ -59,7 +63,7 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
       IMachine vm = manager.get().getVBox().findMachine(vmName);
       ensureMachineIsLaunched(vmName);
 
-      NodeMetadata vmMetadata = new IMachineToNodeMetadata().apply(vm);
+      NodeMetadata vmMetadata = new IMachineToNodeMetadata(runScriptOnNodeFactory, nodeMetadataSupplier).apply(vm);
 
       ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmMetadata.getId(),
             new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);
