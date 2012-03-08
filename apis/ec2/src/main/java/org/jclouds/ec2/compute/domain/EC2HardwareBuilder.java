@@ -206,18 +206,6 @@ public class EC2HardwareBuilder extends HardwareBuilder {
    /**
     * @see InstanceType#M1_SMALL
     */
-   public static EC2HardwareBuilder m1_small32() {
-      return new EC2HardwareBuilder(InstanceType.M1_SMALL)
-            .ram(1740)
-            .processors(ImmutableList.of(new Processor(1.0, 1.0)))
-            .volumes(
-                  ImmutableList.<Volume> of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(150.0f,
-                        "/dev/sda2", false, false))).is64Bit(false);
-   }
-
-   /**
-    * @see InstanceType#M1_SMALL
-    */
    public static EC2HardwareBuilder m1_small() {
       return new EC2HardwareBuilder(InstanceType.M1_SMALL)
             .ram(1740)
@@ -226,6 +214,19 @@ public class EC2HardwareBuilder extends HardwareBuilder {
                   ImmutableList.<Volume> of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(150.0f,
                         "/dev/sda2", false, false)));
    }
+
+   /**
+    * @see InstanceType#M1_MEDIUM
+    */
+   public static EC2HardwareBuilder m1_medium() {
+      return new EC2HardwareBuilder(InstanceType.M1_MEDIUM)
+            .ram(3750)
+            .processors(ImmutableList.of(new Processor(1.0, 2.0)))
+            .volumes(
+                     ImmutableList.<Volume> of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(420.0f,
+                           "/dev/sdb", false, false), new VolumeImpl(420.0f, "/dev/sdc", false, false)));
+   }
+
 
    /**
     * @see InstanceType#T1_MICRO
@@ -303,7 +304,7 @@ public class EC2HardwareBuilder extends HardwareBuilder {
             .processors(ImmutableList.of(new Processor(2.0, 2.5)))
             .volumes(
                   ImmutableList.<Volume> of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(340.0f,
-                        "/dev/sda2", false, false))).is64Bit(false);
+                        "/dev/sda2", false, false)));
    }
 
    /**
