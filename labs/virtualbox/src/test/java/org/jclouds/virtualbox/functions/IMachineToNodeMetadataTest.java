@@ -47,7 +47,7 @@ public class IMachineToNodeMetadataTest {
       Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
 
       VirtualBox virtualBox = new VirtualBox();
-      IMachineToNodeMetadata parser = new IMachineToNodeMetadata();
+      //IMachineToNodeMetadata parser = new IMachineToNodeMetadata();
       IMachineToHardware hwParser = new IMachineToHardware(Suppliers.ofInstance(manager));
 
       // hwParser.apply()

@@ -24,16 +24,18 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
@@ -45,32 +47,23 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
    protected Logger logger = Logger.NULL;
 
    private final SshClient.Factory sshClientFactory;
+   private final RunScriptOnNode.Factory factory;
+   private final Supplier<NodeMetadata> nodeMetadataSupplier;
 
    @Inject
-   public IMachineToSshClient(SshClient.Factory sshClientFactory) {
+   public IMachineToSshClient(SshClient.Factory sshClientFactory, RunScriptOnNode.Factory factory, Supplier<NodeMetadata> nodeMetadataSupplier) {
       this.sshClientFactory = sshClientFactory;
+      this.nodeMetadataSupplier = nodeMetadataSupplier;
+      this.factory = factory;
    }
 
    @Override
    public SshClient apply(final IMachine vm) {
-      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0L);
-
-      SshClient client = null;
-      checkNotNull(networkAdapter);
-      for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()) {
-         Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
-         String protocolNumber = Iterables.get(stuff, 1);
-         String hostAddress = Iterables.get(stuff, 2);
-         String inboundPort = Iterables.get(stuff, 3);
-         String targetPort = Iterables.get(stuff, 5);
-         // TODO: we need a way to align the default login credentials from the iso with the
-         // vmspec
-         if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-            client = sshClientFactory.create(new IPSocket(hostAddress, Integer.parseInt(inboundPort)), LoginCredentials
-                     .builder().user("toor").password("password").authenticateSudo(true).build());
-         }
-      }
-      checkNotNull(client);
-      return client;
+      IMachineToNodeMetadata iMachineToNodeMetadata = new IMachineToNodeMetadata(factory, nodeMetadataSupplier);
+      NodeMetadata nodeMetadata = iMachineToNodeMetadata.apply(vm);
+      String ipAddress = Iterables.get(nodeMetadata.getPrivateAddresses(), 0);
+         
+      return checkNotNull(sshClientFactory.create(new IPSocket(ipAddress, 22), LoginCredentials.builder().user("toor")
+               .password("password").authenticateSudo(true).build()), "ssh client");
    }
 }

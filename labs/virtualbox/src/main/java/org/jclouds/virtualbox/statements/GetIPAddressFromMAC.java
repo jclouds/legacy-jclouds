@@ -41,7 +41,7 @@ public class GetIPAddressFromMAC implements Statement {
 
    public static final Map<OsFamily, String> OS_TO_ARP = ImmutableMap
          .of(OsFamily.UNIX,
-               "MAC={macAddress} && [[ `uname -s` = \"Darwin\" ]] && MAC={macAddressBsd}\n arp -an | grep $MAC\n",
+               "MAC={macAddress} && [[ `uname -s` = \"Darwin\" ]] && MAC={macAddressBsd}\n arp -an | grep $MAC | cut -d \"(\" -f2 | cut -d \")\" -f1\n",
                OsFamily.WINDOWS, "set MAC={macAddress} arp -a | Findstr %MAC%");
 
    private String macAddress;
@@ -49,15 +49,12 @@ public class GetIPAddressFromMAC implements Statement {
 
    public GetIPAddressFromMAC(String macAddress) {
    	this(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase(),
-   	      MacAddressToBSD.INSTANCE.apply(Joiner.on(":").join(Splitter.fixedLength(2).split(macAddress)).toLowerCase()));
+   	   MacAddressToBSD.INSTANCE.apply(macAddress));
    }
    
    public GetIPAddressFromMAC(String macAddress, String macAddressBsd) {
-      checkNotNull(macAddress, "macAddress");
-      checkArgument(macAddress.length() == 17);
-      this.macAddress = macAddress;
-      checkNotNull(macAddressBsd, "macAddressBsd");
-      this.macAddressBsd = macAddressBsd;
+      this.macAddress = checkNotNull(macAddress, "macAddress");
+      this.macAddressBsd = checkNotNull(macAddressBsd, "macAddressBsd");
    }
 
    @Override

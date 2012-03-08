@@ -27,7 +27,6 @@ import java.util.List;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
-
 /**
  * Describes the network configuration for a VirtualBox machine.
  */
@@ -49,8 +48,7 @@ public class NetworkSpec {
 
       public Builder addNIC(long slot, NetworkInterfaceCard networkInterfaceCard) {
          checkArgument(slot >= 0 && slot < 4, "must be 0, 1, 2, 3: %s", slot);
-    	  NetworkInterfaceCard nic = NetworkInterfaceCard.builder().slot(slot).addNetworkAdapter(networkInterfaceCard.getNetworkAdapter()).build();
-         this.networkInterfaceCards.add(nic);
+         this.networkInterfaceCards.add(networkInterfaceCard);
          return this;
       }
 

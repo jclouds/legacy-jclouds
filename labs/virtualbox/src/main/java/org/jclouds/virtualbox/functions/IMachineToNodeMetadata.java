@@ -26,32 +26,55 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
+import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.Host;
+import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
+import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.NetworkAttachmentType;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
+@Singleton
 public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+
+   private final RunScriptOnNode.Factory factory;
+   private final NodeMetadata nodeMetadata;
+
+   @Inject
+   public IMachineToNodeMetadata(RunScriptOnNode.Factory factory,
+         Supplier<NodeMetadata> nodeMetadataSupplier) {
+      this.factory = factory;
+      this.nodeMetadata = nodeMetadataSupplier.get();
+   }
 
    @Override
    public NodeMetadata apply(@Nullable IMachine vm) {
@@ -81,7 +104,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       hardwareBuilder.is64Bit(false);
 
       nodeMetadataBuilder.hostname(vm.getName());
-      
 
       MachineState vmState = vm.getState();
       NodeState nodeState = machineToNodeState.get(vmState);
@@ -93,21 +115,44 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
       INetworkAdapter networkAdapter = vm.getNetworkAdapter(0l);
       if (networkAdapter != null) {
-         nodeMetadataBuilder.privateAddresses(ImmutableSet.of(networkAdapter.getNatDriver().getHostIP()));
-         for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()){
-            Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
-            String protocolNumber  = Iterables.get(stuff, 1);
-            String hostAddress= Iterables.get(stuff, 2);
-            String inboundPort= Iterables.get(stuff, 3);
-            String targetPort= Iterables.get(stuff, 5);
-            if ("1".equals(protocolNumber) && "22".equals(targetPort))
-               nodeMetadataBuilder.privateAddresses(ImmutableSet.of(hostAddress)).loginPort(Integer.parseInt(inboundPort));
+         if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.NAT)) {
+            nodeMetadataBuilder.privateAddresses(ImmutableSet.of(networkAdapter.getNatDriver().getHostIP()));
+            for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver()
+                  .getRedirects()) {
+               Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+               String protocolNumber = Iterables.get(stuff, 1);
+               String hostAddress = Iterables.get(stuff, 2);
+               String inboundPort = Iterables.get(stuff, 3);
+               String targetPort = Iterables.get(stuff, 5);
+               if ("1".equals(protocolNumber) && "22".equals(targetPort))
+                  nodeMetadataBuilder.privateAddresses(ImmutableSet.of(hostAddress)).loginPort(
+                        Integer.parseInt(inboundPort));
+            }
+         } else if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.Bridged)) {
+            // TODO wait for the machine up and running ...
+            String network = "192.168.1.0";
+            // Scan for ip
+            RunScriptOnNode scanNetwork = factory.create(nodeMetadata, new ScanNetworkWithPing(network),
+                  RunScriptOptions.NONE);
+            scanNetwork.init();
+            Preconditions.checkState(scanNetwork.call().getExitStatus() == 0);
+
+            // get IP from MACaddress
+            String macAddress = vm.getNetworkAdapter(0L).getMACAddress();
+
+            RunScriptOnNode retrieveIpFromMac = factory.create(nodeMetadata, new GetIPAddressFromMAC(macAddress),
+                  RunScriptOptions.NONE);
+            retrieveIpFromMac.init();
+            ExecResponse response = retrieveIpFromMac.call();
+            Preconditions.checkState(response.getExitStatus() == 0);
+            String ipAddress = response.getOutput().trim();
+            nodeMetadataBuilder.privateAddresses(ImmutableSet.of(ipAddress));
          }
       }
 
       LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
       nodeMetadataBuilder.credentials(loginCredentials);
-      
+
       return nodeMetadataBuilder.build();
    }
 

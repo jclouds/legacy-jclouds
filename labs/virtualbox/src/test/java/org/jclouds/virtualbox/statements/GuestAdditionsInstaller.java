@@ -40,7 +40,7 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
    private final ExecutionType executionType;
    private final MachineUtils machineUtils;
    // TODO remove this hardcoded value
-   private String vboxVersion = "4.1.6";
+   private String vboxVersion = "4.1.8";
 
    @Inject
    public GuestAdditionsInstaller(ComputeServiceContext context, Supplier<VirtualBoxManager> manager,
@@ -59,7 +59,7 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
       IMachine vm = manager.get().getVBox().findMachine(vmName);
       ensureMachineIsLaunched(vmName);
 
-      NodeMetadata vmMetadata = new IMachineToNodeMetadata().apply(vm);
+      NodeMetadata vmMetadata = new IMachineToNodeMetadata(machineUtils).apply(vm);
 
       ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmMetadata.getId(),
             new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);

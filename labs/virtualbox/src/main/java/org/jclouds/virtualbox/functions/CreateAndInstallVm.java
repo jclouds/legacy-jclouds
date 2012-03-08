@@ -20,7 +20,6 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.scriptbuilder.domain.Statements.call;
 
 import java.net.URI;
 import java.util.List;
@@ -29,9 +28,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
@@ -43,19 +40,14 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.predicates.GuestAdditionsInstaller;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.MachineState;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 @Singleton
@@ -103,8 +95,8 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
 
       // Launch machine and wait for it to come online
-      ensureMachineIsLaunched(vmName);
-
+      machineUtils.ensureMachineIsRunning(vmName);
+      
       URI uri = preConfiguration.getUnchecked(isoSpec);
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
                uri.toASCIIString());
@@ -133,7 +125,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
       logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
 
-      ensureMachineHasPowerDown(vmName);
+      machineUtils.ensureMachineIsPoweredOff(vmName);
       return vm;
    }
 
@@ -144,41 +136,6 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       for (List<Integer> scancodes : scancodelist) {
          machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new SendScancodes(scancodes));
       }
-   }
-
-   /**
-    * ensureMachineHasPowerDown needs to have this delay just to ensure that the machine is
-    * completely powered off
-    * 
-    * @param vmName
-    */
-   private void ensureMachineHasPowerDown(String vmName) {
-      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
-         try {
-            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
-               @Override
-               public Void apply(ISession session) {
-                  IProgress powerDownProgress = session.getConsole().powerDown();
-                  powerDownProgress.waitForCompletion(-1);
-                  return null;
-               }
-            });
-         } catch (RuntimeException e) {
-            // sometimes the machine might be powered of between the while test and the call to
-            // lockSessionOnMachineAndApply
-            if (e.getMessage().contains("Invalid machine state: PoweredOff")) {
-               return;
-            } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
-               continue;
-            } else {
-               throw e;
-            }
-         }
-      }
-   }
-
-   private void ensureMachineIsLaunched(String vmName) {
-      machineUtils.applyForMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
    }
 
 }

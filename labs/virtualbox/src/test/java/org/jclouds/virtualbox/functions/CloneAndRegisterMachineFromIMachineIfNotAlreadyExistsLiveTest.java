@@ -118,20 +118,11 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
          cloneSpec = CloneSpec.builder().vm(clonedVmSpec).network(cloneNetworkSpec).master(source)
                   .linked(IS_LINKED_CLONE).build();
 
-         if (source.getCurrentSnapshot() != null) {
-            ISession session = manager.get().openMachineSession(source);
-            session.getConsole().deleteSnapshot(source.getCurrentSnapshot().getId());
-            session.unlockMachine();
-         }
-
          IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
                   .apply(cloneSpec);
          assertEquals(clone.getName(), cloneSpec.getVmSpec().getVmName());
 
          new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(clone);
-
-         // TODO ssh into the node
-
       } finally {
          Set<VmSpec> specs = cloneSpec == null ? ImmutableSet.of(sourceMachineSpec.getVmSpec()) : ImmutableSet.of(
                   cloneSpec.getVmSpec(), sourceMachineSpec.getVmSpec());

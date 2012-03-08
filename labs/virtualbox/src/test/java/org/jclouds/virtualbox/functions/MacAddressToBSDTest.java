@@ -23,9 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-
 /**
  * @author Andrea Turli
  */
@@ -35,9 +32,16 @@ public class MacAddressToBSDTest {
    private static final String vboxMacAddressFormat = "0800271A9806";
    private static final String bsdMacAddressFormat = "8:0:27:1a:98:6";
 
+   private static final String vboxMacAddress = "0800277E4F62";
+   private static final String bsdMacAddress = "8:0:27:7e:4f:62";
 
-@Test
-  public void testTransformMacAddressToBSDFormat() {
-     assertEquals(MacAddressToBSD.INSTANCE.apply(Joiner.on(":").join(Splitter.fixedLength(2).split(vboxMacAddressFormat)).toLowerCase()), bsdMacAddressFormat);
-  }
+   @Test
+   public void testTransformMacAddressToBSDFormat() {
+      assertEquals(MacAddressToBSD.INSTANCE.apply(vboxMacAddressFormat), bsdMacAddressFormat);
+   }
+
+   @Test
+   public void testRealTransformMacAddressToBSDFormat() {
+      assertEquals(MacAddressToBSD.INSTANCE.apply(vboxMacAddress), bsdMacAddress);
+   }
 }
