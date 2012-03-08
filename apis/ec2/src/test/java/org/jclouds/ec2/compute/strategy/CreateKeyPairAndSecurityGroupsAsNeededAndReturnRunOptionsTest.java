@@ -102,7 +102,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      Hardware size = EC2HardwareBuilder.m1_small32().build();
+      Hardware size = EC2HardwareBuilder.m1_small().build();
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -158,7 +158,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String group = "group";
-      Hardware size = EC2HardwareBuilder.m1_small32().build();
+      Hardware size = EC2HardwareBuilder.m1_small().build();
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);

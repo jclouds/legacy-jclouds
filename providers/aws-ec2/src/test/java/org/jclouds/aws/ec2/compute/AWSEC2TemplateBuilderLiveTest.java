@@ -92,9 +92,9 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    }
 
    @Test
-   public void testTemplateBuilderM1SMALLWithNegativeLookaroundDoesntMatchTestImages() {
+   public void testTemplateBuilderM1MEDIUMWithNegativeLookaroundDoesntMatchTestImages() {
 
-      Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
+      Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_MEDIUM)
             // need to select versions with double-digits so that lexicographic
             // doesn't end up prefering 9.x vs 11.x
             .osVersionMatches("1[012].[10][04]")
@@ -113,7 +113,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);
-      assertEquals(template.getHardware().getId(), InstanceType.M1_SMALL);
+      assertEquals(template.getHardware().getId(), InstanceType.M1_MEDIUM);
       assertEquals(template.getImage().getOperatingSystem().getArch(), "paravirtual");
    }
 
@@ -184,7 +184,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2011.09.2");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
@@ -258,9 +258,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          assertEquals(template.getImage().getVersion(), "4.4.10");
          assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
          assertEquals(template.getLocation().getId(), "us-east-1");
-         assertEquals(getCores(template.getHardware()), 2.0d);
-         assertEquals(template.getHardware().getId(), "m1.large"); // because it
-         // is 64bit
+         assertEquals(getCores(template.getHardware()), 1.0d);
+         assertEquals(template.getHardware().getId(), "m1.small");
 
          // ensure we cache the new image for next time
          assertEquals(context.getComputeService().listImages().size(), 1);
@@ -294,9 +293,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          assertEquals(template.getImage().getVersion(), "4.4.10");
          assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
          assertEquals(template.getLocation().getId(), "us-east-1");
-         assertEquals(getCores(template.getHardware()), 2.0d);
-         assertEquals(template.getHardware().getId(), "m1.large"); // because it
-         // is 64bit
+         assertEquals(getCores(template.getHardware()), 1.0d);
+         assertEquals(template.getHardware().getId(), "m1.small");
 
          // ensure we cache the new image for next time
          assertEquals(context.getComputeService().listImages().size(), 1);
@@ -337,9 +335,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          assertEquals(template.getImage().getVersion(), "2011.09.2");
          assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
          assertEquals(template.getLocation().getId(), "eu-west-1");
-         assertEquals(getCores(template.getHardware()), 2.0d);
-         assertEquals(template.getHardware().getId(), "m1.large"); // because it
-         // is 64bit
+         assertEquals(getCores(template.getHardware()), 1.0d);
+         assertEquals(template.getHardware().getId(), "m1.small");
 
       } finally {
          if (context != null)
