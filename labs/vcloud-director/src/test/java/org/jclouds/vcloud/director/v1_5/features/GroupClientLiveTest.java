@@ -18,8 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.testng.Assert.assertNotNull;
+
 import java.net.URI;
 
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
@@ -55,5 +59,13 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       groupRef = Reference.builder()
          .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/???"))
          .build();
+   }
+   
+   @Test(testName = "GET /admin/group/{id}", enabled = false)
+   public void testGetGroup() {
+      assertNotNull(groupRef, String.format(REF_REQ_LIVE, "Group"));
+      group = groupClient.getGroup(groupRef.getURI());
+      
+      Checks.checkGroup(group);
    }
 }

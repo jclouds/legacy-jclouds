@@ -18,9 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
 
 /**
  * Provides synchronous access to {@link Group} objects.
@@ -30,5 +32,17 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface GroupClient {
+   
+   /**
+    * Retrieves a group.
+    *
+    * <pre>
+    * GET /admin/group/{id}
+    * </pre>
+    *
+    * @param groupURI the reference for the group
+    * @return a group
+    */
+   Group getGroup(URI groupUri);
 
 }
