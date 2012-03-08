@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -107,6 +108,13 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
       }
       this.version = Iterables.get(Splitter.on('r').split(version), 0);
       this.isoDownloader = isoDownloader;
+   }
+   
+   @PostConstruct
+   public void createCacheDirStructure() {
+      if (!new File(workingDir).exists()) {
+         new File(workingDir, "isos").mkdirs();
+      }
    }
 
    @Override

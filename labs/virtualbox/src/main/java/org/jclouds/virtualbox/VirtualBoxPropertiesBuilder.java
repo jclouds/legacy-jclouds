@@ -77,10 +77,6 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
 
       properties.put(VIRTUALBOX_WORKINGDIR, workingDir);
 
-      if (!new File(workingDir).exists()) {
-         new File(workingDir, "isos").mkdirs();
-      }
-
       String yamlDescriptor = System.getProperty("test.virtualbox.image.descriptor.yaml", VIRTUALBOX_WORKINGDIR
                + File.separator + "images.yaml");
 

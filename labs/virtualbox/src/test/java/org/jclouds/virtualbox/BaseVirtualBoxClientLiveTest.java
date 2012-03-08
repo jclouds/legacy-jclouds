@@ -138,10 +138,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       
       imageId = "ubuntu-11.04-server-i386";
       isosDir = workingDir + File.separator + "isos";
-      File isosDirFile = new File(isosDir);
-      if (!isosDirFile.exists()) {
-         isosDirFile.mkdirs();
-      }
+      
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
