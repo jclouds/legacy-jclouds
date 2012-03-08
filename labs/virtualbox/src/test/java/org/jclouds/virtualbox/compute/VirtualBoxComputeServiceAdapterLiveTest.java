@@ -87,7 +87,6 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       }
    }
 
-   @AfterClass
    @Override
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {

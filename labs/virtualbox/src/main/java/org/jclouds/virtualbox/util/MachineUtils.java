@@ -18,18 +18,17 @@
  */
 package org.jclouds.virtualbox.util;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.jclouds.scriptbuilder.domain.Statements.findPid;
 import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
-import static com.google.common.base.Preconditions.checkState;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.eclipse.jetty.util.log.Log;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.ExecResponse;
@@ -42,7 +41,6 @@ import org.jclouds.util.Throwables2;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.MutableMachine;
-import org.jclouds.virtualbox.functions.RetrieveActiveBridgedInterfaces;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
