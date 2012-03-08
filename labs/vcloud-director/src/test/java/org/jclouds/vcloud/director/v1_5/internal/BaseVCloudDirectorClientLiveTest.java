@@ -29,6 +29,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -40,6 +41,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -56,6 +58,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @author grkvlt@apache.org
  */
+@Listeners(FormatApiResultsListener.class)
 @Test(groups = "live")
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
 
