@@ -94,26 +94,28 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    protected String catalogName;
-   // TODO: change to URI, not id
-   protected String vAppTemplateId;
+   protected URI vAppTemplateURI;
    protected URI networkURI;
    protected URI vdcURI;
 
+   // TODO change properties to URI, not id
    @SuppressWarnings("unchecked")
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
-      vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
-
       catalogName = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-name"));
+
+      String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
+      if (vAppTemplateId != null)
+         vAppTemplateURI = URI.create(endpoint + "/vAppTemplate/" + vAppTemplateId);
       
-      // TODO: change properties to URI, not id
       String vdcId = Strings.emptyToNull(System.getProperty("test." + provider + ".vdc-id"));
       if (vdcId != null)
          vdcURI = URI.create(endpoint + "/vdc/" + vdcId);
+
       String networkId = Strings.emptyToNull(System.getProperty("test." + provider + ".network-id"));
       if (networkId != null)
          networkURI = URI.create(endpoint + "/network/" + networkId);
       
-      if (Iterables.any(Lists.newArrayList(vAppTemplateId, catalogName, networkURI, vdcURI), Predicates.isNull())) {
+      if (Iterables.any(Lists.newArrayList(catalogName, vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
          Org thisOrg = context.getApi().getOrgClient().getOrg(
                   Iterables.find(context.getApi().getOrgClient().getOrgList().getOrgs(),
                            ReferenceTypePredicates.<Reference> nameEquals(session.getOrg())).getHref());

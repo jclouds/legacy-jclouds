@@ -18,32 +18,29 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_BE_WELL_FORMED_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_CONTAIN_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
+import static org.testng.Assert.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.AuthenticationMechanism;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorType;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
+import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.common.net.InetAddresses;
 
 /**
@@ -516,13 +513,127 @@ public class Checks {
    }
 
    public static void checkVApp(VApp vApp) {
-      // TODO Auto-generated method stub
+      // Check optional fields
+      Owner owner = vApp.getOwner();
+      if (owner != null) checkOwner(owner);
+      // NOTE inMaintenanceMode cannot be checked
+      VAppChildren children = vApp.getChildren();
+      if (children != null) checkVAppChildren(children);
+      // NOTE ovfDescriptorUploaded cannot be checked
       
+      // Check parent type
+      checkAbstractVAppType(vApp);
+   }
+
+   public static void checkVAppChildren(VAppChildren vAppChildren) {
+      // Check optional fields
+      for (VApp vApp : vAppChildren.getVApps()) {
+         checkVApp(vApp);
+      }
+      for (Vm vm : vAppChildren.getVms()) {
+         checkVm(vm);
+      }
+   }
+
+   public static void checkAbstractVAppType(AbstractVAppType<?> abstractVAppType) {
+      // Check optional fields
+      Reference vAppParent = abstractVAppType.getVAppParent();
+      if (vAppParent != null) checkReferenceType(vAppParent);
+      // NOTE deployed cannot be checked
+      for (SectionType<?> section : abstractVAppType.getSections()) {
+         checkSectionType(section);
+      }
+      
+      // Check parent type
+      checkResourceEntityType(abstractVAppType);
    }
 
    public static void checkVAppTemplate(VAppTemplate template) {
-      // TODO Auto-generated method stub
+      // Check optional fields
+      Owner owner = template.getOwner();
+      if (owner != null) checkOwner(owner);
+      for (VAppTemplate child : template.getChildren()) {
+         checkVAppTemplate(child);
+      }
+      for (SectionType<?> section : template.getSections()) {
+         checkSectionType(section);
+      }
+      // NOTE vAppScopedLocalId cannot be checked
+      // NOTE ovfDescriptorUploaded cannot be checked
+      // NOTE goldMaster cannot be checked
       
+      // Check parent type
+      checkResourceEntityType(template);
+   }
+
+   public static void checkVm(Vm vm) {
+      // Check optional fields
+      EnvironmentType environment = vm.getEnvironment();
+      if (environment != null) checkEnvironmentType(environment);
+      // NOTE vAppScopedLocalId cannot be checked
+      // NOTE needsCustomization cannot be checked
+      
+      // Check parent type
+      checkAbstractVAppType(vm);
+   }
+
+   public static void checkControlAccessParams(ControlAccessParams params) {
+      // Check required fields
+      assertNotNull(params.isSharedToEveryone(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "IsSharedToEveryone"));
+      
+      // Check optional fields
+      if (params.isSharedToEveryone()) {
+         assertNotNull(params.getEveryoneAccessLevel(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "EveryoneAccessLevel"));
+      } else {
+         assertNotNull(params.getAccessSettings(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "AccessSettings"));
+         checkAccessSettings(params.getAccessSettings());
+      }
+   }
+
+   public static void checkAccessSettings(AccessSettings accessSettings) {
+      for (AccessSetting setting : accessSettings.getAccessSettings()) {
+         checkAccessSetting(setting);
+      }
+   }
+
+   public static void checkAccessSetting(AccessSetting setting) {
+      // Check required fields
+      assertNotNull(setting.getSubject(), String.format(OBJ_FIELD_REQ, "AccessSetting", "Subject"));
+      checkReferenceType(setting.getSubject());
+      assertNotNull(setting.getAccessLevel(), String.format(OBJ_FIELD_REQ, "AccessSetting", "AccessLevel"));
+   }
+
+   public static void checkEnvironmentType(EnvironmentType environment) {
+      // TODO
+   }
+
+   public static void checkSectionType(SectionType<?> section) {
+      // Check optional fields
+      // NOTE info cannot be checked
+      // NOTE required cannot be checked
+   }
+
+   public static void checkVirtualHardwareSection(VirtualHardwareSection hardware) {
+      // Check optional fields
+      VirtualSystemSettingData virtualSystem = hardware.getSystem();
+      if (virtualSystem != null) checkVirtualSystemSettingData(virtualSystem);
+      for (String transport : hardware.getTransports()) {
+         // NOTE transport cannot be checked
+      }
+      for (ResourceAllocationSettingData item : hardware.getItems()) {
+         checkResourceAllocationSettingData(item);
+      }
+      
+      // Check parent type
+      checkSectionType(hardware);
+   }
+
+   public static void checkVirtualSystemSettingData(VirtualSystemSettingData virtualSystem) {
+      // TODO
+   }
+
+   public static void checkResourceAllocationSettingData(ResourceAllocationSettingData item) {
+      // TODO
    }
 
    public static void checkMediaFor(String client, Media media) {
