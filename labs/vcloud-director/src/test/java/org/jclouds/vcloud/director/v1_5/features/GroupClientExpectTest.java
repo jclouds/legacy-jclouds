@@ -64,4 +64,17 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          
          .build();
    }
+   
+   @Test
+   public void testDeleteGroup() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            new VcloudHttpRequestPrimer()
+               .apiCommand("DELETE", "/admin/group/???")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .httpResponseBuilder().statusCode(204).build());
+      
+      client.getAdminCatalogClient().deleteCatalog(groupRef.getURI());
+   }
 }

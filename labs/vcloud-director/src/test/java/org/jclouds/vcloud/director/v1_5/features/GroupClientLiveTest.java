@@ -21,9 +21,16 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.testng.Assert.assertNotNull;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.fail;
+
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
@@ -57,7 +64,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void setupRequiredClients() {
       groupClient = context.getApi().getGroupClient();
       groupRef = Reference.builder()
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/???"))
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/group/???"))
          .build();
    }
    
@@ -67,5 +74,30 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       group = groupClient.getGroup(groupRef.getURI());
       
       Checks.checkGroup(group);
+   }
+   
+   @Test(testName = "DELETE /admin/group/{id}", enabled = false )
+   public void testDeleteCatalog() {
+      groupClient.deleteGroup(groupRef.getURI());
+      
+      Error expected = Error.builder()
+            .message("???")
+            .majorErrorCode(403)
+            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+            .build();
+      
+      try {
+         group = groupClient.getGroup(groupRef.getURI());
+         fail("Should give HTTP 403 error");
+      } catch (VCloudDirectorException vde) {
+         assertEquals(vde.getError(), expected);
+         group = null;
+      } catch (Exception e) {
+         fail("Should have thrown a VCloudDirectorException");
+      }
+      
+      if (group != null) { // guard against NPE on the .toStrings
+         assertNull(group, String.format(OBJ_DEL, GROUP, group.toString()));
+      }
    }
 }

@@ -45,4 +45,12 @@ public interface GroupClient {
     */
    Group getGroup(URI groupUri);
 
+   /**
+    * Deletes a group.
+    * 
+    * <pre>
+    * DELETE /admin/group/{id}
+    * </pre>
+    */
+   void deleteGroup(URI groupRef);
 }
