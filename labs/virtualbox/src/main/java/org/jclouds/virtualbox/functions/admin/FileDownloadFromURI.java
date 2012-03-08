@@ -38,9 +38,10 @@ import javax.inject.Named;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.HttpAsyncClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * @author Mattias Holmqvist
@@ -51,37 +52,40 @@ public class FileDownloadFromURI implements Function<URI, File> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final HttpClient client;
-   private final String workingDir;
+   private final HttpAsyncClient client;
+   private final String isosDir;
 
    @Inject
-   public FileDownloadFromURI(HttpClient client, @Named(VIRTUALBOX_WORKINGDIR) String workingDir) {
+   public FileDownloadFromURI(HttpAsyncClient client, @Named(VIRTUALBOX_WORKINGDIR) String workingDir) {
       this.client = client;
-      this.workingDir = workingDir;
+      this.isosDir = workingDir + File.separator + "isos";
    }
 
    @Override
    public File apply(@Nullable URI input) {
-
-      final File file = new File(workingDir, new File(input.getPath()).getName());
-
-      if (!file.exists()) {
-         final InputStream inputStream = client.get(input);
-         checkNotNull(inputStream, "%s not found", input);
-         try {
-            copy(inputStream, new FileOutputStream(file));
+      final File file = new File(isosDir, new File(input.getPath()).getName());
+      try {
+         if (!file.exists()) {
+            final InputStream inputStream = client.get(input).get();
+            checkNotNull(inputStream, "%s not found", input);
+            try {
+               copy(inputStream, new FileOutputStream(file));
+               return file;
+            } catch (FileNotFoundException e) {
+               logger.error(e, "File %s could not be found", file.getPath());
+            } catch (IOException e) {
+               logger.error(e, "Error when downloading file %s", input.toString());
+            } finally {
+               closeQuietly(inputStream);
+            }
+            return null;
+         } else {
+            logger.debug("File %s already exists. Skipping download", file.getPath());
             return file;
-         } catch (FileNotFoundException e) {
-            logger.error(e, "File %s could not be found", file);
-         } catch (IOException e) {
-            logger.error(e, "Error when downloading file %s", input);
-         } finally {
-            closeQuietly(inputStream);
          }
+      } catch (Exception e) {
+         Throwables.propagate(e);
          return null;
-      } else {
-         logger.debug("File %s already exists. Skipping download", file);
-         return file;
       }
    }
 }

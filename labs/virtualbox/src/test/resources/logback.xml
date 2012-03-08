@@ -49,7 +49,7 @@
     </logger>
 
     <logger name="jclouds.wire">
-        <level value="DEBUG" />
+        <level value="INFO" />
         <appender-ref ref="WIREFILE" />
     </logger>
 

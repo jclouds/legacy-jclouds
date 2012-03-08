@@ -73,18 +73,18 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
                + "keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false "
                + "initrd=/install/initrd.gz -- <Enter>");
 
-      properties.put(
-               VIRTUALBOX_WORKINGDIR,
-               System.getProperty("user.home") + File.separator
-                        + System.getProperty("test.virtualbox.workingDir", ".jclouds-vbox"));
+      String workingDir = System.getProperty("test.virtualbox.workingDir", VIRTUALBOX_DEFAULT_DIR);
 
-      // allow to set the descriptor as a sysprop but default to just setting a default file path.
-      // The configured supplier
-      // must be able to handle the chosen option.
-      properties.put(
-               VIRTUALBOX_IMAGES_DESCRIPTOR,
-               System.getProperty("test.virtualbox.image.descriptor.yaml", VIRTUALBOX_DEFAULT_DIR + File.separator
-                        + "images.yaml"));
+      properties.put(VIRTUALBOX_WORKINGDIR, workingDir);
+
+      if (!new File(workingDir).exists()) {
+         new File(workingDir, "isos").mkdirs();
+      }
+
+      String yamlDescriptor = System.getProperty("test.virtualbox.image.descriptor.yaml", VIRTUALBOX_WORKINGDIR
+               + File.separator + "images.yaml");
+
+      properties.put(VIRTUALBOX_IMAGES_DESCRIPTOR, yamlDescriptor);
 
       properties.put(VIRTUALBOX_PRECONFIGURATION_URL, "http://10.0.2.2:8080/src/test/resources/preseed.cfg");
 

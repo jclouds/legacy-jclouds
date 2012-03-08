@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.config;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
@@ -73,6 +74,7 @@ import org.jclouds.virtualbox.functions.IMachineToSshClient;
 import org.jclouds.virtualbox.functions.MastersCache;
 import org.jclouds.virtualbox.functions.NodeCreator;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
+import org.jclouds.virtualbox.functions.admin.FileDownloadFromURI;
 import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
@@ -126,6 +128,9 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to(IMachineToImage.class);
       bind(new TypeLiteral<CacheLoader<IsoSpec, URI>>() {
       }).to((Class) StartJettyIfNotAlreadyRunning.class);
+      bind(new TypeLiteral<Function<URI, File>>() {
+      }).to((Class) FileDownloadFromURI.class);
+      
       bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
       }).to((Class) StartVBoxIfNotAlreadyRunning.class);
       // the yaml config to image mapper
