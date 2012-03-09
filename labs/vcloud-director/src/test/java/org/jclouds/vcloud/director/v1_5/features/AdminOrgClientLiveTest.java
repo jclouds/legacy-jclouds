@@ -18,14 +18,19 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
-
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.testng.Assert.assertNotNull;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Tests live behavior of {@link AdminGroupClient}.
@@ -35,7 +40,7 @@ import org.testng.annotations.Test;
 @Test(groups = { "live", "admin", "org" }, singleThreaded = true, testName = "AdminOrgClientLiveTest")
 public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
-   public static final String GROUP = "admin org";
+   public static final String ORG = "admin org";
 
    /*
     * Convenience references to API clients.
@@ -48,14 +53,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private ReferenceType<?> orgRef;
    private AdminOrg org;
+   OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
 
    @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       orgClient = context.getApi().getAdminOrgClient();
-      orgRef = Reference.builder()
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/???"))
-         .build();
+      orgRef = Iterables.getFirst(orgClient.getOrgList().getOrgs(), null).toAdminReference(endpoint);
+      assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
    }
    
 // GET /admin/org/{id}
@@ -86,7 +91,46 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
  
 // PUT /admin/org/{id}/settings/vAppLeaseSettings
  
-// GET /admin/org/{id}/settings/vAppTemplateLeaseSettings
- 
-// PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings
+   @Test(testName = "GET /admin/org/{id}/settings/vAppTemplateLeaseSettings")
+   public void testGetVAppTemplateLeaseSettings() {
+      vAppTemplateLeaseSettings = orgClient.getVAppTemplateLeaseSettings(orgRef.getURI());
+      
+      Checks.checkVAppTemplateLeaseSettings(vAppTemplateLeaseSettings);
+   }
+   
+   @Test(testName = "PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings", 
+         dependsOnMethods = { "testGetVAppTemplateLeaseSettings" }, enabled = false) // FIXME: fails with 403 forbidden
+   public void testUpdateVAppTemplateLeaseSettings() {
+      boolean deleteOnStorageLeaseExpiration = vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration();
+      Integer storageLeaseSeconds = vAppTemplateLeaseSettings.getStorageLeaseSeconds();
+      
+      try {
+         vAppTemplateLeaseSettings = vAppTemplateLeaseSettings.toBuilder()
+               .deleteOnStorageLeaseExpiration(!deleteOnStorageLeaseExpiration)
+               .storageLeaseSeconds(storageLeaseSeconds+1)
+               .build();
+         
+         vAppTemplateLeaseSettings = orgClient.updateVAppTemplateLeaseSettings(
+               orgRef.getURI(), vAppTemplateLeaseSettings);
+         
+         assertTrue(equal(vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "vAppTemplateLeaseSettings", "deleteOnStorageLeaseExpiration"));
+         assertTrue(equal(vAppTemplateLeaseSettings.getStorageLeaseSeconds(), storageLeaseSeconds+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "vAppTemplateLeaseSettings", "storageLeaseSeconds"));
+         
+         //TODO negative tests?
+         
+         Checks.checkVAppTemplateLeaseSettings(vAppTemplateLeaseSettings);
+      } finally {
+         vAppTemplateLeaseSettings = vAppTemplateLeaseSettings.toBuilder()
+               .deleteOnStorageLeaseExpiration(deleteOnStorageLeaseExpiration)
+               .storageLeaseSeconds(storageLeaseSeconds)
+               .build();
+         
+         vAppTemplateLeaseSettings = orgClient.updateVAppTemplateLeaseSettings(
+               orgRef.getURI(), vAppTemplateLeaseSettings);
+      }
+   }
 }

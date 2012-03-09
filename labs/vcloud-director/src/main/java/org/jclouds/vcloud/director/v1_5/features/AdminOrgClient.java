@@ -18,9 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 
 /**
  * Provides synchronous access to {@link Group} objects.
@@ -29,7 +32,7 @@ import org.jclouds.concurrent.Timeout;
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AdminOrgClient {
+public interface AdminOrgClient extends OrgClient {
    
 //   GET /admin/org/{id}
    
@@ -59,8 +62,29 @@ public interface AdminOrgClient {
    
 //   PUT /admin/org/{id}/settings/vAppLeaseSettings
    
-//   GET /admin/org/{id}/settings/vAppTemplateLeaseSettings
+   /**
+    * Retrieves expiration and storage policy for vApp templates in an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/vAppTemplateLeaseSettings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgVAppTemplateLeaseSettings getVAppTemplateLeaseSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings
+   /**
+    * Updates vApp template policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings(URI orgRef, 
+         OrgVAppTemplateLeaseSettings newSettings);
 
 }

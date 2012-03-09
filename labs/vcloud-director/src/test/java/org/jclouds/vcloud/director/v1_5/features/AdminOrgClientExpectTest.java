@@ -18,8 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.testng.Assert.assertEquals;
+
 import java.net.URI;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -66,7 +71,51 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
  
 // PUT /admin/org/{id}/settings/vAppLeaseSettings
  
-// GET /admin/org/{id}/settings/vAppTemplateLeaseSettings
- 
-// PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings
+   @Test(enabled = false)
+   public void testGetVAppTemplateLeaseSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/???/settings/vAppTemplateLeaseSettings")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/vAppTemplateLeaseSettings.xml", 
+                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgVAppTemplateLeaseSettings expected = orgVAppTemplateLeaseSettings();
+
+      assertEquals(client.getAdminOrgClient().getVAppTemplateLeaseSettings(orgRef.getURI()), expected);
+   }
+   
+   public static final OrgVAppTemplateLeaseSettings orgVAppTemplateLeaseSettings() {
+      return OrgVAppTemplateLeaseSettings.builder()
+         
+         .build();
+   }
+   
+   @Test(enabled = false)
+   public void testUpdateOrgVAppTemplateLeaseSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/???/settings/vAppTemplateLeaseSettings")
+            .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateVAppLeaseSettings.xml", 
+                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgVAppTemplateLeaseSettings expected = updateOrgVAppTemplateLeaseSettings();
+
+      assertEquals(client.getAdminOrgClient().updateVAppTemplateLeaseSettings(orgRef.getURI(), expected), expected);
+   }
+   
+   public static final OrgVAppTemplateLeaseSettings updateOrgVAppTemplateLeaseSettings() {
+      return orgVAppTemplateLeaseSettings().toBuilder()
+         
+         .build();
+   }
 }
