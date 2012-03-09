@@ -24,8 +24,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+
+import org.jclouds.vcloud.director.v1_5.domain.EntityType.NewBuilder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -44,7 +47,57 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public abstract class ResourceType<T extends ResourceType<T>> implements URISupplier {
+   
+   public NewBuilder<?> toNewBuilder() {
+      throw new UnsupportedOperationException("New builder not yet implemented for this class");
+   }
+   
+   public static abstract class NewBuilder<T extends NewBuilder<T>> {
+      protected abstract T self();
+      
+      protected URI href;
+      protected String type;
+      protected Set<Link> links = Sets.newLinkedHashSet();
 
+      /**
+       * @see ResourceType#getHref()
+       */
+      public T href(URI href) {
+         this.href = href;
+         return self();
+      }
+
+      /**
+       * @see ResourceType#getType()
+       */
+      public T type(String type) {
+         this.type = type;
+         return self();
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      public T links(Set<Link> links) {
+         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         return self();
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      public T link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return self();
+      }
+
+      public abstract ResourceType<?> build();
+
+      protected T fromResourceType(ResourceType<?> in) {
+         return href(in.getHref()).type(in.getType()).links(in.getLinks());
+      }
+   }
+   
    public abstract Builder<T> toBuilder();
 
    public static abstract class Builder<T extends ResourceType<T>> {
