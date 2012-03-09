@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -48,8 +49,53 @@ public class Org extends EntityType<Org> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG;
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
+   public static NewBuilder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public NewBuilder<?> toNewBuilder() {
+      return new ConcreteBuilder().fromOrg(this);
+   }
+   
+   public static abstract class NewBuilder<T extends NewBuilder<T>> extends EntityType.NewBuilder<T> {
+      
+      private String fullName;
+      private Boolean isEnabled;
+
+      /**
+       * @see Org#getFullName()
+       */
+      public T fullName(String fullName) {
+         this.fullName = fullName;
+         return self();
+      }
+
+      /**
+       * @see Org#isEnabled()
+       */
+      public T isEnabled(Boolean isEnabled) {
+         this.isEnabled = isEnabled;
+         return self();
+      }
+      
+      @Override
+      public Org build() {
+         return new Org(href, type, links, description, tasksInProgress, id, name, fullName, isEnabled);
+      }
+      
+      public T fromOrg(Org in) {
+         return fromEntityType(in).fullName(in.getFullName());
+      }
+   }
+   
+   private static class ConcreteBuilder extends NewBuilder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+   
+   public static Builder oldBuilder() {
       return new Builder();
    }
 
@@ -182,7 +228,7 @@ public class Org extends EntityType<Org> {
       }
    }
 
-   private Org() {
+   protected Org() {
       // for JAXB
    }
 
