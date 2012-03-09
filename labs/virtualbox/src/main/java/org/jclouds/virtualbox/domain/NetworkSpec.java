@@ -45,12 +45,7 @@ public class NetworkSpec {
 
       private List<NetworkInterfaceCard> networkInterfaceCards = new ArrayList<NetworkInterfaceCard>();
 
-<<<<<<< HEAD
       public Builder addNIC(NetworkInterfaceCard networkInterfaceCard) {
-=======
-      public Builder addNIC(long slot, NetworkInterfaceCard networkInterfaceCard) {
-         checkArgument(slot >= 0 && slot < 4, "must be 0, 1, 2, 3: %s", slot);
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
          this.networkInterfaceCards.add(networkInterfaceCard);
          return this;
       }

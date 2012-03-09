@@ -68,7 +68,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             + nodeSpec.getName();
 
       CleanupMode mode = CleanupMode.Full;
-<<<<<<< HEAD
 
       VmSpec clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(mode)
             .forceOverwrite(true).build();
@@ -82,21 +81,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             .build();
       NetworkSpec cloneNetworkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
-=======
-
-      VmSpec clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(mode)
-            .forceOverwrite(true).build();
-      
-      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.Bridged)
-            .build();
-      
-      // TODO use RetrieveActiveBridgedInterface
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-            .addHostInterfaceName("en1: Wi-Fi (AirPort)")
-            .build();
-      NetworkSpec cloneNetworkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
-
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
       CloneSpec cloneSpec = CloneSpec.builder().vm(clonedVmSpec).network(cloneNetworkSpec).master(master.getMachine()).linked(true)
             .build();
 

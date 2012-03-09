@@ -46,10 +46,7 @@ public class NetworkInterfaceCard {
       private String hostInterfaceName;
 
       public Builder slot(long slot) {
-<<<<<<< HEAD
          checkArgument(slot >= 0 && slot < 4, "must be 0, 1, 2, 3: %s", slot);
-=======
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
          this.slot = slot;
          return this;
       }

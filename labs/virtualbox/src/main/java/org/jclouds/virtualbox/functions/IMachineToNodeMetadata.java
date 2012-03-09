@@ -43,15 +43,9 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
-<<<<<<< HEAD
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
-=======
 import org.jclouds.virtualbox.Host;
-import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
-import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
-import org.jclouds.virtualbox.util.MachineUtils;
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
@@ -76,12 +70,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    private final NodeMetadata nodeMetadata;
 
    @Inject
-<<<<<<< HEAD
    public IMachineToNodeMetadata(RunScriptOnNode.Factory factory, Supplier<NodeMetadata> nodeMetadataSupplier) {
-=======
-   public IMachineToNodeMetadata(RunScriptOnNode.Factory factory,
-         Supplier<NodeMetadata> nodeMetadataSupplier) {
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
       this.factory = factory;
       this.nodeMetadata = nodeMetadataSupplier.get();
    }
@@ -124,7 +113,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
 
       INetworkAdapter networkAdapter = vm.getNetworkAdapter(0l);
-<<<<<<< HEAD
       checkNotNull(networkAdapter, "networkAdapter");
       if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.NAT)) {
          nodeMetadataBuilder.privateAddresses(ImmutableSet.of(networkAdapter.getNatDriver().getHostIP()));
@@ -137,41 +125,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
             if ("1".equals(protocolNumber) && "22".equals(targetPort))
                nodeMetadataBuilder.privateAddresses(ImmutableSet.of(hostAddress)).loginPort(
                      Integer.parseInt(inboundPort));
-=======
-      if (networkAdapter != null) {
-         if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.NAT)) {
-            nodeMetadataBuilder.privateAddresses(ImmutableSet.of(networkAdapter.getNatDriver().getHostIP()));
-            for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver()
-                  .getRedirects()) {
-               Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
-               String protocolNumber = Iterables.get(stuff, 1);
-               String hostAddress = Iterables.get(stuff, 2);
-               String inboundPort = Iterables.get(stuff, 3);
-               String targetPort = Iterables.get(stuff, 5);
-               if ("1".equals(protocolNumber) && "22".equals(targetPort))
-                  nodeMetadataBuilder.privateAddresses(ImmutableSet.of(hostAddress)).loginPort(
-                        Integer.parseInt(inboundPort));
-            }
-         } else if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.Bridged)) {
-            // TODO wait for the machine up and running ...
-            String network = "192.168.1.0";
-            // Scan for ip
-            RunScriptOnNode scanNetwork = factory.create(nodeMetadata, new ScanNetworkWithPing(network),
-                  RunScriptOptions.NONE);
-            scanNetwork.init();
-            Preconditions.checkState(scanNetwork.call().getExitStatus() == 0);
-
-            // get IP from MACaddress
-            String macAddress = vm.getNetworkAdapter(0L).getMACAddress();
-
-            RunScriptOnNode retrieveIpFromMac = factory.create(nodeMetadata, new GetIPAddressFromMAC(macAddress),
-                  RunScriptOptions.NONE);
-            retrieveIpFromMac.init();
-            ExecResponse response = retrieveIpFromMac.call();
-            Preconditions.checkState(response.getExitStatus() == 0);
-            String ipAddress = response.getOutput().trim();
-            nodeMetadataBuilder.privateAddresses(ImmutableSet.of(ipAddress));
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
          }
       } else if (networkAdapter.getAttachmentType().equals(NetworkAttachmentType.Bridged)) {
          // TODO wait for the machine up and running .

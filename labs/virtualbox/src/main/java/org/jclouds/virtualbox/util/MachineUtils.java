@@ -236,41 +236,8 @@ public class MachineUtils {
    }
    
    public static boolean machineNotFoundException(VBoxException e) {
-<<<<<<< HEAD
      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ")
            || e.getMessage().contains("Could not find a registered machine with UUID {");
   }
-=======
-      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ")
-            || e.getMessage().contains("Could not find a registered machine with UUID {");
-   }
-
-   public void ensureMachineIsRunning(String vmNameOrId) {
-      applyForMachine(vmNameOrId, new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, ""));
-   }
-
-   /**
-    * ensureMachineHasPowerDown needs to have this delay just to ensure that the
-    * machine is completely powered off
-    * 
-    * @param vmNameOrId
-    */
-   public void ensureMachineIsPoweredOff(final String vmNameOrId) {
-      while (!isPoweredOff(vmNameOrId)) {
-         lockSessionOnMachineAndApply(vmNameOrId, LockType.Shared, new Function<ISession, Void>() {
-            @Override
-            public Void apply(ISession session) {
-               IProgress powerDownProgress = session.getConsole().powerDown();
-               powerDownProgress.waitForCompletion(-1);
-               return null;
-            }
-         });
-      }
-   }
-
-   public boolean isPoweredOff(String vmNameOrId) {
-      return manager.get().getVBox().findMachine(vmNameOrId).getState().equals(MachineState.PoweredOff);
-   }
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
 
 }

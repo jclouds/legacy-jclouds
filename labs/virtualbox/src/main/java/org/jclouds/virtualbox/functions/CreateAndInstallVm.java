@@ -20,6 +20,7 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.scriptbuilder.domain.Statements.call;
 
 import java.net.URI;
 import java.util.List;
@@ -28,7 +29,9 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
@@ -41,15 +44,13 @@ import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.LockType;
-<<<<<<< HEAD
-=======
-import org.virtualbox_4_1.VirtualBoxManager;
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 @Singleton
@@ -95,13 +96,8 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
 
       // Launch machine and wait for it to come online
-<<<<<<< HEAD
       machineController.ensureMachineIsRunning(vmName);
 
-=======
-      machineUtils.ensureMachineIsRunning(vmName);
-      
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
       URI uri = preConfiguration.getUnchecked(isoSpec);
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
             uri.toASCIIString());
@@ -129,11 +125,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
       logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
 
-<<<<<<< HEAD
       machineController.ensureMachineIsPoweredOff(vmName);
-=======
-      machineUtils.ensureMachineIsPoweredOff(vmName);
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
       return vm;
    }
 

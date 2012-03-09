@@ -63,11 +63,7 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
       IMachine vm = manager.get().getVBox().findMachine(vmName);
       ensureMachineIsLaunched(vmName);
 
-<<<<<<< HEAD
       NodeMetadata vmMetadata = new IMachineToNodeMetadata(runScriptOnNodeFactory, nodeMetadataSupplier).apply(vm);
-=======
-      NodeMetadata vmMetadata = new IMachineToNodeMetadata(machineUtils).apply(vm);
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
 
       ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmMetadata.getId(),
             new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);

@@ -62,14 +62,9 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
       NodeMetadata nodeMetadata = iMachineToNodeMetadata.apply(vm);
       String ipAddress = Iterables.get(nodeMetadata.getPrivateAddresses(), 0);
          
-<<<<<<< HEAD
 //      return checkNotNull(sshClientFactory.create(new IPSocket(ipAddress, 22), LoginCredentials.builder().user("toor")
 //               .password("password").authenticateSudo(true).build()), "ssh client");
       return checkNotNull(sshClientFactory.create(new IPSocket(ipAddress, 22), 
             nodeMetadata.getCredentials()), "ssh client");
-=======
-      return checkNotNull(sshClientFactory.create(new IPSocket(ipAddress, 22), LoginCredentials.builder().user("toor")
-               .password("password").authenticateSudo(true).build()), "ssh client");
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
    }
 }
