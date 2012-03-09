@@ -79,6 +79,9 @@ public class RegionIdToURIFromAccessForTypeAndVersionSupplier implements RegionI
 
                   @Override
                   public boolean apply(Endpoint input) {
+                     if (input.getVersionId() == null) {
+                         return true;
+                     }
                      return input.getVersionId().equals(apiVersion);
                   }
 

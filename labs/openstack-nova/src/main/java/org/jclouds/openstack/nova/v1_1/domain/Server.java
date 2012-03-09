@@ -18,11 +18,9 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
-import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collection;
 import java.util.Date;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +35,8 @@ import org.jclouds.util.Multimaps2;
 
 import com.google.gson.annotations.SerializedName;
 
+import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A server is a virtual machine instance in the compute system. Flavor and
  * image are requisite elements when creating a server.
@@ -69,8 +69,8 @@ public class Server extends Resource {
       private Resource flavor;
       private Map<String, String> metadata = Maps.newHashMap();
       // TODO: get gson multimap ad
-      private Multimap<Address.Type, Address> addresses = LinkedHashMultimap
-            .create();
+      private Multimap<Address.Type, Address> addresses = LinkedHashMultimap.create();
+      private String adminPass;
 
       /**
        * @see Server#getTenantId()
@@ -211,11 +211,19 @@ public class Server extends Resource {
          return this;
       }
 
+      /**
+       * @see Server#getAdminPass()
+       */
+      public Builder adminPass(String adminPass) {
+          this.adminPass = adminPass;
+          return this;
+      }
+
       public Server build() {
          // return new Server(id, name, links, addresses);
          return new Server(id, name, links, tenantId, userId, updated,
                created, hostId, accessIPv4, accessIPv6, status, progress,
-               image, flavor, addresses, metadata);
+               image, flavor, adminPass, addresses, metadata);
       }
 
       public Builder fromServer(Server in) {
@@ -268,15 +276,15 @@ public class Server extends Resource {
    protected int progress;
    protected Resource image;
    protected Resource flavor;
+   protected final String adminPass;
    // TODO: get gson multimap adapter!
    protected final Map<Address.Type, Set<Address>> addresses;
    protected Map<String, String> metadata;
-   protected String adminPass;
 
    protected Server(String id, String name, Set<Link> links, String tenantId,
          String userId, Date updated, Date created, String hostId,
          String accessIPv4, String accessIPv6, ServerStatus status,
-         int progress, Resource image, Resource flavor,
+         int progress, Resource image, Resource flavor, String adminPass,
          Multimap<Address.Type, Address> addresses, Map<String, String> metadata) {
       super(id, name, links);
       this.tenantId = tenantId;
@@ -293,7 +301,7 @@ public class Server extends Resource {
       this.metadata = Maps.newHashMap(metadata);
       this.addresses = Multimaps2.toOldSchool(ImmutableMultimap
             .copyOf(checkNotNull(addresses, "addresses")));
-
+      this.adminPass = adminPass;
    }
 
    public String getTenantId() {
@@ -342,11 +350,6 @@ public class Server extends Resource {
 
    public Map<String, String> getMetadata() {
       return this.metadata;
-   }
-
-   
-   public String getAdminPass() {
-     return this.adminPass;
    }
    
    /**
@@ -402,6 +405,13 @@ public class Server extends Resource {
         }
     }
 
+   /**
+    * @return the administrative password for this server.
+    */
+   public String getAdminPass() {
+       return adminPass;
+   }
+
    @Override
    public String toString() {
       return toStringHelper("").add("id", id).add("name", name)
@@ -411,7 +421,7 @@ public class Server extends Resource {
             .add("status", status).add("progress", progress)
             .add("image", image).add("flavor", flavor)
             .add("metadata", metadata)
-            .add("links", links).add("addresses", addresses).toString();
+            .add("links", links).add("addresses", addresses)
+            .add("adminPass",adminPass).toString();
    }
-
 }
