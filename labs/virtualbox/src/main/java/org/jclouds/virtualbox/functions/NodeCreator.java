@@ -38,7 +38,6 @@ import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
 
@@ -53,7 +52,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
    @Inject
    public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,
-            MachineUtils machineUtils) {
+         MachineUtils machineUtils) {
       this.manager = manager;
       this.cloner = cloner;
    }
@@ -63,42 +62,37 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       Master master = nodeSpec.getMaster();
 
-      if (master.getMachine().getCurrentSnapshot() != null) {
-         ISession session;
-         try {
-            session = manager.get().openMachineSession(master.getMachine());
-         } catch (Exception e) {
-            throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
-         }
-         session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
-         session.unlockMachine();
-      }
       String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
 
       String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + "-" + nodeSpec.getTag() + "-"
-               + nodeSpec.getName();
+            + nodeSpec.getName();
 
-      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
-               .forceOverwrite(true).build();
+      CleanupMode mode = CleanupMode.Full;
 
-      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      VmSpec clonedVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(mode)
+            .forceOverwrite(true).build();
+      
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.Bridged)
+            .build();
+      
+      // TODO use RetrieveActiveBridgedInterface
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().slot(0L).addNetworkAdapter(networkAdapter)
+            .addHostInterfaceName("en1: Wi-Fi (AirPort)")
+            .build();
+      NetworkSpec cloneNetworkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-               .build();
+      CloneSpec cloneSpec = CloneSpec.builder().vm(clonedVmSpec).network(cloneNetworkSpec).master(master.getMachine()).linked(true)
+            .build();
 
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
-
-      CloneSpec cloneSpec = CloneSpec.builder().linked(false).master(master.getMachine()).network(networkSpec)
-               .vm(cloneVmSpec).build();
-
+      
       IMachine cloned = cloner.apply(cloneSpec);
 
       new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
 
-      // TODO get credentials from somewhere else (they are also HC in IMachineToSshClient)
+      // TODO get credentials from somewhere else (they are also HC in
+      // IMachineToSshClient)
       NodeAndInitialCredentials<IMachine> nodeAndInitialCredentials = new NodeAndInitialCredentials<IMachine>(cloned,
-               cloneName, LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
+            cloneName, LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
 
       return nodeAndInitialCredentials;
    }

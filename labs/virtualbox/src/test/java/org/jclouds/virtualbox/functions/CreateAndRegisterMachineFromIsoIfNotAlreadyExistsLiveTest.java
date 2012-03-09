@@ -77,10 +77,10 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 				.networkAttachmentType(NetworkAttachmentType.NAT)
 				.tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
 		NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-				.builder().addNetworkAdapter(networkAdapter).build();
+				.builder().slot(0L).addNetworkAdapter(networkAdapter).build();
 
 		NetworkSpec networkSpec = NetworkSpec.builder()
-              .addNIC(0L, networkInterfaceCard).build();
+              .addNIC(networkInterfaceCard).build();
 
 		MasterSpec machineSpec = MasterSpec
 				.builder()

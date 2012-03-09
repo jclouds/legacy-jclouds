@@ -36,11 +36,9 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
-import org.virtualbox_4_1.CleanupMode;
+import org.jclouds.virtualbox.util.MachineController;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
@@ -65,15 +63,17 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    private final Map<Image, YamlImage> images;
    private final LoadingCache<Image, Master> mastersLoader;
    private final Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator;
+   private final MachineController machineController;
 
    @Inject
    public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
             Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
-            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator) {
+            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator, MachineController machineController) {
       this.manager = checkNotNull(manager, "manager");
       this.images = imagesMapper.get();
       this.mastersLoader = mastersLoader;
       this.cloneCreator = cloneCreator;
+      this.machineController = machineController;
    }
 
    @Override
@@ -132,16 +132,15 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public void destroyNode(String vmName) {
-      IMachine machine = manager.get().getVBox().findMachine(vmName);
-      powerDownMachine(machine);
-      machine.unregister(CleanupMode.Full);
-   }
+      machineController.ensureMachineIsPoweredOff(vmName);
+      // TODO
+      //machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmName,
+      //      new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));   
+      }
 
    @Override
    public void rebootNode(String vmName) {
-      IMachine machine = manager.get().getVBox().findMachine(vmName);
-      powerDownMachine(machine);
-      launchVMProcess(machine, manager.get().getSessionObject());
+      machineController.ensureMachineIsRunning(vmName);
    }
 
    @Override
@@ -170,30 +169,5 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       }
    }
 
-   private void launchVMProcess(IMachine machine, ISession session) {
-      IProgress prog = machine.launchVMProcess(session, "gui", "");
-      prog.waitForCompletion(-1);
-      session.unlockMachine();
-   }
-
-   private void powerDownMachine(IMachine machine) {
-      try {
-         ISession machineSession = manager.get().openMachineSession(machine);
-         IProgress progress = machineSession.getConsole().powerDown();
-         progress.waitForCompletion(-1);
-         machineSession.unlockMachine();
-
-         while (!machine.getSessionState().equals(SessionState.Unlocked)) {
-            try {
-               System.out.println("waiting for unlocking session - session state: " + machine.getSessionState());
-               Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-         }
-
-      } catch (Exception e) {
-         throw Throwables.propagate(e);
-      }
-   }
 
 }

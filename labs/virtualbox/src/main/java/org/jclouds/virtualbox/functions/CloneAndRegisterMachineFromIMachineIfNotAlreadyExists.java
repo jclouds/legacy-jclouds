@@ -102,14 +102,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       if (isLinkedClone)
          options.add(CloneOptions.Link);
-
+      
       // TODO snapshot name
       ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc")
                .apply(master);
 
       // clone
       IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
-
       progress.waitForCompletion(-1);
       logger.debug("clone done");
 

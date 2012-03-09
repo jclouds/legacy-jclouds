@@ -18,16 +18,19 @@
  */
 package org.jclouds.virtualbox.util;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static org.jclouds.scriptbuilder.domain.Statements.findPid;
 import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
+import static com.google.common.base.Preconditions.checkState;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.eclipse.jetty.util.log.Log;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode.Factory;
 import org.jclouds.compute.domain.ExecResponse;
@@ -37,10 +40,15 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Throwables2;
+import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.MutableMachine;
+import org.jclouds.virtualbox.functions.RetrieveActiveBridgedInterfaces;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -69,21 +77,22 @@ public class MachineUtils {
 
    @Inject
    public MachineUtils(Supplier<VirtualBoxManager> manager, RunScriptOnNode.Factory scriptRunner,
-            Supplier<NodeMetadata> host) {
+         Supplier<NodeMetadata> host) {
       super();
       this.manager = manager;
       this.scriptRunner = scriptRunner;
       this.host = host;
    }
-
+   
    public ListenableFuture<ExecResponse> runScriptOnNode(NodeMetadata metadata, Statement statement,
-            RunScriptOptions options) {
+         RunScriptOptions options) {
       return scriptRunner.submit(metadata, statement, options);
-   }
+   }   
 
    /**
-    * Locks the machine and executes the given function using the machine matching the given id.
-    * Since the machine is locked it is possible to perform some modifications to the IMachine.
+    * Locks the machine and executes the given function using the machine
+    * matching the given id. Since the machine is locked it is possible to
+    * perform some modifications to the IMachine.
     * <p/>
     * Unlocks the machine before returning.
     * 
@@ -110,8 +119,9 @@ public class MachineUtils {
    }
 
    /**
-    * Locks the machine and executes the given function using the current session. Since the machine
-    * is locked it is possible to perform some modifications to the IMachine.
+    * Locks the machine and executes the given function using the current
+    * session. Since the machine is locked it is possible to perform some
+    * modifications to the IMachine.
     * <p/>
     * Unlocks the machine before returning.
     * 
@@ -133,7 +143,7 @@ public class MachineUtils {
          }
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
-                  type, e.getMessage()), e);
+               type, e.getMessage()), e);
       }
    }
 
@@ -143,20 +153,25 @@ public class MachineUtils {
 
    private void unlockMachine(final String machineId) {
       IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
-      if (immutableMachine.getSessionState().equals(SessionState.Locked)) {
+      logger.debug("the session state for machine '%s' is %s == %s", immutableMachine.getName(),
+            immutableMachine.getSessionState(), SessionState.Locked);
+      while (!immutableMachine.getSessionState().equals(SessionState.Unlocked)) {
          Statement kill = newStatementList(call("default"), findPid(immutableMachine.getSessionPid().toString()),
-                  kill());
-         scriptRunner.create(host.get(), kill, runAsRoot(false).wrapInInitScript(false)).init().call();
+               kill());
+         ExecResponse execResponse = scriptRunner.create(host.get(), kill, runAsRoot(false).wrapInInitScript(false))
+               .init().call();
+         checkState(execResponse.getExitStatus() == 0);
       }
    }
 
    /**
-    * Unlocks the machine and executes the given function using the machine matching the given id.
-    * Since the machine is unlocked it is possible to delete the IMachine.
+    * Unlocks the machine and executes the given function using the machine
+    * matching the given id. Since the machine is unlocked it is possible to
+    * delete the IMachine.
     * <p/>
     * <p/>
-    * <h3>Note!</h3> Currently, this can only unlock the machine, if the lock was created in the
-    * current session.
+    * <h3>Note!</h3> Currently, this can only unlock the machine, if the lock
+    * was created in the current session.
     * 
     * @param machineId
     *           the id of the machine
@@ -173,13 +188,14 @@ public class MachineUtils {
 
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s: %s", function, machineId, e.getMessage()),
-                  e);
+               e);
       }
    }
 
    /**
-    * Unlocks the machine and executes the given function, if the machine is registered. Since the
-    * machine is unlocked it is possible to delete the machine.
+    * Unlocks the machine and executes the given function, if the machine is
+    * registered. Since the machine is unlocked it is possible to delete the
+    * machine.
     * <p/>
     * 
     * @param machineId
@@ -218,9 +234,10 @@ public class MachineUtils {
          }
       }.apply(immutableMachine);
    }
-
+   
    public static boolean machineNotFoundException(VBoxException e) {
-      return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ")
-               || e.getMessage().contains("Could not find a registered machine with UUID {");
-   }
+     return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ")
+           || e.getMessage().contains("Could not find a registered machine with UUID {");
+  }
+
 }

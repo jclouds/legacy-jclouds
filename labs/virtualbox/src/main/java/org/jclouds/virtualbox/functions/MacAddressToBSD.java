@@ -19,8 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -34,20 +32,19 @@ public enum MacAddressToBSD implements Function<String, String> {
    INSTANCE;
 
    @Override
-   public String apply(String macAddress) {
-      checkArgument(macAddress.length() == 17);
+   public String apply(String vBoxMacAddress) {
+      String macAddress = Joiner.on(":").join(Splitter.fixedLength(2).split(vBoxMacAddress)).toLowerCase();
       return Joiner.on(":").join(
-              Iterables.transform(Splitter.on(":").split(macAddress),
-                      new Function<String, String>() {
-                         @Override
-                         public String apply(String addressPart) {
-                            if (addressPart.equals("00"))
-                               return "0";
-                            if (addressPart.startsWith("0"))
-                               return addressPart.substring(1);
+            Iterables.transform(Splitter.on(":").split(macAddress), new Function<String, String>() {
+               @Override
+               public String apply(String addressPart) {
+                  if (addressPart.equals("00"))
+                     return "0";
+                  if (addressPart.startsWith("0"))
+                     return addressPart.substring(1);
 
-                            return addressPart;
-                         }
-                      }));
+                  return addressPart;
+               }
+            }));
    }
 }

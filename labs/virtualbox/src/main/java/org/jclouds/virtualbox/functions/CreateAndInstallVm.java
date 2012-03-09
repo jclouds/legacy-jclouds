@@ -18,8 +18,8 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.scriptbuilder.domain.Statements.call;
 
 import java.net.URI;
@@ -36,23 +36,18 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.Preconfiguration;
-import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.predicates.GuestAdditionsInstaller;
+import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.MachineState;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -65,32 +60,30 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Supplier<VirtualBoxManager> manager;
    private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
    private final GuestAdditionsInstaller guestAdditionsInstaller;
    private final Predicate<SshClient> sshResponds;
-   private final ExecutionType executionType;
    private LoadingCache<IsoSpec, URI> preConfiguration;
    private final Function<IMachine, SshClient> sshClientForIMachine;
    private final MachineUtils machineUtils;
    private final IMachineToNodeMetadata imachineToNodeMetadata;
+   private final MachineController machineController;
 
    @Inject
-   public CreateAndInstallVm(Supplier<VirtualBoxManager> manager,
-            CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-            GuestAdditionsInstaller guestAdditionsInstaller, IMachineToNodeMetadata imachineToNodeMetadata,
-            Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
-            ExecutionType executionType, MachineUtils machineUtils,
-            @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration) {
-      this.manager = manager;
+   public CreateAndInstallVm(MachineUtils machineUtils,
+         CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+         GuestAdditionsInstaller guestAdditionsInstaller, IMachineToNodeMetadata imachineToNodeMetadata,
+         Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
+         @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration,
+         MachineController machineController) {
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
       this.sshClientForIMachine = sshClientForIMachine;
-      this.executionType = executionType;
       this.machineUtils = machineUtils;
       this.preConfiguration = preConfiguration;
       this.guestAdditionsInstaller = guestAdditionsInstaller;
       this.imachineToNodeMetadata = imachineToNodeMetadata;
+      this.machineController = machineController;
    }
 
    @Override
@@ -103,82 +96,46 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
 
       // Launch machine and wait for it to come online
-      ensureMachineIsLaunched(vmName);
+      machineController.ensureMachineIsRunning(vmName);
 
       URI uri = preConfiguration.getUnchecked(isoSpec);
       String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
-               uri.toASCIIString());
+            uri.toASCIIString());
 
       configureOsInstallationWithKeyboardSequence(vmName, installationKeySequence);
       SshClient client = sshClientForIMachine.apply(vm);
-      
+
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
 
       checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-      logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
+      //logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
 
-      checkState(guestAdditionsInstaller.apply(vm));
+      //checkState(guestAdditionsInstaller.apply(vm));
 
       logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
 
       NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
-      
-      // TODO for now this is executed on installModuleAssistantIfNeeded as a workaround to some transient execution issue.
-//      ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"),
-//               RunScriptOptions.NONE);
-      
-//      ExecResponse execResponse = Futures.getUnchecked(execFuture);
-//      checkState(execResponse.getExitCode() == 0);
+
+      ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"),
+            RunScriptOptions.NONE);
+
+      ExecResponse execResponse = Futures.getUnchecked(execFuture);
+      checkState(execResponse.getExitStatus() == 0);
 
       logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
 
-      ensureMachineHasPowerDown(vmName);
+      machineController.ensureMachineIsPoweredOff(vmName);
       return vm;
    }
 
    private void configureOsInstallationWithKeyboardSequence(String vmName, String installationKeySequence) {
       Iterable<List<Integer>> scancodelist = transform(Splitter.on(" ").split(installationKeySequence),
-               new StringToKeyCode());
+            new StringToKeyCode());
 
       for (List<Integer> scancodes : scancodelist) {
          machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new SendScancodes(scancodes));
       }
-   }
-
-   /**
-    * ensureMachineHasPowerDown needs to have this delay just to ensure that the machine is
-    * completely powered off
-    * 
-    * @param vmName
-    */
-   private void ensureMachineHasPowerDown(String vmName) {
-      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
-         try {
-            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
-               @Override
-               public Void apply(ISession session) {
-                  IProgress powerDownProgress = session.getConsole().powerDown();
-                  powerDownProgress.waitForCompletion(-1);
-                  return null;
-               }
-            });
-         } catch (RuntimeException e) {
-            // sometimes the machine might be powered of between the while test and the call to
-            // lockSessionOnMachineAndApply
-            if (e.getMessage().contains("Invalid machine state: PoweredOff")) {
-               return;
-            } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
-               continue;
-            } else {
-               throw e;
-            }
-         }
-      }
-   }
-
-   private void ensureMachineIsLaunched(String vmName) {
-      machineUtils.applyForMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
    }
 
 }
