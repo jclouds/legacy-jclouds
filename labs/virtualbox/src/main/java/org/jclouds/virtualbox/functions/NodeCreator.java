@@ -84,6 +84,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       CloneSpec cloneSpec = CloneSpec.builder().vm(clonedVmSpec).network(cloneNetworkSpec).master(master.getMachine()).linked(true)
             .build();
 
+      
       IMachine cloned = cloner.apply(cloneSpec);
 
       new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);

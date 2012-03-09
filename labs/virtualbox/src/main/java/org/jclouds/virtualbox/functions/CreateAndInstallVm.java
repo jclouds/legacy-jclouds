@@ -18,9 +18,7 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.scriptbuilder.domain.Statements.call;
 
 import java.net.URI;
 import java.util.List;
@@ -74,8 +72,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
          CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
          GuestAdditionsInstaller guestAdditionsInstaller, IMachineToNodeMetadata imachineToNodeMetadata,
          Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
-         @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration,
-         MachineController machineController) {
+         @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration, MachineController machineController) {
       this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
       this.sshResponds = sshResponds;
       this.sshClientForIMachine = sshClientForIMachine;
