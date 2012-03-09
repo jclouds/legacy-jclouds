@@ -23,7 +23,12 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
-import org.jclouds.openstack.nova.v1_1.features.*;
+import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.FloatingIPAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.KeyPairAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.SecurityGroupAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -88,5 +93,4 @@ public interface NovaAsyncClient {
    @Delegate
    KeyPairAsyncClient getKeyPairClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
-
 }
