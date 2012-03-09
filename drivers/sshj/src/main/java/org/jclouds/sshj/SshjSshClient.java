@@ -504,10 +504,10 @@ public class SshjSshClient implements SshClient {
       return acquire(new ExecConnection(command));
    }
 
-
    class ExecChannelConnection implements Connection<ExecChannel> {
       private final String command;
       private SessionChannel session;
+      private Command output;
 
       ExecChannelConnection(String command) {
          this.command = checkNotNull(command, "command");
@@ -515,35 +515,31 @@ public class SshjSshClient implements SshClient {
 
       @Override
       public void clear() {
-         if (session != null)
-            Closeables.closeQuietly(session);
+         Closeables.closeQuietly(output);
+         Closeables.closeQuietly(session);
       }
 
       @Override
       public ExecChannel create() throws Exception {
-         try {
-            session = SessionChannel.class.cast(acquire(execConnection()));
-            Command output = session.exec(command);
-            output.join(timeoutMillis, TimeUnit.SECONDS);
-            return new ExecChannel(session.getOutputStream(), session.getInputStream(), session.getErrorStream(),
-                     new Supplier<Integer>() {
+         session = SessionChannel.class.cast(acquire(execConnection()));
+         output = session.exec(command);
+         return new ExecChannel(output.getOutputStream(), output.getInputStream(), output.getErrorStream(),
+                  new Supplier<Integer>() {
 
-                        @Override
-                        public Integer get() {
-                           return session.getExitStatus();
-                        }
+                     @Override
+                     public Integer get() {
+                        return output.getExitStatus();
+                     }
 
-                     }, new Closeable() {
+                  }, new Closeable() {
 
-                        @Override
-                        public void close() throws IOException {
-                           clear();
-                        }
+                     @Override
+                     public void close() throws IOException {
+                        clear();
+                     }
 
-                     });
-         } finally {
-            clear();
-         }
+                  });
+
       }
 
       @Override
