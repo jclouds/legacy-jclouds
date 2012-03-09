@@ -36,11 +36,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
-<<<<<<< HEAD
 import org.jclouds.virtualbox.util.MachineController;
-=======
-import org.jclouds.virtualbox.util.MachineUtils;
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -67,29 +63,17 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    private final Map<Image, YamlImage> images;
    private final LoadingCache<Image, Master> mastersLoader;
    private final Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator;
-<<<<<<< HEAD
    private final MachineController machineController;
-=======
-   private final MachineUtils machineUtils;
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
 
    @Inject
    public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
             Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
-<<<<<<< HEAD
             Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator, MachineController machineController) {
-=======
-            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator, MachineUtils machineUtils) {
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
       this.manager = checkNotNull(manager, "manager");
       this.images = imagesMapper.get();
       this.mastersLoader = mastersLoader;
       this.cloneCreator = cloneCreator;
-<<<<<<< HEAD
       this.machineController = machineController;
-=======
-      this.machineUtils = machineUtils;
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
    }
 
    @Override
@@ -148,11 +132,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public void destroyNode(String vmName) {
-<<<<<<< HEAD
       machineController.ensureMachineIsPoweredOff(vmName);
-=======
-      machineUtils.ensureMachineIsPoweredOff(vmName);
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
       // TODO
       //machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmName,
       //      new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));   
@@ -160,11 +140,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public void rebootNode(String vmName) {
-<<<<<<< HEAD
       machineController.ensureMachineIsRunning(vmName);
-=======
-      machineUtils.ensureMachineIsRunning(vmName);
->>>>>>> 21a347b... issue 384: clone machine with bridged interface working
    }
 
    @Override
