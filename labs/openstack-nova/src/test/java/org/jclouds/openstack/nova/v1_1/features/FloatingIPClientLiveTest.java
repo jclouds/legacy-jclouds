@@ -96,7 +96,7 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
         for (String regionId : context.getApi().getConfiguredRegions()) {
             FloatingIPClient client = context.getApi().getFloatingIPClientForRegion(regionId);
             ServerClient serverClient = context.getApi().getServerClientForRegion(regionId);
-            Server server = serverClient.createServer("test", "121", "100");
+            Server server = serverClient.createServer("test", imageIdForRegion(regionId), flavorRefForRegion(regionId));
             blockUntilServerActive(server.getId(), serverClient);
             FloatingIP floatingIP = client.allocate();
             assertNotNull(floatingIP);
@@ -109,6 +109,16 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
                 serverClient.deleteServer(server.getId());
             }
         }
+    }
+
+    private String imageIdForRegion(String regionId) {
+        ImageClient imageClient = context.getApi().getImageClientForRegion(regionId);
+        return Iterables.getLast(imageClient.listImages()).getId();
+    }
+    
+    private String flavorRefForRegion(String regionId) {
+        FlavorClient flavorClient = context.getApi().getFlavorClientForRegion(regionId);
+        return Iterables.getLast(flavorClient.listFlavors()).getId();
     }
 
     private void blockUntilServerActive(String serverId, ServerClient client) throws InterruptedException {
