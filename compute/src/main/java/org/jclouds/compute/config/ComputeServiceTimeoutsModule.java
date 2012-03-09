@@ -27,10 +27,12 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.AtomicNodeRunning;
+import org.jclouds.compute.predicates.AtomicNodeSuspended;
 import org.jclouds.compute.predicates.NodeRunning;
 import org.jclouds.compute.predicates.NodeSuspended;
 import org.jclouds.compute.predicates.NodeTerminated;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
+import org.jclouds.compute.predicates.TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.predicates.RetryablePredicate;
@@ -57,7 +59,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("NODE_TERMINATED")
-   protected Predicate<AtomicReference<NodeMetadata>> serverTerminated(AtomicNodeRunning stateTerminated, Timeouts timeouts) {
+   protected Predicate<AtomicReference<NodeMetadata>> serverTerminated(TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse stateTerminated, Timeouts timeouts) {
       return timeouts.nodeTerminated == 0 ? stateTerminated : new RetryablePredicate<AtomicReference<NodeMetadata>>(stateTerminated,
             timeouts.nodeTerminated);
    }
@@ -66,7 +68,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("NODE_SUSPENDED")
-   protected Predicate<AtomicReference<NodeMetadata>> serverSuspended(AtomicNodeRunning stateSuspended, Timeouts timeouts) {
+   protected Predicate<AtomicReference<NodeMetadata>> serverSuspended(AtomicNodeSuspended stateSuspended, Timeouts timeouts) {
       return timeouts.nodeSuspended == 0 ? stateSuspended : new RetryablePredicate<AtomicReference<NodeMetadata>>(stateSuspended,
             timeouts.nodeSuspended);
    }
