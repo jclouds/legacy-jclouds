@@ -44,6 +44,52 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T> {
+   
+   public static abstract class NewBuilder<T extends NewBuilder<T>> extends ResourceType.NewBuilder<T> {
+      
+      protected String description;
+      protected TasksInProgress tasksInProgress;
+      protected String name;
+      protected String id;
+
+      /**
+       * @see EntityType#getName()
+       */
+      public T name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      /**
+       * @see EntityType#getDescription()
+       */
+      public T description(String description) {
+         this.description = description;
+         return self();
+      }
+
+      /**
+       * @see EntityType#getId()
+       */
+      public T id(String id) {
+         this.id = id;
+         return self();
+      }
+
+      /**
+       * @see EntityType#getTasksInProgress()
+       */
+      public T tasksInProgress(TasksInProgress tasksInProgress) {
+         this.tasksInProgress = tasksInProgress;
+         return self();
+      }
+
+      public T fromEntityType(EntityType<?> in) {
+         return fromResourceType(in)
+               .description(in.getDescription()).tasksInProgress(in.getTasksInProgress())
+               .id(in.getId()).name(in.getName());
+      }
+   }
 
    public static abstract class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
 
