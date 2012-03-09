@@ -193,7 +193,7 @@ public class OrgPasswordPolicySettings extends ResourceType<OrgPasswordPolicySet
      * Gets the value of the invalidLoginsBeforeLockout property.
      * 
      */
-    public int getInvalidLoginsBeforeLockout() {
+    public Integer getInvalidLoginsBeforeLockout() {
         return invalidLoginsBeforeLockout;
     }
 
@@ -201,7 +201,7 @@ public class OrgPasswordPolicySettings extends ResourceType<OrgPasswordPolicySet
      * Gets the value of the accountLockoutIntervalMinutes property.
      * 
      */
-    public int getAccountLockoutIntervalMinutes() {
+    public Integer getAccountLockoutIntervalMinutes() {
         return accountLockoutIntervalMinutes;
     }
 

@@ -22,6 +22,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -66,6 +68,21 @@ import com.google.common.base.Objects.ToStringHelper;
     "customOrgLdapSettings"
 })
 public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
+   public static final class LdapMode {
+      public static final String NONE = "none";
+      public static final String SYSTEM = "system";
+      public static final String CUSTOM = "custom";
+
+      /**
+       * All acceptable {@link OrgLdapSettings#getOrgLdapMode()} values.
+       * <p/>
+       * This list must be updated whenever a new mode is added.
+       */
+      public static final List<String> ALL = Arrays.asList(
+            NONE, SYSTEM, CUSTOM
+      );
+   }
+   
    public static Builder builder() {
       return new Builder();
    }

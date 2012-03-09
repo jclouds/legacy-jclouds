@@ -21,6 +21,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -86,6 +89,36 @@ import com.google.common.base.Objects.ToStringHelper;
     "groupAttributes"
 })
 public class CustomOrgLdapSettings {
+   public static final class AuthenticationMechanism {
+      public static final String SIMPLE = "simple";
+      public static final String KERBEROS = "kerberos";
+      public static final String MD5DIGEST = "md5digest";
+      public static final String NTLM = "ntlm";
+
+      /**
+       * All acceptable {@link CustomOrgLdapSettings#getAuthenticationMechanism()} values.
+       * <p/>
+       * This list must be updated whenever a new authentication mechanism is added.
+       */
+      public static final List<String> ALL = Arrays.asList(
+            SIMPLE, KERBEROS, MD5DIGEST, NTLM
+      );
+   }
+   
+   public static final class ConnectorType {
+      public static final String ACTIVE_DIRECTORY = "ACTIVE_DIRECTORY";
+      public static final String OPEN_LDAP = "OPEN_LDAP";
+
+      /**
+       * All acceptable {@link OrgLdapSettings#getOrgLdapMode()} values.
+       * <p/>
+       * This list must be updated whenever a new mode is added.
+       */
+      public static final List<String> ALL = Arrays.asList(
+            ACTIVE_DIRECTORY, OPEN_LDAP
+      );
+   }
+   
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }

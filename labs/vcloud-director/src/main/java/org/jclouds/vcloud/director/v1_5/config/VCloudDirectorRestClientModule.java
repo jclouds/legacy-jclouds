@@ -109,6 +109,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(AdminCatalogClient.class, AdminCatalogAsyncClient.class)
             .put(AdminOrgClient.class, AdminOrgAsyncClient.class)
             .put(GroupClient.class, GroupAsyncClient.class)
+            .put(AdminOrgClient.class, AdminOrgAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {
