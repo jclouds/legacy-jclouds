@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.InetAddress;
 
 import org.jclouds.compute.domain.ExecChannel;
@@ -169,12 +170,17 @@ public class SshjSshClientLiveTest {
                : sshHost);
    }
    
-   public void testExecChannelHostname() throws IOException {
-      ExecChannel response = setupClient().execChannel("hostname");
+   public void testExecChannelTakesStdinAndEchosBack() throws IOException {
+      ExecChannel response = setupClient().execChannel("cat <<EOF");
+      assertEquals(response.getExitStatus().get(), null);
       try {
+         PrintStream printStream = new PrintStream(response.getInput());
+         printStream.append("foo\n");
+         printStream.append("EOF\n");
+         printStream.close();
          assertEquals(Strings2.toStringAndClose(response.getError()), "");
-         assertEquals(Strings2.toStringAndClose(response.getOutput()).trim(), "localhost".equals(sshHost) ? InetAddress
-                  .getLocalHost().getHostName() : sshHost);
+         // local echo
+         assertEquals(Strings2.toStringAndClose(response.getOutput()), "foo\r\nEOF\r\n");
       } finally {
          Closeables.closeQuietly(response);
       }
