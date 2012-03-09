@@ -1,32 +1,13 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 117, Failures: 5, Errors: 0, Skipped: 8, Time elapsed: 3,133.519 sec <<< FAILURE!
-testAutoIpAllocation(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 607.834 sec  <<< FAILURE!
-org.jclouds.compute.RunNodesException: error running 1 node group(eu-aip) location(kvm-cluster) image(emi-E0641459) size(m1.small) options([groupNames=[], keyPair=null, noKeyPair=false, userData=null, blockDeviceMappings=[]])
-Execution failures:
-0 error[s]
-Node failures:
-1) IllegalStateException on node Eucalyptus/i-4BD1090F:
-java.lang.IllegalStateException: node(Eucalyptus/i-4BD1090F) terminated before we could customize
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:139)
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:57)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-1 error[s]
-	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:208)
-	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:216)
-	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:221)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
-	at $Proxy53.createNodesInGroup(Unknown Source)
-	at org.jclouds.ec2.compute.EC2ComputeServiceLiveTest.testAutoIpAllocation(EC2ComputeServiceLiveTest.java:189)
+Tests run: 117, Failures: 5, Errors: 0, Skipped: 8, Time elapsed: 2,615.498 sec <<< FAILURE!
+testAutoIpAllocation(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 161.081 sec  <<< FAILURE!
+java.lang.AssertionError: failed to open socket [address=173.205.188.182, port=22] on node [id=Eucalyptus/i-4BE40801, providerId=i-4BE40801, group=eu-aip, name=null, location=[id=kvm-cluster, scope=ZONE, description=kvm-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=Eucalyptus/emi-E0641459, os=[name=null, family=ubuntu, version=10.04, arch=paravirtual, is64Bit=true, description=ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[10.9.0.130], publicAddresses=[173.205.188.182], hardware=[id=m1.small, providerId=m1.small, name=null, processors=[[cores=1.0, speed=1.0]], ram=1740, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=150.0, device=/dev/sda2, durable=false, isBootDevice=false]], hypervisor=null, supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=root, userMetadata={}, tags=[]] expected:<true> but was:<false>
+	at org.testng.Assert.fail(Assert.java:89)
+	at org.testng.Assert.failNotEquals(Assert.java:489)
+	at org.testng.Assert.assertTrue(Assert.java:37)
+	at org.jclouds.ec2.compute.EC2ComputeServiceLiveTest.testAutoIpAllocation(EC2ComputeServiceLiveTest.java:204)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -46,15 +27,16 @@ java.lang.IllegalStateException: node(Eucalyptus/i-4BD1090F) terminated before w
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testCreateAndRunAService(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 618.346 sec  <<< FAILURE!
+testCreateAndRunAService(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 705.245 sec  <<< FAILURE!
 org.jclouds.compute.RunNodesException: error running 1 node group(eu-s) location(kvm-cluster) image(emi-E0641459) size(m1.small) options([groupNames=[], keyPair=null, noKeyPair=false, userData=null, blockDeviceMappings=[]])
 Execution failures:
 0 error[s]
 Node failures:
-1) IllegalStateException on node Eucalyptus/i-4593073C:
-java.lang.IllegalStateException: node(Eucalyptus/i-4593073C) terminated before we could customize
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:139)
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:57)
+1) NoSuchElementException on node Eucalyptus/i-41C007DC:
+java.util.NoSuchElementException: could not connect to any ip address port 22 on node [id=Eucalyptus/i-41C007DC, providerId=i-41C007DC, group=eu-s, name=null, location=[id=kvm-cluster, scope=ZONE, description=kvm-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=Eucalyptus/emi-E0641459, os=[name=null, family=ubuntu, version=10.04, arch=paravirtual, is64Bit=true, description=ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[10.9.0.130], publicAddresses=[173.205.188.182], hardware=[id=m1.small, providerId=m1.small, name=null, processors=[[cores=1.0, speed=1.0]], ram=1740, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=150.0, device=/dev/sda2, durable=false, isBootDevice=false]], hypervisor=null, supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=root, userMetadata={}, tags=[]]
+	at org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOnNode(ComputeServiceUtils.java:193)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:156)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:58)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
@@ -69,7 +51,7 @@ java.lang.IllegalStateException: node(Eucalyptus/i-4593073C) terminated before w
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy53.createNodesInGroup(Unknown Source)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAndRunAService(BaseComputeServiceLiveTest.java:649)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAndRunAService(BaseComputeServiceLiveTest.java:646)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -89,15 +71,16 @@ java.lang.IllegalStateException: node(Eucalyptus/i-4593073C) terminated before w
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 621.023 sec  <<< FAILURE!
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 348.804 sec  <<< FAILURE!
 org.jclouds.compute.RunNodesException: error running 1 node group(eu-r) location(kvm-cluster) image(emi-E0641459) size(m1.small) options([groupNames=[], keyPair=null, noKeyPair=false, userData=null, blockDeviceMappings=[]])
 Execution failures:
 0 error[s]
 Node failures:
-1) IllegalStateException on node Eucalyptus/i-39880746:
-java.lang.IllegalStateException: node(Eucalyptus/i-39880746) terminated before we could customize
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:139)
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:57)
+1) NoSuchElementException on node Eucalyptus/i-407C07C1:
+java.util.NoSuchElementException: could not connect to any ip address port 22 on node [id=Eucalyptus/i-407C07C1, providerId=i-407C07C1, group=eu-r, name=null, location=[id=kvm-cluster, scope=ZONE, description=kvm-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=Eucalyptus/emi-E0641459, os=[name=null, family=ubuntu, version=10.04, arch=paravirtual, is64Bit=true, description=ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[10.9.0.130], publicAddresses=[173.205.188.182], hardware=[id=m1.small, providerId=m1.small, name=null, processors=[[cores=1.0, speed=1.0]], ram=1740, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=150.0, device=/dev/sda2, durable=false, isBootDevice=false]], hypervisor=null, supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=root, userMetadata={}, tags=[]]
+	at org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOnNode(ComputeServiceUtils.java:193)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:156)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:58)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
@@ -112,7 +95,7 @@ java.lang.IllegalStateException: node(Eucalyptus/i-39880746) terminated before w
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy53.createNodesInGroup(Unknown Source)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:230)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:227)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -132,24 +115,42 @@ java.lang.IllegalStateException: node(Eucalyptus/i-39880746) terminated before w
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testCreateTwoNodesWithRunScript(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 619.11 sec  <<< FAILURE!
+testCreateTwoNodesWithRunScript(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 650.644 sec  <<< FAILURE!
 org.jclouds.compute.RunNodesException: error running 2 nodes group(eu-) location(kvm-cluster) image(emi-E0641459) size(m1.small) options([groupNames=[], keyPair=null, noKeyPair=false, userData=null, blockDeviceMappings=[]])
 Execution failures:
 0 error[s]
 Node failures:
-1) IllegalStateException on node Eucalyptus/i-5D9409C9:
-java.lang.IllegalStateException: node(Eucalyptus/i-5D9409C9) terminated before we could customize
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:139)
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:57)
+1) NoSuchElementException on node Eucalyptus/i-3E380824:
+java.util.NoSuchElementException: could not connect to any ip address port 22 on node [id=Eucalyptus/i-3E380824, providerId=i-3E380824, group=eu-, name=null, location=[id=kvm-cluster, scope=ZONE, description=kvm-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=Eucalyptus/emi-E0641459, os=[name=null, family=ubuntu, version=10.04, arch=paravirtual, is64Bit=true, description=ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[10.9.0.130], publicAddresses=[173.205.188.182], hardware=[id=m1.small, providerId=m1.small, name=null, processors=[[cores=1.0, speed=1.0]], ram=1740, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=150.0, device=/dev/sda2, durable=false, isBootDevice=false]], hypervisor=null, supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=root, userMetadata={}, tags=[]]
+	at org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOnNode(ComputeServiceUtils.java:193)
+	at org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode.apply(CreateSshClientOncePortIsListeningOnNode.java:58)
+	at org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode.apply(CreateSshClientOncePortIsListeningOnNode.java:40)
+	at org.jclouds.compute.callables.SudoAwareInitManager.init(SudoAwareInitManager.java:73)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.init(RunScriptOnNodeAsInitScriptUsingSsh.java:70)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.init(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:83)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.init(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:44)
+	at org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap.call(InitializeRunScriptOnNodeOrPlaceInBadMap.java:67)
+	at org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap.call(InitializeRunScriptOnNodeOrPlaceInBadMap.java:40)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:149)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:58)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-2) IllegalStateException on node Eucalyptus/i-446E0840:
-java.lang.IllegalStateException: node(Eucalyptus/i-446E0840) terminated before we could customize
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:139)
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:57)
+2) NoSuchElementException on node Eucalyptus/i-3FD5080E:
+java.util.NoSuchElementException: could not connect to any ip address port 22 on node [id=Eucalyptus/i-3FD5080E, providerId=i-3FD5080E, group=eu-, name=null, location=[id=kvm-cluster, scope=ZONE, description=kvm-cluster, parent=Eucalyptus, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=Eucalyptus/emi-E0641459, os=[name=null, family=ubuntu, version=10.04, arch=paravirtual, is64Bit=true, description=ubuntu-10.04-x86_64/ubuntu.10-04.x86-64.img.manifest.xml], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[10.9.0.131], publicAddresses=[173.205.188.184], hardware=[id=m1.small, providerId=m1.small, name=null, processors=[[cores=1.0, speed=1.0]], ram=1740, volumes=[[id=null, type=LOCAL, size=10.0, device=/dev/sda1, durable=false, isBootDevice=true], [id=null, type=LOCAL, size=150.0, device=/dev/sda2, durable=false, isBootDevice=false]], hypervisor=null, supportsImage=And(ALWAYS_TRUE,Or(isWindows(),requiresVirtualizationType(paravirtual)),ALWAYS_TRUE,ALWAYS_TRUE), tags=[]], loginUser=root, userMetadata={}, tags=[]]
+	at org.jclouds.compute.util.ComputeServiceUtils.findReachableSocketOnNode(ComputeServiceUtils.java:193)
+	at org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode.apply(CreateSshClientOncePortIsListeningOnNode.java:58)
+	at org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode.apply(CreateSshClientOncePortIsListeningOnNode.java:40)
+	at org.jclouds.compute.callables.SudoAwareInitManager.init(SudoAwareInitManager.java:73)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.init(RunScriptOnNodeAsInitScriptUsingSsh.java:70)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.init(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:83)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.init(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:44)
+	at org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap.call(InitializeRunScriptOnNodeOrPlaceInBadMap.java:67)
+	at org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap.call(InitializeRunScriptOnNodeOrPlaceInBadMap.java:40)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:149)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:58)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
@@ -163,7 +164,7 @@ java.lang.IllegalStateException: node(Eucalyptus/i-446E0840) terminated before w
 	at java.lang.reflect.Method.invoke(Method.java:597)
 	at com.google.inject.internal.DelegatingInvocationHandler.invoke(DelegatingInvocationHandler.java:37)
 	at $Proxy53.createNodesInGroup(Unknown Source)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateTwoNodesWithRunScript(BaseComputeServiceLiveTest.java:350)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateTwoNodesWithRunScript(BaseComputeServiceLiveTest.java:347)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -183,15 +184,15 @@ java.lang.IllegalStateException: node(Eucalyptus/i-446E0840) terminated before w
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testExtendedOptionsAndLogin(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 623.34 sec  <<< FAILURE!
+testExtendedOptionsAndLogin(org.jclouds.epc.compute.EucalyptusPartnerCloudEucalyptusComputeServiceLiveTest)  Time elapsed: 624.023 sec  <<< FAILURE!
 org.jclouds.compute.RunNodesException: error running 1 node group(eu-o) location(kvm-cluster) image(emi-E0641459) size(m1.small) options([groupNames=[eu-o], keyPair=eu-o, noKeyPair=false, userData=null, blockDeviceMappings=[]])
 Execution failures:
 0 error[s]
 Node failures:
-1) IllegalStateException on node Eucalyptus/i-37850781:
-java.lang.IllegalStateException: node(Eucalyptus/i-37850781) terminated before we could customize
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:139)
-	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:57)
+1) IllegalStateException on node Eucalyptus/i-3A640816:
+java.lang.IllegalStateException: node(Eucalyptus/i-3A640816) terminated before we could customize
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:143)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:58)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)

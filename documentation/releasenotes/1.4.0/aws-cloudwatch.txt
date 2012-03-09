@@ -13,6 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ aws-cloudwatch ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.4.x/jclouds/providers/aws-cloudwatch/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ aws-cloudwatch ---
 [INFO] 
@@ -53,18 +54,18 @@
 -------------------------------------------------------
 Running org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest
 Starting test testAllContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
-Starting test testInRestProperties(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
-Starting test testWithId(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
-Starting test testOfTypeContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
-[pool-2-thread-4] Test testWithId(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 56ms
+[pool-2-thread-1] Test testAllContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 29ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testOfTypeContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 45ms
+Starting test testWithId(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
+Starting test testInRestProperties(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
+Starting test testOfTypeContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest)
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 6ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testAllContains(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 57ms
+[pool-2-thread-4] Test testWithId(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 59ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testInRestProperties(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 149ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.aws.cloudwatch.AWSCloudWatchProviderTest) succeeded: 123ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.507 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.356 sec
 
 Results :
 
@@ -98,9 +99,9 @@ Ran 0 tests containing 0 assertions.
 -------------------------------------------------------
 Running org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest
 Starting test testGetMetricStatisticsInRegion(org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest)
-[TestNG] Test testGetMetricStatisticsInRegion(org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest) succeeded: 13791ms
+[TestNG] Test testGetMetricStatisticsInRegion(org.jclouds.aws.cloudwatch.AWSCloudWatchClientLiveTest) succeeded: 12500ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.541 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.179 sec
 
 Results :
 
@@ -119,7 +120,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 37.256s
-[INFO] Finished at: Sat Feb 04 13:59:58 PST 2012
+[INFO] Total time: 52.225s
+[INFO] Finished at: Wed Mar 07 14:41:48 PST 2012
 [INFO] Final Memory: 20M/265M
 [INFO] ------------------------------------------------------------------------

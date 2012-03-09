@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 63, Failures: 4, Errors: 0, Skipped: 2, Time elapsed: 823.425 sec <<< FAILURE!
-testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)  Time elapsed: 3.172 sec  <<< FAILURE!
+Tests run: 63, Failures: 4, Errors: 0, Skipped: 2, Time elapsed: 729.38 sec <<< FAILURE!
+testCreateDirectory(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)  Time elapsed: 0.205 sec  <<< FAILURE!
 org.jclouds.atmos.AtmosResponseException: command GET http://onlinestorage.ninefold.com/rest/namespace/On%20and%20On/ HTTP/1.1 failed with code 403, error: AtmosError [code=1032, message=There was a mismatch between the signature in the request and the signature computed by the server., stringSigned=GET
 null
 /rest/namespace/on%20and%20on/]
@@ -16,7 +16,7 @@ null
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:184)
 	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
 	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
 	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
@@ -52,7 +52,7 @@ null
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:184)
 	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
 	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
 	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
@@ -88,7 +88,7 @@ null
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)  Time elapsed: 0 sec  <<< FAILURE!
+testListDirectorys(org.jclouds.ninefold.storage.NinefoldStorageClientLiveTest)  Time elapsed: 0.002 sec  <<< FAILURE!
 java.lang.reflect.UndeclaredThrowableException
 	at $Proxy71.listDirectories(Unknown Source)
 	at org.jclouds.atmos.AtmosClientLiveTest.testListDirectorys(AtmosClientLiveTest.java:113)
@@ -115,31 +115,31 @@ Caused by: java.lang.InterruptedException
 	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1302)
 	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:227)
 	at java.util.concurrent.FutureTask.get(FutureTask.java:91)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:248)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:250)
 	at com.google.common.util.concurrent.ForwardingFuture.get(ForwardingFuture.java:69)
 	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:661)
 	at org.jclouds.concurrent.ExceptionParsingListenableFuture.get(ExceptionParsingListenableFuture.java:74)
 	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	... 21 more
 Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:252)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:272)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:254)
 	... 25 more
 Caused by: java.lang.InterruptedException
 	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1302)
 	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:227)
 	at java.util.concurrent.FutureTask.get(FutureTask.java:91)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:248)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:250)
 	at com.google.common.util.concurrent.ForwardingFuture.get(ForwardingFuture.java:69)
 	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.get(Futures.java:661)
 	at org.jclouds.concurrent.ExceptionParsingListenableFuture.get(ExceptionParsingListenableFuture.java:74)
 	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
 	... 21 more
 Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:270)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:252)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:272)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:254)
 	... 25 more
-testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)  Time elapsed: 15.184 sec  <<< FAILURE!
+testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageBlobMapIntegrationLiveTest)  Time elapsed: 6.419 sec  <<< FAILURE!
 java.lang.AssertionError: Sets differ: expected [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, apps/0, apps/1, apps/2, apps/3, apps/4, apps/5, apps/6, apps/7, apps/8, apps/9] but got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.testng.Assert.assertEquals(Assert.java:694)
@@ -163,7 +163,7 @@ java.lang.AssertionError: Sets differ: expected [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, a
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)  Time elapsed: 87.688 sec  <<< FAILURE!
+testDirectory(org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageInputStreamMapIntegrationLiveTest)  Time elapsed: 16.183 sec  <<< FAILURE!
 java.lang.AssertionError: Sets differ: expected [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, apps/0, apps/1, apps/2, apps/3, apps/4, apps/5, apps/6, apps/7, apps/8, apps/9] but got [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.testng.Assert.assertEquals(Assert.java:694)

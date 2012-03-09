@@ -13,6 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ greenhousedata-element-vcloud ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.4.x/jclouds/providers/greenhousedata-element-vcloud/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ greenhousedata-element-vcloud ---
 [INFO] 
@@ -56,15 +57,15 @@ Starting test testAllContains(org.jclouds.greenhousedata.element.vcloud.GreenHou
 Starting test testInRestProperties(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest)
 Starting test testOfTypeContains(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest)
 Starting test testWithId(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest)
-[pool-2-thread-1] Test testAllContains(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 49ms
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 38ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testWithId(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 46ms
+[pool-2-thread-1] Test testAllContains(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 48ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testOfTypeContains(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 49ms
+[pool-2-thread-4] Test testWithId(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 52ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testInRestProperties(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 108ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.greenhousedata.element.vcloud.GreenHouseDataElementVCloudProviderTest) succeeded: 118ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.529 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.549 sec
 
 Results :
 
@@ -97,380 +98,397 @@ Ran 0 tests containing 0 assertions.
  T E S T S
 -------------------------------------------------------
 Running TestSuite
-Starting test testFindCatalogIsWriteable(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest)
-Starting test testGetVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppClientLiveTest)
-[TestNG] Test testGetVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppClientLiveTest) succeeded: 1095ms
-Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[TestNG] Test testFindCatalogIsWriteable(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest) succeeded: 2939ms
-Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test testGetCatalog(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest)
-[TestNG] Test testGetCatalog(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest) succeeded: 877ms
-Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testListOrgs(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudOrgClientLiveTest)
-Starting test testCaptureVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest)
-[TestNG] Test testListOrgs(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudOrgClientLiveTest) succeeded: 1269ms
-Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-Starting test testExtendedOptionsWithCustomizationScript(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest)
+Starting test testGetVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppClientLiveTest)
+Starting test testFindCatalogIsWriteable(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest)
 Starting test testCompareSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testGetVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppClientLiveTest) succeeded: 5076ms
+Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
+[TestNG] Test testListOrgs(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudOrgClientLiveTest) succeeded: 5527ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testCaptureVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest)
+Starting test testExtendedOptionsWithCustomizationScript(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest)
+[TestNG] Test testFindCatalogIsWriteable(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest) failed.
+Test suite progress: tests succeeded: 2, failed: 1, skipped: 0.
+Starting test testGetCatalog(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest)
+[TestNG] Test testGetCatalog(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest) succeeded: 1761ms
+Test suite progress: tests succeeded: 3, failed: 1, skipped: 0.
+Mar 8, 2012 10:45:43 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, name=UbuntuServer-x64-2GB, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913), tags=[]]
+Mar 8, 2012 10:45:43 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, name=UbuntuServer-x64-2GB, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913), tags=[]]
+Mar 8, 2012 10:45:43 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-129899ba-9a43-4583-86f6-333f24e10690, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-129899ba-9a43-4583-86f6-333f24e10690, name=WinSBS2011_x64, processors=[[cores=1.0, speed=1.0]], ram=10240, volumes=[[id=0, type=LOCAL, size=180.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-129899ba-9a43-4583-86f6-333f24e10690), tags=[]]
+[TestNG] Test testCompareSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 13377ms
+Test suite progress: tests succeeded: 4, failed: 1, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
 smallest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, name=UbuntuServer-x64-2GB, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913), tags=[]]
 fastest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, name=Windows2008-R2-x64, processors=[[cores=2.0, speed=1.0]], ram=4096, volumes=[[id=0, type=LOCAL, size=40.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24), tags=[]]
 biggest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, name=Windows2008-R2-x64, processors=[[cores=2.0, speed=1.0]], ram=4096, volumes=[[id=0, type=LOCAL, size=40.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24), tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 7385ms
-Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
+[TestNG] Test testCompareSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 15243ms
+Test suite progress: tests succeeded: 5, failed: 1, skipped: 0.
 Starting test testFromTemplate(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testFromTemplate(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
+[TestNG] Test testFromTemplate(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 6, failed: 1, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 location [id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
+[TestNG] Test testGetAssignableLocations(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 7, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 27ms
+Test suite progress: tests succeeded: 8, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanUseImageId(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-Feb 4, 2012 11:04:40 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: smallest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, name=UbuntuServer-x64-2GB, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913), tags=[]]
-Feb 4, 2012 11:04:40 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: fastest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, name=Windows2008-R2-x64, processors=[[cores=2.0, speed=1.0]], ram=4096, volumes=[[id=0, type=LOCAL, size=40.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24), tags=[]]
-Feb 4, 2012 11:04:40 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: biggest [id=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, providerId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24, name=Windows2008-R2-x64, processors=[[cores=2.0, speed=1.0]], ram=4096, volumes=[[id=0, type=LOCAL, size=40.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-cf67c32e-9049-4ec7-96a8-257b29698a24), tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 7725ms
-Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testCorrectAuthException(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 1253ms
-Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
+[TestNG] Test testCorrectAuthException(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 3984ms
+Test suite progress: tests succeeded: 9, failed: 1, skipped: 0.
 Starting test testCreateAndRunAService(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 10226ms
-Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
+Exception in thread "user thread 1" java.lang.IllegalStateException: interrupted calling get() on [[method=VCloudLoginAsyncClient.login, request=POST https://mycloud.greenhousedata.com/api/v1.0/login HTTP/1.1]], so could not run listeners
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:66)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:979)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1281)
+	at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.java:218)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:83)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:239)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:59)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: task submitted from the following trace
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.ensureCauseHasSubmissionTrace(ExecutorServiceModule.java:272)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribedFuture.get(ExecutorServiceModule.java:243)
+	... 4 more
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 11992ms
+Test suite progress: tests succeeded: 10, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 11, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 12, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 13, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 22, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 23, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 24, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 25, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 40, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 42, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 17ms
-Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 43, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 44, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 45, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 46, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 47, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 48, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 49, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 54, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 55, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 56, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 57, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 16ms
-Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 58, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 59, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 60, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 61, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 62, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 63, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 64, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 65, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 66, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 67, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 68, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 69, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 8ms
-Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 70, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 71, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 72, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 73, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 74, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 75, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 76, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 77, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 78, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 79, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 80, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 81, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 82, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 83, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 84, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 85, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 86, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 87, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 88, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 89, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 90, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 91, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 92, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 93, failed: 1, skipped: 0.
 Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) failed.
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 19045ms
 Test suite progress: tests succeeded: 94, failed: 1, skipped: 0.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 18703ms
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 20193ms
 Test suite progress: tests succeeded: 95, failed: 1, skipped: 0.
 Starting test testDefaultTemplateBuilder(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest)
-[TestNG] Test testDefaultTemplateBuilder(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 96, failed: 1, skipped: 0.
-[TestNG] Test testCaptureVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) failed.
-Test suite progress: tests succeeded: 96, failed: 2, skipped: 0.
+[TestNG] Test testCaptureVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) succeeded: 204910ms
+Test suite progress: tests succeeded: 97, failed: 1, skipped: 0.
 Starting test testFindVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest)
-[TestNG] Test testFindVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) succeeded: 21211ms
-Test suite progress: tests succeeded: 97, failed: 2, skipped: 0.
-Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest)
-[TestNG] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) succeeded: 10394ms
-Test suite progress: tests succeeded: 98, failed: 2, skipped: 0.
-Starting test testGetVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest)
-[TestNG] Test testGetVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) succeeded: 11232ms
-Test suite progress: tests succeeded: 99, failed: 2, skipped: 0.
+Mar 8, 2012 10:49:03 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db) os([name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64]) in 195s
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-Feb 4, 2012 11:07:49 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d) os([name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64]) in 185s
-[TestNG] Test testExtendedOptionsWithCustomizationScript(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest) succeeded: 207541ms
-Test suite progress: tests succeeded: 100, failed: 2, skipped: 0.
+[TestNG] Test testExtendedOptionsWithCustomizationScript(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest) succeeded: 227698ms
+Test suite progress: tests succeeded: 98, failed: 1, skipped: 0.
 Starting test testGetThumbnailOfVm(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest)
-[TestNG] Test testGetThumbnailOfVm(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest) succeeded: 2935ms
-Test suite progress: tests succeeded: 101, failed: 2, skipped: 0.
+[TestNG] Test testFindVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) succeeded: 24850ms
+Test suite progress: tests succeeded: 99, failed: 1, skipped: 0.
+Starting test testGetOvfEnvelopeForVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest)
+[TestNG] Test testGetThumbnailOfVm(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest) succeeded: 2195ms
+Test suite progress: tests succeeded: 100, failed: 1, skipped: 0.
 Starting test testGetVm(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest)
-[TestNG] Test testGetVm(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest) succeeded: 3548ms
-Test suite progress: tests succeeded: 102, failed: 2, skipped: 0.
-Feb 4, 2012 11:08:41 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 48s
-Feb 4, 2012 11:08:43 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+[TestNG] Test testGetVm(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVmClientLiveTest) succeeded: 2972ms
+Test suite progress: tests succeeded: 101, failed: 1, skipped: 0.
+[TestNG] Test testGetOvfEnvelopeForVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) succeeded: 13515ms
+Test suite progress: tests succeeded: 102, failed: 1, skipped: 0.
+Starting test testGetVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest)
+[TestNG] Test testGetVAppTemplate(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest) succeeded: 12586ms
+Test suite progress: tests succeeded: 103, failed: 1, skipped: 0.
+Mar 8, 2012 10:50:14 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db) with java full version "1.7.0-b147" and JBoss 7.0.2.Final in 67s
+Mar 8, 2012 10:50:16 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Feb 4, 2012 11:08:43 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d): 209.132.182.31
-Feb 4, 2012 11:08:45 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 69.146.190.74; check freegeoip
-Feb 4, 2012 11:08:45 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d): 69.146.190.74
-Feb 4, 2012 11:08:47 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 68.168.252.139; check freegeoip
-Feb 4, 2012 11:08:47 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d) from perspective of amazonaws: 68.168.252.139
+Mar 8, 2012 10:50:16 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db): 209.132.182.31
+Mar 8, 2012 10:50:19 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 69.144.75.81; check freegeoip
+Mar 8, 2012 10:50:19 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db): 69.144.75.81
+Mar 8, 2012 10:50:21 AM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 68.168.252.103; check freegeoip
+Mar 8, 2012 10:50:21 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db) from perspective of amazonaws: 68.168.252.103
 [TestNG] Test testCreateAndRunAService(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 102, failed: 3, skipped: 0.
+Test suite progress: tests succeeded: 103, failed: 2, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-Feb 4, 2012 11:10:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Mar 8, 2012 10:51:51 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}]
 [TestNG] Test testGetAssignableLocations(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 103, failed: 3, skipped: 0.
+Test suite progress: tests succeeded: 104, failed: 2, skipped: 0.
 Starting test testImagesCache(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testImagesCache(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 2154ms
-Test suite progress: tests succeeded: 104, failed: 3, skipped: 0.
+[TestNG] Test testImagesCache(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 2177ms
+Test suite progress: tests succeeded: 105, failed: 2, skipped: 0.
 Starting test testListImages(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testListImages(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 105, failed: 3, skipped: 0.
+[TestNG] Test testListImages(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 106, failed: 2, skipped: 0.
 Starting test testListSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testListSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 4168ms
-Test suite progress: tests succeeded: 106, failed: 3, skipped: 0.
+[TestNG] Test testListSizes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 4641ms
+Test suite progress: tests succeeded: 107, failed: 2, skipped: 0.
 Starting test setServiceDefaults(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
 [TestNG] Test setServiceDefaults(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 107, failed: 3, skipped: 0.
+Test suite progress: tests succeeded: 108, failed: 2, skipped: 0.
 Starting test testOptionToNotBlock(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
 [TestNG] Test testOptionToNotBlock(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 108, failed: 3, skipped: 0.
+Test suite progress: tests succeeded: 109, failed: 2, skipped: 0.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 1082ms
-Test suite progress: tests succeeded: 109, failed: 3, skipped: 0.
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 523ms
+Test suite progress: tests succeeded: 110, failed: 2, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-<< problem applying options to node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-a100254b-0c94-433c-9c3e-8c1536edd7a7): 
-org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@68.168.252.138:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@68.168.252.138:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
+<< problem applying options to node(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-a83dcb12-8193-44a1-952d-6bdfecd10420): 
+org.jclouds.rest.AuthorizationException: (root:pw[5d907853a9617cfd55fb62eae803595b]@68.168.252.64:22) (root:pw[5d907853a9617cfd55fb62eae803595b]@68.168.252.64:22) error acquiring SSHClient(timeout=60000) (not retryable): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:416)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:247)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:257)
-	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
+	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:80)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
@@ -492,50 +510,58 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 17 more
-[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 192166ms
-Test suite progress: tests succeeded: 110, failed: 3, skipped: 0.
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 212480ms
+Test suite progress: tests succeeded: 111, failed: 2, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 192571ms
-Test suite progress: tests succeeded: 111, failed: 3, skipped: 0.
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 186728ms
+Test suite progress: tests succeeded: 112, failed: 2, skipped: 0.
 Starting test testTemplateMatch(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-[TestNG] Test testTemplateMatch(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 5635ms
-Test suite progress: tests succeeded: 112, failed: 3, skipped: 0.
+[TestNG] Test testTemplateMatch(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 5650ms
+Test suite progress: tests succeeded: 113, failed: 2, skipped: 0.
 Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
-Feb 4, 2012 11:16:58 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+Mar 8, 2012 10:58:45 AM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
 INFO: creating another node based on existing nodes' location: [id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}]
-[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) failed.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 0.
-[TestNG] Test testCredentialsCache(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 1.
-[TestNG] Test testGet(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 2.
-[TestNG] Test testReboot(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 3.
-[TestNG] Test testSuspendResume(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 4.
-[TestNG] Test testGetNodesWithDetails(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 5.
-[TestNG] Test testListNodes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 6.
-[TestNG] Test testDestroyNodes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) skipped.
-Test suite progress: tests succeeded: 112, failed: 4, skipped: 7.
-Tests run: 123, Failures: 4, Errors: 0, Skipped: 7, Time elapsed: 805.49 sec <<< FAILURE!
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 180005ms
+Test suite progress: tests succeeded: 114, failed: 2, skipped: 0.
+Starting test testCredentialsCache(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testCredentialsCache(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 351ms
+Test suite progress: tests succeeded: 115, failed: 2, skipped: 0.
+Starting test testGet(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testGet(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 6910ms
+Test suite progress: tests succeeded: 116, failed: 2, skipped: 0.
+Starting test testReboot(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testReboot(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 16719ms
+Test suite progress: tests succeeded: 117, failed: 2, skipped: 0.
+Starting test testSuspendResume(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testSuspendResume(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 55777ms
+Test suite progress: tests succeeded: 118, failed: 2, skipped: 0.
+Starting test testGetNodesWithDetails(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testGetNodesWithDetails(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 2868ms
+Test suite progress: tests succeeded: 119, failed: 2, skipped: 0.
+Starting test testListNodes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testListNodes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) succeeded: 2717ms
+Test suite progress: tests succeeded: 120, failed: 2, skipped: 0.
+Starting test testDestroyNodes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest)
+[TestNG] Test testDestroyNodes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 120, failed: 3, skipped: 0.
+Tests run: 125, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 1,122.837 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testTemplateBuilderWithImageIdSpecified(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudTemplateBuilderLiveTest): no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=UbuntuServer-x64-2GB, imageDescription=This is a special place-holder used for disconnected network interfaces., imageId=https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913, imagePredicate=null, imageVersion=null, location=[id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}], minCores=0.0, minRam=0, osFamily=ubuntu, osName=Ubuntu 64-Bit, osDescription=Ubuntu Linux (64-bit), osVersion=, osArch=null, os64Bit=true, hardwareId=null]
-  testCaptureVApp(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudVAppTemplateClientLiveTest): error running 1 node group(vcdcap) location(https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f) image(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913) size(https://mycloud.greenhousedata.com/api/v1.0/vAppTemplate/vappTemplate-33578b29-1437-4b30-9f9a-4d4a3393b913) options([customizationScript=false, description=null, ipAddressAllocationMode=POOL, inboundPorts=[22], privateKey=false, publicKey=false, runScript=false, port:seconds=-1:-1, userMetadata: {}])
-  testCreateAndRunAService(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest): failed to open socket [address=68.168.252.139, port=8080] on node [id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d, group=vcd-s, name=vcd-s-746, location=[id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}], uri=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d, imageId=null, os=[name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64], state=RUNNING, loginPort=22, hostname=vcd-s-746, privateAddresses=[], publicAddresses=[68.168.252.139], hardware=[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d, name=vcd-s-746, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-09ada075-23ee-4589-9310-6c6e74eb809d), tags=[]], loginUser=root, userMetadata={}, tags=[]]:
-  testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest): no image matched predicate: And(locationEqualsOrChildOf(https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f),And(osFamily(ubuntu),osName(Ubuntu 64-Bit),osDescription(Ubuntu Linux (64-bit)),osVersion(),os64Bit(true)),imageName(UbuntuServer-x64-2GB),imageDescription(This is a special place-holder used for disconnected network interfaces.))
+Failed tests:   testFindCatalogIsWriteable(org.jclouds.greenhousedata.element.vcloud.features.GreenHouseDataElementVCloudCatalogClientLiveTest): expected:<true> but was:<false>
+  testCreateAndRunAService(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest): failed to open socket [address=68.168.252.103, port=8080] on node [id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db, group=vcd-s, name=vcd-s-d04, location=[id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}], uri=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db, imageId=null, os=[name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64], state=RUNNING, loginPort=22, hostname=vcd-s-d04, privateAddresses=[], publicAddresses=[68.168.252.103], hardware=[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db, name=vcd-s-d04, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-1bdf4bea-b6e9-4dbe-8359-ec7e600634db), tags=[]], loginUser=root, userMetadata={}, tags=[]]:
+  testDestroyNodes(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest): error destroyNodesMatching(inGroup(vcd)): {[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, group=vcd, name=vcd-b80, location=[id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}], uri=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, imageId=null, os=[name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64], state=RUNNING, loginPort=22, hostname=vcd-b80, privateAddresses=[], publicAddresses=[68.168.252.103], hardware=[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, name=vcd-b80, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962), tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]=java.util.concurrent.ExecutionException: java.lang.IllegalArgumentException: The requested operation could not be executed on vApp "vcd-b80". Stop the vApp and try again.}
+  cleanup(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest): error destroyNodesMatching(inGroup(vcd)): {[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, group=vcd, name=vcd-b80, location=[id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}], uri=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, imageId=null, os=[name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64], state=SUSPENDED, loginPort=22, hostname=vcd-b80, privateAddresses=[], publicAddresses=[68.168.252.103], hardware=[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, name=vcd-b80, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962), tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]=java.util.concurrent.ExecutionException: java.lang.IllegalArgumentException: The requested operation could not be executed on vApp "vcd-b80". Stop the vApp and try again.}
+  cleanup(org.jclouds.greenhousedata.element.vcloud.compute.GreenHouseDataElementVCloudComputeServiceLiveTest): error destroyNodesMatching(inGroup(vcd)): {[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, group=vcd, name=vcd-b80, location=[id=https://mycloud.greenhousedata.com/api/v1.0/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f, scope=ZONE, description=orgVDC-cloudsoft-Tier1-PAYG, parent=https://mycloud.greenhousedata.com/api/v1.0/org/c076f90a-397a-49fa-89b8-b294c1599cd0, iso3166Codes=[], metadata={}], uri=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, imageId=null, os=[name=Ubuntu 64-Bit, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit), osType=UBUNTU_64], state=SUSPENDED, loginPort=22, hostname=vcd-b80, privateAddresses=[], publicAddresses=[68.168.252.103], hardware=[id=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, providerId=https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962, name=vcd-b80, processors=[[cores=1.0, speed=1.0]], ram=256, volumes=[[id=0, type=LOCAL, size=2.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://mycloud.greenhousedata.com/api/v1.0/vApp/vapp-91b4ee2d-e9bc-4644-9262-c9d5e06e9962), tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]=java.util.concurrent.ExecutionException: java.lang.IllegalArgumentException: The requested operation could not be executed on vApp "vcd-b80". Stop the vApp and try again.}
 
-Tests run: 123, Failures: 4, Errors: 0, Skipped: 7
+Tests run: 125, Failures: 5, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 13:46.806s
-[INFO] Finished at: Sat Feb 04 23:17:33 PST 2012
-[INFO] Final Memory: 21M/265M
+[INFO] Total time: 19:11.216s
+[INFO] Finished at: Thu Mar 08 11:04:07 PST 2012
+[INFO] Final Memory: 19M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project greenhousedata-element-vcloud: There are test failures.
 [ERROR] 

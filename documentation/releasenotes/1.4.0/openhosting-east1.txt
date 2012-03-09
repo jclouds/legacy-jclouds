@@ -13,6 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ openhosting-east1 ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.4.x/jclouds/providers/openhosting-east1/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ openhosting-east1 ---
 [INFO] 
@@ -53,18 +54,18 @@
 -------------------------------------------------------
 Running org.jclouds.openhosting.OpenHostingEast1ProviderTest
 Starting test testAllContains(org.jclouds.openhosting.OpenHostingEast1ProviderTest)
-Starting test testWithId(org.jclouds.openhosting.OpenHostingEast1ProviderTest)
-Starting test testOfTypeContains(org.jclouds.openhosting.OpenHostingEast1ProviderTest)
 Starting test testInRestProperties(org.jclouds.openhosting.OpenHostingEast1ProviderTest)
-[pool-2-thread-4] Test testWithId(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 67ms
+Starting test testOfTypeContains(org.jclouds.openhosting.OpenHostingEast1ProviderTest)
+Starting test testWithId(org.jclouds.openhosting.OpenHostingEast1ProviderTest)
+[pool-2-thread-4] Test testWithId(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 493ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-1] Test testAllContains(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 101ms
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 638ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testOfTypeContains(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 67ms
+[pool-2-thread-1] Test testAllContains(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 662ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testInRestProperties(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 93ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.openhosting.OpenHostingEast1ProviderTest) succeeded: 849ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.632 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.077 sec
 
 Results :
 
@@ -102,57 +103,57 @@ Starting test setServiceDefaults(org.jclouds.openhosting.compute.OpenHostingEast
 [TestNG] Test setServiceDefaults(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
-Feb 5, 2012 12:55:27 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
-Feb 5, 2012 12:55:27 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-Feb 5, 2012 12:55:27 AM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
+Starting test testCreateDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
 smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
 fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
 biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 5451ms
+[TestNG] Test testCompareSizes(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6057ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
-Starting test testCreateDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
-[TestNG] Test testCompareSizes(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6352ms
-Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testFromTemplate(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testFromTemplate(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 12ms
+Mar 8, 2012 12:07:10 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
+Mar 8, 2012 12:07:10 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
+Mar 8, 2012 12:07:10 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
+[TestNG] Test testCompareSizes(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 5099ms
+Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
+[TestNG] Test testFromTemplate(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 14ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 location [id=openhosting-east1, scope=PROVIDER, description=https://api.east1.openhosting.com, parent=null, iso3166Codes=[US-FL], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testGetAssignableLocations(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 9ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 7ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 26ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 25ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
@@ -161,28 +162,41 @@ Starting test testTemplateBuilderCanUseImageId(org.jclouds.openhosting.compute.O
 [TestNG] Test testCreateDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) failed.
 Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
 Starting test testGetDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
-[TestNG] Test testGetDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 474ms
+[TestNG] Test testGetDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 484ms
 Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
 Starting test testGetServer(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
-[TestNG] Test testCorrectAuthException(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 1383ms
+[TestNG] Test testCorrectAuthException(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 1268ms
 Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Mar 8, 2012 12:07:11 PM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable com.google.common.util.concurrent.Futures$ChainingListenableFuture@3981e7fe with executor java.util.concurrent.ThreadPoolExecutor@7fa5f230
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.execute(ExecutorServiceModule.java:200)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
 Starting test testCreateAndRunAService(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
-[TestNG] Test testGetServer(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 485ms
+[TestNG] Test testGetServer(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 519ms
 Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
 Starting test testListDriveInfo(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
-[TestNG] Test testListDriveInfo(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 475ms
+[TestNG] Test testListDriveInfo(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 459ms
 Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
 Starting test testListDrives(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
-[TestNG] Test testListDrives(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 484ms
+[TestNG] Test testListDrives(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 470ms
 Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
 Starting test testListServers(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
-[TestNG] Test testListServers(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 471ms
+[TestNG] Test testListServers(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 464ms
 Test suite progress: tests succeeded: 22, failed: 1, skipped: 0.
 Starting test testWeCanReadAndWriteToDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
 [TestNG] Test testCreateAndRunAService(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) failed.
 Test suite progress: tests succeeded: 22, failed: 2, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
-Feb 5, 2012 12:55:30 AM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Mar 8, 2012 12:07:14 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=openhosting-east1, scope=PROVIDER, description=https://api.east1.openhosting.com, parent=null, iso3166Codes=[US-FL], metadata={}]
 [TestNG] Test testGetAssignableLocations(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 23, failed: 2, skipped: 0.
@@ -193,7 +207,7 @@ Starting test testListImages(org.jclouds.openhosting.compute.OpenHostingEast1Com
 [TestNG] Test testListImages(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 25, failed: 2, skipped: 0.
 Starting test testListSizes(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
-[TestNG] Test testListSizes(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 1ms
+[TestNG] Test testListSizes(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 26, failed: 2, skipped: 0.
 Starting test testOptionToNotBlock(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
 [TestNG] Test testOptionToNotBlock(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 0ms
@@ -202,28 +216,28 @@ Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.openhosting.c
 [TestNG] Test testWeCanReadAndWriteToDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) failed.
 Test suite progress: tests succeeded: 27, failed: 3, skipped: 0.
 Starting test testListServerInfo(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)
-[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3760ms
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3836ms
 Test suite progress: tests succeeded: 28, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 29, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 30, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 31, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 32, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 33, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6ms
 Test suite progress: tests succeeded: 34, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 35, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
@@ -232,22 +246,22 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.Open
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 37, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 38, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 39, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 40, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 41, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 42, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 43, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
@@ -256,25 +270,25 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.Open
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 45, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 46, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 47, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 13ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 48, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 49, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 50, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6ms
 Test suite progress: tests succeeded: 51, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 52, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
@@ -283,40 +297,40 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.Open
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 54, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 55, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 56, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 57, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 58, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 59, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 60, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 14ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 61, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 62, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 63, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 64, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 65, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 66, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
@@ -325,61 +339,61 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.Open
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 68, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 69, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 10ms
 Test suite progress: tests succeeded: 70, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 71, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 72, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 73, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 74, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 75, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 76, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 77, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 5ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 78, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 79, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 80, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 81, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 82, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 83, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 5ms
 Test suite progress: tests succeeded: 84, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 85, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 86, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 87, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
@@ -394,9 +408,10 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.Open
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 91, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 526ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 92, failed: 3, skipped: 0.
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
+Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 93, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
@@ -408,26 +423,25 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.Open
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 96, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 97, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 98, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 99, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 100, failed: 3, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 101, failed: 3, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 102, failed: 3, skipped: 0.
 Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testListServerInfo(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 474ms
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 776ms
+Test suite progress: tests succeeded: 102, failed: 3, skipped: 0.
+Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
+[TestNG] Test testListServerInfo(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) succeeded: 541ms
 Test suite progress: tests succeeded: 103, failed: 3, skipped: 0.
 [TestNG] Test testSetDriveData(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest) skipped.
 Test suite progress: tests succeeded: 103, failed: 3, skipped: 1.
@@ -451,7 +465,7 @@ Starting test testCreateTwoNodesWithRunScript(org.jclouds.openhosting.compute.Op
 [TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) failed.
 Test suite progress: tests succeeded: 103, failed: 5, skipped: 8.
 Starting test testTemplateMatch(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest)
-[TestNG] Test testTemplateMatch(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 8ms
+[TestNG] Test testTemplateMatch(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 104, failed: 5, skipped: 8.
 [TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 104, failed: 5, skipped: 9.
@@ -469,15 +483,15 @@ Test suite progress: tests succeeded: 104, failed: 5, skipped: 14.
 Test suite progress: tests succeeded: 104, failed: 5, skipped: 15.
 [TestNG] Test testDestroyNodes(org.jclouds.openhosting.compute.OpenHostingEast1ComputeServiceLiveTest) skipped.
 Test suite progress: tests succeeded: 104, failed: 5, skipped: 16.
-[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6882ms
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 7260ms
 Test suite progress: tests succeeded: 105, failed: 5, skipped: 16.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6850ms
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 7295ms
 Test suite progress: tests succeeded: 106, failed: 5, skipped: 16.
 Starting test testDefaultTemplateBuilder(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest)
-[TestNG] Test testDefaultTemplateBuilder(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 5ms
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.openhosting.compute.OpenHostingEast1TemplateBuilderLiveTest) succeeded: 6ms
 Test suite progress: tests succeeded: 107, failed: 5, skipped: 16.
-Tests run: 128, Failures: 5, Errors: 0, Skipped: 16, Time elapsed: 27.736 sec <<< FAILURE!
+Tests run: 128, Failures: 5, Errors: 0, Skipped: 16, Time elapsed: 33.505 sec <<< FAILURE!
 
 Results :
 
@@ -492,8 +506,8 @@ Tests run: 128, Failures: 5, Errors: 0, Skipped: 16
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 47.679s
-[INFO] Finished at: Sun Feb 05 00:55:45 PST 2012
+[INFO] Total time: 1:15.711s
+[INFO] Finished at: Thu Mar 08 12:07:32 PST 2012
 [INFO] Final Memory: 21M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project openhosting-east1: There are test failures.

@@ -1,87 +1,11 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 123, Failures: 13, Errors: 0, Skipped: 7, Time elapsed: 1,076.291 sec <<< FAILURE!
-testCompareSizes(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 9.13 sec  <<< FAILURE!
-java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:620)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:608)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:592)
-	at org.jclouds.compute.BaseTemplateBuilderLiveTest.testCompareSizes(BaseTemplateBuilderLiveTest.java:70)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-testFromTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 0.012 sec  <<< FAILURE!
-java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:620)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:608)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:592)
-	at org.jclouds.compute.BaseTemplateBuilderLiveTest.testFromTemplate(BaseTemplateBuilderLiveTest.java:93)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-testTemplateBuilderCanFind(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 0.002 sec  <<< FAILURE!
-java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),And(osFamily(ubuntu),os64Bit(true)))
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:620)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:608)
-	at org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderCanFind(BaseTemplateBuilderLiveTest.java:149)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-testTemplateBuilderCanUseImageId(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 0.002 sec  <<< FAILURE!
-java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:620)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:608)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:592)
-	at org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderCanUseImageId(BaseTemplateBuilderLiveTest.java:167)
+Tests run: 123, Failures: 10, Errors: 0, Skipped: 8, Time elapsed: 804.366 sec <<< FAILURE!
+testTemplateBuilderCanUseImageId(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 28.149 sec  <<< FAILURE!
+java.util.NoSuchElementException: imageId(https://mycloud.stratogen.net/api/v1.0/vAppTemplate/vappTemplate-134af01d-5684-4c26-85e0-3945c1df94d4) not found
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:636)
+	at org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderCanUseImageId(BaseTemplateBuilderLiveTest.java:171)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -102,10 +26,10 @@ java.util.NoSuchElementException: no image matched predicate: And(locationEquals
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
 testTemplateBuilderWithImageIdSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 0 sec  <<< FAILURE!
-java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:620)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:608)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:592)
+java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://mycloud.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:650)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:638)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:622)
 	at org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderWithImageIdSpecified(BaseTemplateBuilderLiveTest.java:229)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -126,168 +50,13 @@ java.util.NoSuchElementException: no image matched predicate: And(locationEquals
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testTemplateBuilderWithLoginUserSpecified(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 68.428 sec  <<< FAILURE!
-java.util.NoSuchElementException: no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=Ubuntu server 11.04 64bit no GUI (base), imageDescription=null, imageId=null, imagePredicate=null, imageVersion=null, location=[id=https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75, scope=ZONE, description=jClouds, parent=https://vcd.stratogen.net/api/v1.0/org/4fc44942-ba30-4222-9977-a61fc6d5824c, iso3166Codes=[], metadata={}], minCores=0.0, minRam=0, osFamily=null, osName=null, osDescription=null, osVersion=null, osArch=null, os64Bit=null, hardwareId=null]
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.resolveHardware(TemplateBuilderImpl.java:654)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:613)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:592)
-	at org.jclouds.compute.BaseTemplateBuilderLiveTest.tryOverrideUsingPropertyKey(BaseTemplateBuilderLiveTest.java:281)
-	at org.jclouds.compute.BaseTemplateBuilderLiveTest.testTemplateBuilderWithLoginUserSpecified(BaseTemplateBuilderLiveTest.java:263)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-testDefaultTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 0 sec  <<< FAILURE!
-java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:620)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:608)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:592)
+testDefaultTemplateBuilder(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest)  Time elapsed: 0.001 sec  <<< FAILURE!
+java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://mycloud.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:650)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:638)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:622)
 	at org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudTemplateBuilderLiveTest.testDefaultTemplateBuilder(StratoGenVCloudMyCloudTemplateBuilderLiveTest.java:73)
-testCaptureVApp(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)  Time elapsed: 151.241 sec  <<< FAILURE!
-org.jclouds.rest.ResourceNotFoundException: No access to entity "(com.vmware.vcloud.entity.catalog:46f2e02e-a54a-4a7d-9f4b-b877dae67156)".
-	at org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse.handleError(ParseVCloudErrorFromHttpResponse.java:101)
-	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
-	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
-	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
-	at $Proxy90.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy97.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
-	at org.jclouds.vcloud.features.VAppTemplateClientLiveTest.testCaptureVApp(VAppTemplateClientLiveTest.java:150)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
-	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
-	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
-	at $Proxy90.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy97.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
-	at org.jclouds.vcloud.features.VAppTemplateClientLiveTest.testCaptureVApp(VAppTemplateClientLiveTest.java:150)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:182)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
-	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
-	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
-	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
-	at $Proxy90.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
-	at $Proxy97.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
-	at org.jclouds.vcloud.features.VAppTemplateClientLiveTest.testCaptureVApp(VAppTemplateClientLiveTest.java:150)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-Caused by: org.jclouds.vcloud.VCloudResponseException: request POST https://vcd.stratogen.net/api/v1.0/catalog/46f2e02e-a54a-4a7d-9f4b-b877dae67156/catalogItems HTTP/1.1 failed with code 403, error: [majorErrorCode=403, message=No access to entity "(com.vmware.vcloud.entity.catalog:46f2e02e-a54a-4a7d-9f4b-b877dae67156)"., minorErrorCode=ACCESS_TO_RESOURCE_IS_FORBIDDEN, stackTrace=null, vendorSpecificErrorCode=null]
-	at org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse.handleError(ParseVCloudErrorFromHttpResponse.java:74)
-	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-Caused by: org.jclouds.vcloud.VCloudResponseException: request POST https://vcd.stratogen.net/api/v1.0/catalog/46f2e02e-a54a-4a7d-9f4b-b877dae67156/catalogItems HTTP/1.1 failed with code 403, error: [majorErrorCode=403, message=No access to entity "(com.vmware.vcloud.entity.catalog:46f2e02e-a54a-4a7d-9f4b-b877dae67156)"., minorErrorCode=ACCESS_TO_RESOURCE_IS_FORBIDDEN, stackTrace=null, vendorSpecificErrorCode=null]
-	at org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse.handleError(ParseVCloudErrorFromHttpResponse.java:74)
-	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
-	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
-	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-	... 3 more
-testExtendedOptionsWithCustomizationScript(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest)  Time elapsed: 40.651 sec  <<< FAILURE!
+testExtendedOptionsWithCustomizationScript(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVmClientLiveTest)  Time elapsed: 388.279 sec  <<< FAILURE!
 java.lang.AssertionError: expected:<cat > /root/foo.txt<<EOF
 I '"love"' {asc|!}*&
 EOF
@@ -323,20 +92,32 @@ EOF
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testCreateAndRunAService(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)  Time elapsed: 100.949 sec  <<< FAILURE!
-java.lang.NullPointerException
-	at org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs(VCloudComputeUtils.java:57)
-	at org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs(VCloudComputeUtils.java:53)
-	at org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs(VCloudComputeUtils.java:47)
-	at org.jclouds.vcloud.compute.functions.VAppToNodeMetadata.apply(VAppToNodeMetadata.java:78)
-	at org.jclouds.vcloud.compute.functions.VAppToNodeMetadata.apply(VAppToNodeMetadata.java:51)
-	at com.google.common.base.Functions$FunctionComposition.apply(Functions.java:205)
-	at org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies.getNode(AdaptingComputeServiceStrategies.java:116)
-	at org.jclouds.compute.internal.BaseComputeService.getNodeMetadata(BaseComputeService.java:376)
-	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNode(BaseComputeService.java:563)
-	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNode(BaseComputeService.java:547)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.exec(BaseComputeServiceLiveTest.java:756)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAndRunAService(BaseComputeServiceLiveTest.java:687)
+testCaptureVApp(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)  Time elapsed: 2.662 sec  <<< FAILURE!
+org.jclouds.rest.ResourceNotFoundException: No access to entity "(com.vmware.vcloud.entity.catalog:46f2e02e-a54a-4a7d-9f4b-b877dae67156)".
+	at org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse.handleError(ParseVCloudErrorFromHttpResponse.java:101)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:184)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
+	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
+	at $Proxy90.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy91.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
+	at org.jclouds.vcloud.features.VAppTemplateClientLiveTest.testCaptureVApp(VAppTemplateClientLiveTest.java:150)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -356,7 +137,341 @@ java.lang.NullPointerException
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)  Time elapsed: 32.088 sec  <<< FAILURE!
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:184)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
+	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
+	at $Proxy90.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy91.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
+	at org.jclouds.vcloud.features.VAppTemplateClientLiveTest.testCaptureVApp(VAppTemplateClientLiveTest.java:150)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.submit(ExecutorServiceModule.java:184)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService.submit(BaseHttpCommandExecutorService.java:127)
+	at org.jclouds.http.TransformingHttpCommandExecutorServiceImpl.submit(TransformingHttpCommandExecutorServiceImpl.java:54)
+	at org.jclouds.http.TransformingHttpCommandImpl.execute(TransformingHttpCommandImpl.java:73)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.createListenableFutureForHttpRequestMappedToMethodAndArgs(AsyncRestClientProxy.java:198)
+	at org.jclouds.rest.internal.AsyncRestClientProxy.invoke(AsyncRestClientProxy.java:134)
+	at $Proxy90.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.jclouds.concurrent.internal.SyncProxy.invoke(SyncProxy.java:137)
+	at $Proxy91.addVAppTemplateOrMediaImageToCatalogAndNameItem(Unknown Source)
+	at org.jclouds.vcloud.features.VAppTemplateClientLiveTest.testCaptureVApp(VAppTemplateClientLiveTest.java:150)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: org.jclouds.vcloud.VCloudResponseException: request POST https://mycloud.stratogen.net/api/v1.0/catalog/46f2e02e-a54a-4a7d-9f4b-b877dae67156/catalogItems HTTP/1.1 failed with code 403, error: [majorErrorCode=403, message=No access to entity "(com.vmware.vcloud.entity.catalog:46f2e02e-a54a-4a7d-9f4b-b877dae67156)"., minorErrorCode=ACCESS_TO_RESOURCE_IS_FORBIDDEN, stackTrace=null, vendorSpecificErrorCode=null]
+	at org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse.handleError(ParseVCloudErrorFromHttpResponse.java:74)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	... 3 more
+Caused by: org.jclouds.vcloud.VCloudResponseException: request POST https://mycloud.stratogen.net/api/v1.0/catalog/46f2e02e-a54a-4a7d-9f4b-b877dae67156/catalogItems HTTP/1.1 failed with code 403, error: [majorErrorCode=403, message=No access to entity "(com.vmware.vcloud.entity.catalog:46f2e02e-a54a-4a7d-9f4b-b877dae67156)"., minorErrorCode=ACCESS_TO_RESOURCE_IS_FORBIDDEN, stackTrace=null, vendorSpecificErrorCode=null]
+	at org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse.handleError(ParseVCloudErrorFromHttpResponse.java:74)
+	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:161)
+	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.call(BaseHttpCommandExecutorService.java:130)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	... 3 more
+testCreateAndRunAService(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)  Time elapsed: 109.996 sec  <<< FAILURE!
+java.lang.RuntimeException: java.util.concurrent.ExecutionException: org.jclouds.compute.callables.ScriptStillRunningException: BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=https://mycloud.stratogen.net/api/v1.0/vApp/vapp-e94c5f2a-52d6-40bf-8d05-ea2af581d7e3, name=configure-jboss, runAsRoot=true}} still running: pid(null), last status: {output=Selecting previously deselected package libcurl3.
+(Reading database ... 52080 files and directories currently installed.)
+Unpacking libcurl3 (from .../libcurl3_7.21.3-1ubuntu1_amd64.deb) ...
+Selecting previously deselected package curl.
+Unpacking curl (from .../curl_7.21.3-1ubuntu1_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up libcurl3 (7.21.3-1ubuntu1) ...
+Setting up curl (7.21.3-1ubuntu1) ...
+Processing triggers for libc-bin ...
+ldconfig deferred processing now taking place
+# Generated by iptables-save v1.4.10 on Thu Mar  8 21:41:39 2012
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT 
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+COMMIT
+# Completed on Thu Mar  8 21:41:39 2012
+, error=dpkg-preconfigure: Unable to re-open stdin: 
+/tmp/configure-jboss/configure-jboss.sh: line 76: /home/root/.bashrc: No such file or directory
+java version "1.7.0"
+Java(TM) SE Runtime Environment (build 1.7.0-b147)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0-b17, mixed mode)
+, exitStatus=-1}
+	at com.google.common.base.Throwables.propagate(Throwables.java:156)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:65)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:79)
+	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNode(BaseComputeService.java:571)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAndRunAService(BaseComputeServiceLiveTest.java:664)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: java.util.concurrent.ExecutionException: org.jclouds.compute.callables.ScriptStillRunningException: BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=https://mycloud.stratogen.net/api/v1.0/vApp/vapp-e94c5f2a-52d6-40bf-8d05-ea2af581d7e3, name=configure-jboss, runAsRoot=true}} still running: pid(null), last status: {output=Selecting previously deselected package libcurl3.
+(Reading database ... 52080 files and directories currently installed.)
+Unpacking libcurl3 (from .../libcurl3_7.21.3-1ubuntu1_amd64.deb) ...
+Selecting previously deselected package curl.
+Unpacking curl (from .../curl_7.21.3-1ubuntu1_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up libcurl3 (7.21.3-1ubuntu1) ...
+Setting up curl (7.21.3-1ubuntu1) ...
+Processing triggers for libc-bin ...
+ldconfig deferred processing now taking place
+# Generated by iptables-save v1.4.10 on Thu Mar  8 21:41:39 2012
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT 
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+COMMIT
+# Completed on Thu Mar  8 21:41:39 2012
+, error=dpkg-preconfigure: Unable to re-open stdin: 
+/tmp/configure-jboss/configure-jboss.sh: line 76: /home/root/.bashrc: No such file or directory
+java version "1.7.0"
+Java(TM) SE Runtime Environment (build 1.7.0-b147)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0-b17, mixed mode)
+, exitStatus=-1}
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:262)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:196)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:62)
+	... 22 more
+Caused by: org.jclouds.compute.callables.ScriptStillRunningException: BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=https://mycloud.stratogen.net/api/v1.0/vApp/vapp-e94c5f2a-52d6-40bf-8d05-ea2af581d7e3, name=configure-jboss, runAsRoot=true}} still running: pid(null), last status: {output=Selecting previously deselected package libcurl3.
+(Reading database ... 52080 files and directories currently installed.)
+Unpacking libcurl3 (from .../libcurl3_7.21.3-1ubuntu1_amd64.deb) ...
+Selecting previously deselected package curl.
+Unpacking curl (from .../curl_7.21.3-1ubuntu1_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up libcurl3 (7.21.3-1ubuntu1) ...
+Setting up curl (7.21.3-1ubuntu1) ...
+Processing triggers for libc-bin ...
+ldconfig deferred processing now taking place
+# Generated by iptables-save v1.4.10 on Thu Mar  8 21:41:39 2012
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT 
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+COMMIT
+# Completed on Thu Mar  8 21:41:39 2012
+, error=dpkg-preconfigure: Unable to re-open stdin: 
+/tmp/configure-jboss/configure-jboss.sh: line 76: /home/root/.bashrc: No such file or directory
+java version "1.7.0"
+Java(TM) SE Runtime Environment (build 1.7.0-b147)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0-b17, mixed mode)
+, exitStatus=-1}
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$3.run(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:138)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	... 3 more
+Caused by: java.util.concurrent.ExecutionException: org.jclouds.compute.callables.ScriptStillRunningException: BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=https://mycloud.stratogen.net/api/v1.0/vApp/vapp-e94c5f2a-52d6-40bf-8d05-ea2af581d7e3, name=configure-jboss, runAsRoot=true}} still running: pid(null), last status: {output=Selecting previously deselected package libcurl3.
+(Reading database ... 52080 files and directories currently installed.)
+Unpacking libcurl3 (from .../libcurl3_7.21.3-1ubuntu1_amd64.deb) ...
+Selecting previously deselected package curl.
+Unpacking curl (from .../curl_7.21.3-1ubuntu1_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up libcurl3 (7.21.3-1ubuntu1) ...
+Setting up curl (7.21.3-1ubuntu1) ...
+Processing triggers for libc-bin ...
+ldconfig deferred processing now taking place
+# Generated by iptables-save v1.4.10 on Thu Mar  8 21:41:39 2012
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT 
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+COMMIT
+# Completed on Thu Mar  8 21:41:39 2012
+, error=dpkg-preconfigure: Unable to re-open stdin: 
+/tmp/configure-jboss/configure-jboss.sh: line 76: /home/root/.bashrc: No such file or directory
+java version "1.7.0"
+Java(TM) SE Runtime Environment (build 1.7.0-b147)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0-b17, mixed mode)
+, exitStatus=-1}
+	at com.google.common.util.concurrent.AbstractFuture$Sync.getValue(AbstractFuture.java:289)
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:262)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:196)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:62)
+	... 22 more
+Caused by: org.jclouds.compute.callables.ScriptStillRunningException: BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=https://mycloud.stratogen.net/api/v1.0/vApp/vapp-e94c5f2a-52d6-40bf-8d05-ea2af581d7e3, name=configure-jboss, runAsRoot=true}} still running: pid(null), last status: {output=Selecting previously deselected package libcurl3.
+(Reading database ... 52080 files and directories currently installed.)
+Unpacking libcurl3 (from .../libcurl3_7.21.3-1ubuntu1_amd64.deb) ...
+Selecting previously deselected package curl.
+Unpacking curl (from .../curl_7.21.3-1ubuntu1_amd64.deb) ...
+Processing triggers for man-db ...
+Setting up libcurl3 (7.21.3-1ubuntu1) ...
+Setting up curl (7.21.3-1ubuntu1) ...
+Processing triggers for libc-bin ...
+ldconfig deferred processing now taking place
+# Generated by iptables-save v1.4.10 on Thu Mar  8 21:41:39 2012
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT 
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT 
+COMMIT
+# Completed on Thu Mar  8 21:41:39 2012
+, error=dpkg-preconfigure: Unable to re-open stdin: 
+/tmp/configure-jboss/configure-jboss.sh: line 76: /home/root/.bashrc: No such file or directory
+java version "1.7.0"
+Java(TM) SE Runtime Environment (build 1.7.0-b147)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0-b17, mixed mode)
+, exitStatus=-1}
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput$3.run(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:138)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	... 3 more
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)  Time elapsed: 1.577 sec  <<< FAILURE!
+java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://mycloud.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:650)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:638)
+	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:216)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:227)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+testCreateTwoNodesWithRunScript(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)  Time elapsed: 0.785 sec  <<< FAILURE!
+java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://mycloud.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:650)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:638)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:622)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.buildTemplate(BaseComputeServiceLiveTest.java:460)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.refreshTemplate(BaseComputeServiceLiveTest.java:368)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateTwoNodesWithRunScript(BaseComputeServiceLiveTest.java:345)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+testTemplateMatch(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)  Time elapsed: 0.001 sec  <<< FAILURE!
+java.util.NoSuchElementException: no image matched predicate: And(locationEqualsOrChildOf(https://mycloud.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75),imageName(Ubuntu server 11.04 64bit no GUI (base)))
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.throwNoSuchElementExceptionAfterLoggingImageIds(TemplateBuilderImpl.java:650)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:638)
+	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:622)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.buildTemplate(BaseComputeServiceLiveTest.java:460)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testTemplateMatch(BaseComputeServiceLiveTest.java:329)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+testGetOvfEnvelopeForVAppTemplate(org.jclouds.stratogen.vcloud.mycloud.features.StratoGenVCloudMyCloudVAppTemplateClientLiveTest)  Time elapsed: 27.97 sec  <<< FAILURE!
 java.lang.IllegalArgumentException: this handler cannot currently create envelopes with multiple virtual systems
 	at org.jclouds.ovf.xml.internal.BaseEnvelopeHandler.endElement(BaseEnvelopeHandler.java:136)
 	at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.endElement(AbstractSAXParser.java:601)
@@ -377,53 +492,6 @@ java.lang.IllegalArgumentException: this handler cannot currently create envelop
 	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
 	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
 	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)  Time elapsed: 139.32 sec  <<< FAILURE!
-java.lang.AssertionError
-	at org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest.checkResponseEqualsHostname(StratoGenVCloudMyCloudComputeServiceLiveTest.java:39)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:239)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-	at java.lang.Thread.run(Thread.java:680)
-testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.stratogen.vcloud.mycloud.compute.StratoGenVCloudMyCloudComputeServiceLiveTest)  Time elapsed: 46.525 sec  <<< FAILURE!
-java.util.NoSuchElementException: no hardware profiles support images matching params: [biggest=false, fastest=false, imageName=Ubuntu server 11.04 64bit no GUI (base), imageDescription=Ubuntu server 11.04 64bit no GUI (base), imageId=null, imagePredicate=null, imageVersion=null, location=[id=https://vcd.stratogen.net/api/v1.0/vdc/712149e0-a241-4dbc-8d06-d4a9d6f5af75, scope=ZONE, description=jClouds, parent=https://vcd.stratogen.net/api/v1.0/org/4fc44942-ba30-4222-9977-a61fc6d5824c, iso3166Codes=[], metadata={}], minCores=1.0, minRam=1024, osFamily=ubuntu, osName=Ubuntu 64-Bit, osDescription=Ubuntu Linux (64-bit), osVersion=, osArch=null, os64Bit=true, hardwareId=null]
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.resolveHardware(TemplateBuilderImpl.java:654)
-	at org.jclouds.compute.domain.internal.TemplateBuilderImpl.build(TemplateBuilderImpl.java:613)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(BaseComputeServiceLiveTest.java:410)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:597)
-	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
-	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
-	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
-	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
-	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
-	at org.testng.TestRunner.privateRun(TestRunner.java:758)
-	at org.testng.TestRunner.run(TestRunner.java:613)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
-	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
-	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
-	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)

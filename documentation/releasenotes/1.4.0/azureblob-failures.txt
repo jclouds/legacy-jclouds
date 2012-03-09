@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 94, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 578.483 sec <<< FAILURE!
-testPutObject(org.jclouds.azureblob.blobstore.integration.AzureBlobIntegrationLiveTest)  Time elapsed: 5.127 sec  <<< FAILURE!
-java.lang.AssertionError: expected:<file> but was:<10>
+Tests run: 94, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 583.087 sec <<< FAILURE!
+testPutObject(org.jclouds.azureblob.blobstore.integration.AzureBlobIntegrationLiveTest)  Time elapsed: 6.208 sec  <<< FAILURE!
+java.lang.AssertionError: expected:<file> but was:<1>
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.testng.Assert.failNotEquals(Assert.java:489)
 	at org.testng.Assert.assertEquals(Assert.java:118)

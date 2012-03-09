@@ -1,20 +1,37 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 129, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 653.263 sec <<< FAILURE!
-testCreateAndRunAService(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)  Time elapsed: 133.134 sec  <<< FAILURE!
-java.lang.AssertionError: failed to open socket [address=178.250.52.248, port=8080] on node [id=3d51985e-8852-42b6-84f5-16926ade0c29, providerId=3d51985e-8852-42b6-84f5-16926ade0c29, group=serverlove-s, name=serverlove-s-334, location=[id=serverlove-z1-man, scope=PROVIDER, description=https://api.z1-man.serverlove.com, parent=null, iso3166Codes=[GB-MAN], metadata={}], uri=null, imageId=null, os=[name=Ubuntu 10.04 LTS, family=ubuntu, version=10.04, arch=null, is64Bit=true, description=img/Ubuntu 10.04 LTS/1], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[178.250.52.248], hardware=[id=3d51985e-8852-42b6-84f5-16926ade0c29, providerId=3d51985e-8852-42b6-84f5-16926ade0c29, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[[id=null, type=NAS, size=null, device=null, durable=true, isBootDevice=false]]], hypervisor=kvm, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=root, userMetadata={}, tags=[]]:
-[output=, error=, exitCode=0][output=Exception in thread "main" org.jboss.modules.ModuleNotFoundException: Module org.jboss.logmanager:main is not found
-	at org.jboss.modules.LocalModuleLoader.findModule(LocalModuleLoader.java:121)
-	at org.jboss.modules.ModuleLoader.loadModuleLocal(ModuleLoader.java:245)
-	at org.jboss.modules.ModuleLoader.preloadModule(ModuleLoader.java:194)
-	at org.jboss.modules.LocalModuleLoader.preloadModule(LocalModuleLoader.java:97)
-	at org.jboss.modules.ModuleLoader.loadModule(ModuleLoader.java:176)
-	at org.jboss.modules.ModuleLoader.loadModule(ModuleLoader.java:172)
-	at org.jboss.modules.Main.main(Main.java:257)
-, error=, exitCode=0]
-	at org.jclouds.compute.BaseComputeServiceLiveTest.trackAvailabilityOfProcessOnNode(BaseComputeServiceLiveTest.java:597)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateAndRunAService(BaseComputeServiceLiveTest.java:708)
+Tests run: 129, Failures: 2, Errors: 0, Skipped: 8, Time elapsed: 1,609.162 sec <<< FAILURE!
+testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)  Time elapsed: 684.93 sec  <<< FAILURE!
+org.jclouds.compute.RunScriptOnNodesException: error runScript on filtered nodes options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=false, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
+Execution failures:
+0 error[s]
+Node failures:
+1) RuntimeException on node 029f8a8e-d20a-4963-9302-b7aa78a6eb5a:
+java.lang.RuntimeException: org.jclouds.compute.callables.ScriptStillRunningException: time up waiting 600s for BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=029f8a8e-d20a-4963-9302-b7aa78a6eb5a, name=runScriptWithCreds, runAsRoot=true}} to complete. call get() on this exception to get access to the task in progress
+	at com.google.common.base.Throwables.propagate(Throwables.java:156)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:65)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:79)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
+	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
+	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: org.jclouds.compute.callables.ScriptStillRunningException: time up waiting 600s for BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=029f8a8e-d20a-4963-9302-b7aa78a6eb5a, name=runScriptWithCreds, runAsRoot=true}} to complete. call get() on this exception to get access to the task in progress
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:198)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:62)
+	... 8 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:196)
+	... 9 more
+1 error[s]
+	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:529)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.runScriptWithCreds(BaseComputeServiceLiveTest.java:437)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:248)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
@@ -34,64 +51,101 @@ java.lang.AssertionError: failed to open socket [address=178.250.52.248, port=80
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)  Time elapsed: 93.326 sec  <<< FAILURE!
-java.lang.AssertionError: [output=bash: java: command not found
-, error=, exitCode=127]
-[output=#!/bin/bash
-set +u
-shopt -s xpg_echo
-shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;runScriptWithCreds\007"'
-export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='runScriptWithCreds'
-export INSTANCE_NAME='runScriptWithCreds'
-export INSTANCE_HOME='/tmp/runScriptWithCreds'
-export LOG_DIR='/tmp/runScriptWithCreds'
-cd $INSTANCE_HOME
-which nslookup >&- 2>&-|| apt-get install -f -y -qq --force-yes dnsutils|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes dnsutils
-grep `hostname` /etc/hosts >/dev/null || awk -v hostname=`hostname` 'END { print $1" "hostname }' /proc/net/arp >> /etc/hosts
-nslookup yahoo.com >/dev/null || echo nameserver 208.67.222.222 >> /etc/resolv.conf
-which curl >&- 2>&-|| apt-get install -f -y -qq --force-yes curl|| (apt-get update -qq&&apt-get upgrade -y -qq)&&apt-get install -f -y -qq --force-yes curl
-mkdir -p /usr/local/jdk
-curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET  http://download.oracle.com/otn-pub/java/jdk/7u2-b13/jdk-7u2-linux-x64.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
-mv /usr/local/jdk1.7*/* /usr/local/jdk/
-test -n "$SUDO_USER" && 
-cat >> /home/$SUDO_USER/.bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-cat >> /etc/bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-cat >> $HOME/.bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-cat >> /etc/skel/.bashrc <<'END_OF_FILE'
-export JAVA_HOME=/usr/local/jdk
-export PATH=$JAVA_HOME/bin:$PATH
-END_OF_FILE
-ln -fs /usr/local/jdk/bin/java /usr/bin/java
-
-exit 0
-Selecting previously deselected package libcurl3.
-(Reading database ... 19934 files and directories currently installed.)
-Unpacking libcurl3 (from .../libcurl3_7.19.7-1ubuntu1.1_amd64.deb) ...
-Selecting previously deselected package curl.
-Unpacking curl (from .../curl_7.19.7-1ubuntu1.1_amd64.deb) ...
-Processing triggers for man-db ...
-Setting up libcurl3 (7.19.7-1ubuntu1.1) ...
-
-Setting up curl (7.19.7-1ubuntu1.1) ...
-Processing triggers for libc-bin ...
-ldconfig deferred processing now taking place
-dpkg-preconfigure: unable to re-open stdin: 
-, error=, exitCode=0]
-	at org.jclouds.compute.BaseComputeServiceLiveTest.doCheckJavaIsInstalledViaSsh(BaseComputeServiceLiveTest.java:889)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.sshPing(BaseComputeServiceLiveTest.java:870)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.checkNodes(BaseComputeServiceLiveTest.java:457)
-	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:253)
+Caused by: org.jclouds.compute.callables.ScriptStillRunningException: time up waiting 600s for BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=029f8a8e-d20a-4963-9302-b7aa78a6eb5a, name=runScriptWithCreds, runAsRoot=true}} to complete. call get() on this exception to get access to the task in progress
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:198)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:62)
+	... 8 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:196)
+	... 9 more
+1 error[s]
+	at org.jclouds.compute.internal.BaseComputeService.runScriptOnNodesMatching(BaseComputeService.java:529)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.runScriptWithCreds(BaseComputeServiceLiveTest.java:437)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testAScriptExecutionAfterBootWithBasicTemplate(BaseComputeServiceLiveTest.java:248)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+testCreateTwoNodesWithRunScript(org.jclouds.serverlove.compute.ServerloveManchesterComputeServiceLiveTest)  Time elapsed: 668.998 sec  <<< FAILURE!
+org.jclouds.compute.RunNodesException: error running 2 nodes group(serverlove-) location(serverlove-z1-man) image(574a3921-2926-4a61-bdd9-8d9282b32810) size(cpu=1000.000000,ram=512,disk=1.000000) options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=true, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
+Execution failures:
+0 error[s]
+Node failures:
+1) RuntimeException on node dc55dbcf-6ff7-437c-9c03-7912da1a1807:
+java.lang.RuntimeException: org.jclouds.compute.callables.ScriptStillRunningException: time up waiting 600s for BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=dc55dbcf-6ff7-437c-9c03-7912da1a1807, name=bootstrap, runAsRoot=true}} to complete. call get() on this exception to get access to the task in progress
+	at com.google.common.base.Throwables.propagate(Throwables.java:156)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:65)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh.call(RunScriptOnNodeAsInitScriptUsingSsh.java:79)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:151)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.apply(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:171)
+	at org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.apply(CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:58)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:503)
+	at com.google.common.util.concurrent.Futures$4.apply(Futures.java:501)
+	at com.google.common.util.concurrent.Futures$3.apply(Futures.java:279)
+	at com.google.common.util.concurrent.Futures$ChainingListenableFuture.run(Futures.java:729)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: org.jclouds.compute.callables.ScriptStillRunningException: time up waiting 600s for BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=dc55dbcf-6ff7-437c-9c03-7912da1a1807, name=bootstrap, runAsRoot=true}} to complete. call get() on this exception to get access to the task in progress
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:198)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:62)
+	... 11 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:196)
+	... 12 more
+1 error[s]
+	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:208)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateTwoNodesWithRunScript(BaseComputeServiceLiveTest.java:347)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:80)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:691)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:883)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1208)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:127)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:111)
+	at org.testng.TestRunner.privateRun(TestRunner.java:758)
+	at org.testng.TestRunner.run(TestRunner.java:613)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:334)
+	at org.testng.SuiteRunner.access$000(SuiteRunner.java:37)
+	at org.testng.SuiteRunner$SuiteWorker.run(SuiteRunner.java:368)
+	at org.testng.internal.thread.ThreadUtil$CountDownLatchedRunnable.run(ThreadUtil.java:165)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Caused by: org.jclouds.compute.callables.ScriptStillRunningException: time up waiting 600s for BlockUntilInitScriptStatusIsZeroThenReturnOutput{commandRunner=RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete{node=dc55dbcf-6ff7-437c-9c03-7912da1a1807, name=bootstrap, runAsRoot=true}} to complete. call get() on this exception to get access to the task in progress
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:198)
+	at org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.doCall(RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.java:62)
+	... 11 more
+Caused by: java.util.concurrent.TimeoutException: Timeout waiting for task.
+	at com.google.common.util.concurrent.AbstractFuture$Sync.get(AbstractFuture.java:259)
+	at com.google.common.util.concurrent.AbstractFuture.get(AbstractFuture.java:91)
+	at org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput.get(BlockUntilInitScriptStatusIsZeroThenReturnOutput.java:196)
+	... 12 more
+1 error[s]
+	at org.jclouds.compute.internal.BaseComputeService.createNodesInGroup(BaseComputeService.java:208)
+	at org.jclouds.compute.BaseComputeServiceLiveTest.testCreateTwoNodesWithRunScript(BaseComputeServiceLiveTest.java:347)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)

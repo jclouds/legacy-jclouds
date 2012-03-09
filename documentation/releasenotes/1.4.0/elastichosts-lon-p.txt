@@ -13,6 +13,7 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ elastichosts-lon-p ---
+[INFO] Deleting /Users/adriancole/workspace/git/1.4.x/jclouds/providers/elastichosts-lon-p/target
 [INFO] 
 [INFO] --- maven-enforcer-plugin:1.0.1:enforce (enforce-maven) @ elastichosts-lon-p ---
 [INFO] 
@@ -52,19 +53,19 @@
  T E S T S
 -------------------------------------------------------
 Running org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest
-Starting test testWithId(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest)
+Starting test testAllContains(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest)
 Starting test testInRestProperties(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest)
 Starting test testOfTypeContains(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest)
-Starting test testAllContains(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest)
-[pool-2-thread-1] Test testAllContains(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 40ms
+Starting test testWithId(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest)
+[pool-2-thread-4] Test testWithId(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 33ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
-[pool-2-thread-3] Test testOfTypeContains(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 61ms
+[pool-2-thread-1] Test testAllContains(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 43ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-[pool-2-thread-4] Test testWithId(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 67ms
+[pool-2-thread-3] Test testOfTypeContains(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 37ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-[pool-2-thread-2] Test testInRestProperties(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 123ms
+[pool-2-thread-2] Test testInRestProperties(org.jclouds.elastichosts.ElasticHostsPeer1LondonProviderTest) succeeded: 97ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.537 sec
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.559 sec
 
 Results :
 
@@ -102,33 +103,33 @@ Starting test setServiceDefaults(org.jclouds.elastichosts.compute.ElasticHostsPe
 [TestNG] Test setServiceDefaults(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
+Mar 7, 2012 8:30:09 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
+Mar 7, 2012 8:30:09 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
+Mar 7, 2012 8:30:09 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+INFO: biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
+[TestNG] Test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 8799ms
+Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
+Starting test testCorrectAuthException(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
 Starting test testCreateDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
 smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
 fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
 biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 9920ms
-Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
-Starting test testDefaultTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testDefaultTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 9829ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
-Starting test testFromTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-Feb 4, 2012 8:39:11 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: smallest [id=cpu=1000.000000,ram=512,disk=1.000000, providerId=cpu=1000.000000,ram=512,disk=1.000000, name=null, processors=[[cores=1.0, speed=1000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=1.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(1.0), tags=[]]
-Feb 4, 2012 8:39:11 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: fastest [id=cpu=20000.000000,ram=512,disk=20.000000, providerId=cpu=20000.000000,ram=512,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=512, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-Feb 4, 2012 8:39:11 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
-INFO: biggest [id=cpu=20000.000000,ram=8192,disk=20.000000, providerId=cpu=20000.000000,ram=8192,disk=20.000000, name=null, processors=[[cores=1.0, speed=20000.0]], ram=8192, volumes=[[id=null, type=LOCAL, size=20.0, device=null, durable=true, isBootDevice=true]], hypervisor=kvm, supportsImage=sizeLessThanOrEqual(20.0), tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 9258ms
+Starting test testDefaultTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
-Starting test testCorrectAuthException(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testFromTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 37ms
+Starting test testFromTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
+[TestNG] Test testFromTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 location [id=elastichosts-lon-p, scope=PROVIDER, description=https://api.lon-p.elastichosts.com, parent=null, iso3166Codes=[GB-LND], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 12ms
+[TestNG] Test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
@@ -137,139 +138,139 @@ Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.Elasti
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 43ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCanUseImageId(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testCorrectAuthException(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 1648ms
+[TestNG] Test testCorrectAuthException(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 1642ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testCreateDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 5106ms
+[TestNG] Test testCreateDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 7878ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testGetDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testGetDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 1858ms
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 9368ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
-Starting test testGetServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testGetServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 1020ms
-Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
-Starting test testListDriveInfo(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testListDriveInfo(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 910ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
-Starting test testListDrives(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 8939ms
-Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
+Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 8ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 7ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 11ms
 Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
@@ -287,82 +288,82 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.Ela
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 28ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 5ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
 Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 8ms
 Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 24ms
 Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 3ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
@@ -386,69 +387,69 @@ Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.Ela
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
 Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 4ms
-Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
 Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-[TestNG] Test testListDrives(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 931ms
+[TestNG] Test testGetDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 2728ms
+Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
+Starting test testGetServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
+[TestNG] Test testGetServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 896ms
+Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
+Starting test testListDriveInfo(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
+[TestNG] Test testListDriveInfo(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 903ms
+Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
+Starting test testListDrives(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
+[TestNG] Test testListDrives(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 13769ms
 Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
 Starting test testListServers(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testListServers(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 899ms
+[TestNG] Test testListServers(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 5146ms
 Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
 Starting test testWeCanReadAndWriteToDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testWeCanReadAndWriteToDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 7257ms
+[TestNG] Test testWeCanReadAndWriteToDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 15336ms
 Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
 Starting test testListServerInfo(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testListServerInfo(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 948ms
+[TestNG] Test testListServerInfo(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 894ms
 Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
 Starting test testSetDriveData(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testSetDriveData(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 3433ms
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 38796ms
 Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
-Starting test testWeCopyADriveContentsViaGzip(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 16818ms
-Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
 Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
-before image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=19df3bf3-e9dc-4ad6-b586-18c0370d66ed, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-before image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=d8c837f3-c118-40df-ac89-76a230f94884, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 16830ms
+[TestNG] Test testSetDriveData(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 3571ms
+Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
+Starting test testWeCopyADriveContentsViaGzip(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
+before image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=b68b58db-3222-4ec7-8f2e-eb5ba19dfe69, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+before image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=e056566f-4cab-41d5-9a68-a36e17e0cd4f, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 16650ms
 Test suite progress: tests succeeded: 103, failed: 0, skipped: 0.
 Starting test testTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilder(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonTemplateBuilderLiveTest) succeeded: 2ms
 Test suite progress: tests succeeded: 104, failed: 0, skipped: 0.
-after image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=19df3bf3-e9dc-4ad6-b586-18c0370d66ed, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-after image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=d8c837f3-c118-40df-ac89-76a230f94884, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-[TestNG] Test testWeCopyADriveContentsViaGzip(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 77176ms
+after image; drive 2[size=4194304, claimType=exclusive, readers=[], uuid=b68b58db-3222-4ec7-8f2e-eb5ba19dfe69, name=adriancole.test2, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+after image; drive 3[size=4194304, claimType=exclusive, readers=[], uuid=e056566f-4cab-41d5-9a68-a36e17e0cd4f, name=adriancole.test3, tags=[], userMetadata={}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+[TestNG] Test testWeCopyADriveContentsViaGzip(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 27192ms
 Test suite progress: tests succeeded: 105, failed: 0, skipped: 0.
 Starting test testCreateAndStartServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-Feb 4, 2012 8:40:51 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+Mar 7, 2012 8:31:27 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
 INFO: preparing drive
-before prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=4dcdf0cc-484b-4e50-812c-915521f68963, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-Feb 4, 2012 8:41:12 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(8a724f4e-e02a-4bac-84d7-32458707341a) os([name=Ubuntu Linux 11.10, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=img/Ubuntu Linux 11.10/1]) in 118s
+before prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=8b755e05-4f0c-4416-ba6b-e902655291e9, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+Mar 7, 2012 8:31:38 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(ebcccfdc-b66f-4a85-94ee-6519b3f1cb16) os([name=Ubuntu Linux 11.10, family=ubuntu, version=11.10, arch=null, is64Bit=true, description=img/Ubuntu Linux 11.10/1]) in 86s
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-after prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=4dcdf0cc-484b-4e50-812c-915521f68963, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
-Feb 4, 2012 8:41:52 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
+after prepare[size=1073741824, claimType=shared, readers=[ffffffff-ffff-ffff-ffff-ffffffffffff], uuid=8b755e05-4f0c-4416-ba6b-e902655291e9, name=rediculous, tags=[networking, security, gateway], userMetadata={foo=bar}, status=active, user=2f6244eb-50bc-4403-847e-f03cc3706a1f, claimed=[], encryptionCipher=aes-xts-plain, imaging=null, metrics=[readBytes=0, readRequests=0, writeBytes=0, writeRequests=0]]
+Mar 7, 2012 8:32:26 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testCreateAndStartServer
 INFO: starting server
-{"status":"ACTIVE","started":"Jan 16, 1970 1:00:16 AM","user":"2f6244eb-50bc-4403-847e-f03cc3706a1f","metrics":{"txPackets":0,"tx":0,"rxPackets":0,"rx":0,"driveMetrics":{"ide:0:0":{"readBytes":0,"readRequests":0,"writeBytes":0,"writeRequests":0}}},"cpu":1000,"smp":1,"mem":512,"persistent":true,"devices":{"ide:0:0":{"bus":0,"unit":0,"driveUuid":"4dcdf0cc-484b-4e50-812c-915521f68963","mediaType":"DISK"}},"bootDeviceIds":["ide:0:0"],"nics":[{"dhcp":"46.20.114.225","model":"E1000","mac":"02:00:2e:14:72:e1","block":[]}],"vnc":{"ip":"46.20.114.225","password":"Il0veVNC","tls":false},"uuid":"bfac7df1-77b7-4dcc-a17d-09757b90f315","name":"adriancole.test","tags":[],"userMetadata":{}}
-[TestNG] Test testCreateAndStartServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 75542ms
+{"status":"ACTIVE","started":"Jan 16, 1970 1:46:21 AM","user":"2f6244eb-50bc-4403-847e-f03cc3706a1f","metrics":{"txPackets":0,"tx":0,"rxPackets":0,"rx":0,"driveMetrics":{"ide:0:0":{"readBytes":0,"readRequests":0,"writeBytes":0,"writeRequests":0}}},"cpu":1000,"smp":1,"mem":512,"persistent":true,"devices":{"ide:0:0":{"bus":0,"unit":0,"driveUuid":"8b755e05-4f0c-4416-ba6b-e902655291e9","mediaType":"DISK"}},"bootDeviceIds":["ide:0:0"],"nics":[{"dhcp":"46.20.121.124","model":"E1000","mac":"02:00:2e:14:79:7c","block":[]}],"vnc":{"ip":"46.20.121.124","password":"Il0veVNC","tls":false},"uuid":"32a30c09-6291-498c-ba44-d9e25a012f1a","name":"adriancole.test","tags":[],"userMetadata":{}}
+[TestNG] Test testCreateAndStartServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 68477ms
 Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
 Starting test testConnectivity(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-Feb 4, 2012 8:42:06 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
-INFO: awaiting vnc: [address=46.20.114.225, port=5900]
-Feb 4, 2012 8:42:07 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
-INFO: awaiting ssh: [address=46.20.114.225, port=22]
+Mar 7, 2012 8:32:36 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting vnc: [address=46.20.121.124, port=5900]
+Mar 7, 2012 8:32:36 PM org.jclouds.elasticstack.ElasticStackClientLiveTest testConnectivity
+INFO: awaiting ssh: [address=46.20.121.124, port=22]
 Filesystem           1K-blocks      Used Available Use% Mounted on
-/dev/sda               1033144    661660    322020  68% /
+/dev/sda               1033144    661656    322024  68% /
 udev                    244336         4    244332   1% /dev
 tmpfs                   100900       216    100684   1% /run
 none                      5120         4      5116   1% /run/lock
@@ -468,44 +469,57 @@ none on /run/shm type tmpfs (rw,nosuid,nodev)
 
 Linux ubuntu 3.0.0-12-generic #20-Ubuntu SMP Fri Oct 7 14:56:25 UTC 2011 x86_64 x86_64 x86_64 GNU/Linux
 
-[TestNG] Test testConnectivity(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 17126ms
+[TestNG] Test testConnectivity(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 21013ms
 Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
 Starting test testLifeCycle(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testLifeCycle(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 19552ms
+[TestNG] Test testLifeCycle(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 15229ms
 Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
 Starting test testSetServerConfiguration(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testSetServerConfiguration(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 5358ms
+[TestNG] Test testSetServerConfiguration(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 4598ms
 Test suite progress: tests succeeded: 109, failed: 0, skipped: 0.
 Starting test testDestroyServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testDestroyServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 1816ms
+[TestNG] Test testDestroyServer(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 1818ms
 Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
 Starting test testDestroyDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest)
-[TestNG] Test testDestroyDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 4675ms
+[TestNG] Test testDestroyDrive(org.jclouds.elastichosts.ElasticHostsPeer1LondonClientLiveTest) succeeded: 4396ms
 Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
-Feb 4, 2012 8:51:16 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(8a724f4e-e02a-4bac-84d7-32458707341a) with java full version "1.7.0_02-b13" and JBoss 7.0.2.Final in 596s
-Feb 4, 2012 8:51:20 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Mar 7, 2012 8:33:25 PM com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair execute
+SEVERE: RuntimeException while executing runnable com.google.common.util.concurrent.Futures$ChainingListenableFuture@4ee00c09 with executor java.util.concurrent.ThreadPoolExecutor@57364b53
+java.util.concurrent.RejectedExecutionException
+	at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:1768)
+	at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:767)
+	at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:658)
+	at org.jclouds.concurrent.config.ExecutorServiceModule$DescribingExecutorService.execute(ExecutorServiceModule.java:200)
+	at com.google.common.util.concurrent.ExecutionList$RunnableExecutorPair.execute(ExecutionList.java:149)
+	at com.google.common.util.concurrent.ExecutionList.execute(ExecutionList.java:134)
+	at org.jclouds.concurrent.Futures$CallGetAndRunExecutionList.run(Futures.java:72)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at java.lang.Thread.run(Thread.java:680)
+Mar 7, 2012 8:33:50 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(ebcccfdc-b66f-4a85-94ee-6519b3f1cb16) with java full version "1.7.0-b147" and JBoss 7.0.2.Final in 124s
+Mar 7, 2012 8:33:54 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Feb 4, 2012 8:51:20 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(8a724f4e-e02a-4bac-84d7-32458707341a): 209.132.182.31
-Feb 4, 2012 8:51:23 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Mar 7, 2012 8:33:54 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(ebcccfdc-b66f-4a85-94ee-6519b3f1cb16): 209.132.182.31
+Mar 7, 2012 8:33:57 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 80.239.148.136; check freegeoip
-Feb 4, 2012 8:51:23 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(8a724f4e-e02a-4bac-84d7-32458707341a): 80.239.148.136
-Feb 4, 2012 8:51:27 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
-WARNING: could not get info on ip 83.222.241.40; check freegeoip
-Feb 4, 2012 8:51:27 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(8a724f4e-e02a-4bac-84d7-32458707341a) from perspective of amazonaws: 83.222.241.40
-Feb 4, 2012 8:51:41 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(8a724f4e-e02a-4bac-84d7-32458707341a) [backgroundProcessMilliseconds=8293, socketOpenMilliseconds=2450, reportedStartupTimeMilliseconds=4044]
-Feb 4, 2012 8:51:54 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(8a724f4e-e02a-4bac-84d7-32458707341a) [backgroundProcessMilliseconds=4288, socketOpenMilliseconds=1797, reportedStartupTimeMilliseconds=3418]
-[TestNG] Test testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 774076ms
+Mar 7, 2012 8:33:57 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(ebcccfdc-b66f-4a85-94ee-6519b3f1cb16): 80.239.148.136
+Mar 7, 2012 8:34:01 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+WARNING: could not get info on ip 46.20.121.125; check freegeoip
+Mar 7, 2012 8:34:01 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(ebcccfdc-b66f-4a85-94ee-6519b3f1cb16) from perspective of amazonaws: 46.20.121.125
+Mar 7, 2012 8:34:15 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(ebcccfdc-b66f-4a85-94ee-6519b3f1cb16) [backgroundProcessMilliseconds=7971, socketOpenMilliseconds=2482, reportedStartupTimeMilliseconds=4005]
+Mar 7, 2012 8:34:28 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(ebcccfdc-b66f-4a85-94ee-6519b3f1cb16) [backgroundProcessMilliseconds=4225, socketOpenMilliseconds=1928, reportedStartupTimeMilliseconds=3332]
+[TestNG] Test testCreateAndRunAService(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 268824ms
 Test suite progress: tests succeeded: 112, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-Feb 4, 2012 8:52:07 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Mar 7, 2012 8:34:39 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=elastichosts-lon-p, scope=PROVIDER, description=https://api.lon-p.elastichosts.com, parent=null, iso3166Codes=[GB-LND], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 1ms
+[TestNG] Test testGetAssignableLocations(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 113, failed: 0, skipped: 0.
 Starting test testImagesCache(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
 [TestNG] Test testImagesCache(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 0ms
@@ -520,15 +534,15 @@ Starting test testOptionToNotBlock(org.jclouds.elastichosts.compute.ElasticHosts
 [TestNG] Test testOptionToNotBlock(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 892ms
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 895ms
 Test suite progress: tests succeeded: 118, failed: 0, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-<< problem applying options to node(61f73ca0-1d21-4c29-8a38-7ec542487d1c): 
-org.jclouds.rest.AuthorizationException: (toor:pw[5d907853a9617cfd55fb62eae803595b]@46.20.114.225:22) (toor:pw[5d907853a9617cfd55fb62eae803595b]@46.20.114.225:22) error acquiring SSHClient(timeout=60000) (out of retries - max 5): Exhausted available authentication methods
+<< problem applying options to node(6c6b26c5-5c62-4340-8a09-b03f2adc00d8): 
+org.jclouds.rest.AuthorizationException: (toor:pw[5d907853a9617cfd55fb62eae803595b]@46.20.121.124:22) (toor:pw[5d907853a9617cfd55fb62eae803595b]@46.20.121.124:22) error acquiring SSHClient(timeout=60000) (out of retries - max 5): Exhausted available authentication methods
 	at org.jclouds.sshj.SshjSshClient.propagate(SshjSshClient.java:416)
 	at org.jclouds.sshj.SshjSshClient.acquire(SshjSshClient.java:238)
 	at org.jclouds.sshj.SshjSshClient.connect(SshjSshClient.java:257)
-	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:73)
+	at org.jclouds.compute.callables.RunScriptOnNodeUsingSsh.call(RunScriptOnNodeUsingSsh.java:80)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:69)
 	at org.jclouds.compute.strategy.RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.call(RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.java:44)
 	at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
@@ -550,60 +564,55 @@ Caused by: net.schmizz.sshj.userauth.UserAuthException: Exhausted available auth
 Caused by: net.schmizz.sshj.userauth.UserAuthException: keyboard-interactive auth not allowed by server
 	at net.schmizz.sshj.userauth.UserAuthImpl.authenticate(UserAuthImpl.java:81)
 	... 17 more
-[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 263288ms
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 186713ms
 Test suite progress: tests succeeded: 119, failed: 0, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 191292ms
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 151196ms
 Test suite progress: tests succeeded: 120, failed: 0, skipped: 0.
 Starting test testTemplateMatch(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testTemplateMatch(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 7ms
+[TestNG] Test testTemplateMatch(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 6ms
 Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
 Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-Feb 4, 2012 8:59:42 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+Mar 7, 2012 8:40:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
 INFO: creating another node based on existing nodes' location: [id=elastichosts-lon-p, scope=PROVIDER, description=https://api.lon-p.elastichosts.com, parent=null, iso3166Codes=[GB-LND], metadata={}]
-[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 206886ms
-Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
-Starting test testCredentialsCache(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testCredentialsCache(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 124ms
-Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
-Starting test testGet(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testGet(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 14535ms
-Test suite progress: tests succeeded: 124, failed: 0, skipped: 0.
-Starting test testReboot(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testReboot(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 12811ms
-Test suite progress: tests succeeded: 125, failed: 0, skipped: 0.
-Starting test testSuspendResume(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testSuspendResume(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 64309ms
-Test suite progress: tests succeeded: 126, failed: 0, skipped: 0.
-Starting test testGetNodesWithDetails(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testGetNodesWithDetails(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 911ms
-Test suite progress: tests succeeded: 127, failed: 0, skipped: 0.
-Starting test testListNodes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testListNodes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 968ms
-Test suite progress: tests succeeded: 128, failed: 0, skipped: 0.
-Starting test testDestroyNodes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest)
-[TestNG] Test testDestroyNodes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) succeeded: 16021ms
-Test suite progress: tests succeeded: 129, failed: 0, skipped: 0.
-Tests run: 129, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1,564.114 sec
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) failed.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 0.
+[TestNG] Test testCredentialsCache(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 1.
+[TestNG] Test testGet(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 2.
+[TestNG] Test testReboot(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 3.
+[TestNG] Test testSuspendResume(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 4.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 5.
+[TestNG] Test testListNodes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 6.
+[TestNG] Test testDestroyNodes(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest) skipped.
+Test suite progress: tests succeeded: 121, failed: 1, skipped: 7.
+Tests run: 129, Failures: 1, Errors: 0, Skipped: 7, Time elapsed: 1,354.313 sec <<< FAILURE!
 
 Results :
 
-Tests run: 129, Failures: 0, Errors: 0, Skipped: 0
+Failed tests:   testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.elastichosts.compute.ElasticHostsPeer1LondonComputeServiceLiveTest): error running 1 node group(elastichosts-) location(elastichosts-lon-p) image(24ea9dad-f014-4836-bcb0-f03184c74e7a) size(cpu=1000.000000,ram=512,disk=1.000000) options([inboundPorts=[22], privateKey=false, publicKey=false, runScript=true, blockUntilRunning=true, blockOnComplete=true, port:seconds=-1:-1, userMetadata: {}])
 
-[INFO] 
-[INFO] --- maven-install-plugin:2.3:install (default-install) @ elastichosts-lon-p ---
-[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/elastichosts-lon-p/target/elastichosts-lon-p-1.4.0-SNAPSHOT.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/elastichosts-lon-p/1.4.0-SNAPSHOT/elastichosts-lon-p-1.4.0-SNAPSHOT.jar
-[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/elastichosts-lon-p/pom.xml to /Users/adriancole/.m2/repository/org/jclouds/provider/elastichosts-lon-p/1.4.0-SNAPSHOT/elastichosts-lon-p-1.4.0-SNAPSHOT.pom
-[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/elastichosts-lon-p/target/elastichosts-lon-p-1.4.0-SNAPSHOT-sources.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/elastichosts-lon-p/1.4.0-SNAPSHOT/elastichosts-lon-p-1.4.0-SNAPSHOT-sources.jar
-[INFO] Installing /Users/adriancole/workspace/git/1.4.x/jclouds/providers/elastichosts-lon-p/target/elastichosts-lon-p-1.4.0-SNAPSHOT-tests.jar to /Users/adriancole/.m2/repository/org/jclouds/provider/elastichosts-lon-p/1.4.0-SNAPSHOT/elastichosts-lon-p-1.4.0-SNAPSHOT-tests.jar
-[INFO] 
-[INFO] --- maven-bundle-plugin:2.3.4:install (default-install) @ elastichosts-lon-p ---
-[INFO] Installing org/jclouds/provider/elastichosts-lon-p/1.4.0-SNAPSHOT/elastichosts-lon-p-1.4.0-SNAPSHOT.jar
-[INFO] Writing OBR metadata
+Tests run: 129, Failures: 1, Errors: 0, Skipped: 7
+
 [INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
+[INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 26:23.207s
-[INFO] Finished at: Sat Feb 04 21:05:06 PST 2012
-[INFO] Final Memory: 19M/265M
+[INFO] Total time: 22:48.615s
+[INFO] Finished at: Wed Mar 07 20:52:31 PST 2012
+[INFO] Final Memory: 21M/265M
 [INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project elastichosts-lon-p: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/adriancole/workspace/git/1.4.x/jclouds/providers/elastichosts-lon-p/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
