@@ -18,14 +18,15 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to Server.

@@ -18,16 +18,19 @@
  */
 package org.jclouds.openstack.nova.v1_1.functions;
 
-import com.google.common.base.Function;
+import static org.testng.Assert.assertEquals;
+
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToImage;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.testng.annotations.Test;
-import java.util.UUID;
-import javax.annotation.Nullable;
 
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Function;
 
 /**
  * Tests the function that transforms nova-specific images to generic images.

@@ -18,12 +18,13 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
-import com.google.common.base.Function;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+
+import com.google.common.base.Function;
 
 /**
  * A function for transforming the nova specific Flavor object to the generic Hardware object.

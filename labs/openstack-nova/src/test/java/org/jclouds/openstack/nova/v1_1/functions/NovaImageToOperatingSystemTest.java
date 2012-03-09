@@ -18,21 +18,26 @@
  */
 package org.jclouds.openstack.nova.v1_1.functions;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Nullable;
 
-import static org.testng.Assert.*;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests for the function for transforming a nova specific Image into a generic OperatingSystem object.

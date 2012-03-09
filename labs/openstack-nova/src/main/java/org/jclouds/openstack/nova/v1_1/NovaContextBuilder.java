@@ -24,7 +24,6 @@ import java.util.Properties;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
-import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
 

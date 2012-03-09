@@ -18,19 +18,21 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.ListenableFuture;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-import java.util.Set;
-import static org.testng.Assert.*;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Tests behavior of {@code ServerClient}

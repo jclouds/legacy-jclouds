@@ -18,9 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import java.util.Properties;
+
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
@@ -28,7 +27,10 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
 import org.jclouds.rest.BaseRestClientExpectTest;
-import java.util.Properties;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Base class for writing KeyStone Expect tests with the ComputeService abstraction

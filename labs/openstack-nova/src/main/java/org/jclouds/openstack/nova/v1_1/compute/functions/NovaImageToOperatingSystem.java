@@ -18,6 +18,22 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.util.ComputeServiceUtils;
+import org.jclouds.logging.Logger;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -25,19 +41,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v1_1.domain.Image;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * A function for transforming a nova specific Image into a generic OperatingSystem object.

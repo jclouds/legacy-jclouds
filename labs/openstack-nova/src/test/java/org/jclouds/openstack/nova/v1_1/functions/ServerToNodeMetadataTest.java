@@ -18,16 +18,17 @@
  */
 package org.jclouds.openstack.nova.v1_1.functions;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.UUID;
+
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ServerToNodeMetadata;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
 import org.testng.annotations.Test;
-import java.util.UUID;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 /**
  * Tests for the function for transforming a nova specific Server into a generic NodeMetadata object.

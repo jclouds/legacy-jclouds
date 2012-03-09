@@ -18,11 +18,13 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
-import com.google.common.base.Function;
+import javax.inject.Inject;
+
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
-import javax.inject.Inject;
+
+import com.google.common.base.Function;
 
 /**
  * A function for transforming a nova-specific Image into a generic Image object.

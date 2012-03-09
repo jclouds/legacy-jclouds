@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.config;
 
-import com.google.common.base.Function;
-import com.google.inject.TypeLiteral;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
@@ -37,6 +35,9 @@ import org.jclouds.openstack.nova.v1_1.compute.functions.ServerToNodeMetadata;
 import org.jclouds.openstack.nova.v1_1.compute.strategy.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+
+import com.google.common.base.Function;
+import com.google.inject.TypeLiteral;
 
 /**
  * Module for building a compute service context for Nova

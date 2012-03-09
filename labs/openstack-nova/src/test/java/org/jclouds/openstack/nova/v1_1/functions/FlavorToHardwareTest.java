@@ -18,13 +18,16 @@
  */
 package org.jclouds.openstack.nova.v1_1.functions;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.UUID;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorToHardware;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.testng.annotations.Test;
-import java.util.UUID;
-
-import static org.testng.Assert.*;
 
 /**
  * Tests the function used to transform Flavor objects into Hardware objects

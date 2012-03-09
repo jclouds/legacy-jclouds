@@ -28,7 +28,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerListTest;
-import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;

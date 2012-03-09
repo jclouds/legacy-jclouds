@@ -32,7 +32,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;

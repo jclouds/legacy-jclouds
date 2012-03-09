@@ -18,25 +18,31 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
+import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Date;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.*;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
 import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Multimaps2;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import com.google.gson.annotations.SerializedName;
-
-import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A server is a virtual machine instance in the compute system. Flavor and
  * image are requisite elements when creating a server.

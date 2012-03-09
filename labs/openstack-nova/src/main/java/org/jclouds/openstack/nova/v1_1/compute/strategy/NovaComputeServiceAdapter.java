@@ -18,9 +18,11 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.strategy;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
@@ -34,9 +36,10 @@ import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
-import java.util.Set;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * The adapter used by the NovaComputeServiceContextModule to interface the nova-specific domain model to the computeService generic domain model.
