@@ -44,8 +44,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Suppliers;
 
-@Test(groups = "unit", singleThreaded = true, testName = "StartVBoxIfNotAlreadyRunningTest")
-public class StartVBoxIfNotAlreadyRunningTest {
+@Test(groups = "live", singleThreaded = true, testName = "StartVBoxIfNotAlreadyRunningLiveTest")
+public class StartVBoxIfNotAlreadyRunningLiveTest {
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
