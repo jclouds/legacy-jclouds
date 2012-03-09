@@ -18,33 +18,14 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
-import org.jclouds.rest.annotations.Unwrap;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
-
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to Server.
@@ -82,49 +63,92 @@ public interface ServerClient {
    Server getServer(String id);
 
    /**
-    * @see NovaClient#createServer
+    * Create a new server
+    *
+    * @param name
+    *              name of the server to create
+    * @param imageRef
+    *              reference to the image for the server to use
+    * @param flavorRef
+    *              reference to the flavor to use when creating the server
+    * @param options
+    *              optional parameters to be passed into the server creation request
+    * @return the newly created server
     */
-   Server createServer(String name, String imageRef,
-                       String flavorRef, CreateServerOptions... options);
+   Server createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
    /**
-    * @see NovaClient#deleteServer
+    * Terminate and delete a server.
+    *
+    * @param id
+    *           id of the server
+    * @return True if successful, False otherwise
     */
    Boolean deleteServer(String id);
 
-   /**
-    * @see NovaClient#rebootServer
-    */
+    /**
+     * Reboot a server.
+     *
+     * @param id
+     *           id of the server
+     * @param rebootType
+     *           The type of reboot to perform (Hard/Soft)
+     */
    void rebootServer(String id, RebootType rebootType);
 
-   /**
-    * @see NovaClient#resizeServer
-    */
+    /**
+     * Resize a server to a new flavor size.
+     *
+     * @param id
+     *           id of the server
+     * @param flavorId
+     *           id of the new flavor to use
+     */
    void resizeServer(String id, String flavorId);
 
-   /**
-    * @see NovaClient#confirmResizeServer
+    /**
+     * Confirm a resize operation.
+     *
+     * @param id
+     *           id of the server
     */
    void confirmResizeServer(String id);
 
-   /**
-    * @see NovaClient#revertResizeServer
-    */
+    /**
+     * Revert a resize operation.
+     *
+     * @param id
+     *           id of the server
+     */
    void revertResizeServer(String id);
 
-   /**
-    * @see NovaClient#rebuildServer
+    /**
+     * Rebuild a server.
+     *
+     * @param id
+     *           id of the server
+     * @param options
+     *           Optional paramaters to the rebuilding operation.
     */
    void rebuildServer(String id, RebuildServerOptions... options);
 
-   /**
-    * @see NovaClient#changeAdminPass
+    /**
+     * Change the administrative password to a server.
+     *
+     * @param id
+     *           id of the server
+     * @param adminPass
+     *           The new administrative password to use
     */
    void changeAdminPass(String id, String adminPass);
 
-   /**
-    * @see NovaClient#renameServer
+    /**
+     * Rename a server.
+     *
+     * @param id
+     *           id of the server
+     * @param newName
+     *           The new name for the server
     */
    void renameServer(String id, String newName);
-
 }

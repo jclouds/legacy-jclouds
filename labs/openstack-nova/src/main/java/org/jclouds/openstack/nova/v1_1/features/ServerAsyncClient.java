@@ -94,9 +94,8 @@ public interface ServerAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Server> getServer(@PathParam("id") String id);
 
-
     /**
-     * @see NovaClient#deleteServer
+     * @see ServerClient#deleteServer
      */
     @DELETE
     @Consumes
@@ -105,7 +104,7 @@ public interface ServerAsyncClient {
     ListenableFuture<Boolean> deleteServer(@PathParam("id") String id);
 
    /**
-    * @see NovaClient#rebootServer
+    * @see ServerClient#rebootServer
     */
    @POST
    @Path("/servers/{id}/action")
@@ -115,7 +114,7 @@ public interface ServerAsyncClient {
    ListenableFuture<Void> rebootServer(@PathParam("id") String id, @PayloadParam("type") RebootType rebootType);
 
    /**
-    * @see NovaClient#resizeServer
+    * @see ServerClient#resizeServer
     */
    @POST
    @Path("/servers/{id}/action")
@@ -125,7 +124,7 @@ public interface ServerAsyncClient {
    ListenableFuture<Void> resizeServer(@PathParam("id") String id, @PayloadParam("flavorId") String flavorId);
 
    /**
-    * @see NovaClient#confirmResizeServer
+    * @see ServerClient#confirmResizeServer
     */
    @POST
    @Path("/servers/{id}/action")
@@ -135,7 +134,7 @@ public interface ServerAsyncClient {
    ListenableFuture<Void> confirmResizeServer(@PathParam("id") String id);
 
    /**
-    * @see NovaClient#revertResizeServer
+    * @see ServerClient#revertResizeServer
     */
    @POST
    @Path("/servers/{id}/action")
@@ -145,7 +144,7 @@ public interface ServerAsyncClient {
    ListenableFuture<Void> revertResizeServer(@PathParam("id") String id);
 
    /**
-    * @see NovaClient#createServer
+    * @see ServerClient#createServer
     */
    @POST
    @Unwrap
@@ -156,7 +155,7 @@ public interface ServerAsyncClient {
                                          @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**
-    * @see NovaClient#rebuildServer
+    * @see ServerClient#rebuildServer
     */
    @POST
    @Path("/servers/{id}/action")
@@ -166,7 +165,7 @@ public interface ServerAsyncClient {
 
 
    /**
-    * @see NovaClient#changeAdminPass
+    * @see ServerClient#changeAdminPass
     */
    @POST
    @Path("/servers/{id}/action")
@@ -176,7 +175,7 @@ public interface ServerAsyncClient {
    ListenableFuture<Void> changeAdminPass(@PathParam("id") String id, @PayloadParam("adminPass") String adminPass);
 
    /**
-    * @see NovaClient#renameServer
+    * @see ServerClient#renameServer
     */
    @PUT
    @Path("/servers/{id}")

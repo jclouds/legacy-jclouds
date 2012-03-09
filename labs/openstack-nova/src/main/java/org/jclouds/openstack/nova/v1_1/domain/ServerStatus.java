@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
+import org.jclouds.compute.domain.NodeState;
+
 /**
  * Servers contain a status attribute that can be used as an indication of the
  * current server state. Servers with an ACTIVE status are available for use.
@@ -29,7 +31,27 @@ package org.jclouds.openstack.nova.v1_1.domain;
  * @author Adrian Cole
  */
 public enum ServerStatus {
-   ACTIVE, BUILD, REBUILD, SUSPENDED, RESIZE, VERIFY_RESIZE, REVERT_RESIZE, PASSWORD, REBOOT, HARD_REBOOT, DELETED, UNKNOWN, ERROR, UNRECOGNIZED;
+
+   ACTIVE       (NodeState.RUNNING),
+   BUILD        (NodeState.PENDING),
+   REBUILD      (NodeState.PENDING),
+   SUSPENDED    (NodeState.SUSPENDED),
+   RESIZE       (NodeState.PENDING),
+   VERIFY_RESIZE(NodeState.PENDING),
+   REVERT_RESIZE(NodeState.PENDING),
+   PASSWORD     (NodeState.PENDING),
+   REBOOT       (NodeState.PENDING),
+   HARD_REBOOT  (NodeState.PENDING),
+   DELETED      (NodeState.TERMINATED),
+   UNKNOWN      (NodeState.UNRECOGNIZED),
+   ERROR        (NodeState.ERROR),
+   UNRECOGNIZED (NodeState.UNRECOGNIZED);
+
+   private final NodeState nodeState;
+
+   ServerStatus(NodeState nodeState) {
+       this.nodeState = nodeState;
+   }
 
    public String value() {
       return name();
@@ -43,4 +65,8 @@ public enum ServerStatus {
       }
    }
 
+    public NodeState getNodeState()
+    {
+        return nodeState;
+    }
 }
