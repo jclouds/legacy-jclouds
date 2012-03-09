@@ -26,10 +26,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.*;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
+import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Multimaps2;
 
 import com.google.gson.annotations.SerializedName;
@@ -381,23 +384,23 @@ public class Server extends Resource {
 
        if (privateAddresses.size() > 1) {
            if (publicAddresses != null) {
-               returnMapBuilder.putAll(Type.PUBLIC, publicAddresses);
+               returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(publicAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
            }
-           for (Address address : privateAddresses) {
-               if (address.getAddr().startsWith("10.") ||
-                   address.getAddr().startsWith("192.168.") ||
-                   address.getAddr().matches("^172\\.(1[6-9]|2[0-9]|3[0-1])\\..*")) {
-                   returnMapBuilder.put(Address.Type.PRIVATE, address);
-               } else {
-                   returnMapBuilder.put(Address.Type.PUBLIC, address);
-               }
-           }
+           returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
+           returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
        } else {
            return Multimaps2.fromOldSchool(addresses);
        }
        
        return returnMapBuilder.build();
    }
+
+    private static enum IsPrivateAddress implements Predicate<Address> {
+        INSTANCE;
+        public boolean apply (Address in) {
+            return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
+        }
+    }
 
    @Override
    public String toString() {
