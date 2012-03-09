@@ -21,21 +21,20 @@ package org.jclouds.openstack.nova.v1_1.domain;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.*;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
+import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Multimaps2;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -354,22 +353,54 @@ public class Server extends Resource {
     * @return the private ip addresses assigned to the server
     */
    public Set<Address> getPrivateAddresses() {
-      return ImmutableSet.copyOf(addresses.get(Address.Type.PRIVATE));
+       Collection<Address> privateAddresses = getAddresses().get(Address.Type.PRIVATE);
+       if (privateAddresses == null) {
+           return ImmutableSet.<Address> of();
+       } else {
+           return ImmutableSet.copyOf(privateAddresses);
+       }
    }
 
    /**
     * @return the public ip addresses assigned to the server
     */
    public Set<Address> getPublicAddresses() {
-      return ImmutableSet.copyOf(addresses.get(Address.Type.PUBLIC));
+       Collection<Address> publicAddrs = getAddresses().get(Address.Type.PUBLIC);
+	   if (publicAddrs == null) {
+		   return ImmutableSet.<Address> of();
+	   } else {
+		   return ImmutableSet.copyOf(publicAddrs);
+	   }
    }
 
    /**
     * @return the ip addresses assigned to the server
     */
    public Multimap<Type, Address> getAddresses() {
-      return Multimaps2.fromOldSchool(addresses);
+       ImmutableSetMultimap.Builder returnMapBuilder = new ImmutableSetMultimap.Builder<Type, Address>();
+       
+       Set<Address> publicAddresses = addresses.get(Address.Type.PUBLIC);
+       Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
+
+       if (privateAddresses.size() > 1) {
+           if (publicAddresses != null) {
+               returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(publicAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
+           }
+           returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
+           returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
+       } else {
+           return Multimaps2.fromOldSchool(addresses);
+       }
+       
+       return returnMapBuilder.build();
    }
+
+    private static enum IsPrivateAddress implements Predicate<Address> {
+        INSTANCE;
+        public boolean apply (Address in) {
+            return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
+        }
+    }
 
    @Override
    public String toString() {

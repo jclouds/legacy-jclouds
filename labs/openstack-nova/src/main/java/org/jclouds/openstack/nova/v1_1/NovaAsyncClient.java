@@ -23,12 +23,7 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
-import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
-import org.jclouds.openstack.nova.v1_1.features.FloatingIPClient;
-import org.jclouds.openstack.nova.v1_1.features.ImageClient;
-import org.jclouds.openstack.nova.v1_1.features.KeyPairClient;
-import org.jclouds.openstack.nova.v1_1.features.SecurityGroupClient;
-import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.*;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -63,35 +58,35 @@ public interface NovaAsyncClient {
     * Provides asynchronous access to Flavor features.
     */
    @Delegate
-   FlavorClient getFlavorClientForRegion(
+   FlavorAsyncClient getFlavorClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Image features.
     */
    @Delegate
-   ImageClient getImageClientForRegion(
+   ImageAsyncClient getImageClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Floating IP features.
     */
    @Delegate
-   FloatingIPClient getFloatingIPClientForRegion(
+   FloatingIPAsyncClient getFloatingIPClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Security Group features.
     */
    @Delegate
-   SecurityGroupClient getSecurityGroupClientForRegion(
+   SecurityGroupAsyncClient getSecurityGroupClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Key Pair features.
     */
    @Delegate
-   KeyPairClient getKeyPairClientForRegion(
+   KeyPairAsyncClient getKeyPairClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }
