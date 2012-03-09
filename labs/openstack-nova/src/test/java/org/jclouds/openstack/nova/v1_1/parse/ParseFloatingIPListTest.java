@@ -23,9 +23,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Link.Relation;
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.rest.annotations.SelectJson;
@@ -33,7 +30,6 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
-import java.net.URI;
 import java.util.Set;
 
 /**
