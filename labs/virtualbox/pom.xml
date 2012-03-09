@@ -40,8 +40,8 @@
     <test.virtualbox.build-version>4.1.8r75467</test.virtualbox.build-version>
     <test.virtualbox.identity>administrator</test.virtualbox.identity>
     <test.virtualbox.credential>12345</test.virtualbox.credential>
+    <test.virtualbox.image-id>default-ubuntu-11.04-i386</test.virtualbox.image-id>
     <test.virtualbox.image.login-user>toor:password</test.virtualbox.image.login-user>
-    <test.virtualbox.image.authenticate-sudo>true</test.virtualbox.image.authenticate-sudo>
     <test.virtualbox.image.authenticate-sudo>true</test.virtualbox.image.authenticate-sudo>
   </properties>
 
@@ -142,6 +142,7 @@
                     <test.virtualbox.build-version>${test.virtualbox.build-version}</test.virtualbox.build-version>
                     <test.virtualbox.identity>${test.virtualbox.identity}</test.virtualbox.identity>
                     <test.virtualbox.credential>${test.virtualbox.credential}</test.virtualbox.credential>
+                    <test.virtualbox.image-id>${test.virtualbox.image-id}</test.virtualbox.image-id>
                     <test.virtualbox.image.login-user>${test.virtualbox.image.login-user}</test.virtualbox.image.login-user>
                     <test.virtualbox.image.authenticate-sudo>${test.virtualbox.image.authenticate-sudo}</test.virtualbox.image.authenticate-sudo>
                   </systemPropertyVariables>
