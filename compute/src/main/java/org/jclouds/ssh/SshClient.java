@@ -39,7 +39,7 @@ public interface SshClient {
        */
       @Deprecated
       SshClient create(IPSocket socket, Credentials credentials);
-      
+
       SshClient create(IPSocket socket, LoginCredentials credentials);
 
    }
@@ -51,19 +51,23 @@ public interface SshClient {
    void put(String path, Payload contents);
 
    Payload get(String path);
-   
+
    /**
     * Execute a process and block until it is complete
     * 
-    * @param command command line to invoke
+    * @param command
+    *           command line to invoke
     * @return output of the command
     */
    ExecResponse exec(String command);
 
    /**
-    * Execute a process and allow the user to interact with it
+    * Execute a process and allow the user to interact with it. Note that this will allow the
+    * session to exist indefinitely, and its connection is not closed when {@link #disconnect()} is
+    * called.
     * 
-    * @param command command line to invoke
+    * @param command
+    *           command line to invoke
     * @return reference to the running process
     * @since 1.5.0
     */
