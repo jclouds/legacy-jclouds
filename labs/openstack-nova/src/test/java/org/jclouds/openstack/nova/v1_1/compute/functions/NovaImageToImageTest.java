@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.functions;
+package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 
@@ -26,11 +26,13 @@ import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.domain.Location;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToImage;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Suppliers;
 
 /**
  * Tests the function that transforms nova-specific images to generic images.
@@ -45,10 +47,12 @@ public class NovaImageToImageTest
       UUID id = UUID.randomUUID();
       Image novaImageToConvert = Image.builder().id(id.toString()).name("Test Image " + id).build();
       OperatingSystem operatingSystem = new OperatingSystem(OsFamily.UBUNTU, "My Test OS", "My Test Version", "x86", "My Test OS", true);
-      NovaImageToImage converter = new NovaImageToImage(new MockImageToOsConverter(operatingSystem));
+      NovaImageToImage converter = new NovaImageToImage(new MockImageToOsConverter(operatingSystem),Suppliers.<Location>ofInstance(null));
       org.jclouds.compute.domain.Image convertedImage = converter.apply(novaImageToConvert);
 
       assertEquals(convertedImage.getId(), novaImageToConvert.getId());
+      assertEquals(convertedImage.getProviderId(), novaImageToConvert.getId());
+
       assertEquals(convertedImage.getName(), novaImageToConvert.getName());
       assertEquals(convertedImage.getOperatingSystem(), operatingSystem);
    }

@@ -28,11 +28,11 @@ import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorToHardware;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToImage;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ServerToNodeMetadata;
-import org.jclouds.openstack.nova.v1_1.compute.strategy.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 

@@ -43,9 +43,10 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.gson.annotations.SerializedName;
+
 /**
- * A server is a virtual machine instance in the compute system. Flavor and
- * image are requisite elements when creating a server.
+ * A server is a virtual machine instance in the compute system. Flavor and image are requisite
+ * elements when creating a server.
  * 
  * @author Adrian Cole
  * @see <a href=
@@ -109,7 +110,7 @@ public class Server extends Resource {
          this.created = created;
          return this;
       }
-      
+
       /**
        * @see Server#getHostId()
        */
@@ -117,7 +118,7 @@ public class Server extends Resource {
          this.hostId = hostId;
          return this;
       }
-      
+
       /**
        * @see Server#getAccessIPv4()
        */
@@ -133,7 +134,7 @@ public class Server extends Resource {
          this.accessIPv6 = accessIPv6;
          return this;
       }
-      
+
       /**
        * @see Server#getStatus()
        */
@@ -173,13 +174,12 @@ public class Server extends Resource {
          this.metadata = ImmutableMap.copyOf(metadata);
          return this;
       }
-      
+
       /**
        * @see Server#getAddresses()
        */
       public Builder addresses(Multimap<Address.Type, Address> addresses) {
-         this.addresses = ImmutableMultimap.copyOf(checkNotNull(addresses,
-               "addresses"));
+         this.addresses = ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses"));
          return this;
       }
 
@@ -187,16 +187,15 @@ public class Server extends Resource {
        * @see Server#getPrivateAddresses()
        */
       public Builder privateAddresses(Address... privateAddresses) {
-         return privateAddresses(ImmutableSet.copyOf(checkNotNull(
-               privateAddresses, "privateAddresses")));
+         return privateAddresses(ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses")));
       }
 
       /**
        * @see Server#getPrivateAddresses()
        */
       public Builder privateAddresses(Set<Address> privateAddresses) {
-         this.addresses.replaceValues(Address.Type.PRIVATE, ImmutableSet
-               .copyOf(checkNotNull(privateAddresses, "privateAddresses")));
+         this.addresses.replaceValues(Address.Type.PRIVATE, ImmutableSet.copyOf(checkNotNull(privateAddresses,
+                  "privateAddresses")));
          return this;
       }
 
@@ -204,16 +203,15 @@ public class Server extends Resource {
        * @see Server#getPublicAddresses()
        */
       public Builder publicAddresses(Address... publicAddresses) {
-         return publicAddresses(ImmutableSet.copyOf(checkNotNull(
-               publicAddresses, "publicAddresses")));
+         return publicAddresses(ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses")));
       }
 
       /**
        * @see Server#getPublicAddresses()
        */
       public Builder publicAddresses(Set<Address> publicAddresses) {
-         this.addresses.replaceValues(Address.Type.PUBLIC, ImmutableSet
-               .copyOf(checkNotNull(publicAddresses, "publicAddresses")));
+         this.addresses.replaceValues(Address.Type.PUBLIC, ImmutableSet.copyOf(checkNotNull(publicAddresses,
+                  "publicAddresses")));
          return this;
       }
 
@@ -221,15 +219,14 @@ public class Server extends Resource {
        * @see Server#getAdminPass()
        */
       public Builder adminPass(String adminPass) {
-          this.adminPass = adminPass;
-          return this;
+         this.adminPass = adminPass;
+         return this;
       }
 
       public Server build() {
          // return new Server(id, name, links, addresses);
-         return new Server(id, name, links, tenantId, userId, updated,
-               created, hostId, accessIPv4, accessIPv6, status, progress,
-               image, flavor, adminPass, addresses, metadata);
+         return new Server(id, name, links, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6, status,
+                  progress, image, flavor, adminPass, addresses, metadata);
       }
 
       public Builder fromServer(Server in) {
@@ -268,7 +265,7 @@ public class Server extends Resource {
          return Builder.class.cast(super.fromResource(in));
       }
    }
-   
+
    @SerializedName("tenant_id")
    protected String tenantId;
    @SerializedName("user_id")
@@ -287,11 +284,10 @@ public class Server extends Resource {
    protected final Map<Address.Type, Set<Address>> addresses;
    protected Map<String, String> metadata;
 
-   protected Server(String id, String name, Set<Link> links, String tenantId,
-         String userId, Date updated, Date created, String hostId,
-         String accessIPv4, String accessIPv6, ServerStatus status,
-         int progress, Resource image, Resource flavor, String adminPass,
-         Multimap<Address.Type, Address> addresses, Map<String, String> metadata) {
+   protected Server(String id, String name, Set<Link> links, String tenantId, String userId, Date updated,
+            Date created, String hostId, String accessIPv4, String accessIPv6, ServerStatus status, int progress,
+            Resource image, Resource flavor, String adminPass, Multimap<Address.Type, Address> addresses,
+            Map<String, String> metadata) {
       super(id, name, links);
       this.tenantId = tenantId;
       this.userId = userId;
@@ -305,8 +301,7 @@ public class Server extends Resource {
       this.image = image;
       this.flavor = flavor;
       this.metadata = Maps.newHashMap(metadata);
-      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap
-            .copyOf(checkNotNull(addresses, "addresses")));
+      this.addresses = Multimaps2.toOldSchool(ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses")));
       this.adminPass = adminPass;
    }
 
@@ -357,77 +352,73 @@ public class Server extends Resource {
    public Map<String, String> getMetadata() {
       return this.metadata;
    }
-   
+
    /**
     * @return the private ip addresses assigned to the server
     */
    public Set<Address> getPrivateAddresses() {
-       Collection<Address> privateAddresses = getAddresses().get(Address.Type.PRIVATE);
-       if (privateAddresses == null) {
-           return ImmutableSet.<Address> of();
-       } else {
-           return ImmutableSet.copyOf(privateAddresses);
-       }
+      Collection<Address> privateAddresses = getAddresses().get(Address.Type.PRIVATE);
+      if (privateAddresses == null) {
+         return ImmutableSet.<Address> of();
+      } else {
+         return ImmutableSet.copyOf(privateAddresses);
+      }
    }
 
    /**
     * @return the public ip addresses assigned to the server
     */
    public Set<Address> getPublicAddresses() {
-       Collection<Address> publicAddrs = getAddresses().get(Address.Type.PUBLIC);
-	   if (publicAddrs == null) {
-		   return ImmutableSet.<Address> of();
-	   } else {
-		   return ImmutableSet.copyOf(publicAddrs);
-	   }
+      Collection<Address> publicAddrs = getAddresses().get(Address.Type.PUBLIC);
+      if (publicAddrs == null) {
+         return ImmutableSet.<Address> of();
+      } else {
+         return ImmutableSet.copyOf(publicAddrs);
+      }
    }
 
    /**
     * @return the ip addresses assigned to the server
     */
    public Multimap<Type, Address> getAddresses() {
-       ImmutableSetMultimap.Builder returnMapBuilder = new ImmutableSetMultimap.Builder<Type, Address>();
-       
-       Set<Address> publicAddresses = addresses.get(Address.Type.PUBLIC);
-       Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
+      ImmutableSetMultimap.Builder<Type, Address> returnMapBuilder = new ImmutableSetMultimap.Builder<Type, Address>();
 
-       if (privateAddresses.size() > 1) {
-           if (publicAddresses != null) {
-               returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(publicAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
-           }
-           returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
-           returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
-       } else {
-           return Multimaps2.fromOldSchool(addresses);
-       }
-       
-       return returnMapBuilder.build();
+      Set<Address> publicAddresses = addresses.get(Address.Type.PUBLIC);
+      Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
+      if (publicAddresses != null) {
+         returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(publicAddresses, Predicates
+                  .not(IsPrivateAddress.INSTANCE)));
+      }
+      if (privateAddresses != null) {
+         returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
+         returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates
+                  .not(IsPrivateAddress.INSTANCE)));
+      }
+      ImmutableSetMultimap<Type, Address> returnMap = returnMapBuilder.build();
+
+      return returnMap.size() > 0 ? returnMap : Multimaps2.fromOldSchool(addresses);
    }
 
-    private static enum IsPrivateAddress implements Predicate<Address> {
-        INSTANCE;
-        public boolean apply (Address in) {
-            return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
-        }
-    }
+   private static enum IsPrivateAddress implements Predicate<Address> {
+      INSTANCE;
+      public boolean apply(Address in) {
+         return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
+      }
+   }
 
    /**
     * @return the administrative password for this server.
     */
    public String getAdminPass() {
-       return adminPass;
+      return adminPass;
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name)
-            .add("tenantId", tenantId).add("userId", userId).add("hostId", hostId)
-            .add("updated", updated).add("created", created)
-            .add("accessIPv4", accessIPv4).add("accessIPv6", accessIPv6)
-            .add("status", status).add("progress", progress)
-            .add("image", image).add("flavor", flavor)
-            .add("metadata", metadata)
-            .add("links", links).add("addresses", addresses)
-            .add("adminPass",adminPass).toString();
+      return toStringHelper("").add("id", id).add("name", name).add("tenantId", tenantId).add("userId", userId).add(
+               "hostId", hostId).add("updated", updated).add("created", created).add("accessIPv4", accessIPv4).add(
+               "accessIPv6", accessIPv6).add("status", status).add("progress", progress).add("image", image).add(
+               "flavor", flavor).add("metadata", metadata).add("links", links).add("addresses", addresses).add(
+               "adminPass", adminPass).toString();
    }
 }

@@ -59,7 +59,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata>
    public NodeMetadata apply(Server server)
    {
       return new NodeMetadataBuilder()
-         .id(server.getId())
+          // TODO: scope id to region, if there's a chance for conflict
+         .id(server.getId()) 
+         .providerId(server.getId())
          .name(server.getName())
          .publicAddresses(Iterables.transform(server.getPublicAddresses(), new AddressToStringTransformationFunction()))
          .privateAddresses(Iterables.transform(server.getPrivateAddresses(), new AddressToStringTransformationFunction()))

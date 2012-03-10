@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.strategy;
+package org.jclouds.openstack.nova.v1_1.compute;
 
 import java.util.Set;
 
@@ -75,6 +75,8 @@ public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, 
    public NodeAndInitialCredentials<Server> createNodeWithGroupEncodedIntoName(String tag, String name, Template template)
    {
       ServerClient serverClient = template.getLocation() != null ? novaClient.getServerClientForRegion(template.getLocation().getId()) : defaultLocationServerClient;
+      // TODO: make NovaTemplateOptions with the following:
+      // security group, key pair, floating ip (attach post server-create?)
       Server server = serverClient.createServer(name, template.getImage().getId(), template.getHardware().getId());
       return new NodeAndInitialCredentials<Server>(server, server.getId() + "", LoginCredentials.builder().password(server.getAdminPass()).build());
    }

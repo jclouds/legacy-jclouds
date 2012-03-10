@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1.compute;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;

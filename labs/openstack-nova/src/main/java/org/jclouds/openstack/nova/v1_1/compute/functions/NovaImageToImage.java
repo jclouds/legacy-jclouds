@@ -23,8 +23,10 @@ import javax.inject.Inject;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * A function for transforming a nova-specific Image into a generic Image object.
@@ -34,21 +36,26 @@ import com.google.common.base.Function;
 public class NovaImageToImage implements Function<org.jclouds.openstack.nova.v1_1.domain.Image, Image>
 {
    private final Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs;
+   private final Supplier<Location> defaultLocation;
 
    @Inject
-   public NovaImageToImage(Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs)
+   public NovaImageToImage(Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs, Supplier<Location> defaultLocation)
    {
       this.imageToOs = imageToOs;
+      this.defaultLocation = defaultLocation;
    }
 
    @Override
    public Image apply(org.jclouds.openstack.nova.v1_1.domain.Image image)
    {
       return new ImageBuilder()
-         .id(image.getId())
+          // TODO: scope id to region, if there's a chance for conflict
+         .id(image.getId()) 
+         .providerId(image.getId())
          .name(image.getName())
          .operatingSystem(imageToOs.apply(image))
          .description(image.getName())
+         .location(defaultLocation.get())
          .build();
    }
 }

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.functions;
+package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -45,7 +45,7 @@ public class ServerToNodeMetadataTest
          .id(id.toString())
          .name("Test Server " + id)
          .privateAddresses(Address.createV4("10.0.0.1"))
-         .publicAddresses(Address.createV4("10.0.1.1"))
+         .publicAddresses(Address.createV4("1.0.1.1"))
          .status(ServerStatus.ACTIVE)
          .build();
 
@@ -54,6 +54,7 @@ public class ServerToNodeMetadataTest
       NodeMetadata convertedNodeMetadata = converter.apply(serverToConvert);
 
       assertEquals(serverToConvert.getId(), convertedNodeMetadata.getId());
+      assertEquals(serverToConvert.getId(), convertedNodeMetadata.getProviderId());
       assertEquals(serverToConvert.getName(), convertedNodeMetadata.getName());
       assertEquals(serverToConvert.getStatus().getNodeState(), convertedNodeMetadata.getState());
 
@@ -63,6 +64,6 @@ public class ServerToNodeMetadataTest
 
       assertNotNull(convertedNodeMetadata.getPublicAddresses());
       assertEquals(convertedNodeMetadata.getPublicAddresses().size(), 1);
-      assertEquals(convertedNodeMetadata.getPublicAddresses().iterator().next(), "10.0.1.1");
+      assertEquals(convertedNodeMetadata.getPublicAddresses().iterator().next(), "1.0.1.1");
    }
 }

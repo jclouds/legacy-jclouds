@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.functions;
+package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -25,9 +25,12 @@ import static org.testng.Assert.assertNotNull;
 import java.util.UUID;
 
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.domain.Location;
 import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorToHardware;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Suppliers;
 
 /**
  * Tests the function used to transform Flavor objects into Hardware objects
@@ -48,10 +51,11 @@ public class FlavorToHardwareTest
          .vcpus(16)
          .build();
 
-      Hardware converted = new FlavorToHardware().apply(flavorToConvert);
+      Hardware converted = new FlavorToHardware(Suppliers.<Location>ofInstance(null)).apply(flavorToConvert);
 
       assertEquals(converted.getName(), flavorToConvert.getName());
       assertEquals(converted.getId(), flavorToConvert.getId());
+      assertEquals(converted.getProviderId(), flavorToConvert.getId());
       assertEquals(converted.getRam(), flavorToConvert.getRam());
 
       assertNotNull(converted.getProcessors());
@@ -61,5 +65,6 @@ public class FlavorToHardwareTest
       assertNotNull(converted.getVolumes());
       assertFalse(converted.getVolumes().isEmpty());
       assertEquals(converted.getVolumes().iterator().next().getSize(), Float.valueOf(flavorToConvert.getDisk()));
+
    }
 }
