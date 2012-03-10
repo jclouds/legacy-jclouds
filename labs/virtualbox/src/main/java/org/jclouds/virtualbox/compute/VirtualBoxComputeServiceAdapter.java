@@ -20,6 +20,7 @@
 package org.jclouds.virtualbox.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
@@ -90,7 +91,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
             Template template) {
       try {
          Master master = mastersLoader.get(template.getImage());
-         checkNotNull(master, "could not find a master for image: "+template.getClass());
+         checkState(master != null, "could not find a master for image: "+template.getClass());
          NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
          return cloneCreator.apply(nodeSpec);
       } catch (Exception e) {

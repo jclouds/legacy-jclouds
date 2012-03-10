@@ -76,6 +76,7 @@ import com.google.common.collect.Maps;
 @Singleton
 public class MastersCache extends AbstractLoadingCache<Image, Master> {
    
+   // TODO parameterize
    public static final int MASTER_PORT = 2222;
 
    @Resource

@@ -25,7 +25,6 @@ import java.io.File;
 import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,6 +40,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -112,7 +112,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    @Inject
    protected LoadingCache<Image, Master> mastersCache;
    
-   private final ExecutorService singleThreadExec = Executors.newSingleThreadExecutor(); 
+   private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor(); 
 
    @Override
    protected void setupCredentials() {

@@ -1,5 +1,5 @@
 /**
-mh * Licensed to jclouds, Inc. (jclouds) under one or more
+ * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -54,9 +54,17 @@ import com.google.common.base.Supplier;
 @Singleton
 public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials<IMachine>> {
 
+   // TODO parameterize
    public static final int NODE_PORT_INIT = 3000;
+   
+   // TODO parameterize
    public static final String VMS_NETWORK = "33.33.33.";
+   
+   // TODO parameterize
    public static final String HOST_ONLY_IFACE_NAME = "vboxnet0";
+   
+   // TODO parameterize
+   public static final boolean USE_LINKED = true;
 
    private final Supplier<VirtualBoxManager> manager;
    private final Function<CloneSpec, IMachine> cloner;
@@ -70,7 +78,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             MachineUtils machineUtils, Function<IMachine, NodeMetadata> imachineToNodeMetadata) {
       this.manager = manager;
       this.cloner = cloner;
-      this.nodePorts = new AtomicInteger(3000);
+      this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
       this.nodeIps = new AtomicInteger(1);
       this.machineUtils = machineUtils;
       this.imachineToNodeMetadata = imachineToNodeMetadata;
@@ -115,7 +123,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(natIfaceCard).addNIC(hostOnlyIfaceCard).build();
 
-      CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
+      CloneSpec cloneSpec = CloneSpec.builder().linked(USE_LINKED).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
 
       IMachine cloned = cloner.apply(cloneSpec);
