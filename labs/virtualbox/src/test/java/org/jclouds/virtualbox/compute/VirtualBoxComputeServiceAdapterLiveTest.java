@@ -40,10 +40,11 @@ import com.google.common.collect.Iterables;
 
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxComputeServiceAdapterLiveTest")
 public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClientLiveTest {
-   @Inject
-   private VirtualBoxComputeServiceAdapter adapter;
 
    private NodeAndInitialCredentials<IMachine> machine;
+   
+   @Inject
+   protected VirtualBoxComputeServiceAdapter adapter;
 
    @Test
    public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
