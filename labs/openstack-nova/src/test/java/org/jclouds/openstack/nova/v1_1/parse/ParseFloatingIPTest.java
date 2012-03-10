@@ -18,9 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.parse;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
@@ -28,11 +27,11 @@ import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 
 /**
- * @author Jeremy Daggett
+ * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "ParseFloatingIPTest")
 public class ParseFloatingIPTest extends BaseItemParserTest<FloatingIP> {

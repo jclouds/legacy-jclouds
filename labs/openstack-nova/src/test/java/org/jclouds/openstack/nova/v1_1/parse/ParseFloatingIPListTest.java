@@ -18,11 +18,9 @@
  */
 package org.jclouds.openstack.nova.v1_1.parse;
 
-import java.util.Set;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
@@ -30,9 +28,9 @@ import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+import java.util.Set;
 
 /**
  * 
