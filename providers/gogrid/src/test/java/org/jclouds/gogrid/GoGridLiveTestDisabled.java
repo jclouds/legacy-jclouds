@@ -354,8 +354,7 @@ public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
 
       socketOpen.apply(socket);
 
-      SshClient sshClient = new SshjSshClient(new BackoffLimitedRetryHandler(), socket, 60000,
-               instanceCredentials.identity, instanceCredentials.credential, null);
+      SshClient sshClient = context.utils().injector().getInstance(SshClient.Factory.class).create(socket, instanceCredentials);
       sshClient.connect();
       String output = sshClient.exec("df").getOutput();
       assertTrue(output.contains("Filesystem"),
