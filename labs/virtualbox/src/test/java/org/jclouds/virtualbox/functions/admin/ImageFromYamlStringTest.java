@@ -40,7 +40,7 @@ import com.google.common.collect.Iterables;
 public class ImageFromYamlStringTest {
 
   public static final Image TEST1 = new ImageBuilder()
-                                      .id("myTestId")
+                                      .id("default-ubuntu-11.04-i386")
                                       .name("ubuntu-11.04-server-i386")
                                       .description("ubuntu 11.04 server (i386)")
                                       .operatingSystem(
@@ -51,7 +51,7 @@ public class ImageFromYamlStringTest {
   public void testNodesParse() throws Exception {
 
     final StringBuilder yamlFileLines = new StringBuilder();
-    for (Object line : IOUtils.readLines(new InputStreamReader(getClass().getResourceAsStream("/testImages.yaml")))) {
+    for (Object line : IOUtils.readLines(new InputStreamReader(getClass().getResourceAsStream("/default-images.yaml")))) {
       yamlFileLines.append(line).append("\n");
     }
 

@@ -19,6 +19,8 @@
 
 package org.jclouds.virtualbox;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Properties;
@@ -32,13 +34,17 @@ import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.IsoSpec;
+import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineUtils;
@@ -72,16 +78,16 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
    
    protected ComputeServiceContext context;
-   
+
    @Inject
    protected Supplier<VirtualBoxManager> manager;
-   
+
    @Inject
-   void eagerlyStartManager(Supplier<VirtualBoxManager> manager){
+   void eagerlyStartManager(Supplier<VirtualBoxManager> manager) {
       this.manager = manager;
       manager.get();
    }
-   
+
    @Inject
    protected MachineUtils machineUtils;
 
@@ -89,7 +95,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    @Inject
    @Preconfiguration
    protected LoadingCache<IsoSpec, URI> preconfigurationUri;
-   
+
    protected String hostVersion;
    protected String operatingSystemIso;
    protected String guestAdditionsIso;
@@ -101,6 +107,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected Supplier<NodeMetadata> host;
    @Inject
    protected PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
+   @Inject
+   protected LoadingCache<Image, Master> mastersCache;
 
    @Override
    protected void setupCredentials() {
@@ -135,13 +143,18 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
       context.utils().injector().injectMembers(this);
-      
+
       imageId = "ubuntu-11.04-server-i386";
       isosDir = workingDir + File.separator + "isos";
-      
+
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
+      
+      // try and get a master from the cache, this will initialize the config/download isos and
+      // prepare everything IF a master is not available, subsequent calls should be pretty fast
+      Template template = context.getComputeService().templateBuilder().build();
+      checkNotNull(mastersCache.apply(template.getImage()));
    }
 
    protected void undoVm(VmSpec vmSpecification) {
@@ -173,7 +186,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
          }
       }
    }
-   
+
    public String adminDisk(String vmName) {
       return workingDir + File.separator + vmName + ".vdi";
    }
