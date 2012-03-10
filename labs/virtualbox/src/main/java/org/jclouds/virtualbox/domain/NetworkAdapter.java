@@ -24,6 +24,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.virtualbox_4_1.NATProtocol;
 import org.virtualbox_4_1.NetworkAttachmentType;
 
@@ -41,13 +43,16 @@ public class NetworkAdapter {
 	private final NetworkAttachmentType networkAttachmentType;
 	private final String macAddress;
 	private final Set<RedirectRule> redirectRules;
+	private final String staticIp;
 
 	public NetworkAdapter(NetworkAttachmentType networkAttachmentType,
-			String macAddress, Set<RedirectRule> redirectRules) {
+			String macAddress, Set<RedirectRule> redirectRules,
+			String staticIp) {
 		this.networkAttachmentType = checkNotNull(networkAttachmentType,
 				"networkAttachmentType");
 		this.macAddress = macAddress;
 		this.redirectRules = ImmutableSet.<RedirectRule>copyOf(redirectRules);
+		this.staticIp = staticIp;
 	}
 
 	public static Builder builder() {
@@ -59,6 +64,7 @@ public class NetworkAdapter {
 		private NetworkAttachmentType networkAttachmentType;
 		private String macAddress;
 		private Set<RedirectRule> redirectRules = Sets.newLinkedHashSet();
+		private String staticIp;
 
 		/**
 		 * 
@@ -112,10 +118,15 @@ public class NetworkAdapter {
 					guest, guestPort));
 			return this;
 		}
+		
+		public Builder staticIp(@Nullable String staticIp) {
+		   this.staticIp = staticIp;
+		   return this;
+		}
 
 		public NetworkAdapter build() {
 			return new NetworkAdapter(networkAttachmentType, macAddress,
-					redirectRules);
+					redirectRules,staticIp);
 		}
 	}
 
@@ -130,6 +141,10 @@ public class NetworkAdapter {
 	public String getMacAddress() {
 		return macAddress;
 	}
+	
+	public String getStaticIp() {
+         return staticIp;
+      }
 
 	@Override
 	public boolean equals(Object o) {

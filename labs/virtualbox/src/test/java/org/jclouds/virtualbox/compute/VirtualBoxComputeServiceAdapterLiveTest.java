@@ -58,20 +58,6 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
       assertEquals(machine.getNode().getName(), machineName);
       doConnectViaSsh(machine.getNode(), prioritizeCredentialsFromTemplate.apply(template, machine.getCredentials()));
    }
-
-   @Test
-   public void testListHardwareProfiles() {
-      Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-      assertEquals(1, Iterables.size(profiles));
-      //TODO: check state;
-   }
-
-   @Test
-   public void testListImages() {
-      Iterable<Image> iMageIterable = adapter.listImages();
-      assertEquals(1, Iterables.size(iMageIterable));
-      //TODO: check state;
-   }
    
    protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
       SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
@@ -86,6 +72,20 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
          if (ssh != null)
             ssh.disconnect();
       }
+   }
+
+   @Test
+   public void testListHardwareProfiles() {
+      Iterable<IMachine> profiles = adapter.listHardwareProfiles();
+      assertEquals(1, Iterables.size(profiles));
+      //TODO: check state;
+   }
+
+   @Test
+   public void testListImages() {
+      Iterable<Image> iMageIterable = adapter.listImages();
+      assertEquals(1, Iterables.size(iMageIterable));
+      //TODO: check state;
    }
 
    @AfterClass
