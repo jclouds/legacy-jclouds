@@ -41,12 +41,13 @@ import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
-import org.virtualbox_4_1.CleanupMode;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndForceDeleteItsMedia;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
@@ -138,14 +139,21 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public IMachine getNode(String vmName) {
-      return manager.get().getVBox().findMachine(vmName);
+      try {
+         return manager.get().getVBox().findMachine(vmName);
+      } catch (VBoxException e) {
+         if (e.getMessage().contains("Could not find a registered machine named")){
+            return null;
+         }
+         throw Throwables.propagate(e);
+      }
    }
 
    @Override
    public void destroyNode(String vmName) {
       IMachine machine = manager.get().getVBox().findMachine(vmName);
       powerDownMachine(machine);
-      machine.unregister(CleanupMode.Full);
+      new UnregisterMachineIfExistsAndForceDeleteItsMedia().apply(machine);
    }
 
    @Override
@@ -201,7 +209,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
          while (!machine.getSessionState().equals(SessionState.Unlocked)) {
             try {
-               System.out.println("waiting for unlocking session - session state: " + machine.getSessionState());
+               logger.info("waiting for unlocking session - session state: " + machine.getSessionState());
                Thread.sleep(1000);
             } catch (InterruptedException e) {
             }
