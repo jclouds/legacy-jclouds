@@ -56,7 +56,7 @@ public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBui
    protected void addHostModuleIfNotPresent(List<Module> modules) {
       if (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
-            return input.getClass().equals(CacheNodeStoreModule.class);
+            return input instanceof CacheNodeStoreModule;
          }
       })) {
          CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
