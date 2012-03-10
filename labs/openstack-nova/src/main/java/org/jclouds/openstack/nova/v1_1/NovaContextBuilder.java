@@ -21,16 +21,19 @@ package org.jclouds.openstack.nova.v1_1;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
-import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
 
 /**
- * 
+ * A context builder for getting nova clients.
+ *
  * @author Adrian Cole
  */
-public class NovaContextBuilder extends RestContextBuilder<NovaClient, NovaAsyncClient> {
+public class NovaContextBuilder extends ComputeServiceContextBuilder<NovaClient, NovaAsyncClient>
+{
 
    public NovaContextBuilder(Properties props) {
       super(NovaClient.class, NovaAsyncClient.class, props);
@@ -41,4 +44,8 @@ public class NovaContextBuilder extends RestContextBuilder<NovaClient, NovaAsync
       modules.add(new NovaRestClientModule());
    }
 
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new NovaComputeServiceContextModule());
+   }
 }

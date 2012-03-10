@@ -19,57 +19,60 @@
 package org.jclouds.openstack.nova.v1_1.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
-import org.jclouds.openstack.nova.v1_1.parse.ParseServerListTest;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaComputeServiceExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests annotation parsing of {@code ServerAsyncClient}
+ * Tests the compute service abstraction of the nova client.
  * 
- * @author Adrian Cole
+ * @author Matt Stephenson
  */
-@Test(groups = "unit", testName = "ServerAsyncClientTest")
-public class ServerClientExpectTest extends BaseNovaRestClientExpectTest {
+@Test(groups = "unit", testName = "NovaComputeServiceExpectTest")
+public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
       HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers")).headers(
+               URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/server_list.json")).build();
+               payloadFromResource("/server_list_details.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      ComputeService clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
                responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertNotNull(clientWhenServersExist.listAssignableLocations());
+      assertEquals(clientWhenServersExist.listAssignableLocations().size(), 1);
+      assertEquals(clientWhenServersExist.listAssignableLocations().iterator().next().getId(), "North");
 
-      assertEquals(clientWhenServersExist.getServerClientForRegion("North").listServers().toString(),
-               new ParseServerListTest().expected().toString());
+      assertNotNull(clientWhenServersExist.listNodes());
+      assertEquals(clientWhenServersExist.listNodes().size(), 1);
+      assertEquals(clientWhenServersExist.listNodes().iterator().next().getId(), "52415800-8b69-11e0-9b19-734f000004d2");
+      assertEquals(clientWhenServersExist.listNodes().iterator().next().getName(), "sample-server");
    }
 
    public void testListServersWhenReponseIs404IsEmpty() throws Exception {
       HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers")).headers(
+               URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
                responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertTrue(clientWhenNoServersExist.getServerClientForRegion("North").listServers().isEmpty());
+      assertTrue(clientWhenNoServersExist.listNodes().isEmpty());
    }
 }

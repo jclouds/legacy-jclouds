@@ -70,6 +70,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
             @Provider Supplier<URI> providerSupplier, @Identity String identity, @Credential String credential) {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.socketTester = checkNotNull(socketTester, "socketTester");
+      this.socketTester.seconds(1L);
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
       this.identity = checkNotNull(identity, "identity");
@@ -96,8 +97,8 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
       manager = managerForNode.apply(host);
       manager.connect(provider.toASCIIString(), identity, credential);
       if (logger.isDebugEnabled())
-         if (manager.getSessionObject().getState() == SessionState.Unlocked)
-            logger.warn("manager  is not in unlocked state " + manager);
+         if (manager.getSessionObject().getState() != SessionState.Unlocked)
+            logger.warn("manager is not in unlocked state " + manager.getSessionObject().getState());
    }
 
    @Override

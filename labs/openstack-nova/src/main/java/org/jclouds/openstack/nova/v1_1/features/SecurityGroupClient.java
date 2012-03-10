@@ -21,7 +21,6 @@ package org.jclouds.openstack.nova.v1_1.features;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;

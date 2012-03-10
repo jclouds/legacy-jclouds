@@ -55,7 +55,7 @@ public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLi
                   return (input.version.equals("") || input.version.equals("10.04") || input.version.startsWith("11"))
                            && input.is64Bit;
                case DEBIAN:
-                  return input.is64Bit && !input.version.matches("[56].0");
+                  return input.is64Bit && !input.version.equals("5.0");
                case CENTOS:
                   return (input.version.equals("") || input.version.equals("5.6") || input.version.equals("6.0"))
                            && input.is64Bit;

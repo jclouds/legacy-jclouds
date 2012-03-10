@@ -18,8 +18,12 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
@@ -28,11 +32,8 @@ import org.jclouds.openstack.nova.v1_1.parse.ParseFloatingIPListTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseFloatingIPTest;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code FloatingIPAsyncClient}
