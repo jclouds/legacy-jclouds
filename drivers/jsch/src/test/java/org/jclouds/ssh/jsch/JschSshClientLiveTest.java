@@ -170,7 +170,7 @@ public class JschSshClientLiveTest {
             : sshHost);
    }
 
-   public void testExecChannelTakesStdinAndEchosBack() throws IOException {
+   public void testExecChannelTakesStdinAndNoEchoOfCharsInOuput() throws IOException {
       ExecChannel response = setupClient().execChannel("cat <<EOF");
       assertEquals(response.getExitStatus().get(), null);
       try {
@@ -179,12 +179,10 @@ public class JschSshClientLiveTest {
          printStream.append("EOF\n");
          printStream.close();
          assertEquals(Strings2.toStringAndClose(response.getError()), "");
-         // local echo
-         assertEquals(Strings2.toStringAndClose(response.getOutput()), "foo\r\nEOF\r\n");
+         assertEquals(Strings2.toStringAndClose(response.getOutput()), "");
       } finally {
          Closeables.closeQuietly(response);
       }
       assertEquals(response.getExitStatus().get(), new Integer(0));
    }
-
 }

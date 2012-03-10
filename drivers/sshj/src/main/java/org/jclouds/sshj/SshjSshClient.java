@@ -504,6 +504,33 @@ public class SshjSshClient implements SshClient {
       return acquire(new ExecConnection(command));
    }
 
+   protected Connection<Session> noPTYConnection() {
+
+      return new Connection<Session>() {
+
+         private Session session = null;
+
+         @Override
+         public void clear() throws TransportException, ConnectionException {
+            if (session != null)
+               session.close();
+         }
+
+         @Override
+         public Session create() throws Exception {
+            checkConnected();
+            session = ssh.startSession();
+            return session;
+         }
+
+         @Override
+         public String toString() {
+            return "Session()";
+         }
+      };
+
+   }
+
    class ExecChannelConnection implements Connection<ExecChannel> {
       private final String command;
       private SessionChannel session;
@@ -521,7 +548,7 @@ public class SshjSshClient implements SshClient {
 
       @Override
       public ExecChannel create() throws Exception {
-         session = SessionChannel.class.cast(acquire(execConnection()));
+         session = SessionChannel.class.cast(acquire(noPTYConnection()));
          output = session.exec(command);
          return new ExecChannel(output.getOutputStream(), output.getInputStream(), output.getErrorStream(),
                   new Supplier<Integer>() {

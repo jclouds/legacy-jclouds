@@ -491,7 +491,6 @@ public class JschSshClient implements SshClient {
          checkConnected();
          String channel = "exec";
          executor = (ChannelExec) session.openChannel(channel);
-         executor.setPty(true);
          executor.setCommand(command);
          ByteArrayOutputStream error = new ByteArrayOutputStream();
          executor.setErrStream(error);
