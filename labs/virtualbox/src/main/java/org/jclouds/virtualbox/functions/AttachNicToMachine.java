@@ -49,6 +49,8 @@ public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> 
 
 	  } else if (hasBridgedAdapter(nic)) {
 		  return machineUtils.writeLockMachineAndApply(vmName, new AttachBridgedAdapterToMachine(nic));
+      } else if (hasHostOnlyAdapter(nic)) {
+         return machineUtils.writeLockMachineAndApply(vmName, new AttachHostOnlyAdapter(nic));
 	  } else
 		  return null;
 	}
@@ -61,5 +63,9 @@ public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> 
 	private boolean hasBridgedAdapter(NetworkInterfaceCard nic) {
 		return nic.getNetworkAdapter().getNetworkAttachmentType()
 				.equals(NetworkAttachmentType.Bridged);
+   }
+	
+   private boolean hasHostOnlyAdapter(NetworkInterfaceCard nic) {
+      return nic.getNetworkAdapter().getNetworkAttachmentType().equals(NetworkAttachmentType.HostOnly);
    }
 }

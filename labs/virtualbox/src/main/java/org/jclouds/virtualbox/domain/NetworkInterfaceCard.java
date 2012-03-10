@@ -18,6 +18,7 @@
  */
 package org.jclouds.virtualbox.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Objects;
@@ -41,11 +42,12 @@ public class NetworkInterfaceCard {
 	
 	public static class Builder {
 		
-		private long slot;
+		private long slot = 0L;
 		private NetworkAdapter networkAdapter;
 		private String hostInterfaceName;
 		
 		public Builder slot(long slot) {
+		      checkArgument(slot >= 0 && slot < 4, "must be 0, 1, 2, 3: %s", slot);
 			this.slot = slot;
 			return this;
 		}

@@ -105,7 +105,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
                .build();
 
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
       masterSpec = MasterSpec
                .builder()

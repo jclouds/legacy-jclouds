@@ -19,19 +19,56 @@
 
 package org.jclouds.virtualbox.compute;
 
+import static org.testng.Assert.assertEquals;
+
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "VirtualBoxExperimentLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "VirtualBoxExperimentLiveTest")
 public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
+   
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
    @Test
-   public void testAndExperiment() {
-      context.getComputeService().listNodes();
+   public void testLaunchCluster() throws RunNodesException {
+      int numNodes = 4;
+      final String clusterName = "test-launch-cluster";
+      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName,
+               numNodes);
+      assertEquals(numNodes, nodes.size(), "wrong number of nodes");
+      for (NodeMetadata node : nodes) {
+         logger.debug("Created Node: %s", node);
+         SshClient client = context.utils().sshForNode().apply(node);
+         client.connect();
+         ExecResponse hello = client.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
+      }
+      context.getComputeService().destroyNodesMatching(new Predicate<NodeMetadata>() {
+         @Override
+         public boolean apply(NodeMetadata input) {
+            return input.getId().contains(clusterName);
+         }
+      });
    }
 
 }
