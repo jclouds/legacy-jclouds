@@ -48,7 +48,7 @@ public abstract class ComputeServiceContextBuilder<S, A> extends RestContextBuil
 
    @Override
    public Injector buildInjector() {
-      addImageResolutionModuleIfNotPresent();
+      addHostModuleIfNotPresent();
       return super.buildInjector();
    }
 
@@ -67,7 +67,7 @@ public abstract class ComputeServiceContextBuilder<S, A> extends RestContextBuil
                         asyncClientType)));
    }
 
-   protected void addImageResolutionModuleIfNotPresent() {
+   protected void addHostModuleIfNotPresent() {
       if (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ResolvesImages.class);

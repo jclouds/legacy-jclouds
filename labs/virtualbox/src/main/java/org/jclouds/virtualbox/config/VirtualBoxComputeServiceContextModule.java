@@ -176,16 +176,8 @@ public class VirtualBoxComputeServiceContextModule extends
       String provider = "byon";
       String identity = "";
       String credential = "";
-      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
-               "host",
-               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
-                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
-                        .osVersion(System.getProperty("os.version")).group("ssh")
-                        .username(System.getProperty("user.name"))
-                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
-                        .build()));
       return new ComputeServiceContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule));
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()));
    }
 
    @Provides
