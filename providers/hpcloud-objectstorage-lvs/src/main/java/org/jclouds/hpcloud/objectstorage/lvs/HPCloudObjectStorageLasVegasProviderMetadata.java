@@ -56,13 +56,13 @@ public class HPCloudObjectStorageLasVegasProviderMetadata extends BaseProviderMe
    public String getName() {
       return "HP Cloud Services Object StorageLasVegas";
    }
-
+   
    /**
     * {@inheritDoc}
     */
    @Override
    public String getIdentityName() {
-      return "Account ID";
+      return "email:tenantId";
    }
 
    /**
@@ -70,7 +70,7 @@ public class HPCloudObjectStorageLasVegasProviderMetadata extends BaseProviderMe
     */
    @Override
    public String getCredentialName() {
-      return "Access Key";
+      return "API Key";
    }
 
    /**
@@ -94,7 +94,7 @@ public class HPCloudObjectStorageLasVegasProviderMetadata extends BaseProviderMe
     */
    @Override
    public URI getApiDocumentation() {
-      return URI.create("https://manage.hpcloud.com/pages/build/docs/objectstorage-lvs/api");
+      return URI.create("TODO");
    }
 
    /**
@@ -102,7 +102,7 @@ public class HPCloudObjectStorageLasVegasProviderMetadata extends BaseProviderMe
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("hpcloud-objectstorage-lvs");
+      return ImmutableSet.of("hpcloud-compute", "hpcloud-objectstorage-lvs");
    }
 
    /**
