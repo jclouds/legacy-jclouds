@@ -44,7 +44,7 @@ import com.google.inject.Module;
 public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
 
    public VirtualBoxContextBuilder(Properties properties) {
-      super(Supplier.class, properties);
+      super(Supplier.class, new VirtualBoxPropertiesBuilder(properties).defaultProperties());
    }
 
    @Override
