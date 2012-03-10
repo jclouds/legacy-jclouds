@@ -90,7 +90,7 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
     NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
         .build();
 
-    this.networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+    this.networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
   }
 

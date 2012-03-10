@@ -99,7 +99,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
                .build();
 
-      this.cloneNetworkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+      this.cloneNetworkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
       sourceMachineSpec = MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec).network(cloneNetworkSpec).build();
 

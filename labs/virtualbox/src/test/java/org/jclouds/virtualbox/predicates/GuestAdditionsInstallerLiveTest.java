@@ -99,7 +99,7 @@ public class GuestAdditionsInstallerLiveTest extends
 				.builder().addNetworkAdapter(networkAdapter).build();
 
 		NetworkSpec networkSpec = NetworkSpec.builder()
-				.addNIC(0L, networkInterfaceCard).build();
+				.addNIC(networkInterfaceCard).build();
 		sourceMachineSpec = MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec)
 				.network(networkSpec).build();
 

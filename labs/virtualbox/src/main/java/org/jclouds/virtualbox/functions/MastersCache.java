@@ -37,6 +37,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
@@ -72,7 +73,10 @@ import com.google.common.collect.Maps;
  * @author dralves
  * 
  */
+@Singleton
 public class MastersCache extends AbstractLoadingCache<Image, Master> {
+   
+   public static final int MASTER_PORT = 2222;
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -121,7 +125,7 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
    public synchronized Master get(Image key) throws ExecutionException {
       // check if we have loaded this machine before
       if (masters.containsKey(key.getId())) {
-         return masters.get(key);
+         return masters.get(key.getId());
       }
 
       String guestAdditionsFileName = String.format("VBoxGuestAdditions_%s.iso", version);
@@ -154,12 +158,12 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
                .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+               .tcpRedirectRule("127.0.0.1", MASTER_PORT, "", 22).build();
 
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-               .build();
+               .slot(0L).build();
 
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(0L, networkInterfaceCard).build();
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
       MasterSpec masterSpec = MasterSpec
                .builder()
@@ -189,6 +193,14 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
       return master;
    }
 
+   @Override
+   public synchronized Master getIfPresent(Image key) {
+      if (masters.containsKey(key.getId())) {
+         return masters.get(key.getId());
+      }
+      return null;
+   }
+   
    private String getFilePathOrDownload(String httpUrl) throws ExecutionException {
       String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1, httpUrl.length());
       File localFile = new File(isosDir, fileName);
@@ -198,14 +210,6 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
       }
       checkState(localFile.exists(), "iso file has not been downloaded: " + fileName);
       return localFile.getAbsolutePath();
-   }
-
-   @Override
-   public Master getIfPresent(Image key) {
-      if (masters.containsKey(key.getId())) {
-         return masters.get(key.getId());
-      }
-      return null;
    }
 
 }
