@@ -61,7 +61,7 @@ public class SetIpAddressTest {
                .addNetworkAdapter(
                         NetworkAdapter.builder().staticIp("localhost").networkAttachmentType(NetworkAttachmentType.NAT)
                                  .build()).build();
-      SetIpAddress setIpAddressStmtm = new SetIpAddress(networkInterfaceCard);
+      new SetIpAddress(networkInterfaceCard);
    }
 
 }

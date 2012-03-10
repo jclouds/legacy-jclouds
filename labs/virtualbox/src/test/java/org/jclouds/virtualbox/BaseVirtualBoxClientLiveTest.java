@@ -135,17 +135,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       setupCredentials();
       Properties overrides = new VirtualBoxPropertiesBuilder(setupProperties()).build();
 
-      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
-               "host",
-               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
-                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
-                        .osVersion(System.getProperty("os.version")).group("ssh")
-                        .username(System.getProperty("user.name"))
-                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
-                        .build()));
-
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
-               .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule, new ExecutorServiceModule(
+               .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), new ExecutorServiceModule(
                         singleThreadExec, singleThreadExec)), overrides);
       
       context.utils().injector().injectMembers(this);
