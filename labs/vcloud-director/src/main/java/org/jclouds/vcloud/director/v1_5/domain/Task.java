@@ -384,6 +384,7 @@ public class Task extends EntityType<Task> {
     * <li>aborted - The task was aborted by an administrative action.
     * </ul>
     */
+   // TODO: enum!!!
    public String getStatus() {
       return status;
    }
