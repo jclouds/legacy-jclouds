@@ -20,6 +20,7 @@ package org.jclouds.vcloud.director.v1_5.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
 import com.google.common.base.Predicate;

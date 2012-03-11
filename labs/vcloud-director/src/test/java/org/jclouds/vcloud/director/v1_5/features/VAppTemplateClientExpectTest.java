@@ -18,7 +18,16 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CUSTOMIZATION_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ERROR;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.LEASE_SETTINGS_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_ENTRY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONFIG_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.RELOCATE_TEMPLATE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -29,7 +38,31 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.domain.*;
+import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.FirewallRule;
+import org.jclouds.vcloud.director.v1_5.domain.FirewallRuleProtocols;
+import org.jclouds.vcloud.director.v1_5.domain.FirewallService;
+import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.NatOneToOneVmRule;
+import org.jclouds.vcloud.director.v1_5.domain.NatRule;
+import org.jclouds.vcloud.director.v1_5.domain.NatService;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
