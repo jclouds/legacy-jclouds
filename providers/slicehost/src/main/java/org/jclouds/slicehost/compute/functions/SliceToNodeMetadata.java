@@ -129,7 +129,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       try {
          return Iterables.find(hardwares.get(), new FindHardwareForSlice(from));
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching hardware for slice %s", from);
+         logger.debug("could not find a matching hardware for slice %s", from);
       }
       return null;
    }
@@ -138,7 +138,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       try {
          return Iterables.find(images.get(), new FindImageForSlice(from)).getOperatingSystem();
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching image for slice %s in location %s", from, location);
+         logger.debug("could not find a matching image for slice %s in location %s", from, location);
       }
       return null;
    }
