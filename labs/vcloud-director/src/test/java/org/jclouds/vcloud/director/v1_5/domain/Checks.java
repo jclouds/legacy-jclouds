@@ -531,7 +531,7 @@ public class Checks {
    public static void checkOrgSetting(OrgSettings settings) {
       // Check optional fields
       if (settings.getOrgGeneralSettings() != null) {
-         checkOrgGeneralSettings(settings.getOrgGeneralSettings());
+         checkGeneralSettings(settings.getOrgGeneralSettings());
       }
       if (settings.getVAppLeaseSettings() != null) {
          checkVAppLeaseSettings(settings.getVAppLeaseSettings());
@@ -574,7 +574,7 @@ public class Checks {
       // TODO: validate email addresses
    }
    
-   public static void checkOrgGeneralSettings(OrgGeneralSettings settings) {
+   public static void checkGeneralSettings(OrgGeneralSettings settings) {
       // Check optional fields
       // NOTE canPublishCatalogs cannot be checked
       // NOTE useServerBootSequence cannot be checked

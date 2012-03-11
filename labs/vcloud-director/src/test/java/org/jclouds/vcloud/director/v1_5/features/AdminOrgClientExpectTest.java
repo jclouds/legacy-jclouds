@@ -25,6 +25,7 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
@@ -61,9 +62,53 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
  
 // PUT /admin/org/{id}/settings/email
  
-// GET /admin/org/{id}/settings/general
- 
-// PUT /admin/org/{id}/settings/general
+   @Test(enabled = false)
+   public void testGetGeneralSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/generalSettings.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgGeneralSettings expected = generalSettings();
+
+      assertEquals(client.getAdminOrgClient().getGeneralSettings(orgRef.getURI()), expected);
+   }
+   
+   public static final OrgGeneralSettings generalSettings() {
+      return OrgGeneralSettings.builder()
+         
+         .build();
+   }
+   
+   @Test(enabled = false)
+   public void testUpdateGeneralSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general")
+            .xmlFilePayload("/org/admin/updateGeneralSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateGeneralSettings.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgGeneralSettings expected = updateGeneralSettings();
+
+      assertEquals(client.getAdminOrgClient().updateGeneralSettings(orgRef.getURI(), expected), expected);
+   }
+   
+   public static final OrgGeneralSettings updateGeneralSettings() {
+      return generalSettings().toBuilder()
+         
+         .build();
+   }
  
    @Test
    public void testGetLdapSettings() {

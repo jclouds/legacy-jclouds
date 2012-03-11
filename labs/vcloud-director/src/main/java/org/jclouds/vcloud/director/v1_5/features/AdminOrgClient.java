@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
@@ -51,11 +52,30 @@ public interface AdminOrgClient extends OrgClient {
    
 //   PUT /admin/org/{id}/settings/email
    
-//   GET /admin/org/{id}/settings/general
+   /**
+    * Gets general organization settings.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/general
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgGeneralSettings getGeneralSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/general
-   
-//   GET /admin/org/{id}/settings/ldap
+   /**
+    * Updates general organization settings.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/general
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgGeneralSettings updateGeneralSettings(URI orgRef, 
+         OrgGeneralSettings newSettings);
    
    /**
     * Retrieves LDAP settings for an organization.

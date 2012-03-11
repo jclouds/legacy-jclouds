@@ -24,6 +24,7 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
@@ -59,6 +60,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    OrgPasswordPolicySettings passwordPolicy;
    OrgLeaseSettings vAppLeaseSettings;
    OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
+   OrgGeneralSettings generalSettings;
 
    @Override
    @BeforeClass(inheritGroups = true)
@@ -82,9 +84,66 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
  
 // PUT /admin/org/{id}/settings/email
  
-// GET /admin/org/{id}/settings/general
- 
-// PUT /admin/org/{id}/settings/general
+   @Test(testName = "GET /admin/org/{id}/settings/generalSettings")
+   public void testGetGeneralSettings() {
+      generalSettings = orgClient.getGeneralSettings(orgRef.getURI());
+      
+      Checks.checkGeneralSettings(generalSettings);
+   }
+   
+   @Test(testName = "PUT /admin/org/{id}/settings/generalSettings", 
+         dependsOnMethods = { "testGetGeneralSettings" }, enabled = false )
+   public void testUpdateGeneralSettings() {
+//      boolean canPublishCatalogs = generalSettings.canPublishCatalogs(); // FIXME: did not update
+      Integer deployedVMQuota = generalSettings.getDeployedVMQuota();
+      Integer storedVmQuota = generalSettings.getStoredVmQuota();
+      boolean useServerBootSequence = generalSettings.useServerBootSequence();
+      Integer delayAfterPowerOnSeconds = generalSettings.getDelayAfterPowerOnSeconds();
+      
+      try {
+         generalSettings = generalSettings.toBuilder()
+//               .canPublishCatalogs(!canPublishCatalogs)
+               .deployedVMQuota(deployedVMQuota+1)
+               .storedVmQuota(storedVmQuota+1)
+               .useServerBootSequence(!useServerBootSequence)
+               .delayAfterPowerOnSeconds(delayAfterPowerOnSeconds+1)
+               .build();
+         
+         generalSettings = orgClient.updateGeneralSettings(
+               orgRef.getURI(), generalSettings);
+         
+//         assertTrue(equal(generalSettings.canPublishCatalogs(), !canPublishCatalogs), 
+//               String.format(OBJ_FIELD_UPDATABLE, 
+//               "generalSettings", "canPublishCatalogs"));
+         assertTrue(equal(generalSettings.getDeployedVMQuota(), deployedVMQuota+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "generalSettings", "deployedVMQuota"));
+         assertTrue(equal(generalSettings.getStoredVmQuota(), storedVmQuota+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "generalSettings", "storedVmQuota"));
+         assertTrue(equal(generalSettings.useServerBootSequence(), !useServerBootSequence), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "generalSettings", "useServerBootSequence"));
+         assertTrue(equal(generalSettings.getDelayAfterPowerOnSeconds(), delayAfterPowerOnSeconds+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "generalSettings", "delayAfterPowerOnSeconds"));
+         
+         //TODO negative tests?
+         
+         Checks.checkGeneralSettings(generalSettings);
+      } finally {
+         generalSettings = generalSettings.toBuilder()
+//               .canPublishCatalogs(canPublishCatalogs)
+               .deployedVMQuota(deployedVMQuota)
+               .storedVmQuota(storedVmQuota)
+               .useServerBootSequence(useServerBootSequence)
+               .delayAfterPowerOnSeconds(delayAfterPowerOnSeconds)
+               .build();
+         
+         generalSettings = orgClient.updateGeneralSettings(
+               orgRef.getURI(), generalSettings);
+      }
+   }
  
    @Test(testName = "GET /admin/org/{id}/settings/ldap")
    public void getLdapSettings() {

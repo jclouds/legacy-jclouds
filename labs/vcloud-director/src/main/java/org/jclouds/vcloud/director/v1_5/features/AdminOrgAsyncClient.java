@@ -33,6 +33,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
@@ -63,9 +64,29 @@ public interface AdminOrgAsyncClient extends OrgAsyncClient {
  
 // PUT /admin/org/{id}/settings/email
  
-// GET /admin/org/{id}/settings/general
- 
-// PUT /admin/org/{id}/settings/general
+   /**
+    * @see AdminOrgClient#getGeneralSettings(URI)
+    */
+   @GET
+   @Path("/settings/general")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgGeneralSettings> getGeneralSettings(
+         @EndpointParam URI orgRef);
+
+   /**
+    * @see AdminOrgClient#updateGeneralSettings(URI, OrgGeneralSettings)
+    */
+   @PUT
+   @Path("/settings/general")
+   @Consumes(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+   @Produces(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgGeneralSettings> updateGeneralSettings(
+         @EndpointParam URI orgRef, 
+         @BinderParam(BindToXMLPayload.class) OrgGeneralSettings settings);
    
    /**
     * @see AdminOrgClient#getPasswordPolicy(URI)
