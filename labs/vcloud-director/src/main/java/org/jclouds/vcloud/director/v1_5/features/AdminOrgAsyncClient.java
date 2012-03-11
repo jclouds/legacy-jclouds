@@ -38,6 +38,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
@@ -57,9 +58,29 @@ public interface AdminOrgAsyncClient extends OrgAsyncClient {
  
 // POST /admin/org/{id}/groups
  
-// GET /admin/org/{id}/settings
- 
-// PUT /admin/org/{id}/settings
+   /**
+    * @see AdminOrgClient#getSettings(URI)
+    */
+   @GET
+   @Path("/settings")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgSettings> getSettings(
+         @EndpointParam URI orgRef);
+
+   /**
+    * @see AdminOrgClient#updateSettings(URI, OrgSettings)
+    */
+   @PUT
+   @Path("/settings")
+   @Consumes(VCloudDirectorMediaType.ORG_SETTINGS)
+   @Produces(VCloudDirectorMediaType.ORG_SETTINGS)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgSettings> updateSettings(
+         @EndpointParam URI orgRef, 
+         @BinderParam(BindToXMLPayload.class) OrgSettings settings);
  
    /**
     * @see AdminOrgClient#getEmailSettings(URI)

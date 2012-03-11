@@ -28,6 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 
 /**
@@ -45,9 +46,29 @@ public interface AdminOrgClient extends OrgClient {
    
 //   POST /admin/org/{id}/groups
    
-//   GET /admin/org/{id}/settings
+   /**
+    * Gets organizational settings for this organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the settings
+    */
+   OrgSettings getSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings
+   /**
+    * Updates organizational settings for this organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgSettings updateSettings(URI orgRef, OrgSettings newSettings);
    
    /**
     * Retrieves email settings for an organization.

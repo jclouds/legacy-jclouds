@@ -29,6 +29,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
@@ -59,11 +60,13 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private ReferenceType<?> orgRef;
    private AdminOrg org;
-   OrgEmailSettings emailSettings;
-   OrgGeneralSettings generalSettings;
-   OrgPasswordPolicySettings passwordPolicy;
-   OrgLeaseSettings vAppLeaseSettings;
-   OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
+   private OrgSettings settings, newSettings;
+   private OrgEmailSettings emailSettings, newEmailSettings;
+   private OrgGeneralSettings generalSettings, newGeneralSettings;
+   private OrgLdapSettings ldapSettings, newLdapSettings;
+   private OrgPasswordPolicySettings passwordPolicy, newPasswordPolicy;
+   private OrgLeaseSettings vAppLeaseSettings, newVAppLeaseSettings;
+   private OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings, newVAppTemplateLeaseSettings;
 
    @Override
    @BeforeClass(inheritGroups = true)
@@ -79,9 +82,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
  
 // POST /admin/org/{id}/groups
  
-// GET /admin/org/{id}/settings
- 
-// PUT /admin/org/{id}/settings
+   
  
    @Test(testName = "GET /admin/org/{id}/settings/emailSettings")
    public void testGetEmailSettings() {
@@ -109,7 +110,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          .build();
       
       try {
-         emailSettings = emailSettings.toBuilder()
+         newEmailSettings = emailSettings.toBuilder()
                .isDefaultSmtpServer(!isDefaultSmtpServer)
                .isDefaultOrgEmail(!isDefaultOrgEmail)
                .fromEmailAddress(newFromEmailAddress)
@@ -119,7 +120,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          emailSettings = orgClient.updateEmailSettings(
-               orgRef.getURI(), emailSettings);
+               orgRef.getURI(), newEmailSettings);
          
          assertTrue(equal(emailSettings.isDefaultSmtpServer(), !isDefaultSmtpServer), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -175,7 +176,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Integer delayAfterPowerOnSeconds = generalSettings.getDelayAfterPowerOnSeconds();
       
       try {
-         generalSettings = generalSettings.toBuilder()
+         newGeneralSettings = generalSettings.toBuilder()
 //               .canPublishCatalogs(!canPublishCatalogs)
                .deployedVMQuota(deployedVMQuota+1)
                .storedVmQuota(storedVmQuota+1)
@@ -184,7 +185,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          generalSettings = orgClient.updateGeneralSettings(
-               orgRef.getURI(), generalSettings);
+               orgRef.getURI(), newGeneralSettings);
          
 //         assertTrue(equal(generalSettings.canPublishCatalogs(), !canPublishCatalogs), 
 //               String.format(OBJ_FIELD_UPDATABLE, 
@@ -220,8 +221,8 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
  
    @Test(testName = "GET /admin/org/{id}/settings/ldap")
-   public void getLdapSettings() {
-      OrgLdapSettings ldapSettings = orgClient.getLdapSettings(orgRef.getURI());
+   public void testGetLdapSettings() {
+      ldapSettings = orgClient.getLdapSettings(orgRef.getURI());
       
       Checks.checkLdapSettings(ldapSettings);
    }
@@ -241,14 +242,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Integer accountLockoutIntervalMinutes = passwordPolicy.getAccountLockoutIntervalMinutes();
       
       try {
-         passwordPolicy = passwordPolicy.toBuilder()
+         newPasswordPolicy = passwordPolicy.toBuilder()
                .accountLockoutEnabled(!accountLockoutEnabled)
                .invalidLoginsBeforeLockout(invalidLoginsBeforeLockout+1)
                .accountLockoutIntervalMinutes(accountLockoutIntervalMinutes+1)
                .build();
          
          passwordPolicy = orgClient.updatePasswordPolicy(
-               orgRef.getURI(), passwordPolicy);
+               orgRef.getURI(), newPasswordPolicy);
          
          assertTrue(equal(passwordPolicy.isAccountLockoutEnabled(), !accountLockoutEnabled), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -290,14 +291,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Integer deploymentLeaseSeconds = vAppLeaseSettings.getDeploymentLeaseSeconds();
       
       try {
-         vAppLeaseSettings = vAppLeaseSettings.toBuilder()
+         newVAppLeaseSettings = vAppLeaseSettings.toBuilder()
                .deleteOnStorageLeaseExpiration(!deleteOnStorageLeaseExpiration)
                .storageLeaseSeconds(storageLeaseSeconds+1)
                .deploymentLeaseSeconds(deploymentLeaseSeconds+1)
                .build();
          
          vAppLeaseSettings = orgClient.updateVAppLeaseSettings(
-               orgRef.getURI(), vAppLeaseSettings);
+               orgRef.getURI(), newVAppLeaseSettings);
          
          assertTrue(equal(vAppLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -338,13 +339,13 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Integer storageLeaseSeconds = vAppTemplateLeaseSettings.getStorageLeaseSeconds();
       
       try {
-         vAppTemplateLeaseSettings = vAppTemplateLeaseSettings.toBuilder()
+         newVAppTemplateLeaseSettings = vAppTemplateLeaseSettings.toBuilder()
                .deleteOnStorageLeaseExpiration(!deleteOnStorageLeaseExpiration)
                .storageLeaseSeconds(storageLeaseSeconds+1)
                .build();
          
          vAppTemplateLeaseSettings = orgClient.updateVAppTemplateLeaseSettings(
-               orgRef.getURI(), vAppTemplateLeaseSettings);
+               orgRef.getURI(), newVAppTemplateLeaseSettings);
          
          assertTrue(equal(vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -364,6 +365,77 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          
          vAppTemplateLeaseSettings = orgClient.updateVAppTemplateLeaseSettings(
                orgRef.getURI(), vAppTemplateLeaseSettings);
+      }
+   }
+   
+   @Test(testName = "GET /admin/org/{id}/settings/settings",
+      dependsOnMethods = { "testGetGeneralSettings", 
+         "testGetVAppLeaseSettings", 
+         "testGetVAppTemplateLeaseSettings", 
+         "testGetLdapSettings", 
+         "testGetEmailSettings", 
+         "testGetPasswordPolicy"})
+   public void testGetSettings() {
+      settings = orgClient.getSettings(orgRef.getURI());
+      
+      Checks.checkOrgSettings(settings);
+   }
+   
+   @Test(testName = "PUT /admin/org/{id}/settings/settings",
+         dependsOnMethods = { "testUpdateGeneralSettings", 
+         "testUpdateVAppLeaseSettings", 
+         "testUpdateVAppTemplateLeaseSettings", 
+         "testUpdateEmailSettings", 
+         "testUpdatePasswordPolicy"}, 
+          enabled = false )
+   public void testUpdateSettings() {
+      try {
+         newSettings = settings.toBuilder()
+               .orgGeneralSettings(newGeneralSettings)
+               .vAppLeaseSettings(newVAppLeaseSettings)
+               .vAppTemplateLeaseSettings(newVAppTemplateLeaseSettings)
+               .orgLdapSettings(newLdapSettings)
+               .orgEmailSettings(newEmailSettings)
+               .passwordPolicy(newPasswordPolicy)
+               .build();
+         
+         settings = orgClient.updateSettings(
+               orgRef.getURI(), newSettings);
+         
+         assertTrue(equal(settings.getGeneralSettings(), newGeneralSettings), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "orgSettings", "generalSettings"));
+         assertTrue(equal(settings.getVAppLeaseSettings(), newVAppLeaseSettings), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "orgSettings", "vAppLeaseSettings"));
+         assertTrue(equal(settings.getVAppTemplateLeaseSettings(), newVAppTemplateLeaseSettings), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "orgSettings", "vAppTemplateLeaseSettings"));
+         assertTrue(equal(settings.getLdapSettings(), newLdapSettings), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "orgSettings", "ldapSettings"));
+         assertTrue(equal(settings.getEmailSettings(), newEmailSettings), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "orgSettings", "emailSettings"));
+         assertTrue(equal(settings.getPasswordPolicy(), newPasswordPolicy), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "orgSettings", "passwordPolicy"));
+         
+         //TODO negative tests?
+         
+         Checks.checkOrgSettings(settings);
+      } finally {
+         settings = settings.toBuilder()
+               .orgGeneralSettings(generalSettings)
+               .vAppLeaseSettings(vAppLeaseSettings)
+               .vAppTemplateLeaseSettings(vAppTemplateLeaseSettings)
+               .orgLdapSettings(ldapSettings)
+               .orgEmailSettings(emailSettings)
+               .passwordPolicy(passwordPolicy)
+               .build();
+         
+         settings = orgClient.updateSettings(
+               orgRef.getURI(), settings);
       }
    }
 }

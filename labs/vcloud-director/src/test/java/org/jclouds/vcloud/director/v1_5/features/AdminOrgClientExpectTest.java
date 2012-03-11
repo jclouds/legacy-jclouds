@@ -30,6 +30,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
@@ -54,9 +55,60 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
  
 // POST /admin/org/{id}/groups
  
-// GET /admin/org/{id}/settings
- 
-// PUT /admin/org/{id}/settings
+   @Test
+   public void testGetSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/settings.xml", 
+                  VCloudDirectorMediaType.ORG_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgSettings expected = settings();
+
+      assertEquals(client.getAdminOrgClient().getSettings(orgRef.getURI()), expected);
+   }
+   
+   public static final OrgSettings settings() {
+      return OrgSettings.builder()
+         .type("application/vnd.vmware.admin.organizationSettings+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/"))
+         .link(Link.builder()
+            .rel("edit")
+            .type("application/vnd.vmware.admin.organizationSettings+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/"))
+            .build())
+         
+         .build();
+   }
+   
+   @Test
+   public void testUpdateSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/")
+            .xmlFilePayload("/org/admin/updateSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateSettings.xml", 
+                  VCloudDirectorMediaType.ORG_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgSettings expected = updateSettings();
+
+      assertEquals(client.getAdminOrgClient().updateSettings(orgRef.getURI(), expected), expected);
+   }
+   
+   @Test
+   public static final OrgSettings updateSettings() {
+      return settings().toBuilder()
+         .build();
+   }
  
    @Test
    public void testGetEmailSettings() {
@@ -239,10 +291,10 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    }
    
    @Test
-   public void testUpdateOrgPasswordPolicy() {
+   public void testUpdatePasswordPolicy() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/???/settings/passwordPolicy")
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy")
             .xmlFilePayload("/org/admin/updatePasswordPolicySource.xml", 
                   VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
             .acceptMedia(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
@@ -269,7 +321,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    public void testGetVAppLeaseSettings() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/???/settings/vAppLeaseSettings")
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings")
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
@@ -292,7 +344,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    public void testUpdateOrgVAppLeaseSettings() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/???/settings/vAppLeaseSettings")
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings")
             .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml", 
                   VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
             .acceptMedia(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
@@ -317,7 +369,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    public void testGetVAppTemplateLeaseSettings() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/???/settings/vAppTemplateLeaseSettings")
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings")
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
@@ -340,7 +392,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    public void testUpdateOrgVAppTemplateLeaseSettings() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/???/settings/vAppTemplateLeaseSettings")
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings")
             .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml", 
                   VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
             .acceptMedia(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)

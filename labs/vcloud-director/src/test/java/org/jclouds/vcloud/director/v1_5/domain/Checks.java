@@ -528,10 +528,10 @@ public class Checks {
       }
    }
    
-   public static void checkOrgSetting(OrgSettings settings) {
+   public static void checkOrgSettings(OrgSettings settings) {
       // Check optional fields
-      if (settings.getOrgGeneralSettings() != null) {
-         checkGeneralSettings(settings.getOrgGeneralSettings());
+      if (settings.getGeneralSettings() != null) {
+         checkGeneralSettings(settings.getGeneralSettings());
       }
       if (settings.getVAppLeaseSettings() != null) {
          checkVAppLeaseSettings(settings.getVAppLeaseSettings());
@@ -539,14 +539,14 @@ public class Checks {
       if (settings.getVAppTemplateLeaseSettings() != null) {
          checkVAppTemplateLeaseSettings(settings.getVAppTemplateLeaseSettings());
       }
-      if (settings.getOrgLdapSettings() != null) {
-         checkLdapSettings(settings.getOrgLdapSettings());
+      if (settings.getLdapSettings() != null) {
+         checkLdapSettings(settings.getLdapSettings());
       }
-      if (settings.getOrgEmailSettings() != null) {
-         checkEmailSettings(settings.getOrgEmailSettings());
+      if (settings.getEmailSettings() != null) {
+         checkEmailSettings(settings.getEmailSettings());
       }
-      if (settings.getOrgPasswordPolicySettings() != null) {
-         checkPasswordPolicySettings(settings.getOrgPasswordPolicySettings());
+      if (settings.getPasswordPolicy() != null) {
+         checkPasswordPolicySettings(settings.getPasswordPolicy());
       }
       
       // parent type
@@ -561,7 +561,6 @@ public class Checks {
       checkEmailAddress(settings.getFromEmailAddress());
       assertNotNull(settings.getDefaultSubjectPrefix(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "defaultSubjectPrefix"));
       assertNotNull(settings.isAlertEmailToAllAdmins(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "isAlertEmailToAllAdmins"));
-      assertNotNull(settings.getAlertEmailsTo(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "alertEmailsTo"));
       
       // optional
       // NOTE alertEmailsTo cannot be checked

@@ -69,12 +69,12 @@ import com.google.common.base.Objects.ToStringHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "OrgSettings")
 @XmlType(propOrder = {
-    "orgGeneralSettings",
+    "generalSettings",
     "vAppLeaseSettings",
     "vAppTemplateLeaseSettings",
-    "orgLdapSettings",
-    "orgEmailSettings",
-    "orgPasswordPolicySettings"
+    "ldapSettings",
+    "emailSettings",
+    "passwordPolicy"
 })
 public class OrgSettings extends ResourceType<OrgSettings> {
    public static Builder builder() {
@@ -87,18 +87,18 @@ public class OrgSettings extends ResourceType<OrgSettings> {
 
    public static class Builder extends ResourceType.Builder<OrgSettings> {
       
-      private OrgGeneralSettings orgGeneralSettings;
+      private OrgGeneralSettings generalSettings;
       private OrgLeaseSettings vAppLeaseSettings;
       private OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
-      private OrgLdapSettings orgLdapSettings;
-      private OrgEmailSettings orgEmailSettings;
-      private OrgPasswordPolicySettings orgPasswordPolicySettings;
+      private OrgLdapSettings ldapSettings;
+      private OrgEmailSettings emailSettings;
+      private OrgPasswordPolicySettings passwordPolicy;
 
       /**
-       * @see OrgSettings#getOrgGeneralSettings()
+       * @see OrgSettings#getGeneralSettings()
        */
-      public Builder orgGeneralSettings(OrgGeneralSettings orgGeneralSettings) {
-         this.orgGeneralSettings = orgGeneralSettings;
+      public Builder orgGeneralSettings(OrgGeneralSettings generalSettings) {
+         this.generalSettings = generalSettings;
          return this;
       }
 
@@ -119,32 +119,32 @@ public class OrgSettings extends ResourceType<OrgSettings> {
       }
 
       /**
-       * @see OrgSettings#getOrgLdapSettings()
+       * @see OrgSettings#getLdapSettings()
        */
-      public Builder orgLdapSettings(OrgLdapSettings orgLdapSettings) {
-         this.orgLdapSettings = orgLdapSettings;
+      public Builder orgLdapSettings(OrgLdapSettings ldapSettings) {
+         this.ldapSettings = ldapSettings;
          return this;
       }
 
       /**
-       * @see OrgSettings#getOrgEmailSettings()
+       * @see OrgSettings#getEmailSettings()
        */
-      public Builder orgEmailSettings(OrgEmailSettings orgEmailSettings) {
-         this.orgEmailSettings = orgEmailSettings;
+      public Builder orgEmailSettings(OrgEmailSettings emailSettings) {
+         this.emailSettings = emailSettings;
          return this;
       }
 
       /**
-       * @see OrgSettings#getOrgPasswordPolicySettings()
+       * @see OrgSettings#getPasswordPolicy()
        */
-      public Builder orgPasswordPolicySettings(OrgPasswordPolicySettings orgPasswordPolicySettings) {
-         this.orgPasswordPolicySettings = orgPasswordPolicySettings;
+      public Builder passwordPolicy(OrgPasswordPolicySettings passwordPolicy) {
+         this.passwordPolicy = passwordPolicy;
          return this;
       }
 
       public OrgSettings build() {
-         return new OrgSettings(href, type, links, orgGeneralSettings, vAppLeaseSettings, 
-               vAppTemplateLeaseSettings, orgLdapSettings, orgEmailSettings, orgPasswordPolicySettings);
+         return new OrgSettings(href, type, links, generalSettings, vAppLeaseSettings, 
+               vAppTemplateLeaseSettings, ldapSettings, emailSettings, passwordPolicy);
       }
 
       
@@ -191,12 +191,12 @@ public class OrgSettings extends ResourceType<OrgSettings> {
       }
       public Builder fromOrgSettings(OrgSettings in) {
          return fromResourceType(in)
-            .orgGeneralSettings(in.getOrgGeneralSettings())
+            .orgGeneralSettings(in.getGeneralSettings())
             .vAppLeaseSettings(in.getVAppLeaseSettings())
             .vAppTemplateLeaseSettings(in.getVAppTemplateLeaseSettings())
-            .orgLdapSettings(in.getOrgLdapSettings())
-            .orgEmailSettings(in.getOrgEmailSettings())
-            .orgPasswordPolicySettings(in.getOrgPasswordPolicySettings());
+            .orgLdapSettings(in.getLdapSettings())
+            .orgEmailSettings(in.getEmailSettings())
+            .passwordPolicy(in.getPasswordPolicy());
       }
    }
 
@@ -205,32 +205,33 @@ public class OrgSettings extends ResourceType<OrgSettings> {
       // For JAXB
    }
 
-    public OrgSettings(URI href, String type, Set<Link> links,
-         OrgGeneralSettings orgGeneralSettings,
+   public OrgSettings(URI href, String type, Set<Link> links,
+         OrgGeneralSettings generalSettings,
          OrgLeaseSettings vAppLeaseSettings,
          OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings,
-         OrgLdapSettings orgLdapSettings, OrgEmailSettings orgEmailSettings,
-         OrgPasswordPolicySettings orgPasswordPolicySettings) {
+         OrgLdapSettings ldapSettings, OrgEmailSettings emailSettings,
+         OrgPasswordPolicySettings passwordPolicy) {
       super(href, type, links);
-      this.orgGeneralSettings = orgGeneralSettings;
+      this.generalSettings = generalSettings;
       this.vAppLeaseSettings = vAppLeaseSettings;
       this.vAppTemplateLeaseSettings = vAppTemplateLeaseSettings;
-      this.orgLdapSettings = orgLdapSettings;
-      this.orgPasswordPolicySettings = orgPasswordPolicySettings;
+      this.ldapSettings = ldapSettings;
+      this.emailSettings = emailSettings;
+      this.passwordPolicy = passwordPolicy;
    }
 
    @XmlElement(name = "OrgGeneralSettings")
-    protected OrgGeneralSettings orgGeneralSettings;
+    protected OrgGeneralSettings generalSettings;
     @XmlElement(name = "VAppLeaseSettings")
     protected OrgLeaseSettings vAppLeaseSettings;
     @XmlElement(name = "VAppTemplateLeaseSettings")
     protected OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
     @XmlElement(name = "OrgLdapSettings")
-    protected OrgLdapSettings orgLdapSettings;
+    protected OrgLdapSettings ldapSettings;
     @XmlElement(name = "OrgEmailSettings")
-    protected OrgEmailSettings orgEmailSettings;
+    protected OrgEmailSettings emailSettings;
     @XmlElement(name = "OrgPasswordPolicySettings")
-    protected OrgPasswordPolicySettings orgPasswordPolicySettings;
+    protected OrgPasswordPolicySettings passwordPolicy;
 
     /**
      * Gets the value of the orgGeneralSettings property.
@@ -240,8 +241,8 @@ public class OrgSettings extends ResourceType<OrgSettings> {
      *     {@link OrgGeneralSettings }
      *     
      */
-    public OrgGeneralSettings getOrgGeneralSettings() {
-        return orgGeneralSettings;
+    public OrgGeneralSettings getGeneralSettings() {
+        return generalSettings;
     }
 
     /**
@@ -276,8 +277,8 @@ public class OrgSettings extends ResourceType<OrgSettings> {
      *     {@link OrgLdapSettings }
      *     
      */
-    public OrgLdapSettings getOrgLdapSettings() {
-        return orgLdapSettings;
+    public OrgLdapSettings getLdapSettings() {
+        return ldapSettings;
     }
 
     /**
@@ -288,8 +289,8 @@ public class OrgSettings extends ResourceType<OrgSettings> {
      *     {@link OrgEmailSettings }
      *     
      */
-    public OrgEmailSettings getOrgEmailSettings() {
-        return orgEmailSettings;
+    public OrgEmailSettings getEmailSettings() {
+        return emailSettings;
     }
 
     /**
@@ -300,8 +301,8 @@ public class OrgSettings extends ResourceType<OrgSettings> {
      *     {@link OrgPasswordPolicySettings }
      *     
      */
-    public OrgPasswordPolicySettings getOrgPasswordPolicySettings() {
-        return orgPasswordPolicySettings;
+    public OrgPasswordPolicySettings getPasswordPolicy() {
+        return passwordPolicy;
     }
 
    @Override
@@ -312,34 +313,34 @@ public class OrgSettings extends ResourceType<OrgSettings> {
          return false;
       OrgSettings that = OrgSettings.class.cast(o);
       return super.equals(that) && 
-           equal(orgGeneralSettings, that.orgGeneralSettings) && 
+           equal(generalSettings, that.generalSettings) && 
            equal(vAppLeaseSettings, that.vAppLeaseSettings) && 
            equal(vAppTemplateLeaseSettings, that.vAppTemplateLeaseSettings) && 
-           equal(orgLdapSettings, that.orgLdapSettings) && 
-           equal(orgEmailSettings, that.orgEmailSettings) && 
-           equal(orgPasswordPolicySettings, that.orgPasswordPolicySettings);
+           equal(ldapSettings, that.ldapSettings) && 
+           equal(emailSettings, that.emailSettings) && 
+           equal(passwordPolicy, that.passwordPolicy);
    }
 
    @Override
    public int hashCode() {
       return Objects.hashCode(super.hashCode(), 
-           orgGeneralSettings, 
+           generalSettings, 
            vAppLeaseSettings, 
            vAppTemplateLeaseSettings, 
-           orgLdapSettings, 
-           orgEmailSettings, 
-           orgPasswordPolicySettings);
+           ldapSettings, 
+           emailSettings, 
+           passwordPolicy);
    }
 
    @Override
    public ToStringHelper string() {
       return super.string()
-            .add("orgGeneralSettings", orgGeneralSettings)
+            .add("generalSettings", generalSettings)
             .add("vAppLeaseSettings", vAppLeaseSettings)
             .add("vAppTemplateLeaseSettings", vAppTemplateLeaseSettings)
-            .add("orgLdapSettings", orgLdapSettings)
-            .add("orgEmailSettings", orgEmailSettings)
-            .add("orgPasswordPolicySettings", orgPasswordPolicySettings);
+            .add("ldapSettings", ldapSettings)
+            .add("emailSettings", emailSettings)
+            .add("passwordPolicy", passwordPolicy);
    }
 
 }
