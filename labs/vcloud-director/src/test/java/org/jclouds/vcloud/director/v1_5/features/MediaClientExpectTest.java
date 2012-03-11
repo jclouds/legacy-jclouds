@@ -41,7 +41,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test
    public void testCreateMedia() {
-      URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
+      URI uploadLink = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/media");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -62,12 +62,12 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
       Media expected = createMedia();
       
-      assertEquals(client.getVdcClient().createMedia(vdcUri, source), expected);
+      assertEquals(client.getMediaClient().createMedia(uploadLink, source), expected);
    }
    
    @Test
    public void testCloneMedia() {
-      URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
+      URI cloneUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -92,7 +92,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
       Media expected = cloneMedia();
       
-      assertEquals(client.getVdcClient().cloneMedia(vdcUri, params), expected);
+      assertEquals(client.getMediaClient().cloneMedia(cloneUri, params), expected);
    }
    
    @Test
@@ -351,7 +351,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       assertEquals(client.getMediaClient().getOwner(mediaUri), expected);
    }
    
-   private static Media createMedia() {
+   static Media createMedia() {
       return Media.builder()
          .size(0)
          .imageType("iso")
@@ -385,7 +385,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
    }
    
-   private static Media cloneMedia() {
+   static Media cloneMedia() {
       return Media.builder()
          .size(175163392)
          .imageType("iso")

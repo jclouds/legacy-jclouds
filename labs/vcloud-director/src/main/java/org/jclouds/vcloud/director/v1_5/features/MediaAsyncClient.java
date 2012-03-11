@@ -23,6 +23,7 @@ import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -35,6 +36,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
@@ -59,6 +61,29 @@ public interface MediaAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Media> getMedia(@EndpointParam URI uri);
+   
+   /**
+    * @see MediaClient#createMedia(URI, Media)
+    */
+   @POST
+   @Consumes(VCloudDirectorMediaType.MEDIA)
+   @Produces(VCloudDirectorMediaType.MEDIA)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Media> createMedia(@EndpointParam URI link,
+         @BinderParam(BindToXMLPayload.class) Media media);
+   
+   
+   /**
+    * @see MediaClient#cloneMedia(URI, CloneMediaParams)
+    */
+   @POST
+   @Consumes(VCloudDirectorMediaType.MEDIA)
+   @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Media> cloneMedia(@EndpointParam URI cloneLink,
+         @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
    
    /**
     * @see MediaClient#updateMedia(URI, Media))

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
@@ -45,6 +46,22 @@ public interface MediaClient {
     * @return the media or null if not found
     */
    Media getMedia(URI mediaUri);
+   
+   /**
+    * Creates a media (and present upload link for the floppy/iso file).
+    * 
+    * @return The response will return a link to transfer site to be able to continue with uploading the media.
+    */
+   Media createMedia(URI uploadLink, Media media);
+   
+   /**
+    * Clones a media into new one. 
+    * The status of the returned media is UNRESOLVED(0) until the task for cloning finish.
+    * 
+    * @return a Media resource which will contain a task. 
+    * The user should monitor the contained task status in order to check when it is completed.
+    */
+   Media cloneMedia(URI cloneLink, CloneMediaParams params);
    
    /**
     * Updates the name/description of a media.
