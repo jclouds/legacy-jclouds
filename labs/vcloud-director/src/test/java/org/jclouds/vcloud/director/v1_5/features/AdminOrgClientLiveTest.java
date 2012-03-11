@@ -25,6 +25,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -54,8 +55,9 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private ReferenceType<?> orgRef;
    private AdminOrg org;
-   OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
+   OrgPasswordPolicySettings passwordPolicy;
    OrgLeaseSettings vAppLeaseSettings;
+   OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
 
    @Override
    @BeforeClass(inheritGroups = true)
@@ -85,9 +87,54 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
  
 // GET /admin/org/{id}/settings/ldap
  
-// GET /admin/org/{id}/settings/passwordPolicy
- 
-// PUT /admin/org/{id}/settings/passwordPolicy
+   @Test(testName = "GET /admin/org/{id}/settings/passwordPolicy")
+   public void testGetPasswordPolicy() {
+      passwordPolicy = orgClient.getPasswordPolicy(orgRef.getURI());
+      
+      Checks.checkPasswordPolicySettings(passwordPolicy);
+   }
+   
+   @Test(testName = "PUT /admin/org/{id}/settings/passwordPolicy", 
+         dependsOnMethods = { "testGetPasswordPolicy" })
+   public void testUpdatePasswordPolicy() {
+      boolean accountLockoutEnabled = passwordPolicy.isAccountLockoutEnabled();
+      Integer invalidLoginsBeforeLockout = passwordPolicy.getInvalidLoginsBeforeLockout();
+      Integer accountLockoutIntervalMinutes = passwordPolicy.getAccountLockoutIntervalMinutes();
+      
+      try {
+         passwordPolicy = passwordPolicy.toBuilder()
+               .accountLockoutEnabled(!accountLockoutEnabled)
+               .invalidLoginsBeforeLockout(invalidLoginsBeforeLockout+1)
+               .accountLockoutIntervalMinutes(accountLockoutIntervalMinutes+1)
+               .build();
+         
+         passwordPolicy = orgClient.updatePasswordPolicy(
+               orgRef.getURI(), passwordPolicy);
+         
+         assertTrue(equal(passwordPolicy.isAccountLockoutEnabled(), !accountLockoutEnabled), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "PasswordPolicySettings", "deleteOnStorageLeaseExpiration"));
+         assertTrue(equal(passwordPolicy.getInvalidLoginsBeforeLockout(), invalidLoginsBeforeLockout+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "PasswordPolicySettings", "storageLeaseSeconds"));
+         assertTrue(equal(passwordPolicy.getAccountLockoutIntervalMinutes(), accountLockoutIntervalMinutes+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "PasswordPolicySettings", "deploymentLeaseSeconds"));
+         
+         //TODO negative tests?
+         
+         Checks.checkPasswordPolicySettings(passwordPolicy);
+      } finally {
+         passwordPolicy = passwordPolicy.toBuilder()
+               .accountLockoutEnabled(accountLockoutEnabled)
+               .invalidLoginsBeforeLockout(invalidLoginsBeforeLockout)
+               .accountLockoutIntervalMinutes(accountLockoutIntervalMinutes)
+               .build();
+         
+         passwordPolicy = orgClient.updatePasswordPolicy(
+               orgRef.getURI(), passwordPolicy);
+      }
+   }
    
    @Test(testName = "GET /admin/org/{id}/settings/vAppLeaseSettings")
    public void testGetVAppLeaseSettings() {

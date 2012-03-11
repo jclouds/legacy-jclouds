@@ -139,6 +139,8 @@ public class VCloudDirectorMediaType {
    
    public static final String ORG_LEASE_SETTINGS = "application/vnd.vmware.admin.vAppLeaseSettings+xml";
    
+   public static final String ORG_PASSWORD_POLICY_SETTINGS = "application/vnd.vmware.admin.organizationPasswordPolicySettings+xml";
+   
    /**
     * 
     * All acceptable media types.
@@ -158,6 +160,6 @@ public class VCloudDirectorMediaType {
             NETWORK_SECTION, NETWORK_CONFIG_SECTION, NETWORK_CONNECTION_SECTION,   
             CLONE_MEDIA_PARAMS, LEASE_SETTINGS_SECTION, RELOCATE_TEMPLATE, ENVELOPE,
             PUBLISH_CATALOG_PARAMS, GROUP, ORG_VAPP_TEMPLATE_LEASE_SETTINGS,
-            ORG_LEASE_SETTINGS
+            ORG_LEASE_SETTINGS, ORG_PASSWORD_POLICY_SETTINGS
       );
 }

@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 
 /**
@@ -55,9 +56,30 @@ public interface AdminOrgClient extends OrgClient {
    
 //   GET /admin/org/{id}/settings/ldap
    
-//   GET /admin/org/{id}/settings/passwordPolicy
+   /**
+    * Retrieves password policy settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/passwordPolicy
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgPasswordPolicySettings getPasswordPolicy(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/passwordPolicy
+   /**
+    * Updates password policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/passwordPolicy
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgPasswordPolicySettings updatePasswordPolicy(URI orgRef, 
+         OrgPasswordPolicySettings newSettings);
    
    /**
     * Gets organization resource cleanup settings on the level of vApp.

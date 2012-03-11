@@ -24,7 +24,9 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
@@ -39,9 +41,9 @@ import org.testng.annotations.Test;
 public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    private Reference orgRef = Reference.builder()
-         .type("application/vnd.vmware.admin.???+xml")
+//         .type("application/vnd.vmware.admin.???+xml")
          .name("???")
-         .href(URI.create(endpoint + "/admin/org/???"))
+         .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
          .build();
    
 // GET /admin/org/{id}
@@ -64,9 +66,64 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
  
 // GET /admin/org/{id}/settings/ldap
  
-// GET /admin/org/{id}/settings/passwordPolicy
- 
-// PUT /admin/org/{id}/settings/passwordPolicy
+   @Test
+   public void testGetPasswordPolicy() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/passwordPolicy.xml", 
+                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgPasswordPolicySettings expected = orgPasswordPolicy();
+
+      assertEquals(client.getAdminOrgClient().getPasswordPolicy(orgRef.getURI()), expected);
+   }
+   
+   public static final OrgPasswordPolicySettings orgPasswordPolicy() {
+      return OrgPasswordPolicySettings.builder()
+         .type("application/vnd.vmware.admin.organizationPasswordPolicySettings+xml")
+         .link(Link.builder()
+               .rel("edit")
+               .type("application/vnd.vmware.admin.organizationPasswordPolicySettings+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"))
+               .build())
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"))
+         .accountLockoutEnabled(false)
+         .invalidLoginsBeforeLockout(5)
+         .accountLockoutIntervalMinutes(10)
+         .build();
+   }
+   
+   @Test
+   public void testUpdateOrgPasswordPolicy() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/???/settings/passwordPolicy")
+            .xmlFilePayload("/org/admin/updatePasswordPolicySource.xml", 
+                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updatePasswordPolicy.xml", 
+                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgPasswordPolicySettings expected = updateOrgPasswordPolicy();
+
+      assertEquals(client.getAdminOrgClient().updatePasswordPolicy(orgRef.getURI(), expected), expected);
+   }
+   
+   public static final OrgPasswordPolicySettings updateOrgPasswordPolicy() {
+      return orgPasswordPolicy().toBuilder()
+         .accountLockoutEnabled(true)
+         .invalidLoginsBeforeLockout(6)
+         .accountLockoutIntervalMinutes(11)
+         .build();
+   }
  
    @Test(enabled = false)
    public void testGetVAppLeaseSettings() {
