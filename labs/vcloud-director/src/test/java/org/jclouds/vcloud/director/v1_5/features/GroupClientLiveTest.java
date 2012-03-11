@@ -62,6 +62,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private ReferenceType<?> groupRef;
    private Group group;
 
+   @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       groupClient = context.getApi().getGroupClient();

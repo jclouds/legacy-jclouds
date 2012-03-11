@@ -22,6 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -42,6 +43,7 @@ public class VCloudDirectorClientExperimentLiveTest extends BaseVCloudDirectorCl
     * @see BaseVCloudDirectorClientLiveTest#setupRequiredClients()
     */
    @Override
+   @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() { }
 
 }

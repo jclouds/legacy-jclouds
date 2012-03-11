@@ -49,6 +49,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private ReferenceType<?> orgRef;
    private AdminOrg org;
 
+   @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       orgClient = context.getApi().getAdminOrgClient();

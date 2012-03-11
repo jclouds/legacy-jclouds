@@ -86,8 +86,8 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    protected VdcClient vdcClient;
    protected MediaClient mediaClient;
 
-   @BeforeClass(inheritGroups = true)
    @Override
+   @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       vdcClient = context.getApi().getVdcClient();
       mediaClient = context.getApi().getMediaClient();

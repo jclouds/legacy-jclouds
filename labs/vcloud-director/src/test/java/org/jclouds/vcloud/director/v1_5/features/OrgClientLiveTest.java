@@ -57,8 +57,8 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    private OrgClient orgClient;
 
-   @BeforeClass(inheritGroups = true)
    @Override
+   @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       orgClient = context.getApi().getOrgClient();
    }

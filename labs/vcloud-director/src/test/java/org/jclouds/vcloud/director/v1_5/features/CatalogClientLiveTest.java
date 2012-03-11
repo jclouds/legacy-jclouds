@@ -79,6 +79,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private CatalogItem newCatalogItem;
    private Metadata catalogMetadata;
 
+   @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       catalogClient = context.getApi().getCatalogClient();
