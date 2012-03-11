@@ -110,7 +110,7 @@ public class CustomOrgLdapSettings {
       public static final String OPEN_LDAP = "OPEN_LDAP";
 
       /**
-       * All acceptable {@link OrgLdapSettings#getOrgLdapMode()} values.
+       * All acceptable {@link OrgLdapSettings#getLdapMode()} values.
        * <p/>
        * This list must be updated whenever a new mode is added.
        */

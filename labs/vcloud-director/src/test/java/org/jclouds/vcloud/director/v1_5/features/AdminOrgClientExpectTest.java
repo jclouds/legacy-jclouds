@@ -25,6 +25,7 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
@@ -64,7 +65,30 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
  
 // PUT /admin/org/{id}/settings/general
  
-// GET /admin/org/{id}/settings/ldap
+   @Test
+   public void testGetLdapSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/ldapSettings.xml", 
+                  VCloudDirectorMediaType.ORG_LDAP_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgLdapSettings expected = ldapSettings();
+
+      assertEquals(client.getAdminOrgClient().getLdapSettings(orgRef.getURI()), expected);
+   }
+   
+   public static final OrgLdapSettings ldapSettings() {
+      return OrgLdapSettings.builder()
+         .type("application/vnd.vmware.admin.organizationLdapSettings+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap"))
+         .ldapMode("NONE")
+         .build();
+   }
  
    @Test
    public void testGetPasswordPolicy() {

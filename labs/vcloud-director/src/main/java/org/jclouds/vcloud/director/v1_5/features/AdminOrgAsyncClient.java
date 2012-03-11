@@ -33,6 +33,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
@@ -65,8 +66,16 @@ public interface AdminOrgAsyncClient extends OrgAsyncClient {
 // GET /admin/org/{id}/settings/general
  
 // PUT /admin/org/{id}/settings/general
- 
-// GET /admin/org/{id}/settings/ldap
+   
+   /**
+    * @see AdminOrgClient#getPasswordPolicy(URI)
+    */
+   @GET
+   @Path("/settings/ldap")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgLdapSettings> getLdapSettings(@EndpointParam URI orgRef);
  
    /**
     * @see AdminOrgClient#getPasswordPolicy(URI)

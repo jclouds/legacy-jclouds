@@ -598,9 +598,9 @@ public class Checks {
    public static void checkLdapSettings(OrgLdapSettings settings) {
       // Check optional fields
       // NOTE customUsersOu cannot be checked
-      if (settings.getOrgLdapMode() != null) {
-         assertTrue(LdapMode.ALL.contains(settings.getOrgLdapMode()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
-               "LdapMode", "OrdLdapSettings", settings.getOrgLdapMode(), Iterables.toString(OrgLdapSettings.LdapMode.ALL)));
+      if (settings.getLdapMode() != null) {
+         assertTrue(LdapMode.ALL.contains(settings.getLdapMode()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
+               "LdapMode", "OrdLdapSettings", settings.getLdapMode(), Iterables.toString(OrgLdapSettings.LdapMode.ALL)));
       }
       if (settings.getCustomOrgLdapSettings() != null) {
          checkCustomOrgLdapSettings(settings.getCustomOrgLdapSettings());

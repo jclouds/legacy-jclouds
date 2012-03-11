@@ -24,6 +24,7 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
@@ -85,7 +86,12 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
  
 // PUT /admin/org/{id}/settings/general
  
-// GET /admin/org/{id}/settings/ldap
+   @Test(testName = "GET /admin/org/{id}/settings/ldap")
+   public void getLdapSettings() {
+      OrgLdapSettings ldapSettings = orgClient.getLdapSettings(orgRef.getURI());
+      
+      Checks.checkLdapSettings(ldapSettings);
+   }
  
    @Test(testName = "GET /admin/org/{id}/settings/passwordPolicy")
    public void testGetPasswordPolicy() {
