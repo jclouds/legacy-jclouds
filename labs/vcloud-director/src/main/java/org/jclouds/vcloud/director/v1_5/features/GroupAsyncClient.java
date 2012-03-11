@@ -63,7 +63,7 @@ public interface GroupAsyncClient {
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Group> updateCatalog(@EndpointParam URI groupRef, 
+   ListenableFuture<Group> updateGroup(@EndpointParam URI groupRef, 
          @BinderParam(BindToXMLPayload.class) Group group);
 
    /**
