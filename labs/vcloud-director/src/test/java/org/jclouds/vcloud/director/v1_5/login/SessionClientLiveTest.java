@@ -31,9 +31,11 @@ import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +47,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live", "apitests" }, testName = "SessionClientLiveTest")
+@Listeners(FormatApiResultsListener.class)
+@Test(groups = { "live", "user" }, testName = "SessionClientLiveTest")
 public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
    public SessionClientLiveTest() {
       provider = "vcloud-director";
