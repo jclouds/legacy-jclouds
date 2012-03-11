@@ -24,12 +24,14 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -57,10 +59,11 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private ReferenceType<?> orgRef;
    private AdminOrg org;
+   OrgEmailSettings emailSettings;
+   OrgGeneralSettings generalSettings;
    OrgPasswordPolicySettings passwordPolicy;
    OrgLeaseSettings vAppLeaseSettings;
    OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
-   OrgGeneralSettings generalSettings;
 
    @Override
    @BeforeClass(inheritGroups = true)
@@ -80,9 +83,80 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
  
 // PUT /admin/org/{id}/settings
  
-// GET /admin/org/{id}/settings/email
- 
-// PUT /admin/org/{id}/settings/email
+   @Test(testName = "GET /admin/org/{id}/settings/emailSettings")
+   public void testGetEmailSettings() {
+      emailSettings = orgClient.getEmailSettings(orgRef.getURI());
+      
+      Checks.checkEmailSettings(emailSettings);
+   }
+   
+   @Test(testName = "PUT /admin/org/{id}/settings/emailSettings", 
+         dependsOnMethods = { "testGetEmailSettings" })
+   public void testUpdateEmailSettings() {
+      boolean isDefaultSmtpServer = emailSettings.isDefaultSmtpServer();
+      boolean isDefaultOrgEmail = emailSettings.isDefaultOrgEmail();
+      String oldFromEmailAddress = emailSettings.getFromEmailAddress();
+      String newFromEmailAddress = "test@test.com";
+      String oldDefaultSubjectPrefix = emailSettings.getDefaultSubjectPrefix();
+      String newDefaultSubjectPrefix = "new"+oldDefaultSubjectPrefix;
+      boolean isAlertEmailToAllAdmins = emailSettings.isAlertEmailToAllAdmins();
+      SmtpServerSettings oldSmtpServerSettings = emailSettings.getSmtpServerSettings();
+      SmtpServerSettings newSmtpServerSettings = oldSmtpServerSettings.toBuilder()
+         .useAuthentication(!oldSmtpServerSettings.useAuthentication())
+         .host("new"+oldSmtpServerSettings.getHost())
+         .username("new"+oldSmtpServerSettings.getUsername())
+         .password("new"+oldSmtpServerSettings.getPassword())
+         .build();
+      
+      try {
+         emailSettings = emailSettings.toBuilder()
+               .isDefaultSmtpServer(!isDefaultSmtpServer)
+               .isDefaultOrgEmail(!isDefaultOrgEmail)
+               .fromEmailAddress(newFromEmailAddress)
+               .defaultSubjectPrefix(newDefaultSubjectPrefix)
+               .isAlertEmailToAllAdmins(!isAlertEmailToAllAdmins)
+               .smtpServerSettings(newSmtpServerSettings)
+               .build();
+         
+         emailSettings = orgClient.updateEmailSettings(
+               orgRef.getURI(), emailSettings);
+         
+         assertTrue(equal(emailSettings.isDefaultSmtpServer(), !isDefaultSmtpServer), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "emailSettings", "isDefaultSmtpServer"));
+         assertTrue(equal(emailSettings.isDefaultOrgEmail(), !isDefaultOrgEmail), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "emailSettings", "isDefaultOrgEmail"));
+         assertTrue(equal(emailSettings.getFromEmailAddress(), newFromEmailAddress), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "emailSettings", "fromEmailAddress"));
+         assertTrue(equal(emailSettings.getDefaultSubjectPrefix(), newDefaultSubjectPrefix), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "emailSettings", "defaultSubjectPrefix"));
+         assertTrue(equal(emailSettings.isAlertEmailToAllAdmins(), !isAlertEmailToAllAdmins), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "emailSettings", "isAlertEmailToAllAdmins"));
+         assertTrue(equal(emailSettings.getSmtpServerSettings(), newSmtpServerSettings), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "emailSettings", "smtpServerSettings"));
+         
+         //TODO negative tests?
+         
+         Checks.checkEmailSettings(emailSettings);
+      } finally {
+         emailSettings = emailSettings.toBuilder()
+               .isDefaultSmtpServer(isDefaultSmtpServer)
+               .isDefaultOrgEmail(isDefaultOrgEmail)
+               .fromEmailAddress(oldFromEmailAddress)
+               .defaultSubjectPrefix(oldDefaultSubjectPrefix)
+               .isAlertEmailToAllAdmins(isAlertEmailToAllAdmins)
+               .smtpServerSettings(oldSmtpServerSettings)
+               .build();
+         
+         emailSettings = orgClient.updateEmailSettings(
+               orgRef.getURI(), emailSettings);
+      }
+   }
  
    @Test(testName = "GET /admin/org/{id}/settings/generalSettings")
    public void testGetGeneralSettings() {

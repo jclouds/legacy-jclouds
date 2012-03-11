@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OrgEmailSettings type="application/vnd.vmware.admin.organizationEmailSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Link rel="edit" type="application/vnd.vmware.admin.organizationEmailSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email"/>
+    <IsDefaultSmtpServer>false</IsDefaultSmtpServer>
+    <IsDefaultOrgEmail>false</IsDefaultOrgEmail>
+    <FromEmailAddress>test@test.com</FromEmailAddress>
+    <DefaultSubjectPrefix>new</DefaultSubjectPrefix>
+    <IsAlertEmailToAllAdmins>false</IsAlertEmailToAllAdmins>
+    <SmtpServerSettings>
+        <IsUseAuthentication>true</IsUseAuthentication>
+        <Host>new</Host>
+        <Username>new</Username>
+    </SmtpServerSettings>
+</OrgEmailSettings>

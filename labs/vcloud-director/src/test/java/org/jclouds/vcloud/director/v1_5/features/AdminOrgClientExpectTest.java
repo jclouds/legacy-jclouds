@@ -25,12 +25,14 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -43,8 +45,6 @@ import org.testng.annotations.Test;
 public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    private Reference orgRef = Reference.builder()
-//         .type("application/vnd.vmware.admin.???+xml")
-         .name("???")
          .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
          .build();
    
@@ -58,10 +58,81 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
  
 // PUT /admin/org/{id}/settings
  
-// GET /admin/org/{id}/settings/email
- 
-// PUT /admin/org/{id}/settings/email
- 
+   @Test
+   public void testGetEmailSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/emailSettings.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgEmailSettings expected = emailSettings();
+
+      assertEquals(client.getAdminOrgClient().getEmailSettings(orgRef.getURI()), expected);
+   }
+   
+   public static final OrgEmailSettings emailSettings() {
+      return OrgEmailSettings.builder()
+         .type("application/vnd.vmware.admin.organizationEmailSettings+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email"))
+         .link(Link.builder()
+               .rel("edit")
+               .type("application/vnd.vmware.admin.organizationEmailSettings+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email"))
+               .build())
+         .isDefaultSmtpServer(true)
+         .isDefaultOrgEmail(true)
+         .fromEmailAddress("")
+         .defaultSubjectPrefix("")
+         .isAlertEmailToAllAdmins(true)
+         .smtpServerSettings(SmtpServerSettings.builder()
+            .useAuthentication(false)
+            .host("")
+            .username("")
+            .password("")
+            .build())
+         .build();
+   }
+   
+   @Test
+   public void testUpdateEmailSettings() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email")
+            .xmlFilePayload("/org/admin/updateEmailSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateEmailSettings.xml", 
+                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgEmailSettings expected = updateEmailSettings();
+
+      assertEquals(client.getAdminOrgClient().updateEmailSettings(orgRef.getURI(), expected), expected);
+   }
+   
+   @Test
+   public static final OrgEmailSettings updateEmailSettings() {
+      return emailSettings().toBuilder()
+         .isDefaultSmtpServer(false)
+         .isDefaultOrgEmail(false)
+         .fromEmailAddress("test@test.com")
+         .defaultSubjectPrefix("new")
+         .isAlertEmailToAllAdmins(false)
+         .smtpServerSettings(emailSettings().getSmtpServerSettings().toBuilder()
+            .useAuthentication(true)
+            .host("new")
+            .username("new")
+            .build())
+         .build();
+   }
+   
    @Test(enabled = false)
    public void testGetGeneralSettings() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 

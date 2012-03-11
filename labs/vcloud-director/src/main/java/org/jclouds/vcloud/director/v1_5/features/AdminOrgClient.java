@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
@@ -48,9 +49,30 @@ public interface AdminOrgClient extends OrgClient {
    
 //   PUT /admin/org/{id}/settings
    
-//   GET /admin/org/{id}/settings/email
+   /**
+    * Retrieves email settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/email
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the email settings
+    */
+   OrgEmailSettings getEmailSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/email
+   /**
+    * Updates email policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/email
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgEmailSettings updateEmailSettings(URI orgRef, 
+         OrgEmailSettings newSettings);
    
    /**
     * Gets general organization settings.

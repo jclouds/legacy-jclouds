@@ -33,6 +33,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
@@ -60,9 +61,29 @@ public interface AdminOrgAsyncClient extends OrgAsyncClient {
  
 // PUT /admin/org/{id}/settings
  
-// GET /admin/org/{id}/settings/email
- 
-// PUT /admin/org/{id}/settings/email
+   /**
+    * @see AdminOrgClient#getEmailSettings(URI)
+    */
+   @GET
+   @Path("/settings/email")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgEmailSettings> getEmailSettings(
+         @EndpointParam URI orgRef);
+
+   /**
+    * @see AdminOrgClient#updateEmailSettings(URI, OrgEmailSettings)
+    */
+   @PUT
+   @Path("/settings/email")
+   @Consumes(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+   @Produces(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgEmailSettings> updateEmailSettings(
+         @EndpointParam URI orgRef, 
+         @BinderParam(BindToXMLPayload.class) OrgEmailSettings settings);
  
    /**
     * @see AdminOrgClient#getGeneralSettings(URI)
