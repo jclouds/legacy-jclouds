@@ -92,7 +92,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       //TODO: upload media or something so you can get a fresh cancellable task?
       
       Task taskRef = Iterables.getFirst(taskList.getTasks(), null);
-      taskURI = taskRef.getURI();
+      taskURI = taskRef.getHref();
 
       // Call the method being tested
       task = taskClient.getTask(taskURI);

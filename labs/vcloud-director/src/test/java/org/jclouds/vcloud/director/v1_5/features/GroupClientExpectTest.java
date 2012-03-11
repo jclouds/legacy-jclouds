@@ -56,7 +56,7 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
 
       Group expected = group();
 
-      assertEquals(client.getGroupClient().getGroup(groupRef.getURI()), expected);
+      assertEquals(client.getGroupClient().getGroup(groupRef.getHref()), expected);
    }
    
    public static final Group group() {
@@ -79,7 +79,7 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
 
       Group expected = updateGroup();
 
-      assertEquals(client.getGroupClient().updateGroup(groupRef.getURI(), expected), expected);
+      assertEquals(client.getGroupClient().updateGroup(groupRef.getHref(), expected), expected);
    }
    
    public static Group updateGroup() {
@@ -96,6 +96,6 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             new VcloudHttpResponsePrimer()
                .httpResponseBuilder().statusCode(204).build());
       
-      client.getAdminCatalogClient().deleteCatalog(groupRef.getURI());
+      client.getAdminCatalogClient().deleteCatalog(groupRef.getHref());
    }
 }

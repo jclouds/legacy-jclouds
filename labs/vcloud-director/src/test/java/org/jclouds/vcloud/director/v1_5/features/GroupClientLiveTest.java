@@ -76,7 +76,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/group/{id}", enabled = false)
    public void testGetGroup() {
       assertNotNull(groupRef, String.format(REF_REQ_LIVE, "Group"));
-      group = groupClient.getGroup(groupRef.getURI());
+      group = groupClient.getGroup(groupRef.getHref());
       
       Checks.checkGroup(group);
    }
@@ -95,7 +95,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .description(newDescription)
                .build();
          
-         group = groupClient.updateGroup(group.getURI(), group);
+         group = groupClient.updateGroup(group.getHref(), group);
          
          assertTrue(equal(group.getName(), newName), String.format(OBJ_FIELD_UPDATABLE, GROUP, "name"));
          assertTrue(equal(group.getDescription(), newDescription),
@@ -110,13 +110,13 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .description(oldDescription)
                .build();
          
-         group = groupClient.updateGroup(group.getURI(), group);
+         group = groupClient.updateGroup(group.getHref(), group);
       }
    }
    
    @Test(testName = "DELETE /admin/group/{id}", enabled = false )
    public void testDeleteCatalog() {
-      groupClient.deleteGroup(groupRef.getURI());
+      groupClient.deleteGroup(groupRef.getHref());
       
       Error expected = Error.builder()
             .message("???")
@@ -125,7 +125,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
       
       try {
-         group = groupClient.getGroup(groupRef.getURI());
+         group = groupClient.getGroup(groupRef.getHref());
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);

@@ -43,7 +43,7 @@ import com.google.common.base.Objects.ToStringHelper;
       CatalogReference.class,
       Reference.class
 })
-public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
+public class ReferenceType<T extends ReferenceType<T>> {
 
    public static <T extends ReferenceType<T>> Builder<T> builder() {
       return new Builder<T>();
@@ -174,14 +174,6 @@ public class ReferenceType<T extends ReferenceType<T>> implements URISupplier {
     */
    public String getType() {
       return type;
-   }
-
-   /**
-    * @see URISupplier#getURI()
-    */
-   @Override
-   public URI getURI() {
-      return getHref();
    }
 
    @Override

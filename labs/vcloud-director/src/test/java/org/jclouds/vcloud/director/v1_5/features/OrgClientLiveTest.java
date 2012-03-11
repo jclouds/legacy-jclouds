@@ -92,7 +92,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
       assertNotNull(orgRef);
       
-      orgURI = orgRef.getURI();
+      orgURI = orgRef.getHref();
       
       // Call the method being tested
       org = orgClient.getOrg(orgURI);

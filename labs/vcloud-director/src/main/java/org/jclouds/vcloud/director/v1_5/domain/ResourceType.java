@@ -28,8 +28,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.jclouds.vcloud.director.v1_5.domain.EntityType.NewBuilder;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
@@ -46,7 +44,7 @@ import com.google.common.collect.Sets;
  *
  * @author Adrian Cole
  */
-public abstract class ResourceType<T extends ResourceType<T>> implements URISupplier {
+public abstract class ResourceType<T extends ResourceType<T>> {
    
    public NewBuilder<?> toNewBuilder() {
       throw new UnsupportedOperationException("New builder not yet implemented for this class");
@@ -177,14 +175,6 @@ public abstract class ResourceType<T extends ResourceType<T>> implements URISupp
     */
    public URI getHref() {
       return href;
-   }
-
-   /**
-    * @see URISupplier#getURI()
-    */
-   @Override
-   public URI getURI() {
-      return getHref();
    }
 
    /**

@@ -60,7 +60,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       AdminCatalog expected = catalog();
 
-      assertEquals(client.getAdminCatalogClient().getCatalog(catalogRef.getURI()), expected);
+      assertEquals(client.getAdminCatalogClient().getCatalog(catalogRef.getHref()), expected);
    }
    
    @Test
@@ -77,7 +77,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       AdminCatalog expected = modifyCatalog();
 
-      assertEquals(client.getAdminCatalogClient().updateCatalog(catalogRef.getURI(), expected), expected);
+      assertEquals(client.getAdminCatalogClient().updateCatalog(catalogRef.getHref(), expected), expected);
    }
    
    @Test
@@ -93,7 +93,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
       
       Owner expected = owner();
 
-      assertEquals(client.getAdminCatalogClient().getOwner(catalogRef.getURI()), expected);
+      assertEquals(client.getAdminCatalogClient().getOwner(catalogRef.getHref()), expected);
    }
    
    @Test
@@ -116,7 +116,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                   .build())
             .build();
       
-      client.getAdminCatalogClient().setOwner(catalogRef.getURI(), newOwner);
+      client.getAdminCatalogClient().setOwner(catalogRef.getHref(), newOwner);
    }
    
    @Test
@@ -134,7 +134,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             .isPublished(true)
             .build();
       
-      client.getAdminCatalogClient().publishCatalog(catalogRef.getURI(), params);
+      client.getAdminCatalogClient().publishCatalog(catalogRef.getHref(), params);
    }
    
    @Test
@@ -147,7 +147,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpResponsePrimer()
                .httpResponseBuilder().statusCode(204).build());
       
-      client.getAdminCatalogClient().deleteCatalog(catalogRef.getURI());
+      client.getAdminCatalogClient().deleteCatalog(catalogRef.getHref());
    }
    
    public static final AdminCatalog catalog() {
