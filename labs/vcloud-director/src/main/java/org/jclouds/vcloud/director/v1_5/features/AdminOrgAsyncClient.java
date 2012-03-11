@@ -33,6 +33,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
@@ -52,11 +53,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface AdminOrgAsyncClient extends OrgAsyncClient {
    
-// GET /admin/org/{id}
-   
-// POST /admin/org/{id}/catalogs
- 
-// POST /admin/org/{id}/groups
+   /**
+    * @see AdminOrgClient#getOrg(URI)
+    */
+   @GET
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<AdminOrg> getOrg(
+         @EndpointParam URI orgRef);
  
    /**
     * @see AdminOrgClient#getSettings(URI)

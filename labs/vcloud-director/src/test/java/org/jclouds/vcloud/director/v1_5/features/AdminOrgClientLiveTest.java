@@ -59,7 +59,6 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Shared state between dependant tests.
     */
    private ReferenceType<?> orgRef;
-   private AdminOrg org;
    private OrgSettings settings, newSettings;
    private OrgEmailSettings emailSettings, newEmailSettings;
    private OrgGeneralSettings generalSettings, newGeneralSettings;
@@ -76,14 +75,13 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
    }
    
-// GET /admin/org/{id}
+   @Test(testName = "GET /admin/org/{id}")
+   public void testGetAdminOrg() {
+      AdminOrg adminOrg = orgClient.getOrg(orgRef.getURI());
+      
+      Checks.checkAdminOrg(adminOrg);
+   }
    
-// POST /admin/org/{id}/catalogs
- 
-// POST /admin/org/{id}/groups
- 
-   
- 
    @Test(testName = "GET /admin/org/{id}/settings/emailSettings")
    public void testGetEmailSettings() {
       emailSettings = orgClient.getEmailSettings(orgRef.getURI());
@@ -391,11 +389,11 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testUpdateSettings() {
       try {
          newSettings = settings.toBuilder()
-               .orgGeneralSettings(newGeneralSettings)
+               .generalSettings(newGeneralSettings)
                .vAppLeaseSettings(newVAppLeaseSettings)
                .vAppTemplateLeaseSettings(newVAppTemplateLeaseSettings)
-               .orgLdapSettings(newLdapSettings)
-               .orgEmailSettings(newEmailSettings)
+               .ldapSettings(newLdapSettings)
+               .emailSettings(newEmailSettings)
                .passwordPolicy(newPasswordPolicy)
                .build();
          
@@ -426,11 +424,11 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          Checks.checkOrgSettings(settings);
       } finally {
          settings = settings.toBuilder()
-               .orgGeneralSettings(generalSettings)
+               .generalSettings(generalSettings)
                .vAppLeaseSettings(vAppLeaseSettings)
                .vAppTemplateLeaseSettings(vAppTemplateLeaseSettings)
-               .orgLdapSettings(ldapSettings)
-               .orgEmailSettings(emailSettings)
+               .ldapSettings(ldapSettings)
+               .emailSettings(emailSettings)
                .passwordPolicy(passwordPolicy)
                .build();
          

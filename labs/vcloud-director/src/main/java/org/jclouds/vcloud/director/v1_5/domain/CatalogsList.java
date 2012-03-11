@@ -67,6 +67,14 @@ public class CatalogsList {
          this.catalogReferences = checkNotNull(catalogReferences, "catalogReferences");
          return this;
       }
+      
+      /**
+       * @see CatalogsList#getCatalogItems()
+       */
+      public Builder catalog(Reference catalog) {
+         this.catalogReferences.add(checkNotNull(catalog, "catalog"));
+         return this;
+      }
 
       public CatalogsList build() {
          return new CatalogsList(catalogReferences);
@@ -81,7 +89,7 @@ public class CatalogsList {
       // for JAXB
    }
 
-   private CatalogsList(Set<Reference> tasks) {
+   private CatalogsList(Set<Reference> catalogReferences) {
       this.catalogReferences = ImmutableSet.copyOf(checkNotNull(catalogReferences, "catalogReferences"));
    }
 

@@ -97,7 +97,7 @@ public class OrgSettings extends ResourceType<OrgSettings> {
       /**
        * @see OrgSettings#getGeneralSettings()
        */
-      public Builder orgGeneralSettings(OrgGeneralSettings generalSettings) {
+      public Builder generalSettings(OrgGeneralSettings generalSettings) {
          this.generalSettings = generalSettings;
          return this;
       }
@@ -121,7 +121,7 @@ public class OrgSettings extends ResourceType<OrgSettings> {
       /**
        * @see OrgSettings#getLdapSettings()
        */
-      public Builder orgLdapSettings(OrgLdapSettings ldapSettings) {
+      public Builder ldapSettings(OrgLdapSettings ldapSettings) {
          this.ldapSettings = ldapSettings;
          return this;
       }
@@ -129,7 +129,7 @@ public class OrgSettings extends ResourceType<OrgSettings> {
       /**
        * @see OrgSettings#getEmailSettings()
        */
-      public Builder orgEmailSettings(OrgEmailSettings emailSettings) {
+      public Builder emailSettings(OrgEmailSettings emailSettings) {
          this.emailSettings = emailSettings;
          return this;
       }
@@ -191,11 +191,11 @@ public class OrgSettings extends ResourceType<OrgSettings> {
       }
       public Builder fromOrgSettings(OrgSettings in) {
          return fromResourceType(in)
-            .orgGeneralSettings(in.getGeneralSettings())
+            .generalSettings(in.getGeneralSettings())
             .vAppLeaseSettings(in.getVAppLeaseSettings())
             .vAppTemplateLeaseSettings(in.getVAppTemplateLeaseSettings())
-            .orgLdapSettings(in.getLdapSettings())
-            .orgEmailSettings(in.getEmailSettings())
+            .ldapSettings(in.getLdapSettings())
+            .emailSettings(in.getEmailSettings())
             .passwordPolicy(in.getPasswordPolicy());
       }
    }

@@ -232,6 +232,46 @@ public class Checks {
       checkEntityType(org);
    }
    
+   public static void checkAdminOrg(AdminOrg org) {
+      // required
+      assertNotNull(org.getSettings(), String.format(NOT_NULL_OBJECT_FMT, "settings", "AdminOrg"));
+      
+      // optional
+      if (org.getGroups() != null) {
+         checkGroupsList(org.getGroups());
+      }
+      if (org.getCatalogs() != null) {
+         checkCatalogsList(org.getCatalogs());
+      }
+      if (org.getVdcs() != null) {
+         checkVdcs(org.getVdcs());
+      }
+      if (org.getNetworks() != null) {
+         checkNetworks(org.getNetworks());
+      }
+      
+      // Check parent type
+      checkOrg(org);
+   }
+   
+   public static void checkCatalogsList(CatalogsList catalogList) {
+      for (Reference catalogItem : catalogList.getCatalogItems()) {
+         checkReferenceType(catalogItem);
+      }
+   }
+   
+   public static void checkVdcs(Vdcs vdcs) {
+      for (Reference vdc : vdcs.getVdcs()) {
+         checkReferenceType(vdc);
+      }
+   }
+   
+   public static void checkNetworks(Networks networks) {
+      for (Reference network : networks.getNetwork()) {
+         checkReferenceType(network);
+      }
+   }
+   
    public static void checkAdminCatalog(AdminCatalog catalog) {
       // Check parent type
       checkCatalogType(catalog);

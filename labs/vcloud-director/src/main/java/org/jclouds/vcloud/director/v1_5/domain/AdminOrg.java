@@ -21,6 +21,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.net.URI;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -145,7 +148,8 @@ public class AdminOrg extends Org {
       }
 
       public AdminOrg build() {
-         return new AdminOrg(settings, users, groups, catalogs, vdcs, networks);
+         return new AdminOrg(href, type, links, description, tasksInProgress, id, 
+               name, fullName, isEnabled, settings, users, groups, catalogs, vdcs, networks);
       }
 
       public T fromAdminOrg(AdminOrg in) {
@@ -175,8 +179,11 @@ public class AdminOrg extends Org {
       // For JAXB
    }
    
-   protected AdminOrg(OrgSettings settings, UsersList users, GroupsList groups, 
+   protected AdminOrg(URI href, String type, Set<Link> links, String description, 
+         TasksInProgress tasksInProgress, String id, String name, String fullName, 
+         Boolean enabled, OrgSettings settings, UsersList users, GroupsList groups, 
          CatalogsList catalogs, Vdcs vdcs, Networks networks) {
+      super(href, type, links, description, tasksInProgress, id, name, fullName, enabled);
       this.settings = settings;
       this.users = users;
       this.groups = groups;

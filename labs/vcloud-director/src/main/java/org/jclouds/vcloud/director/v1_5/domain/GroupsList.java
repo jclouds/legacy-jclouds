@@ -62,7 +62,7 @@ import com.google.common.collect.ImmutableList;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "GroupsList")
 @XmlType(propOrder = {
-    "groupReference"
+    "groups"
 })
 public class GroupsList {
    public static Builder builder() {

@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
@@ -40,11 +41,19 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminOrgClient extends OrgClient {
    
-//   GET /admin/org/{id}
-   
-//   POST /admin/org/{id}/catalogs
-   
-//   POST /admin/org/{id}/groups
+   /**
+    * Retrieves an admin view of an organization. 
+    * The organization might be enabled or disabled. 
+    * If enabled, the organization allows login and all other operations.
+    *
+    * <pre>
+    * GET /admin/org/{id}
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the admin org
+    */
+   AdminOrg getOrg(URI orgRef);
    
    /**
     * Gets organizational settings for this organization.
