@@ -33,6 +33,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
@@ -69,6 +70,30 @@ public interface AdminOrgAsyncClient extends OrgAsyncClient {
 // GET /admin/org/{id}/settings/passwordPolicy
  
 // PUT /admin/org/{id}/settings/passwordPolicy
+   
+   /**
+    * @see AdminOrgClient#getVAppLeaseSettings(URI)
+    */
+   @GET
+   @Path("/settings/vAppLeaseSettings")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgLeaseSettings> getVAppLeaseSettings(
+         @EndpointParam URI orgRef);
+
+   /**
+    * @see AdminOrgClient#updateVAppLeaseSettings(URI, OrgVAppLeaseSettings)
+    */
+   @PUT
+   @Path("/settings/vAppLeaseSettings")
+   @Consumes(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
+   @Produces(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<OrgLeaseSettings> updateVAppLeaseSettings(
+         @EndpointParam URI orgRef, 
+         @BinderParam(BindToXMLPayload.class) OrgLeaseSettings group);
  
    /**
     * @see AdminOrgClient#getVAppTemplateLeaseSettings(URI)

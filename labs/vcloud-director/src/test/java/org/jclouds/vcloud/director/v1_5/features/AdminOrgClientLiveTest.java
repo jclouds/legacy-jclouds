@@ -24,6 +24,7 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -54,6 +55,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private ReferenceType<?> orgRef;
    private AdminOrg org;
    OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
+   OrgLeaseSettings vAppLeaseSettings;
 
    @Override
    @BeforeClass(inheritGroups = true)
@@ -86,10 +88,55 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 // GET /admin/org/{id}/settings/passwordPolicy
  
 // PUT /admin/org/{id}/settings/passwordPolicy
- 
-// GET /admin/org/{id}/settings/vAppLeaseSettings
- 
-// PUT /admin/org/{id}/settings/vAppLeaseSettings
+   
+   @Test(testName = "GET /admin/org/{id}/settings/vAppLeaseSettings")
+   public void testGetVAppLeaseSettings() {
+      vAppLeaseSettings = orgClient.getVAppLeaseSettings(orgRef.getURI());
+      
+      Checks.checkVAppLeaseSettings(vAppLeaseSettings);
+   }
+   
+   @Test(testName = "PUT /admin/org/{id}/settings/vAppLeaseSettings", 
+         dependsOnMethods = { "testGetVAppLeaseSettings" }, enabled = false) // FIXME: fails with 403 forbidden
+   public void testUpdateVAppLeaseSettings() {
+      boolean deleteOnStorageLeaseExpiration = vAppLeaseSettings.deleteOnStorageLeaseExpiration();
+      Integer storageLeaseSeconds = vAppLeaseSettings.getStorageLeaseSeconds();
+      Integer deploymentLeaseSeconds = vAppLeaseSettings.getDeploymentLeaseSeconds();
+      
+      try {
+         vAppLeaseSettings = vAppLeaseSettings.toBuilder()
+               .deleteOnStorageLeaseExpiration(!deleteOnStorageLeaseExpiration)
+               .storageLeaseSeconds(storageLeaseSeconds+1)
+               .deploymentLeaseSeconds(deploymentLeaseSeconds+1)
+               .build();
+         
+         vAppLeaseSettings = orgClient.updateVAppLeaseSettings(
+               orgRef.getURI(), vAppLeaseSettings);
+         
+         assertTrue(equal(vAppLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "vAppLeaseSettings", "deleteOnStorageLeaseExpiration"));
+         assertTrue(equal(vAppLeaseSettings.getStorageLeaseSeconds(), storageLeaseSeconds+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "vAppLeaseSettings", "storageLeaseSeconds"));
+         assertTrue(equal(vAppLeaseSettings.getDeploymentLeaseSeconds(), deploymentLeaseSeconds+1), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "vAppLeaseSettings", "deploymentLeaseSeconds"));
+         
+         //TODO negative tests?
+         
+         Checks.checkVAppLeaseSettings(vAppLeaseSettings);
+      } finally {
+         vAppLeaseSettings = vAppLeaseSettings.toBuilder()
+               .deleteOnStorageLeaseExpiration(deleteOnStorageLeaseExpiration)
+               .storageLeaseSeconds(storageLeaseSeconds)
+               .deploymentLeaseSeconds(deploymentLeaseSeconds)
+               .build();
+         
+         vAppLeaseSettings = orgClient.updateVAppLeaseSettings(
+               orgRef.getURI(), vAppLeaseSettings);
+      }
+   }
  
    @Test(testName = "GET /admin/org/{id}/settings/vAppTemplateLeaseSettings")
    public void testGetVAppTemplateLeaseSettings() {
