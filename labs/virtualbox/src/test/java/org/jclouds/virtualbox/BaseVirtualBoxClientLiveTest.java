@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.net.URI;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -39,9 +40,10 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
+import org.jclouds.concurrent.MoreExecutors;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
@@ -109,6 +111,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
    @Inject
    protected LoadingCache<Image, Master> mastersCache;
+   
+   private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor(); 
 
    @Override
    protected void setupCredentials() {
@@ -131,17 +135,10 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       setupCredentials();
       Properties overrides = new VirtualBoxPropertiesBuilder(setupProperties()).build();
 
-      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
-               "host",
-               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
-                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
-                        .osVersion(System.getProperty("os.version")).group("ssh")
-                        .username(System.getProperty("user.name"))
-                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
-                        .build()));
-
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule), overrides);
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
+               .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), new ExecutorServiceModule(
+                        singleThreadExec, singleThreadExec)), overrides);
+      
       context.utils().injector().injectMembers(this);
 
       imageId = "ubuntu-11.04-server-i386";
@@ -156,6 +153,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       Template template = context.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
    }
+
 
    protected void undoVm(VmSpec vmSpecification) {
       machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(),

@@ -169,9 +169,11 @@ public class SshjSshClientLiveTest {
       assertEquals(response.getOutput().trim(), "localhost".equals(sshHost) ? InetAddress.getLocalHost().getHostName()
                : sshHost);
    }
-   
-   public void testExecChannelTakesStdinAndEchosBack() throws IOException {
-      ExecChannel response = setupClient().execChannel("cat <<EOF");
+
+   public void testExecChannelTakesStdinAndNoEchoOfCharsInOuputAndOutlivesClient() throws IOException {
+      SshClient client = setupClient();
+      ExecChannel response = client.execChannel("cat <<EOF");
+      client.disconnect();
       assertEquals(response.getExitStatus().get(), null);
       try {
          PrintStream printStream = new PrintStream(response.getInput());
@@ -179,8 +181,7 @@ public class SshjSshClientLiveTest {
          printStream.append("EOF\n");
          printStream.close();
          assertEquals(Strings2.toStringAndClose(response.getError()), "");
-         // local echo
-         assertEquals(Strings2.toStringAndClose(response.getOutput()), "foo\r\nEOF\r\n");
+         assertEquals(Strings2.toStringAndClose(response.getOutput()), "");
       } finally {
          Closeables.closeQuietly(response);
       }

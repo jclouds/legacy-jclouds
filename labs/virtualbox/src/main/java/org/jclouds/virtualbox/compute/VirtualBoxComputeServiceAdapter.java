@@ -20,27 +20,34 @@
 package org.jclouds.virtualbox.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
-import org.virtualbox_4_1.CleanupMode;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndForceDeleteItsMedia;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
@@ -61,6 +68,10 @@ import com.google.inject.Singleton;
 @Singleton
 public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, Image, Location> {
 
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+   
    private final Supplier<VirtualBoxManager> manager;
    private final Map<Image, YamlImage> images;
    private final LoadingCache<Image, Master> mastersLoader;
@@ -81,6 +92,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
             Template template) {
       try {
          Master master = mastersLoader.get(template.getImage());
+         checkState(master != null, "could not find a master for image: "+template.getClass());
          NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
          return cloneCreator.apply(nodeSpec);
       } catch (Exception e) {
@@ -93,7 +105,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       return Iterables.filter(manager.get().getVBox().getMachines(), new Predicate<IMachine>() {
          @Override
          public boolean apply(IMachine arg0) {
-            return !arg0.getName().startsWith(VIRTUALBOX_NODE_PREFIX);
+            return arg0.getName().startsWith(VIRTUALBOX_NODE_PREFIX);
          }
       });
    }
@@ -127,14 +139,21 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public IMachine getNode(String vmName) {
-      return manager.get().getVBox().findMachine(vmName);
+      try {
+         return manager.get().getVBox().findMachine(vmName);
+      } catch (VBoxException e) {
+         if (e.getMessage().contains("Could not find a registered machine named")){
+            return null;
+         }
+         throw Throwables.propagate(e);
+      }
    }
 
    @Override
    public void destroyNode(String vmName) {
       IMachine machine = manager.get().getVBox().findMachine(vmName);
       powerDownMachine(machine);
-      machine.unregister(CleanupMode.Full);
+      new UnregisterMachineIfExistsAndForceDeleteItsMedia().apply(machine);
    }
 
    @Override
@@ -178,6 +197,11 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    private void powerDownMachine(IMachine machine) {
       try {
+         if (machine.getState() == MachineState.PoweredOff){
+            logger.debug("vm was already powered down: ", machine.getName());
+            return;
+         }
+         logger.debug("powering down vm: ", machine.getName());
          ISession machineSession = manager.get().openMachineSession(machine);
          IProgress progress = machineSession.getConsole().powerDown();
          progress.waitForCompletion(-1);
@@ -185,7 +209,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
          while (!machine.getSessionState().equals(SessionState.Unlocked)) {
             try {
-               System.out.println("waiting for unlocking session - session state: " + machine.getSessionState());
+               logger.info("waiting for unlocking session - session state: " + machine.getSessionState());
                Thread.sleep(1000);
             } catch (InterruptedException e) {
             }

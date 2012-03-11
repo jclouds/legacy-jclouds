@@ -49,6 +49,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
+import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
@@ -104,6 +105,7 @@ import com.google.inject.TypeLiteral;
  * @author Mattias Holmqvist, Andrea Turli
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@SingleThreaded
 public class VirtualBoxComputeServiceContextModule extends
          ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
 
@@ -176,16 +178,8 @@ public class VirtualBoxComputeServiceContextModule extends
       String provider = "byon";
       String identity = "";
       String credential = "";
-      CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
-               "host",
-               Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
-                        .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
-                        .osVersion(System.getProperty("os.version")).group("ssh")
-                        .username(System.getProperty("user.name"))
-                        .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
-                        .build()));
       return new ComputeServiceContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), hostModule));
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()));
    }
 
    @Provides

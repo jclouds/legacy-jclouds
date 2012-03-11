@@ -65,9 +65,7 @@ public class SshjSshClientModule extends AbstractModule {
 
       @Override
       public SshClient create(IPSocket socket, LoginCredentials credentials) {
-         SshClient client = new SshjSshClient(backoffLimitedRetryHandler, socket, timeout, credentials.getUser(),
-               (credentials.getPrivateKey() == null) ? credentials.getPassword() : null,
-               credentials.getPrivateKey() != null ? credentials.getPrivateKey().getBytes() : null);
+         SshClient client = new SshjSshClient(backoffLimitedRetryHandler, socket, credentials, timeout);
          injector.injectMembers(client);// add logger
          return client;
       }

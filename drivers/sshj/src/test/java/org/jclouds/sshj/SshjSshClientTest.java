@@ -172,8 +172,8 @@ public class SshjSshClientTest {
       ssh.disconnect();
       expectLastCall().andThrow(new ConnectionException("disconnected"));
       replay(ssh);
-      ssh1.ssh = ssh;
-      ssh1.sshConnection.clear();
+      ssh1.sshClientConnection.ssh = ssh;
+      ssh1.sshClientConnection.clear();
       verify(ssh);
    }
 
@@ -186,10 +186,9 @@ public class SshjSshClientTest {
    }
 
    public void testRetriesLoggedAtInfoWithCount() throws Exception {
-      @SuppressWarnings("unchecked")
-      SshjSshClient.Connection<net.schmizz.sshj.SSHClient> mockConnection = createMock(SshjSshClient.Connection.class);
+      SSHClientConnection mockConnection = createMock(SSHClientConnection.class);
       net.schmizz.sshj.SSHClient mockClient = createMock(net.schmizz.sshj.SSHClient.class);
-      
+
       mockConnection.clear(); expectLastCall();
       mockConnection.create(); expectLastCall().andThrow(new ConnectionException("test1"));
       mockConnection.clear(); expectLastCall();
@@ -199,14 +198,14 @@ public class SshjSshClientTest {
       replay(mockConnection);
       replay(mockClient);
       
-      ssh.sshConnection = mockConnection;
+      ssh.sshClientConnection = mockConnection;
       BufferLogger logcheck = new BufferLogger(ssh.getClass().getCanonicalName()); 
       ssh.logger = logcheck;
       logcheck.setLevel(Level.INFO);
       
       ssh.connect();
       
-      Assert.assertEquals(ssh.ssh, mockClient);
+      Assert.assertEquals(ssh.sshClientConnection, mockConnection);
       verify(mockConnection);
       verify(mockClient);
       Record r = logcheck.assertLogContains("attempt 1 of 5");

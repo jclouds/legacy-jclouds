@@ -98,7 +98,7 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       try {
          return Iterables.find(hardwares.get(), new FindHardwareForInstance(from));
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching hardware for instance %s", from);
+         logger.debug("could not find a matching hardware for instance %s", from);
       }
       return null;
    }
@@ -107,7 +107,7 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       try {
          return Iterables.find(images.get(), new FindImageForInstance(from)).getOperatingSystem();
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching image for instance %s", from);
+         logger.debug("could not find a matching image for instance %s", from);
       }
       return null;
    }
@@ -129,7 +129,7 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       try {
          return Iterables.find(locations.get(), new FindLocationForInstance(from));
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching realm for instance %s", from);
+         logger.debug("could not find a matching realm for instance %s", from);
       }
       return null;
    }

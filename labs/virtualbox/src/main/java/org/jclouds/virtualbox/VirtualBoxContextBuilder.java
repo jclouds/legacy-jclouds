@@ -19,13 +19,22 @@
 
 package org.jclouds.virtualbox;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.byon.Node;
+import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.concurrent.MoreExecutors;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
@@ -37,12 +46,31 @@ import com.google.inject.Module;
 public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
 
    public VirtualBoxContextBuilder(Properties properties) {
-      super(Supplier.class, properties);
+      super(Supplier.class, new VirtualBoxPropertiesBuilder(properties).defaultProperties());
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new VirtualBoxComputeServiceContextModule());
+      addHostModuleIfNotPresent(modules);
+   }
+
+   protected void addHostModuleIfNotPresent(List<Module> modules) {
+      if (!Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input instanceof CacheNodeStoreModule;
+         }
+      })) {
+         CacheNodeStoreModule hostModule = new CacheNodeStoreModule(ImmutableMap.of(
+                  "host",
+                  Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+                           .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name"))
+                           .osVersion(System.getProperty("os.version")).group("ssh")
+                           .username(System.getProperty("user.name"))
+                           .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa"))
+                           .build()));
+         modules.add(hostModule);
+      }
    }
 
 }
