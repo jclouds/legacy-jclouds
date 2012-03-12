@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1.extensions;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -30,6 +30,10 @@ import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
+import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
+import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageClient;
+import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 

@@ -18,7 +18,7 @@
  */
 package org.jclouds.hpcloud.compute.features;
 
-import org.jclouds.openstack.nova.v1_1.features.FloatingIPClientLiveTest;
+import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
