@@ -35,7 +35,7 @@ import org.jclouds.openstack.nova.v1_1.domain.Flavor;
  *      />
  * @author Jeremy Daggett
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface FlavorClient {
 
    /**

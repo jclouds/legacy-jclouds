@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1.extensions;
 
 import java.util.Set;
 
@@ -48,6 +48,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see FloatingIPClient
  * @author Jeremy Daggett
+ * @see <a href="http://wiki.openstack.org/os_api_floating_ip"/>
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)

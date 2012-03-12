@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1.extensions;
 
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +49,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see KeyPairClient
  * @author Jeremy Daggett
+ * @see <a href="http://nova.openstack.org/api_ext/ext_keypairs.html" />
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)

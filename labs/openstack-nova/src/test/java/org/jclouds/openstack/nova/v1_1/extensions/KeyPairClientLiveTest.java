@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1.extensions;
 
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
