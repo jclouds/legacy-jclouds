@@ -70,7 +70,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
             @Provider Supplier<URI> providerSupplier, @Identity String identity, @Credential String credential) {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.socketTester = checkNotNull(socketTester, "socketTester");
-      this.socketTester.seconds(1L);
+      this.socketTester.seconds(3L);
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
       this.identity = checkNotNull(identity, "identity");
@@ -94,10 +94,8 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
          runScriptOnNodeFactory.create(host.get(), Statements.exec(vboxwebsrv),
                   runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")).init().call();
          
-         try {
-            // wait for a couple of seconds to make sure vbox has correctly started
-            Thread.sleep(2000L);
-         } catch (InterruptedException e) {
+         if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))){
+            throw new RuntimeException("could not connect to virtualbox");
          }
       }
       manager = managerForNode.apply(host);
