@@ -79,5 +79,12 @@ public interface UserClient {
     */
    void deleteUser(URI userRef);
    
-//   POST /admin/user/{id}/action/unlock
+   /**
+    * Unlocks a user.
+    * 
+    * <pre>
+    * POST /admin/user/{id}/action/unlock
+    * </pre>
+    */
+   void unlockUser(URI userRef);
 }

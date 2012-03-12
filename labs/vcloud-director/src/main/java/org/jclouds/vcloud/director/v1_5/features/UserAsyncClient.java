@@ -88,5 +88,13 @@ public interface UserAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> deleteUser(@EndpointParam URI userRef);
  
-// POST /admin/user/{id}/action/unlock
+   /**
+    * @see UserClient#unlockUser(URI)
+    */
+   @POST
+   @Path("/action/unlock")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Void> unlockUser(@EndpointParam URI userRef);
 }

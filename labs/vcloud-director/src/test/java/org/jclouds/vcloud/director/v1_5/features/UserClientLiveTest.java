@@ -162,10 +162,21 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-// POST /admin/user/{id}/action/unlock
+// 
+
+   
+   @Test(testName = "POST /admin/user/{id}/action/unlock",
+         dependsOnMethods = { "testUpdateUser" } )
+   public void testUnlockUser() {
+      //TODO: check previous tests a) enabled lockout, b) set password
+      //TODO: attempt too many times with the wrong password
+      //TODO: verify access is denied
+      //TODO: unlock user
+      //TODO: verify access is renewed
+   }
  
    @Test(testName = "DELETE /admin/user/{id}",
-         dependsOnMethods = { "testUpdateUser" } )
+         dependsOnMethods = { "testUnlockUser" } )
    public void testDeleteUser() {
       userClient.deleteUser(user.getHref());
       
