@@ -30,8 +30,6 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -46,6 +44,7 @@ public class ParseKeyPairTest extends BaseItemParserTest<KeyPair> {
     }
 
     @Override
+    @SelectJson("keypair")
     @Consumes(MediaType.APPLICATION_JSON)
     public KeyPair expected() {
         return KeyPair
