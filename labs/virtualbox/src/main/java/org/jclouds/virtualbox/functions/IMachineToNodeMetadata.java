@@ -19,6 +19,8 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
 
 import java.util.HashSet;
@@ -41,6 +43,7 @@ import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
+import org.virtualbox_4_1.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -66,22 +69,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       locationBuilder.scope(LocationScope.HOST);
       nodeMetadataBuilder.location(locationBuilder.build());
 
-      HardwareBuilder hardwareBuilder = new HardwareBuilder();
-      hardwareBuilder.ram(vm.getMemorySize().intValue());
-
-      // TODO: Get more processor information
-      Set<Processor> processors = new HashSet<Processor>();
-      for (int i = 0; i < vm.getCPUCount(); i++) {
-         Processor processor = new Processor(1, 0);
-         processors.add(processor);
-      }
-      hardwareBuilder.processors(processors);
-
-      // TODO: How to get this?
-      hardwareBuilder.is64Bit(false);
-
       nodeMetadataBuilder.hostname(vm.getName());
-      
 
       MachineState vmState = vm.getState();
       NodeState nodeState = machineToNodeState.get(vmState);
@@ -91,23 +79,35 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
       logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
 
-      INetworkAdapter networkAdapter = vm.getNetworkAdapter(0l);
-      if (networkAdapter != null) {
-         nodeMetadataBuilder.privateAddresses(ImmutableSet.of(networkAdapter.getNatDriver().getHostIP()));
-         for (String nameProtocolnumberAddressInboudportGuestTargetport : networkAdapter.getNatDriver().getRedirects()){
-            Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
-            String protocolNumber  = Iterables.get(stuff, 1);
-            String hostAddress= Iterables.get(stuff, 2);
-            String inboundPort= Iterables.get(stuff, 3);
-            String targetPort= Iterables.get(stuff, 5);
-            if ("1".equals(protocolNumber) && "22".equals(targetPort))
-               nodeMetadataBuilder.privateAddresses(ImmutableSet.of(hostAddress)).loginPort(Integer.parseInt(inboundPort));
+      // hardcoded set-up that works only for nat+host-only
+
+      // nat adapter
+      INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);
+      checkNotNull(natAdapter, "slot 0 networkadapter");
+      checkState(natAdapter.getAttachmentType() == NetworkAttachmentType.NAT,
+               "expecting slot 0 to be a NAT attachment type (was: " + natAdapter.getAttachmentType() + ")");
+
+      int ipTermination = 0;
+
+      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(natAdapter.getNatDriver().getHostIP()));
+      for (String nameProtocolnumberAddressInboudportGuestTargetport : natAdapter.getNatDriver().getRedirects()) {
+         Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+         String protocolNumber = Iterables.get(stuff, 1);
+         String hostAddress = Iterables.get(stuff, 2);
+         String inboundPort = Iterables.get(stuff, 3);
+         String targetPort = Iterables.get(stuff, 5);
+         if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
+            int inPort = Integer.parseInt(inboundPort);
+            ipTermination = inPort % NodeCreator.NODE_PORT_INIT;
+            nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
          }
       }
 
+      nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
+
       LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
       nodeMetadataBuilder.credentials(loginCredentials);
-      
+
       return nodeMetadataBuilder.build();
    }
 

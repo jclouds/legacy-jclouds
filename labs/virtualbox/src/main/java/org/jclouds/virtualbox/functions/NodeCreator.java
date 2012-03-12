@@ -68,8 +68,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
    private final Supplier<VirtualBoxManager> manager;
    private final Function<CloneSpec, IMachine> cloner;
-   private final AtomicInteger nodePorts;
-   private final AtomicInteger nodeIps;
+   private final AtomicInteger nodes;
    private MachineUtils machineUtils;
    private Function<IMachine, NodeMetadata> imachineToNodeMetadata;
 
@@ -78,8 +77,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             MachineUtils machineUtils, Function<IMachine, NodeMetadata> imachineToNodeMetadata) {
       this.manager = manager;
       this.cloner = cloner;
-      this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
-      this.nodeIps = new AtomicInteger(1);
+      this.nodes = new AtomicInteger(0);
       this.machineUtils = machineUtils;
       this.imachineToNodeMetadata = imachineToNodeMetadata;
    }
@@ -117,12 +115,12 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
                .forceOverwrite(true).build();
 
       NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22).build();
+               .tcpRedirectRule("127.0.0.1", NODE_PORT_INIT + this.nodes.getAndIncrement(), "", 22).build();
 
       NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(0L).build();
 
       NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
-               .staticIp(VMS_NETWORK + this.nodeIps.getAndIncrement()).build();
+               .staticIp(VMS_NETWORK + this.nodes.getAndIncrement()).build();
 
       NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
                .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();
