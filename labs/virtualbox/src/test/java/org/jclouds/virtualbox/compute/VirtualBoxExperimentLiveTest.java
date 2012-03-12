@@ -26,35 +26,47 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.sshj.config.SshjSshClientModule;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxExperimentLiveTest")
-public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
-   
+public class VirtualBoxExperimentLiveTest {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   ComputeServiceContext context;
+
+   @BeforeClass
+   public void setUp() {
+      context = new ComputeServiceContextFactory().createContext("virtualbox", "toor", "password",
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()));
+   }
+
    @Test
    public void testLaunchCluster() throws RunNodesException {
       int numNodes = 4;
       final String clusterName = "test-launch-cluster";
-      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName,
-               numNodes);
+      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes);
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
          logger.debug("Created Node: %s", node);
