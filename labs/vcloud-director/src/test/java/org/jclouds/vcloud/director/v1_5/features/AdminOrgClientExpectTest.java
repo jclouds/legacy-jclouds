@@ -69,7 +69,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       AdminOrg expected = adminOrg();
 
-      assertEquals(client.getAdminOrgClient().getOrg(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getOrg(orgRef.getHref()), expected);
    }
    
    public static final AdminOrg adminOrg() {
@@ -213,7 +213,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgSettings expected = settings();
 
-      assertEquals(client.getAdminOrgClient().getSettings(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getSettings(orgRef.getHref()), expected);
    }
    
    public static final OrgSettings settings() {
@@ -280,7 +280,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgSettings expected = updateSettings();
 
-      assertEquals(client.getAdminOrgClient().updateSettings(orgRef.getURI(), expected), expected);
+      assertEquals(client.getAdminOrgClient().updateSettings(orgRef.getHref(), expected), expected);
    }
    
    @Test
@@ -303,7 +303,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgEmailSettings expected = emailSettings();
 
-      assertEquals(client.getAdminOrgClient().getEmailSettings(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getEmailSettings(orgRef.getHref()), expected);
    }
    
    public static final OrgEmailSettings emailSettings() {
@@ -345,7 +345,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgEmailSettings expected = updateEmailSettings();
 
-      assertEquals(client.getAdminOrgClient().updateEmailSettings(orgRef.getURI(), expected), expected);
+      assertEquals(client.getAdminOrgClient().updateEmailSettings(orgRef.getHref(), expected), expected);
    }
    
    @Test
@@ -378,7 +378,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgGeneralSettings expected = generalSettings();
 
-      assertEquals(client.getAdminOrgClient().getGeneralSettings(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getGeneralSettings(orgRef.getHref()), expected);
    }
    
    public static final OrgGeneralSettings generalSettings() {
@@ -414,7 +414,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgGeneralSettings expected = updateGeneralSettings();
 
-      assertEquals(client.getAdminOrgClient().updateGeneralSettings(orgRef.getURI(), expected), expected);
+      assertEquals(client.getAdminOrgClient().updateGeneralSettings(orgRef.getHref(), expected), expected);
    }
    
    public static final OrgGeneralSettings updateGeneralSettings() {
@@ -437,7 +437,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgLdapSettings expected = ldapSettings();
 
-      assertEquals(client.getAdminOrgClient().getLdapSettings(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getLdapSettings(orgRef.getHref()), expected);
    }
    
    public static final OrgLdapSettings ldapSettings() {
@@ -462,7 +462,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgPasswordPolicySettings expected = passwordPolicy();
 
-      assertEquals(client.getAdminOrgClient().getPasswordPolicy(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getPasswordPolicy(orgRef.getHref()), expected);
    }
    
    public static final OrgPasswordPolicySettings passwordPolicy() {
@@ -496,7 +496,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgPasswordPolicySettings expected = updateOrgPasswordPolicy();
 
-      assertEquals(client.getAdminOrgClient().updatePasswordPolicy(orgRef.getURI(), expected), expected);
+      assertEquals(client.getAdminOrgClient().updatePasswordPolicy(orgRef.getHref(), expected), expected);
    }
    
    public static final OrgPasswordPolicySettings updateOrgPasswordPolicy() {
@@ -521,7 +521,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgLeaseSettings expected = vAppLeaseSettings();
 
-      assertEquals(client.getAdminOrgClient().getVAppLeaseSettings(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getVAppLeaseSettings(orgRef.getHref()), expected);
    }
    
    public static final OrgLeaseSettings vAppLeaseSettings() {
@@ -555,7 +555,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgLeaseSettings expected = updateVAppLeaseSettings();
 
-      assertEquals(client.getAdminOrgClient().updateVAppLeaseSettings(orgRef.getURI(), expected), expected);
+      assertEquals(client.getAdminOrgClient().updateVAppLeaseSettings(orgRef.getHref(), expected), expected);
    }
    
    public static final OrgLeaseSettings updateVAppLeaseSettings() {
@@ -578,7 +578,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgVAppTemplateLeaseSettings expected = vAppTemplateLeaseSettings();
 
-      assertEquals(client.getAdminOrgClient().getVAppTemplateLeaseSettings(orgRef.getURI()), expected);
+      assertEquals(client.getAdminOrgClient().getVAppTemplateLeaseSettings(orgRef.getHref()), expected);
    }
    
    public static final OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings() {
@@ -611,7 +611,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgVAppTemplateLeaseSettings expected = updateVAppTemplateLeaseSettings();
 
-      assertEquals(client.getAdminOrgClient().updateVAppTemplateLeaseSettings(orgRef.getURI(), expected), expected);
+      assertEquals(client.getAdminOrgClient().updateVAppTemplateLeaseSettings(orgRef.getHref(), expected), expected);
    }
    
    public static final OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings() {

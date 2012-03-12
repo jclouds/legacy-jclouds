@@ -233,7 +233,7 @@ public class Org extends EntityType<Org> {
    }
 
    public Org(URI href, String type, Set<Link> links, String description, 
-         TasksInProgress tasksInProgress, String id, String name, 
+         Set<Task> tasksInProgress, String id, String name, 
          String fullName, Boolean enabled) {
       super(href, type, links, description, tasksInProgress, id, name);
       this.fullName = fullName;

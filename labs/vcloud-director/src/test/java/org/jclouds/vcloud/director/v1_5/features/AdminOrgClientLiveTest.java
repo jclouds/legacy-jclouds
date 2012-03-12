@@ -18,11 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static com.google.common.base.Objects.equal;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
@@ -77,14 +79,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /admin/org/{id}")
    public void testGetAdminOrg() {
-      AdminOrg adminOrg = orgClient.getOrg(orgRef.getURI());
+      AdminOrg adminOrg = orgClient.getOrg(orgRef.getHref());
       
       Checks.checkAdminOrg(adminOrg);
    }
    
    @Test(testName = "GET /admin/org/{id}/settings/emailSettings")
    public void testGetEmailSettings() {
-      emailSettings = orgClient.getEmailSettings(orgRef.getURI());
+      emailSettings = orgClient.getEmailSettings(orgRef.getHref());
       
       Checks.checkEmailSettings(emailSettings);
    }
@@ -118,7 +120,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          emailSettings = orgClient.updateEmailSettings(
-               orgRef.getURI(), newEmailSettings);
+               orgRef.getHref(), newEmailSettings);
          
          assertTrue(equal(emailSettings.isDefaultSmtpServer(), !isDefaultSmtpServer), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -153,13 +155,13 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          emailSettings = orgClient.updateEmailSettings(
-               orgRef.getURI(), emailSettings);
+               orgRef.getHref(), emailSettings);
       }
    }
  
    @Test(testName = "GET /admin/org/{id}/settings/generalSettings")
    public void testGetGeneralSettings() {
-      generalSettings = orgClient.getGeneralSettings(orgRef.getURI());
+      generalSettings = orgClient.getGeneralSettings(orgRef.getHref());
       
       Checks.checkGeneralSettings(generalSettings);
    }
@@ -183,7 +185,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          generalSettings = orgClient.updateGeneralSettings(
-               orgRef.getURI(), newGeneralSettings);
+               orgRef.getHref(), newGeneralSettings);
          
 //         assertTrue(equal(generalSettings.canPublishCatalogs(), !canPublishCatalogs), 
 //               String.format(OBJ_FIELD_UPDATABLE, 
@@ -214,20 +216,20 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          generalSettings = orgClient.updateGeneralSettings(
-               orgRef.getURI(), generalSettings);
+               orgRef.getHref(), generalSettings);
       }
    }
  
    @Test(testName = "GET /admin/org/{id}/settings/ldap")
    public void testGetLdapSettings() {
-      ldapSettings = orgClient.getLdapSettings(orgRef.getURI());
+      ldapSettings = orgClient.getLdapSettings(orgRef.getHref());
       
       Checks.checkLdapSettings(ldapSettings);
    }
  
    @Test(testName = "GET /admin/org/{id}/settings/passwordPolicy")
    public void testGetPasswordPolicy() {
-      passwordPolicy = orgClient.getPasswordPolicy(orgRef.getURI());
+      passwordPolicy = orgClient.getPasswordPolicy(orgRef.getHref());
       
       Checks.checkPasswordPolicySettings(passwordPolicy);
    }
@@ -247,7 +249,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          passwordPolicy = orgClient.updatePasswordPolicy(
-               orgRef.getURI(), newPasswordPolicy);
+               orgRef.getHref(), newPasswordPolicy);
          
          assertTrue(equal(passwordPolicy.isAccountLockoutEnabled(), !accountLockoutEnabled), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -270,13 +272,13 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          passwordPolicy = orgClient.updatePasswordPolicy(
-               orgRef.getURI(), passwordPolicy);
+               orgRef.getHref(), passwordPolicy);
       }
    }
    
    @Test(testName = "GET /admin/org/{id}/settings/vAppLeaseSettings")
    public void testGetVAppLeaseSettings() {
-      vAppLeaseSettings = orgClient.getVAppLeaseSettings(orgRef.getURI());
+      vAppLeaseSettings = orgClient.getVAppLeaseSettings(orgRef.getHref());
       
       Checks.checkVAppLeaseSettings(vAppLeaseSettings);
    }
@@ -296,7 +298,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          vAppLeaseSettings = orgClient.updateVAppLeaseSettings(
-               orgRef.getURI(), newVAppLeaseSettings);
+               orgRef.getHref(), newVAppLeaseSettings);
          
          assertTrue(equal(vAppLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -319,13 +321,13 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          vAppLeaseSettings = orgClient.updateVAppLeaseSettings(
-               orgRef.getURI(), vAppLeaseSettings);
+               orgRef.getHref(), vAppLeaseSettings);
       }
    }
  
    @Test(testName = "GET /admin/org/{id}/settings/vAppTemplateLeaseSettings")
    public void testGetVAppTemplateLeaseSettings() {
-      vAppTemplateLeaseSettings = orgClient.getVAppTemplateLeaseSettings(orgRef.getURI());
+      vAppTemplateLeaseSettings = orgClient.getVAppTemplateLeaseSettings(orgRef.getHref());
       
       Checks.checkVAppTemplateLeaseSettings(vAppTemplateLeaseSettings);
    }
@@ -343,7 +345,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          vAppTemplateLeaseSettings = orgClient.updateVAppTemplateLeaseSettings(
-               orgRef.getURI(), newVAppTemplateLeaseSettings);
+               orgRef.getHref(), newVAppTemplateLeaseSettings);
          
          assertTrue(equal(vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration(), !deleteOnStorageLeaseExpiration), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -362,7 +364,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          vAppTemplateLeaseSettings = orgClient.updateVAppTemplateLeaseSettings(
-               orgRef.getURI(), vAppTemplateLeaseSettings);
+               orgRef.getHref(), vAppTemplateLeaseSettings);
       }
    }
    
@@ -374,7 +376,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          "testGetEmailSettings", 
          "testGetPasswordPolicy"})
    public void testGetSettings() {
-      settings = orgClient.getSettings(orgRef.getURI());
+      settings = orgClient.getSettings(orgRef.getHref());
       
       Checks.checkOrgSettings(settings);
    }
@@ -398,7 +400,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          settings = orgClient.updateSettings(
-               orgRef.getURI(), newSettings);
+               orgRef.getHref(), newSettings);
          
          assertTrue(equal(settings.getGeneralSettings(), newGeneralSettings), 
                String.format(OBJ_FIELD_UPDATABLE, 
@@ -433,7 +435,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .build();
          
          settings = orgClient.updateSettings(
-               orgRef.getURI(), settings);
+               orgRef.getHref(), settings);
       }
    }
 }
