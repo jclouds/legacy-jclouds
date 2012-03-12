@@ -18,31 +18,25 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.io.File;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.io.Payload;
 
 /**
  * Provides synchronous access to Upload.
  * <p/>
  * 
  * @see UploadAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface UploadClient {
 
    /**
-    * Uploads a file.
+    * @return eTag
     */
-   void uploadFile(URI uri, File file);
-   
-   /**
-    * Uploads a file using ranged PUTs.
-    */
-   void uploadBigFile(URI uri, File file);
+   void upload(URI location, Payload payload);
    
 }

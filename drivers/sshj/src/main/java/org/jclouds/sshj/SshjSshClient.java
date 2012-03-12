@@ -52,14 +52,13 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.sftp.SFTPException;
 import net.schmizz.sshj.transport.TransportException;
-import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.UserAuthException;
-import net.schmizz.sshj.userauth.keyprovider.OpenSSHKeyFile;
 import net.schmizz.sshj.xfer.InMemorySourceFile;
 
 import org.apache.commons.io.input.ProxyInputStream;
 import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -77,6 +76,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
 
 /**
@@ -104,10 +104,6 @@ public class SshjSshClient implements SshClient {
       }
    }
 
-   private final String host;
-   private final int port;
-   private final String username;
-   private final String password;
    private final String toString;
 
    @Inject(optional = true)
@@ -129,41 +125,42 @@ public class SshjSshClient implements SshClient {
    @Named("jclouds.ssh.retry-predicate")
    // NOTE cannot retry io exceptions, as SSHException is a part of the chain
    private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectionException.class),
-         instanceOf(ConnectException.class), instanceOf(SocketTimeoutException.class),
-         instanceOf(TransportException.class), 
-         // safe to retry sftp exceptions as they are idempotent
-         instanceOf(SFTPException.class));
+            instanceOf(ConnectException.class), instanceOf(SocketTimeoutException.class),
+            instanceOf(TransportException.class),
+            // safe to retry sftp exceptions as they are idempotent
+            instanceOf(SFTPException.class));
 
    @Resource
    @Named("jclouds.ssh")
    protected Logger logger = Logger.NULL;
 
    @VisibleForTesting
-   SSHClient ssh;
-   private final byte[] privateKey;
-   final byte[] emptyPassPhrase = new byte[0];
-   private final int timeoutMillis;
+   SSHClientConnection sshClientConnection;
+   
+   final String user;
+   final String host;
+
    private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
-   public SshjSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket, int timeout,
-         String username, String password, byte[] privateKey) {
+   public SshjSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket,
+            LoginCredentials loginCredentials, int timeout) {
+      this.user = checkNotNull(loginCredentials, "loginCredentials").getUser();
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
-      checkArgument(password != null || privateKey != null, "you must specify a password or a key");
-      this.port = socket.getPort();
-      this.username = checkNotNull(username, "username");
+      checkArgument(loginCredentials.getPassword() != null || loginCredentials.getPrivateKey() != null,
+               "you must specify a password or a key");
       this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler, "backoffLimitedRetryHandler");
-      this.timeoutMillis = timeout;
-      this.password = password;
-      this.privateKey = privateKey;
-      if (privateKey == null) {
-         this.toString = String.format("%s:pw[%s]@%s:%d", username, hex(md5(password.getBytes())), host, port);
+      if (loginCredentials.getPrivateKey() == null) {
+         this.toString = String.format("%s:pw[%s]@%s:%d", loginCredentials.getUser(), hex(md5(loginCredentials
+                  .getPassword().getBytes())), host, socket.getPort());
       } else {
-         String fingerPrint = fingerprintPrivateKey(new String(privateKey));
-         String sha1 = sha1PrivateKey(new String(privateKey));
-         this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", username, fingerPrint, sha1, host,
-               port);
+         String fingerPrint = fingerprintPrivateKey(loginCredentials.getPrivateKey());
+         String sha1 = sha1PrivateKey(loginCredentials.getPrivateKey());
+         this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", loginCredentials.getUser(),
+                  fingerPrint, sha1, host, socket.getPort());
       }
+      sshClientConnection = SSHClientConnection.builder().hostAndPort(HostAndPort.fromParts(host, socket.getPort()))
+               .loginCredentials(loginCredentials).connectTimeout(timeout).sessionTimeout(timeout).build();
    }
 
    @Override
@@ -172,7 +169,8 @@ public class SshjSshClient implements SshClient {
    }
 
    private void checkConnected() {
-      checkState(ssh != null && ssh.isConnected(), String.format("(%s) ssh not connected!", toString()));
+      checkState(sshClientConnection.ssh != null && sshClientConnection.ssh.isConnected(), String
+               .format("(%s) ssh not connected!", toString()));
    }
 
    public static interface Connection<T> {
@@ -180,45 +178,6 @@ public class SshjSshClient implements SshClient {
 
       T create() throws Exception;
    }
-
-   Connection<net.schmizz.sshj.SSHClient> sshConnection = new Connection<net.schmizz.sshj.SSHClient>() {
-
-      @Override
-      public void clear() {
-         if (ssh != null && ssh.isConnected()) {
-            try {
-               ssh.disconnect();
-            } catch (IOException e) {
-               logger.warn(e, "<< exception disconnecting from %s: %s", e, e.getMessage());
-            }
-            ssh = null;
-         }
-      }
-
-      @Override
-      public net.schmizz.sshj.SSHClient create() throws Exception {
-         net.schmizz.sshj.SSHClient ssh = new net.schmizz.sshj.SSHClient();
-         ssh.addHostKeyVerifier(new PromiscuousVerifier());
-         if (timeoutMillis != 0) {
-            ssh.setTimeout(timeoutMillis);
-            ssh.setConnectTimeout(timeoutMillis);
-         }
-         ssh.connect(host, port);
-         if (password != null) {
-            ssh.authPassword(username, password);
-         } else {
-            OpenSSHKeyFile key = new OpenSSHKeyFile();
-            key.init(new String(privateKey), null);
-            ssh.authPublickey(username, key);
-         }
-         return ssh;
-      }
-
-      @Override
-      public String toString() {
-         return String.format("SSHClient(timeout=%d)", timeoutMillis);
-      }
-   };
 
    private void backoffForAttempt(int retryAttempt, String message) {
       backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, retryAttempt, sshRetries, message);
@@ -240,16 +199,17 @@ public class SshjSshClient implements SshClient {
                logger.warn(from, "<< (%s) error closing connection", toString());
             }
             if (i + 1 == sshRetries) {
-               throw propagate(from, errorMessage+" (out of retries - max "+sshRetries+")");
-            } else if (shouldRetry(from) ||
-                  (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null)) {
-               logger.info("<< " + errorMessage + " (attempt " + (i + 1) + " of " + sshRetries + "): " + from.getMessage());
+               throw propagate(from, errorMessage + " (out of retries - max " + sshRetries + ")");
+            } else if (shouldRetry(from)
+                     || (Throwables2.getFirstThrowableOfType(from, IllegalStateException.class) != null)) {
+               logger.info("<< " + errorMessage + " (attempt " + (i + 1) + " of " + sshRetries + "): "
+                        + from.getMessage());
                backoffForAttempt(i + 1, errorMessage + ": " + from.getMessage());
-               if (connection != sshConnection)
+               if (connection != sshClientConnection)
                   connect();
                continue;
             } else {
-               throw propagate(from, errorMessage+" (not retryable)");
+               throw propagate(from, errorMessage + " (not retryable)");
             }
          }
       }
@@ -259,7 +219,7 @@ public class SshjSshClient implements SshClient {
 
    public void connect() {
       try {
-         ssh = acquire(sshConnection);
+         acquire(sshClientConnection);
       } catch (Exception e) {
          Throwables.propagate(e);
       }
@@ -282,7 +242,7 @@ public class SshjSshClient implements SshClient {
       @Override
       public SFTPClient create() throws IOException {
          checkConnected();
-         sftp = ssh.newSFTPClient();
+         sftp = sshClientConnection.ssh.newSFTPClient();
          return sftp;
       }
 
@@ -310,7 +270,7 @@ public class SshjSshClient implements SshClient {
       public Payload create() throws Exception {
          sftp = acquire(sftpConnection);
          return Payloads.newInputStreamPayload(new CloseFtpChannelOnCloseInputStream(sftp.getSFTPEngine().open(path)
-               .getInputStream(), sftp));
+                  .getInputStream(), sftp));
       }
 
       @Override
@@ -385,7 +345,7 @@ public class SshjSshClient implements SshClient {
    @VisibleForTesting
    boolean shouldRetry(Exception from) {
       Predicate<Throwable> predicate = retryAuth ? Predicates.<Throwable> or(retryPredicate,
-            instanceOf(AuthorizationException.class), instanceOf(UserAuthException.class)) : retryPredicate;
+               instanceOf(AuthorizationException.class), instanceOf(UserAuthException.class)) : retryPredicate;
       if (any(getCausalChain(from), predicate))
          return true;
       if (!retryableMessages.equals(""))
@@ -404,7 +364,7 @@ public class SshjSshClient implements SshClient {
                @Override
                public boolean apply(Throwable arg0) {
                   return (arg0.toString().indexOf(input) != -1)
-                        || (arg0.getMessage() != null && arg0.getMessage().indexOf(input) != -1);
+                           || (arg0.getMessage() != null && arg0.getMessage().indexOf(input) != -1);
                }
 
             });
@@ -420,7 +380,7 @@ public class SshjSshClient implements SshClient {
       if (e instanceof UserAuthException)
          throw new AuthorizationException("(" + toString() + ") " + message, e);
       throw e instanceof SshException ? SshException.class.cast(e) : new SshException(
-            "(" + toString() + ") " + message, e);
+               "(" + toString() + ") " + message, e);
    }
 
    @Override
@@ -431,7 +391,7 @@ public class SshjSshClient implements SshClient {
    @PreDestroy
    public void disconnect() {
       try {
-         sshConnection.clear();
+         sshClientConnection.clear();
       } catch (Exception e) {
          Throwables.propagate(e);
       }
@@ -452,8 +412,8 @@ public class SshjSshClient implements SshClient {
          @Override
          public Session create() throws Exception {
             checkConnected();
-            session = ssh.startSession();
-            session.allocatePTY("vt100", 80, 24, 0, 0, Collections.<PTYMode, Integer>emptyMap());
+            session = sshClientConnection.ssh.startSession();
+            session.allocatePTY("vt100", 80, 24, 0, 0, Collections.<PTYMode, Integer> emptyMap());
             return session;
          }
 
@@ -485,7 +445,7 @@ public class SshjSshClient implements SshClient {
             session = acquire(execConnection());
             Command output = session.exec(checkNotNull(command, "command"));
             String outputString = IOUtils.readFully(output.getInputStream()).toString();
-            output.join(timeoutMillis, TimeUnit.SECONDS);
+            output.join(sshClientConnection.getSessionTimeout(), TimeUnit.MILLISECONDS);
             int errorStatus = output.getExitStatus();
             String errorString = IOUtils.readFully(output.getErrorStream()).toString();
             return new ExecResponse(outputString, errorString, errorStatus);
@@ -502,6 +462,37 @@ public class SshjSshClient implements SshClient {
 
    public ExecResponse exec(String command) {
       return acquire(new ExecConnection(command));
+   }
+
+   protected Connection<Session> noPTYConnection() {
+
+      return new Connection<Session>() {
+
+         private Session session = null;
+         private SSHClient sshClientConnection;
+
+         @Override
+         public void clear() throws TransportException, ConnectionException {
+            if (session != null)
+               session.close();
+            if (sshClientConnection != null)
+               Closeables.closeQuietly(sshClientConnection);
+         }
+
+         @Override
+         public Session create() throws Exception {
+            this.sshClientConnection = acquire(SSHClientConnection.builder().fromSSHClientConnection(
+                     SshjSshClient.this.sshClientConnection).sessionTimeout(0).build());
+            session = sshClientConnection.startSession();
+            return session;
+         }
+
+         @Override
+         public String toString() {
+            return "Session()";
+         }
+      };
+
    }
 
    class ExecChannelConnection implements Connection<ExecChannel> {
@@ -521,7 +512,7 @@ public class SshjSshClient implements SshClient {
 
       @Override
       public ExecChannel create() throws Exception {
-         session = SessionChannel.class.cast(acquire(execConnection()));
+         session = SessionChannel.class.cast(acquire(noPTYConnection()));
          output = session.exec(command);
          return new ExecChannel(output.getOutputStream(), output.getInputStream(), output.getErrorStream(),
                   new Supplier<Integer>() {
@@ -552,7 +543,7 @@ public class SshjSshClient implements SshClient {
    public ExecChannel execChannel(String command) {
       return acquire(new ExecChannelConnection(command));
    }
-   
+
    @Override
    public String getHostAddress() {
       return this.host;
@@ -560,7 +551,7 @@ public class SshjSshClient implements SshClient {
 
    @Override
    public String getUsername() {
-      return this.username;
+      return this.user;
    }
 
 }

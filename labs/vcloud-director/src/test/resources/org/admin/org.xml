@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AdminOrg xmlns="http://www.vmware.com/vcloud/v1.5" name="JClouds" id="urn:vcloud:org:6f312e42-cd2b-488d-a2bb-97519cd57ed0" type="application/vnd.vmware.admin.organization+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="down" type="application/vnd.vmware.vcloud.tasksList+xml" href="https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata"/>
+    <Link rel="add" type="application/vnd.vmware.admin.catalog+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalogs"/>
+    <Link rel="add" type="application/vnd.vmware.admin.user+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/users"/>
+    <Link rel="add" type="application/vnd.vmware.admin.group+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/groups"/>
+    <Link rel="add" type="application/vnd.vmware.admin.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/networks"/>
+    <Link rel="edit" type="application/vnd.vmware.admin.organization+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="remove" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.org+xml" href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Description/>
+    <FullName>JClouds</FullName>
+    <IsEnabled>true</IsEnabled>
+    <Settings type="application/vnd.vmware.admin.orgSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings">
+        <Link rel="down" type="application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings"/>
+        <Link rel="down" type="application/vnd.vmware.admin.organizationEmailSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email"/>
+        <Link rel="down" type="application/vnd.vmware.admin.vAppLeaseSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings"/>
+        <Link rel="down" type="application/vnd.vmware.admin.organizationPasswordPolicySettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"/>
+        <Link rel="down" type="application/vnd.vmware.admin.organizationGeneralSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general"/>
+        <Link rel="down" type="application/vnd.vmware.admin.organizationLdapSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap"/>
+        <Link rel="edit" type="application/vnd.vmware.admin.orgSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings"/>
+        <OrgGeneralSettings type="application/vnd.vmware.admin.organizationGeneralSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general">
+            <Link rel="edit" type="application/vnd.vmware.admin.organizationGeneralSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general"/>
+            <CanPublishCatalogs>false</CanPublishCatalogs>
+            <DeployedVMQuota>0</DeployedVMQuota>
+            <StoredVmQuota>0</StoredVmQuota>
+            <UseServerBootSequence>false</UseServerBootSequence>
+            <DelayAfterPowerOnSeconds>0</DelayAfterPowerOnSeconds>
+        </OrgGeneralSettings>
+        <VAppLeaseSettings type="application/vnd.vmware.admin.vAppLeaseSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings">
+            <Link rel="edit" type="application/vnd.vmware.admin.vAppLeaseSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings"/>
+            <DeleteOnStorageLeaseExpiration>false</DeleteOnStorageLeaseExpiration>
+            <DeploymentLeaseSeconds>0</DeploymentLeaseSeconds>
+            <StorageLeaseSeconds>0</StorageLeaseSeconds>
+        </VAppLeaseSettings>
+        <VAppTemplateLeaseSettings type="application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings">
+            <Link rel="edit" type="application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings"/>
+            <DeleteOnStorageLeaseExpiration>false</DeleteOnStorageLeaseExpiration>
+            <StorageLeaseSeconds>0</StorageLeaseSeconds>
+        </VAppTemplateLeaseSettings>
+        <OrgLdapSettings type="application/vnd.vmware.admin.organizationLdapSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap">
+            <OrgLdapMode>NONE</OrgLdapMode>
+        </OrgLdapSettings>
+        <OrgEmailSettings type="application/vnd.vmware.admin.organizationEmailSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email">
+            <Link rel="edit" type="application/vnd.vmware.admin.organizationEmailSettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email"/>
+            <IsDefaultSmtpServer>true</IsDefaultSmtpServer>
+            <IsDefaultOrgEmail>true</IsDefaultOrgEmail>
+            <FromEmailAddress/>
+            <DefaultSubjectPrefix/>
+            <IsAlertEmailToAllAdmins>true</IsAlertEmailToAllAdmins>
+            <SmtpServerSettings>
+                <IsUseAuthentication>false</IsUseAuthentication>
+                <Host/>
+                <Username/>
+            </SmtpServerSettings>
+        </OrgEmailSettings>
+        <OrgPasswordPolicySettings type="application/vnd.vmware.admin.organizationPasswordPolicySettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy">
+            <Link rel="edit" type="application/vnd.vmware.admin.organizationPasswordPolicySettings+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"/>
+            <AccountLockoutEnabled>false</AccountLockoutEnabled>
+            <InvalidLoginsBeforeLockout>5</InvalidLoginsBeforeLockout>
+            <AccountLockoutIntervalMinutes>10</AccountLockoutIntervalMinutes>
+        </OrgPasswordPolicySettings>
+    </Settings>
+    <Users>
+        <UserReference type="application/vnd.vmware.admin.user+xml" name="adam.lowe@cloudsoftcorp.com" href="https://vcloudbeta.bluelock.com/api/admin/user/672ebb67-d8ff-4201-9c1b-c1be869e526c"/>
+        <UserReference type="application/vnd.vmware.admin.user+xml" name="adrian@jclouds.org" href="https://vcloudbeta.bluelock.com/api/admin/user/8c360b93-ed25-4c9a-8e24-d48cd9966d93"/>
+        <UserReference type="application/vnd.vmware.admin.user+xml" name="qunying.huang@enstratus.com" href="https://vcloudbeta.bluelock.com/api/admin/user/967d317c-4273-4a95-b8a4-bf63b78e9c69"/>
+        <UserReference type="application/vnd.vmware.admin.user+xml" name="dan@cloudsoftcorp.com" href="https://vcloudbeta.bluelock.com/api/admin/user/ae75edd2-12de-414c-8e85-e6ea10442c08"/>
+        <UserReference type="application/vnd.vmware.admin.user+xml" name="adk@cloudsoftcorp.com" href="https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"/>
+    </Users>
+    <Groups/>
+    <Catalogs>
+        <CatalogReference type="application/vnd.vmware.admin.catalog+xml" name="QunyingTestCatalog" href="https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"/>
+        <CatalogReference type="application/vnd.vmware.admin.catalog+xml" name="Public" href="https://vcloudbeta.bluelock.com/api/admin/catalog/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"/>
+        <CatalogReference type="application/vnd.vmware.admin.catalog+xml" name="dantest" href="https://vcloudbeta.bluelock.com/api/admin/catalog/b542aff4-9f97-4f51-a126-4330fbf62f02"/>
+        <CatalogReference type="application/vnd.vmware.admin.catalog+xml" name="test" href="https://vcloudbeta.bluelock.com/api/admin/catalog/b7289d54-4ca4-497f-9a93-2d4afc97e3da"/>
+    </Catalogs>
+    <Vdcs>
+        <Vdc type="application/vnd.vmware.vcloud.vdc+xml" name="Cluster01-JClouds" href="https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"/>
+    </Vdcs>
+    <Networks>
+        <Network type="application/vnd.vmware.admin.network+xml" name="ilsolation01-Jclouds" href="https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"/>
+        <Network type="application/vnd.vmware.admin.network+xml" name="internet01-Jclouds" href="https://vcloudbeta.bluelock.com/api/admin/network/55a677cf-ab3f-48ae-b880-fab90421980c"/>
+    </Networks>
+</AdminOrg>

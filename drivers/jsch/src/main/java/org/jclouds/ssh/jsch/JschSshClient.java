@@ -34,7 +34,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
-import java.util.Arrays;
 
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -44,6 +43,7 @@ import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.compute.domain.ExecChannel;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
@@ -52,7 +52,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.util.CredentialUtils;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -61,10 +60,10 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.io.Closeables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
@@ -91,11 +90,7 @@ public class JschSshClient implements SshClient {
             sftp.disconnect();
       }
    }
-
-   private final String host;
-   private final int port;
-   private final String username;
-   private final String password;
+   
    private final String toString;
 
    @Inject(optional = true)
@@ -121,31 +116,31 @@ public class JschSshClient implements SshClient {
    @Named("jclouds.ssh")
    protected Logger logger = Logger.NULL;
 
-   private Session session;
-   private final byte[] privateKey;
-   final byte[] emptyPassPhrase = new byte[0];
-   private final int timeout;
    private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
-   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket, int timeout,
-            String username, String password, byte[] privateKey) {
+   final SessionConnection sessionConnection;
+   final String user;
+   final String host;
+
+   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket,
+            LoginCredentials loginCredentials, int timeout) {
+      this.user = checkNotNull(loginCredentials, "loginCredentials").getUser();
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
-      checkArgument(password != null || privateKey != null, "you must specify a password or a key");
-      this.port = socket.getPort();
-      this.username = checkNotNull(username, "username");
+      checkArgument(loginCredentials.getPassword() != null || loginCredentials.getPrivateKey() != null,
+               "you must specify a password or a key");
       this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler, "backoffLimitedRetryHandler");
-      this.timeout = timeout;
-      this.password = password;
-      this.privateKey = privateKey;
-      if (privateKey == null) {
-         this.toString = String.format("%s:pw[%s]@%s:%d", username, hex(md5(password.getBytes())), host, port);
+      if (loginCredentials.getPrivateKey() == null) {
+         this.toString = String.format("%s:pw[%s]@%s:%d", loginCredentials.getUser(), hex(md5(loginCredentials
+                  .getPassword().getBytes())), host, socket.getPort());
       } else {
-         String fingerPrint = fingerprintPrivateKey(new String(privateKey));
-         String sha1 = sha1PrivateKey(new String(privateKey));
-         this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", username, fingerPrint, sha1, host,
-                  port);
+         String fingerPrint = fingerprintPrivateKey(loginCredentials.getPrivateKey());
+         String sha1 = sha1PrivateKey(loginCredentials.getPrivateKey());
+         this.toString = String.format("%s:rsa[fingerprint(%s),sha1(%s)]@%s:%d", loginCredentials.getUser(),
+                  fingerPrint, sha1, host, socket.getPort());
       }
+      sessionConnection = SessionConnection.builder().hostAndPort(HostAndPort.fromParts(host, socket.getPort())).loginCredentials(
+               loginCredentials).connectTimeout(timeout).sessionTimeout(timeout).build();
    }
 
    @Override
@@ -154,7 +149,8 @@ public class JschSshClient implements SshClient {
    }
 
    private void checkConnected() {
-      checkState(session != null && session.isConnected(), String.format("(%s) Session not connected!", toString()));
+      checkState(sessionConnection.getSession() != null && sessionConnection.getSession().isConnected(), String.format(
+               "(%s) Session not connected!", toString()));
    }
 
    public static interface Connection<T> {
@@ -162,45 +158,6 @@ public class JschSshClient implements SshClient {
 
       T create() throws Exception;
    }
-
-   Connection<Session> sessionConnection = new Connection<Session>() {
-
-      @Override
-      public void clear() {
-         if (session != null && session.isConnected()) {
-            session.disconnect();
-            session = null;
-         }
-      }
-
-      @Override
-      public Session create() throws Exception {
-         JSch jsch = new JSch();
-         session = jsch.getSession(username, host, port);
-         if (timeout != 0)
-            session.setTimeout(timeout);
-         if (password != null) {
-            session.setPassword(password);
-         } else {
-            // jsch wipes out your private key
-            if (CredentialUtils.isPrivateKeyEncrypted(privateKey)) {
-               throw new IllegalArgumentException(
-                        "JschSshClientModule does not support private keys that require a passphrase");
-            }
-            jsch.addIdentity(username, Arrays.copyOf(privateKey, privateKey.length), null, emptyPassPhrase);
-         }
-         java.util.Properties config = new java.util.Properties();
-         config.put("StrictHostKeyChecking", "no");
-         session.setConfig(config);
-         session.connect(timeout);
-         return session;
-      }
-
-      @Override
-      public String toString() {
-         return String.format("Session(timeout=%d)", timeout);
-      }
-   };
 
    protected <T, C extends Connection<T>> T acquire(C connection) {
       connection.clear();
@@ -245,7 +202,7 @@ public class JschSshClient implements SshClient {
       public ChannelSftp create() throws JSchException {
          checkConnected();
          String channel = "sftp";
-         sftp = (ChannelSftp) session.openChannel(channel);
+         sftp = (ChannelSftp) sessionConnection.getSession().openChannel(channel);
          sftp.connect();
          return sftp;
       }
@@ -394,7 +351,7 @@ public class JschSshClient implements SshClient {
          public ChannelExec create() throws Exception {
             checkConnected();
             String channel = "exec";
-            executor = (ChannelExec) session.openChannel(channel);
+            executor = (ChannelExec) sessionConnection.getSession().openChannel(channel);
             executor.setPty(true);
             executor.setCommand(command);
             ByteArrayOutputStream error = new ByteArrayOutputStream();
@@ -468,13 +425,13 @@ public class JschSshClient implements SshClient {
 
    @Override
    public String getUsername() {
-      return this.username;
+      return this.user;
    }
-
 
    class ExecChannelConnection implements Connection<ExecChannel> {
       private final String command;
       private ChannelExec executor = null;
+      private Session sessionConnection;
 
       ExecChannelConnection(String command) {
          this.command = checkNotNull(command, "command");
@@ -484,14 +441,16 @@ public class JschSshClient implements SshClient {
       public void clear() {
          if (executor != null)
             executor.disconnect();
+         if (sessionConnection != null)
+            sessionConnection.disconnect();
       }
 
       @Override
       public ExecChannel create() throws Exception {
-         checkConnected();
+         this.sessionConnection = acquire(SessionConnection.builder().fromSessionConnection(
+                  JschSshClient.this.sessionConnection).sessionTimeout(0).build());
          String channel = "exec";
-         executor = (ChannelExec) session.openChannel(channel);
-         executor.setPty(true);
+         executor = (ChannelExec) sessionConnection.openChannel(channel);
          executor.setCommand(command);
          ByteArrayOutputStream error = new ByteArrayOutputStream();
          executor.setErrStream(error);
@@ -521,7 +480,6 @@ public class JschSshClient implements SshClient {
       }
    };
 
-   
    @Override
    public ExecChannel execChannel(String command) {
       return acquire(new ExecChannelConnection(command));

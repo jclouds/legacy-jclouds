@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
-import java.net.URI;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,7 +25,6 @@ import javax.inject.Singleton;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.common.base.Predicate;
@@ -56,7 +53,7 @@ public class TaskSuccess implements Predicate<Task> {
       logger.trace("looking for status on task %s", task);
 
       // TODO shouldn't we see if it's already done before getting it from API server?
-      task = taskClient.getTask(task.getURI());
+      task = taskClient.getTask(task.getHref());
       
       // perhaps task isn't available, yet
       if (task == null) return false;

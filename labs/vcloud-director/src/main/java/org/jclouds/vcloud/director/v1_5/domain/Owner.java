@@ -19,17 +19,18 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.net.URI;
-import java.util.Set;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 
 /**

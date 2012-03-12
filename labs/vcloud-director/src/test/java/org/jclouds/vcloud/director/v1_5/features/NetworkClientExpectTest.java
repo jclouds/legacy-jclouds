@@ -27,7 +27,16 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.*;
+import org.jclouds.vcloud.director.v1_5.domain.IpAddresses;
+import org.jclouds.vcloud.director.v1_5.domain.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 

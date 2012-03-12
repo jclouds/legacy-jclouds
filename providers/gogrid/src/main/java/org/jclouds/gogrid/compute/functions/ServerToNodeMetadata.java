@@ -124,7 +124,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       try {
          image = Iterables.find(images.get(), new FindImageForServer(from));
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching image for server %s", from);
+         logger.debug("could not find a matching image for server %s", from);
       }
       return image;
    }
@@ -134,7 +134,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       try {
          hardware = Iterables.find(hardwares.get(), new FindHardwareForServer(from));
       } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching hardware for server %s", from);
+         logger.debug("could not find a matching hardware for server %s", from);
       }
       return hardware;
    }

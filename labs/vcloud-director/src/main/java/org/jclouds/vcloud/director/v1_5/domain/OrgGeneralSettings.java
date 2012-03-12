@@ -63,7 +63,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "OrgGeneralSettings")
+@XmlRootElement(name = "GeneralOrgSettings")
 @XmlType(propOrder = {
     "canPublishCatalogs",
     "deployedVMQuota",

@@ -26,7 +26,6 @@ import javax.inject.Singleton;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.URISupplier;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 
 import com.google.common.base.Function;

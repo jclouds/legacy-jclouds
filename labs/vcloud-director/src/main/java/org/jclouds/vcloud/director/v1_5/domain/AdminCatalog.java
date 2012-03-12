@@ -19,16 +19,12 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.google.common.collect.Sets;
 
 
 /**
@@ -69,7 +65,7 @@ public class AdminCatalog extends CatalogType<AdminCatalog> {
    public static class Builder extends CatalogType.Builder<AdminCatalog> {
       
       public AdminCatalog build() {
-         return new AdminCatalog(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, isPublished);
+         return new AdminCatalog(href, type, links, description, tasks, id, name, owner, catalogItems, isPublished);
       }
       
       /**
@@ -132,14 +128,14 @@ public class AdminCatalog extends CatalogType<AdminCatalog> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
-
+      
       /**
        * @see ReferenceType#getHref()
        */
@@ -157,24 +153,23 @@ public class AdminCatalog extends CatalogType<AdminCatalog> {
          this.type = type;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
+         return Builder.class.cast(super.link(link));
       }
+
 
       @Override
       public Builder fromCatalogType(CatalogType<AdminCatalog> in) {
@@ -190,8 +185,8 @@ public class AdminCatalog extends CatalogType<AdminCatalog> {
       // For JAXB
    }
    
-   public AdminCatalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+   public AdminCatalog(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
          String name, Owner owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, published);
+      super(href, type, links, description, tasks, id, name, owner, catalogItems, published);
    }
 }

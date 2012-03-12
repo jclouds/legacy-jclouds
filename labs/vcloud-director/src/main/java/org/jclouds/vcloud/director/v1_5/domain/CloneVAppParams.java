@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import javax.xml.bind.annotation.XmlType;
 
-import com.google.common.base.Objects;
-
 
 /**
  * Represents parameters for copying a vApp and optionally deleting the source.

@@ -22,7 +22,6 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.testng.annotations.Test;
 
 /**

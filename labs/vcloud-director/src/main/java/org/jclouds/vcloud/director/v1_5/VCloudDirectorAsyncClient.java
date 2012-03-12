@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5;
 
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Media;

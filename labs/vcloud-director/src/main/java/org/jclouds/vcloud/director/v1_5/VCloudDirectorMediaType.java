@@ -129,14 +129,31 @@ public class VCloudDirectorMediaType {
    
    public static final String ADMIN_CATALOG = "application/vnd.vmware.admin.catalog+xml";
    
-   public static final String ADMIN_ORGANIZATION = "application/vnd.vmware.admin.organization+xml";
+   public static final String ADMIN_ORG = "application/vnd.vmware.admin.organization+xml";
    
    public static final String PUBLISH_CATALOG_PARAMS = "application/vnd.vmware.admin.publishCatalogParams+xml";
    
    public static final String GROUP = "application/vnd.vmware.admin.group+xml";
    
+   public static final String ORG_VAPP_TEMPLATE_LEASE_SETTINGS = "application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml";
+   
+   public static final String ORG_LEASE_SETTINGS = "application/vnd.vmware.admin.vAppLeaseSettings+xml";
+   
+   public static final String ORG_PASSWORD_POLICY_SETTINGS = "application/vnd.vmware.admin.organizationPasswordPolicySettings+xml";
+   
+   public static final String ORG_LDAP_SETTINGS = "application/vnd.vmware.admin.organizationLdapSettings+xml";
+   
+   public static final String ORG_GENERAL_SETTINGS = "application/vnd.vmware.admin.organizationGeneralSettings+xml";
+   
+   public static final String ORG_EMAIL_SETTINGS = "application/vnd.vmware.admin.organizationEmailSettings+xml";
+   
+   public static final String ORG_SETTINGS = "application/vnd.vmware.admin.orgSettings+xml";
+   
+   public static final String ADMIN_NETWORK = "application/vnd.vmware.admin.network+xml";
+   
+   public static final String ADMIN_ORG_NETWORK = "application/vnd.vmware.admin.orgNetwork+xml";
+   
    /**
-    * 
     * All acceptable media types.
     *
     * This list must be updated whenever a new media type constant is added.
@@ -148,11 +165,14 @@ public class VCloudDirectorMediaType {
             MEDIA, OWNER, VDC, ADMIN_USER, V_APP, V_APP_TEMPLATE, 
             CAPTURE_VAPP_PARAMS, CLONE_V_APP_PARAMS, CLONE_V_APP_TEMPLATE_PARAMS,
             COMPOSE_VAPP_PARAMS, INSTANTIATE_VAPP_TEMPLATE_PARAMS,
-            UPLOAD_VAPP_TEMPLATE_PARAMS, ADMIN_CATALOG, ADMIN_ORGANIZATION,
+            UPLOAD_VAPP_TEMPLATE_PARAMS, ADMIN_CATALOG, ADMIN_ORG,
             QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
             CONTROL_ACCESS, VAPP_TEMPLATE, CUSTOMIZATION_SECTION, GUEST_CUSTOMIZATION_SECTION, 
             NETWORK_SECTION, NETWORK_CONFIG_SECTION, NETWORK_CONNECTION_SECTION,   
             CLONE_MEDIA_PARAMS, LEASE_SETTINGS_SECTION, RELOCATE_TEMPLATE, ENVELOPE,
-            PUBLISH_CATALOG_PARAMS, GROUP
+            PUBLISH_CATALOG_PARAMS, GROUP, ORG_VAPP_TEMPLATE_LEASE_SETTINGS,
+            ORG_LEASE_SETTINGS, ORG_PASSWORD_POLICY_SETTINGS, ORG_LDAP_SETTINGS,
+            ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
+            ADMIN_ORG_NETWORK
       );
 }

@@ -24,7 +24,18 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.*;
+import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
+import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 
 /**
  * Provides synchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} objects.

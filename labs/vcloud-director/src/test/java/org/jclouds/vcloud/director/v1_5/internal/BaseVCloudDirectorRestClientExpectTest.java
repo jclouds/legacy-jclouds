@@ -28,7 +28,6 @@ import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;

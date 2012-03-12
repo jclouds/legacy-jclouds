@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 
 /**
@@ -62,7 +63,7 @@ import com.google.common.collect.ImmutableList;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "UsersList")
 @XmlType(propOrder = {
-    "userReference"
+    "users"
 })
 public class UsersList {
    public static Builder builder() {
@@ -74,7 +75,7 @@ public class UsersList {
    }
 
    public static class Builder {
-      private List<Reference> users;
+      private List<Reference> users = Lists.newArrayList();
 
       /**
        * @see UsersList#getUsers()

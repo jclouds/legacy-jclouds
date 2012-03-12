@@ -19,7 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EMPTY_TO_DELETE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -40,6 +44,8 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTes
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
+
 /**
  * Tests live behavior of {@link AdminCatalogClient}.
  * 
@@ -59,22 +65,34 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    /*
     * Shared state between dependant tests.
     */
-   private ReferenceType<?> catalogRef;
+   private ReferenceType<?> orgRef;
    private AdminCatalog catalog;
    private Owner owner;
 
+   @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       catalogClient = context.getApi().getAdminCatalogClient();
-      catalogRef = Reference.builder()
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+      orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
+   }
+   
+   @Test(testName = "POST /admin/org/{id}/catalogs")
+   public void testCreateCatalog() {
+      AdminCatalog newCatalog = AdminCatalog.builder()
+         .name("Test Catalog")
+         .description("created by testCreateCatalog()")
          .build();
+      catalog = catalogClient.createCatalog(orgRef.getHref(), newCatalog);
+      
+      Checks.checkAdminCatalog(catalog);
+      
+      // FIXME: documentation suggests we should wait for a task here
    }
 
-   @Test(testName = "GET /admin/catalog/{id}")
+   @Test(testName = "GET /admin/catalog/{id}",
+         dependsOnMethods = { "testCreateCatalog" })
    public void testGetCatalog() {
-      assertNotNull(catalogRef, String.format(REF_REQ_LIVE, "Catalog"));
-      catalog = catalogClient.getCatalog(catalogRef.getURI());
+      catalog = catalogClient.getCatalog(catalog.getHref());
       
       Checks.checkAdminCatalog(catalog);
    }
@@ -82,7 +100,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Test(testName = "GET /admin/catalog/{id}/owner",
          dependsOnMethods = { "testGetCatalog" })
    public void testGetCatalogOwner() {
-      owner = catalogClient.getOwner(catalog.getURI());
+      owner = catalogClient.getOwner(catalog.getHref());
       Checks.checkOwner(owner);
    }
    
@@ -100,13 +118,13 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
             .build();
       
       try {
-         catalogClient.setOwner(catalog.getURI(), newOwner);
-         owner = catalogClient.getOwner(catalog.getURI());
+         catalogClient.setOwner(catalog.getHref(), newOwner);
+         owner = catalogClient.getOwner(catalog.getHref());
          Checks.checkOwner(owner);
          assertTrue(equal(owner, newOwner), String.format(OBJ_FIELD_UPDATABLE, CATALOG, "owner"));
       } finally {
-         catalogClient.setOwner(catalog.getURI(), oldOwner);
-         owner = catalogClient.getOwner(catalog.getURI());
+         catalogClient.setOwner(catalog.getHref(), oldOwner);
+         owner = catalogClient.getOwner(catalog.getHref());
       }
    }
    
@@ -127,7 +145,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
 //               .catalogItems(newCatalogItems)
                .build();
          
-         catalog = catalogClient.updateCatalog(catalog.getURI(), catalog);
+         catalog = catalogClient.updateCatalog(catalog.getHref(), catalog);
          
          assertTrue(equal(catalog.getName(), newName), String.format(OBJ_FIELD_UPDATABLE, CATALOG, "name"));
          assertTrue(equal(catalog.getDescription(), newDescription),
@@ -144,12 +162,12 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
 //               .catalogItems(oldCatalogItems)
                .build();
          
-         catalog = catalogClient.updateCatalog(catalog.getURI(), catalog);
+         catalog = catalogClient.updateCatalog(catalog.getHref(), catalog);
       }
    }
    
    @Test(testName = "POST /admin/catalog/{id}/action/publish",
-         dependsOnMethods = { "testUpdateCatalog" }, enabled = false )
+         dependsOnMethods = { "testUpdateCatalog" }, enabled = false ) // FIXME: fails with a 403
    public void testPublishCatalog() {
       assertTrue(!catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
             CATALOG, "isPublished", false, catalog.isPublished()));
@@ -158,8 +176,8 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
          .isPublished(true)
          .build();
       
-      catalogClient.publishCatalog(catalogRef.getURI(), params);
-      catalog = catalogClient.getCatalog(catalogRef.getURI());
+      catalogClient.publishCatalog(catalog.getHref(), params);
+      catalog = catalogClient.getCatalog(catalog.getHref());
       
       assertTrue(catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
             CATALOG, "isPublished", true, catalog.isPublished()));
@@ -167,18 +185,22 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    @Test(testName = "DELETE /admin/catalog/{id}",
-         dependsOnMethods = { "testPublishCatalog" }, enabled = false )
+         dependsOnMethods = { "testUpdateCatalog" } )
    public void testDeleteCatalog() {
-      catalogClient.deleteCatalog(catalogRef.getURI());
+//      assertEquals(catalog.getCatalogItems().getCatalogItems().size(), 0, 
+//            String.format(OBJ_FIELD_EMPTY_TO_DELETE, "Catalog", "CatalogItems", 
+//                  catalog.getCatalogItems().getCatalogItems().toString()));
+      catalogClient.deleteCatalog(catalog.getHref());
       
       Error expected = Error.builder()
-            .message("???")
+            .message("No access to entity \"(com.vmware.vcloud.entity.catalog:"+
+                  catalog.getId().substring("urn:vcloud:catalog:".length())+")\".")
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
       
       try {
-         catalog = catalogClient.getCatalog(catalogRef.getURI());
+         catalog = catalogClient.getCatalog(catalog.getHref());
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);

@@ -19,13 +19,13 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,7 +34,6 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Represents an asynchronous or long-running task in the vCloud environment.
@@ -43,6 +42,8 @@ import com.google.common.collect.Sets;
  * &lt;xs:complexType name="TaskType"&gt;
  * </pre>
  *
+ *  TODO: this object and the hierarchy is wrong.  it is literally a Task with a Task container.  please review class diagram
+ * 
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Task")
@@ -187,7 +188,7 @@ public class Task extends EntityType<Task> {
 
       @Override
       public Task build() {
-         return new Task(href, type, links, description, tasksInProgress, id, name,
+         return new Task(href, type, links, description, tasks, id, name,
                error, org, progress, owner, user, params, status, operation, operationName, startTime, endTime, expiryTime);
       }
 
@@ -217,13 +218,13 @@ public class Task extends EntityType<Task> {
          this.id = id;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -246,22 +247,21 @@ public class Task extends EntityType<Task> {
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
+         return Builder.class.cast(super.link(link));
       }
+
 
       @Override
       public Builder fromEntityType(EntityType<Task> in) {
@@ -275,11 +275,11 @@ public class Task extends EntityType<Task> {
       }
    }
 
-   public Task(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+   public Task(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
                String id, String name, Error error, Reference org, Integer progress, Reference owner,
                Reference user, Object params, String status, String operation, String operationName,
                Date startTime, Date endTime, Date expiryTime) {
-      super(href, type, links, description, tasksInProgress, id, name);
+      super(href, type, links, description, tasks, id, name);
       this.error = error;
       this.org = org;
       this.progress = progress;
@@ -383,6 +383,7 @@ public class Task extends EntityType<Task> {
     * <li>aborted - The task was aborted by an administrative action.
     * </ul>
     */
+   // TODO: enum!!!
    public String getStatus() {
       return status;
    }
