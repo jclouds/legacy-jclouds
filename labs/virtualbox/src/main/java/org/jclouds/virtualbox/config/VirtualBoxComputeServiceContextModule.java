@@ -24,8 +24,8 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECO
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Named;
@@ -78,6 +78,7 @@ import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescript
 import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.predicates.SshResponds;
+import org.testng.internal.annotations.Sets;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.MachineState;
@@ -218,7 +219,13 @@ public class VirtualBoxComputeServiceContextModule extends
    @Override
    protected Supplier provideHardware(ComputeServiceAdapter<IMachine, IMachine, Image, Location> adapter,
             Function<IMachine, Hardware> transformer) {
-      return Suppliers.ofInstance(Collections.singleton(new HardwareBuilder().id("").build()));
+      // since no vms might be available we need to list images
+      Iterable<Image> images = adapter.listImages();
+      Set<Hardware> hardware = Sets.newHashSet();
+      for (Image image : images) {
+         hardware.add(new HardwareBuilder().ids(image.getId()).hypervisor("VirtualBox").name(image.getName()).build());
+      }
+      return Suppliers.ofInstance(hardware);
    }
 
    @Override
