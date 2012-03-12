@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AdminCatalog xmlns="http://www.vmware.com/vcloud/v1.5" name="Test Catalog" id="urn:vcloud:catalog:c56d9159-7838-446f-bb35-9ee12dfbbef3" type="application/vnd.vmware.admin.catalog+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.admin.organization+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.catalog+xml" href="https://vcloudbeta.bluelock.com/api/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3/owner"/>
+    <Link rel="add" type="application/vnd.vmware.vcloud.catalogItem+xml" href="https://vcloudbeta.bluelock.com/api/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3/catalogItems"/>
+    <Link rel="edit" type="application/vnd.vmware.admin.catalog+xml" href="https://vcloudbeta.bluelock.com/api/admin/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3"/>
+    <Link rel="remove" href="https://vcloudbeta.bluelock.com/api/admin/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3/metadata"/>
+    <Description>created by testCreateCatalog()</Description>
+    <Tasks>
+        <Task status="running" startTime="2012-03-11T18:43:02.429-04:00" operationName="catalogCreateCatalog" operation="Creating Catalog Test Catalog(c56d9159-7838-446f-bb35-9ee12dfbbef3)" expiryTime="2012-06-09T18:43:02.429-04:00" name="task" id="urn:vcloud:task:20f556f9-9125-4090-9092-0da9f72bedf4" type="application/vnd.vmware.vcloud.task+xml" href="https://vcloudbeta.bluelock.com/api/task/20f556f9-9125-4090-9092-0da9f72bedf4">
+            <Link rel="task:cancel" href="https://vcloudbeta.bluelock.com/api/task/20f556f9-9125-4090-9092-0da9f72bedf4/action/cancel"/>
+            <Owner type="application/vnd.vmware.vcloud.catalog+xml" name="Test Catalog" href="https://vcloudbeta.bluelock.com/api/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3"/>
+            <User type="application/vnd.vmware.admin.user+xml" name="dan@cloudsoftcorp.com" href="https://vcloudbeta.bluelock.com/api/admin/user/ae75edd2-12de-414c-8e85-e6ea10442c08"/>
+            <Organization type="application/vnd.vmware.vcloud.org+xml" name="JClouds" href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+        </Task>
+    </Tasks>
+    <CatalogItems/>
+    <IsPublished>false</IsPublished>
+</AdminCatalog>

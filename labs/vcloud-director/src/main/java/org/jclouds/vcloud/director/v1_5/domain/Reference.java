@@ -111,4 +111,11 @@ public class Reference extends ReferenceType<Reference> {
       Reference that = Reference.class.cast(o);
       return super.equals(that);
    }
+   
+   public ReferenceType<?> toAdminReference(String endpoint) {
+      return toBuilder()
+        .type(null)
+        .href(URI.create(getHref().toASCIIString().replace(endpoint, endpoint+"/admin")))
+        .build();
+   }
 }

@@ -72,5 +72,7 @@ public class VCloudDirectorLiveTestConstants {
    public static final String CORRECT_VALUE_OBJECT_FMT = "ERR-122: The %s field of the %s must be '%s': '%s'";
    
    public static final String OBJ_FIELD_CLONE = "ERR-123: %s %s must be a clone of \"%s\" (%s)";
+   
+   public static final String OBJ_FIELD_EMPTY_TO_DELETE = "ERR-124: %s must have no %s to be deleted (%s)";
 
 }

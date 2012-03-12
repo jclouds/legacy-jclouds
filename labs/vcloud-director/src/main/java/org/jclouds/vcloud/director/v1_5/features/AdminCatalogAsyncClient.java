@@ -49,6 +49,18 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
+   
+   /**
+    * @see AdminClient#createCatalog(URI, AdminCatalog)
+    */
+   @POST
+   @Path("/catalogs")
+   @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
+   @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<AdminCatalog> createCatalog(@EndpointParam URI orgRef, 
+         @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
 
    /**
     * @see AdminClient#getCatalog(URI)
