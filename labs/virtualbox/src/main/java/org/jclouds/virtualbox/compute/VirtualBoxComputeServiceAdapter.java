@@ -150,7 +150,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    }
 
    @Override
-   public void destroyNode(String vmName) {
+   public synchronized void destroyNode(String vmName) {
       IMachine machine = manager.get().getVBox().findMachine(vmName);
       powerDownMachine(machine);
       new UnregisterMachineIfExistsAndForceDeleteItsMedia().apply(machine);
@@ -198,10 +198,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    private void powerDownMachine(IMachine machine) {
       try {
          if (machine.getState() == MachineState.PoweredOff){
-            logger.debug("vm was already powered down: ", machine.getName());
+            logger.debug("vm was already powered down: ", machine.getId());
             return;
          }
-         logger.debug("powering down vm: ", machine.getName());
+         logger.debug("powering down vm: ", machine.getId());
          ISession machineSession = manager.get().openMachineSession(machine);
          IProgress progress = machineSession.getConsole().powerDown();
          progress.waitForCompletion(-1);

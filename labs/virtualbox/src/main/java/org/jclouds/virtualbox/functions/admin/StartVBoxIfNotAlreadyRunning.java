@@ -93,6 +93,12 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
 
          runScriptOnNodeFactory.create(host.get(), Statements.exec(vboxwebsrv),
                   runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")).init().call();
+         
+         try {
+            // wait for a couple of seconds to make sure vbox has correctly started
+            Thread.sleep(2000L);
+         } catch (InterruptedException e) {
+         }
       }
       manager = managerForNode.apply(host);
       manager.connect(provider.toASCIIString(), identity, credential);
