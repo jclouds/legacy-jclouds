@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
@@ -47,7 +48,7 @@ import com.google.inject.Inject;
 
 /**
  * CloneAndRegisterMachineFromIMachineIfNotAlreadyExists will take care of the followings: - cloning
- * the master - register the clone machine -
+ * the master - register the clone machine.
  * 
  * @author Andrea Turli
  */
@@ -88,7 +89,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
                || e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
-   private synchronized IMachine cloneMachine(CloneSpec cloneSpec) {
+   private IMachine cloneMachine(CloneSpec cloneSpec) {
       VmSpec vmSpec = cloneSpec.getVmSpec();
       NetworkSpec networkSpec = cloneSpec.getNetworkSpec();
       boolean isLinkedClone = cloneSpec.isLinked();
