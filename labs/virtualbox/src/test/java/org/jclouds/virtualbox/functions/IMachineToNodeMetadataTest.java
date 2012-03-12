@@ -19,38 +19,53 @@
 
 package org.jclouds.virtualbox.functions;
 
-import java.util.Map;
-import java.util.Set;
+import static junit.framework.Assert.assertEquals;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.domain.Credentials;
-import org.jclouds.virtualbox.VirtualBox;
-import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.INATEngine;
+import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
-import org.virtualbox_4_1.VirtualBoxManager;
+import org.virtualbox_4_1.NetworkAttachmentType;
 
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 public class IMachineToNodeMetadataTest {
 
    @Test
    public void testCreate() throws Exception {
 
-      Credentials creds = new Credentials("admin", "123456");
-      VirtualBoxManager manager = VirtualBoxManager.createInstance("");
+      IMachine vm = createNiceMock(IMachine.class);
 
-      Map<MachineState, NodeState> machineToNodeState = VirtualBoxComputeServiceContextModule.machineToNodeState;
-      Set<Image> images = ImmutableSet.of();
-      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
+      expect(vm.getName()).andReturn("mocked-vm").anyTimes();
+      expect(vm.getState()).andReturn(MachineState.PoweredOff).once();
 
-      VirtualBox virtualBox = new VirtualBox();
-      IMachineToNodeMetadata parser = new IMachineToNodeMetadata();
-      IMachineToHardware hwParser = new IMachineToHardware(Suppliers.ofInstance(manager));
+      INetworkAdapter nat = createNiceMock(INetworkAdapter.class);
+      INATEngine natEng = createNiceMock(INATEngine.class);
 
-      // hwParser.apply()
+      expect(vm.getNetworkAdapter(eq(0l))).andReturn(nat).once();
+      expect(nat.getAttachmentType()).andReturn(NetworkAttachmentType.NAT).once();
+      expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
+      expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
+      expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3001,,22"));
 
+      INetworkAdapter hostOnly = createNiceMock(INetworkAdapter.class);
+
+      replay(vm, nat, natEng, hostOnly);
+
+      NodeMetadata node = new IMachineToNodeMetadata().apply(vm);
+
+      assertEquals("mocked-vm", node.getName());
+      assertEquals(1, node.getPrivateAddresses().size());
+      assertEquals((NodeCreator.VMS_NETWORK + 1), Iterables.get(node.getPrivateAddresses(), 0));
+      assertEquals(1, node.getPublicAddresses().size());
+      assertEquals("127.0.0.1", Iterables.get(node.getPublicAddresses(), 0));
+      assertEquals(3001, node.getLoginPort());
    }
 }
