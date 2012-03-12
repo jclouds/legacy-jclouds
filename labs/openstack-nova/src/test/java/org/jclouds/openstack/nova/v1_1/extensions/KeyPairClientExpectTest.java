@@ -25,6 +25,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseKeyPairListTest;
+import org.jclouds.openstack.nova.v1_1.parse.ParseKeyPairTest;
 import org.testng.annotations.Test;
 
 import java.net.URI;
@@ -55,15 +56,111 @@ public class KeyPairClientExpectTest  extends BaseNovaRestClientExpectTest {
         HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(200)
                 .payload(payloadFromResource("/keypair_list.json")).build();
 
-        NovaClient clientWhenFloatingIPsExist = requestsSendResponses(
+        NovaClient clientWhenServersExist = requestsSendResponses(
                 keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
                 listKeyPairs, listKeyPairsResponse);
 
-        assertEquals(clientWhenFloatingIPsExist.getConfiguredRegions(),
+        assertEquals(clientWhenServersExist.getConfiguredRegions(),
                 ImmutableSet.of("North"));
 
-        assertEquals(clientWhenFloatingIPsExist.getKeyPairClientForRegion("North")
+        assertEquals(clientWhenServersExist.getKeyPairClientForRegion("North")
                 .listKeyPairs().toString(), new ParseKeyPairListTest().expected()
                 .toString());
+    }
+
+    public void testListKeyPairsWhenResponseIs404() throws Exception {
+        HttpRequest listKeyPairs = HttpRequest
+                .builder()
+                .method("GET")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/os-keypairs"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build()).build();
+
+        HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(404)
+                .build();
+
+        NovaClient clientWhenNoServersExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                listKeyPairs, listKeyPairsResponse);
+
+        assertTrue(clientWhenNoServersExist.getKeyPairClientForRegion("North")
+                .listKeyPairs().isEmpty());
+
+    }
+
+    public void testCreateKeyPair() throws Exception {
+        HttpRequest createKeyPair = HttpRequest
+                .builder()
+                .method("POST")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/os-keypairs"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build())
+                .payload(payloadFromStringWithContentType("{\"keypair\":{\"name\":\"testkeypair\"}}",
+                        "application/json")).build();
+
+        HttpResponse createKeyPairResponse = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/keypair_created.json")).build();
+
+        NovaClient clientWhenServersExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                createKeyPair, createKeyPairResponse);
+
+        assertEquals(clientWhenServersExist.getKeyPairClientForRegion("North")
+                .createKeyPair("testkeypair").toString(),
+                new ParseKeyPairTest().expected().toString());
+
+    }
+
+    public void testCreateKeyPairWithPublicKey() throws Exception {
+        HttpRequest createKeyPair = HttpRequest
+                .builder()
+                .method("POST")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/os-keypairs"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build())
+                .payload(payloadFromStringWithContentType("{\"keypair\":{\"name\":\"testkeypair\",\"public_key\":\"ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001\n\"}}",
+                        "application/json")).build();
+
+        HttpResponse createKeyPairResponse = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/keypair_created.json")).build();
+
+        NovaClient clientWhenServersExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                createKeyPair, createKeyPairResponse);
+
+        assertEquals(clientWhenServersExist.getKeyPairClientForRegion("North")
+                .createKeyPairWithPublicKey("testkeypair", "ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001\n")
+                .toString(),
+                new ParseKeyPairTest().expected().toString());
+    }
+
+    public void testDeleteKeyPair() throws Exception {
+        HttpRequest deleteKeyPair = HttpRequest
+                .builder()
+                .method("DELETE")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/os-keypairs/testkeypair"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "*/*")
+                                .put("X-Auth-Token", authToken).build()).build();
+
+
+        HttpResponse deleteKeyPairResponse = HttpResponse.builder().statusCode(202).build();
+
+        NovaClient clientWhenServersExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                deleteKeyPair, deleteKeyPairResponse);
+        
+        assertTrue(clientWhenServersExist.getKeyPairClientForRegion("North").deleteKeyPair("testkeypair"));
     }
 }
