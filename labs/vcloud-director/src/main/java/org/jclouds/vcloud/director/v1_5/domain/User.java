@@ -270,7 +270,7 @@ public class User
 
 
       public User build() {
-         return new User(href, type, links, description, tasksInProgress, id,
+         return new User(href, type, links, description, tasks, id,
                name, fullName, emailAddress, telephone, isEnabled, isLocked,
                im, nameInSource, isAlertEnabled, alertEmailPrefix, alertEmail,
                isExternal, isDefaultCached, isGroupRole, storedVmQuota, deployedVmQuota,
@@ -286,13 +286,13 @@ public class User
          this.id = id;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -398,12 +398,12 @@ public class User
    @XmlElement(name = "GroupReferences")
    protected Object /* GroupsList */ groupReferences;
 
-   public User(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+   public User(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
                String name, String fullName, String emailAddress, String telephone, Boolean enabled, Boolean locked,
                String im, String nameInSource, Boolean alertEnabled, String alertEmailPrefix, String alertEmail,
                Boolean external, Boolean defaultCached, Boolean groupRole, Integer storedVmQuota, Integer deployedVmQuota,
                Reference role, String password, Object groupReferences) {
-      super(href, type, links, description, tasksInProgress, id, name);
+      super(href, type, links, description, tasks, id, name);
       this.fullName = fullName;
       this.emailAddress = emailAddress;
       this.telephone = telephone;

@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -29,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 @XmlRootElement(name = "NetworkType")
 public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
@@ -57,7 +55,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
 
       @Override
       public NetworkType<T> build() {
-         return new NetworkType<T>(href, type, links, description, tasksInProgress, id, name, networkConfiguration);
+         return new NetworkType<T>(href, type, links, description, tasks, id, name, networkConfiguration);
       }
 
       /**
@@ -86,13 +84,13 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
          this.id = id;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder<T> tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder<T> tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -119,7 +117,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
        */
       @Override
       public Builder<T> links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         super.links(links);
          return this;
       }
 
@@ -128,7 +126,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
        */
       @Override
       public Builder<T> link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
+         super.link(link);
          return this;
       }
 
@@ -146,9 +144,9 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
       }
    }
 
-   public NetworkType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+   public NetworkType(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
                       String id, String name, NetworkConfiguration networkConfiguration) {
-      super(href, type, links, description, tasksInProgress, id, name);
+      super(href, type, links, description, tasks, id, name);
       this.networkConfiguration = networkConfiguration;
    }
 

@@ -80,7 +80,7 @@ public class Org extends EntityType<Org> {
       
       @Override
       public Org build() {
-         return new Org(href, type, links, description, tasksInProgress, id, name, fullName, isEnabled);
+         return new Org(href, type, links, description, tasks, id, name, fullName, isEnabled);
       }
       
       public T fromOrg(Org in) {
@@ -143,7 +143,7 @@ public class Org extends EntityType<Org> {
 
       @Override
       public Org build() {
-         return new Org(href, type, links, description, tasksInProgress, id, name, fullName, isEnabled);
+         return new Org(href, type, links, description, tasks, id, name, fullName, isEnabled);
       }
 
       /**
@@ -174,11 +174,11 @@ public class Org extends EntityType<Org> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -232,8 +232,8 @@ public class Org extends EntityType<Org> {
       // for JAXB
    }
 
-   public Org(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, String fullName, Boolean enabled) {
-      super(href, type, links, description, tasksInProgress, id, name);
+   public Org(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, String fullName, Boolean enabled) {
+      super(href, type, links, description, tasks, id, name);
       this.fullName = fullName;
       isEnabled = enabled;
    }

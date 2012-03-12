@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -29,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 @XmlRootElement(name = "OrgNetwork")
 public class OrgNetwork extends NetworkType<OrgNetwork> {
@@ -67,7 +65,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
 
       @Override
       public OrgNetwork build() {
-         return new OrgNetwork(href, type, links, description, tasksInProgress, id, name, networkConfiguration,
+         return new OrgNetwork(href, type, links, description, tasks, id, name, networkConfiguration,
                networkPool, allowedExternalIpAddresses);
       }
 
@@ -105,13 +103,13 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
          this.id = id;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -138,7 +136,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         super.links(links);
          return this;
       }
 
@@ -147,7 +145,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
+         super.link(link);
          return this;
       }
 
@@ -167,9 +165,9 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
       // For JAXB
    }
 
-   private OrgNetwork(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+   private OrgNetwork(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
                       String id, String name, NetworkConfiguration networkConfiguration, ReferenceType<?> networkPool, IpAddresses allowedExternalIpAddresses) {
-      super(href, type, links, description, tasksInProgress, id, name, networkConfiguration);
+      super(href, type, links, description, tasks, id, name, networkConfiguration);
       this.networkPool = networkPool;
       this.allowedExternalIpAddresses = allowedExternalIpAddresses;
    }

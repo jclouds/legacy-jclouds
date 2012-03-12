@@ -80,9 +80,9 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // NOTE The environment MUST have ...
       
       // Check required elements and attributes
-      assertFalse(Iterables.isEmpty(taskList.getTasks()), String.format(NOT_EMPTY_OBJECT_FMT, "Task", "TaskList"));
+      assertFalse(Iterables.isEmpty(taskList), String.format(NOT_EMPTY_OBJECT_FMT, "Task", "TaskList"));
       
-      for (Task task : taskList.getTasks()) {
+      for (Task task : taskList) {
          checkTask(task);
       }
    }
@@ -91,7 +91,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testGetTask() {
       //TODO: upload media or something so you can get a fresh cancellable task?
       
-      Task taskRef = Iterables.getFirst(taskList.getTasks(), null);
+      Task taskRef = Iterables.getFirst(taskList, null);
       taskURI = taskRef.getHref();
 
       // Call the method being tested

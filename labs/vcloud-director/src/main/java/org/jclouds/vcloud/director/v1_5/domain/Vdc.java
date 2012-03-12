@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -32,7 +31,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
 
 
 /**
@@ -199,7 +197,7 @@ public class Vdc
 
       public Vdc build() {
          return new Vdc(
-               href, type, links, description, tasksInProgress, id, name, allocationModel, storageCapacity,
+               href, type, links, description, tasks, id, name, allocationModel, storageCapacity,
                computeCapacity, resourceEntities, availableNetworks, capabilities, nicQuota, networkQuota,
                vmQuota, isEnabled, status);
       }
@@ -228,13 +226,13 @@ public class Vdc
          this.id = id;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -255,13 +253,13 @@ public class Vdc
          this.type = type;
          return this;
       }
-
+      
       /**
        * @see EntityType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         super.links(links);
          return this;
       }
 
@@ -270,10 +268,9 @@ public class Vdc
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
+         super.link(link);
          return this;
       }
-
 
       @Override
       public Builder fromEntityType(EntityType<Vdc> in) {
@@ -296,8 +293,8 @@ public class Vdc
       }
    }
 
-   public Vdc(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, String allocationModel, CapacityWithUsage storageCapacity, ComputeCapacity computeCapacity, ResourceEntities resourceEntities, AvailableNetworks availableNetworks, Capabilities capabilities, int nicQuota, int networkQuota, Integer vmQuota, Boolean enabled, Integer status) {
-      super(href, type, links, description, tasksInProgress, id, name);
+   public Vdc(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, String allocationModel, CapacityWithUsage storageCapacity, ComputeCapacity computeCapacity, ResourceEntities resourceEntities, AvailableNetworks availableNetworks, Capabilities capabilities, int nicQuota, int networkQuota, Integer vmQuota, Boolean enabled, Integer status) {
+      super(href, type, links, description, tasks, id, name);
       this.allocationModel = allocationModel;
       this.storageCapacity = storageCapacity;
       this.computeCapacity = computeCapacity;

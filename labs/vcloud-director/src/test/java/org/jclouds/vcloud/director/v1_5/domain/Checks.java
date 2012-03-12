@@ -66,9 +66,9 @@ public class Checks {
 
       // Check optional fields
       // NOTE description cannot be checked
-      TasksInProgress tasksInProgress = entity.getTasksInProgress();
-      if (tasksInProgress != null && tasksInProgress.getTasks() != null && !tasksInProgress.getTasks().isEmpty()) {
-         for (Task task : tasksInProgress.getTasks()) checkTask(task);
+      Set<Task> tasks = entity.getTasks();
+      if (tasks != null && tasks != null && !tasks.isEmpty()) {
+         for (Task task : tasks) checkTask(task);
       }
       
       // Check parent type

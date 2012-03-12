@@ -38,9 +38,10 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksInProgress;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Allows us to test a client via its side effects.
@@ -415,8 +416,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .href(URI.create("https://mycloud.greenhousedata.com/api/media/a6b023f2-7f90-4e89-a24d-56e0eba83a5a"))
             .build())
          .description("copied by testCloneMedia()")
-         .tasksInProgress(TasksInProgress.builder()
-            .task(Task.builder()
+         .tasks(ImmutableSet.<Task>builder()
+            .add(Task.builder()
                 .status("running")
                 .startTime(dateService.iso8601DateParse("2012-03-02T04:58:48.754-07:00"))
                 .operationName("vdcCopyMedia")

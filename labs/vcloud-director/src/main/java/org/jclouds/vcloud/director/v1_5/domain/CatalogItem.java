@@ -46,7 +46,6 @@ public class CatalogItem extends EntityType<CatalogItem> {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG_ITEM;
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -87,7 +86,7 @@ public class CatalogItem extends EntityType<CatalogItem> {
 
       @Override
       public CatalogItem build() {
-         return new CatalogItem(href, type, links, description, tasksInProgress, id, name, entity, properties);
+         return new CatalogItem(href, type, links, description, tasks, id, name, entity, properties);
       }
 
       /**
@@ -116,13 +115,13 @@ public class CatalogItem extends EntityType<CatalogItem> {
          this.id = id;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -145,21 +144,19 @@ public class CatalogItem extends EntityType<CatalogItem> {
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       @Override
@@ -172,8 +169,8 @@ public class CatalogItem extends EntityType<CatalogItem> {
       }
    }
 
-   private CatalogItem(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, Reference entity, Set<Property> properties) {
-      super(href, type, links, description, tasksInProgress, id, name);
+   private CatalogItem(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, Reference entity, Set<Property> properties) {
+      super(href, type, links, description, tasks, id, name);
       this.entity = entity;
       this.properties = ImmutableSet.copyOf(properties);
    }

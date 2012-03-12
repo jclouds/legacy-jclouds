@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -30,7 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Base type that represents a resource entity such as a vApp template or virtual media.
@@ -72,13 +70,13 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
          this.id = id;
          return this;
       }
-
+      
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder<T> tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder<T> tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -101,20 +99,18 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceEntityType#getLinks()
        */
-      @Override
       public Builder<T> links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         super.links(links);
          return this;
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceEntityType#getLinks()
        */
-      @Override
       public Builder<T> link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
+         super.link(link);
          return this;
       }
 
@@ -134,8 +130,8 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
    @XmlAttribute
    protected Integer status;
 
-   public ResourceEntityType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, FilesList files, Integer status) {
-      super(href, type, links, description, tasksInProgress, id, name);
+   public ResourceEntityType(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, FilesList files, Integer status) {
+      super(href, type, links, description, tasks, id, name);
       this.files = files;
       this.status = status;
    }

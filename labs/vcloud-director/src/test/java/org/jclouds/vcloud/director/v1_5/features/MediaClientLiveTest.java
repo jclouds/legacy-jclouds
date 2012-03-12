@@ -143,7 +143,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       media = mediaClient.getMedia(media.getHref());
       
-      Task task = Iterables.getOnlyElement(media.getTasksInProgress().getTasks());
+      Task task = Iterables.getOnlyElement(media.getTasks());
 
       assertEquals(task.getStatus(), "running");
       
@@ -192,8 +192,8 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       Checks.checkMediaFor(VDC, media);
       
-      if (media.getTasksInProgress() != null) {
-         Task copyTask = getFirst(media.getTasksInProgress().getTasks(), null);
+      if (media.getTasks() != null) {
+         Task copyTask = getFirst(media.getTasks(), null);
          if (copyTask != null) {
             Checks.checkTask(copyTask);
             assertTrue(retryTaskSuccess.apply(copyTask), String.format(TASK_COMPLETE_TIMELY, "copyTask"));
@@ -216,8 +216,8 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       Checks.checkMediaFor(VDC, media);
       
-      if (media.getTasksInProgress() != null) {
-         Task copyTask = getFirst(media.getTasksInProgress().getTasks(), null);
+      if (media.getTasks() != null) {
+         Task copyTask = getFirst(media.getTasks(), null);
          if (copyTask != null) {
             Checks.checkTask(copyTask);
             assertTrue(retryTaskSuccess.apply(copyTask), String.format(TASK_COMPLETE_TIMELY, "copyTask"));

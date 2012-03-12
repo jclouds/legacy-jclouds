@@ -57,7 +57,7 @@ public class Catalog extends CatalogType<Catalog> {
 
       @Override
       public Catalog build() {
-         return new Catalog(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, isPublished);
+         return new Catalog(href, type, links, description, tasks, id, name, owner, catalogItems, isPublished);
       }
       
       /**
@@ -120,11 +120,11 @@ public class Catalog extends CatalogType<Catalog> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -174,9 +174,9 @@ public class Catalog extends CatalogType<Catalog> {
       }
    }
 
-   public Catalog(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+   public Catalog(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
                   String name, Owner owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, published);
+      super(href, type, links, description, tasks, id, name, owner, catalogItems, published);
    }
 
    @SuppressWarnings("unused")

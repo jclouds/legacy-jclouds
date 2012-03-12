@@ -28,6 +28,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
@@ -55,7 +57,7 @@ public abstract class ResourceType<T extends ResourceType<T>> {
       
       protected URI href;
       protected String type;
-      protected Set<Link> links = Sets.newLinkedHashSet();
+      protected Set<Link> links;
 
       /**
        * @see ResourceType#getHref()
@@ -85,6 +87,8 @@ public abstract class ResourceType<T extends ResourceType<T>> {
        * @see ResourceType#getLinks()
        */
       public T link(Link link) {
+         if (links == null)
+            links = Sets.newLinkedHashSet();
          this.links.add(checkNotNull(link, "link"));
          return self();
       }
@@ -102,7 +106,7 @@ public abstract class ResourceType<T extends ResourceType<T>> {
 
       protected URI href;
       protected String type;
-      protected Set<Link> links = Sets.newLinkedHashSet();
+      protected Set<Link> links;
 
       /**
        * @see ResourceType#getHref()
@@ -132,6 +136,8 @@ public abstract class ResourceType<T extends ResourceType<T>> {
        * @see ResourceType#getLinks()
        */
       public Builder<T> link(Link link) {
+         if (links == null)
+            links = Sets.newLinkedHashSet();
          this.links.add(checkNotNull(link, "link"));
          return this;
       }
@@ -148,12 +154,13 @@ public abstract class ResourceType<T extends ResourceType<T>> {
    @XmlAttribute
    private String type;
    @XmlElement(name = "Link")
-   private Set<Link> links = Sets.newLinkedHashSet();
+   private Set<Link> links;
 
-   protected ResourceType(URI href, String type, Set<Link> links) {
+   protected ResourceType(URI href, String type, @Nullable Set<Link> links) {
       this.href = href;
       this.type = type;
-      this.links = ImmutableSet.copyOf(links);
+      // nullable so that jaxb wont persist empty collections
+      this.links = links != null && links.size() == 0 ? null : links;
    }
 
    protected ResourceType() {
@@ -193,7 +200,7 @@ public abstract class ResourceType<T extends ResourceType<T>> {
     * Set of optional links to an entity or operation associated with this object.
     */
    public Set<Link> getLinks() {
-      return Collections.unmodifiableSet(links);
+      return links == null ? ImmutableSet.<Link>of() : Collections.unmodifiableSet(links);
    }
 
    @Override

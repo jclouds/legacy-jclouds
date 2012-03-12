@@ -106,7 +106,7 @@ public class Group extends EntityType<Group> {
       }
 
       public Group build() {
-         return new Group(href, type, links, description, tasksInProgress, id, name, 
+         return new Group(href, type, links, description, tasks, id, name, 
                nameInSource, usersList, role);
       }
       
@@ -138,11 +138,11 @@ public class Group extends EntityType<Group> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         super.tasksInProgress(tasksInProgress);
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -200,9 +200,9 @@ public class Group extends EntityType<Group> {
    }
    
    public Group(URI href, String type, Set<Link> links, String description, 
-         TasksInProgress tasksInProgress, String id, String name, String nameInSource, 
+         Set<Task> tasks, String id, String name, String nameInSource, 
          UsersList usersList, Reference role) {
-      super(href, type, links, description, tasksInProgress, id, name);
+      super(href, type, links, description, tasks, id, name);
       this.nameInSource = nameInSource;
       this.usersList = usersList;
       this.role = role;

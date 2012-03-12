@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -33,7 +32,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 
 /**
@@ -99,7 +97,7 @@ public class File extends EntityType<File> {
       }
 
       public File build() {
-         return new File(href, type, links, description, tasksInProgress, id, name, size, bytesTransferred, checksum);
+         return new File(href, type, links, description, tasks, id, name, size, bytesTransferred, checksum);
 
       }
 
@@ -128,11 +126,11 @@ public class File extends EntityType<File> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         super.tasksInProgress (tasksInProgress);
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks (tasks);
          return this;
       }
 
@@ -159,7 +157,7 @@ public class File extends EntityType<File> {
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         super.links(links);
          return this;
       }
 
@@ -168,7 +166,7 @@ public class File extends EntityType<File> {
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
+         super.link(link);
          return this;
       }
 
@@ -186,9 +184,9 @@ public class File extends EntityType<File> {
       }
    }
 
-   public File(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+   public File(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
                String name, Long size, Long bytesTransferred, String checksum) {
-      super(href, type, links, description, tasksInProgress, id, name);
+      super(href, type, links, description, tasks, id, name);
       this.size = size;
       this.bytesTransferred = bytesTransferred;
       this.checksum = checksum;
