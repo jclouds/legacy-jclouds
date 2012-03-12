@@ -61,7 +61,7 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SmtpServerSettings", propOrder = {
-    "isUseAuthentication",
+    "useAuthentication",
     "host",
     "username",
     "password"
@@ -200,8 +200,7 @@ public class SmtpServerSettings {
       if (o == null || getClass() != o.getClass())
          return false;
       SmtpServerSettings that = SmtpServerSettings.class.cast(o);
-      return super.equals(that) && 
-           equal(useAuthentication, that.useAuthentication) && 
+      return equal(useAuthentication, that.useAuthentication) && 
            equal(host, that.host) && 
            equal(username, that.username) && 
            equal(password, that.password);
@@ -209,8 +208,7 @@ public class SmtpServerSettings {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(),
-           useAuthentication, 
+      return Objects.hashCode(useAuthentication, 
            host, 
            username, 
            password);

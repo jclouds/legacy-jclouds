@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.testng.collections.Lists;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
@@ -62,7 +64,7 @@ import com.google.common.collect.ImmutableList;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Networks", propOrder = {
-    "network"
+    "networks"
 })
 public class Networks {
    public static Builder builder() {
@@ -75,7 +77,7 @@ public class Networks {
 
    public static class Builder {
       
-      private List<Reference> networks;
+      private List<Reference> networks = Lists.newArrayList();
 
       /**
        * @see Networks#getNetwork()

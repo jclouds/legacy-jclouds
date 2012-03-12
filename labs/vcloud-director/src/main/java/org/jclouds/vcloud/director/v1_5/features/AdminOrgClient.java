@@ -18,9 +18,19 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
+import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 
 /**
  * Provides synchronous access to {@link Group} objects.
@@ -29,38 +39,181 @@ import org.jclouds.concurrent.Timeout;
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AdminOrgClient {
+public interface AdminOrgClient extends OrgClient {
    
-//   GET /admin/org/{id}
+   /**
+    * Retrieves an admin view of an organization. 
+    * The organization might be enabled or disabled. 
+    * If enabled, the organization allows login and all other operations.
+    *
+    * <pre>
+    * GET /admin/org/{id}
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the admin org
+    */
+   AdminOrg getOrg(URI orgRef);
    
-//   POST /admin/org/{id}/catalogs
+   /**
+    * Gets organizational settings for this organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the settings
+    */
+   OrgSettings getSettings(URI orgRef);
    
-//   POST /admin/org/{id}/groups
+   /**
+    * Updates organizational settings for this organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgSettings updateSettings(URI orgRef, OrgSettings newSettings);
    
-//   GET /admin/org/{id}/settings
+   /**
+    * Retrieves email settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/email
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the email settings
+    */
+   OrgEmailSettings getEmailSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings
+   /**
+    * Updates email policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/email
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgEmailSettings updateEmailSettings(URI orgRef, 
+         OrgEmailSettings newSettings);
    
-//   GET /admin/org/{id}/settings/email
+   /**
+    * Gets general organization settings.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/general
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgGeneralSettings getGeneralSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/email
+   /**
+    * Updates general organization settings.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/general
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgGeneralSettings updateGeneralSettings(URI orgRef, 
+         OrgGeneralSettings newSettings);
    
-//   GET /admin/org/{id}/settings/general
+   /**
+    * Retrieves LDAP settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/ldap
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the ldap settings
+    */
+   OrgLdapSettings getLdapSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/general
+   /**
+    * Retrieves password policy settings for an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/passwordPolicy
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgPasswordPolicySettings getPasswordPolicy(URI orgRef);
    
-//   GET /admin/org/{id}/settings/ldap
+   /**
+    * Updates password policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/passwordPolicy
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgPasswordPolicySettings updatePasswordPolicy(URI orgRef, 
+         OrgPasswordPolicySettings newSettings);
    
-//   GET /admin/org/{id}/settings/passwordPolicy
+   /**
+    * Gets organization resource cleanup settings on the level of vApp.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/vAppLeaseSettings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgLeaseSettings getVAppLeaseSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/passwordPolicy
+   /**
+    * Updates organization resource cleanup settings on the level of vApp.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/vAppLeaseSettings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgLeaseSettings updateVAppLeaseSettings(URI orgRef, 
+         OrgLeaseSettings newSettings);
    
-//   GET /admin/org/{id}/settings/vAppLeaseSettings
+   /**
+    * Retrieves expiration and storage policy for vApp templates in an organization.
+    *
+    * <pre>
+    * GET /admin/org/{id}/settings/vAppTemplateLeaseSettings
+    * </pre>
+    *
+    * @param orgRef the reference for the admin org
+    * @return the lease settings
+    */
+   OrgVAppTemplateLeaseSettings getVAppTemplateLeaseSettings(URI orgRef);
    
-//   PUT /admin/org/{id}/settings/vAppLeaseSettings
-   
-//   GET /admin/org/{id}/settings/vAppTemplateLeaseSettings
-   
-//   PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings
+   /**
+    * Updates vApp template policy settings for organization.
+    * 
+    * <pre>
+    * PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings
+    * </pre>
+    * @param orgRef the reference for the admin org
+    * @param newSettings the requested updated settings
+    * @return the resultant settings
+    */
+   OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings(URI orgRef, 
+         OrgVAppTemplateLeaseSettings newSettings);
 
 }

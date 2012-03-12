@@ -31,6 +31,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.testng.collections.Lists;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
@@ -76,7 +78,7 @@ public class Vdcs {
 
    public static class Builder {
       
-      private List<Reference> vdcs;
+      private List<Reference> vdcs = Lists.newArrayList();
 
       /**
        * @see Vdcs#getVdc()
