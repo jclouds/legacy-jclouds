@@ -4,7 +4,7 @@
         <file>target/test-data/jclouds.log</file>
 
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
+            <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
         </layout>
     </appender>
 
@@ -12,7 +12,7 @@
         <file>target/test-data/jclouds-wire.log</file>
 
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
+            <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
         </layout>
     </appender>
 
@@ -20,7 +20,7 @@
         <file>target/test-data/jclouds-compute.log</file>
 
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
+            <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
         </layout>
     </appender>
     
@@ -28,7 +28,7 @@
         <file>target/test-data/jclouds-ssh.log</file>
 
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d %-5p [%c] (%t) %m%n</Pattern>
+            <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
         </layout>
     </appender>
 
