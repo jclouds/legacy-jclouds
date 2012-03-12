@@ -46,10 +46,10 @@ public class IMachineToHardwareTest {
       IGuestOSType guestOsType = createNiceMock(IGuestOSType.class);
 
       String linuxDescription = "Ubuntu Linux 10.04";
-      String machineId = "hw-machineId";
+      String machineName = "hw-machineId";
 
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
-      expect(vm.getId()).andReturn(machineId).anyTimes();
+      expect(vm.getName()).andReturn(machineName).anyTimes();
 
       expect(vm.getDescription()).andReturn(linuxDescription).anyTimes();
 
@@ -61,11 +61,11 @@ public class IMachineToHardwareTest {
 
       Hardware hardware = new IMachineToHardware(Suppliers.ofInstance(vbm)).apply(vm);
 
-      assertEquals(hardware.getId(), machineId);
-      assertEquals(hardware.getProviderId(), machineId);
+      assertEquals(hardware.getId(), machineName);
+      assertEquals(hardware.getProviderId(), machineName);
       // for starters assume 1-to-1 relationship hardware to image (which
       // correlate to a single source IMachine)
-      assertEquals(hardware.supportsImage().toString(), ImagePredicates.idEquals(machineId).toString());
+      assertEquals(hardware.supportsImage().toString(), ImagePredicates.idEquals(machineName).toString());
 
    }
 
