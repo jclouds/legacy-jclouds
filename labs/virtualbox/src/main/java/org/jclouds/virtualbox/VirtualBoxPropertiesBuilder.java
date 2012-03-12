@@ -60,8 +60,8 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(PROPERTY_API_VERSION, "4.1.4");
 
       properties.put(PROPERTY_BUILD_VERSION, "4.1.8r75467");
-      properties.put(PROPERTY_IDENTITY, "administrator");
-      properties.put(PROPERTY_CREDENTIAL, "12345");
+      properties.put(PROPERTY_IDENTITY, "toor");
+      properties.put(PROPERTY_CREDENTIAL, "password");
 
       properties.put(PROPERTY_IMAGE_LOGIN_USER, "toor:password");
       properties.put(PROPERTY_IMAGE_AUTHENTICATE_SUDO, "true");

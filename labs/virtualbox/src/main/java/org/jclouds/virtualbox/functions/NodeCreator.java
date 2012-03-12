@@ -65,6 +65,9 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
    // TODO parameterize
    public static final boolean USE_LINKED = true;
+   
+   // TODO parameterize
+   public static final ExecutionType executionType = ExecutionType.GUI;
 
    private final Supplier<VirtualBoxManager> manager;
    private final Function<CloneSpec, IMachine> cloner;
@@ -132,7 +135,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       IMachine cloned = cloner.apply(cloneSpec);
 
-      new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
+      new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, "").apply(cloned);
 
       machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
                RunScriptOptions.NONE);

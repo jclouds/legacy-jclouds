@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
