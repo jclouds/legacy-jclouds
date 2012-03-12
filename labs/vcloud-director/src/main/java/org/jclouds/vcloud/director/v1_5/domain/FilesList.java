@@ -29,7 +29,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ForwardingList;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 
@@ -58,7 +60,8 @@ import com.google.common.collect.Lists;
 @XmlType(name = "FilesList", propOrder = {
       "files"
 })
-public class FilesList {
+public class FilesList extends ForwardingList<File> {
+   
    public static Builder builder() {
       return new Builder();
    }
@@ -137,4 +140,8 @@ public class FilesList {
             .add("file", files).toString();
    }
 
+   @Override
+   protected List<File> delegate() {
+      return getFiles();
+   }
 }
