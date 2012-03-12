@@ -33,7 +33,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
 import org.jclouds.byon.Node;
-import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
@@ -49,7 +48,6 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
-import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
@@ -105,7 +103,6 @@ import com.google.inject.TypeLiteral;
  * @author Mattias Holmqvist, Andrea Turli
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@SingleThreaded
 public class VirtualBoxComputeServiceContextModule extends
          ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
 

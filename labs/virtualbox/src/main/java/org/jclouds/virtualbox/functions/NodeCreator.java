@@ -56,13 +56,13 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
    // TODO parameterize
    public static final int NODE_PORT_INIT = 3000;
-   
+
    // TODO parameterize
    public static final String VMS_NETWORK = "33.33.33.";
-   
+
    // TODO parameterize
    public static final String HOST_ONLY_IFACE_NAME = "vboxnet0";
-   
+
    // TODO parameterize
    public static final boolean USE_LINKED = true;
 
@@ -84,8 +84,13 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       this.imachineToNodeMetadata = imachineToNodeMetadata;
    }
 
+   /**
+    * Creates a clone based on the {@link NodeSpec}. It is synchronized because it needs sole access
+    * to the master. Could be improved by locking on a master basis (would allow concurrent cloning
+    * as long as form different masters."
+    */
    @Override
-   public NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
+   public synchronized NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
 
       checkNotNull(nodeSpec, "NodeSpec");
 
@@ -102,6 +107,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
          session.unlockMachine();
       }
+
       String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
 
       String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + "-" + nodeSpec.getTag() + "-"
