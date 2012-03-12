@@ -18,9 +18,16 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import java.net.URI;
+import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
+import java.util.Collections;
+
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -32,17 +39,113 @@ import org.testng.annotations.Test;
 @Test(groups = { "unit", "admin", "adminUser"}, singleThreaded = true, testName = "UserClientExpectTest")
 public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
-   private Reference userRef = Reference.builder()
-         .href(URI.create(endpoint + "/admin/user/???"))
+   private Reference orgRef = Reference.builder()
+         .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
          .build();
    
-// POST /admin/org/{id}/users
+   private Reference userRef = Reference.builder()
+         .href(URI.create(endpoint + "/admin/user/b37223f3-8792-477a-820f-334998f61cd6"))
+         .build();
    
-// GET /admin/user/{id}
+   @Test
+   public void testCreateUser() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("POST", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalogs")
+            .xmlFilePayload("/user/createUserSource.xml", VCloudDirectorMediaType.USER)
+            .acceptMedia(VCloudDirectorMediaType.USER)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/user/createUser.xml", VCloudDirectorMediaType.USER)
+            .httpResponseBuilder().build());
+
+      User source = createUserSource();
+      User expected = createUser();
+
+      assertEquals(client.getUserClient().createUser(orgRef.getHref(), source), expected);
+   }
+   
+   public static final User createUserSource() {
+      return User.builder()
+            .name("test")
+            .fullName("testFullName")
+            .emailAddress("test@test.com")
+            .telephone("555-1234")
+            .isEnabled(false)
+            .im("testIM")
+            .isAlertEnabled(false)
+            .alertEmailPrefix("testPrefix")
+            .alertEmail("testAlert@test.com")
+            .isExternal(false)
+            .isGroupRole(false)
+            .role(Reference.builder()
+               .type("application/vnd.vmware.admin.role+xml")
+               .name("vApp User")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/role/ff1e0c91-1288-3664-82b7-a6fa303af4d1"))
+               .build())
+            .password("password")
+            .groups(Collections.<Reference>emptyList())
+            .build();
+   }
+   
+   public static final User createUser() {
+      return createUserSource().toBuilder()
+         .id("urn:vcloud:user:b37223f3-8792-477a-820f-334998f61cd6")
+         .type("application/vnd.vmware.admin.user+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/b37223f3-8792-477a-820f-334998f61cd6"))
+         .link(Link.builder()
+            .rel("edit")
+            .type("application/vnd.vmware.admin.user+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/b37223f3-8792-477a-820f-334998f61cd6"))
+            .build())
+         .link(Link.builder()
+            .rel("remove")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/b37223f3-8792-477a-820f-334998f61cd6"))
+            .build())
+         .isLocked(false)
+         .isDefaultCached(false)
+         .storedVmQuota(0)
+         .deployedVmQuota(0)
+         .password(null)
+         .build();
+   }
+   
+   @Test
+   public void testGetUser() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/user/user.xml", VCloudDirectorMediaType.USER)
+            .httpResponseBuilder().build());
+
+      User expected = user();
+
+      assertEquals(client.getUserClient().getUser(userRef.getHref()), expected);
+   }
+   
+   public static final User user() {
+      return createUser().toBuilder()
+         .nameInSource("test")
+         .build();
+   }
  
 // PUT /admin/user/{id}
  
-// DELETE /admin/user/{id}
- 
 // POST /admin/user/{id}/action/unlock
+ 
+   @Test
+   public void testDeleteUser() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+            new VcloudHttpRequestPrimer()
+               .apiCommand("DELETE", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6")
+               .acceptAnyMedia()
+               .httpRequestBuilder().build(), 
+            new VcloudHttpResponsePrimer()
+               .httpResponseBuilder().statusCode(204).build());
+      
+      client.getUserClient().deleteUser(userRef.getHref());
+   }
 }

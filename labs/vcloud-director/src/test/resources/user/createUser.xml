@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<User xmlns="http://www.vmware.com/vcloud/v1.5" name="test" id="urn:vcloud:user:b37223f3-8792-477a-820f-334998f61cd6" type="application/vnd.vmware.admin.user+xml" href="https://vcloudbeta.bluelock.com/api/admin/user/b37223f3-8792-477a-820f-334998f61cd6" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="edit" type="application/vnd.vmware.admin.user+xml" href="https://vcloudbeta.bluelock.com/api/admin/user/b37223f3-8792-477a-820f-334998f61cd6"/>
+    <Link rel="remove" href="https://vcloudbeta.bluelock.com/api/admin/user/b37223f3-8792-477a-820f-334998f61cd6"/>
+    <FullName>testFullName</FullName>
+    <EmailAddress>test@test.com</EmailAddress>
+    <Telephone>555-1234</Telephone>
+    <IsEnabled>false</IsEnabled>
+    <IsLocked>false</IsLocked>
+    <IM>testIM</IM>
+    <IsAlertEnabled>false</IsAlertEnabled>
+    <AlertEmailPrefix>testPrefix</AlertEmailPrefix>
+    <AlertEmail>testAlert@test.com</AlertEmail>
+    <IsExternal>false</IsExternal>
+    <IsDefaultCached>false</IsDefaultCached>
+    <IsGroupRole>false</IsGroupRole>
+    <StoredVmQuota>0</StoredVmQuota>
+    <DeployedVmQuota>0</DeployedVmQuota>
+    <Role type="application/vnd.vmware.admin.role+xml" name="vApp User" href="https://vcloudbeta.bluelock.com/api/admin/role/ff1e0c91-1288-3664-82b7-a6fa303af4d1"/>
+    <GroupReferences/>
+</User>

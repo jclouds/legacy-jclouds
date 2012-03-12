@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.testng.collections.Lists;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -125,7 +127,7 @@ public class User
       private Integer deployedVmQuota;
       private Reference role;
       private String password;
-      private List<Reference> groups;
+      private List<Reference> groups = Lists.newArrayList();
 
       /**
        * @see User#getFullName()
@@ -267,7 +269,7 @@ public class User
        * @see User#getGroups()
        */
       public Builder groups(List<Reference> groups) {
-         this.groups = ImmutableList.copyOf(groups);
+         this.groups = groups == null ? null : ImmutableList.copyOf(groups);
          return this;
       }
       
@@ -287,6 +289,14 @@ public class User
                role, password, groups);
       }
 
+      /**
+       * @see EntityType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
 
       /**
        * @see EntityType#getId()
@@ -616,7 +626,7 @@ public class User
     *         {@link GroupsListType }
     */
    public List<Reference> getGroups() {
-      return groups;
+      return groups == null ? Lists.<Reference>newArrayList() : groups;
    }
 
    @Override
@@ -690,5 +700,4 @@ public class User
             .add("password", password)
             .add("groups", groups).toString();
    }
-
 }

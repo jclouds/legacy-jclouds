@@ -18,10 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 
 /**
  * Provides synchronous access to {@link Group} objects.
@@ -31,13 +33,40 @@ import org.jclouds.vcloud.director.v1_5.domain.Group;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface UserClient {
-//   POST /admin/org/{id}/users
+   /**
+    * Creates or imports a user in an organization. The user could be enabled or disabled.
+    *
+    * <pre>
+    * POST /admin/org/{id}/users
+    * </pre>
+    *
+    * @param orgRef the reference for the org
+    * @return the created user
+    */
+   User createUser(URI orgRef, User user);
    
-//   GET /admin/user/{id}
+   /**
+    * Retrieves a user. This entity could be enabled or disabled.
+    *
+    * <pre>
+    * GET /admin/user/{id}
+    * </pre>
+    *
+    * @param userRef the reference for the user
+    * @return a user
+    */
+   User getUser(URI userRef);
    
 //   PUT /admin/user/{id}
    
-//   DELETE /admin/user/{id}
+   /**
+    * Deletes a user. Enabled and disabled users could be deleted.
+    * 
+    * <pre>
+    * DELETE /admin/catalog/{id}
+    * </pre>
+    */
+   void deleteUser(URI userRef);
    
 //   POST /admin/user/{id}/action/unlock
 }
