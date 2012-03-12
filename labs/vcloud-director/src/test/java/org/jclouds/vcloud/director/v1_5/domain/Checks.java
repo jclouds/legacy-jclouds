@@ -576,7 +576,7 @@ public class Checks {
          }
       }
       if (template.getFiles() != null) {
-         for (File file : template.getFiles().getFiles()) { // TODO FileList should implement List
+         for (File file : template.getFiles()) {
             checkFile(file);
          }
       }
@@ -953,7 +953,7 @@ public class Checks {
    public static void checkProductSectionList(ProductSectionList val) {
       assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "ProductSectionList", ""));
       
-      for (ProductSection productSection : val.getProductSections()) { // TODO Should implement List
+      for (ProductSection productSection : val) {
          checkOvfProductSection(productSection);
       }
       
