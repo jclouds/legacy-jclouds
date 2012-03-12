@@ -94,7 +94,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
          runScriptOnNodeFactory.create(host.get(), Statements.exec(vboxwebsrv),
                   runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")).init().call();
          
-         if (!!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))){
+         if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))){
             throw new RuntimeException("could not connect to virtualbox");
          }
       }
