@@ -22,13 +22,16 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 /**
@@ -88,7 +91,7 @@ import com.google.common.collect.Sets;
       "deployedVmQuota",
       "role",
       "password",
-      "groupReferences"
+      "groups"
 })
 public class User
       extends EntityType<User>
@@ -122,7 +125,7 @@ public class User
       private Integer deployedVmQuota;
       private Reference role;
       private String password;
-      private Object /* GroupsList */ groupReferences;
+      private List<Reference> groups;
 
       /**
        * @see User#getFullName()
@@ -261,20 +264,27 @@ public class User
       }
 
       /**
-       * @see User#getGroupReferences()
+       * @see User#getGroups()
        */
-      public Builder groupReferences(Object /* GroupsList */ groupReferences) {
-         this.groupReferences = groupReferences;
+      public Builder groups(List<Reference> groups) {
+         this.groups = ImmutableList.copyOf(groups);
          return this;
       }
-
+      
+      /**
+       * @see User#getGroups()
+       */
+      public Builder group(Reference group) {
+         this.groups.add(checkNotNull(group, "group"));
+         return this;
+      }
 
       public User build() {
          return new User(href, type, links, description, tasks, id,
                name, fullName, emailAddress, telephone, isEnabled, isLocked,
                im, nameInSource, isAlertEnabled, alertEmailPrefix, alertEmail,
                isExternal, isDefaultCached, isGroupRole, storedVmQuota, deployedVmQuota,
-               role, password, groupReferences);
+               role, password, groups);
       }
 
 
@@ -357,7 +367,7 @@ public class User
                .deployedVmQuota(in.getDeployedVmQuota())
                .role(in.getRole())
                .password(in.getPassword())
-               .groupReferences(in.getGroupReferences());
+               .groups(in.getGroups());
       }
    }
 
@@ -395,14 +405,14 @@ public class User
    protected Reference role;
    @XmlElement(name = "Password")
    protected String password;
-   @XmlElement(name = "GroupReferences")
-   protected Object /* GroupsList */ groupReferences;
+   @XmlElementWrapper(name = "GroupReferences")
+   protected List<Reference> groups;
 
    public User(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
                String name, String fullName, String emailAddress, String telephone, Boolean enabled, Boolean locked,
                String im, String nameInSource, Boolean alertEnabled, String alertEmailPrefix, String alertEmail,
                Boolean external, Boolean defaultCached, Boolean groupRole, Integer storedVmQuota, Integer deployedVmQuota,
-               Reference role, String password, Object groupReferences) {
+               Reference role, String password, List<Reference> groups) {
       super(href, type, links, description, tasks, id, name);
       this.fullName = fullName;
       this.emailAddress = emailAddress;
@@ -421,7 +431,7 @@ public class User
       this.deployedVmQuota = deployedVmQuota;
       this.role = role;
       this.password = password;
-      this.groupReferences = groupReferences;
+      this.groups = groups;
    }
 
    private User() {
@@ -605,8 +615,8 @@ public class User
     * @return possible object is
     *         {@link GroupsListType }
     */
-   public Object /* GroupsList */ getGroupReferences() {
-      return groupReferences;
+   public List<Reference> getGroups() {
+      return groups;
    }
 
    @Override
@@ -633,7 +643,7 @@ public class User
             equal(deployedVmQuota, that.deployedVmQuota) &&
             equal(role, that.role) &&
             equal(password, that.password) &&
-            equal(groupReferences, that.groupReferences);
+            equal(groups, that.groups);
    }
 
    @Override
@@ -655,7 +665,7 @@ public class User
             deployedVmQuota,
             role,
             password,
-            groupReferences);
+            groups);
    }
 
    @Override
@@ -678,7 +688,7 @@ public class User
             .add("deployedVmQuota", deployedVmQuota)
             .add("role", role)
             .add("password", password)
-            .add("groupReferences", groupReferences).toString();
+            .add("groups", groups).toString();
    }
 
 }

@@ -748,4 +748,52 @@ public class Checks {
       // parent type
       checkResourceType(settings);
    }
+   
+   public static void checkUser(User user) {
+      // Check optional fields
+      // NOTE fullName cannot be checked
+      // NOTE isEnabled cannot be checked
+      // NOTE isLocked cannot be checked
+      // NOTE im cannot be checked
+      // NOTE nameInSource cannot be checked
+      // NOTE isAlertEnabled cannot be checked
+      // NOTE alterEmailPrefix cannot be checked
+      // NOTE isExternal cannot be checked
+      // NOTE isDefaultCached cannot be checked
+      // NOTE isGroupRole cannot be checked
+      // NOTE password cannot be checked
+      
+      if (user.getEmailAddress() != null) {
+         checkEmailAddress(user.getEmailAddress());
+      }
+      if (user.getTelephone() != null) {
+         checkTelephone(user.getTelephone());
+      }
+      if (user.getAlertEmail() != null) {
+         checkEmailAddress(user.getAlertEmail());
+      }
+      if (user.getStoredVmQuota() != null) {
+         assertTrue(user.getStoredVmQuota() >= 0, String.format(OBJ_FIELD_GTE_0, 
+               "User", "storedVmQuota", user.getStoredVmQuota()));
+      }
+      if (user.getDeployedVmQuota() != null) {
+         assertTrue(user.getDeployedVmQuota() >= 0, String.format(OBJ_FIELD_GTE_0, 
+               "User", "deployedVmQuota", user.getDeployedVmQuota()));
+      }
+      if (user.getRole() != null) {
+         checkReferenceType(user.getRole());
+      }
+      if (user.getGroups() != null) {
+         for (Reference group : user.getGroups()) {
+            checkReferenceType(group);
+         }
+      }
+      
+      // parent type
+      checkEntityType(user);
+   }
+   
+   public static void checkTelephone(String number) {
+      // TODO: regex validate telephone 
+   }
 }
