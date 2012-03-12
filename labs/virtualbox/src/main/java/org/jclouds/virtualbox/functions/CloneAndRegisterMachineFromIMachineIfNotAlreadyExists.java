@@ -88,7 +88,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
                || e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
-   private IMachine cloneMachine(CloneSpec cloneSpec) {
+   private synchronized IMachine cloneMachine(CloneSpec cloneSpec) {
       VmSpec vmSpec = cloneSpec.getVmSpec();
       NetworkSpec networkSpec = cloneSpec.getNetworkSpec();
       boolean isLinkedClone = cloneSpec.isLinked();

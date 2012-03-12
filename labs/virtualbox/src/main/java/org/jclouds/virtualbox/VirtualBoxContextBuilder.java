@@ -27,8 +27,6 @@ import org.jclouds.byon.Node;
 import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.concurrent.MoreExecutors;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 
 import com.google.common.base.Predicate;
