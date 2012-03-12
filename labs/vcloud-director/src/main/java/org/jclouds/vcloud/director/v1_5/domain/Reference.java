@@ -111,7 +111,7 @@ public class Reference extends ReferenceType<Reference> {
       Reference that = Reference.class.cast(o);
       return super.equals(that);
    }
-   
+
    public ReferenceType<?> toAdminReference(String endpoint) {
       return toBuilder()
         .type(null)

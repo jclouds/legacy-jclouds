@@ -60,7 +60,7 @@ public interface OrgAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Org> getOrg(@EndpointParam URI orgUri);
+   ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgUri);
    
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

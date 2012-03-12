@@ -31,9 +31,10 @@ import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.TasksInProgress;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Test the {@link CatalogClient} by observing its side effects.
@@ -225,8 +226,8 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/c56d9159-7838-446f-bb35-9ee12dfbbef3/metadata"))
             .build())
          .description("created by testCreateCatalog()")
-         .tasksInProgress(TasksInProgress.builder()
-            .task(Task.builder()
+         .tasks(ImmutableSet.<Task>builder()
+            .add(Task.builder()
                .status("running")
                .startTime(dateService.iso8601DateParse("2012-03-11T18:43:02.429-04:00"))
                .operationName("catalogCreateCatalog")

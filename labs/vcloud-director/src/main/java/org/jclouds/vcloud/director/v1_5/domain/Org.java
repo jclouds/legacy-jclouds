@@ -59,8 +59,8 @@ public class Org extends EntityType<Org> {
    
    public static abstract class NewBuilder<T extends NewBuilder<T>> extends EntityType.NewBuilder<T> {
       
-      private String fullName;
-      private Boolean isEnabled;
+      protected String fullName;
+      protected Boolean isEnabled;
 
       /**
        * @see Org#getFullName()
@@ -232,8 +232,10 @@ public class Org extends EntityType<Org> {
       // for JAXB
    }
 
-   public Org(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, String fullName, Boolean enabled) {
-      super(href, type, links, description, tasks, id, name);
+   public Org(URI href, String type, Set<Link> links, String description, 
+         Set<Task> tasksInProgress, String id, String name, 
+         String fullName, Boolean enabled) {
+      super(href, type, links, description, tasksInProgress, id, name);
       this.fullName = fullName;
       isEnabled = enabled;
    }
