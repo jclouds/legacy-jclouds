@@ -25,6 +25,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -44,14 +45,14 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
    @Override
    public Hardware apply(@Nullable IMachine vm) {
       String osTypeId = vm.getOSTypeId();
-
+      String vmNameWithoutPrefix = vm.getName().replace(VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX, "");
+      
       IGuestOSType guestOSType = virtualBoxManager.get().getVBox().getGuestOSType(osTypeId);
       Boolean is64Bit = guestOSType.getIs64Bit();
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
-      hardwareBuilder.ids(vm.getId());
-      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
+      hardwareBuilder.ids(vmNameWithoutPrefix);
       hardwareBuilder.is64Bit(is64Bit);
-      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
+      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vmNameWithoutPrefix));
       hardwareBuilder.hypervisor("VirtualBox");
       return hardwareBuilder.build();
    }
