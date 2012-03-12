@@ -25,6 +25,7 @@ import static org.testng.Assert.assertFalse;
 import java.util.List;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.domain.BridgedIf;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -51,13 +52,13 @@ public class RetrieveActiveBridgedInterfacesLiveTest extends BaseVirtualBoxClien
 
    @Test
    public void retrieveBridgedInterfaceNamesTest() {
-      List<String> activeBridgedInterfaceNames = retrieveBridgedInterfaceNames(TEST1);
-      assertEquals(activeBridgedInterfaceNames, expectedBridgedInterfaces);
+      List<BridgedIf> activeBridgedInterfaces = retrieveBridgedInterfaceNames(TEST1);
+      assertEquals(activeBridgedInterfaces, expectedBridgedInterfaces);
    }
 
    @Test
    public void retrieveAvailableBridgedInterfaceInfoTest() {
-      List<String> bridgedInterface = context.utils().injector().getInstance(RetrieveActiveBridgedInterfaces.class)
+      List<BridgedIf> bridgedInterface = context.utils().injector().getInstance(RetrieveActiveBridgedInterfaces.class)
                .apply(host.get());
       assertFalse(bridgedInterface.isEmpty());
    }
