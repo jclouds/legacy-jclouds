@@ -132,7 +132,45 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
          .build();
    }
  
-// PUT /admin/user/{id}
+   @Test
+   public void testUpdateUser() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6")
+            .xmlFilePayload("/user/updateUserSource.xml", VCloudDirectorMediaType.USER)
+            .acceptMedia(VCloudDirectorMediaType.USER)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/user/updateUser.xml", VCloudDirectorMediaType.USER)
+            .httpResponseBuilder().build());
+
+      User source = updateUserSource();
+      User expected = updateUser();
+
+      assertEquals(client.getUserClient().updateUser(userRef.getHref(), source), expected);
+   }
+   
+   public static final User updateUserSource() {
+      return user().toBuilder()
+         .fullName("new"+user().getFullName())
+         .emailAddress("new"+user().getEmailAddress())
+         .telephone("1-"+user().getTelephone())
+         .isEnabled(true)
+         .im("new"+user().getIM())
+         .isAlertEnabled(true)
+         .alertEmailPrefix("new"+user().getAlertEmailPrefix())
+         .alertEmail("new"+user().getAlertEmail())
+         .storedVmQuota(1)
+         .deployedVmQuota(1)
+         .password("newPassword")
+         .build();
+   }
+   
+   public static final User updateUser() {
+      return updateUserSource().toBuilder()
+         .password(null)
+         .build();
+   }
  
 // POST /admin/user/{id}/action/unlock
  

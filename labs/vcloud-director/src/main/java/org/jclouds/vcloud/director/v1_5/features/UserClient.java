@@ -57,7 +57,18 @@ public interface UserClient {
     */
    User getUser(URI userRef);
    
-//   PUT /admin/user/{id}
+   /**
+    * Modifies a user. The user object could be enabled or disabled. 
+    * Note: the lock status cannot be changed using this call: use unlockUser.
+    *
+    * <pre>
+    * PUT /admin/user/{id}
+    * </pre>
+    *
+    * @param userRef the reference for the user
+    * @return the modified user
+    */
+   User updateUser(URI userRef, User user);
    
    /**
     * Deletes a user. Enabled and disabled users could be deleted.

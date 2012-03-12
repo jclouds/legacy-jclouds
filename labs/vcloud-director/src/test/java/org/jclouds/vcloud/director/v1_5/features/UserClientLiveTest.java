@@ -18,9 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
@@ -28,6 +31,7 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.User;
@@ -99,12 +103,69 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkUser(user);
    }
  
-// PUT /admin/user/{id}
+   @Test(testName = "PUT /admin/user/{id}",
+         dependsOnMethods = { "testGetUser" })
+   public void testUpdateUser() {
+      User oldUser = user.toBuilder().build();
+      User newUser = user.toBuilder()
+//         .name("new"+oldUser.getName())
+         .fullName("new"+oldUser.getFullName())
+         .emailAddress("new"+oldUser.getEmailAddress())
+         .telephone("1-"+oldUser.getTelephone())
+         .isEnabled(true)
+         .im("new"+oldUser.getIM())
+         .isAlertEnabled(true)
+         .alertEmailPrefix("new"+oldUser.getAlertEmailPrefix())
+         .alertEmail("new"+oldUser.getAlertEmail())
+//         .role(Reference.builder() // FIXME: auto-fetch a role? or inject
+//            .name("vApp Author")
+//            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/role/1bf4457f-a253-3cf1-b163-f319f1a31802"))
+//            .build())
+         .storedVmQuota(1)
+         .deployedVmQuota(1)
+         .password("newPassword")
+         .build();
+      
+      try {
+         userClient.updateUser(user.getHref(), newUser);
+         user = userClient.getUser(user.getHref());
+         Checks.checkUser(user);
+//         assertTrue(equal(user.getName(), newUser.getName()), 
+//               String.format(OBJ_FIELD_UPDATABLE, USER, "name"));
+         assertTrue(equal(user.getFullName(), newUser.getFullName()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "fullName"));
+         assertTrue(equal(user.getEmailAddress(), newUser.getEmailAddress()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "emailAddress"));
+         assertTrue(equal(user.getTelephone(), newUser.getTelephone()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "telephone"));
+         assertTrue(equal(user.isEnabled(), newUser.isEnabled()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "isEnabled"));
+         assertTrue(equal(user.getIM(), newUser.getIM()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "im"));
+         assertTrue(equal(user.isAlertEnabled(), newUser.isAlertEnabled()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "isAlertEnabled"));
+         assertTrue(equal(user.getAlertEmailPrefix(), newUser.getAlertEmailPrefix()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "alertEmailPrefix"));
+         assertTrue(equal(user.getAlertEmail(), newUser.getAlertEmail()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "alertEmail"));
+//         assertTrue(equal(user.getRole(), newUser.getRole()), 
+//               String.format(OBJ_FIELD_UPDATABLE, USER, "role"));
+         assertTrue(equal(user.getStoredVmQuota(), newUser.getStoredVmQuota()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "storedVmQuota"));
+         assertTrue(equal(user.getDeployedVmQuota(), newUser.getDeployedVmQuota()), 
+               String.format(OBJ_FIELD_UPDATABLE, USER, "deployedVmQuota"));
+         
+         // FIXME: assert password is changed with session client?
+      } finally {
+         userClient.updateUser(user.getHref(), oldUser);
+         user = userClient.getUser(user.getHref());
+      }
+   }
  
 // POST /admin/user/{id}/action/unlock
  
    @Test(testName = "DELETE /admin/user/{id}",
-         dependsOnMethods = { "testGetUser" } )
+         dependsOnMethods = { "testUpdateUser" } )
    public void testDeleteUser() {
       userClient.deleteUser(user.getHref());
       
