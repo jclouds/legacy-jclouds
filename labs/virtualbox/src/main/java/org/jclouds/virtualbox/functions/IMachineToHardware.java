@@ -48,10 +48,10 @@ public class IMachineToHardware implements Function<IMachine, Hardware> {
       IGuestOSType guestOSType = virtualBoxManager.get().getVBox().getGuestOSType(osTypeId);
       Boolean is64Bit = guestOSType.getIs64Bit();
       HardwareBuilder hardwareBuilder = new HardwareBuilder();
-      hardwareBuilder.ids(vm.getId());
-      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
+      hardwareBuilder.ids(vm.getName());
+      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getName()));
       hardwareBuilder.is64Bit(is64Bit);
-      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getId()));
+      hardwareBuilder.supportsImage(ImagePredicates.idEquals(vm.getName()));
       hardwareBuilder.hypervisor("VirtualBox");
       return hardwareBuilder.build();
    }
