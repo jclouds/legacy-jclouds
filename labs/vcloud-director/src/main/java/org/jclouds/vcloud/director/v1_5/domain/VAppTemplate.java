@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -144,7 +145,7 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
 
       @Override
       public VAppTemplate build() {
-         return new VAppTemplate(href, type, links, description, tasksInProgress, id, name, files, status, owner, children, sections, vAppScopedLocalId, ovfDescriptorUploaded, goldMaster);
+         return new VAppTemplate(href, type, links, description, tasks, id, name, files, status, owner, children, sections, vAppScopedLocalId, ovfDescriptorUploaded, goldMaster);
       }
 
       @Override
@@ -209,11 +210,11 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         super.tasksInProgress(tasksInProgress);
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -267,10 +268,10 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
    @XmlAttribute
    protected Boolean goldMaster;
 
-   private VAppTemplate(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress,
+   private VAppTemplate(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
                         String id, String name, FilesList files, Integer status, Owner owner, Set<VAppTemplate> children,
                         Set<? extends SectionType<?>> sections, String vAppScopedLocalId, Boolean ovfDescriptorUploaded, Boolean goldMaster) {
-      super(href, type, links, description, tasksInProgress, id, name, files, status);
+      super(href, type, links, description, tasks, id, name, files, status);
       this.owner = owner;
       this.children = VAppTemplateChildren.builder().vms(children).build();
       this.sections = ImmutableSet.copyOf(sections);

@@ -19,8 +19,8 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import java.net.URI;
+
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author Adrian Cole

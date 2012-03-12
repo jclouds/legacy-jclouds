@@ -34,6 +34,19 @@ import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminCatalogClient extends CatalogClient {
+   
+   
+   /**
+    * Creates a catalog in an organization. The catalog will always be created in unpublished state.
+    *
+    * <pre>
+    * POST /admin/org/{id}/catalogs
+    * </pre>
+    *
+    * @param orgRef the reference for the org
+    * @return contains a , which will point to the running asynchronous creation operation.
+    */
+   AdminCatalog createCatalog(URI orgRef, AdminCatalog catalog);
 
    /**
     * Retrieves a catalog.

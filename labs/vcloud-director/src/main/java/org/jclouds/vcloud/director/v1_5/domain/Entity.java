@@ -46,7 +46,7 @@ public class Entity extends EntityType<Entity> {
 
       @Override
       public Entity build() {
-         return new Entity(href, type, links, description, tasksInProgress, id, name);
+         return new Entity(href, type, links, description, tasks, id, name);
       }
 
       /**
@@ -77,11 +77,11 @@ public class Entity extends EntityType<Entity> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -131,8 +131,8 @@ public class Entity extends EntityType<Entity> {
       }
    }
 
-   private Entity(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name) {
-      super(href, type, links, description, tasksInProgress, id, name);
+   private Entity(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name) {
+      super(href, type, links, description, tasks, id, name);
    }
 
    private Entity() {

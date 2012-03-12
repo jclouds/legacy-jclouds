@@ -1,6 +1,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import java.net.URI;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CatalogReference")

@@ -26,10 +26,22 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.*;
+import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.vcloud.director.v1_5.domain.File;
+import org.jclouds.vcloud.director.v1_5.domain.FilesList;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.Owner;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Allows us to test a client via its side effects.
@@ -41,7 +53,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test
    public void testCreateMedia() {
-      URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
+      URI uploadLink = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/media");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -62,12 +74,12 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
       Media expected = createMedia();
       
-      assertEquals(client.getVdcClient().createMedia(vdcUri, source), expected);
+      assertEquals(client.getMediaClient().createMedia(uploadLink, source), expected);
    }
    
    @Test
    public void testCloneMedia() {
-      URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
+      URI cloneUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia");
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
@@ -92,7 +104,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
       Media expected = cloneMedia();
       
-      assertEquals(client.getVdcClient().cloneMedia(vdcUri, params), expected);
+      assertEquals(client.getMediaClient().cloneMedia(cloneUri, params), expected);
    }
    
    @Test
@@ -351,7 +363,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       assertEquals(client.getMediaClient().getOwner(mediaUri), expected);
    }
    
-   private static Media createMedia() {
+   static Media createMedia() {
       return Media.builder()
          .size(0)
          .imageType("iso")
@@ -385,7 +397,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
          .build();
    }
    
-   private static Media cloneMedia() {
+   static Media cloneMedia() {
       return Media.builder()
          .size(175163392)
          .imageType("iso")
@@ -404,8 +416,8 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             .href(URI.create("https://mycloud.greenhousedata.com/api/media/a6b023f2-7f90-4e89-a24d-56e0eba83a5a"))
             .build())
          .description("copied by testCloneMedia()")
-         .tasksInProgress(TasksInProgress.builder()
-            .task(Task.builder()
+         .tasks(ImmutableSet.<Task>builder()
+            .add(Task.builder()
                 .status("running")
                 .startTime(dateService.iso8601DateParse("2012-03-02T04:58:48.754-07:00"))
                 .operationName("vdcCopyMedia")

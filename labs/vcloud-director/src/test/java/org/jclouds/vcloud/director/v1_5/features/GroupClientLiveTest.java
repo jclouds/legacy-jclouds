@@ -18,25 +18,22 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
-import static org.testng.Assert.assertNotNull;
-
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
 import static com.google.common.base.Objects.equal;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
-import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -65,6 +62,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private ReferenceType<?> groupRef;
    private Group group;
 
+   @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       groupClient = context.getApi().getGroupClient();
@@ -76,7 +74,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/group/{id}", enabled = false)
    public void testGetGroup() {
       assertNotNull(groupRef, String.format(REF_REQ_LIVE, "Group"));
-      group = groupClient.getGroup(groupRef.getURI());
+      group = groupClient.getGroup(groupRef.getHref());
       
       Checks.checkGroup(group);
    }
@@ -95,7 +93,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .description(newDescription)
                .build();
          
-         group = groupClient.updateGroup(group.getURI(), group);
+         group = groupClient.updateGroup(group.getHref(), group);
          
          assertTrue(equal(group.getName(), newName), String.format(OBJ_FIELD_UPDATABLE, GROUP, "name"));
          assertTrue(equal(group.getDescription(), newDescription),
@@ -110,13 +108,13 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                .description(oldDescription)
                .build();
          
-         group = groupClient.updateGroup(group.getURI(), group);
+         group = groupClient.updateGroup(group.getHref(), group);
       }
    }
    
    @Test(testName = "DELETE /admin/group/{id}", enabled = false )
    public void testDeleteCatalog() {
-      groupClient.deleteGroup(groupRef.getURI());
+      groupClient.deleteGroup(groupRef.getHref());
       
       Error expected = Error.builder()
             .message("???")
@@ -125,7 +123,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build();
       
       try {
-         group = groupClient.getGroup(groupRef.getURI());
+         group = groupClient.getGroup(groupRef.getHref());
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);

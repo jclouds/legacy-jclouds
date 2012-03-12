@@ -22,12 +22,16 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -35,33 +39,36 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * A list of tasks.
- *
+ * Task List
+ * 
+ * 
  * @author Adrian Cole
  */
 @XmlRootElement(name = "TasksList")
-public class TasksList extends EntityType<TasksList> {
-
-   public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASKS_LIST;
-
+public class TasksList extends ResourceType<TasksList> implements Set<Task> {
    public static Builder builder() {
       return new Builder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder();
-   }
+   public static class Builder extends ResourceType.Builder<TasksList> {
+      protected String name;
 
-   public static class Builder extends EntityType.Builder<TasksList> {
+      private Set<Task> tasks;
 
-      protected Set<Task> tasks = Sets.newLinkedHashSet();
+      /**
+       * @see TasksList#getName()
+       */
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
 
       /**
        * @see TasksList#getTasks()
        */
       public Builder tasks(Set<Task> tasks) {
-         this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
+         if (checkNotNull(tasks, "tasks").size() > 0)
+            this.tasks = Sets.newLinkedHashSet(tasks);
          return this;
       }
 
@@ -69,111 +76,86 @@ public class TasksList extends EntityType<TasksList> {
        * @see TasksList#getTasks()
        */
       public Builder task(Task task) {
+         if (tasks == null)
+            tasks = Sets.newLinkedHashSet();
          this.tasks.add(checkNotNull(task, "task"));
          return this;
       }
-
+      
       @Override
       public TasksList build() {
-         return new TasksList(href, type, links, description, tasksInProgress, id, name, tasks);
+         return new TasksList(href, type, links, name, tasks);
       }
 
       /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasksInProgress()
-       */
-      @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
+       * @see ResourceType#getHref()
        */
       @Override
       public Builder href(URI href) {
-         this.href = href;
+         super.href(href);
          return this;
       }
 
       /**
-       * @see ReferenceType#getType()
+       * @see ResourceType#getType()
        */
       @Override
       public Builder type(String type) {
-         this.type = type;
+         super.type(type);
          return this;
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
+         super.link(link);
          return this;
       }
 
-      @Override
-      public Builder fromEntityType(EntityType<TasksList> in) {
-         return Builder.class.cast(super.fromEntityType(in));
+      public Builder fromTasksList(TasksList in) {
+         return fromResourceType(in).tasks(in);
       }
 
-      public Builder fromTasksList(TasksList in) {
-         return fromEntityType(in).tasks(in.getTasks());
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder fromResourceType(ResourceType<TasksList> in) {
+         return Builder.class.cast(super.fromResourceType(in));
       }
+   }
+
+   @XmlAttribute(required = true)
+   private String name;
+   @XmlElement(name = "Task")
+   private Set<Task> tasks;
+
+   public TasksList(URI href, String type, @Nullable Set<Link> links, String name, @Nullable Set<Task> tasks) {
+      super(href, type, links);
+      this.tasks = tasks;
+      this.name = name;
    }
 
    protected TasksList() {
-      // for JAXB
+      // For JAXB
    }
 
-   public TasksList(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name, Set<Task> tasks) {
-      super(href, type, links, description, tasksInProgress, id, name);
-      this.tasks = ImmutableSet.copyOf(tasks);
-   }
 
-   @XmlElement(name = "Task")
-   private Set<Task> tasks = Sets.newLinkedHashSet();
-
-   public Set<Task> getTasks() {
-      return Collections.unmodifiableSet(tasks);
+   /**
+    * Contains the name of the the entity.
+    */
+   public String getName() {
+      return name;
    }
 
    @Override
@@ -183,16 +165,91 @@ public class TasksList extends EntityType<TasksList> {
       if (o == null || getClass() != o.getClass())
          return false;
       TasksList that = TasksList.class.cast(o);
-      return super.equals(that) && equal(this.tasks, that.tasks);
+      return super.equals(that) && equal(this.delegate(), that.delegate()) && equal(this.name, that.name);
    }
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(tasks);
+      return super.hashCode() + Objects.hashCode(delegate(), name);
+   }
+
+   private Set<Task> delegate() {
+      return tasks == null ? ImmutableSet.<Task>of() : Collections.unmodifiableSet(tasks);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("tasks", tasks);
+      return super.string().add("name", name).add("tasks", delegate());
    }
+
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromTasksList(this);
+   }
+
+   @Override
+   public Iterator<Task> iterator() {
+      return delegate().iterator();
+   }
+
+   @Override
+   public int size() {
+      return delegate().size();
+   }
+
+   @Override
+   public boolean removeAll(Collection<?> collection) {
+      return delegate().removeAll(collection);
+   }
+
+   @Override
+   public boolean isEmpty() {
+      return delegate().isEmpty();
+   }
+
+   @Override
+   public boolean contains(Object object) {
+      return delegate().contains(object);
+   }
+
+   @Override
+   public boolean add(Task element) {
+      return delegate().add(element);
+   }
+
+   @Override
+   public boolean remove(Object object) {
+      return delegate().remove(object);
+   }
+
+   @Override
+   public boolean containsAll(Collection<?> collection) {
+      return delegate().containsAll(collection);
+   }
+
+   @Override
+   public boolean addAll(Collection<? extends Task> collection) {
+      return delegate().addAll(collection);
+   }
+
+   @Override
+   public boolean retainAll(Collection<?> collection) {
+      return delegate().retainAll(collection);
+   }
+
+   @Override
+   public void clear() {
+      delegate().clear();
+   }
+
+   @Override
+   public Object[] toArray() {
+      return delegate().toArray();
+   }
+
+   @Override
+   public <T> T[] toArray(T[] array) {
+      return delegate().toArray(array);
+   }
+
 }

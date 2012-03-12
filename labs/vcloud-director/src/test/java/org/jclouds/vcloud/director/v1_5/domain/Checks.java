@@ -38,6 +38,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.AuthenticationMechanism;
+import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorType;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -66,9 +69,9 @@ public class Checks {
 
       // Check optional fields
       // NOTE description cannot be checked
-      TasksInProgress tasksInProgress = entity.getTasksInProgress();
-      if (tasksInProgress != null && tasksInProgress.getTasks() != null && !tasksInProgress.getTasks().isEmpty()) {
-         for (Task task : tasksInProgress.getTasks()) checkTask(task);
+      Set<Task> tasks = entity.getTasks();
+      if (tasks != null && tasks != null && !tasks.isEmpty()) {
+         for (Task task : tasks) checkTask(task);
       }
       
       // Check parent type
@@ -227,6 +230,46 @@ public class Checks {
 
       // Check parent type
       checkEntityType(org);
+   }
+   
+   public static void checkAdminOrg(AdminOrg org) {
+      // required
+      assertNotNull(org.getSettings(), String.format(NOT_NULL_OBJECT_FMT, "settings", "AdminOrg"));
+      
+      // optional
+      if (org.getGroups() != null) {
+         checkGroupsList(org.getGroups());
+      }
+      if (org.getCatalogs() != null) {
+         checkCatalogsList(org.getCatalogs());
+      }
+      if (org.getVdcs() != null) {
+         checkVdcs(org.getVdcs());
+      }
+      if (org.getNetworks() != null) {
+         checkNetworks(org.getNetworks());
+      }
+      
+      // Check parent type
+      checkOrg(org);
+   }
+   
+   public static void checkCatalogsList(CatalogsList catalogList) {
+      for (Reference catalogItem : catalogList.getCatalogItems()) {
+         checkReferenceType(catalogItem);
+      }
+   }
+   
+   public static void checkVdcs(Vdcs vdcs) {
+      for (Reference vdc : vdcs.getVdcs()) {
+         checkReferenceType(vdc);
+      }
+   }
+   
+   public static void checkNetworks(Networks networks) {
+      for (Reference network : networks.getNetwork()) {
+         checkReferenceType(network);
+      }
    }
    
    public static void checkAdminCatalog(AdminCatalog catalog) {
@@ -523,5 +566,186 @@ public class Checks {
             checkReferenceType(user);
          }
       }
+   }
+   
+   public static void checkOrgSettings(OrgSettings settings) {
+      // Check optional fields
+      if (settings.getGeneralSettings() != null) {
+         checkGeneralSettings(settings.getGeneralSettings());
+      }
+      if (settings.getVAppLeaseSettings() != null) {
+         checkVAppLeaseSettings(settings.getVAppLeaseSettings());
+      }
+      if (settings.getVAppTemplateLeaseSettings() != null) {
+         checkVAppTemplateLeaseSettings(settings.getVAppTemplateLeaseSettings());
+      }
+      if (settings.getLdapSettings() != null) {
+         checkLdapSettings(settings.getLdapSettings());
+      }
+      if (settings.getEmailSettings() != null) {
+         checkEmailSettings(settings.getEmailSettings());
+      }
+      if (settings.getPasswordPolicy() != null) {
+         checkPasswordPolicySettings(settings.getPasswordPolicy());
+      }
+      
+      // parent type
+      checkResourceType(settings);
+   }
+   
+   public static void checkEmailSettings(OrgEmailSettings settings) {
+      // required
+      assertNotNull(settings.isDefaultSmtpServer(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "isDefaultSmtpServer"));
+      assertNotNull(settings.isDefaultOrgEmail(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "isDefaultOrgEmail"));
+      assertNotNull(settings.getFromEmailAddress(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "fromEmailAddress"));
+      checkEmailAddress(settings.getFromEmailAddress());
+      assertNotNull(settings.getDefaultSubjectPrefix(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "defaultSubjectPrefix"));
+      assertNotNull(settings.isAlertEmailToAllAdmins(), String.format(OBJ_FIELD_REQ, "OrgEmailSettings", "isAlertEmailToAllAdmins"));
+      
+      // optional
+      // NOTE alertEmailsTo cannot be checked
+      
+      // parent type
+      checkResourceType(settings);
+   }
+   
+   public static void checkEmailAddress(String email) {
+      // TODO: validate email addresses
+   }
+   
+   public static void checkGeneralSettings(OrgGeneralSettings settings) {
+      // Check optional fields
+      // NOTE canPublishCatalogs cannot be checked
+      // NOTE useServerBootSequence cannot be checked
+      if (settings.getDeployedVMQuota() != null) {
+         assertTrue(settings.getDeployedVMQuota() >= 0, String.format(
+               OBJ_FIELD_GTE_0, "deployedVMQuota", "port", settings.getDeployedVMQuota()));
+      }
+      if (settings.getStoredVmQuota() != null) {
+         assertTrue(settings.getStoredVmQuota() >= 0, String.format(
+               OBJ_FIELD_GTE_0, "storedVmQuota", "port", settings.getStoredVmQuota()));
+      }
+      if (settings.getDelayAfterPowerOnSeconds() != null) {
+         assertTrue(settings.getDelayAfterPowerOnSeconds() >= 0, String.format(
+               OBJ_FIELD_GTE_0, "delayAfterPowerOnSeconds", "port", settings.getDelayAfterPowerOnSeconds()));
+      }
+      
+      // parent type
+      checkResourceType(settings);
+   }
+   
+   public static void checkLdapSettings(OrgLdapSettings settings) {
+      // Check optional fields
+      // NOTE customUsersOu cannot be checked
+      if (settings.getLdapMode() != null) {
+         assertTrue(LdapMode.ALL.contains(settings.getLdapMode()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
+               "LdapMode", "OrdLdapSettings", settings.getLdapMode(), Iterables.toString(OrgLdapSettings.LdapMode.ALL)));
+      }
+      if (settings.getCustomOrgLdapSettings() != null) {
+         checkCustomOrgLdapSettings(settings.getCustomOrgLdapSettings());
+      }
+      
+      // parent type
+      checkResourceType(settings);
+   }
+   
+   public static void checkCustomOrgLdapSettings(CustomOrgLdapSettings settings) {
+      // required
+      assertNotNull(settings.getHostName(), String.format(OBJ_FIELD_REQ, "CustomOrgLdapSettings", "hostName"));
+      assertNotNull(settings.getPort(), String.format(OBJ_FIELD_REQ, "CustomOrgLdapSettings", "port"));
+      assertTrue(settings.getPort() >= 0, String.format(
+            OBJ_FIELD_GTE_0, "CustomOrgLdapSettings", "port", settings.getPort()));
+      assertNotNull(settings.getAuthenticationMechanism(), String.format(OBJ_FIELD_REQ, "CustomOrgLdapSettings", "authenticationMechanism"));
+      assertTrue(AuthenticationMechanism.ALL.contains(settings.getAuthenticationMechanism()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
+            "AuthenticationMechanism", "CustomOrdLdapSettings", settings.getAuthenticationMechanism(), 
+            Iterables.toString(CustomOrgLdapSettings.AuthenticationMechanism.ALL)));
+      assertNotNull(settings.isGroupSearchBaseEnabled(), String.format(OBJ_FIELD_REQ, "CustomOrgLdapSettings", "isGroupSearchBaseEnabled"));
+      assertNotNull(settings.getConnectorType(), String.format(OBJ_FIELD_REQ, "CustomOrgLdapSettings", "connectorType"));
+      assertTrue(ConnectorType.ALL.contains(settings.getConnectorType()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
+            "ConnectorType", "CustomOrdLdapSettings", settings.getConnectorType(), 
+            Iterables.toString(CustomOrgLdapSettings.ConnectorType.ALL)));
+      assertNotNull(settings.getUserAttributes(), String.format(OBJ_FIELD_REQ, "CustomOrgLdapSettings", "userAttributes"));
+      checkUserAttributes("CustomOrdLdapSettings", settings.getUserAttributes());
+      assertNotNull(settings.getGroupAttributes(), String.format(OBJ_FIELD_REQ, "CustomOrgLdapSettings", "groupAttributes"));
+      checkGroupAttributes("CustomOrdLdapSettings", settings.getGroupAttributes());
+      
+      // optional
+      // NOTE isSsl cannot be checked
+      // NOTE isSSlAcceptAll cannot be checked
+      // NOTE realm cannot be checked
+      // NOTE searchBase cannot be checked
+      // NOTE userName cannot be checked
+      // NOTE password cannot be checked
+      // NOTE groupSearchBase cannot be checked
+   }
+   
+   public static void checkUserAttributes(String client, OrgLdapUserAttributes attributes) {
+      // required
+      assertNotNull(attributes.getObjectClass(), String.format(OBJ_FIELD_REQ, client, "objectClass"));
+      assertNotNull(attributes.getObjectIdentifier(), String.format(OBJ_FIELD_REQ, client, "objectIdentifier"));
+      assertNotNull(attributes.getUserName(), String.format(OBJ_FIELD_REQ, client, "userName"));
+      assertNotNull(attributes.getEmail(), String.format(OBJ_FIELD_REQ, client, "email"));
+      assertNotNull(attributes.getFullName(), String.format(OBJ_FIELD_REQ, client, "fullName"));
+      assertNotNull(attributes.getGivenName(), String.format(OBJ_FIELD_REQ, client, "givenName"));
+      assertNotNull(attributes.getSurname(), String.format(OBJ_FIELD_REQ, client, "surname"));
+      assertNotNull(attributes.getTelephone(), String.format(OBJ_FIELD_REQ, client, "telephone"));
+      assertNotNull(attributes.getGroupMembershipIdentifier(), String.format(OBJ_FIELD_REQ, client, "groupMembershipIdentifier"));
+      
+      // optional
+      // NOTE groupBackLinkIdentifier cannot be checked
+   }
+   
+   public static void checkGroupAttributes(String client, OrgLdapGroupAttributes attributes) {
+      // required
+      assertNotNull(attributes.getObjectClass(), String.format(OBJ_FIELD_REQ, client, "objectClass"));
+      assertNotNull(attributes.getObjectIdentifier(), String.format(OBJ_FIELD_REQ, client, "objectIdentifier"));
+      assertNotNull(attributes.getGroupName(), String.format(OBJ_FIELD_REQ, client, "groupName"));
+      assertNotNull(attributes.getMembership(), String.format(OBJ_FIELD_REQ, client, "membership"));
+      assertNotNull(attributes.getMembershipIdentifier(), String.format(OBJ_FIELD_REQ, client, "membershipIdentifier"));
+      
+      // optional
+      // NOTE backLinkIdentifier cannot be checked
+   }
+
+   public static void checkPasswordPolicySettings(OrgPasswordPolicySettings settings) {
+      // required
+      assertNotNull(settings.isAccountLockoutEnabled(), String.format(OBJ_FIELD_REQ, "OrgPasswordPolicySettings", "isAccountLockoutEnabled"));
+      assertNotNull(settings.getInvalidLoginsBeforeLockout(), String.format(OBJ_FIELD_REQ, "OrgPasswordPolicySettings", "invalidLoginsBeforeLockout"));
+      assertTrue(settings.getInvalidLoginsBeforeLockout() >= 0, String.format(
+            OBJ_FIELD_GTE_0, "OrgPasswordPolicySettings", "storageLeaseSeconds", settings.getInvalidLoginsBeforeLockout()));
+      assertNotNull(settings.getAccountLockoutIntervalMinutes(), String.format(OBJ_FIELD_REQ, "OrgPasswordPolicySettings", "accountLockoutIntervalMinutes"));
+      assertTrue(settings.getAccountLockoutIntervalMinutes() >= 0, String.format(
+            OBJ_FIELD_GTE_0, "OrgPasswordPolicySettings", "accountLockoutIntervalMinutes", settings.getAccountLockoutIntervalMinutes()));
+      
+      // parent type
+      checkResourceType(settings);
+   }
+   
+   public static void checkVAppLeaseSettings(OrgLeaseSettings settings) {
+      // Check optional fields
+      // NOTE deleteOnStorageLeaseExpiration cannot be checked
+      if (settings.getStorageLeaseSeconds() != null) {
+         assertTrue(settings.getStorageLeaseSeconds() >= 0, String.format(
+               OBJ_FIELD_GTE_0, "OrgLeaseSettings", "storageLeaseSeconds", settings.getStorageLeaseSeconds()));
+      }
+      if (settings.getDeploymentLeaseSeconds() != null) {
+         assertTrue(settings.getDeploymentLeaseSeconds() >= 0, String.format(
+               OBJ_FIELD_GTE_0, "OrgLeaseSettings", "deploymentLeaseSeconds", settings.getDeploymentLeaseSeconds()));
+      }
+      
+      // parent type
+      checkResourceType(settings);
+   }
+
+   public static void checkVAppTemplateLeaseSettings(OrgVAppTemplateLeaseSettings settings) {
+      // Check optional fields
+      // NOTE deleteOnStorageLeaseExpiration cannot be checked
+      if (settings.getStorageLeaseSeconds() != null) {
+         assertTrue(settings.getStorageLeaseSeconds() >= 0, String.format(
+               OBJ_FIELD_GTE_0, "OrgVAppTemplateLeaseSettings", "storageLeaseSeconds", settings.getStorageLeaseSeconds()));
+      }
+      
+      // parent type
+      checkResourceType(settings);
    }
 }

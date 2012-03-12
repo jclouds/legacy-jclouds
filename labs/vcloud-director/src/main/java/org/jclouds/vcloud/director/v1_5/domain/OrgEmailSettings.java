@@ -76,7 +76,7 @@ import com.google.common.collect.ImmutableList;
     "fromEmailAddress",
     "defaultSubjectPrefix",
     "isAlertEmailToAllAdmins",
-    "alertEmailTo",
+    "alertEmailsTo",
     "smtpServerSettings"
 })
 public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
@@ -142,7 +142,7 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
        * @see OrgEmailSettings#getAlertEmailTo()
        */
       public Builder alertEmailsTo(List<String> alertEmailsTo) {
-         this.alertEmailTo = ImmutableList.copyOf(alertEmailsTo);
+         this.alertEmailTo = alertEmailsTo == null ? null : ImmutableList.copyOf(alertEmailsTo);
          return this;
       }
       
@@ -163,7 +163,8 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
       }
 
       public OrgEmailSettings build() {
-         return new OrgEmailSettings(isDefaultSmtpServer, isDefaultOrgEmail, fromEmailAddress, defaultSubjectPrefix, 
+         return new OrgEmailSettings(href, type, links, isDefaultSmtpServer, 
+               isDefaultOrgEmail, fromEmailAddress, defaultSubjectPrefix, 
                isAlertEmailToAllAdmins, alertEmailTo, smtpServerSettings);
       }
 
@@ -225,9 +226,11 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
       // For JAXB
    }
 
-   private OrgEmailSettings(boolean isDefaultSmtpServer, boolean isDefaultOrgEmail, 
+   private OrgEmailSettings(URI href, String type, Set<Link> links, 
+         boolean isDefaultSmtpServer, boolean isDefaultOrgEmail, 
          String fromEmailAddress, String defaultSubjectPrefix, boolean isAlertEmailToAllAdmins, 
          List<String> alertEmailTo, SmtpServerSettings smtpServerSettings) {
+      super(href, type, links);
       this.isDefaultSmtpServer = isDefaultSmtpServer;
       this.isDefaultOrgEmail = isDefaultOrgEmail;
       this.fromEmailAddress = fromEmailAddress;
@@ -323,9 +326,6 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
      * 
      */
     public List<String> getAlertEmailsTo() {
-        if (alertEmailsTo == null) {
-            alertEmailsTo = new ArrayList<String>();
-        }
         return this.alertEmailsTo;
     }
 

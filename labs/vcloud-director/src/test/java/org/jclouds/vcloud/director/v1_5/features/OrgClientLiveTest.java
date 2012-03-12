@@ -57,8 +57,8 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    private OrgClient orgClient;
 
-   @BeforeClass(inheritGroups = true)
    @Override
+   @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       orgClient = context.getApi().getOrgClient();
    }
@@ -92,7 +92,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
       assertNotNull(orgRef);
       
-      orgURI = orgRef.getURI();
+      orgURI = orgRef.getHref();
       
       // Call the method being tested
       org = orgClient.getOrg(orgURI);

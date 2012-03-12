@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -89,7 +90,7 @@ public class Media extends ResourceEntityType<Media> {
 
       @Override
       public Media build() {
-         return new Media(href, type, links, description, tasksInProgress, id, name, files, status, owner, imageType, size);
+         return new Media(href, type, links, description, tasks, id, name, files, status, owner, imageType, size);
       }
 
       /**
@@ -138,11 +139,11 @@ public class Media extends ResourceEntityType<Media> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder tasksInProgress(TasksInProgress tasksInProgress) {
-         super.tasksInProgress(tasksInProgress);
+      public Builder tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -193,9 +194,9 @@ public class Media extends ResourceEntityType<Media> {
    }
 
 
-   public Media(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, 
+   public Media(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, 
                 String name, FilesList files, Integer status, Owner owner, String imageType, long size) {
-      super(href, type, links, description, tasksInProgress, id, name, files, status);
+      super(href, type, links, description, tasks, id, name, files, status);
       this.owner = owner;
       this.imageType = imageType;
       this.size = size;

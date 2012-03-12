@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AdminCatalog name="Test Catalog" xmlns="http://www.vmware.com/vcloud/v1.5">
+    <Description>created by testCreateCatalog()</Description>
+</AdminCatalog>

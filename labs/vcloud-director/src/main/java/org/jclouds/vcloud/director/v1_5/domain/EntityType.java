@@ -22,13 +22,18 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -48,7 +53,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
    public static abstract class NewBuilder<T extends NewBuilder<T>> extends ResourceType.NewBuilder<T> {
       
       protected String description;
-      protected TasksInProgress tasksInProgress;
+      protected Set<Task> tasks;
       protected String name;
       protected String id;
 
@@ -77,16 +82,16 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
-      public T tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public T tasks(Set<Task> tasks) {
+         this.tasks = tasks;
          return self();
       }
 
       public T fromEntityType(EntityType<?> in) {
          return fromResourceType(in)
-               .description(in.getDescription()).tasksInProgress(in.getTasksInProgress())
+               .description(in.getDescription()).tasks(in.getTasks())
                .id(in.getId()).name(in.getName());
       }
    }
@@ -94,7 +99,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
    public static abstract class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
 
       protected String description;
-      protected TasksInProgress tasksInProgress;
+      protected Set<Task> tasks;
       protected String name;
       protected String id;
 
@@ -121,12 +126,23 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
          this.id = id;
          return this;
       }
+      
+      /**
+       * @see EntityType#getTasks()
+       */
+      public Builder<T> tasks(Set<Task> tasks) {
+         if (checkNotNull(tasks, "tasks").size() > 0)
+            this.tasks = Sets.newLinkedHashSet(tasks);
+         return this;
+      }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
-      public Builder<T> tasksInProgress(TasksInProgress tasksInProgress) {
-         this.tasksInProgress = tasksInProgress;
+      public Builder<T> task(Task task) {
+         if (tasks == null)
+            tasks = Sets.newLinkedHashSet();
+         this.tasks.add(checkNotNull(task, "task"));
          return this;
       }
 
@@ -151,19 +167,19 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       /**
        * @see ResourceType#getLinks()
        */
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
        * @see ResourceType#getLinks()
        */
+      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       /**
@@ -177,24 +193,26 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
       public Builder<T> fromEntityType(EntityType<T> in) {
          return fromResourceType(in)
-               .description(in.getDescription()).tasksInProgress(in.getTasksInProgress())
+               .description(in.getDescription()).tasks(in.getTasks())
                .id(in.getId()).name(in.getName());
       }
    }
 
    @XmlElement(name = "Description")
    private String description;
-   @XmlElement(name = "Tasks")
-   private TasksInProgress tasksInProgress;
+   @XmlElementWrapper(name = "Tasks")
+   @XmlElement(name = "Task")
+   private Set<Task> tasks;
    @XmlAttribute
    private String id;
    @XmlAttribute(required = true)
    private String name;
 
-   public EntityType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id, String name) {
+   public EntityType(URI href, String type, @Nullable Set<Link> links, String description, @Nullable Set<Task> tasks, String id, String name) {
       super(href, type, links);
       this.description = description;
-      this.tasksInProgress = tasksInProgress;
+      // nullable so that jaxb wont persist empty collections
+      this.tasks = tasks != null && tasks.size() == 0 ? null : tasks;
       this.id = id;
       this.name = name;
    }
@@ -213,8 +231,8 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
    /**
     * A list of queued, running, or recently completed tasks associated with this entity.
     */
-   public TasksInProgress getTasksInProgress() {
-      return tasksInProgress;
+   public Set<Task> getTasks() {
+      return tasks == null ? ImmutableSet.<Task>of() : Collections.unmodifiableSet(tasks);
    }
 
    /**
@@ -243,7 +261,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       EntityType<?> that = EntityType.class.cast(o);
       return super.equals(that) &&
             equal(this.id, that.id) && equal(this.description, that.description) &&
-            equal(this.tasksInProgress, that.tasksInProgress) && equal(this.name, that.name);
+            equal(this.tasks, that.tasks) && equal(this.name, that.name);
    }
    
    @Override
@@ -258,11 +276,11 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(description, tasksInProgress, id, name);
+      return super.hashCode() + Objects.hashCode(description, tasks, id, name);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("description", description).add("tasksInProgress", tasksInProgress).add("id", id).add("name", name);
+      return super.string().add("description", description).add("tasks", tasks).add("id", id).add("name", name);
    }
 }

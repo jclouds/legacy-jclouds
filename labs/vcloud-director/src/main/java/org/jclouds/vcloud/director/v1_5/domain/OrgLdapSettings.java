@@ -22,11 +22,14 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -60,12 +63,28 @@ import com.google.common.base.Objects.ToStringHelper;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "OrgLdapSettings", propOrder = {
-    "orgLdapMode",
+@XmlRootElement(name = "OrgLdapSettings")
+@XmlType(propOrder = {
+    "ldapMode",
     "customUsersOu",
     "customOrgLdapSettings"
 })
 public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
+   public static final class LdapMode {
+      public static final String NONE = "NONE";
+      public static final String SYSTEM = "SYSTEM";
+      public static final String CUSTOM = "CUSTOM";
+
+      /**
+       * All acceptable {@link OrgLdapSettings#getLdapMode()} values.
+       * <p/>
+       * This list must be updated whenever a new mode is added.
+       */
+      public static final List<String> ALL = Arrays.asList(
+            NONE, SYSTEM, CUSTOM
+      );
+   }
+   
    public static Builder builder() {
       return new Builder();
    }
@@ -76,15 +95,15 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
 
    public static class Builder extends ResourceType.Builder<OrgLdapSettings> {
       
-      private String orgLdapMode;
+      private String ldapMode;
       private String customUsersOu;
       private CustomOrgLdapSettings customOrgLdapSettings;
 
       /**
-       * @see OrgLdapSettings#getOrgLdapMode()
+       * @see OrgLdapSettings#getLdapMode()
        */
-      public Builder orgLdapMode(String orgLdapMode) {
-         this.orgLdapMode = orgLdapMode;
+      public Builder ldapMode(String ldapMode) {
+         this.ldapMode = ldapMode;
          return this;
       }
 
@@ -106,7 +125,7 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
 
       public OrgLdapSettings build() {
          OrgLdapSettings orgLdapSettings = new OrgLdapSettings(href, type, links, 
-               orgLdapMode, customUsersOu, customOrgLdapSettings);
+               ldapMode, customUsersOu, customOrgLdapSettings);
          return orgLdapSettings;
       }
 
@@ -154,7 +173,7 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
       }
       public Builder fromOrgLdapSettings(OrgLdapSettings in) {
          return fromResourceType(in)
-            .orgLdapMode(in.getOrgLdapMode())
+            .ldapMode(in.getLdapMode())
             .customUsersOu(in.getCustomUsersOu())
             .customOrgLdapSettings(in.getCustomOrgLdapSettings());
       }
@@ -166,9 +185,9 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
    }
 
     public OrgLdapSettings(URI href, String type, Set<Link> links, 
-          String orgLdapMode, String customUsersOu, CustomOrgLdapSettings customOrgLdapSettings) {
+          String ldapMode, String customUsersOu, CustomOrgLdapSettings customOrgLdapSettings) {
       super(href, type, links);
-      this.orgLdapMode = orgLdapMode;
+      this.ldapMode = ldapMode;
       this.customUsersOu = customUsersOu;
       this.customOrgLdapSettings = customOrgLdapSettings;
    }
@@ -176,7 +195,7 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
 
 
    @XmlElement(name = "OrgLdapMode")
-    protected String orgLdapMode;
+    protected String ldapMode;
     @XmlElement(name = "CustomUsersOu")
     protected String customUsersOu;
     @XmlElement(name = "CustomOrgLdapSettings")
@@ -190,8 +209,8 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
      *     {@link String }
      *     
      */
-    public String getOrgLdapMode() {
-        return orgLdapMode;
+    public String getLdapMode() {
+        return ldapMode;
     }
 
     /**
@@ -226,7 +245,7 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
          return false;
       OrgLdapSettings that = OrgLdapSettings.class.cast(o);
       return super.equals(that) && 
-           equal(orgLdapMode, that.orgLdapMode) && 
+           equal(ldapMode, that.ldapMode) && 
            equal(customUsersOu, that.customUsersOu) && 
            equal(customOrgLdapSettings, that.customOrgLdapSettings);
    }
@@ -234,7 +253,7 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
    @Override
    public int hashCode() {
       return Objects.hashCode(super.hashCode(),
-           orgLdapMode, 
+           ldapMode, 
            customUsersOu, 
            customOrgLdapSettings);
    }
@@ -242,7 +261,7 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
    @Override
    public ToStringHelper string() {
       return super.string()
-            .add("orgLdapMode", orgLdapMode)
+            .add("orgLdapMode", ldapMode)
             .add("customUsersOu", customUsersOu)
             .add("customOrgLdapSettings", customOrgLdapSettings);
    }

@@ -90,7 +90,7 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
 
       @Override
       public CatalogType<T> build() {
-         return new CatalogType<T>(href, type, links, description, tasksInProgress, id, name, owner, catalogItems, isPublished);
+         return new CatalogType<T>(href, type, links, description, tasks, id, name, owner, catalogItems, isPublished);
       }
 
       /**
@@ -121,11 +121,11 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
       }
 
       /**
-       * @see EntityType#getTasksInProgress()
+       * @see EntityType#getTasks()
        */
       @Override
-      public Builder<T> tasksInProgress(TasksInProgress tasksInProgress) {
-         super.tasksInProgress(tasksInProgress);
+      public Builder<T> tasks(Set<Task> tasks) {
+         super.tasks(tasks);
          return this;
       }
 
@@ -176,9 +176,9 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
       }
    }
 
-   public CatalogType(URI href, String type, Set<Link> links, String description, TasksInProgress tasksInProgress, String id,
+   public CatalogType(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
                   String name, Owner owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasksInProgress, id, name);
+      super(href, type, links, description, tasks, id, name);
       this.owner = owner;
       this.catalogItems = catalogItems;
       this.isPublished = published;

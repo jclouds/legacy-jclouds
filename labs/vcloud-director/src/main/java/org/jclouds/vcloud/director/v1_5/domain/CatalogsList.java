@@ -21,9 +21,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -67,6 +67,14 @@ public class CatalogsList {
          this.catalogReferences = checkNotNull(catalogReferences, "catalogReferences");
          return this;
       }
+      
+      /**
+       * @see CatalogsList#getCatalogItems()
+       */
+      public Builder catalog(Reference catalog) {
+         this.catalogReferences.add(checkNotNull(catalog, "catalog"));
+         return this;
+      }
 
       public CatalogsList build() {
          return new CatalogsList(catalogReferences);
@@ -81,7 +89,7 @@ public class CatalogsList {
       // for JAXB
    }
 
-   private CatalogsList(Set<Reference> tasks) {
+   private CatalogsList(Set<Reference> catalogReferences) {
       this.catalogReferences = ImmutableSet.copyOf(checkNotNull(catalogReferences, "catalogReferences"));
    }
 
