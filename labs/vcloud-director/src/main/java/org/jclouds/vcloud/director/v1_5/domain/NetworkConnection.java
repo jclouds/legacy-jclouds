@@ -21,6 +21,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -65,6 +68,18 @@ import com.google.common.base.Objects;
       "ipAddressAllocationMode"
 })
 public class NetworkConnection {
+   
+   public static class IpAddressAllocationMode {
+      public static final String POOL = "pool";
+      public static final String DHCP = "dhcp";
+      public static final String MANUAL = "manual";
+      public static final String NONE = "none";
+
+      public static final List<String> ALL = Arrays.asList(
+            POOL, DHCP, MANUAL, NONE
+      );
+   }
+
    public static Builder builder() {
       return new Builder();
    }
