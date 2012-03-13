@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
+import com.google.common.collect.ImmutableMap;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -47,6 +49,7 @@ public class ServerToNodeMetadataTest
          .privateAddresses(Address.createV4("10.0.0.1"))
          .publicAddresses(Address.createV4("1.0.1.1"))
          .status(ServerStatus.ACTIVE)
+         .metadata(ImmutableMap.of("test", "testing"))
          .build();
 
       ServerToNodeMetadata converter = new ServerToNodeMetadata();
@@ -65,5 +68,9 @@ public class ServerToNodeMetadataTest
       assertNotNull(convertedNodeMetadata.getPublicAddresses());
       assertEquals(convertedNodeMetadata.getPublicAddresses().size(), 1);
       assertEquals(convertedNodeMetadata.getPublicAddresses().iterator().next(), "1.0.1.1");
+
+      assertNotNull(convertedNodeMetadata.getUserMetadata());
+      assertEquals(convertedNodeMetadata.getUserMetadata().size(), 1);
+      assertEquals(convertedNodeMetadata.getUserMetadata().get("test"),"testing");
    }
 }

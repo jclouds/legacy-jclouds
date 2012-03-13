@@ -26,6 +26,7 @@ import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -47,6 +48,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata>
          .publicAddresses(Iterables.transform(server.getPublicAddresses(), new AddressToStringTransformationFunction()))
          .privateAddresses(Iterables.transform(server.getPrivateAddresses(), new AddressToStringTransformationFunction()))
          .state(server.getStatus().getNodeState())
+         .userMetadata(ImmutableMap.copyOf(server.getMetadata()))
          .build();
    }
 
