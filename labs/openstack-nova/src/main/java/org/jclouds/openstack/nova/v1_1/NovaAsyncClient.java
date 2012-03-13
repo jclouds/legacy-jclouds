@@ -26,6 +26,7 @@ import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
@@ -64,6 +65,13 @@ public interface NovaAsyncClient {
     */
    @Delegate
    FlavorAsyncClient getFlavorClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   
+   /**
+    * Provides asynchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionAsyncClient getExtensionClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**

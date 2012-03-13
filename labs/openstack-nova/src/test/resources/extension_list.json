@@ -1,0 +1,42 @@
+{
+    "extensions": [
+        {
+            "name": "Public Image Extension",
+            "namespace": "http://docs.rackspacecloud.com/servers/api/ext/pie/v1.0",
+            "alias": "RAX-PIE",
+            "updated": "2011-01-22T13:25:27-06:00",
+            "description": "Adds the capability to share an image with other users.",
+            "links": [
+                {
+                    "rel": "describedby",
+                    "type": "application/pdf",
+                    "href": "http://docs.rackspacecloud.com/servers/api/ext/cs-pie-20111111.pdf"
+                },
+                {
+                    "rel": "describedby",
+                    "type": "application/vnd.sun.wadl+xml",
+                    "href": "http://docs.rackspacecloud.com/servers/api/ext/cs-pie.wadl"
+                }
+            ]
+        },
+        {
+            "name": "Cloud Block Storage",
+            "namespace": "http://docs.rackspacecloud.com/servers/api/ext/cbs/v1.0",
+            "alias": "RAX-CBS",
+            "updated": "2011-01-12T11:22:33-06:00",
+            "description": "Allows mounting cloud block storage volumes.",
+            "links": [
+                {
+                    "rel": "describedby",
+                    "type": "application/pdf",
+                    "href": "http://docs.rackspacecloud.com/servers/api/ext/cs-cbs-20111201.pdf"
+                },
+                {
+                    "rel": "describedby",
+                    "type": "application/vnd.sun.wadl+xml",
+                    "href": "http://docs.rackspacecloud.com/servers/api/ext/cs-cbs.wadl"
+                }
+            ]
+        }
+    ]
+}

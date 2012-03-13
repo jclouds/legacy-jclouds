@@ -32,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -49,6 +50,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see KeyPairClient
  * @author Jeremy Daggett
+ * @see ExtensionAsyncClient
+ * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html" />
+ * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://nova.openstack.org/api_ext/ext_keypairs.html" />
  */
 @SkipEncoding({ '/', '=' })

@@ -28,6 +28,7 @@ import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
@@ -68,6 +69,13 @@ public interface NovaClient {
    FlavorClient getFlavorClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
+   /**
+    * Provides synchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionClient getExtensionClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   
    /**
     * Provides synchronous access to Image features.
     */

@@ -34,6 +34,8 @@ import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
@@ -59,6 +61,7 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
             .put(ServerClient.class, ServerAsyncClient.class)//
             .put(FlavorClient.class, FlavorAsyncClient.class)
             .put(ImageClient.class, ImageAsyncClient.class)
+            .put(ExtensionClient.class, ExtensionAsyncClient.class)
             .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
             .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
             .put(KeyPairClient.class, KeyPairAsyncClient.class)
