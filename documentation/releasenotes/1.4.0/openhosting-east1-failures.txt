@@ -1,6 +1,9 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
+<<<<<<< HEAD
+Tests run: 128, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 746.155 sec
+=======
 Tests run: 128, Failures: 5, Errors: 0, Skipped: 16, Time elapsed: 33.505 sec <<< FAILURE!
 testCreateDrive(org.jclouds.openhosting.OpenHostingEast1ClientLiveTest)  Time elapsed: 0.624 sec  <<< FAILURE!
 org.jclouds.http.HttpResponseException: command: POST https://api.east1.openhosting.com/drives/create HTTP/1.1 failed with response: HTTP/1.1 402 Payment Required; content: [Usage of Disk would exceed your subscriptions, and cost 0.001/hour on burst. Use the Subscriptions tab to increase your subscriptions or use the Billing tab to increase your balance.
@@ -1279,3 +1282,4 @@ Node failures:
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
+>>>>>>> e2cfe390847eb0d01fab013d5f5a437de87460ff
