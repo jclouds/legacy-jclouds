@@ -19,20 +19,17 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.*;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Objects;
 
 /**
- * 
- *                 Represents vApp/VM undeployment parameters.
- *             
- * 
- * <p>Java class for UndeployVAppParams complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * Represents vApp/VM undeployment parameters.
  * 
  * <pre>
  * &lt;complexType name="UndeployVAppParams">
@@ -46,18 +43,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "UndeployVAppParams", propOrder = {
-    "undeployPowerAction"
-})
-public class UndeployVAppParams
-   
+@XmlType(name = "UndeployVAppParams")
+public class UndeployVAppParams {
 
-{
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -67,7 +57,7 @@ public class UndeployVAppParams
    }
 
    public static class Builder {
-      
+
       private String undeployPowerAction;
 
       /**
@@ -78,13 +68,11 @@ public class UndeployVAppParams
          return this;
       }
 
-
       public UndeployVAppParams build() {
          UndeployVAppParams undeployVAppParams = new UndeployVAppParams();
-         undeployVAppParams.setUndeployPowerAction(undeployPowerAction);
+         undeployVAppParams.undeployPowerAction = undeployPowerAction;
          return undeployVAppParams;
       }
-
 
       public Builder fromUndeployVAppParams(UndeployVAppParams in) {
          return undeployPowerAction(in.getUndeployPowerAction());
@@ -95,39 +83,20 @@ public class UndeployVAppParams
       // For JAXB and builder use
    }
 
+   @XmlElement(name = "UndeployPowerAction")
+   protected String undeployPowerAction;
 
-
-    @XmlElement(name = "UndeployPowerAction")
-    protected String undeployPowerAction;
-
-    /**
-     * Gets the value of the undeployPowerAction property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getUndeployPowerAction() {
-        return undeployPowerAction;
-    }
-
-    /**
-     * Sets the value of the undeployPowerAction property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUndeployPowerAction(String value) {
-        this.undeployPowerAction = value;
-    }
+   /**
+    * Gets the value of the undeployPowerAction property.
+    */
+   public String getUndeployPowerAction() {
+      return undeployPowerAction;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       UndeployVAppParams that = UndeployVAppParams.class.cast(o);
@@ -141,8 +110,7 @@ public class UndeployVAppParams
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("")
-            .add("undeployPowerAction", undeployPowerAction).toString();
+      return Objects.toStringHelper("").add("undeployPowerAction", undeployPowerAction).toString();
    }
 
 }

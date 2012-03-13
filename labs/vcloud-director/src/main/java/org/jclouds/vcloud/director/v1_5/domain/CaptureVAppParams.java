@@ -35,7 +35,6 @@ import org.jclouds.ovf.OperatingSystemSection;
 import org.jclouds.ovf.ProductSection;
 import org.jclouds.ovf.Section;
 import org.jclouds.ovf.VirtualHardwareSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;

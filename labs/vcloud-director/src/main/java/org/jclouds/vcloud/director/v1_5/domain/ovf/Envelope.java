@@ -22,6 +22,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OV
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseEnvelope;
 
 import com.google.common.collect.Multimap;

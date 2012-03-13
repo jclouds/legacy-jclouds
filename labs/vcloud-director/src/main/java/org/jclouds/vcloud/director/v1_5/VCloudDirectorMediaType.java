@@ -174,6 +174,12 @@ public class VCloudDirectorMediaType {
    
    public static final String UNDEPLOY_VAPP_PARAMS = "application/vnd.vmware.vcloud.undeployVAppParams+xml";
    
+   public static final String MEDIA_PARAMS = "application/vnd.vmware.vcloud.mediaInsertOrEjectParams+xml";
+   
+   public static final String RUNTIME_INFO_SECTION = "application/vnd.vmware.vcloud.runtimeInfoSection+xml";
+   
+   public static final String SCREEN_TICKET = "application/vnd.vmware.vcloud.screenTicket+xml";
+   
    /**
     * All acceptable media types.
     *
@@ -197,6 +203,7 @@ public class VCloudDirectorMediaType {
          ORG_LEASE_SETTINGS, ORG_PASSWORD_POLICY_SETTINGS, ORG_LDAP_SETTINGS,
          ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
          ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
-         RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS
+         RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, MEDIA_PARAMS, RUNTIME_INFO_SECTION,
+         SCREEN_TICKET
 		);
 }
