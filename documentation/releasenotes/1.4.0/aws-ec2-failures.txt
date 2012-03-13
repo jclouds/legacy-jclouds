@@ -1,15 +1,15 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 155, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 2,086.345 sec <<< FAILURE!
-testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNode(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 113.881 sec  <<< FAILURE!
-java.lang.AssertionError: Sets differ: expected [] but got [[region=us-east-1, id=sg-9f984af7, name=jclouds#ec2-incidental#us-east-1, ownerId=993194456877, description=jclouds#ec2-incidental#us-east-1, ipPermissions=[[fromPort=-1, toPort=-1, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=icmp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=tcp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=udp, ipRanges=[]], [fromPort=22, toPort=22, userIdGroupPairs={}, groupIds=[], ipProtocol=tcp, ipRanges=[0.0.0.0/0]]]]]
+Tests run: 155, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 2,908.896 sec <<< FAILURE!
+testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNode(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 186.366 sec  <<< FAILURE!
+java.lang.AssertionError: Sets differ: expected [] but got [[region=us-east-1, id=sg-85f123ed, name=jclouds#ec2-incidental#us-east-1, ownerId=993194456877, description=jclouds#ec2-incidental#us-east-1, ipPermissions=[[fromPort=-1, toPort=-1, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=icmp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=tcp, ipRanges=[]], [fromPort=1, toPort=65535, userIdGroupPairs={993194456877=[jclouds#ec2-incidental#us-east-1]}, groupIds=[], ipProtocol=udp, ipRanges=[]], [fromPort=22, toPort=22, userIdGroupPairs={}, groupIds=[], ipProtocol=tcp, ipRanges=[0.0.0.0/0]]]]]
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.testng.Assert.assertEquals(Assert.java:694)
 	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(AWSEC2ComputeServiceLiveTest.java:306)
 	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNode(AWSEC2ComputeServiceLiveTest.java:216)
-testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 11.499 sec  <<< FAILURE!
-org.jclouds.rest.ResourceNotFoundException: The key pair 'jclouds#ec2-incidental#us-east-1#60' does not exist
+testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching(org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest)  Time elapsed: 9.88 sec  <<< FAILURE!
+org.jclouds.rest.ResourceNotFoundException: The key pair 'jclouds#ec2-incidental#us-east-1#92' does not exist
 	at org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent.refineException(ParseAWSErrorFromXmlContent.java:106)
 	at org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent.handleError(ParseAWSErrorFromXmlContent.java:89)
 	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
@@ -82,7 +82,7 @@ org.jclouds.rest.ResourceNotFoundException: The key pair 'jclouds#ec2-incidental
 	at org.jclouds.aws.ec2.compute.AWSEC2ComputeService.createNodesInGroup(AWSEC2ComputeService.java:130)
 	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(AWSEC2ComputeServiceLiveTest.java:248)
 	at org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceLiveTest.testIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroyNodesMatching(AWSEC2ComputeServiceLiveTest.java:228)
-Caused by: org.jclouds.aws.AWSResponseException: request POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1 failed with code 400, error: AWSError{requestId='24716f62-e621-4b2d-9e6c-c21b2cf8f9e8', requestToken='null', code='InvalidKeyPair.NotFound', message='The key pair 'jclouds#ec2-incidental#us-east-1#60' does not exist', context='{Response=, Errors=}'}
+Caused by: org.jclouds.aws.AWSResponseException: request POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1 failed with code 400, error: AWSError{requestId='0c26783d-ab54-49bb-87c1-5b8c5c7553a4', requestToken='null', code='InvalidKeyPair.NotFound', message='The key pair 'jclouds#ec2-incidental#us-east-1#92' does not exist', context='{Response=, Errors=}'}
 	at org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent.handleError(ParseAWSErrorFromXmlContent.java:75)
 	at org.jclouds.http.handlers.DelegatingErrorHandler.handleError(DelegatingErrorHandler.java:69)
 	at org.jclouds.http.internal.BaseHttpCommandExecutorService$HttpResponseCallable.shouldContinue(BaseHttpCommandExecutorService.java:191)
