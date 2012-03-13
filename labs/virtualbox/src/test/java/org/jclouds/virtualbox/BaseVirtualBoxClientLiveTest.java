@@ -30,14 +30,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.byon.Node;
-import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.concurrent.MoreExecutors;
@@ -49,21 +46,16 @@ import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.virtualbox_4_1.IProgress;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.MachineState;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
@@ -80,6 +72,9 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
    
    protected ComputeServiceContext context;
+   
+   @Inject
+   protected MachineController machineController;
 
    @Inject
    protected Supplier<VirtualBoxManager> manager;
@@ -160,30 +155,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
                new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
 
-   protected void ensureMachineHasPowerDown(String vmName) {
-      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
-         try {
-            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
-               @Override
-               public Void apply(ISession session) {
-                  IProgress powerDownProgress = session.getConsole().powerDown();
-                  powerDownProgress.waitForCompletion(-1);
-                  return null;
-               }
-            });
-         } catch (RuntimeException e) {
-            // sometimes the machine might be powered of between the while test and the call to
-            // lockSessionOnMachineAndApply
-            if (e.getMessage().contains("Invalid machine state: PoweredOff")) {
-               return;
-            } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
-               continue;
-            } else {
-               throw e;
-            }
-         }
-      }
-   }
+
 
    public String adminDisk(String vmName) {
       return workingDir + File.separator + vmName + ".vdi";

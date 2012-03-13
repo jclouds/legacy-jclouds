@@ -117,6 +117,6 @@ public class CloneSpec {
 
    @Override
    public String toString() {
-      return "IMachineSpec{" + "vmSpec= " + vmSpec + ", networkSpec= " + networkSpec + '}';
+      return "CloneSpec{" + "vmSpec= " + vmSpec + ", networkSpec= " + networkSpec + '}';
    }
 }
