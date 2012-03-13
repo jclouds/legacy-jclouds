@@ -64,6 +64,7 @@ import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.predicates.Retryables;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -195,7 +196,7 @@ public class EC2ComputeService extends BaseComputeService {
       }
    }
 
-   protected void cleanUpIncidentalResources(String region, String group){
+   protected void cleanUpIncidentalResources(final String region, final String group){
       // For issue #445, tries to delete security groups first: ec2 throws exception if in use, but
       // deleting a key pair does not.
       // This is "belt-and-braces" because deleteKeyPair also does extractIdsFromInstances & usingKeyPairAndNotDead
@@ -203,14 +204,26 @@ public class EC2ComputeService extends BaseComputeService {
       // There is (probably?) still a race if someone is creating instances at the same time as deleting them: 
       // we may delete the key-pair just when the node-being-created was about to rely on the incidental 
       // resources existing.
-      try {
-         logger.debug(">> deleting incidentalResources(%s @ %s)", region, group);
-         deleteSecurityGroup(region, group);
-         deleteKeyPair(region, group); // not executed if securityGroup was in use
-         logger.debug("<< deleted incidentalResources(%s @ %s)", region, group);
-      } catch (IllegalStateException e) {
-         logger.debug("<< inUse incidentalResources(%s @ %s)", region, group);
-      }
+
+      // Also in #445, in aws-ec2 the deleteSecurityGroup sometimes fails after terminating the final VM using a 
+      // given security group, if called very soon after the VM's state reports terminated. Emprically, it seems that
+      // waiting a small time (e.g. enabling logging or debugging!) then the tests pass. We therefore retry.
+      final int maxAttempts = 3;
+      Retryables.retryNumTimes(new Predicate<Void>() {
+            @Override
+            public boolean apply(Void input) {
+               try {
+                  logger.debug(">> deleting incidentalResources(%s @ %s)", region, group);
+                  deleteSecurityGroup(region, group);
+                  deleteKeyPair(region, group); // not executed if securityGroup was in use
+                  logger.debug("<< deleted incidentalResources(%s @ %s)", region, group);
+                  return true;
+               } catch (IllegalStateException e) {
+                  logger.debug("<< inUse incidentalResources(%s @ %s)", region, group);
+                  return false;
+               }
+            }
+         }, (Void)null, maxAttempts);
    }
 
    /**
