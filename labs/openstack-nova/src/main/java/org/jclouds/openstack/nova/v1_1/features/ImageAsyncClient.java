@@ -75,7 +75,7 @@ public interface ImageAsyncClient {
     * @see ImageClient#getImage
     */
    @GET
-   @SelectJson("flavor")
+   @SelectJson("image")
    @Consumes(MediaType.APPLICATION_JSON)
    @Path("/images/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
