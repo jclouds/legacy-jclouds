@@ -26,8 +26,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTA
 
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
@@ -153,19 +151,9 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
                   }));
       } finally {
          for (VmSpec spec : ImmutableSet.of(vmSpecification)) {
-            ensureMachineHasPowerDown(spec.getVmName());
+            machineController.ensureMachineHasPowerDown(spec.getVmName());
          }
       }
-   }
-
-   private Function<Image, String> extractId() {
-      return new Function<Image, String>() {
-
-         @Override
-         public String apply(@Nullable Image input) {
-            return input.getId();
-         }
-      };
    }
 
    private IMachine getVmWithGuestAdditionsInstalled() {
