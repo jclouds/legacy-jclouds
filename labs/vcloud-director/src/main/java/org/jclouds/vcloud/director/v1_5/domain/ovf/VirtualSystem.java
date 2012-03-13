@@ -23,6 +23,8 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseVirtualSystem;
 
 import com.google.common.collect.Multimap;
