@@ -54,37 +54,37 @@
 -------------------------------------------------------
 Running TestSuite
 Starting test testAddInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testAddInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 151ms
+[pool-2-thread-1] Test testAddInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 198ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testAddInternetServiceOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testAddInternetServiceOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 14ms
+[pool-2-thread-1] Test testAddInternetServiceOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testAddInternetServiceToExistingIp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testAddInternetServiceToExistingIp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 11ms
+[pool-2-thread-1] Test testAddInternetServiceToExistingIp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 10ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testAddInternetServiceToExistingIpOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testAddInternetServiceToExistingIpOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 4ms
+[pool-2-thread-1] Test testAddInternetServiceToExistingIpOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 26ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testAddNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testAddNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 26ms
+[pool-2-thread-1] Test testAddNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 29ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testAddNodeOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testAddNodeOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 27ms
+[pool-2-thread-1] Test testAddNodeOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 4ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 15ms
+[pool-2-thread-1] Test testCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test testCatalogItemURI(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testCatalogItemURI(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 24ms
+[pool-2-thread-1] Test testCatalogItemURI(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 68ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test testConfigureNodeNoDescription(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testConfigureNodeNoDescription(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 231ms
+[pool-2-thread-1] Test testConfigureNodeNoDescription(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 213ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testConfigureNodeWithDescription(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testConfigureNodeWithDescription(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 91ms
+[pool-2-thread-1] Test testConfigureNodeWithDescription(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 11ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testDelete(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testDelete(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 15ms
+[pool-2-thread-1] Test testDelete(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 6ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testDeleteInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
 [pool-2-thread-1] Test testDeleteInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 6ms
@@ -96,40 +96,40 @@ Starting test testDeleteNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpre
 [pool-2-thread-1] Test testDeleteNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 2ms
 Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
 Starting test testFindCatalogItemInOrgCatalogNamed(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testFindCatalogItemInOrgCatalogNamed(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 13ms
+[pool-2-thread-1] Test testFindCatalogItemInOrgCatalogNamed(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
 Starting test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 23ms
+[pool-2-thread-1] Test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 11ms
 Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
 Starting test testGetCustomizationOptionsOfCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetCustomizationOptionsOfCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 6ms
+[pool-2-thread-1] Test testGetCustomizationOptionsOfCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 64ms
 Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
 Starting test testGetInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 2ms
+[pool-2-thread-1] Test testGetInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 8ms
 Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
 Starting test testGetKeyPair(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetKeyPair(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 10ms
+[pool-2-thread-1] Test testGetKeyPair(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 37ms
 Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
 Starting test testGetKeyPairInOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetKeyPairInOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 58ms
+[pool-2-thread-1] Test testGetKeyPairInOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 41ms
 Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
 Starting test testGetNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 2ms
+[pool-2-thread-1] Test testGetNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 3ms
 Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
 Starting test testGetNodes(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetNodes(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 6ms
+[pool-2-thread-1] Test testGetNodes(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 35ms
 Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
 Starting test testGetVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testGetVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 6ms
+[pool-2-thread-1] Test testGetVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 5ms
 Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
 Starting test testInstantiateVAppTemplateInVDCURI(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testInstantiateVAppTemplateInVDCURI(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 321ms
+[pool-2-thread-1] Test testInstantiateVAppTemplateInVDCURI(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 106ms
 Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
 Starting test testInstantiateVAppTemplateInVDCURIOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testInstantiateVAppTemplateInVDCURIOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 108ms
+[pool-2-thread-1] Test testInstantiateVAppTemplateInVDCURIOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 9ms
 Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
 Starting test testListKeyPairsInOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testListKeyPairsInOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 3ms
+[pool-2-thread-1] Test testListKeyPairsInOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 15ms
 Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
 Starting test testListKeyPairsInOrgNotFound(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
 [pool-2-thread-1] Test testListKeyPairsInOrgNotFound(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 1ms
@@ -138,21 +138,21 @@ Starting test testListKeyPairsInOrgNull(org.jclouds.trmk.vcloudexpress.Terremark
 [pool-2-thread-1] Test testListKeyPairsInOrgNull(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 2ms
 Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
 Starting test testListOrgs(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest)
-[pool-2-thread-1] Test testListOrgs(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 0ms
+[pool-2-thread-1] Test testListOrgs(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressAsyncClientTest) succeeded: 1ms
 Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
 Starting test testAllContains(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest)
-[pool-3-thread-1] Test testAllContains(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 2ms
-Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
 Starting test testInRestProperties(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest)
 Starting test testOfTypeContains(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest)
-Starting test testWithId(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest)
-[pool-3-thread-3] Test testOfTypeContains(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 9ms
+[pool-3-thread-1] Test testAllContains(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 19ms
+Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
+[pool-3-thread-3] Test testOfTypeContains(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 8ms
 Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
-[pool-3-thread-4] Test testWithId(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 6ms
+Starting test testWithId(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest)
+[pool-3-thread-4] Test testWithId(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 5ms
 Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
-[pool-3-thread-2] Test testInRestProperties(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 43ms
+[pool-3-thread-2] Test testInRestProperties(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderTest) succeeded: 55ms
 Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
-Tests run: 33, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.61 sec
+Tests run: 33, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.193 sec
 
 Results :
 
@@ -190,479 +190,603 @@ Classpath: Jar:.,Jar:trmk-common,Jar:jclouds-compute,Jar:java-xmlbuilder,Jar:oau
 -------------------------------------------------------
 Running TestSuite
 Starting test testCompareSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-Mar 8, 2012 2:56:24 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Mar 12, 2012 9:41:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: smallest [id=cpu=1,ram=512,disk=10, providerId=cpu=1,ram=512,disk=10, name=null, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=ALWAYS_TRUE, tags=[]]
-Mar 8, 2012 2:56:24 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Mar 12, 2012 9:41:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: fastest [id=cpu=8,ram=512,disk=10, providerId=cpu=8,ram=512,disk=10, name=null, processors=[[cores=8.0, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=ALWAYS_TRUE, tags=[]]
-Mar 8, 2012 2:56:24 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
+Mar 12, 2012 9:41:18 PM org.jclouds.compute.BaseComputeServiceLiveTest testCompareSizes
 INFO: biggest [id=cpu=8,ram=16384,disk=10, providerId=cpu=8,ram=16384,disk=10, name=null, processors=[[cores=8.0, speed=1.0]], ram=16384, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=ALWAYS_TRUE, tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 8316ms
+[TestNG] Test testCompareSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 7717ms
 Test suite progress: tests succeeded: 1, failed: 0, skipped: 0.
 Starting test testCorrectAuthException(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testCorrectAuthException(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 1205ms
+[TestNG] Test testCorrectAuthException(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 1638ms
 Test suite progress: tests succeeded: 2, failed: 0, skipped: 0.
 Starting test testCreateAndRunAService(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-Mar 8, 2012 3:00:08 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << available node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/430945) os([name=46, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit)]) in 209s
+Mar 12, 2012 9:44:14 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << available node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/431488) os([name=46, family=ubuntu, version=, arch=null, is64Bit=true, description=Ubuntu Linux (64-bit)]) in 172s
 SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-Mar 8, 2012 3:05:54 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << configured node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/430945) with java full version "1.7.0-b147" and JBoss 7.0.2.Final in 333s
-Mar 8, 2012 3:06:00 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Mar 12, 2012 9:47:31 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << configured node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/431488) with java full version "1.7.0-b147" and JBoss 7.0.2.Final in 187s
+Mar 12, 2012 9:47:36 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 209.132.182.31; check freegeoip
-Mar 8, 2012 3:06:00 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jboss7(download.jboss.org) from perpective of node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/430945): 209.132.182.31
-Mar 8, 2012 3:06:06 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Mar 12, 2012 9:47:36 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jboss7(download.jboss.org) from perpective of node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/431488): 209.132.182.31
+Mar 12, 2012 9:47:41 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 77.67.28.50; check freegeoip
-Mar 8, 2012 3:06:06 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of jdk7(download.oracle.com) from perpective of node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/430945): 77.67.28.50
-Mar 8, 2012 3:06:12 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
+Mar 12, 2012 9:47:41 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of jdk7(download.oracle.com) from perpective of node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/431488): 77.67.28.50
+Mar 12, 2012 9:47:47 PM org.jclouds.compute.BaseComputeServiceLiveTest getLocationForIp
 WARNING: could not get info on ip 204.51.112.91; check freegeoip
-Mar 8, 2012 3:06:12 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
-INFO: << location of node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/430945) from perspective of amazonaws: 204.51.112.91
-Mar 8, 2012 3:07:41 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << initial start of jboss on node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/430945) [backgroundProcessMilliseconds=70683, socketOpenMilliseconds=13503, reportedStartupTimeMilliseconds=8832]
-Mar 8, 2012 3:08:26 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
-INFO: << warm start of jboss on node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/430945) [backgroundProcessMilliseconds=6348, socketOpenMilliseconds=27798, reportedStartupTimeMilliseconds=6214]
-[TestNG] Test testCreateAndRunAService(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 822160ms
+Mar 12, 2012 9:47:47 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAndRunAService
+INFO: << location of node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/431488) from perspective of amazonaws: 204.51.112.91
+Mar 12, 2012 9:49:16 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << initial start of jboss on node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/431488) [backgroundProcessMilliseconds=70882, socketOpenMilliseconds=13473, reportedStartupTimeMilliseconds=2378]
+Mar 12, 2012 9:50:01 PM org.jclouds.compute.BaseComputeServiceLiveTest trackAvailabilityOfProcessOnNode
+INFO: << warm start of jboss on node(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/431488) [backgroundProcessMilliseconds=6931, socketOpenMilliseconds=26785, reportedStartupTimeMilliseconds=2196]
+[TestNG] Test testCreateAndRunAService(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 581649ms
 Test suite progress: tests succeeded: 3, failed: 0, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-Mar 8, 2012 3:10:07 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
+Mar 12, 2012 9:51:02 PM org.jclouds.compute.BaseComputeServiceLiveTest testGetAssignableLocations
 WARNING: location [id=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32, scope=ZONE, description=Miami Environment 1, parent=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/org/48, iso3166Codes=[], metadata={}]
-[TestNG] Test testGetAssignableLocations(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 3ms
+[TestNG] Test testGetAssignableLocations(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 11ms
 Test suite progress: tests succeeded: 4, failed: 0, skipped: 0.
 Starting test testImagesCache(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testImagesCache(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 3692ms
+[TestNG] Test testImagesCache(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 3006ms
 Test suite progress: tests succeeded: 5, failed: 0, skipped: 0.
 Starting test testListSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
 [TestNG] Test testListSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 1ms
 Test suite progress: tests succeeded: 6, failed: 0, skipped: 0.
 Starting test testOptionToNotBlock(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testOptionToNotBlock(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 215710ms
+[TestNG] Test testOptionToNotBlock(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 161469ms
 Test suite progress: tests succeeded: 7, failed: 0, skipped: 0.
 Starting test setServiceDefaults(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test setServiceDefaults(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 1ms
+[TestNG] Test setServiceDefaults(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 8, failed: 0, skipped: 0.
 Starting test testDestroyNodes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testDestroyNodes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 36300ms
+[TestNG] Test testDestroyNodes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 3554ms
 Test suite progress: tests succeeded: 9, failed: 0, skipped: 0.
 Starting test testListImages(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
 [TestNG] Test testListImages(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 0ms
 Test suite progress: tests succeeded: 10, failed: 0, skipped: 0.
 Starting test testListNodes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[id=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/426021, providerId=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/426021, name=ddddddddddddddd, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/426021), tags=[]]
-[id=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/423630, providerId=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/423630, name=eduardo, processors=[[cores=1.0, speed=1.0]], ram=1536, volumes=[[id=0, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true], [id=2, type=LOCAL, size=25.0, device=null, durable=true, isBootDevice=false]], hypervisor=VMware, supportsImage=idEquals(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/423630), tags=[]]
-[id=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/423633, providerId=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/423633, name=bbbbbbbbbbbbbbb, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=0, type=LOCAL, size=4.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=idEquals(https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vapp/423633), tags=[]]
-[TestNG] Test testListNodes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 16959ms
+[TestNG] Test testListNodes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 1199ms
 Test suite progress: tests succeeded: 11, failed: 0, skipped: 0.
 Starting test testCorrectExceptionRunningNodesNotFound(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 11713ms
+[TestNG] Test testCorrectExceptionRunningNodesNotFound(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 1208ms
 Test suite progress: tests succeeded: 12, failed: 0, skipped: 0.
+Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 15192ms
+Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
+Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) failed.
+Test suite progress: tests succeeded: 13, failed: 1, skipped: 0.
+Starting test testDefaultTemplateBuilder(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testDefaultTemplateBuilder(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 16ms
+Test suite progress: tests succeeded: 14, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 15, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 16, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 17, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 18, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 19, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 20, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 21, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 22, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 23, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 24, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 25, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 26, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 27, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 28, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 29, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 30, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 31, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 32, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 33, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 34, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 8ms
+Test suite progress: tests succeeded: 35, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 36, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 37, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 38, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 7ms
+Test suite progress: tests succeeded: 39, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 40, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 41, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 42, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 43, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 44, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 45, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 46, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 47, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 48, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 49, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 50, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 51, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 52, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 53, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 54, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 55, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 56, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 57, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 58, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 59, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 60, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 61, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 62, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 63, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 64, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 65, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 66, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 67, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 68, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 69, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 70, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 71, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 72, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 73, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 74, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 75, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 76, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 77, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 78, failed: 1, skipped: 0.
 Starting test testCompareSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 smallest [id=cpu=1,ram=512,disk=10, providerId=cpu=1,ram=512,disk=10, name=null, processors=[[cores=1.0, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=ALWAYS_TRUE, tags=[]]
 fastest [id=cpu=8,ram=512,disk=10, providerId=cpu=8,ram=512,disk=10, name=null, processors=[[cores=8.0, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=ALWAYS_TRUE, tags=[]]
 biggest [id=cpu=8,ram=16384,disk=10, providerId=cpu=8,ram=16384,disk=10, name=null, processors=[[cores=8.0, speed=1.0]], ram=16384, volumes=[[id=null, type=LOCAL, size=10.0, device=null, durable=true, isBootDevice=true]], hypervisor=VMware, supportsImage=ALWAYS_TRUE, tags=[]]
-[TestNG] Test testCompareSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 5188ms
-Test suite progress: tests succeeded: 13, failed: 0, skipped: 0.
-Starting test testFromTemplate(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testFromTemplate(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 24ms
-Test suite progress: tests succeeded: 14, failed: 0, skipped: 0.
+[TestNG] Test testCompareSizes(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 79, failed: 1, skipped: 0.
 Starting test testGetAssignableLocations(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 location [id=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32, scope=ZONE, description=Miami Environment 1, parent=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/org/48, iso3166Codes=[], metadata={}]
 [TestNG] Test testGetAssignableLocations(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 15, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 80, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanUseImageId(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 5437ms
+Test suite progress: tests succeeded: 81, failed: 1, skipped: 0.
+Starting test testFromTemplate(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testFromTemplate(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 119ms
+Test suite progress: tests succeeded: 82, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 16, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 4ms
-Test suite progress: tests succeeded: 17, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 18, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 19, failed: 0, skipped: 0.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 10ms
+Test suite progress: tests succeeded: 83, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 6ms
-Test suite progress: tests succeeded: 20, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 21, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 5ms
-Test suite progress: tests succeeded: 22, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 23, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 24, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 25, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 26, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 84, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 27, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 85, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
+Test suite progress: tests succeeded: 86, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 13ms
+Test suite progress: tests succeeded: 87, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 17ms
+Test suite progress: tests succeeded: 88, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 28, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 89, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 29, failed: 0, skipped: 0.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 90, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 30, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 4ms
-Test suite progress: tests succeeded: 31, failed: 0, skipped: 0.
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 91, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 32, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 92, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 33, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 93, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 34, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 94, failed: 1, skipped: 0.
 Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
 [TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 35, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCanUseImageId(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCanUseImageId(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 5089ms
-Test suite progress: tests succeeded: 36, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 37, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 38, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 39, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 40, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 41, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 42, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 43, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 44, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 45, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 46, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 47, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 48, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 49, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 50, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 51, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 52, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 53, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 54, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 7ms
-Test suite progress: tests succeeded: 55, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 56, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 57, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 58, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 59, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 60, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 61, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 62, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 63, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 64, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 65, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 66, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 67, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 68, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 69, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 70, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 71, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 72, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 73, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 74, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 75, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 76, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 77, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 78, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 79, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 80, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 81, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 82, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 83, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 84, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 85, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 86, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 87, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 88, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 89, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 90, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 91, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 92, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 93, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 94, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 95, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 96, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 3ms
-Test suite progress: tests succeeded: 97, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
-Test suite progress: tests succeeded: 98, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 6ms
-Test suite progress: tests succeeded: 99, failed: 0, skipped: 0.
-Starting test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderCannotFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
-Test suite progress: tests succeeded: 100, failed: 0, skipped: 0.
-Starting test testTemplateBuilderWithImageIdSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithImageIdSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 9106ms
-Test suite progress: tests succeeded: 101, failed: 0, skipped: 0.
-Starting test testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 8981ms
-Test suite progress: tests succeeded: 102, failed: 0, skipped: 0.
-Starting test testDefaultTemplateBuilder(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
-[TestNG] Test testDefaultTemplateBuilder(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 5ms
-Test suite progress: tests succeeded: 103, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 95, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 96, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 97, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 98, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 99, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 2ms
+Test suite progress: tests succeeded: 100, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 0ms
+Test suite progress: tests succeeded: 101, failed: 1, skipped: 0.
+Starting test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+[TestNG] Test testTemplateBuilderCanFind(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest) succeeded: 1ms
+Test suite progress: tests succeeded: 102, failed: 1, skipped: 0.
 Starting test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 1072498ms
-Test suite progress: tests succeeded: 104, failed: 0, skipped: 0.
+[TestNG] Test testAScriptExecutionAfterBootWithBasicTemplate(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 507963ms
+Test suite progress: tests succeeded: 103, failed: 1, skipped: 0.
 Starting test testCreateTwoNodesWithRunScript(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 333831ms
-Test suite progress: tests succeeded: 105, failed: 0, skipped: 0.
+[TestNG] Test testCreateTwoNodesWithRunScript(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 314694ms
+Test suite progress: tests succeeded: 104, failed: 1, skipped: 0.
 Starting test testTemplateMatch(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
 [TestNG] Test testTemplateMatch(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 2ms
-Test suite progress: tests succeeded: 106, failed: 0, skipped: 0.
+Test suite progress: tests succeeded: 105, failed: 1, skipped: 0.
 Starting test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-Mar 8, 2012 3:38:49 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
+Mar 12, 2012 10:08:03 PM org.jclouds.compute.BaseComputeServiceLiveTest testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired
 INFO: creating another node based on existing nodes' location: [id=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32, scope=ZONE, description=Miami Environment 1, parent=https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/org/48, iso3166Codes=[], metadata={}]
-[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 329586ms
-Test suite progress: tests succeeded: 107, failed: 0, skipped: 0.
+[TestNG] Test testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 270792ms
+Test suite progress: tests succeeded: 106, failed: 1, skipped: 0.
 Starting test testCredentialsCache(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testCredentialsCache(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 142ms
-Test suite progress: tests succeeded: 108, failed: 0, skipped: 0.
+[TestNG] Test testCredentialsCache(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 149ms
+Test suite progress: tests succeeded: 107, failed: 1, skipped: 0.
 Starting test testGet(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testGet(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 40565ms
-Test suite progress: tests succeeded: 109, failed: 0, skipped: 0.
+[TestNG] Test testGet(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 24838ms
+Test suite progress: tests succeeded: 108, failed: 1, skipped: 0.
 Starting test testReboot(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testReboot(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 107092ms
-Test suite progress: tests succeeded: 110, failed: 0, skipped: 0.
+[TestNG] Test testReboot(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 73678ms
+Test suite progress: tests succeeded: 109, failed: 1, skipped: 0.
 Starting test testSuspendResume(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testSuspendResume(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 335937ms
-Test suite progress: tests succeeded: 111, failed: 0, skipped: 0.
+[TestNG] Test testSuspendResume(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 162789ms
+Test suite progress: tests succeeded: 110, failed: 1, skipped: 0.
 Starting test testGetNodesWithDetails(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest)
-[TestNG] Test testGetNodesWithDetails(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 26351ms
-Test suite progress: tests succeeded: 112, failed: 0, skipped: 0.
+[TestNG] Test testGetNodesWithDetails(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceLiveTest) succeeded: 11213ms
+Test suite progress: tests succeeded: 111, failed: 1, skipped: 0.
 Starting test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.InternetServiceLiveTest)
-[TestNG] Test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.InternetServiceLiveTest) succeeded: 3525ms
-Test suite progress: tests succeeded: 113, failed: 0, skipped: 0.
+[TestNG] Test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.InternetServiceLiveTest) succeeded: 3233ms
+Test suite progress: tests succeeded: 112, failed: 1, skipped: 0.
 Starting test testGetAllPublicIps(org.jclouds.trmk.vcloudexpress.InternetServiceLiveTest)
-[TestNG] Test testGetAllPublicIps(org.jclouds.trmk.vcloudexpress.InternetServiceLiveTest) succeeded: 33090ms
-Test suite progress: tests succeeded: 114, failed: 0, skipped: 0.
+[TestNG] Test testGetAllPublicIps(org.jclouds.trmk.vcloudexpress.InternetServiceLiveTest) succeeded: 32279ms
+Test suite progress: tests succeeded: 113, failed: 1, skipped: 0.
 Starting test testCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 2226ms
-Test suite progress: tests succeeded: 115, failed: 0, skipped: 0.
+[TestNG] Test testCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 2128ms
+Test suite progress: tests succeeded: 114, failed: 1, skipped: 0.
 Starting test testCreateInternetServiceMonitorDisabled(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testCreateInternetServiceMonitorDisabled(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 8195ms
-Test suite progress: tests succeeded: 116, failed: 0, skipped: 0.
+[TestNG] Test testCreateInternetServiceMonitorDisabled(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 8139ms
+Test suite progress: tests succeeded: 115, failed: 1, skipped: 0.
 Starting test testDefaultTasksList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testDefaultTasksList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 17858ms
-Test suite progress: tests succeeded: 117, failed: 0, skipped: 0.
+[TestNG] Test testDefaultTasksList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 16206ms
+Test suite progress: tests succeeded: 116, failed: 1, skipped: 0.
 Starting test testDefaultVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testDefaultVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 2260ms
-Test suite progress: tests succeeded: 118, failed: 0, skipped: 0.
+[TestNG] Test testDefaultVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 1721ms
+Test suite progress: tests succeeded: 117, failed: 1, skipped: 0.
 Starting test testFindCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testFindCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 33986ms
-Test suite progress: tests succeeded: 119, failed: 0, skipped: 0.
+[TestNG] Test testFindCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 33529ms
+Test suite progress: tests succeeded: 118, failed: 1, skipped: 0.
 Starting test testFindVAppTemplate(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testFindVAppTemplate(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 77645ms
-Test suite progress: tests succeeded: 120, failed: 0, skipped: 0.
+[TestNG] Test testFindVAppTemplate(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) failed.
+Test suite progress: tests succeeded: 118, failed: 2, skipped: 0.
 Starting test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 1349ms
-Test suite progress: tests succeeded: 121, failed: 0, skipped: 0.
+[TestNG] Test testGetAllInternetServices(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 836ms
+Test suite progress: tests succeeded: 119, failed: 2, skipped: 0.
 Starting test testGetCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 14656ms
-Test suite progress: tests succeeded: 122, failed: 0, skipped: 0.
+[TestNG] Test testGetCatalogItem(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 13380ms
+Test suite progress: tests succeeded: 120, failed: 2, skipped: 0.
 Starting test testGetConfigCustomizationOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetConfigCustomizationOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 46103ms
-Test suite progress: tests succeeded: 123, failed: 0, skipped: 0.
+[TestNG] Test testGetConfigCustomizationOptions(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 44140ms
+Test suite progress: tests succeeded: 121, failed: 2, skipped: 0.
 Starting test testGetPublicIpsAssociatedWithVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetPublicIpsAssociatedWithVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 84566ms
-Test suite progress: tests succeeded: 124, failed: 0, skipped: 0.
+[TestNG] Test testGetPublicIpsAssociatedWithVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 56235ms
+Test suite progress: tests succeeded: 122, failed: 2, skipped: 0.
 Starting test testGetTask(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetTask(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 9941ms
-Test suite progress: tests succeeded: 125, failed: 0, skipped: 0.
+[TestNG] Test testGetTask(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 8782ms
+Test suite progress: tests succeeded: 123, failed: 2, skipped: 0.
 Starting test testGetVApp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetVApp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 3757ms
-Test suite progress: tests succeeded: 126, failed: 0, skipped: 0.
+[TestNG] Test testGetVApp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 1179ms
+Test suite progress: tests succeeded: 124, failed: 2, skipped: 0.
 Starting test testGetVAppTemplate(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetVAppTemplate(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 27698ms
-Test suite progress: tests succeeded: 127, failed: 0, skipped: 0.
+[TestNG] Test testGetVAppTemplate(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 25790ms
+Test suite progress: tests succeeded: 125, failed: 2, skipped: 0.
 Starting test testGetVDCNetwork(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testGetVDCNetwork(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 3416ms
-Test suite progress: tests succeeded: 128, failed: 0, skipped: 0.
+[TestNG] Test testGetVDCNetwork(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 3238ms
+Test suite progress: tests succeeded: 126, failed: 2, skipped: 0.
 Starting test testInstantiateAndPowerOn(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testInstantiateAndPowerOn(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) failed.
-Test suite progress: tests succeeded: 128, failed: 1, skipped: 0.
+1331616315020: done deploying vApp
+1331616345411: done powering on vApp
+[TestNG] Test testInstantiateAndPowerOn(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 181343ms
+Test suite progress: tests succeeded: 127, failed: 2, skipped: 0.
 Starting test testKeysList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testKeysList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 869ms
-Test suite progress: tests succeeded: 129, failed: 1, skipped: 0.
+[TestNG] Test testKeysList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 821ms
+Test suite progress: tests succeeded: 128, failed: 2, skipped: 0.
 Starting test testOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 883ms
-Test suite progress: tests succeeded: 130, failed: 1, skipped: 0.
+[TestNG] Test testOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 804ms
+Test suite progress: tests succeeded: 129, failed: 2, skipped: 0.
 Starting test testPropertiesCanOverrideDefaultCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testPropertiesCanOverrideDefaultCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 3116ms
-Test suite progress: tests succeeded: 131, failed: 1, skipped: 0.
+[TestNG] Test testPropertiesCanOverrideDefaultCatalog(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 3085ms
+Test suite progress: tests succeeded: 130, failed: 2, skipped: 0.
 Starting test testPropertiesCanOverrideDefaultNetwork(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testPropertiesCanOverrideDefaultNetwork(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 4416ms
-Test suite progress: tests succeeded: 132, failed: 1, skipped: 0.
+[TestNG] Test testPropertiesCanOverrideDefaultNetwork(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 4150ms
+Test suite progress: tests succeeded: 131, failed: 2, skipped: 0.
 Starting test testPropertiesCanOverrideDefaultOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testPropertiesCanOverrideDefaultOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 1902ms
-Test suite progress: tests succeeded: 133, failed: 1, skipped: 0.
+[TestNG] Test testPropertiesCanOverrideDefaultOrg(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 1827ms
+Test suite progress: tests succeeded: 132, failed: 2, skipped: 0.
 Starting test testPropertiesCanOverrideDefaultTasksList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testPropertiesCanOverrideDefaultTasksList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 19190ms
-Test suite progress: tests succeeded: 134, failed: 1, skipped: 0.
+[TestNG] Test testPropertiesCanOverrideDefaultTasksList(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 17579ms
+Test suite progress: tests succeeded: 133, failed: 2, skipped: 0.
 Starting test testPropertiesCanOverrideDefaultVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
-[TestNG] Test testPropertiesCanOverrideDefaultVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 3696ms
-Test suite progress: tests succeeded: 135, failed: 1, skipped: 0.
-[TestNG] Test testAddInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) skipped.
-Test suite progress: tests succeeded: 135, failed: 1, skipped: 1.
-[TestNG] Test testCloneVApp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) skipped.
-Test suite progress: tests succeeded: 135, failed: 1, skipped: 2.
-[TestNG] Test testPublicIp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) skipped.
-Test suite progress: tests succeeded: 135, failed: 1, skipped: 3.
-[TestNG] Test testConfigureNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) skipped.
-Test suite progress: tests succeeded: 135, failed: 1, skipped: 4.
-[TestNG] Test testLifeCycle(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) skipped.
-Test suite progress: tests succeeded: 135, failed: 1, skipped: 5.
-[TestNG] Test testConfigure(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) skipped.
-Test suite progress: tests succeeded: 135, failed: 1, skipped: 6.
-Tests run: 142, Failures: 1, Errors: 0, Skipped: 6, Time elapsed: 3,988.815 sec <<< FAILURE!
+[TestNG] Test testPropertiesCanOverrideDefaultVDC(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 3123ms
+Test suite progress: tests succeeded: 134, failed: 2, skipped: 0.
+Starting test testAddInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
+[TestNG] Test testAddInternetService(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 10898ms
+Test suite progress: tests succeeded: 135, failed: 2, skipped: 0.
+Starting test testCloneVApp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
+1331616417143: done powering off vApp
+1331616417164: cloning vApp
+1331616505203: done cloning vApp
+1331616534303: done powering on vApp
+[TestNG] Test testCloneVApp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 147084ms
+Test suite progress: tests succeeded: 136, failed: 2, skipped: 0.
+Starting test testPublicIp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
+1331616541708: [address=204.51.124.175, port=22] awaiting ssh service to start
+1331616553795: [address=204.51.124.175, port=22] ssh service started
+1331616554928: [address=204.51.124.175, port=22] ssh connection made
+{output=Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu-root
+                      3.5G  791M  2.6G  24% /
+udev                  248M  152K  247M   1% /dev
+none                  248M     0  248M   0% /dev/shm
+none                  248M   36K  248M   1% /var/run
+none                  248M     0  248M   0% /var/lock
+none                  248M     0  248M   0% /lib/init/rw
+/dev/sda5             228M   15M  202M   7% /boot
+, error=, exitStatus=0}
+{output=brw-rw---- 1 root disk 8, 0 2012-03-13 01:28 /dev/sda
+brw-rw---- 1 root disk 8, 1 2012-03-13 01:28 /dev/sda1
+brw-rw---- 1 root disk 8, 2 2012-03-13 01:28 /dev/sda2
+brw-rw---- 1 root disk 8, 5 2012-03-13 01:28 /dev/sda5
+, error=, exitStatus=0}
+{output=[sudo] password for vcloud: 
+
+Disk /dev/sda: 4294 MB, 4294967296 bytes
+255 heads, 63 sectors/track, 522 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x00007e9e
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *           1         491     3943926   8e  Linux LVM
+/dev/sda2             492         522      249007+   5  Extended
+/dev/sda5             492         522      248976   83  Linux
+, error=, exitStatus=0}
+[TestNG] Test testPublicIp(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 20730ms
+Test suite progress: tests succeeded: 137, failed: 2, skipped: 0.
+Starting test testConfigureNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
+[TestNG] Test testConfigureNode(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 504ms
+Test suite progress: tests succeeded: 138, failed: 2, skipped: 0.
+Starting test testLifeCycle(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
+[TestNG] Test testLifeCycle(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 51145ms
+Test suite progress: tests succeeded: 139, failed: 2, skipped: 0.
+Starting test testConfigure(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest)
+1331616667788: [address=204.51.124.175, port=22] awaiting ssh service to start
+1331616667878: [address=204.51.124.175, port=22] ssh service started
+1331616668944: [address=204.51.124.175, port=22] ssh connection made
+{output=Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu-root
+                      3.5G  791M  2.6G  24% /
+udev                  753M  160K  752M   1% /dev
+none                  753M     0  753M   0% /dev/shm
+none                  753M   36K  752M   1% /var/run
+none                  753M     0  753M   0% /var/lock
+none                  753M     0  753M   0% /lib/init/rw
+/dev/sda5             228M   15M  202M   7% /boot
+, error=, exitStatus=0}
+{output=brw-rw---- 1 root disk 8,  0 2012-03-13 01:30 /dev/sda
+brw-rw---- 1 root disk 8,  1 2012-03-13 01:30 /dev/sda1
+brw-rw---- 1 root disk 8,  2 2012-03-13 01:30 /dev/sda2
+brw-rw---- 1 root disk 8,  5 2012-03-13 01:30 /dev/sda5
+brw-rw---- 1 root disk 8, 16 2012-03-13 01:30 /dev/sdb
+brw-rw---- 1 root disk 8, 32 2012-03-13 01:30 /dev/sdc
+, error=, exitStatus=0}
+{output=[sudo] password for vcloud: 
+
+Disk /dev/sda: 4294 MB, 4294967296 bytes
+255 heads, 63 sectors/track, 522 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x00007e9e
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *           1         491     3943926   8e  Linux LVM
+/dev/sda2             492         522      249007+   5  Extended
+/dev/sda5             492         522      248976   83  Linux
+
+Disk /dev/sdb: 26.8 GB, 26843545600 bytes
+255 heads, 63 sectors/track, 3263 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x00000000
+
+Disk /dev/sdb doesn't contain a valid partition table
+
+Disk /dev/sdc: 26.8 GB, 26843545600 bytes
+255 heads, 63 sectors/track, 3263 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x00000000
+
+Disk /dev/sdc doesn't contain a valid partition table
+, error=, exitStatus=0}
+1331616741040: [address=204.51.124.175, port=22] awaiting ssh service to start
+1331616770131: [address=204.51.124.175, port=22] ssh service started
+1331616771246: [address=204.51.124.175, port=22] ssh connection made
+{output=Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/ubuntu-root
+                      3.5G  791M  2.6G  24% /
+udev                  753M  156K  752M   1% /dev
+none                  753M     0  753M   0% /dev/shm
+none                  753M   36K  752M   1% /var/run
+none                  753M     0  753M   0% /var/lock
+none                  753M     0  753M   0% /lib/init/rw
+/dev/sda5             228M   15M  202M   7% /boot
+, error=, exitStatus=0}
+{output=brw-rw---- 1 root disk 8,  0 2012-03-13 01:32 /dev/sda
+brw-rw---- 1 root disk 8,  1 2012-03-13 01:32 /dev/sda1
+brw-rw---- 1 root disk 8,  2 2012-03-13 01:32 /dev/sda2
+brw-rw---- 1 root disk 8,  5 2012-03-13 01:32 /dev/sda5
+brw-rw---- 1 root disk 8, 16 2012-03-13 01:32 /dev/sdb
+, error=, exitStatus=0}
+{output=[sudo] password for vcloud: 
+
+Disk /dev/sda: 4294 MB, 4294967296 bytes
+255 heads, 63 sectors/track, 522 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x00007e9e
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *           1         491     3943926   8e  Linux LVM
+/dev/sda2             492         522      249007+   5  Extended
+/dev/sda5             492         522      248976   83  Linux
+
+Disk /dev/sdb: 26.8 GB, 26843545600 bytes
+255 heads, 63 sectors/track, 3263 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x00000000
+
+Disk /dev/sdb doesn't contain a valid partition table
+, error=, exitStatus=0}
+[TestNG] Test testConfigure(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest) succeeded: 164755ms
+Test suite progress: tests succeeded: 140, failed: 2, skipped: 0.
+Tests run: 142, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 3,106.809 sec <<< FAILURE!
 
 Results :
 
-Failed tests:   testInstantiateAndPowerOn(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest): Server with name "ddddddddddddddd" already exists.
+Failed tests:   testTemplateBuilderWithLoginUserSpecified(org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressTemplateBuilderLiveTest)
+  testFindVAppTemplate(org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressClientLiveTest): illegal argument in [[adrian.cole@cloudsoftcorp.com, Miami Environment 1 Catalog, CentOS 5 (32-bit)]] for method public abstract com.google.common.util.concurrent.ListenableFuture org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient.findVAppTemplateInOrgCatalogNamed(java.lang.String,java.lang.String,java.lang.String)
 
-Tests run: 142, Failures: 1, Errors: 0, Skipped: 6
+Tests run: 142, Failures: 2, Errors: 0, Skipped: 0
 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 1:07:10.993s
-[INFO] Finished at: Thu Mar 08 16:02:37 PST 2012
-[INFO] Final Memory: 21M/265M
+[INFO] Total time: 52:24.708s
+[INFO] Finished at: Mon Mar 12 22:32:53 PDT 2012
+[INFO] Final Memory: 22M/265M
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (integration) on project trmk-vcloudexpress: There are test failures.
 [ERROR] 
