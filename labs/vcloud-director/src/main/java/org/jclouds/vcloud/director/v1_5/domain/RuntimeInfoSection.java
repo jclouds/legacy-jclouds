@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
@@ -77,7 +78,7 @@ public class RuntimeInfoSection extends SectionType<RuntimeInfoSection> {
 
       @Override
       public RuntimeInfoSection build() {
-         RuntimeInfoSection runtimeInfoSection = new RuntimeInfoSection(vmWareTools, any);
+         RuntimeInfoSection runtimeInfoSection = new RuntimeInfoSection(info, required, vmWareTools, any);
          return runtimeInfoSection;
       }
 
@@ -97,16 +98,17 @@ public class RuntimeInfoSection extends SectionType<RuntimeInfoSection> {
       // For JAXB and builder use
    }
 
-   public RuntimeInfoSection(VMWareTools vmWareTools, List<Object> any) {
+   public RuntimeInfoSection(@Nullable String info, @Nullable Boolean required, VMWareTools vmWareTools, List<Object> any) {
+      super(info, required);
       this.vmWareTools = vmWareTools;
       this.any = any;
    }
 
 
     @XmlElement(name = "VMWareTools")
-    protected VMWareTools vmWareTools;
+    private VMWareTools vmWareTools;
     @XmlAnyElement(lax = true)
-    protected List<Object> any = Lists.newArrayList();
+    private List<Object> any = Lists.newArrayList();
 
     /**
      * Gets the value of the vmWareTools property.
