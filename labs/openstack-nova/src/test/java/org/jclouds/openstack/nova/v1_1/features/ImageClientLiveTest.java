@@ -40,10 +40,11 @@ public class ImageClientLiveTest extends BaseNovaClientLiveTest {
         for (String regionId : context.getApi().getConfiguredRegions()) {
             ImageClient client = context.getApi().getImageClientForRegion(regionId);
             Set<Resource> response = client.listImages();
-            assert null != response;
+            assertNotNull(response);
             assertTrue(response.size() >= 0);
             for (Resource image : response) {
                 Image newDetails = client.getImage(image.getId());
+                assertNotNull(newDetails);
                 assertEquals(newDetails.getId(), image.getId());
                 assertEquals(newDetails.getName(), image.getName());
                 assertEquals(newDetails.getLinks(), image.getLinks());
@@ -56,10 +57,11 @@ public class ImageClientLiveTest extends BaseNovaClientLiveTest {
         for (String regionId : context.getApi().getConfiguredRegions()) {
             ImageClient client = context.getApi().getImageClientForRegion(regionId);
             Set<Image> response = client.listImagesInDetail();
-            assert null != response;
+            assertNotNull(response);
             assertTrue(response.size() >= 0);
             for (Image image : response) {
                 Image newDetails = client.getImage(image.getId());
+                assertNotNull(newDetails);
                 assertEquals(newDetails.getId(), image.getId());
                 assertEquals(newDetails.getName(), image.getName());
                 assertEquals(newDetails.getLinks(), image.getLinks());
