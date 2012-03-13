@@ -18,17 +18,16 @@
  */
 package org.jclouds.hpcloud.compute.features;
 
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClientLiveTest;
+import org.jclouds.openstack.nova.v1_1.features.ImageClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  * @author Michael Arnold
  */
-@Test(groups = "live", testName = "HPCloudComputeKeyPairClientLiveTest")
-public class HPCloudComputeKeyPairClientLiveTest extends KeyPairClientLiveTest {
-   public HPCloudComputeKeyPairClientLiveTest() {
-      provider = "hpcloud-compute";
-   }
-
+@Test(groups = "live", testName = "HPCloudComputeImageClientLiveTest")
+public class HPCloudComputeImageClientLiveTest extends ImageClientLiveTest {
+    public HPCloudComputeImageClientLiveTest() {
+        provider = "hpcloud-compute";
+    }
 }
