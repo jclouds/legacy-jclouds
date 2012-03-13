@@ -18,8 +18,21 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.parse.ParseImageTest;
+import org.jclouds.openstack.nova.v1_1.parse.ParseImageListTest;
 import org.testng.annotations.Test;
+
+import java.net.URI;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests annotation parsing of {@code ImageAsyncClient}
@@ -28,4 +41,98 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "ImageAsyncClientTest")
 public class ImageClientExpectTest  extends BaseNovaRestClientExpectTest {
+    public void testListImagesWhenResponseIs2xx() throws Exception {
+        HttpRequest listImages = HttpRequest
+                .builder()
+                .method("GET")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/images"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build()).build();
+
+        HttpResponse listImagesResponse = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/image_list.json")).build();
+
+        NovaClient clientWhenImagesExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                listImages, listImagesResponse);
+
+        assertEquals(clientWhenImagesExist.getConfiguredRegions(),
+                ImmutableSet.of("North"));
+
+        assertEquals(clientWhenImagesExist.getImageClientForRegion("North")
+                .listImages().toString(), new ParseImageListTest().expected()
+                .toString());
+    }
+    
+    public void testListImagesWhenReponseIs404IsEmpty() throws Exception {
+        HttpRequest listImages = HttpRequest
+                .builder()
+                .method("GET")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/images"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build()).build();
+
+        HttpResponse listImagesResponse = HttpResponse.builder().statusCode(404).build();
+
+        NovaClient clientWhenNoServersExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                listImages, listImagesResponse);
+
+        assertTrue(clientWhenNoServersExist.getImageClientForRegion("North")
+                .listImages().isEmpty());
+    }
+
+    public void testGetImageWhenResponseIs2xx() throws Exception {
+
+        HttpRequest getImage = HttpRequest
+                .builder()
+                .method("GET")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/images/52415800-8b69-11e0-9b19-734f5736d2a2"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build()).build();
+
+        HttpResponse getImageResponse = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/image_details.json")).build();
+
+        NovaClient clientWhenImagesExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                getImage, getImageResponse);
+
+        assertEquals(clientWhenImagesExist.getImageClientForRegion("North")
+                .getImage("52415800-8b69-11e0-9b19-734f5736d2a2").toString(),
+                new ParseImageTest().expected().toString());
+    }
+
+    public void testGetImageWhenResponseIs404() throws Exception {
+        HttpRequest getImage = HttpRequest
+                .builder()
+                .method("GET")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/images/52415800-8b69-11e0-9b19-734f5736d2a2"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build()).build();
+
+        HttpResponse getImageResponse = HttpResponse.builder().statusCode(404).build();
+
+        NovaClient clientWhenNoImagesExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                getImage, getImageResponse);
+
+        assertNull(clientWhenNoImagesExist.getImageClientForRegion("North")
+                .getImage("52415800-8b69-11e0-9b19-734f5736d2a2"));
+
+    }
+
+
 }
