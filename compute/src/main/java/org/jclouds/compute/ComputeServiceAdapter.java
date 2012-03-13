@@ -130,6 +130,7 @@ public interface ComputeServiceAdapter<N, H, I, L> {
 
    N getNode(String id);
 
+   //TODO consider making reboot/resume/suspend return the node they affected
    void destroyNode(String id);
 
    void rebootNode(String id);

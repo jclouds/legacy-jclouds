@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 /**
@@ -36,6 +37,6 @@ public class AtomicNodeSuspended extends RefreshAndDoubleCheckOnFailUnlessStateI
 
    @Inject
    public AtomicNodeSuspended(GetNodeMetadataStrategy client) {
-      super(NodeState.SUSPENDED, client);
+      super(NodeState.SUSPENDED, ImmutableSet.of(NodeState.ERROR, NodeState.TERMINATED), client);
    }
 }

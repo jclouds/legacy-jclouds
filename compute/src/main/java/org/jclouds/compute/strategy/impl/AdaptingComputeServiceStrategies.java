@@ -116,31 +116,36 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
       return nodeMetadataAdapter.apply(node);
    }
 
+   //TODO: make reboot/resume/suspend return the node they affected
    @Override
    public NodeMetadata rebootNode(String id) {
       NodeMetadata node = getNode(checkNotNull(id, "id"));
-      if (node == null || node.getState() == NodeState.TERMINATED)
-         return node;
+      checkStateAvailable(node);
       client.rebootNode(id);
-      return node;
+      // invalidate state of node
+      return getNode(checkNotNull(id, "id"));
+   }
+
+   private void checkStateAvailable(NodeMetadata node) {
+      checkState(node != null && node.getState() != NodeState.TERMINATED, "node %s terminated or unavailable!", node);
    }
 
    @Override
    public NodeMetadata resumeNode(String id) {
       NodeMetadata node = getNode(checkNotNull(id, "id"));
-      if (node == null || node.getState() == NodeState.TERMINATED || node.getState() == NodeState.RUNNING)
-         return node;
+      checkStateAvailable(node);
       client.resumeNode(id);
-      return node;
+      // invalidate state of node
+      return getNode(checkNotNull(id, "id"));
    }
 
    @Override
    public NodeMetadata suspendNode(String id) {
       NodeMetadata node = getNode(checkNotNull(id, "id"));
-      if (node == null || node.getState() == NodeState.TERMINATED || node.getState() == NodeState.SUSPENDED)
-         return node;
+      checkStateAvailable(node);
       client.suspendNode(id);
-      return node;
+      // invalidate state of node
+      return getNode(checkNotNull(id, "id"));
    }
 
    @Override
