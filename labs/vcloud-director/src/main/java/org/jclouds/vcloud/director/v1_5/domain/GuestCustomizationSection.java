@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -34,20 +33,15 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-
 /**
  * Represents a guest customization settings.
- * <p/>
- * <p/>
- * <p>Java class for GuestCustomizationSection complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="GuestCustomizationSection">
  *   &lt;complexContent>
@@ -97,11 +91,12 @@ import com.google.common.collect.Sets;
       "links"
 })
 public class GuestCustomizationSection extends SectionType<GuestCustomizationSection> {
-   @SuppressWarnings("unchecked")
+
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromGuestCustomizationSection(this);
    }
@@ -262,6 +257,7 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       }
 
 
+      @Override
       public GuestCustomizationSection build() {
          return new GuestCustomizationSection(info, required, enabled, changeSid, virtualMachineId,
                joinDomainEnabled, useOrgSettings, domainName, domainUserName,

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -26,29 +25,24 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 
 /**
  * Essentially a container with a list of product sections.
- * <p/>
- * <p>Java class for ProductSectionList complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ProductSectionList">
  *   &lt;complexContent>
@@ -62,12 +56,10 @@ import com.google.common.collect.Sets;
  * &lt;/complexType>
  * </pre>
  */
-@XmlType(name = "ProductSectionList", propOrder = {
-      "productSections"
-})
-public class ProductSectionList extends ResourceType<ProductSectionList> implements List<ProductSection> {
+@XmlRootElement(name = "ProductSectionList")
+@XmlType(name = "ProductSectionListType")
+public class ProductSectionList extends ResourceType<ProductSectionList> implements Set<ProductSection> {
    
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -85,13 +77,24 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
        * @see ProductSectionList#getProductSections()
        */
       public Builder productSections(Set<ProductSection> productSections) {
-         this.productSections = checkNotNull(productSections, "productSection");
+         if (checkNotNull(productSections, "productSections").size() > 0)
+            this.productSections = Sets.newLinkedHashSet(productSections);
          return this;
       }
 
+      /**
+       * @see ProductSectionList#getProductSections()
+       */
+      public Builder productSections(ProductSection productSection) {
+         if (productSections == null)
+            productSections = Sets.newLinkedHashSet();
+         this.productSections.add(checkNotNull(productSection, "productSection"));
+         return this;
+      }
 
+      @Override
       public ProductSectionList build() {
-         ProductSectionList productSectionList = new ProductSectionList(productSections);
+         ProductSectionList productSectionList = new ProductSectionList(href, type, links, productSections);
          return productSectionList;
       }
 
@@ -118,8 +121,7 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
        */
       @Override
       public Builder links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -127,8 +129,7 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
        */
       @Override
       public Builder link(Link link) {
-         super.link(link);
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
 
@@ -147,19 +148,20 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
       // for JAXB
    }
 
-   private ProductSectionList(Set<ProductSection> productSections) {
-      this.productSections = ImmutableList.copyOf(productSections);
+   private ProductSectionList(URI href, String type, @Nullable Set<Link> links, @Nullable Set<ProductSection> productSections) {
+      super(href, type, links);
+      this.productSections = productSections != null && productSections.isEmpty() ? null : productSections;
    }
 
 
-   @XmlElement(name = "ProductSection", namespace = "http://schemas.dmtf.org/ovf/envelope/1")
-   protected List<ProductSection> productSections = Lists.newArrayList();
+   @XmlElement(name = "ProductSection", namespace = VCloudDirectorConstants.VCLOUD_OVF_NS)
+   protected Set<ProductSection> productSections;
 
    /**
     * Gets the value of the productSection property.
     */
-   public List<ProductSection> getProductSections() {
-      return Collections.unmodifiableList(this.productSections);
+   public Set<ProductSection> getProductSections() {
+      return productSections == null ? ImmutableSet.<ProductSection>of() : Collections.unmodifiableSet(productSections);
    }
 
    @Override
@@ -169,26 +171,27 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
       if (o == null || getClass() != o.getClass())
          return false;
       ProductSectionList that = ProductSectionList.class.cast(o);
-      return equal(productSections, that.productSections);
+      return super.equals(that) && equal(this.productSections, that.productSections);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(productSections);
+      return Objects.hashCode(super.hashCode(), productSections);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
-            .add("productSections", productSections).toString();
+   public ToStringHelper string() {
+      return super.string().add("productSections", productSections);
    }
-
    
-   /*
-    * Methods below are for implementing List; annoying lack of multiple inheritance for using ForwardingList!
+   /**
+    * The delegate always returns a {@link Set} even if {@link #productSections} is {@literal null}.
+    * 
+    * The delegated {@link Set} is used by the methods implementing its interface.
+    * <p>
+    * NOTE Annoying lack of multiple inheritance for using ForwardingList!
     */
-   
-   private List<ProductSection> delegate() {
+   private Set<ProductSection> delegate() {
       return getProductSections();
    }
 
@@ -198,18 +201,8 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
    }
 
    @Override
-   public void add(int arg0, ProductSection arg1) {
-      delegate().add(arg0, arg1);
-   }
-
-   @Override
    public boolean addAll(Collection<? extends ProductSection> arg0) {
       return delegate().addAll(arg0);
-   }
-
-   @Override
-   public boolean addAll(int arg0, Collection<? extends ProductSection> arg1) {
-      return delegate().addAll(arg0, arg1);
    }
 
    @Override
@@ -228,16 +221,6 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
    }
 
    @Override
-   public ProductSection get(int arg0) {
-      return delegate().get(arg0);
-   }
-
-   @Override
-   public int indexOf(Object arg0) {
-      return delegate().indexOf(arg0);
-   }
-
-   @Override
    public boolean isEmpty() {
       return delegate().isEmpty();
    }
@@ -248,27 +231,7 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
    }
 
    @Override
-   public int lastIndexOf(Object arg0) {
-      return delegate().lastIndexOf(arg0);
-   }
-
-   @Override
-   public ListIterator<ProductSection> listIterator() {
-      return delegate().listIterator();
-   }
-
-   @Override
-   public ListIterator<ProductSection> listIterator(int arg0) {
-      return delegate().listIterator(arg0);
-   }
-
-   @Override
    public boolean remove(Object arg0) {
-      return delegate().remove(arg0);
-   }
-
-   @Override
-   public ProductSection remove(int arg0) {
       return delegate().remove(arg0);
    }
 
@@ -283,18 +246,8 @@ public class ProductSectionList extends ResourceType<ProductSectionList> impleme
    }
 
    @Override
-   public ProductSection set(int arg0, ProductSection arg1) {
-      return delegate().set(arg0, arg1);
-   }
-
-   @Override
    public int size() {
       return delegate().size();
-   }
-
-   @Override
-   public List<ProductSection> subList(int arg0, int arg1) {
-      return delegate().subList(arg0, arg1);
    }
 
    @Override

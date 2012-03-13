@@ -16,10 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-@XmlSchema(namespace = VCLOUD_OVF_NS, elementFormDefault = XmlNsForm.QUALIFIED)
+@XmlSchema(namespace = VCLOUD_OVF_ENV_NS,
+      elementFormDefault = XmlNsForm.QUALIFIED,
+      xmlns = {
+            @XmlNs(prefix = "cim", namespaceURI = VCLOUD_CIM_NS),
+            @XmlNs(prefix = "ovf", namespaceURI = VCLOUD_OVF_NS)
+      }
+)
+@XmlAccessorType(XmlAccessType.FIELD)
 package org.jclouds.vcloud.director.v1_5.domain.ovf.environment;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_ENV_NS;
 
-import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;
+

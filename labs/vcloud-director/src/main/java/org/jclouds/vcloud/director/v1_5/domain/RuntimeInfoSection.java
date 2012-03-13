@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -74,7 +75,6 @@ public class RuntimeInfoSection extends SectionType<RuntimeInfoSection> {
          this.any = any;
          return this;
       }
-
 
       @Override
       public RuntimeInfoSection build() {

@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,7 +37,6 @@ import javax.xml.namespace.QName;
  * &lt;complexType name="CIM_ResourceAllocationSettingData_Type" /&gt;
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CIM_ResourceAllocationSettingData_Type", namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData")
 public class CIMResourceAllocationSettingDataType {
 

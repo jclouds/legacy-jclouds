@@ -35,20 +35,15 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-
 /**
  * Represents the lease settings section for a vApp.
- * <p/>
- * <p/>
- * <p>Java class for LeaseSettingsSection complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="LeaseSettingsSection">
  *   &lt;complexContent>
@@ -70,18 +65,14 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "LeaseSettingsSection")
-@XmlType(propOrder = {
-      "links",
-      "deploymentLeaseInSeconds",
-      "storageLeaseInSeconds",
-      "deploymentLeaseExpiration",
-      "storageLeaseExpiration"
-})
+@XmlType(name = "LeaseSettingsSection")
 public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
-   public static <T extends LeaseSettingsSection> Builder builder() {
+
+   public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromLeaseSettingsSection(this);
    }
@@ -152,6 +143,7 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
       }
 
 
+      @Override
       public LeaseSettingsSection build() {
          return new LeaseSettingsSection(info, required, links, deploymentLeaseInSeconds,
                storageLeaseInSeconds, deploymentLeaseExpiration,

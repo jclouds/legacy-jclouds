@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -27,20 +27,15 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
-
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a virtual data center (vDC).
- * <p/>
- * <p/>
- * <p>Java class for Vdc complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Vdc">
  *   &lt;complexContent>
@@ -65,25 +60,8 @@ import com.google.common.base.Objects;
  * </pre>
  */
 @XmlRootElement(name = "Vdc")
-@XmlType(propOrder = {
-      "allocationModel",
-      "storageCapacity",
-      "computeCapacity",
-      "resourceEntities",
-      "availableNetworks",
-      "capabilities",
-      "nicQuota",
-      "networkQuota",
-      "vmQuota",
-      "isEnabled"
-})
-@XmlSeeAlso({
-//    AdminVdc.class
-})
-public class Vdc
-      extends EntityType<Vdc>
+public class Vdc extends EntityType<Vdc> {
 
-{
    public static Builder builder() {
       return new Builder();
    }
@@ -101,8 +79,8 @@ public class Vdc
       private ResourceEntities resourceEntities;
       private AvailableNetworks availableNetworks;
       private Capabilities capabilities;
-      private int nicQuota;
-      private int networkQuota;
+      private Integer nicQuota;
+      private Integer networkQuota;
       private Integer vmQuota;
       private Boolean isEnabled;
       private Integer status;
@@ -158,7 +136,7 @@ public class Vdc
       /**
        * @see Vdc#getNicQuota()
        */
-      public Builder nicQuota(int nicQuota) {
+      public Builder nicQuota(Integer nicQuota) {
          this.nicQuota = nicQuota;
          return this;
       }
@@ -166,7 +144,7 @@ public class Vdc
       /**
        * @see Vdc#getNetworkQuota()
        */
-      public Builder networkQuota(int networkQuota) {
+      public Builder networkQuota(Integer networkQuota) {
          this.networkQuota = networkQuota;
          return this;
       }
@@ -195,6 +173,7 @@ public class Vdc
          return this;
       }
 
+      @Override
       public Vdc build() {
          return new Vdc(
                href, type, links, description, tasks, id, name, allocationModel, storageCapacity,
@@ -205,6 +184,7 @@ public class Vdc
       /**
        * @see EntityType#getName()
        */
+      @Override
       public Builder name(String name) {
          super.name(name);
          return this;
@@ -213,6 +193,7 @@ public class Vdc
       /**
        * @see EntityType#getDescription()
        */
+      @Override
       public Builder description(String description) {
          super.description(description);
          return this;
@@ -232,7 +213,19 @@ public class Vdc
        */
       @Override
       public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
+         if (checkNotNull(tasks, "tasks").size() > 0)
+            this.tasks = Sets.newLinkedHashSet(tasks);
+         return this;
+      }
+
+      /**
+       * @see EntityType#getTasks()
+       */
+      @Override
+      public Builder task(Task task) {
+         if (tasks == null)
+            tasks = Sets.newLinkedHashSet();
+         this.tasks.add(checkNotNull(task, "task"));
          return this;
       }
 
@@ -253,23 +246,21 @@ public class Vdc
          this.type = type;
          return this;
       }
-      
+
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
-       * @see EntityType#getLinks()
+       * @see ResourceType#getLinks()
        */
       @Override
       public Builder link(Link link) {
-         super.link(link);
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       @Override
@@ -293,7 +284,9 @@ public class Vdc
       }
    }
 
-   public Vdc(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, String allocationModel, CapacityWithUsage storageCapacity, ComputeCapacity computeCapacity, ResourceEntities resourceEntities, AvailableNetworks availableNetworks, Capabilities capabilities, int nicQuota, int networkQuota, Integer vmQuota, Boolean enabled, Integer status) {
+   public Vdc(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, String allocationModel,
+         CapacityWithUsage storageCapacity, ComputeCapacity computeCapacity, ResourceEntities resourceEntities, AvailableNetworks availableNetworks,
+         Capabilities capabilities, Integer nicQuota, Integer networkQuota, Integer vmQuota, Boolean enabled, Integer status) {
       super(href, type, links, description, tasks, id, name);
       this.allocationModel = allocationModel;
       this.storageCapacity = storageCapacity;
@@ -304,14 +297,13 @@ public class Vdc
       this.nicQuota = nicQuota;
       this.networkQuota = networkQuota;
       this.vmQuota = vmQuota;
-      isEnabled = enabled;
+      this.isEnabled = enabled;
       this.status = status;
    }
 
-   private Vdc() {
+   protected Vdc() {
       // For JAXB
    }
-
 
    @XmlElement(name = "AllocationModel", required = true)
    protected String allocationModel;
@@ -326,9 +318,9 @@ public class Vdc
    @XmlElement(name = "Capabilities")
    protected Capabilities capabilities;
    @XmlElement(name = "NicQuota")
-   protected int nicQuota;
+   protected Integer nicQuota;
    @XmlElement(name = "NetworkQuota")
-   protected int networkQuota;
+   protected Integer networkQuota;
    @XmlElement(name = "VmQuota")
    protected Integer vmQuota;
    @XmlElement(name = "IsEnabled")
@@ -338,9 +330,6 @@ public class Vdc
 
    /**
     * Gets the value of the allocationModel property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getAllocationModel() {
       return allocationModel;
@@ -348,9 +337,6 @@ public class Vdc
 
    /**
     * Gets the value of the storageCapacity property.
-    *
-    * @return possible object is
-    *         {@link CapacityWithUsage }
     */
    public CapacityWithUsage getStorageCapacity() {
       return storageCapacity;
@@ -358,9 +344,6 @@ public class Vdc
 
    /**
     * Gets the value of the computeCapacity property.
-    *
-    * @return possible object is
-    *         {@link ComputeCapacity }
     */
    public ComputeCapacity getComputeCapacity() {
       return computeCapacity;
@@ -368,9 +351,6 @@ public class Vdc
 
    /**
     * Gets the value of the resourceEntities property.
-    *
-    * @return possible object is
-    *         {@link ResourceEntities }
     */
    public ResourceEntities getResourceEntities() {
       return resourceEntities;
@@ -388,9 +368,6 @@ public class Vdc
 
    /**
     * Gets the value of the capabilities property.
-    *
-    * @return possible object is
-    *         {@link Capabilities }
     */
    public Capabilities getCapabilities() {
       return capabilities;
@@ -399,22 +376,19 @@ public class Vdc
    /**
     * Gets the value of the nicQuota property.
     */
-   public int getNicQuota() {
+   public Integer getNicQuota() {
       return nicQuota;
    }
 
    /**
     * Gets the value of the networkQuota property.
     */
-   public int getNetworkQuota() {
+   public Integer getNetworkQuota() {
       return networkQuota;
    }
 
    /**
     * Gets the value of the vmQuota property.
-    *
-    * @return possible object is
-    *         {@link Integer }
     */
    public Integer getVmQuota() {
       return vmQuota;
@@ -422,9 +396,6 @@ public class Vdc
 
    /**
     * Gets the value of the isEnabled property.
-    *
-    * @return possible object is
-    *         {@link Boolean }
     */
    public Boolean isEnabled() {
       return isEnabled;
@@ -432,9 +403,6 @@ public class Vdc
 
    /**
     * Gets the value of the status property.
-    *
-    * @return possible object is
-    *         {@link Integer }
     */
    public Integer getStatus() {
       return status;
@@ -447,37 +415,29 @@ public class Vdc
       if (o == null || getClass() != o.getClass())
          return false;
       Vdc that = Vdc.class.cast(o);
-      return equal(allocationModel, that.allocationModel) &&
-            equal(storageCapacity, that.storageCapacity) &&
-            equal(computeCapacity, that.computeCapacity) &&
-            equal(resourceEntities, that.resourceEntities) &&
-            equal(availableNetworks, that.availableNetworks) &&
-            equal(capabilities, that.capabilities) &&
-            equal(nicQuota, that.nicQuota) &&
-            equal(networkQuota, that.networkQuota) &&
-            equal(vmQuota, that.vmQuota) &&
-            equal(isEnabled, that.isEnabled) &&
-            equal(status, that.status);
+      return super.equals(that) &&
+            equal(this.allocationModel, that.allocationModel) &&
+            equal(this.storageCapacity, that.storageCapacity) &&
+            equal(this.computeCapacity, that.computeCapacity) &&
+            equal(this.resourceEntities, that.resourceEntities) &&
+            equal(this.availableNetworks, that.availableNetworks) &&
+            equal(this.capabilities, that.capabilities) &&
+            equal(this.nicQuota, that.nicQuota) &&
+            equal(this.networkQuota, that.networkQuota) &&
+            equal(this.vmQuota, that.vmQuota) &&
+            equal(this.isEnabled, that.isEnabled) &&
+            equal(this.status, that.status);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(allocationModel,
-            storageCapacity,
-            computeCapacity,
-            resourceEntities,
-            availableNetworks,
-            capabilities,
-            nicQuota,
-            networkQuota,
-            vmQuota,
-            isEnabled,
-            status);
+      return Objects.hashCode(super.hashCode(), allocationModel, storageCapacity, computeCapacity, resourceEntities, availableNetworks,
+            capabilities, nicQuota, networkQuota, vmQuota, isEnabled, status);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public ToStringHelper string() {
+      return super.string()
             .add("allocationModel", allocationModel)
             .add("storageCapacity", storageCapacity)
             .add("computeCapacity", computeCapacity)
@@ -488,7 +448,7 @@ public class Vdc
             .add("networkQuota", networkQuota)
             .add("vmQuota", vmQuota)
             .add("isEnabled", isEnabled)
-            .add("status", status).toString();
+            .add("status", status);
    }
 
 }

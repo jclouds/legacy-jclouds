@@ -18,14 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * Java class for anonymous complex type.
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 public class ConsumerVisibility extends CimAnySimpleType {
 

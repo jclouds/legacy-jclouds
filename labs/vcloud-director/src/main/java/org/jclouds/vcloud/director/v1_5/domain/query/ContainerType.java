@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -32,7 +31,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ResourceType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Container for query result sets.
@@ -108,21 +106,11 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
       }
 
       /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder<T> type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
        * @see ResourceType#getLinks()
        */
       @Override
       public Builder<T> links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -130,8 +118,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
        */
       @Override
       public Builder<T> link(Link link) {
-         super.link(link);
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       @Override

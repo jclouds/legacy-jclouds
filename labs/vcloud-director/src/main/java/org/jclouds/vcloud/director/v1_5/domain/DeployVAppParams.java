@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -33,9 +34,11 @@ import com.google.common.base.Objects;
  * <pre>
  * &lt;complexType name="DeployVAppParams" /&gt;
  * </pre>
+ *
+ * @since 0.9
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DeployVAppParams")
+@XmlRootElement(name = "DeployVAppParams")
+@XmlType(name = "DeployVAppParamsType")
 public class DeployVAppParams {
 
    public static Builder builder() {

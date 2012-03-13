@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static com.google.common.base.Preconditions.*;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
 
@@ -28,8 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -37,7 +35,7 @@ import com.google.common.collect.Sets;
 
 /**
  * The virtual hardware required by a virtual machine is specified in VirtualHardwareSection.
- * <p/>
+ *
  * This specification supports abstract or incomplete hardware descriptions in which only the major
  * devices are described. The hypervisor is allowed to create additional virtual hardware
  * controllers and devices, as long as the required devices listed in the descriptor are realized.
@@ -45,7 +43,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlRootElement(name = "VirtualHardwareSection", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "VirtualHardwareSection")
 public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> {
 
    public static Builder builder() {

@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.List;
@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
@@ -47,6 +48,7 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
+@XmlType(name = "AbstractVAppType")
 public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends ResourceEntityType<T> {
 
    public static abstract class Builder<T extends AbstractVAppType<T>> extends ResourceEntityType.Builder<T> {
@@ -177,9 +179,7 @@ public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends Re
        */
       @Override
       public Builder<T> links(Set<Link> links) {
-         if (checkNotNull(links, "links").size() > 0)
-            this.links = Sets.newLinkedHashSet(links);
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -187,10 +187,7 @@ public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends Re
        */
       @Override
       public Builder<T> link(Link link) {
-         if (links == null)
-            links = Sets.newLinkedHashSet();
-         this.links.add(checkNotNull(link, "link"));
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       @Override
@@ -271,7 +268,7 @@ public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends Re
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      Vm that = Vm.class.cast(o);
+      AbstractVAppType<?> that = AbstractVAppType.class.cast(o);
       return super.equals(that) &&
             equal(this.vAppParent, that.vAppParent) && equal(this.sections, that.sections) && equal(this.deployed, that.deployed);
    }

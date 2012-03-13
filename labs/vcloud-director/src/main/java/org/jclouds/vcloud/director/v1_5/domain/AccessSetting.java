@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -34,9 +35,11 @@ import com.google.common.base.Objects;
  * <pre>
  * &lt;complexType name="AccessSetting" /&gt;
  * </pre>
+ *
+ * @since 0.9
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AccessSetting")
+@XmlRootElement(name = "AccessSetting")
+@XmlType(name = "AccessSettingType")
 public class AccessSetting {
 
    public static Builder builder() {

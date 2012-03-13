@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
@@ -35,7 +37,6 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
@@ -43,8 +44,6 @@ import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
@@ -52,14 +51,16 @@ import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
-import org.jclouds.vcloud.director.v1_5.domain.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -76,7 +77,7 @@ public interface VAppAsyncClient {
     * @see VAppClient#getVApp(URI)
     */
    @GET
-   @Consumes
+   @Consumes(VAPP)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VApp> getVApp(@EndpointParam URI vAppURI);
@@ -85,17 +86,18 @@ public interface VAppAsyncClient {
     * @see VAppClient#modifyVApp(URI, VApp)
     */
    @PUT
-   @Produces(VCloudDirectorMediaType.VAPP)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VAPP)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVApp(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) VApp vApp);
+   ListenableFuture<Task> modifyVApp(@EndpointParam URI vAppURI,
+                                     @BinderParam(BindToXMLPayload.class) VApp vApp);
 
    /**
     * @see VAppClient#deleteVApp(URI)
     */
    @DELETE
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> deleteVApp(@EndpointParam URI vAppURI);
@@ -105,7 +107,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/action/consolidate")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> consolidateVApp(@EndpointParam URI vAppURI);
@@ -115,29 +117,31 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/action/controlAccess")
-   @Produces(VCloudDirectorMediaType.CONTROL_ACCESS)
-   @Consumes(VCloudDirectorMediaType.CONTROL_ACCESS)
+   @Produces(CONTROL_ACCESS)
+   @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<ControlAccessParams> controlAccess(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
+   ListenableFuture<ControlAccessParams> controlAccess(@EndpointParam URI vAppURI,
+                                                       @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
 
    /**
     * @see VAppClient#deploy(URI, DeployVAppParams)
     */
    @POST
    @Path("/action/deploy")
-   @Produces(VCloudDirectorMediaType.DEPLOY_VAPP_PARAMS)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(DEPLOY_VAPP_PARAMS)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> deploy(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) DeployVAppParams params);
+   ListenableFuture<Task> deploy(@EndpointParam URI vAppURI,
+                                 @BinderParam(BindToXMLPayload.class) DeployVAppParams params);
 
    /**
     * @see VAppClient#discardSuspendedState(URI)
     */
    @POST
    @Path("/action/discardSuspendedState")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> discardSuspendedState(@EndpointParam URI vAppURI);
@@ -167,7 +171,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/action/installVMwareTools")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> installVMwareTools(@EndpointParam URI vAppURI);
@@ -177,40 +181,43 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/action/recomposeVApp")
-   @Produces(VCloudDirectorMediaType.RECOMPOSE_VAPP_PARAMS)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(RECOMPOSE_VAPP_PARAMS)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> recomposeVApp(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) RecomposeVAppParams params);
+   ListenableFuture<Task> recomposeVApp(@EndpointParam URI vAppURI,
+                                        @BinderParam(BindToXMLPayload.class) RecomposeVAppParams params);
 
    /**
     * @see VAppClient#relocate(URI, RelocateParams)
     */
    @POST
    @Path("/action/relocate")
-   @Produces(VCloudDirectorMediaType.RELOCATE_VM_PARAMS)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(RELOCATE_VM_PARAMS)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> relocate(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) RelocateParams params);
+   ListenableFuture<Task> relocate(@EndpointParam URI vAppURI,
+                                   @BinderParam(BindToXMLPayload.class) RelocateParams params);
 
    /**
     * @see VAppClient#undeploy(URI, UndeployVAppParams)
     */
    @POST
    @Path("/action/undeploy")
-   @Produces(VCloudDirectorMediaType.UNDEPLOY_VAPP_PARAMS)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(UNDEPLOY_VAPP_PARAMS)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> undeploy(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) UndeployVAppParams params);
+   ListenableFuture<Task> undeploy(@EndpointParam URI vAppURI,
+                                   @BinderParam(BindToXMLPayload.class) UndeployVAppParams params);
 
    /**
     * @see VAppClient#upgradeHardwareVersion(URI)
     */
    @POST
    @Path("/action/upgradeHardwareVersion")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> upgradeHardwareVersion(@EndpointParam URI vAppURI);
@@ -220,7 +227,7 @@ public interface VAppAsyncClient {
     */
    @GET
    @Path("/controlAccess")
-   @Consumes(VCloudDirectorMediaType.CONTROL_ACCESS)
+   @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<ControlAccessParams> getControlAccess(@EndpointParam URI vAppURI);
@@ -230,7 +237,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/power/action/powerOff")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> powerOff(@EndpointParam URI vAppURI);
@@ -240,7 +247,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/power/action/powerOn")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> powerOn(@EndpointParam URI vAppURI);
@@ -250,7 +257,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/power/action/powerOff")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> reboot(@EndpointParam URI vAppURI);
@@ -260,7 +267,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/power/action/reset")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> reset(@EndpointParam URI vAppURI);
@@ -270,7 +277,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/power/action/shutdown")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> shutdown(@EndpointParam URI vAppURI);
@@ -280,7 +287,7 @@ public interface VAppAsyncClient {
     */
    @POST
    @Path("/power/action/suspend")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> suspend(@EndpointParam URI vAppURI);
@@ -300,11 +307,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/guestCustomizationSection")
-   @Produces(VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(GUEST_CUSTOMIZATION_SECTION)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
+   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI vAppURI,
+                                                          @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
    /**
     * @see VAppClient#getLeaseSettingsSection(URI)
@@ -321,32 +329,36 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/leaseSettingsSection")
-   @Produces(VCloudDirectorMediaType.LEASE_SETTINGS_SECTION)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(LEASE_SETTINGS_SECTION)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyLeaseSettingsSection(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) LeaseSettingsSection section);
+   ListenableFuture<Task> modifyLeaseSettingsSection(@EndpointParam URI vAppURI,
+                                                     @BinderParam(BindToXMLPayload.class) LeaseSettingsSection section);
 
    /**
     * @see VAppClient#ejectMedia(URI, MediaInsertOrEjectParams)
     */
    @POST
    @Path("/media/action/ejectMedia")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(MEDIA_PARAMS)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> ejectMedia(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
-
+   ListenableFuture<Task> ejectMedia(@EndpointParam URI vAppURI,
+                                     @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
     * @see VAppClient#insertMedia(URI, MediaInsertOrEjectParams)
     */
    @POST
    @Path("/media/action/insertMedia")
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(MEDIA_PARAMS)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> insertMedia(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
+   ListenableFuture<Task> insertMedia(@EndpointParam URI vAppURI,
+                                      @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
     * @return asynchronous access to {@link Writable} features
@@ -369,11 +381,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/networkConfigSection")
-   @Produces(VCloudDirectorMediaType.NETWORK_CONFIG_SECTION)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(NETWORK_CONFIG_SECTION)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyNetworkConfigSection(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) NetworkConfigSection section);
+   ListenableFuture<Task> modifyNetworkConfigSection(@EndpointParam URI vAppURI,
+                                                     @BinderParam(BindToXMLPayload.class) NetworkConfigSection section);
 
    /**
     * @see VAppClient#getNetworkConnectionSection(URI)
@@ -390,11 +403,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/networkConfigSection")
-   @Produces(VCloudDirectorMediaType.NETWORK_CONFIG_SECTION)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(NETWORK_CONFIG_SECTION)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyNetworkConnectionSection(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
+   ListenableFuture<Task> modifyNetworkConnectionSection(@EndpointParam URI vAppURI,
+                                                         @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
 
    /**
     * @see VAppClient#getNetworkSection(URI)
@@ -421,11 +435,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/operatingSystemSection")
-   @Produces(VCloudDirectorMediaType.OPERATING_SYSTEM_SECTION)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(OPERATING_SYSTEM_SECTION)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyOperatingSystemSection(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) OperatingSystemSection section);
+   ListenableFuture<Task> modifyOperatingSystemSection(@EndpointParam URI vAppURI,
+                                                       @BinderParam(BindToXMLPayload.class) OperatingSystemSection section);
 
    /**
     * @see VAppClient#getOwner(URI)
@@ -442,11 +457,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/owner")
-   @Produces(VCloudDirectorMediaType.OWNER)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(OWNER)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyOwner(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) Owner owner);
+   ListenableFuture<Void> modifyOwner(@EndpointParam URI vAppURI,
+                                      @BinderParam(BindToXMLPayload.class) Owner owner);
 
    /**
     * @see VAppClient#getProductSections(URI)
@@ -463,11 +479,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/productSections")
-   @Produces(VCloudDirectorMediaType.PRODUCT_SECTION_LIST)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(PRODUCT_SECTION_LIST)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyProductSections(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) ProductSectionList sectionList);
+   ListenableFuture<Task> modifyProductSections(@EndpointParam URI vAppURI,
+                                                @BinderParam(BindToXMLPayload.class) ProductSectionList sectionList);
 
    /**
     * @see VAppClient#getPendingQuestion(URI)
@@ -484,11 +501,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/question/action/answer")
-   @Produces(VCloudDirectorMediaType.VM_PENDING_ANSWER)
+   @Produces(VM_PENDING_ANSWER)
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Void> answerQuestion(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) VmQuestionAnswer answer);
+   ListenableFuture<Void> answerQuestion(@EndpointParam URI vAppURI,
+                                         @BinderParam(BindToXMLPayload.class) VmQuestionAnswer answer);
 
    /**
     * @see VAppClient#getRuntimeInfoSection(URI)
@@ -505,7 +523,7 @@ public interface VAppAsyncClient {
     */
    @GET
    @Path("/screen")
-   @Consumes(VCloudDirectorMediaType.ANY_IMAGE)
+   @Consumes(ANY_IMAGE)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<byte[]> getScreenImage(@EndpointParam URI vAppURI);
@@ -535,11 +553,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/startupSection")
-   @Produces(VCloudDirectorMediaType.STARTUP_SECTION)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(STARTUP_SECTION)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyStartupSection(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) StartupSection section);
+   ListenableFuture<Task> modifyStartupSection(@EndpointParam URI vAppURI,
+                                               @BinderParam(BindToXMLPayload.class) StartupSection section);
 
    /**
     * @see VAppClient#getVirtualHardwareSection(URI)
@@ -556,11 +575,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/virtualHardwareSection")
-   @Produces(VCloudDirectorMediaType.VIRTUAL_HARDWARE_SECTION)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VIRTUAL_HARDWARE_SECTION)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSection(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) VirtualHardwareSection section);
+   ListenableFuture<Task> modifyVirtualHardwareSection(@EndpointParam URI vAppURI,
+                                                       @BinderParam(BindToXMLPayload.class) VirtualHardwareSection section);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionCpu(URI)
@@ -577,11 +597,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/virtualHardwareSection/cpu")
-   @Produces(VCloudDirectorMediaType.OVF_RASD_ITEM)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(OVF_RASD_ITEM)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSectionCpu(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) RASD rasd);
+   ListenableFuture<Task> modifyVirtualHardwareSectionCpu(@EndpointParam URI vAppURI,
+                                                          @BinderParam(BindToXMLPayload.class) RASD rasd);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionDisks(URI)
@@ -598,11 +619,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/virtualHardwareSection/disks")
-   @Produces(VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(OVF_RASD_ITEMS_LIST)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSectionDisks(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
+   ListenableFuture<Task> modifyVirtualHardwareSectionDisks(@EndpointParam URI vAppURI,
+                                                            @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionMedia(URI)
@@ -629,11 +651,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/virtualHardwareSection/memory")
-   @Produces(VCloudDirectorMediaType.OVF_RASD_ITEM)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(OVF_RASD_ITEM)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSectionMemory(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) RASD rasd);
+   ListenableFuture<Task> modifyVirtualHardwareSectionMemory(@EndpointParam URI vAppURI,
+                                                             @BinderParam(BindToXMLPayload.class) RASD rasd);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionNetworkCards(URI)
@@ -650,11 +673,12 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/virtualHardwareSection/networkCards")
-   @Produces(VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(OVF_RASD_ITEMS_LIST)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSectionNetworkCards(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
+   ListenableFuture<Task> modifyVirtualHardwareSectionNetworkCards(@EndpointParam URI vAppURI,
+                                                                   @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionSerialPorts(URI)
@@ -671,10 +695,11 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/virtualHardwareSection/serialPorts")
-   @Produces(VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
-   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(OVF_RASD_ITEMS_LIST)
+   @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSectionSerialPorts(@EndpointParam URI vAppURI, @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
+   ListenableFuture<Task> modifyVirtualHardwareSectionSerialPorts(@EndpointParam URI vAppURI,
+                                                                  @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
 }

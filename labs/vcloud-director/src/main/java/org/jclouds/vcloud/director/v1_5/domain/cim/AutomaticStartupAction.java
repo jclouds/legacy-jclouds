@@ -25,11 +25,8 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Java class for anonymous complex type.
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-public class AutomaticStartupAction
-    extends CimAnySimpleType
-{
+public class AutomaticStartupAction extends CimAnySimpleType {
 
 
 }

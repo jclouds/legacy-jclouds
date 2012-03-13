@@ -36,7 +36,6 @@ import javax.xml.namespace.QName;
  * &lt;complexType name="cimUnsignedLong" /&gt;
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cimUnsignedLong", namespace = "http://schemas.dmtf.org/wbem/wscim/1/common")
 public class CimUnsignedLong {
 

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,9 +27,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Configuration;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -48,7 +45,6 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "DeploymentOptionSection")
 public class DeploymentOptionSection extends SectionType<DeploymentOptionSection> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }

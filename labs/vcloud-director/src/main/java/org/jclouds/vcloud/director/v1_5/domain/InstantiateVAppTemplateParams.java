@@ -18,12 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
-
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType.Builder;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -35,7 +33,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * &lt;complexType name="InstantiateVAppTemplateParams" /&gt;
  * </pre>
  */
-@XmlType(name = "InstantiateVAppTemplateParams")
+@XmlRootElement(name = "InstantiateVAppTemplateParams")
 public class InstantiateVAppTemplateParams extends InstantiateVAppParamsType<InstantiateVAppTemplateParams> {
 
    @SuppressWarnings("unchecked")

@@ -28,9 +28,9 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -40,7 +40,7 @@ import com.google.common.collect.Sets;
 /**
  * Basic entity type in the vCloud object model.
  *
- * Includes a name, an optional description, and an optional list of links
+ * Includes the entity name and an optional id, description, and set of running {@link Task}s.
  *
  * <pre>
  * &lt;xs:complexType name="EntityType" /&gt;
@@ -49,7 +49,8 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  * @author Adam Lowe
  */
-public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T> {
+@XmlType(name = "EntityType")
+public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
    
    public static abstract class NewBuilder<T extends NewBuilder<T>> extends ResourceType.NewBuilder<T> {
       
@@ -97,7 +98,12 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       }
    }
 
-   public static abstract class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
+   @Override
+   public Builder<T> toBuilder() {
+      return new Builder<T>().fromEntityType(this);
+   }
+
+   public static class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
 
       protected String description;
       protected Set<Task> tasks;
@@ -147,6 +153,11 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
          return this;
       }
 
+      @Override
+      public EntityType<T> build() {
+         return new EntityType<T>(href, type, links, description, tasks, id, name);
+      }
+
       /**
        * @see ResourceType#getHref()
        */
@@ -170,9 +181,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
        */
       @Override
       public Builder<T> links(Set<Link> links) {
-         if (checkNotNull(links, "links").size() > 0)
-            this.links = Sets.newLinkedHashSet(links);
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -180,10 +189,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
        */
       @Override
       public Builder<T> link(Link link) {
-         if (links == null)
-            links = Sets.newLinkedHashSet();
-         this.links.add(checkNotNull(link, "link"));
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       /**
@@ -244,7 +250,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    /**
     * The resource identifier, expressed in URN format.
-    * <p/>
+    *
     * The value of this attribute uniquely identifies the resource, persists for the life of the
     * resource, and is never reused.
     */

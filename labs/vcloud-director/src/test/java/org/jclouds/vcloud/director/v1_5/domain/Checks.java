@@ -31,12 +31,16 @@ import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorTy
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
 
@@ -601,18 +605,20 @@ public class Checks {
       // Check required fields
       assertNotNull(params.isSharedToEveryone(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "IsSharedToEveryone"));
       
-      // Check optional fields
+      // Check optional fields, dependant on IsSharedToEveryone state
       if (params.isSharedToEveryone()) {
          assertNotNull(params.getEveryoneAccessLevel(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "EveryoneAccessLevel"));
       } else {
-         assertNotNull(params.getAccessSettings(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "AccessSettings"));
-         checkAccessSettings(params.getAccessSettings());
+         AccessSettings accessSettings = params.getAccessSettings();
+         checkAccessSettings(accessSettings);
       }
    }
 
    public static void checkAccessSettings(AccessSettings accessSettings) {
-      for (AccessSetting setting : accessSettings.getAccessSettings()) {
-         checkAccessSetting(setting);
+      if (accessSettings != null && accessSettings.getAccessSettings() != null) {
+	      for (AccessSetting setting : accessSettings.getAccessSettings()) {
+	         checkAccessSetting(setting);
+	      }
       }
    }
 

@@ -25,7 +25,6 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.CIMResourceAllocationSettingD
  *
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RASD_Type")
 public class RASD extends CIMResourceAllocationSettingDataType {
 

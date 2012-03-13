@@ -18,13 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.*;
 
 import java.net.URI;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -40,10 +41,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author grkvlt@apache.org
  */
-@XmlSeeAlso({
-      CatalogReference.class,
-      Reference.class
-})
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ReferenceType<T extends ReferenceType<T>> {
 
    public static <T extends ReferenceType<T>> Builder<T> builder() {

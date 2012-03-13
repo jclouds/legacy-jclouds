@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.*;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 import com.google.common.base.Objects;
@@ -36,6 +37,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author grkvlt@apache.org
  */
+@XmlType(name = "VAppCreationParamsType")
 public class VAppCreationParamsType<T extends VAppCreationParamsType<T>> extends ParamsType<T> {
 
    public static class Builder<T extends VAppCreationParamsType<T>> extends ParamsType.Builder<T> {
