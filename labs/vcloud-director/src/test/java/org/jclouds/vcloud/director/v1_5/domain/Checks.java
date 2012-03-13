@@ -35,11 +35,8 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
 

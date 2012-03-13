@@ -26,10 +26,13 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.DeploymentOptionSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 

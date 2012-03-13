@@ -59,7 +59,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @author grkvlt@apache.org
  */
-@Listeners(FormatApiResultsListener.class)
+//@Listeners(FormatApiResultsListener.class)
 @Test(groups = "live")
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
 
@@ -97,6 +97,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected URI vAppTemplateURI;
    protected URI networkURI;
    protected URI vdcURI;
+   protected URI userURI;
 
    // TODO change properties to URI, not id
    @SuppressWarnings("unchecked")
@@ -114,6 +115,10 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       String networkId = Strings.emptyToNull(System.getProperty("test." + provider + ".network-id"));
       if (networkId != null)
          networkURI = URI.create(endpoint + "/network/" + networkId);
+
+      String userId = Strings.emptyToNull(System.getProperty("test." + provider + ".user-id"));
+      if (userId != null)
+         userURI = URI.create(endpoint + "/admin/user/" + userId);
       
       if (Iterables.any(Lists.newArrayList(catalogName, vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
          Org thisOrg = context.getApi().getOrgClient().getOrg(
@@ -127,6 +132,10 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
          if (networkURI == null)
             networkURI = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
+
+         if (userURI == null)
+            userURI = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ADMIN_USER)).getHref();
 
          if (catalogName == null)
             catalogName = Iterables.find(thisOrg.getLinks(),

@@ -43,6 +43,8 @@ import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
@@ -50,16 +52,14 @@ import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
+import org.jclouds.vcloud.director.v1_5.domain.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -108,7 +108,7 @@ public interface VAppAsyncClient {
    @Consumes(VCloudDirectorMediaType.TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> consolidate(@EndpointParam URI vAppURI);
+   ListenableFuture<Task> consolidateVApp(@EndpointParam URI vAppURI);
 
    /**
     * @see VAppClient#controlAccess(URI, ControlAccessParams)
@@ -223,7 +223,7 @@ public interface VAppAsyncClient {
    @Consumes(VCloudDirectorMediaType.CONTROL_ACCESS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<ControlAccessParams> controlAccess(@EndpointParam URI vAppURI);
+   ListenableFuture<ControlAccessParams> getControlAccess(@EndpointParam URI vAppURI);
 
    /**
     * @see VAppClient#powerOff(URI)

@@ -5,7 +5,7 @@
 // Generated on: 2012.02.08 at 02:47:44 PM GMT
 //
 
-package org.jclouds.vcloud.director.v1_5.domain.ovf;
+package org.jclouds.vcloud.director.v1_5.domain;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
@@ -15,6 +15,10 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSectionItem;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 /**
  * Specifies the order in which entities in a VirtualSystemCollection are powered on and shut down

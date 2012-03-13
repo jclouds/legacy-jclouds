@@ -27,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants;
+import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
+import org.jclouds.vcloud.director.v1_5.domain.AccessSettings;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
@@ -37,6 +39,8 @@ import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
@@ -45,19 +49,16 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
-import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -72,7 +73,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "user", "vapp" }, testName = "VAppClientLiveTest")
+@Test(groups = { "live", "user", "vapp" }, singleThreaded = true, testName = "VAppClientLiveTest")
 public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    public static final String VAPP = "vApp";
@@ -154,7 +155,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       vApp = vAppClient.getVApp(vApp.getHref());
       Integer deployedStatus = Status.DEPLOYED.getValue();
-      assertEquals(vApp.getStatus(), deployedStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", deployedStatus, "deployed"));
+      assertEquals(vApp.getStatus(), deployedStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", deployedStatus, vApp.getStatus()));
    }
 
    @Test(testName = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
@@ -165,10 +166,10 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       vApp = vAppClient.getVApp(vApp.getHref());
       Integer poweredOnStatus = Status.POWERED_ON.getValue();
-      assertEquals(vApp.getStatus(), poweredOnStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus, "powered on"));
+      assertEquals(vApp.getStatus(), poweredOnStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus, vApp.getStatus()));
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
    public void testPowerOffVApp() {
       // The method under test
       Task powerOffVApp = vAppClient.powerOff(vApp.getHref());
@@ -176,26 +177,44 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       vApp = vAppClient.getVApp(vApp.getHref());
       Integer poweredOffStatus = Status.POWERED_OFF.getValue();
-      assertEquals(vApp.getStatus(), poweredOffStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus, "powered off"));
+      assertEquals(vApp.getStatus(), poweredOffStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus, vApp.getStatus()));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testGetVApp" })
    public void testConsolidateVApp(URI vAppURI) {
       // The method under test
       Task consolidateVApp = vAppClient.consolidateVApp(vApp.getHref());
       assertTrue(retryTaskSuccess.apply(consolidateVApp), String.format(TASK_COMPLETE_TIMELY, "consolidateVApp"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
-   public void testControlAccess() {
+   @Test(testName = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
+   public void testControlAccessUser() {
       ControlAccessParams params = ControlAccessParams.builder()
-            .sharedToEveryone()
+            .notSharedToEveryone()
+            .accessSettings(AccessSettings.builder()
+                  .accessSetting(AccessSetting.builder()
+                        .subject(Reference.builder().href(userURI).build())
+                        .accessLevel("ReadOnly")
+                        .build())
+                  .build())
             .build();
       
       // The method under test
       ControlAccessParams modified = vAppClient.controlAccess(vApp.getHref(), params);
       checkControlAccessParams(modified);
-      // TODO check individual fields
+      assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
+   }
+
+   @Test(testName = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
+   public void testControlAccessEveryone() {
+      ControlAccessParams params = ControlAccessParams.builder()
+            .sharedToEveryone()
+            .everyoneAccessLevel("FullControl")
+            .build();
+      
+      // The method under test
+      ControlAccessParams modified = vAppClient.controlAccess(vApp.getHref(), params);
+      checkControlAccessParams(modified);
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
@@ -224,7 +243,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertFalse(vApp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", vApp.isInMaintenanceMode()));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testGetVApp" })
    public void testInstallVMwareTools() {
       // The method under test
       Task installVMwareTools = vAppClient.installVMwareTools(vApp.getHref());
@@ -234,7 +253,6 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "POST /vApp/{id}/action/recomposeVApp", dependsOnMethods = { "testGetVApp" })
    public void testRecomposeVApp() {
       RecomposeVAppParams params = RecomposeVAppParams.builder()
-            
             .build();
 
       // The method under test
@@ -245,7 +263,6 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
    public void testRelocate() {
       RelocateParams params = RelocateParams.builder()
-            
             .build();
 
       // The method under test
@@ -253,15 +270,18 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(retryTaskSuccess.apply(relocate), String.format(TASK_COMPLETE_TIMELY, "relocate"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testGetVApp" })
-   public void testUndeploy() {
+   @Test(testName = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
+   public void testUndeployVApp() {
       UndeployVAppParams params = UndeployVAppParams.builder()
-            
             .build();
 
       // The method under test
       Task undeploy = vAppClient.undeploy(vApp.getHref(), params);
       assertTrue(retryTaskSuccess.apply(undeploy), String.format(TASK_COMPLETE_TIMELY, "undeploy"));
+
+      vApp = vAppClient.getVApp(vApp.getHref());
+      Integer resolvedStatus = Status.RESOLVED.getValue();
+      assertEquals(vApp.getStatus(), resolvedStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", resolvedStatus, vApp.getStatus()));
    }
 
    @Test(enabled = false, testName = "POST /vApp/{id}/action/upgradeHardwareVersion", dependsOnMethods = { "testGetVApp" })
@@ -274,8 +294,8 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testGetVApp" })
    public void testReboot() {
       // The method under test
-      Task powerOffVApp = vAppClient.reboot(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(powerOffVApp), String.format(TASK_COMPLETE_TIMELY, "powerOffVApp"));
+      Task reboot = vAppClient.reboot(vApp.getHref());
+      assertTrue(retryTaskSuccess.apply(reboot), String.format(TASK_COMPLETE_TIMELY, "reboot"));
 
       vApp = vAppClient.getVApp(vApp.getHref());
       Integer poweredOnStatus = Status.POWERED_ON.getValue();
@@ -285,8 +305,8 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testGetVApp" })
    public void testReset() {
       // The method under test
-      Task powerOffVApp = vAppClient.reset(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(powerOffVApp), String.format(TASK_COMPLETE_TIMELY, "powerOffVApp"));
+      Task reset = vAppClient.reset(vApp.getHref());
+      assertTrue(retryTaskSuccess.apply(reset), String.format(TASK_COMPLETE_TIMELY, "reset"));
 
       vApp = vAppClient.getVApp(vApp.getHref());
       Integer poweredOffStatus = Status.POWERED_ON.getValue();
@@ -296,8 +316,8 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testGetVApp" })
    public void testShutdown() {
       // The method under test
-      Task powerOffVApp = vAppClient.shutdown(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(powerOffVApp), String.format(TASK_COMPLETE_TIMELY, "powerOffVApp"));
+      Task shutdown = vAppClient.shutdown(vApp.getHref());
+      assertTrue(retryTaskSuccess.apply(shutdown), String.format(TASK_COMPLETE_TIMELY, "shutdown"));
 
       vApp = vAppClient.getVApp(vApp.getHref());
       Integer poweredOffStatus = Status.POWERED_OFF.getValue();
@@ -307,26 +327,26 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testGetVApp" })
    public void testSuspend() {
       // The method under test
-      Task powerOffVApp = vAppClient.suspend(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(powerOffVApp), String.format(TASK_COMPLETE_TIMELY, "powerOffVApp"));
+      Task suspend = vAppClient.suspend(vApp.getHref());
+      assertTrue(retryTaskSuccess.apply(suspend), String.format(TASK_COMPLETE_TIMELY, "suspend"));
 
       vApp = vAppClient.getVApp(vApp.getHref());
       Integer poweredOffStatus = Status.POWERED_OFF.getValue();
       assertEquals(vApp.getStatus(), poweredOffStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus, "powered off"));
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testGetControlAccess() {
       // The method under test
       ControlAccessParams controlAccess = vAppClient.getControlAccess(vApp.getHref());
-      // checkControlAccessParams(controlAccess);
+      checkControlAccessParams(controlAccess);
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetVApp" })
    public void testGetGuestCustomizationSection() {
       // The method under test
       GuestCustomizationSection section = vAppClient.getGuestCustomizationSection(vApp.getHref());
-      // checkGuestCustomizationSection(section);
+      checkGuestCustomizationSection(section);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
@@ -343,11 +363,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getX, "");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetVApp" })
    public void testGetLeaseSettingsSection() {
       // The method under test
       LeaseSettingsSection section = vAppClient.getLeaseSettingsSection(vApp.getHref());
-      // checkLeaseSettingsSection(section);
+      checkLeaseSettingsSection(section);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
@@ -384,11 +404,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(retryTaskSuccess.apply(ejectMedia), String.format(TASK_COMPLETE_TIMELY, "ejectMedia"));
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkConfigSection() {
       // The method under test
       NetworkConfigSection section = vAppClient.getNetworkConfigSection(vApp.getHref());
-      // checkNetworkConfigSection(section);
+      checkNetworkConfigSection(section);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetNetworkConfigSection" })
@@ -405,11 +425,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getX, "");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkConnectionSection() {
       // The method under test
       NetworkConnectionSection section = vAppClient.getNetworkConnectionSection(vApp.getHref());
-      // checkNetworkConnectionSection(section);
+      checkNetworkConnectionSection(section);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
@@ -430,14 +450,14 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testGetNetworkSection() {
       // The method under test
       NetworkSection section = vAppClient.getNetworkSection(vApp.getHref());
-      // checkNetworkSection(section);
+//      checkNetworkSection(section);
    }
 
    @Test(enabled = false, testName = "GET /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetVApp" })
    public void testGetOperatingSystemSection() {
       // The method under test
       OperatingSystemSection section = vAppClient.getOperatingSystemSection(vApp.getHref());
-      // checkOperatingSystemSection(section);
+//      checkOperatingSystemSection(section);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetOperatingSystemSection" })
@@ -454,16 +474,17 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getX, "");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
    public void testGetOwner() {
       // The method under test
       Owner owner = vAppClient.getOwner(vApp.getHref());
       checkOwner(owner);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
+   @Test(testName = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
    public void testModifyOwner() {
       Owner newOwner = Owner.builder()
+            .user(Reference.builder().href(userURI).build())
             .build();
 
       // The method under test
@@ -474,11 +495,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(modified, newOwner);
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
    public void testGetProductSections() {
       // The method under test
       ProductSectionList sectionList = vAppClient.getProductSections(vApp.getHref());
-      // checkProductSectionList(sectionList);
+      checkProductSectionList(sectionList);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
@@ -518,7 +539,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testGetRuntimeInfoSection() {
       // The method under test
       RuntimeInfoSection section = vAppClient.getRuntimeInfoSection(vApp.getHref());
-      // checkRuntimeInfoSection(section);
+//      checkRuntimeInfoSection(section);
    }
 
    @Test(enabled = false, testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testGetVApp" })
@@ -540,7 +561,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testGetStartupSection() {
       // The method under test
       StartupSection section = vAppClient.getStartupSection(vApp.getHref());
-      // checkStartupSection(section);
+//      checkStartupSection(section);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
@@ -557,14 +578,14 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getX, "");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVApp" })
    public void testGetVirtualHardwareSection() {
       // Method under test
       VirtualHardwareSection hardware = vAppClient.getVirtualHardwareSection(vApp.getHref());
       checkVirtualHardwareSection(hardware);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testModifyVirtualHardwareSection() {
       VirtualHardwareSection hardware = vAppClient.getVirtualHardwareSection(vApp.getHref());
       hardware.setInfo("New Info");
@@ -580,7 +601,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionCpu() {
       RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
-      // checkRASD(rasd);
+//       checkRASD(rasd);
    }
 
    @Test(enabled = false, testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })

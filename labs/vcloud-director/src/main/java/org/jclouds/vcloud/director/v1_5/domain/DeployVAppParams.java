@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.*;
@@ -26,9 +25,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Objects;
+
 /**
  * Represents vApp/VM deployment parameters.
- *
+ * 
  * <pre>
  * &lt;complexType name="DeployVAppParams" /&gt;
  * </pre>
@@ -37,7 +38,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DeployVAppParams")
 public class DeployVAppParams {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -47,7 +47,7 @@ public class DeployVAppParams {
    }
 
    public static class Builder {
-      
+
       private Boolean powerOn = Boolean.TRUE;
       private Integer deploymentLeaseSeconds;
       private Boolean forceCustomization = Boolean.FALSE;
@@ -113,11 +113,8 @@ public class DeployVAppParams {
          return deployVAppParams;
       }
 
-
       public Builder fromDeployVAppParams(DeployVAppParams in) {
-         return powerOn(in.isPowerOn())
-            .deploymentLeaseSeconds(in.getDeploymentLeaseSeconds())
-            .forceCustomization(in.isForceCustomization());
+         return powerOn(in.isPowerOn()).deploymentLeaseSeconds(in.getDeploymentLeaseSeconds()).forceCustomization(in.isForceCustomization());
       }
    }
 
@@ -131,67 +128,60 @@ public class DeployVAppParams {
       this.forceCustomization = forceCustomization;
    }
 
-    @XmlAttribute
-    protected Boolean powerOn;
-    @XmlAttribute
-    protected Integer deploymentLeaseSeconds;
-    @XmlAttribute
-    protected Boolean forceCustomization;
+   @XmlAttribute
+   protected Boolean powerOn;
+   @XmlAttribute
+   protected Integer deploymentLeaseSeconds;
+   @XmlAttribute
+   protected Boolean forceCustomization;
 
-    /**
-     * Used to specify whether to power on vapp on deployment, if not set default value is true.
-     */
-    public Boolean isPowerOn() {
-        return powerOn;
-    }
+   /**
+    * Used to specify whether to power on vapp on deployment, if not set default value is true.
+    */
+   public Boolean isPowerOn() {
+      return powerOn;
+   }
 
-    public void setPowerOn(Boolean value) {
-        this.powerOn = value;
-    }
+   public void setPowerOn(Boolean value) {
+      this.powerOn = value;
+   }
 
-    /**
-     * Lease in seconds for deployment.
-     */
-    public Integer getDeploymentLeaseSeconds() {
-        return deploymentLeaseSeconds;
-    }
+   /**
+    * Lease in seconds for deployment.
+    */
+   public Integer getDeploymentLeaseSeconds() {
+      return deploymentLeaseSeconds;
+   }
 
-    public void setDeploymentLeaseSeconds(Integer value) {
-        this.deploymentLeaseSeconds = value;
-    }
+   public void setDeploymentLeaseSeconds(Integer value) {
+      this.deploymentLeaseSeconds = value;
+   }
 
-    /**
-     * Used to specify whether to force customization on deployment, if not set default value is false.
-     */
-    public Boolean isForceCustomization() {
-        return forceCustomization;
-    }
+   /**
+    * Used to specify whether to force customization on deployment, if not set default value is false.
+    */
+   public Boolean isForceCustomization() {
+      return forceCustomization;
+   }
 
    @Override
    public boolean equals(Object o) {
       if (this == o)
-          return true;
+         return true;
       if (o == null || getClass() != o.getClass())
          return false;
       DeployVAppParams that = DeployVAppParams.class.cast(o);
-      return equal(powerOn, that.powerOn) && 
-           equal(deploymentLeaseSeconds, that.deploymentLeaseSeconds) && 
-           equal(forceCustomization, that.forceCustomization);
+      return equal(powerOn, that.powerOn) && equal(deploymentLeaseSeconds, that.deploymentLeaseSeconds) && equal(forceCustomization, that.forceCustomization);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(powerOn, 
-           deploymentLeaseSeconds, 
-           forceCustomization);
+      return Objects.hashCode(powerOn, deploymentLeaseSeconds, forceCustomization);
    }
 
    @Override
    public String toString() {
-      return Objects.toStringHelper("")
-            .add("powerOn", powerOn)
-            .add("deploymentLeaseSeconds", deploymentLeaseSeconds)
-            .add("forceCustomization", forceCustomization).toString();
+      return Objects.toStringHelper("").add("powerOn", powerOn).add("deploymentLeaseSeconds", deploymentLeaseSeconds).add("forceCustomization", forceCustomization).toString();
    }
 
 }

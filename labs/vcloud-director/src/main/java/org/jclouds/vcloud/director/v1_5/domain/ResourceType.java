@@ -18,18 +18,19 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -40,13 +41,14 @@ import com.google.common.collect.Sets;
  * The base type for all objects in the vCloud model.
  *
  * Has an optional list of links and href and type attributes.
- * <p/>
+ * <p>
  * <pre>
- * &lt;xs:complexType name="ResourceType"&gt;
+ * &lt;xs:complexType name="ResourceType" /&gt;
  * </pre>
  *
  * @author Adrian Cole
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ResourceType<T extends ResourceType<T>> {
    
    public NewBuilder<?> toNewBuilder() {

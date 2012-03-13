@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorRuntimeException;
-import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
