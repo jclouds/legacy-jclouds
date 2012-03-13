@@ -19,10 +19,14 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.google.common.base.Objects;
 
 
 /**
@@ -56,10 +60,56 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class VmQuestionAnswerChoice {
 
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return builder().fromVmQuestionAnswerChoice(this);
+   }
+
+   public static class Builder {
+      private int id;
+      private String text;
+
+      /**
+       * @see VmQuestionAnswer#getChoiceId()
+       */
+      public Builder id(int id) {
+         this.id = id;
+         return this;
+      }
+
+      /**
+       * @see VmQuestionAnswer#getQuestionId()
+       */
+      public Builder text(String text) {
+         this.text = text;
+         return this;
+      }
+
+      public VmQuestionAnswerChoice build() {
+         return new VmQuestionAnswerChoice(id, text);
+      }
+
+      public Builder fromVmQuestionAnswerChoice(VmQuestionAnswerChoice in) {
+         return id(in.getId()).text(in.getText());
+      }
+   }
+
+   protected VmQuestionAnswerChoice() {
+      // For JAXB
+   }
+
+   public VmQuestionAnswerChoice(int id, String text) {
+      this.id = id;
+      this.text = text;
+   }
+
     @XmlElement(name = "Id")
-    protected int id;
+    private int id;
     @XmlElement(name = "Text")
-    protected String text;
+    private String text;
 
     /**
      * Gets the value of the id property.
@@ -67,14 +117,6 @@ public class VmQuestionAnswerChoice {
      */
     public int getId() {
         return id;
-    }
-
-    /**
-     * Sets the value of the id property.
-     *
-     */
-    public void setId(int value) {
-        this.id = value;
     }
 
     /**
@@ -88,17 +130,25 @@ public class VmQuestionAnswerChoice {
     public String getText() {
         return text;
     }
-
-    /**
-     * Sets the value of the text property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setText(String value) {
-        this.text = value;
+    
+    
+    @Override
+    public boolean equals(Object o) {
+       if (this == o)
+          return true;
+       if (o == null || getClass() != o.getClass())
+          return false;
+       VmQuestionAnswerChoice that = VmQuestionAnswerChoice.class.cast(o);
+       return equal(this.id, that.id) && equal(this.text, that.text);
     }
 
+    @Override
+    public int hashCode() {
+       return Objects.hashCode(id, text);
+    }
+
+    @Override
+    public String toString() {
+       return Objects.toStringHelper("").add("id", id).add("text", text).toString();
+    }
 }

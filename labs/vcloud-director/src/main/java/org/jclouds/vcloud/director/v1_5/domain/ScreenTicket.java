@@ -19,10 +19,14 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import com.google.common.base.Objects;
 
 /**
  * The ticket for accessing the console of a VM.
@@ -35,13 +39,69 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "ScreenTicket")
 public class ScreenTicket {
 
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return builder().fromScreenTicket(this);
+   }
+
+   public static class Builder {
+      private String value;
+
+      /**
+       * @see VmQuestionAnswer#getChoiceId()
+       */
+      public Builder value(String value) {
+         this.value = value;
+         return this;
+      }
+
+      public ScreenTicket build() {
+         return new ScreenTicket(value);
+      }
+
+      public Builder fromScreenTicket(ScreenTicket in) {
+         return value(in.getValue());
+      }
+   }
+
+   protected ScreenTicket() {
+      // For JAXB
+   }
+   
+   public ScreenTicket(String value) {
+      this.value = value;
+   }
+
    @XmlValue
-   protected String value;
+   private String value;
 
    /**
     * Gets the value of the value property.
     */
    public String getValue() {
       return value;
+   }
+   
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      ScreenTicket that = ScreenTicket.class.cast(o);
+      return equal(this.value, that.value);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(value);
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("").add("value", value).toString();
    }
 }

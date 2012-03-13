@@ -7,18 +7,24 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSectionItem;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Specifies the order in which entities in a VirtualSystemCollection are powered on and shut down
@@ -30,16 +36,60 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 @XmlRootElement(name = "StartupSection", namespace = VCLOUD_OVF_NS)
 public class StartupSection extends SectionType<StartupSection> {
 
-   /** @see org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType#toBuilder() */
+   public static Builder builder() {
+      return new Builder();
+   }
+
    @Override
-   public org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder<StartupSection> toBuilder() {
-      return null;
+   public Builder toBuilder() {
+      return builder().fromStartupSection(this);
+   }
+
+   public static class Builder extends SectionType.Builder<StartupSection> {
+
+      private List<StartupSectionItem> item = Collections.emptyList();
+      private List<Object> any = Collections.emptyList();
+
+      /**
+       * @see StartupSection#getItem()
+       */
+      public Builder item(List<StartupSectionItem> item) {
+         this.item = item;
+         return this;
+      }
+
+      /**
+       * @see StartupSection#getAny()
+       */
+      public Builder any(List<Object> any) {
+         this.any = any;
+         return this;
+      }
+
+      @Override
+      public StartupSection build() {
+         return new StartupSection(info, required, item, any);
+      }
+      
+      public Builder fromStartupSection(StartupSection in) {
+         return Builder.class.cast(super.fromSectionType(in)).item(item).any(any);
+      }
    }
 
    @XmlElement(name = "Item")
-   protected List<StartupSectionItem> item;
+   private List<StartupSectionItem> item;
    @XmlAnyElement(lax = true)
-   protected List<Object> any;
+   private List<Object> any;
+
+   protected StartupSection() {
+      // For JAXB
+   }
+
+   public StartupSection(@Nullable String info, @Nullable Boolean required, List<StartupSectionItem> item, List<Object> any) {
+      super(info, required);
+      this.item = (item != null) ? ImmutableList.<StartupSectionItem>copyOf(item) : Collections.<StartupSectionItem>emptyList();
+      this.any = (any != null) ? ImmutableList.<Object>copyOf(any) : Collections.<Object>emptyList();
+   }
 
    /**
     * Gets the value of the item property.
@@ -81,5 +131,26 @@ public class StartupSection extends SectionType<StartupSection> {
          any = new ArrayList<Object>();
       }
       return this.any;
+   }
+   
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      StartupSection that = StartupSection.class.cast(o);
+      return super.equals(that) &&
+            equal(this.item, that.item) && equal(this.any, that.any);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), item, any);
+   }
+
+   @Override
+   public ToStringHelper string() {
+      return super.string().add("item", item).add("any", any);
    }
 }

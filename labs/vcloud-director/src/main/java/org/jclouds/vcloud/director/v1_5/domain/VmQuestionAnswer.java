@@ -19,10 +19,14 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import com.google.common.base.Objects;
 
 
 /**
@@ -57,12 +61,56 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class VmQuestionAnswer {
    
-   // TODO builder
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public Builder toBuilder() {
+      return builder().fromVmQuestionAnswer(this);
+   }
+
+   public static class Builder {
+      private int choiceId;
+      private String questionId;
+
+      /**
+       * @see VmQuestionAnswer#getChoiceId()
+       */
+      public Builder choiceId(int choiceId) {
+         this.choiceId = choiceId;
+         return this;
+      }
+
+      /**
+       * @see VmQuestionAnswer#getQuestionId()
+       */
+      public Builder questionId(String questionId) {
+         this.questionId = questionId;
+         return this;
+      }
+
+      public VmQuestionAnswer build() {
+         return new VmQuestionAnswer(choiceId, questionId);
+      }
+
+      public Builder fromVmQuestionAnswer(VmQuestionAnswer in) {
+         return choiceId(in.getChoiceId()).questionId(in.getQuestionId());
+      }
+   }
 
     @XmlElement(name = "ChoiceId")
-    protected int choiceId;
+    private int choiceId;
     @XmlElement(name = "QuestionId", required = true)
-    protected String questionId;
+    private String questionId;
+
+    protected VmQuestionAnswer() {
+       // For JAXB
+    }
+
+    public VmQuestionAnswer(int choiceId, String questionId) {
+       this.choiceId = choiceId;
+       this.questionId = questionId;
+    }
 
     /**
      * Gets the value of the choiceId property.
@@ -70,14 +118,6 @@ public class VmQuestionAnswer {
      */
     public int getChoiceId() {
         return choiceId;
-    }
-
-    /**
-     * Sets the value of the choiceId property.
-     *
-     */
-    public void setChoiceId(int value) {
-        this.choiceId = value;
     }
 
     /**
@@ -91,17 +131,24 @@ public class VmQuestionAnswer {
     public String getQuestionId() {
         return questionId;
     }
-
-    /**
-     * Sets the value of the questionId property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setQuestionId(String value) {
-        this.questionId = value;
+    
+    @Override
+    public boolean equals(Object o) {
+       if (this == o)
+          return true;
+       if (o == null || getClass() != o.getClass())
+          return false;
+       VmQuestionAnswer that = VmQuestionAnswer.class.cast(o);
+       return equal(this.choiceId, that.choiceId) && equal(this.questionId, that.questionId);
     }
 
+    @Override
+    public int hashCode() {
+       return Objects.hashCode(choiceId, questionId);
+    }
+
+    @Override
+    public String toString() {
+       return Objects.toStringHelper("").add("choiceId", choiceId).add("questionId", questionId).toString();
+    }
 }
