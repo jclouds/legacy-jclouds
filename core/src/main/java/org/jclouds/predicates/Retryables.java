@@ -39,6 +39,14 @@ public class Retryables {
       return new RetryablePredicate<Input>(predicate, maxWait, period, unit).apply(input);
    }
 
+   public static <Input> boolean retryNumTimes(Predicate<Input> predicate, Input input, int maxAttempts) {
+      return new RetryableNumTimesPredicate<Input>(predicate, maxAttempts).apply(input);
+   }
+   
+   public static <Input> boolean retryNumTimes(Predicate<Input> predicate, Input input, int maxAttempts, long period, long maxPeriod, TimeUnit unit) {
+      return new RetryableNumTimesPredicate<Input>(predicate, maxAttempts, period, maxPeriod, unit).apply(input);
+   }
+   
    public static <Input> void assertEventually(Predicate<Input> predicate, Input input, 
          long maxWaitMillis, String failureMessage) {
       if (!new RetryablePredicate<Input>(predicate, maxWaitMillis).apply(input))
@@ -51,11 +59,11 @@ public class Retryables {
          throw (AssertionError)new AssertionError(failureMessage).initCause(predicate.getLastFailure());
       return predicate.getResult();
    }
+   
    public static <Input,Result> Result retryGettingResultOrFailing(PredicateWithResult<Input,Result> predicate,
          Input input, long maxWait, long period, TimeUnit unit, String failureMessage) {
       if (!new RetryablePredicate<Input>(predicate, maxWait, period, unit).apply(input))
          throw (AssertionError)new AssertionError(failureMessage).initCause(predicate.getLastFailure());
       return predicate.getResult();
    }
-
 }
