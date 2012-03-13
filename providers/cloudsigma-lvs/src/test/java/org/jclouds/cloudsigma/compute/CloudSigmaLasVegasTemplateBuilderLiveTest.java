@@ -53,14 +53,15 @@ public class CloudSigmaLasVegasTemplateBuilderLiveTest extends BaseTemplateBuild
             switch (input.family) {
             case UBUNTU:
                return (input.version.equals("11.04") && input.is64Bit)
-                     || (input.version.equals("10.04") && !input.is64Bit) || input.version.equals("");
+                     || (input.version.equals("11.10") && !input.is64Bit) || input.version.equals("")
+                     || input.version.equals("10.04");
             case SOLARIS:
                return input.version.equals("") && input.is64Bit;
             case DEBIAN:
                return false;
             case CENTOS:
-               return (input.version.equals("") || input.version.equals("6.0"))
-                     || (input.version.matches("5.[57]") && input.is64Bit);
+               return (input.version.equals("") || input.version.equals("5.7") || input.version.equals("6.0"))
+                     && input.is64Bit;
             case WINDOWS:
                return (input.version.equals("2008 R2") || (input.version.equals("2003") || input.version.equals(""))
                      && input.is64Bit)

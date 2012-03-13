@@ -78,7 +78,7 @@ public class CloudSigmaComputeServiceContextModule
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(OsFamily.UBUNTU).imageNameMatches(".*automated SSH Access.*");
+      return template.osFamily(OsFamily.UBUNTU).imageNameMatches(".*[Aa]utomated SSH Access.*").os64Bit(true);
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })

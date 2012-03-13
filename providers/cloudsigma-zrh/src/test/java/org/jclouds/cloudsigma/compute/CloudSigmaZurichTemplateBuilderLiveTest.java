@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "CloudSigmaZurichTemplateBuilderLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "CloudSigmaZurichTemplateBuilderLiveTest")
 public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public CloudSigmaZurichTemplateBuilderLiveTest() {
@@ -53,17 +53,15 @@ public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilder
             switch (input.family) {
             case UBUNTU:
                return input.version.equals("") || input.version.equals("10.04")
-                     || ((input.version.equals("11.04") || input.version.equals("10.10")) && input.is64Bit);
-            case SOLARIS:
-               return input.version.equals("") && input.is64Bit;
+                     || (input.version.equals("10.10") && input.is64Bit)
+                     || (input.version.equals("11.04") && !input.is64Bit);
             case DEBIAN:
-               return input.version.equals("") || input.version.equals("5.0");
+               return (input.version.equals("") || input.version.equals("6.0")) && input.is64Bit;
             case CENTOS:
-               return input.version.equals("") || (input.version.equals("5.7") && input.is64Bit);
+               return (input.version.equals("") || input.version.equals("5.7")) && input.is64Bit;
             case WINDOWS:
-               return input.version.equals("") || input.version.equals("2003")
-                     || (input.version.equals("2008 R2") && input.is64Bit)
-                     || (input.version.equals("2008") && !input.is64Bit);
+               return input.version.equals("") || input.version.matches("200[38]")
+                     || (input.version.equals("2008 R2") && input.is64Bit);
             default:
                return false;
             }
@@ -75,9 +73,9 @@ public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilder
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getId(), "331f8cff-99c9-4fa9-9069-8f699795ef7e");
+      assertEquals(defaultTemplate.getImage().getId(), "c9df6b90-420c-4c46-b7f2-8d9e99929a09");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getImage().getDefaultCredentials().identity, "root");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
