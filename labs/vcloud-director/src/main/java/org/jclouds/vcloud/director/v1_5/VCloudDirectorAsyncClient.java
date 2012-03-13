@@ -20,6 +20,7 @@ package org.jclouds.vcloud.director.v1_5;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
@@ -31,6 +32,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminVdcAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.GroupAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
@@ -136,4 +138,10 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    UserAsyncClient getUserClient();
+   
+   /**
+    * @return asynchronous access to {@link AdminVdc} features
+    */
+   @Delegate
+   AdminVdcAsyncClient getAdminVdcClient();
 }

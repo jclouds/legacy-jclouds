@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,6 +28,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 
 /**
@@ -78,23 +76,24 @@ import com.google.common.base.Objects;
       "isEnabled"
 })
 @XmlSeeAlso({
-//    AdminVdc.class
+    AdminVdc.class
 })
-public class Vdc
-      extends EntityType<Vdc>
-
-{
-   public static Builder builder() {
-      return new Builder();
+public class Vdc extends EntityType<Vdc> {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
-
+   
    @Override
-   public Builder toBuilder() {
-      return new Builder().fromVdc(this);
+   public Builder<?> toNewBuilder() {
+      return new ConcreteBuilder();
    }
-
-   public static class Builder extends EntityType.Builder<Vdc> {
-
+   
+   @Override
+   public ResourceType.Builder<Vdc> toBuilder() {
+      throw new UnsupportedOperationException("Use new builder");
+   }
+   
+   public abstract static class Builder<T extends Builder<T>> extends EntityType.NewBuilder<T> {
       private String allocationModel;
       private CapacityWithUsage storageCapacity;
       private ComputeCapacity computeCapacity;
@@ -110,174 +109,96 @@ public class Vdc
       /**
        * @see Vdc#getAllocationModel()
        */
-      public Builder allocationModel(String allocationModel) {
+      public T allocationModel(String allocationModel) {
          this.allocationModel = allocationModel;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getStorageCapacity()
        */
-      public Builder storageCapacity(CapacityWithUsage storageCapacity) {
+      public T storageCapacity(CapacityWithUsage storageCapacity) {
          this.storageCapacity = storageCapacity;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getComputeCapacity()
        */
-      public Builder computeCapacity(ComputeCapacity computeCapacity) {
+      public T computeCapacity(ComputeCapacity computeCapacity) {
          this.computeCapacity = computeCapacity;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getResourceEntities()
        */
-      public Builder resourceEntities(ResourceEntities resourceEntities) {
+      public T resourceEntities(ResourceEntities resourceEntities) {
          this.resourceEntities = resourceEntities;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getAvailableNetworks()
        */
-      public Builder availableNetworks(AvailableNetworks availableNetworks) {
+      public T availableNetworks(AvailableNetworks availableNetworks) {
          this.availableNetworks = availableNetworks;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getCapabilities()
        */
-      public Builder capabilities(Capabilities capabilities) {
+      public T capabilities(Capabilities capabilities) {
          this.capabilities = capabilities;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getNicQuota()
        */
-      public Builder nicQuota(int nicQuota) {
+      public T nicQuota(int nicQuota) {
          this.nicQuota = nicQuota;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getNetworkQuota()
        */
-      public Builder networkQuota(int networkQuota) {
+      public T networkQuota(int networkQuota) {
          this.networkQuota = networkQuota;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getVmQuota()
        */
-      public Builder vmQuota(Integer vmQuota) {
+      public T vmQuota(Integer vmQuota) {
          this.vmQuota = vmQuota;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#isEnabled()
        */
-      public Builder isEnabled(Boolean isEnabled) {
+      public T isEnabled(Boolean isEnabled) {
          this.isEnabled = isEnabled;
-         return this;
+         return self();
       }
 
       /**
        * @see Vdc#getStatus()
        */
-      public Builder status(Integer status) {
+      public T status(Integer status) {
          this.status = status;
-         return this;
+         return self();
       }
 
       public Vdc build() {
-         return new Vdc(
-               href, type, links, description, tasks, id, name, allocationModel, storageCapacity,
-               computeCapacity, resourceEntities, availableNetworks, capabilities, nicQuota, networkQuota,
-               vmQuota, isEnabled, status);
+         return new Vdc(this);
       }
 
-      /**
-       * @see EntityType#getName()
-       */
-      public Builder name(String name) {
-         super.name(name);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      public Builder description(String description) {
-         super.description(description);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      @Override
-      public Builder fromEntityType(EntityType<Vdc> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder fromVdc(Vdc in) {
+      public T fromVdc(Vdc in) {
          return fromEntityType(in)
                .allocationModel(in.getAllocationModel())
                .storageCapacity(in.getStorageCapacity())
@@ -292,26 +213,31 @@ public class Vdc
                .status(in.getStatus());
       }
    }
-
-   public Vdc(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, String allocationModel, CapacityWithUsage storageCapacity, ComputeCapacity computeCapacity, ResourceEntities resourceEntities, AvailableNetworks availableNetworks, Capabilities capabilities, int nicQuota, int networkQuota, Integer vmQuota, Boolean enabled, Integer status) {
-      super(href, type, links, description, tasks, id, name);
-      this.allocationModel = allocationModel;
-      this.storageCapacity = storageCapacity;
-      this.computeCapacity = computeCapacity;
-      this.resourceEntities = resourceEntities;
-      this.availableNetworks = availableNetworks;
-      this.capabilities = capabilities;
-      this.nicQuota = nicQuota;
-      this.networkQuota = networkQuota;
-      this.vmQuota = vmQuota;
-      isEnabled = enabled;
-      this.status = status;
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override protected ConcreteBuilder self() {
+         return this;
+      }
    }
-
-   private Vdc() {
+   
+   protected Vdc() {
       // For JAXB
    }
 
+   public Vdc(Builder<?> b) {
+      super(b.href, b.type, b.links, b.description, b.tasks, b.id, b.name);
+      this.allocationModel = b.allocationModel;
+      this.storageCapacity = b.storageCapacity;
+      this.computeCapacity = b.computeCapacity;
+      this.resourceEntities = b.resourceEntities;
+      this.availableNetworks = b.availableNetworks;
+      this.capabilities = b.capabilities;
+      this.nicQuota = b.nicQuota;
+      this.networkQuota = b.networkQuota;
+      this.vmQuota = b.vmQuota;
+      isEnabled = b.isEnabled;
+      this.status = b.status;
+   }
 
    @XmlElement(name = "AllocationModel", required = true)
    protected String allocationModel;
@@ -447,7 +373,8 @@ public class Vdc
       if (o == null || getClass() != o.getClass())
          return false;
       Vdc that = Vdc.class.cast(o);
-      return equal(allocationModel, that.allocationModel) &&
+      return super.equals(that) &&
+            equal(allocationModel, that.allocationModel) &&
             equal(storageCapacity, that.storageCapacity) &&
             equal(computeCapacity, that.computeCapacity) &&
             equal(resourceEntities, that.resourceEntities) &&
@@ -462,7 +389,8 @@ public class Vdc
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(allocationModel,
+      return Objects.hashCode(super.hashCode(), 
+            allocationModel,
             storageCapacity,
             computeCapacity,
             resourceEntities,
@@ -476,8 +404,8 @@ public class Vdc
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public ToStringHelper string() {
+      return super.string()
             .add("allocationModel", allocationModel)
             .add("storageCapacity", storageCapacity)
             .add("computeCapacity", computeCapacity)
@@ -488,7 +416,7 @@ public class Vdc
             .add("networkQuota", networkQuota)
             .add("vmQuota", vmQuota)
             .add("isEnabled", isEnabled)
-            .add("status", status).toString();
+            .add("status", status);
    }
 
 }

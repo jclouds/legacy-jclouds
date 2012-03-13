@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
@@ -34,6 +35,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.GroupClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
@@ -139,4 +141,10 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    UserClient getUserClient();
+   
+   /**
+    * @return synchronous access to {@link AdminVdc} features
+    */
+   @Delegate
+   AdminVdcClient getAdminVdcClient();
 }
