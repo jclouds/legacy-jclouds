@@ -40,62 +40,295 @@ import javax.xml.namespace.QName;
 @XmlType(name = "CIM_ResourceAllocationSettingData_Type", namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData")
 public class CIMResourceAllocationSettingDataType {
 
+   // TODO Add toString, hashCode and equals
+   
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return builder().fromCIMResourceAllocationSettingDataType(this);
+   }
+
+   public static class Builder<B extends Builder<B>> {
+      private CimString address;
+      private CimString addressOnParent;
+      private CimString allocationUnits;
+      private CimBoolean automaticAllocation;
+      private CimBoolean automaticDeallocation;
+      private ResourceAllocationCaption caption;
+      private ResourceAllocationChangeableType changeableType;
+      private CimString configurationName;
+      private List<CimString> connection;
+      private ConsumerVisibility consumerVisibility;
+      private CimString description;
+      private CimString elementName;
+      private CimUnsignedLong generation;
+      private List<CimString> hostResource;
+      private CimString instanceID;
+      private CimUnsignedLong limit;
+      private MappingBehavior mappingBehavior;
+      private CimString otherResourceType;
+      private CimString parent;
+      private CimString poolID;
+      private CimUnsignedLong reservation;
+      private CimString resourceSubType;
+      private ResourceType resourceType;
+      private CimUnsignedLong virtualQuantity;
+      private CimString virtualQuantityUnits;
+      private CimUnsignedInt weight;
+      private List<Object> any;
+      private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
+      
+      public B address(CimString val) {
+         this.address = val;
+         return self();
+      }
+      public B addressOnParent(CimString val) {
+         this.addressOnParent = val;
+         return self();
+      }
+      public B allocationUnits(CimString val) {
+         this.allocationUnits = val;
+         return self();
+      }
+      public B automaticAllocation(CimBoolean val) {
+         this.automaticAllocation = val;
+         return self();
+      }
+      public B automaticDeallocation(CimBoolean val) {
+         this.automaticDeallocation = val;
+         return self();
+      }
+      public B caption(ResourceAllocationCaption val) {
+         this.caption = val;
+         return self();
+      }
+      public B changeableType(ResourceAllocationChangeableType val) {
+         this.changeableType = val;
+         return self();
+      }
+      public B configurationName(CimString val) {
+         this.configurationName = val;
+         return self();
+      }
+      public B connection(List<CimString> val) {
+         this.connection = val;
+         return self();
+      }
+      public B consumerVisibility(ConsumerVisibility val) {
+         this.consumerVisibility = val;
+         return self();
+      }
+      public B description(CimString val) {
+         this.description = val;
+         return self();
+      }
+      public B elementName(CimString val) {
+         this.elementName = val;
+         return self();
+      }
+      public B generation(CimUnsignedLong val) {
+         this.generation = val;
+         return self();
+      }
+      public B hostResource(List<CimString> val) {
+         this.hostResource = val;
+         return self();
+      }
+      public B instanceID(CimString val) {
+         this.instanceID = val;
+         return self();
+      }
+      public B limit(CimUnsignedLong val) {
+         this.limit = val;
+         return self();
+      }
+      public B mappingBehavior(MappingBehavior val) {
+         this.mappingBehavior = val;
+         return self();
+      }
+      public B otherResourceType(CimString val) {
+         this.otherResourceType = val;
+         return self();
+      }
+      public B parent(CimString val) {
+         this.parent = val;
+         return self();
+      }
+      public B poolID(CimString val) {
+         this.poolID = val;
+         return self();
+      }
+      public B reservation(CimUnsignedLong val) {
+         this.reservation = val;
+         return self();
+      }
+      public B resourceSubType(CimString val) {
+         this.resourceSubType = val;
+         return self();
+      }
+      public B resourceType(ResourceType val) {
+         this.resourceType = val;
+         return self();
+      }
+      public B virtualQuantity(CimUnsignedLong val) {
+         this.virtualQuantity = val;
+         return self();
+      }
+      public B virtualQuantityUnits(CimString val) {
+         this.virtualQuantityUnits = val;
+         return self();
+      }
+      public B weight(CimUnsignedInt val) {
+         this.weight = val;
+         return self();
+      }
+      public B any(List<Object> val) {
+         this.any = val;
+         return self();
+      }
+      public B otherAttributes(Map<QName, String> val) {
+         this.otherAttributes = val;
+         return self();
+      }
+      
+      public B fromCIMResourceAllocationSettingDataType(CIMResourceAllocationSettingDataType val) {
+         return self().address(val.getAddress()).
+                  addressOnParent(val.getAddressOnParent()).
+                  allocationUnits(val.getAllocationUnits()).
+                  allocationUnits(val.getAllocationUnits()).
+                  automaticAllocation(val.getAutomaticAllocation()).
+                  automaticDeallocation(val.getAutomaticDeallocation()).
+                  caption(val.getCaption()).
+                  changeableType(val.getChangeableType()).
+                  configurationName(val.getConfigurationName()).
+                  connection(val.getConnection()).
+                  consumerVisibility(val.getConsumerVisibility()).
+                  description(val.getDescription()).
+                  elementName(val.getElementName()).
+                  generation(val.getGeneration()).
+                  hostResource(val.getHostResource()).
+                  instanceID(val.getInstanceID()).
+                  limit(val.getLimit()).
+                  mappingBehavior(val.getMappingBehavior()).
+                  otherResourceType(val.getOtherResourceType()).
+                  parent(val.getParent()).
+                  poolID(val.getPoolID()).
+                  reservation(val.getReservation()).
+                  resourceSubType(val.getResourceSubType()).
+                  resourceType(val.getResourceType()).
+                  virtualQuantity(val.getVirtualQuantity()).
+                  virtualQuantityUnits(val.getVirtualQuantityUnits()).
+                  weight(val.getWeight()).
+                  any(val.getAny()).
+                  otherAttributes(val.getOtherAttributes());
+      }
+      
+      public CIMResourceAllocationSettingDataType build() {
+         return new CIMResourceAllocationSettingDataType(this);
+      }
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+
     @XmlElement(name = "Address", nillable = true)
-    protected CimString address;
+    private CimString address;
     @XmlElement(name = "AddressOnParent", nillable = true)
-    protected CimString addressOnParent;
+    private CimString addressOnParent;
     @XmlElement(name = "AllocationUnits", nillable = true)
-    protected CimString allocationUnits;
+    private CimString allocationUnits;
     @XmlElement(name = "AutomaticAllocation", nillable = true)
-    protected CimBoolean automaticAllocation;
+    private CimBoolean automaticAllocation;
     @XmlElement(name = "AutomaticDeallocation", nillable = true)
-    protected CimBoolean automaticDeallocation;
+    private CimBoolean automaticDeallocation;
     @XmlElementRef(name = "Caption", namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData", type = ResourceAllocationCaption.class)
-    protected ResourceAllocationCaption caption;
+    private ResourceAllocationCaption caption;
     @XmlElementRef(name = "ChangeableType", namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData", type = ResourceAllocationChangeableType.class)
-    protected ResourceAllocationChangeableType changeableType;
+    private ResourceAllocationChangeableType changeableType;
     @XmlElement(name = "ConfigurationName", nillable = true)
-    protected CimString configurationName;
+    private CimString configurationName;
     @XmlElement(name = "Connection", nillable = true)
-    protected List<CimString> connection;
+    private List<CimString> connection;
     @XmlElement(name = "ConsumerVisibility", nillable = true)
-    protected ConsumerVisibility consumerVisibility;
+    private ConsumerVisibility consumerVisibility;
     @XmlElement(name = "Description", nillable = true)
-    protected CimString description;
+    private CimString description;
     @XmlElement(name = "ElementName", required = true)
-    protected CimString elementName;
+    private CimString elementName;
     @XmlElement(name = "Generation", nillable = true)
-    protected CimUnsignedLong generation;
+    private CimUnsignedLong generation;
     @XmlElement(name = "HostResource", nillable = true)
-    protected List<CimString> hostResource;
+    private List<CimString> hostResource;
     @XmlElement(name = "InstanceID", required = true)
-    protected CimString instanceID;
+    private CimString instanceID;
     @XmlElement(name = "Limit", nillable = true)
-    protected CimUnsignedLong limit;
+    private CimUnsignedLong limit;
     @XmlElement(name = "MappingBehavior", nillable = true)
-    protected MappingBehavior mappingBehavior;
+    private MappingBehavior mappingBehavior;
     @XmlElement(name = "OtherResourceType", nillable = true)
-    protected CimString otherResourceType;
+    private CimString otherResourceType;
     @XmlElement(name = "Parent", nillable = true)
-    protected CimString parent;
+    private CimString parent;
     @XmlElement(name = "PoolID", nillable = true)
-    protected CimString poolID;
+    private CimString poolID;
     @XmlElement(name = "Reservation", nillable = true)
-    protected CimUnsignedLong reservation;
+    private CimUnsignedLong reservation;
     @XmlElement(name = "ResourceSubType", nillable = true)
-    protected CimString resourceSubType;
+    private CimString resourceSubType;
     @XmlElement(name = "ResourceType", nillable = true)
-    protected ResourceType resourceType;
+    private ResourceType resourceType;
     @XmlElement(name = "VirtualQuantity", nillable = true)
-    protected CimUnsignedLong virtualQuantity;
+    private CimUnsignedLong virtualQuantity;
     @XmlElement(name = "VirtualQuantityUnits", nillable = true)
-    protected CimString virtualQuantityUnits;
+    private CimString virtualQuantityUnits;
     @XmlElement(name = "Weight", nillable = true)
-    protected CimUnsignedInt weight;
+    private CimUnsignedInt weight;
     @XmlAnyElement(lax = true)
-    protected List<Object> any;
+    private List<Object> any;
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+
+    protected CIMResourceAllocationSettingDataType() {
+       // For JAXB
+    }
+    
+    protected CIMResourceAllocationSettingDataType(Builder<?> builder) {
+       this.address = builder.address;
+       this.addressOnParent = builder.addressOnParent;
+       this.allocationUnits = builder.allocationUnits;
+       this.automaticAllocation = builder.automaticAllocation;
+       this.automaticDeallocation = builder.automaticDeallocation;
+       this.caption = builder.caption;
+       this.changeableType = builder.changeableType;
+       this.configurationName = builder.configurationName;
+       this.connection = builder.connection;
+       this.consumerVisibility = builder.consumerVisibility;
+       this.description = builder.description;
+       this.elementName = builder.elementName;
+       this.generation = builder.generation;
+       this.hostResource = builder.hostResource;
+       this.instanceID = builder.instanceID;
+       this.limit = builder.limit;
+       this.mappingBehavior = builder.mappingBehavior;
+       this.otherResourceType = builder.otherResourceType;
+       this.parent = builder.parent;
+       this.poolID = builder.poolID;
+       this.reservation = builder.reservation;
+       this.resourceSubType = builder.resourceSubType;
+       this.resourceType = builder.resourceType;
+       this.virtualQuantity = builder.virtualQuantity;
+       this.virtualQuantityUnits = builder.virtualQuantityUnits;
+       this.weight = builder.weight;
+       this.any = builder.any;
+       this.otherAttributes = builder.otherAttributes;
+    }
 
     /**
      * Gets the value of the address property.

@@ -60,7 +60,7 @@ public class DiskSection extends SectionType<DiskSection> {
    }
 
    public static class Builder extends SectionType.Builder<DiskSection> {
-      protected Set<Disk> disks = Sets.newLinkedHashSet();
+      private Set<Disk> disks = Sets.newLinkedHashSet();
 
       /**
        * @see DiskSection#getDisks
