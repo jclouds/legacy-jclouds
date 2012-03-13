@@ -796,4 +796,64 @@ public class Checks {
    public static void checkTelephone(String number) {
       // TODO: regex validate telephone 
    }
+
+   public static void checkAdminVdc(AdminVdc vdc) {
+      // optional
+      // NOTE isThinProvision cannot be checked
+      // NOTE usesFastProvisioning cannot be checked
+      if (vdc.getResourceGuaranteedMemory() != null) {
+         // TODO: between 0 and 1 inc.
+      }
+      if (vdc.getResourceGuaranteedCpu() != null) {
+         // TODO: between 0 and 1 inc.
+      }
+      if (vdc.getVCpuInMhz() != null) {
+         assertTrue(vdc.getVCpuInMhz() >= 0, String.format(OBJ_FIELD_GTE_0, 
+               "Vdc", "cCpuInMhz", vdc.getVCpuInMhz()));
+      }
+      if (vdc.getNetworkPoolReference() != null) {
+         checkReferenceType(vdc.getNetworkPoolReference());
+      }
+      if (vdc.getProviderVdcReference() != null) {
+         checkReferenceType(vdc.getProviderVdcReference());
+      }
+      
+      // parent type
+      checkVdc(vdc);
+   }
+   
+   public static void checkVdc(Vdc vdc) {
+      // required
+      assertNotNull(vdc.getAllocationModel(), String.format(OBJ_FIELD_REQ, "Vdc", "allocationModel"));
+      // one of: AllocationVApp, AllocationPool, ReservationPool
+      assertNotNull(vdc.getStorageCapacity(), String.format(OBJ_FIELD_REQ, "Vdc", "storageCapacity"));
+      checkCapacityWithUsage(vdc.getStorageCapacity());
+      assertNotNull(vdc.getComputeCapacity(), String.format(OBJ_FIELD_REQ, "Vdc", "computeCapacity"));
+      checkComputeCapacity(vdc.getComputeCapacity());
+      assertNotNull(vdc.getNicQuota(), String.format(OBJ_FIELD_REQ, "Vdc", "nicQuota"));
+      assertTrue(vdc.getNicQuota() >= 0, String.format(OBJ_FIELD_GTE_0, 
+            "Vdc", "nicQuota", vdc.getNicQuota()));
+      assertNotNull(vdc.getNetworkQuota(), String.format(OBJ_FIELD_REQ, "Vdc", "networkQuota"));
+      assertTrue(vdc.getNetworkQuota() >= 0, String.format(OBJ_FIELD_GTE_0, 
+            "Vdc", "networkQuota", vdc.getNetworkQuota()));
+      
+      // optional
+      // NOTE isEnabled cannot be checked
+      if (vdc.getResourceEntities() != null) {
+         checkResourceEntities(vdc.getResourceEntities());
+      }
+      if (vdc.getAvailableNetworks() != null) {
+         checkAvailableNetworks(vdc.getAvailableNetworks());
+      }
+      if (vdc.getCapabilities() != null) {
+         checkCapabilities(vdc.getCapabilities());
+      }
+      if (vdc.getVmQuota() != null) {
+         assertTrue(vdc.getVmQuota() >= 0, String.format(OBJ_FIELD_GTE_0, 
+               "Vdc", "vmQuota", vdc.getVmQuota()));
+      }
+      
+      // parent type
+      checkEntityType(vdc);
+   }
 }
