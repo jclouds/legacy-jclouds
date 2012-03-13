@@ -22,12 +22,9 @@ import java.util.Map;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -40,21 +37,6 @@ import com.google.common.collect.Iterables;
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata>
 {
 
-   @VisibleForTesting
-   public static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap.<ServerStatus, NodeState>builder()
-      .put(ServerStatus.ACTIVE, NodeState.RUNNING)
-      .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)
-      .put(ServerStatus.DELETED, NodeState.TERMINATED)
-      .put(ServerStatus.RESIZE, NodeState.PENDING)
-      .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)
-      .put(ServerStatus.BUILD, NodeState.PENDING)
-      .put(ServerStatus.PASSWORD, NodeState.PENDING)
-      .put(ServerStatus.REBUILD, NodeState.PENDING)
-      .put(ServerStatus.REBOOT, NodeState.PENDING)
-      .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)
-      .put(ServerStatus.UNKNOWN, NodeState.UNRECOGNIZED)
-      .put(ServerStatus.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
-
    @Override
    public NodeMetadata apply(Server server)
    {
@@ -66,6 +48,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata>
          .publicAddresses(Iterables.transform(server.getPublicAddresses(), new AddressToStringTransformationFunction()))
          .privateAddresses(Iterables.transform(server.getPrivateAddresses(), new AddressToStringTransformationFunction()))
          .state(server.getStatus().getNodeState())
+         .userMetadata(ImmutableMap.copyOf(server.getMetadata()))
          .build();
    }
 
