@@ -66,7 +66,7 @@ public interface VdcAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Vdc> getVdc(@EndpointParam URI vdcURI);
+   ListenableFuture<? extends Vdc> getVdc(@EndpointParam URI vdcURI);
    
    /**
     * @see VdcClient#captureVApp(URI, CaptureVAppParams)
