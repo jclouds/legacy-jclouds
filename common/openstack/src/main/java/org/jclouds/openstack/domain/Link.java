@@ -25,6 +25,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 import com.google.gson.annotations.SerializedName;
 
@@ -51,6 +53,10 @@ public class Link {
        */
       BOOKMARK,
       /**
+       * 
+       */
+      DESCRIBEDBY,
+      /**
        * an alternate representation of the resource. For example, an OpenStack Compute image may
        * have an alternate representation in the OpenStack Image service.
        */
@@ -75,9 +81,13 @@ public class Link {
    }
 
    public static Link create(Relation relation, URI href) {
-      return new Link(relation, href);
+      return new Link(relation, null, href);
    }
-
+   
+   public static Link create(Relation relation,String type, URI href) {
+      return new Link(relation, type, href);
+   }
+   
    public static Builder builder() {
       return new Builder();
    }
@@ -88,6 +98,7 @@ public class Link {
 
    public static class Builder {
       protected Relation relation;
+      protected String type;
       protected URI href;
 
       /**
@@ -99,24 +110,38 @@ public class Link {
       }
 
       /**
+       * @see Link#getType()
+       */
+      public Builder type(String type) {
+         this.type = type;
+         return this;
+      }
+      
+      /**
        * @see Link#getHref()
        */
-      protected Builder href(URI href) {
+      public Builder href(URI href) {
          this.href = checkNotNull(href, "href");
          return this;
       }
 
+      public Link build(){
+         return new Link(relation, type, href);
+      }
+      
       public Builder fromLink(Link from) {
-         return relation(from.getRelation()).href(from.getHref());
+         return relation(from.getRelation()).type(from.getType()).href(from.getHref());
       }
    }
 
    @SerializedName("rel")
    protected final Relation relation;
+   protected final String type;
    protected final URI href;
 
-   protected Link(Relation relation, URI href) {
+   protected Link(Relation relation, @Nullable String type, URI href) {
       this.relation = checkNotNull(relation, "relation");
+      this.type = type;
       this.href = checkNotNull(href, "href");
    }
 
@@ -134,7 +159,15 @@ public class Link {
    public Relation getRelation() {
       return relation;
    }
-
+   
+   /**
+    * @return the type of the resource or null if not specified
+    */
+   @Nullable
+   public String getType() {
+      return type;
+   }
+   
    /**
     * @return the href of the resource
     */
@@ -149,7 +182,7 @@ public class Link {
       }
       if (object instanceof Link) {
          final Link other = Link.class.cast(object);
-         return equal(relation, other.relation) && equal(href, other.href);
+         return equal(relation, other.relation) && equal(type, other.type) && equal(href, other.href);
       } else {
          return false;
       }
@@ -157,12 +190,12 @@ public class Link {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(relation, href);
+      return Objects.hashCode(relation, type, href);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("relation", relation).add("href", href).toString();
+      return toStringHelper("").add("relation", relation).add("type", type).add("href", href).toString();
    }
 
 }

@@ -1,0 +1,31 @@
+{
+    "extensions": [{
+        "updated": "2011-08-08T00:00:00+00:00",
+        "name": "Keypairs",
+        "links": [],
+        "namespace": "http://docs.openstack.org/ext/keypairs/api/v1.1",
+        "alias": "os-keypairs",
+        "description": "Keypair Support"
+    }, {
+        "updated": "2011-03-25T00:00:00+00:00",
+        "name": "Volumes",
+        "links": [],
+        "namespace": "http://docs.openstack.org/ext/volumes/api/v1.1",
+        "alias": "os-volumes",
+        "description": "Volumes support"
+    }, {
+        "updated": "2011-07-21T00:00:00+00:00",
+        "name": "SecurityGroups",
+        "links": [],
+        "namespace": "http://docs.openstack.org/ext/securitygroups/api/v1.1",
+        "alias": "security_groups",
+        "description": "Security group support"
+    }, {
+        "updated": "2011-06-16T00:00:00+00:00",
+        "name": "Floating_ips",
+        "links": [],
+        "namespace": "http://docs.openstack.org/ext/floating_ips/api/v1.1",
+        "alias": "os-floating-ips",
+        "description": "Floating IPs support"
+    }]
+}

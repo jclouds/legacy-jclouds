@@ -23,11 +23,12 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.Region;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
+import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
-import org.jclouds.openstack.nova.v1_1.features.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
-import org.jclouds.openstack.nova.v1_1.features.KeyPairAsyncClient;
-import org.jclouds.openstack.nova.v1_1.features.SecurityGroupAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -64,6 +65,13 @@ public interface NovaAsyncClient {
     */
    @Delegate
    FlavorAsyncClient getFlavorClientForRegion(
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   
+   /**
+    * Provides asynchronous access to Extension features.
+    */
+   @Delegate
+   ExtensionAsyncClient getExtensionClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**

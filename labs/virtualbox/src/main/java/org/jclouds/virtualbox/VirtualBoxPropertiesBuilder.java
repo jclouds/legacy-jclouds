@@ -19,18 +19,16 @@
 
 package org.jclouds.virtualbox;
 
-import static org.jclouds.Constants.*;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
-import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_IMAGE_AUTHENTICATE_SUDO;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_IMAGE_LOGIN_USER;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGES_DESCRIPTOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 
 import java.io.File;
 import java.util.Properties;
@@ -60,11 +58,9 @@ public class VirtualBoxPropertiesBuilder extends PropertiesBuilder {
       properties.put(PROPERTY_API_VERSION, "4.1.4");
 
       properties.put(PROPERTY_BUILD_VERSION, "4.1.8r75467");
-      properties.put(PROPERTY_IDENTITY, "toor");
-      properties.put(PROPERTY_CREDENTIAL, "password");
-
       properties.put(PROPERTY_IMAGE_LOGIN_USER, "toor:password");
       properties.put(PROPERTY_IMAGE_AUTHENTICATE_SUDO, "true");
+      
 
       properties.put(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE, "<Esc><Esc><Enter> "
                + "/install/vmlinuz noapic preseed/url=PRECONFIGURATION_URL "

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1.extensions;
 
 import java.util.Set;
 
@@ -50,6 +50,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see SecurityGroupClient
  * @author Jeremy Daggett
+ * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html" />
+ * @see <a href="http://nova.openstack.org/api_ext" />
+ * @see <a href="http://wiki.openstack.org/os-security-groups" />
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)

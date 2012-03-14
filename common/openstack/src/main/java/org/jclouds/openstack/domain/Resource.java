@@ -132,7 +132,7 @@ public class Resource implements Comparable<Resource> {
       }
       if (object instanceof Resource) {
          final Resource other = Resource.class.cast(object);
-         return equal(id, other.id) && equal(name, other.name) && equal(links, other.links);
+         return equal(getId(), other.getId()) && equal(name, other.name) && equal(links, other.links);
       } else {
          return false;
       }
@@ -140,12 +140,12 @@ public class Resource implements Comparable<Resource> {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, name, links);
+      return Objects.hashCode(getId(), name, links);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("links", links).toString();
+      return toStringHelper("").add("id", getId()).add("name", name).add("links", links).toString();
    }
 
    @Override
@@ -154,7 +154,7 @@ public class Resource implements Comparable<Resource> {
          return 1;
       if (this == that)
          return 0;
-      return this.id.compareTo(that.id);
+      return this.getId().compareTo(that.getId());
    }
 
 }

@@ -159,7 +159,7 @@ public class RetryablePredicateTest {
       assertCallTimes(rawPredicate.callTimes, 0, 1000, 2000);
    }
    
-   private static class RepeatedAttemptsPredicate implements Predicate<String> {
+   public static class RepeatedAttemptsPredicate implements Predicate<String> {
       final List<Long> callTimes = new ArrayList<Long>();
       private final int succeedOnAttempt;
       private final Stopwatch stopwatch;

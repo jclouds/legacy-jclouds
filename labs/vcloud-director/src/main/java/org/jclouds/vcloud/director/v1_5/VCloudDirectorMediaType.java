@@ -153,6 +153,12 @@ public class VCloudDirectorMediaType {
    
    public static final String ADMIN_ORG_NETWORK = "application/vnd.vmware.admin.orgNetwork+xml";
    
+   public static final String USER = "application/vnd.vmware.admin.user+xml";
+   
+   public static final String ROLE = "application/vnd.vmware.admin.role+xml";
+   
+   public static final String ADMIN_VDC = "application/vnd.vmware.admin.vdc+xml";
+   
    /**
     * All acceptable media types.
     *
@@ -173,6 +179,6 @@ public class VCloudDirectorMediaType {
             PUBLISH_CATALOG_PARAMS, GROUP, ORG_VAPP_TEMPLATE_LEASE_SETTINGS,
             ORG_LEASE_SETTINGS, ORG_PASSWORD_POLICY_SETTINGS, ORG_LDAP_SETTINGS,
             ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
-            ADMIN_ORG_NETWORK
+            ADMIN_ORG_NETWORK, USER, ROLE, ADMIN_VDC
       );
 }

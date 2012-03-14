@@ -64,6 +64,8 @@ import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadClient;
+import org.jclouds.vcloud.director.v1_5.features.UserAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.UserClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
@@ -109,6 +111,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(AdminCatalogClient.class, AdminCatalogAsyncClient.class)
             .put(AdminOrgClient.class, AdminOrgAsyncClient.class)
             .put(GroupClient.class, GroupAsyncClient.class)
+            .put(UserClient.class, UserAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {

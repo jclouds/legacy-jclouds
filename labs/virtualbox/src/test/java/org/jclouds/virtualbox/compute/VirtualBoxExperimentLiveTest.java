@@ -58,13 +58,13 @@ public class VirtualBoxExperimentLiveTest {
 
    @BeforeClass
    public void setUp() {
-      context = new ComputeServiceContextFactory().createContext("virtualbox", "toor", "password",
+      context = new ComputeServiceContextFactory().createContext("virtualbox", "", "",
                ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()));
    }
 
    @Test
    public void testLaunchCluster() throws RunNodesException {
-      int numNodes = 4;
+      int numNodes = 1;
       final String clusterName = "test-launch-cluster";
       Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes);
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");

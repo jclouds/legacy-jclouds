@@ -20,16 +20,19 @@ package org.jclouds.vcloud.director.v1_5;
 
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminVdcAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.GroupAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
@@ -37,6 +40,7 @@ import org.jclouds.vcloud.director.v1_5.features.OrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.UserAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
 
@@ -128,4 +132,16 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    AdminOrgAsyncClient getAdminOrgClient();
+   
+   /**
+    * @return asynchronous access to {@link User} features
+    */
+   @Delegate
+   UserAsyncClient getUserClient();
+   
+   /**
+    * @return asynchronous access to {@link AdminVdc} features
+    */
+   @Delegate
+   AdminVdcAsyncClient getAdminVdcClient();
 }

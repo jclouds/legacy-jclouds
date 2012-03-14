@@ -18,71 +18,57 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.domain.Extension;
 import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Payload;
-import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Key Pairs via the REST API.
+ * Provides asynchronous access to Extensions via their REST API.
  * <p/>
  * 
- * @see KeyPairClient
- * @author Jeremy Daggett
+ * @see ExtensionClient
+ * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ *      />
+ * @author Adrian Cole
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
-public interface KeyPairAsyncClient {
+public interface ExtensionAsyncClient {
 
+   /**
+    * @see ExtensionClient#listExtensions
+    */
    @GET
-   @Path("/os-keypairs")
-   @SelectJson("keypairs")
+   @SelectJson("extensions")
    @Consumes(MediaType.APPLICATION_JSON)
+   @Path("/extensions")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Map<String, KeyPair>>> listKeyPairs();
-   
+   ListenableFuture<Set<Extension>> listExtensions();
 
-   @POST
-   @Path("/os-keypairs")
-   @SelectJson("keypair")
+
+   /**
+    * @see ExtensionClient#getExtensionByAlias
+    */
+   @GET
+   @SelectJson("extension")
    @Consumes(MediaType.APPLICATION_JSON)
-   @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"keypair\":%7B\"name\":\"{name}\"%7D%7D")
-   ListenableFuture<KeyPair> createKeyPair(@PayloadParam("name") String name);
+   @Path("/extensions/{alias}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Extension> getExtensionByAlias(@PathParam("alias") String id);
 
-   @POST
-   @Path("/os-keypairs")
-   @SelectJson("keypair")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"keypair\":%7B\"name\":\"{name}\",\"public_key\":\"{publicKey}\"%7D%7D")
-   ListenableFuture<KeyPair> createKeyPairWithPublicKey(@PayloadParam("name") String name,
-                                           @PayloadParam("publicKey") String publicKey);
-
-   @DELETE
-   @Path("/os-keypairs/{name}")
-   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @Consumes
-   ListenableFuture<Boolean> deleteKeyPair(@PathParam("name") String name);
-   
 }

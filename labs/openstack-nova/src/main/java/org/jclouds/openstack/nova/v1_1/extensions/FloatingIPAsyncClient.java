@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.features;
+package org.jclouds.openstack.nova.v1_1.extensions;
 
 import java.util.Set;
 
@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -48,6 +49,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see FloatingIPClient
  * @author Jeremy Daggett
+ * @see ExtensionAsyncClient
+ * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html" />
+ * @see <a href="http://nova.openstack.org/api_ext" />
+ * @see <a href="http://wiki.openstack.org/os_api_floating_ip"/>
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)

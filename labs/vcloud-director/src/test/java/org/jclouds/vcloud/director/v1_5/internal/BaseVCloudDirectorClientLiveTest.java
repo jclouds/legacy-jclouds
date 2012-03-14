@@ -36,6 +36,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
@@ -134,5 +135,13 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected void tearDown() {
       if (context != null)
          context.close();
+   }
+   
+   public URI toAdminUri(ReferenceType<?> ref) {
+      return toAdminUri(ref.getHref());
+   }
+   
+   public URI toAdminUri(URI uri) {
+      return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
    }
 }
