@@ -270,8 +270,18 @@ public class Task extends EntityType<Task> {
 
       public Builder fromTask(Task in) {
          return fromEntityType(in)
-               .error(in.getError()).org(in.getOrg()).progress(in.getProgress()).status(in.getStatus())
-               .operation(in.getOperation()).operationName(in.getOperationName());
+               .error(in.getError())
+               .org(in.getOrg())
+               .progress(in.getProgress())
+               .owner(in.getOwner())
+               .user(in.getUser())
+               .params(in.getParams())
+               .status(in.getStatus())
+               .operation(in.getOperation())
+               .operationName(in.getOperationName())
+               .startTime(in.getStartTime())
+               .endTime(in.getEndTime())
+               .expiryTime(in.getExpiryTime());
       }
    }
 
@@ -294,10 +304,9 @@ public class Task extends EntityType<Task> {
       this.expiryTime = expiryTime;
    }
 
-   private Task() {
+   protected Task() {
       // for JAXB
    }
-
 
    @XmlElement(name = "Error")
    private Error error;
@@ -371,7 +380,7 @@ public class Task extends EntityType<Task> {
 
    /**
     * The execution status of the task.
-    * <p/>
+    *
     * One of:
     * <ul>
     * <li>queued - The task has been queued for execution.
@@ -383,7 +392,6 @@ public class Task extends EntityType<Task> {
     * <li>aborted - The task was aborted by an administrative action.
     * </ul>
     */
-   // TODO: enum!!!
    public String getStatus() {
       return status;
    }

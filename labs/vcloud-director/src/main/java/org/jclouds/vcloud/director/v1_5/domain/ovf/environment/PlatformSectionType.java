@@ -18,22 +18,20 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf.environment;
 
-import java.util.List;
+import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
+
 /**
  * Information about deployment platform
- * <p>
- * Java class for PlatformSection_Type complex type.
- * <p>
- * The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType name="PlatformSection_Type">
@@ -53,9 +51,9 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PlatformSection_Type", propOrder = { "kind", "version", "vendor", "locale", "timezone", "any" })
-public class PlatformSectionType extends SectionType {
+@XmlRootElement(name = "PlatformSection")
+@XmlType(name = "PlatformSection_Type")
+public class PlatformSectionType extends SectionType<PlatformSectionType> {
 
    @XmlElement(name = "Kind")
    protected CimString kind;
@@ -68,7 +66,7 @@ public class PlatformSectionType extends SectionType {
    @XmlElement(name = "Timezone")
    protected Integer timezone;
    @XmlAnyElement(lax = true)
-   protected List<Object> any;
+   protected Set<Object> any = Sets.newLinkedHashSet();
 
    /**
     * Gets the value of the kind property.
@@ -108,7 +106,37 @@ public class PlatformSectionType extends SectionType {
    /**
     * Gets the value of the any property.
     */
-   public List<Object> getAny() {
+   public Set<Object> getAny() {
       return any;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), version, vendor, timezone, locale, kind, any);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      PlatformSectionType that = (PlatformSectionType) obj;
+      return super.equals(that) &&
+            Objects.equal(this.version, that.version) &&
+            Objects.equal(this.vendor, that.vendor) &&
+            Objects.equal(this.timezone, that.timezone) &&
+            Objects.equal(this.locale, that.locale) &&
+            Objects.equal(this.kind, that.kind) &&
+            Objects.equal(this.any, that.any);
+   }
+
+   @Override
+   protected Objects.ToStringHelper string() {
+      return super.string()
+            .add("version", version).add("vendor", vendor).add("timezone", timezone)
+            .add("locale", locale).add("kind", kind).add("any", any);
    }
 }

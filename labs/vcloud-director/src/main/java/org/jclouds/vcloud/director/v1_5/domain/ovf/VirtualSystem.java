@@ -18,16 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseVirtualSystem;
-
-import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
@@ -56,19 +55,21 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
       }
 
       /**
-       * {@inheritDoc}
+       * @see BaseVirtualSystem#getAdditionalSections
        */
       @Override
-      public Builder additionalSection(String name, SectionType<?> additionalSection) {
-         return Builder.class.cast(super.additionalSection(name, additionalSection));
+      public Builder additionalSection(SectionType<?> additionalSection) {
+         this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
+         return this;
       }
 
       /**
-       * {@inheritDoc}
+       * @see BaseVirtualSystem#getAdditionalSections
        */
       @Override
-      public Builder additionalSections(Multimap<String, SectionType<?>> additionalSections) {
-         return Builder.class.cast(super.additionalSections(additionalSections));
+      public Builder additionalSections(Set<SectionType<?>> additionalSections) {
+         this.additionalSections = checkNotNull(additionalSections, "additionalSections");
+         return this;
       }
 
       /**
@@ -163,7 +164,7 @@ public class VirtualSystem extends BaseVirtualSystem<VirtualSystem> {
 
    private VirtualSystem(String id, String info, @Nullable Boolean required, String name, OperatingSystemSection operatingSystem,
                         Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
-                        Iterable<? extends ProductSection> productSections, Multimap<String, SectionType<?>> additionalSections) {
+                        Iterable<? extends ProductSection> productSections, Iterable<? extends SectionType<?>> additionalSections) {
       super(id, info, required, name, operatingSystem, virtualHardwareSections, productSections, additionalSections);
    }
    

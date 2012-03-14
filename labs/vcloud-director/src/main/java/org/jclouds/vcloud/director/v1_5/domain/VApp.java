@@ -27,8 +27,11 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.vcloud.director.v1_5.domain.EntityType.Builder;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
@@ -45,6 +48,8 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
+@XmlRootElement(name = "VApp")
+@XmlType(name = "VAppType")
 public class VApp extends AbstractVAppType<VApp> {
 
    public static Builder builder() {
@@ -210,6 +215,24 @@ public class VApp extends AbstractVAppType<VApp> {
       }
 
       /**
+       * @see EntityType#getName()
+       */
+      @Override
+      public Builder name(String name) {
+         this.name = name;
+         return this;
+      }
+
+      /**
+       * @see EntityType#getDescription()
+       */
+      @Override
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
+
+      /**
        * @see EntityType#getId()
        */
       @Override
@@ -284,7 +307,9 @@ public class VApp extends AbstractVAppType<VApp> {
       }
 
       public Builder fromVApp(VApp in) {
-         return fromAbstractVAppType(in).owner(in.getOwner()).isInMaintenanceMode(in.isInMaintenanceMode()).children(in.getChildren()).isOvfDescriptorUploaded(in.isOvfDescriptorUploaded());
+         return fromAbstractVAppType(in)
+               .owner(in.getOwner()).isInMaintenanceMode(in.isInMaintenanceMode())
+               .children(in.getChildren()).isOvfDescriptorUploaded(in.isOvfDescriptorUploaded());
       }
    }
 

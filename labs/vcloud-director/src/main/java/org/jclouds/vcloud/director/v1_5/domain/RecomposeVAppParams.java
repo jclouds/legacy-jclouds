@@ -18,15 +18,17 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents vApp re-composition parameters.
@@ -45,7 +47,8 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlType(name = "RecomposeVAppParams")
+@XmlRootElement(name = "RecomposeVAppParams")
+@XmlType(name = "RecomposeVAppParamsType")
 public class RecomposeVAppParams extends ComposeVAppParams {
 
    public static Builder builder() {
@@ -80,8 +83,7 @@ public class RecomposeVAppParams extends ComposeVAppParams {
 
       @Override
       public RecomposeVAppParams build() {
-         RecomposeVAppParams recomposeVAppParams = new RecomposeVAppParams(createItem, deleteItem);
-         return recomposeVAppParams;
+         return new RecomposeVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, sourcedItems, allEULAsAccepted, linkedClone, createItem, deleteItem);
       }
 
       @Override
@@ -98,7 +100,9 @@ public class RecomposeVAppParams extends ComposeVAppParams {
       // For JAXB and builder use
    }
 
-   private RecomposeVAppParams(List<Vm> createItem, List<Reference> deleteItem) {
+   private RecomposeVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn,
+									    List<SourcedCompositionItemParam> sourcedItems, Boolean allEULAsAccepted, Boolean linkedClone, List<Vm> createItem, List<Reference> deleteItem) {
+      super(description, name, vAppParent, instantiationParams, deploy, powerOn, sourcedItems, allEULAsAccepted, linkedClone);
       this.createItem = createItem;
       this.deleteItem = deleteItem;
    }
@@ -135,17 +139,18 @@ public class RecomposeVAppParams extends ComposeVAppParams {
       if (o == null || getClass() != o.getClass())
          return false;
       RecomposeVAppParams that = RecomposeVAppParams.class.cast(o);
-      return equal(createItem, that.createItem) && equal(deleteItem, that.deleteItem);
+      return super.equals(that) &&
+            equal(this.createItem, that.createItem) && equal(this.deleteItem, that.deleteItem);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(createItem, deleteItem);
+      return Objects.hashCode(super.hashCode(), createItem, deleteItem);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("").add("createItem", createItem).add("deleteItem", deleteItem).toString();
+   public ToStringHelper string() {
+      return super.string().add("createItem", createItem).add("deleteItem", deleteItem);
    }
 
 }

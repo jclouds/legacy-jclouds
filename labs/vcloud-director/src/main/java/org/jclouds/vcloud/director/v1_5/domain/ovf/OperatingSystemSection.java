@@ -16,15 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 
@@ -34,10 +32,9 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlRootElement(name = "VirtualHardwareSection")
+@XmlRootElement(name = "OperatingSystemSection")
 public class OperatingSystemSection extends SectionType<OperatingSystemSection> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }

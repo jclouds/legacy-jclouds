@@ -18,8 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
 
 import java.net.URI;
 import java.util.List;
@@ -28,10 +27,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Represents a question which vSphere issued for a VM in a stuck state(WAITING_FOR_INPUT). It has a question element, a question ID
@@ -114,8 +111,7 @@ public class VmPendingQuestion extends ResourceType<VmPendingQuestion> {
        */
       @Override
       public Builder links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -123,8 +119,7 @@ public class VmPendingQuestion extends ResourceType<VmPendingQuestion> {
        */
       @Override
       public Builder link(Link link) {
-         super.link(link);
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       @Override

@@ -20,13 +20,14 @@ package org.jclouds.vcloud.director.v1_5.domain.ovf.environment;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 /**
  * Abstract type for all sections in
@@ -45,36 +46,48 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Section_Type")
 @XmlSeeAlso({
     PlatformSectionType.class,
     PropertySectionType.class
 })
-public abstract class SectionType {
+public abstract class SectionType<T extends SectionType<T>> {
 
     @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+    private Map<QName, String> otherAttributes = Maps.newLinkedHashMap();
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     *
-     * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
-     *
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
-     *
-     *
-     * @return
-     *     always non-null
      */
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
+    }
+
+    @Override
+    public int hashCode() {
+       return Objects.hashCode(otherAttributes);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (this == obj)
+          return true;
+       if (obj == null)
+          return false;
+       if (getClass() != obj.getClass())
+          return false;
+       SectionType<?> that = (SectionType<?>) obj;
+       return Objects.equal(this.otherAttributes, that.otherAttributes);
+    }
+
+    @Override
+    public String toString() {
+       return string().toString();
+    }
+
+    protected Objects.ToStringHelper string() {
+       return Objects.toStringHelper("").add("otherAttributes", otherAttributes);
     }
 
 }

@@ -38,7 +38,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.FirewallRule;
 import org.jclouds.vcloud.director.v1_5.domain.FirewallRuleProtocols;
 import org.jclouds.vcloud.director.v1_5.domain.FirewallService;
@@ -63,6 +62,7 @@ import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 

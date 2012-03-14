@@ -44,7 +44,6 @@ import javax.xml.namespace.QName;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlSeeAlso({
     StartupSectionItem.class

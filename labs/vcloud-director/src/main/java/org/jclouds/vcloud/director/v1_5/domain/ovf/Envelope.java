@@ -18,14 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.internal.BaseEnvelope;
 
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -60,16 +60,18 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
        * {@inheritDoc}
        */
       @Override
-      public Builder additionalSection(String name, SectionType<?> additionalSection) {
-         return Builder.class.cast(super.additionalSection(name, additionalSection));
+      public Builder additionalSection(SectionType<?> additionalSection) {
+         this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
+         return this;
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder additionalSections(Multimap<String, SectionType<?>> additionalSections) {
-         return Builder.class.cast(super.additionalSections(additionalSections));
+      public Builder additionalSections(Iterable<? extends SectionType<?>> additionalSections) {
+         this.additionalSections = ImmutableSet.<SectionType<?>> copyOf(checkNotNull(additionalSections, "additionalSections"));
+         return this;
       }
 
       /**
@@ -123,7 +125,7 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
    }
 
    private Envelope(Iterable<? extends DiskSection> diskSections, Iterable<? extends NetworkSection> networkSections,
-            Multimap<String, SectionType<?>> additionalSections, VirtualSystem virtualSystem) {
+            Iterable<? extends SectionType<?>> additionalSections, VirtualSystem virtualSystem) {
       super(diskSections, networkSections, additionalSections, virtualSystem);
    }
    

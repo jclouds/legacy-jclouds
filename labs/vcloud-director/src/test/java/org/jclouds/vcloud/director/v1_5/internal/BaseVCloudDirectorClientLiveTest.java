@@ -55,7 +55,7 @@ import com.google.inject.Module;
 
 /**
  * Tests behavior of {@link VCloudDirectorClient} and acts as parent for other client live tests.
- * 
+ *
  * @author Adrian Cole
  * @author grkvlt@apache.org
  */
@@ -94,7 +94,11 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    protected String catalogName;
+   protected String networkName;
+   protected String userName;
+
    protected URI vAppTemplateURI;
+   protected URI mediaURI;
    protected URI networkURI;
    protected URI vdcURI;
    protected URI userURI;
@@ -103,14 +107,19 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    @SuppressWarnings("unchecked")
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
       catalogName = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-name"));
+      networkName = Strings.emptyToNull(System.getProperty("test." + provider + ".network-name"));
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
       if (vAppTemplateId != null)
          vAppTemplateURI = URI.create(endpoint + "/vAppTemplate/" + vAppTemplateId);
-      
+
       String vdcId = Strings.emptyToNull(System.getProperty("test." + provider + ".vdc-id"));
       if (vdcId != null)
          vdcURI = URI.create(endpoint + "/vdc/" + vdcId);
+
+      String mediaId = Strings.emptyToNull(System.getProperty("test." + provider + ".media-id"));
+      if (mediaId != null)
+         mediaURI = URI.create(endpoint + "/media/" + mediaId);
 
       String networkId = Strings.emptyToNull(System.getProperty("test." + provider + ".network-id"));
       if (networkId != null)
@@ -119,7 +128,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       String userId = Strings.emptyToNull(System.getProperty("test." + provider + ".user-id"));
       if (userId != null)
          userURI = URI.create(endpoint + "/admin/user/" + userId);
-      
+
       if (Iterables.any(Lists.newArrayList(catalogName, vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
          Org thisOrg = context.getApi().getOrgClient().getOrg(
                   Iterables.find(context.getApi().getOrgClient().getOrgList().getOrgs(),
@@ -133,13 +142,11 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
             networkURI = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
 
-         if (userURI == null)
-            userURI = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ADMIN_USER)).getHref();
-
          if (catalogName == null)
             catalogName = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getName();
+
+         // TODO look for default networkName
       }
    }
 

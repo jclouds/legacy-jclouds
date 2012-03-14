@@ -22,15 +22,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
@@ -43,7 +40,7 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
    public static abstract class Builder<V extends BaseVirtualSystem<V>, E extends BaseEnvelope<V, E>> {
       protected Set<DiskSection> diskSections = Sets.newLinkedHashSet();
       protected Set<NetworkSection> networkSections = Sets.newLinkedHashSet();
-      protected Multimap<String, SectionType<?>> additionalSections = LinkedHashMultimap.create();
+      protected Set<SectionType<?>> additionalSections = Sets.newLinkedHashSet();
       protected V virtualSystem;
 
       /**
@@ -81,17 +78,16 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
       /**
        * @see BaseEnvelope#getAdditionalSections
        */
-      public Builder<V, E> additionalSection(String name, SectionType<?> additionalSection) {
-         this.additionalSections.put(checkNotNull(name, "name"), checkNotNull(additionalSection, "additionalSection"));
+      public Builder<V, E> additionalSection(SectionType<?> additionalSection) {
+         this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
          return this;
       }
 
       /**
        * @see BaseEnvelope#getAdditionalSections
        */
-      public Builder<V, E> additionalSections(Multimap<String, SectionType<?>> additionalSections) {
-         this.additionalSections = ImmutableMultimap.<String, SectionType<?>> copyOf(checkNotNull(additionalSections,
-                  "additionalSections"));
+      public Builder<V, E> additionalSections(Iterable<? extends SectionType<?>> additionalSections) {
+         this.additionalSections = ImmutableSet.<SectionType<?>> copyOf(checkNotNull(additionalSections, "additionalSections"));
          return this;
       }
 
@@ -114,14 +110,14 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
 
    private Set<DiskSection> diskSections;
    private Set<NetworkSection> networkSections;
-   private Multimap<String, SectionType<?>> additionalSections;
+   private Set<SectionType<?>> additionalSections;
    private V virtualSystem;
 
    protected BaseEnvelope(Iterable<? extends DiskSection> diskSections, Iterable<? extends NetworkSection> networkSections,
-            Multimap<String, SectionType<?>> additionalSections, V virtualSystem) {
+					           Iterable<? extends SectionType<?>> additionalSections, V virtualSystem) {
       this.diskSections = ImmutableSet.copyOf(checkNotNull(diskSections, "diskSections"));
       this.networkSections = ImmutableSet.copyOf(checkNotNull(networkSections, "networkSections"));
-      this.additionalSections = ImmutableMultimap.copyOf(checkNotNull(additionalSections, "additionalSections"));
+      this.additionalSections = ImmutableSet.copyOf(checkNotNull(additionalSections, "additionalSections"));
       this.virtualSystem = checkNotNull(virtualSystem, "virtualSystem");
    }
    
@@ -137,7 +133,7 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
       return diskSections;
    }
 
-   public Multimap<String, SectionType<?>> getAdditionalSections() {
+   public Set<SectionType<?>> getAdditionalSections() {
       return additionalSections;
    }
 

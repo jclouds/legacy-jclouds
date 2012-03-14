@@ -18,11 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
@@ -35,8 +35,7 @@ import javax.xml.namespace.QName;
  * &lt;complexType name="cimBoolean" /&gt;
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cimBoolean", namespace = "http://schemas.dmtf.org/wbem/wscim/1/common")
+@XmlType(name = "cimBoolean", namespace = VCLOUD_CIM_NS)
 public class CimBoolean {
 
     @XmlValue

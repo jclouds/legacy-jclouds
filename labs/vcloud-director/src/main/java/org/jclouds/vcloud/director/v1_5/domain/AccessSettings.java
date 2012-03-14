@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -37,9 +38,11 @@ import com.google.common.collect.Lists;
  * <pre>
  * &lt;complexType name="AccessSettings" /&gt;
  * </pre>
+ *
+ * @since 0.9
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AccessSettings")
+@XmlRootElement(name = "AccessSettings")
+@XmlType(name = "AccessSettingsType")
 public class AccessSettings {
 
    public static Builder builder() {

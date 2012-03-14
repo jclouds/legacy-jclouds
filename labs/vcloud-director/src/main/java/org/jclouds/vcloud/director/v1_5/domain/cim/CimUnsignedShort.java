@@ -10,15 +10,12 @@ package org.jclouds.vcloud.director.v1_5.domain.cim;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
-
 
 /**
  * <p>Java class for cimUnsignedShort complex type.
@@ -34,17 +31,8 @@ import javax.xml.namespace.QName;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cimUnsignedShort", namespace = "http://schemas.dmtf.org/wbem/wscim/1/common", propOrder = {
-    "value"
-})
-@XmlSeeAlso({
-    VirtualSystemChangeableTypeType.class,
-    ResourceAllocationChangeableTypeType.class
-})
+@XmlType(name = "cimUnsignedShort", namespace = "http://schemas.dmtf.org/wbem/wscim/1/common")
 public class CimUnsignedShort {
 
     @XmlValue

@@ -30,8 +30,6 @@ import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
@@ -39,14 +37,16 @@ import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
-import org.jclouds.vcloud.director.v1_5.domain.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 /**
  * Provides synchronous access to {@link VApp} objects.
@@ -536,7 +536,7 @@ public interface VAppClient {
     *
     * @since 1.5
     */
-   Task modifyOwner(URI vAppURI, Owner owner);
+   void modifyOwner(URI vAppURI, Owner owner);
 
    /**
     * Retrieves VAppTemplate/VM product sections.

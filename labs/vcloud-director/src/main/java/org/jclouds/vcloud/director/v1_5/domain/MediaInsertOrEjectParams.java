@@ -18,13 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 import com.google.common.base.Objects;
 
@@ -37,8 +35,8 @@ import com.google.common.base.Objects;
  *
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "MediaInsertOrEjectParams")
+@XmlRootElement(name = "MediaInsertOrEjectParams")
+@XmlType(name = "MediaInsertOrEjectParamsType")
 public class MediaInsertOrEjectParams {
 
    public static Builder builder() {

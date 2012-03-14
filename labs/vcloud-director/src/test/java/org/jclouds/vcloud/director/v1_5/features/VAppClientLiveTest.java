@@ -18,15 +18,36 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
-import static org.testng.Assert.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_CONDITION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_USER;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkControlAccessParams;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkGuestCustomizationSection;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkLeaseSettingsSection;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConfigSection;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConnectionSection;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOwner;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkProductSectionList;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVApp;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVirtualHardwareSection;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSettings;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
@@ -39,38 +60,45 @@ import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
-import org.jclouds.vcloud.director.v1_5.domain.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
-import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
+import org.jclouds.xml.internal.JAXBParser;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code VAppClient}
- * 
+ *
  * @author grkvlt@apache.org
  */
 @Test(groups = { "live", "user", "vapp" }, singleThreaded = true, testName = "VAppClientLiveTest")
@@ -95,7 +123,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Objects shared between tests.
     */
 
-   VApp vApp;
+   private JAXBParser parser;
+   
+   private Vdc vdc;
+   private VApp vApp;
+   private VAppTemplate vAppTemplate;
 
    @BeforeClass(inheritGroups = true)
    @Override
@@ -106,6 +138,30 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       vAppTemplateClient = context.getApi().getVAppTemplateClient();
       vdcClient = context.getApi().getVdcClient();
       metadataClient = vAppClient.getMetadataClient();
+
+      parser = new JAXBParser();
+   }
+
+   @BeforeClass(inheritGroups = true)
+   public void setupEnvironment() {
+      vdc = vdcClient.getVdc(vdcURI);
+      assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
+
+      vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
+      assertNotNull(vAppTemplate, String.format(ENTITY_NON_NULL, VAPP_TEMPLATE));
+      
+      // Delete the test-vapp VApp if present
+      Optional<Reference> testVApp = Iterables.tryFind(
+            vdc.getResourceEntities().getResourceEntities(),
+            Predicates.and(
+			      ReferenceTypePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
+			      ReferenceTypePredicates.<Reference>nameEquals("test-vapp")
+		      )
+		   );
+      if (testVApp.isPresent()) {
+         Task deleteTestVApp = vAppClient.deleteVApp(testVApp.get().getHref());
+	      retryTaskSuccess.apply(deleteTestVApp);
+      }
    }
 
    /**
@@ -121,7 +177,15 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Check the retrieved object is well formed
       checkVApp(vApp);
 
-      assertEquals(vApp, vAppInstantiated, String.format(ENTITY_EQUAL, VAPP));
+      // Check that task progress is increasing
+      Integer vAppProgress = Iterables.getOnlyElement(vApp.getTasks()).getProgress();
+      Integer vAppInstantiatedProgress = Iterables.getOnlyElement(vAppInstantiated.getTasks()).getProgress();
+      assertTrue(vAppProgress >= vAppInstantiatedProgress,
+            String.format(ENTITY_CONDITION, VAPP, "have an increasing value in the Progress field", String.format("%d < %d", vAppProgress, vAppInstantiatedProgress)));
+
+      // Cheat and copy the VApp with the progress of the instantiate task modified for equality testing
+      VApp vAppCopy = vApp.toBuilder().tasks(ImmutableSet.of(Iterables.getOnlyElement(vApp.getTasks()).toBuilder().progress(vAppInstantiatedProgress).build())).build();
+      assertEquals(vAppCopy, vAppInstantiated, String.format(ENTITY_EQUAL, VAPP));
    }
 
    /**
@@ -129,16 +193,18 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    @Test(testName = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
    public void testModifyVApp() {
-      vApp.setName("new-name");
-      vApp.setDescription("New Description");
+      VApp newVApp = VApp.builder()
+		      .name("new-name")
+		      .description("New Description")
+		      .build();
 
       // The method under test
-      Task modifyVApp = vAppClient.modifyVApp(vApp.getHref(), vApp);
+      Task modifyVApp = vAppClient.modifyVApp(vApp.getHref(), newVApp);
       assertTrue(retryTaskSuccess.apply(modifyVApp), String.format(TASK_COMPLETE_TIMELY, "modifyVApp"));
 
       vApp = vAppClient.getVApp(vApp.getHref());
-      assertEquals(vApp.getName(), "new-name", String.format(OBJ_FIELD_EQ, VAPP, "name", "new-name", "modified"));
-      assertEquals(vApp.getDescription(), "New Description", String.format(OBJ_FIELD_EQ, VAPP, "description", "New Description", "modified"));
+      assertEquals(vApp.getName(), newVApp.getName(), String.format(OBJ_FIELD_EQ, VAPP, "Name", newVApp.getName(), vApp.getName()));
+      assertEquals(vApp.getDescription(), newVApp.getDescription(), String.format(OBJ_FIELD_EQ, VAPP, "Description", newVApp.getDescription(), vApp.getDescription()));
    }
 
    @Test(testName = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
@@ -181,7 +247,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    @Test(testName = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testGetVApp" })
-   public void testConsolidateVApp(URI vAppURI) {
+   public void testConsolidateVApp() {
       // The method under test
       Task consolidateVApp = vAppClient.consolidateVApp(vApp.getHref());
       assertTrue(retryTaskSuccess.apply(consolidateVApp), String.format(TASK_COMPLETE_TIMELY, "consolidateVApp"));
@@ -193,12 +259,12 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .notSharedToEveryone()
             .accessSettings(AccessSettings.builder()
                   .accessSetting(AccessSetting.builder()
-                        .subject(Reference.builder().href(userURI).build())
+                        .subject(Reference.builder().href(userURI).type(ADMIN_USER).build())
                         .accessLevel("ReadOnly")
                         .build())
                   .build())
             .build();
-      
+
       // The method under test
       ControlAccessParams modified = vAppClient.controlAccess(vApp.getHref(), params);
       checkControlAccessParams(modified);
@@ -211,7 +277,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .sharedToEveryone()
             .everyoneAccessLevel("FullControl")
             .build();
-      
+
       // The method under test
       ControlAccessParams modified = vAppClient.controlAccess(vApp.getHref(), params);
       checkControlAccessParams(modified);
@@ -384,11 +450,13 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getX, "");
    }
 
+   // FIXME "Error: validation error : EntityRef has incorrect type, expected type is com.vmware.vcloud.entity.vm."
    @Test(enabled = false, testName = "PUT /vApp/{id}/media/action/insertMedia", dependsOnMethods = { "testGetVApp" })
    public void testInsertMedia() {
       MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
+            .media(Reference.builder().href(mediaURI).type(MEDIA).build())
             .build();
-      
+
       // The method under test
       Task insertMedia = vAppClient.insertMedia(vApp.getHref(), params);
       assertTrue(retryTaskSuccess.apply(insertMedia), String.format(TASK_COMPLETE_TIMELY, "insertMedia"));
@@ -397,8 +465,9 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(enabled = false, testName = "PUT /vApp/{id}/media/action/ejectMedia", dependsOnMethods = { "testInsertMedia" })
    public void testEjectMedia() {
       MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
+            .media(Reference.builder().href(mediaURI).type(MEDIA).build())
             .build();
-      
+
       // The method under test
       Task ejectMedia = vAppClient.ejectMedia(vApp.getHref(), params);
       assertTrue(retryTaskSuccess.apply(ejectMedia), String.format(TASK_COMPLETE_TIMELY, "ejectMedia"));
@@ -484,15 +553,17 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
    public void testModifyOwner() {
       Owner newOwner = Owner.builder()
-            .user(Reference.builder().href(userURI).build())
+            .user(Reference.builder().href(userURI).type(ADMIN_USER).build())
             .build();
 
       // The method under test
-      Task modifyOwner = vAppClient.modifyOwner(vApp.getHref(), newOwner);
-      assertTrue(retryTaskSuccess.apply(modifyOwner), String.format(TASK_COMPLETE_TIMELY, "modifyOwner"));
+      vAppClient.modifyOwner(vApp.getHref(), newOwner);
 
       Owner modified = vAppClient.getOwner(vApp.getHref());
-      assertEquals(modified, newOwner);
+      checkOwner(modified);
+
+      // Check the href fields match
+      assertEquals(modified.getUser().getHref(), newOwner.getUser().getHref());
    }
 
    @Test(testName = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
@@ -727,25 +798,81 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    private VApp instantiateVApp() {
-      Vdc vdc = vdcClient.getVdc(vdcURI);
-      assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
+      InstantiateVAppTemplateParams instantiate = InstantiateVAppTemplateParams.builder()
+            .name("test-vapp")
+            .notDeploy()
+            .notPowerOn()
+            .description("Test VApp")
+            .instantiationParams(instantiationParams())
+            .source(ReferenceType.<Reference>builder().href(vAppTemplateURI).build())
+            .build();
+      
+      // debug(instantiate);
 
-      VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
-      assertNotNull(vAppTemplate, String.format(OBJ_REQ_LIVE, VAPP_TEMPLATE));
+		VApp vAppInstantiated = vdcClient.instantiateVApp(vdcURI, instantiate);
+		assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
 
-      InstantiateVAppTemplateParams instantiate = InstantiateVAppTemplateParams.builder().name("test-vapp").notDeploy().notPowerOn().description("Test VApp").instantiationParams(
-            InstantiationParams.builder().sections(
-                  ImmutableSet.of(NetworkConfigSection.builder().info("Configuration parameters for logical networks").networkConfigs(
-                        ImmutableSet.of(VAppNetworkConfiguration.builder().networkName("vAppNetwork").configuration(
-                              NetworkConfiguration.builder().parentNetwork(Iterables.find(vdc.getAvailableNetworks().getNetworks(), new Predicate<Reference>() {
-                                 @Override
-                                 public boolean apply(Reference reference) {
-                                    return reference.getHref().equals(networkURI);
-                                 }
-                              })).fenceMode("bridged").build()).build())).build())).build()).source(Reference.builder().href(vAppTemplateURI).build()).build();
+		return vAppInstantiated;
+	}
 
-      VApp vAppInstantiated = vdcClient.instantiateVApp(vdcURI, instantiate);
-      assertNotNull(vAppInstantiated, String.format(VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT, VAPP));
-      return vAppInstantiated;
+   private InstantiationParams instantiationParams() {
+      InstantiationParams instantiationParams = InstantiationParams.builder()
+		      .sections(ImmutableSet.of(networkConfigSection()))
+		      .build();
+
+      return instantiationParams;
+   }
+
+   private NetworkConfigSection networkConfigSection() {
+      NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
+		      .info("Configuration parameters for logical networks")
+		      .networkConfigs(
+		            ImmutableSet.of(VAppNetworkConfiguration.builder()
+		                  .networkName("vAppNetwork")
+		                  .configuration(networkConfiguration())
+		                  .build()))
+		      .build();
+
+      return networkConfigSection;
+   }
+
+   private NetworkConfiguration networkConfiguration() {
+      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Optional<Reference> parentNetwork = Iterables.tryFind(
+            networks, new Predicate<Reference>() {
+                  @Override
+                  public boolean apply(Reference reference) {
+                     return reference.getHref().equals(networkURI);
+                  }
+            });
+
+      if (!parentNetwork.isPresent()) {
+         fail(String.format("Could not find network %s in vdc", networkURI.toASCIIString()));
+      }
+
+      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
+		      .parentNetwork(parentNetwork.get())
+		      .fenceMode("bridged")
+		      .build();
+
+      return networkConfiguration;
+   }
+
+   /**
+    * Marshals a JAXB annotated object into XML.
+    *
+    * The XML is output on {@link System#err}.
+    */
+   private void debug(Object object) {
+		String xml;
+      try {
+         xml = parser.toXML(object);
+      
+	      System.err.println(Strings.repeat("-", 80));
+	      System.err.println(xml);
+	      System.err.println(Strings.repeat("-", 80));
+      } catch (IOException ioe) {
+         Throwables.propagate(ioe);
+      }
    }
 }

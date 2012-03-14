@@ -26,6 +26,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -39,6 +40,7 @@ import com.google.common.collect.Sets;
  * &lt;complexType name="VAppNetworkConfiguration" /&gt;
  * </pre>
  */
+@XmlRootElement(name = "NetworkConfiguration")
 @XmlType(name = "VAppNetworkConfiguration")
 public class VAppNetworkConfiguration extends ResourceType<VAppNetworkConfiguration> {
 

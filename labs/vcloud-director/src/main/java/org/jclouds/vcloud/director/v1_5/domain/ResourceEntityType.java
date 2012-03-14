@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorRuntimeException;
 
@@ -49,6 +50,7 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  * @author grkvlt@apache.org
  */
+@XmlType(name = "ResourceEntityType")
 public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityType<T> {
 
    public static enum Status {

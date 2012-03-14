@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.google.common.collect.Sets;
 
 /**
@@ -31,6 +33,7 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  * @author Adam Lowe
  */
+@XmlRootElement(name = "Entity")
 public class Entity extends EntityType<Entity> {
 
    public static Builder builder() {

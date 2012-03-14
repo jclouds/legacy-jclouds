@@ -18,13 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
@@ -37,8 +37,7 @@ import javax.xml.namespace.QName;
  * &lt;complexType name="cimReference" /&gt;
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "cimReference", namespace = "http://schemas.dmtf.org/wbem/wscim/1/common")
+@XmlType(name = "cimReference", namespace = VCLOUD_CIM_NS)
 public class CimReference {
 
     @XmlAnyElement(lax = true)

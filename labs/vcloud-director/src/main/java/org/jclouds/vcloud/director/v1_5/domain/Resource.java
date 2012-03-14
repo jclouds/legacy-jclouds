@@ -18,18 +18,17 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A resource.
  *
  * @author grkvlt@apache.org
  */
+@XmlRootElement(name = "Resource")
 public class Resource extends ResourceType<Resource> {
 
    public static Builder builder() {
@@ -71,8 +70,7 @@ public class Resource extends ResourceType<Resource> {
        */
       @Override
       public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -80,8 +78,7 @@ public class Resource extends ResourceType<Resource> {
        */
       @Override
       public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
       @Override

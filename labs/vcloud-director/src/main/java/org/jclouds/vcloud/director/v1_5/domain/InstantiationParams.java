@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
@@ -41,7 +42,8 @@ import com.google.common.collect.Sets;
  * 
  * @author grkvlt@apache.org
  */
-@XmlType(name = "InstantiationParams")
+@XmlRootElement(name = "InstantiationParams")
+@XmlType(name = "InstantiationParamsType")
 public class InstantiationParams {
 
    public static Builder builder() {

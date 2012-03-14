@@ -131,7 +131,7 @@ public interface VdcAsyncClient {
     * @see VdcClient#instantiateVApp(URI, InstantiateVAppParamsType)
     */
    @POST
-   @Path("/action/instantiateVApp")
+   @Path("/action/instantiateVAppTemplate")
    @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser

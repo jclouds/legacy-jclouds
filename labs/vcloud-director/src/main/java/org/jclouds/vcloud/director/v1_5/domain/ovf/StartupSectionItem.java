@@ -40,12 +40,9 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "Item")
-public class StartupSectionItem
-    extends Item
-{
+public class StartupSectionItem extends Item {
 
 
 }

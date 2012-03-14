@@ -118,8 +118,8 @@ public class VCloudDirectorMediaType {
    
    public static final String OPERATING_SYSTEM_SECTION = "application/vnd.vmware.vcloud.operatingSystemSection+xml";
    
-   public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.productSection+xml";
-
+   public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.productSections+xml";
+   
    public static final String STARTUP_SECTION = "application/vnd.vmware.vcloud.startupSection+xml";
 
    public static final String VIRTUAL_HARDWARE_SECTION = "application/vnd.vmware.vcloud.virtualHardwareSection+xml";
@@ -180,6 +180,8 @@ public class VCloudDirectorMediaType {
    
    public static final String SCREEN_TICKET = "application/vnd.vmware.vcloud.screenTicket+xml";
    
+   public static final String VAPP_NETWORK = "application/vnd.vmware.vcloud.vAppNetwork+xml";
+   
    public static final String ADMIN_VDC = "application/vnd.vmware.admin.vdc+xml";
    
    /**
@@ -206,6 +208,6 @@ public class VCloudDirectorMediaType {
          ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
          ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
          RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC, MEDIA_PARAMS, RUNTIME_INFO_SECTION,
-         SCREEN_TICKET
+         SCREEN_TICKET, VAPP_NETWORK
       );
 }

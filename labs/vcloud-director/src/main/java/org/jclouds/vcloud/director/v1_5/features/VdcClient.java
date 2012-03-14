@@ -115,6 +115,10 @@ public interface VdcClient {
    /**
     * Instantiate a vApp template into a new vApp. 
     * The status of vApp will be in UNRESOLVED(0) until the instantiate task is finished.
+    *
+    * <pre>
+    * POST /vdc/{id}/action/instantiateVAppTemplate
+    * </pre>
     * 
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,17 +18,16 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 
@@ -41,15 +40,17 @@ import com.google.common.collect.Sets;
  * The base type for all objects in the vCloud model.
  *
  * Has an optional list of links and href and type attributes.
- * <p>
+ *
  * <pre>
  * &lt;xs:complexType name="ResourceType" /&gt;
  * </pre>
  *
  * @author Adrian Cole
+ *
+ * @since 0.9
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ResourceType<T extends ResourceType<T>> {
+@XmlType(name = "ResourceType")
+public class ResourceType<T extends ResourceType<T>> {
    
    public NewBuilder<?> toNewBuilder() {
       throw new UnsupportedOperationException("New builder not yet implemented for this class");
@@ -102,10 +103,12 @@ public abstract class ResourceType<T extends ResourceType<T>> {
          return href(in.getHref()).type(in.getType()).links(in.getLinks());
       }
    }
-   
-   public abstract Builder<T> toBuilder();
 
-   public static abstract class Builder<T extends ResourceType<T>> {
+   public Builder<T> toBuilder() {
+      return new Builder<T>().fromResourceType(this);
+   }
+   
+   public static class Builder<T extends ResourceType<T>> {
 
       protected URI href;
       protected String type;
@@ -146,7 +149,9 @@ public abstract class ResourceType<T extends ResourceType<T>> {
          return this;
       }
 
-      public abstract ResourceType<T> build();
+      public ResourceType<T> build() {
+         return new ResourceType<T>(href, type, links);
+      }
 
       protected Builder<T> fromResourceType(ResourceType<T> in) {
          return href(in.getHref()).type(in.getType()).links(in.getLinks());

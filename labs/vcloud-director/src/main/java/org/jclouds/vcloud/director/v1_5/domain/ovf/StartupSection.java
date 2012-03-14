@@ -5,7 +5,7 @@
 // Generated on: 2012.02.08 at 02:47:44 PM GMT
 //
 
-package org.jclouds.vcloud.director.v1_5.domain;
+package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
@@ -19,8 +19,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSectionItem;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -33,7 +31,7 @@ import com.google.common.collect.ImmutableList;
  * &lt;complexType name="StartupSection_Type" /&gt;
  * </pre>
  */
-@XmlRootElement(name = "StartupSection", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "StartupSection")
 public class StartupSection extends SectionType<StartupSection> {
 
    public static Builder builder() {

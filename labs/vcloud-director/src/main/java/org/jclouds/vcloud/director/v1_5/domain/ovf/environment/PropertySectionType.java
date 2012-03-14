@@ -18,23 +18,18 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf.environment;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.w3c.dom.Element;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
- * Key/value pairs of assigned properties for an
- *             entity
- *
- * <p>Java class for PropertySection_Type complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * Key/value pairs of assigned properties for an entity
  *
  * <pre>
  * &lt;complexType name="PropertySection_Type">
@@ -59,80 +54,52 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- *
- *
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "PropertySection_Type", propOrder = {
-    "property",
-    "any"
-})
-public class PropertySectionType
-    extends SectionType
-{
+@XmlRootElement(name = "PropertySection")
+@XmlType(name = "PropertySection_Type")
+public class PropertySectionType extends SectionType<PropertySectionType> {
 
     @XmlElement(name = "Property")
-    protected List<Property> property;
+    protected Set<Property> properties = Sets.newLinkedHashSet();
     @XmlAnyElement(lax = true)
-    protected List<Object> any;
+    protected Set<Object> any = Sets.newLinkedHashSet();
 
     /**
-     * Gets the value of the property property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the property property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProperty().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Property }
-     *
-     *
+     * Gets the value of the properties property.
      */
-    public List<Property> getProperty() {
-        if (property == null) {
-            property = new ArrayList<Property>();
-        }
-        return this.property;
+    public Set<Property> getProperties() {
+        return properties;
     }
 
     /**
      * Gets the value of the any property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAny().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Object }
-     * {@link Element }
-     *
-     *
      */
-    public List<Object> getAny() {
-        if (any == null) {
-            any = new ArrayList<Object>();
-        }
-        return this.any;
+    public Set<Object> getAny() {
+        return any;
     }
 
+    @Override
+    public int hashCode() {
+       return Objects.hashCode(super.hashCode(), properties, any);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (this == obj)
+          return true;
+       if (obj == null)
+          return false;
+       if (getClass() != obj.getClass())
+          return false;
+       PropertySectionType that = (PropertySectionType) obj;
+       return super.equals(that) &&
+             Objects.equal(this.properties, that.properties) &&
+             Objects.equal(this.any, that.any);
+    }
+
+    @Override
+    protected Objects.ToStringHelper string() {
+       return super.string()
+             .add("properties", properties).add("any", any);
+    }
 }

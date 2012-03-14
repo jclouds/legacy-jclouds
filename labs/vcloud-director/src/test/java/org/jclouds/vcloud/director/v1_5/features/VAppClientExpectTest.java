@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
@@ -26,31 +26,35 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
-import org.jclouds.vcloud.director.v1_5.domain.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.testng.internal.annotations.Sets;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimaps;
@@ -202,7 +206,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .httpResponseBuilder().build());
+            .httpResponseBuilder().statusCode(204).build());
 		
 		// TODO how to test?
 		client.getVAppClient().enterMaintenanceMode(vAppURI);
@@ -216,7 +220,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .httpResponseBuilder().build());
+            .httpResponseBuilder().statusCode(204).build());
 		
 		// TODO how to test?
 		client.getVAppClient().exitMaintenanceMode(vAppURI);
@@ -687,15 +691,12 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/vApp/modifyOwner.xml", VCloudDirectorMediaType.TASK)
-            .httpResponseBuilder().build());
-		      
-      Owner owner = getOwner().toBuilder()
-		      .build();
+            .httpResponseBuilder().statusCode(204).build());
+      
+      Owner owner = Owner.builder()
+            .build();
 		
-		Task expected = modifyOwnerTask();
-		
-		assertEquals(client.getVAppClient().modifyOwner(vAppURI, owner), expected);
+		client.getVAppClient().modifyOwner(vAppURI, owner);
    }
 
    @Test(enabled = false)
@@ -756,7 +757,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .acceptAnyMedia()
             .httpRequestBuilder().build(), 
          new VcloudHttpResponsePrimer()
-            .httpResponseBuilder().build());
+            .httpResponseBuilder().statusCode(204).build());
 
          VmQuestionAnswer answer = null; // = VmQuestionAnswer.builder();
 //               .build;
@@ -1397,8 +1398,8 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    public static RASD getVirtualHardwareSectionCpu() {
-      RASD cpu = null; // = RASD.builder();
-//            .build();
+      RASD cpu = RASD.builder()
+            .build();
 
       return cpu;
    }
@@ -1432,8 +1433,8 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    public static RASD getVirtualHardwareSectionMemory() {
-      RASD memory = null; // = RASD.builder();
-//            .build();
+      RASD memory = RASD.builder()
+            .build();
 
       return memory;
    }
@@ -1467,7 +1468,30 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    public static Task modifyVirtualHardwareSectionSerialPortsTask() {
+      return task("id", "name", "description", "status", "operation", "operationName", "startTime");
+   }
+
+   /** Used by other methods to create a custom {@link Task} object. */
+   private static Task task(String taskId, String name, String description, String status, String operation, String operationName, String startTime) {
       Task task = Task.builder()
+            .error(Error.builder().build())
+            .org(Reference.builder().build())
+            .owner(Reference.builder().build())
+            .user(Reference.builder().build())
+            .params(null)
+            .progress(0)
+            .status(status)
+            .operation(operation)
+            .operationName(operationName)
+            .startTime(dateService.iso8601DateParse(startTime))
+            .endTime(null)
+            .expiryTime(null)
+            .tasks(Sets.<Task>newLinkedHashSet())
+            .description(description)
+            .name(name)
+            .id("urn:vcloud:" + taskId)
+            .href(URI.create(endpoint + "/task/" + taskId))
+            .links(Sets.<Link>newLinkedHashSet())
             .build();
 
       return task;

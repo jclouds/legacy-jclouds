@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -42,7 +42,8 @@ import com.google.common.collect.Lists;
  * 
  * @author grkvlt@apache.org
  */
-@XmlType(name = "ComposeVAppParams")
+@XmlRootElement(name = "ComposeVAppParams")
+@XmlType(name = "ComposeVAppParamsType")
 public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams> {
 
    public static Builder builder() {
@@ -55,15 +56,15 @@ public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams>
 
    public static class Builder extends VAppCreationParamsType.Builder<ComposeVAppParams> {
 
-      private List<SourcedCompositionItemParam> sourcedItemList = Lists.newArrayList();
-      private Boolean allEULAsAccepted;
-      private Boolean linkedClone;
+      protected List<SourcedCompositionItemParam> sourcedItems = Lists.newArrayList();
+      protected Boolean allEULAsAccepted;
+      protected Boolean linkedClone;
 
       /**
        * @see ComposeVAppParams#getSourcedItems()
        */
-      public Builder sourcedItemList(List<SourcedCompositionItemParam> sourcedItemList) {
-         this.sourcedItemList = Lists.newArrayList(checkNotNull(sourcedItemList, "sourcedItemList"));
+      public Builder sourcedItems(List<SourcedCompositionItemParam> sourcedItems) {
+         this.sourcedItems = Lists.newArrayList(checkNotNull(sourcedItems, "sourcedItems"));
          return this;
       }
 
@@ -71,7 +72,7 @@ public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams>
        * @see ComposeVAppParams#getSourcedItem()
        */
       public Builder sourcedItem(SourcedCompositionItemParam sourcedItem) {
-         this.sourcedItemList.add(checkNotNull(sourcedItem, "sourcedItem"));
+         this.sourcedItems.add(checkNotNull(sourcedItem, "sourcedItem"));
          return this;
       }
 
@@ -93,7 +94,7 @@ public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams>
 
       @Override
       public ComposeVAppParams build() {
-         return new ComposeVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, sourcedItemList, allEULAsAccepted, linkedClone);
+         return new ComposeVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, sourcedItems, allEULAsAccepted, linkedClone);
       }
 
       /**
@@ -192,14 +193,14 @@ public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams>
       }
 
       public Builder fromComposeVAppParams(ComposeVAppParams in) {
-         return fromVAppCreationParamsType(in).sourcedItemList(in.getSourcedItemList()).allEULAsAccepted(in.isAllEULAsAccepted()).linkedClone(in.isLinkedClone());
+         return fromVAppCreationParamsType(in).sourcedItems(in.getSourcedItems()).allEULAsAccepted(in.isAllEULAsAccepted()).linkedClone(in.isLinkedClone());
       }
    }
 
    public ComposeVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn,
                             List<SourcedCompositionItemParam> sourcedItems, Boolean allEULAsAccepted, Boolean linkedClone) {
       super(description, name, vAppParent, instantiationParams, deploy, powerOn);
-      this.sourcedItemList = ImmutableList.copyOf(sourcedItemList);
+      this.sourcedItems = ImmutableList.copyOf(sourcedItems);
       this.allEULAsAccepted = allEULAsAccepted;
       this.linkedClone = linkedClone;
    }
@@ -209,17 +210,17 @@ public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams>
    }
 
    @XmlElement(name = "SourcedItem")
-   protected List<SourcedCompositionItemParam> sourcedItemList = Lists.newArrayList();
+   protected List<SourcedCompositionItemParam> sourcedItems = Lists.newArrayList();
    @XmlElement(name = "AllEULAsAccepted")
    protected Boolean allEULAsAccepted;
    @XmlAttribute
    protected Boolean linkedClone;
 
    /**
-    * Gets the value of the sourcedItem property.
+    * Gets the value of the sourcedItems property.
     */
-   public List<SourcedCompositionItemParam> getSourcedItemList() {
-      return ImmutableList.copyOf(this.sourcedItemList);
+   public List<SourcedCompositionItemParam> getSourcedItems() {
+      return ImmutableList.copyOf(sourcedItems);
    }
 
    /**
@@ -247,17 +248,17 @@ public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams>
          return false;
       ComposeVAppParams that = ComposeVAppParams.class.cast(o);
       return super.equals(that) &&
-            equal(this.sourcedItemList, that.sourcedItemList) && equal(this.allEULAsAccepted, that.allEULAsAccepted) && equal(this.linkedClone, that.linkedClone);
+            equal(this.sourcedItems, that.sourcedItems) && equal(this.allEULAsAccepted, that.allEULAsAccepted) && equal(this.linkedClone, that.linkedClone);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), sourcedItemList, allEULAsAccepted, linkedClone);
+      return Objects.hashCode(super.hashCode(), sourcedItems, allEULAsAccepted, linkedClone);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("sourcedItemList", sourcedItemList).add("allEULAsAccepted", allEULAsAccepted).add("linkedClone", linkedClone);
+      return super.string().add("sourcedItems", sourcedItems).add("allEULAsAccepted", allEULAsAccepted).add("linkedClone", linkedClone);
    }
 
 }

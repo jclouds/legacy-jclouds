@@ -81,4 +81,6 @@ public class VCloudDirectorLiveTestConstants {
 
    public static final String ENTITY_EQUAL = "ERR-302: The two %s entities must be equal";
 
+   public static final String ENTITY_CONDITION = "ERR-303: The %s entity must %s (%s)";
+
 }
