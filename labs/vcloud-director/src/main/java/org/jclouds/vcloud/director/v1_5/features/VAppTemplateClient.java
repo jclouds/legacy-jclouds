@@ -80,7 +80,7 @@ public interface VAppTemplateClient {
    Task consolidateVappTemplate(URI templateUri);
 
    /**
-    * Consolidates a VM
+    * Disables the download link to the ovf of a vApp template.
     *
     * @param templateUri the URI of the template
     * @return the task performing the action
@@ -88,7 +88,7 @@ public interface VAppTemplateClient {
    Task disableDownloadVappTemplate(URI templateUri);
 
    /**
-    * Consolidates a VM,
+    * Enables downloading of the ovf of a vApp template.
     *
     * @param templateUri the URI of the template
     * @return the task performing the action
@@ -236,15 +236,6 @@ public interface VAppTemplateClient {
     * @return the network section requested
     */
    NetworkSection getVAppTemplateNetworkSection(URI templateUri);
-
-   /**
-    * Modifies the network section of a vApp or vApp template.
-    *
-    * @param templateUri the URI of the template
-    * @param section     the new configuration to apply
-    * @return the task performing the action
-    */
-   Task editVAppTemplateNetworkSection(URI templateUri, NetworkSection section);
 
    /**
     * Retrieves an OVF descriptor of a vApp template.
