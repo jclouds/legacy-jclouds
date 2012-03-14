@@ -27,6 +27,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -61,6 +62,22 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
    }
    
    // PUT /admin/network/{id}
+   @Test
+   public void testUpdateNetwork() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1")
+            .xmlFilePayload("/network/admin/updateNetworkSource.xml", VCloudDirectorMediaType.ORG_NETWORK)
+            .acceptMedia(VCloudDirectorMediaType.TASK)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/network/admin/updateNetworkTask.xml", VCloudDirectorMediaType.TASK)
+            .httpResponseBuilder().build());
+
+      Task expected = updateNetworkTask();
+
+      assertEquals(client.getAdminNetworkClient().updateNetwork(networkRef.getHref(), updateNetwork()), expected);
+   }
    
    // POST /admin/network/{id}/action/reset
    
@@ -97,6 +114,45 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
             .type("application/vnd.vmware.admin.networkPool+xml")
             .name("vcdni01")
             .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/extension/networkPool/e86bfdb5-b3e0-4ece-9125-e764ac64c95c"))
+            .build())
+         .build();
+   }
+   
+   public final OrgNetwork updateNetwork() {
+      return orgNetwork().toNewBuilder()
+         
+         .build();
+   }
+   
+   public final Task updateNetworkTask() {
+      return Task.builder()
+         .status("running")
+         .startTime(dateService.iso8601DateParse("2012-03-14T12:39:23.720-04:00"))
+         .operationName("networkUpdateNetwork")
+         .operation("Updating Network ilsolation01-Jclouds(f3ba8256-6f48-4512-aad6-600e85b4dc38)")
+         .expiryTime(dateService.iso8601DateParse("2012-06-12T12:39:23.720-04:00"))
+         .name("task")
+         .id("urn:vcloud:task:49d2e180-7921-4902-ac39-b4ff5406bb94")
+         .type("application/vnd.vmware.vcloud.task+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/task/49d2e180-7921-4902-ac39-b4ff5406bb94"))
+         .link(Link.builder()
+            .rel("task:cancel")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/task/49d2e180-7921-4902-ac39-b4ff5406bb94/action/cancel"))
+            .build())
+         .owner(Reference.builder()
+            .type("application/vnd.vmware.vcloud.network+xml")
+            .name("ilsolation01-Jclouds")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"))
+            .build())
+         .user(Reference.builder()
+            .type("application/vnd.vmware.admin.user+xml")
+            .name("dan@cloudsoftcorp.com")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/ae75edd2-12de-414c-8e85-e6ea10442c08"))
+            .build())
+         .org(Reference.builder()
+            .type("application/vnd.vmware.vcloud.org+xml")
+            .name("JClouds")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
             .build())
          .build();
    }

@@ -22,12 +22,19 @@ import java.net.URI;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Produces;
 
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -50,7 +57,13 @@ public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    @Override
    ListenableFuture<ExternalNetwork> getNetwork(@EndpointParam URI networkRef);
    
-   // PUT /admin/network/{id}
+   @PUT
+   @Consumes(VCloudDirectorMediaType.TASK)
+   @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Task> updateNetwork(@EndpointParam URI networkRef, 
+         @BinderParam(BindToXMLPayload.class) OrgNetwork network);
    
    // POST /admin/network/{id}/action/reset
    

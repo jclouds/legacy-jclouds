@@ -20,6 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
@@ -28,6 +31,22 @@ import com.google.common.base.Objects.ToStringHelper;
 
 @XmlSeeAlso( {OrgNetwork.class, ExternalNetwork.class} )
 public abstract class Network extends EntityType {
+   public static final class FenceMode {
+
+      public static final String BRIDGED = "bridged";
+      public static final String ISOLATED = "isolated";
+      public static final String NAT_ROUTED = "natRouted";
+
+      /**
+       * All acceptable {@link Network#getFenceMode()} values.
+       * <p/>
+       * This list must be updated whenever a new mode is added.
+       */
+      public static final List<String> ALL = Arrays.asList(
+            BRIDGED, ISOLATED, NAT_ROUTED
+      );
+   }
+   
    public abstract static class Builder<T extends Builder<T>> extends EntityType.Builder<T> {
       protected NetworkConfiguration networkConfiguration;
 
@@ -39,7 +58,7 @@ public abstract class Network extends EntityType {
          return self();
       }
 
-      public T fromNetworkType(Network in) {
+      public T fromNetwork(Network in) {
          return fromEntityType(in).configuration(in.getConfiguration());
       }
    }
@@ -55,7 +74,6 @@ public abstract class Network extends EntityType {
    
    @SuppressWarnings("unchecked")
    public static <T extends Network> T toSubType(Network clazz) {
-      assert clazz instanceof Network;
       return (T)clazz;
    }
 

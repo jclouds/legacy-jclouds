@@ -92,7 +92,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
 
    @Inject
    protected void initTaskSuccess(TaskSuccess taskSuccess) {
-      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 1000L);
+      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 10000L);
    }
 
    @Inject

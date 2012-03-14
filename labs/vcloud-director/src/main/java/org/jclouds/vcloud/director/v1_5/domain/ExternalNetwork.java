@@ -90,7 +90,7 @@ public class ExternalNetwork extends Network {
       }
       
       public T fromExternalNetwork(ExternalNetwork in) {
-         return fromNetworkType(in)
+         return fromNetwork(in)
             .providerInfo(in.getProviderInfo());
       }
    }

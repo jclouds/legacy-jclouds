@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Network;
+import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 
 /**
  * Provides synchronous access to admin {@link Network} objects.
@@ -42,13 +44,25 @@ public interface AdminNetworkClient extends NetworkClient {
     * GET /admin/network/{id}
     * </pre>
     *
-    * @param catalogUri the reference for the catalog
-    * @return a catalog
+    * @param networkRef the reference for the network
+    * @return the network
     */
    @Override
    Network getNetwork(URI networkRef);
    
-   // PUT /admin/network/{id}
+   /**
+    * Modifies an org network
+    *
+    * <pre>
+    * PUT /admin/network/{id}
+    * </pre>
+    *
+    * @param networkRef the reference for the network
+    * @param network the updated network
+    * @return a task. This operation is asynchronous and the user should monitor the 
+    * returned task status in order to check when it is completed.
+    */
+   Task updateNetwork(URI networkRef, OrgNetwork network);
    
    // POST /admin/network/{id}/action/reset
 

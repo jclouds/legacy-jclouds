@@ -372,7 +372,14 @@ public class Checks {
    }
    
    public static void checkNetworkConfiguration(NetworkConfiguration config) {
+      // required
+      assertNotNull(config.getFenceMode(), String.format(NOT_NULL_OBJECT_FMT, 
+            "fenceMode", "NetworkConfiguration"));
+      assertTrue(Network.FenceMode.ALL.contains(config.getFenceMode()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
+            "fenceMode", "NetworkConfiguration", config.getFenceMode(), Iterables.toString(Network.FenceMode.ALL)));
+      
       // Check optional fields
+      // NOTE retainNetInfoAcrossDeployments cannot be checked
       if (config.getIpScope() != null) {
          checkIpScope(config.getIpScope());
       }
