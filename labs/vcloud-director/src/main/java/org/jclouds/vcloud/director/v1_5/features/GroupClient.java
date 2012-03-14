@@ -44,6 +44,7 @@ public interface GroupClient {
     * @return a group
     */
    Group getGroup(URI groupUri);
+
    /**
     * Modifies a group.
     * 

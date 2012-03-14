@@ -229,7 +229,6 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       Task setCatalogItemMetadataValue = catalogClient.getMetadataClient().setMetadata(catalogItemRef.getHref(), "KEY", newMetadataValue);
       checkTask(setCatalogItemMetadataValue);
-      Checks.checkTask(setCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(setCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "setCatalogItemMetadataValue"));
       
@@ -243,7 +242,6 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testDeleteCatalogItemMetadataValue() {
       Task deleteCatalogItemMetadataValue = catalogClient.getMetadataClient().deleteMetadataEntry(catalogItemRef.getHref(), "KEY");
       checkTask(deleteCatalogItemMetadataValue);
-      Checks.checkTask(deleteCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
       try {
@@ -271,7 +269,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       deleteAllCatalogItemMetadata(catalogItemURI);
       Metadata newMetadata = Metadata.builder().entry(MetadataEntry.builder().entry("KEY", "VALUE").build()).build();
       Task mergeCatalogItemMetadata = catalogClient.getMetadataClient().mergeMetadata(catalogItemURI, newMetadata);
-      Checks.checkTask(mergeCatalogItemMetadata);
+      checkTask(mergeCatalogItemMetadata);
       assertTrue(retryTaskSuccess.apply(mergeCatalogItemMetadata), 
             String.format(TASK_COMPLETE_TIMELY, "mergeCatalogItemMetadata"));
    }

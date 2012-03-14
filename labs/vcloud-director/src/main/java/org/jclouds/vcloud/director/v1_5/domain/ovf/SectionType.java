@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,32 +30,33 @@ import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 
 import com.google.common.base.Objects;
 
 /**
  * Metadata about a virtual machine or grouping of them.
- * <p/>
- * Base type for Sections, subclassing this is the most common form of extensibility. Subtypes define more specific
- * elements.
  *
+ * Base type for Sections, subclassing this is the most common form of extensibility. Subtypes define more specific elements.
+ * 
  * @author Adrian Cole
  * @author Adam Lowe
  */
-
-// TODO why do I have to declare these?
-@XmlSeeAlso(
-      {CustomizationSection.class,
-            DeploymentOptionSection.class,
-            DiskSection.class,
-            LeaseSettingsSection.class,
-            GuestCustomizationSection.class,
-            NetworkSection.class,
-            NetworkConfigSection.class,
-            NetworkConnectionSection.class,
-            ProductSection.class,
-            VirtualHardwareSection.class,
-            VirtualSystem.class})
+@XmlSeeAlso({
+   CustomizationSection.class,
+   DeploymentOptionSection.class,
+   DiskSection.class,
+   LeaseSettingsSection.class,
+   GuestCustomizationSection.class,
+   NetworkSection.class,
+   NetworkConfigSection.class,
+   NetworkConnectionSection.class,
+   OperatingSystemSection.class,
+   ProductSection.class,
+   RuntimeInfoSection.class,
+   StartupSection.class,
+   VirtualHardwareSection.class,
+   VirtualSystem.class })
 public abstract class SectionType<T extends SectionType<T>> {
 
    public abstract Builder<T> toBuilder();
@@ -73,6 +74,7 @@ public abstract class SectionType<T extends SectionType<T>> {
          this.info = info;
          return this;
       }
+
       /**
        * @see SectionType#isRequired()
        */
@@ -81,7 +83,7 @@ public abstract class SectionType<T extends SectionType<T>> {
          return this;
       }
 
-      public Builder<T> fromSection(SectionType<T> in) {
+      public Builder<T> fromSectionType(SectionType<T> in) {
          return info(in.getInfo()).required(in.isRequired());
       }
    }
@@ -101,13 +103,16 @@ public abstract class SectionType<T extends SectionType<T>> {
    }
 
    /**
-    * Info element describes the meaning of the Section, this is typically shown if the Section is not understood by an
-    * application
-    *
+    * Info element describes the meaning of the Section, this is typically shown if the Section is not understood by an application
+    * 
     * @return ovf info
     */
    public String getInfo() {
       return info;
+   }
+
+   public void setInfo(String info) {
+      this.info = info;
    }
 
    public Boolean isRequired() {

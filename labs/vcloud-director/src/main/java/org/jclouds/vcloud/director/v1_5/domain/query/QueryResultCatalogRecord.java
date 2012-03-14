@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a Catalog vCloud query as a record.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="QueryResultCatalogRecord" /&gt;
  * </pre>
@@ -358,7 +358,7 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(name, isPublished, isShared, creationDate,
+      return Objects.hashCode(super.hashCode(), name, isPublished, isShared, creationDate,
             orgName, ownerName, numberOfVAppTemplates, numberOfMedia, owner);
    }
 

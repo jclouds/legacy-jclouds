@@ -39,10 +39,10 @@ public class Configuration {
    }
 
    public static class Builder {
-      protected String id;
-      protected boolean isDefault;
-      protected String label;
-      protected String description;
+      private String id;
+      private boolean isDefault;
+      private String label;
+      private String description;
 
       /**
        * @see Configuration#getId

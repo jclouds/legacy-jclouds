@@ -29,18 +29,35 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.AuthenticationMechanism;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorType;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -78,7 +95,16 @@ public class Checks {
       checkResourceType(entity);
    }
 
+   /**
+    * Assumes the validTypes to be vcloud-specific types.
+    * 
+    * @see checkReferenceType(ReferenceType, Collection<String>)
+    */
    public static void checkReferenceType(ReferenceType<?> reference) {
+      checkReferenceType(reference, VCloudDirectorMediaType.ALL);
+   }
+   
+   public static void checkReferenceType(ReferenceType<?> reference, Collection<String> validTypes) {
       // Check required fields
       assertNotNull(reference.getHref(), String.format(NOT_NULL_OBJECT_FMT, "Href", "ReferenceType"));
 
@@ -86,7 +112,7 @@ public class Checks {
       String id = reference.getId();
       if (id != null) checkId(id);
       String type = reference.getType();
-      if (type != null) checkType(type);
+      if (type != null) checkType(type, validTypes);
       // NOTE name cannot be checked
    }
 
@@ -115,7 +141,11 @@ public class Checks {
    }
 
    public static void checkType(String type) {
-      assertTrue(VCloudDirectorMediaType.ALL.contains(type), String.format(REQUIRED_VALUE_FMT, "Type", type, Iterables.toString(VCloudDirectorMediaType.ALL)));
+      checkType(type, VCloudDirectorMediaType.ALL);
+   }
+
+   public static void checkType(String type, Collection<String> validTypes) {
+      assertTrue(validTypes.contains(type), String.format(REQUIRED_VALUE_FMT, "Type", type, Iterables.toString(validTypes)));
    }
 
    // NOTE this does not currently check anything
@@ -135,7 +165,11 @@ public class Checks {
       assertTrue(Link.Rel.ALL.contains(link.getRel()), String.format(REQUIRED_VALUE_OBJECT_FMT, "Rel", "Link", link.getRel(), Iterables.toString(Link.Rel.ALL)));
 
       // Check parent type
-      checkReferenceType(link);
+      if (link.getRel().equals(Link.Rel.OVF)) {
+         checkReferenceType(link, VCloudDirectorMediaType.ALL_OVF);
+      } else {
+         checkReferenceType(link);
+      }
    }
 
    public static void checkTask(Task task) {
@@ -426,6 +460,11 @@ public class Checks {
       InetAddresses.isInetAddress(ip);
    }
    
+   private static void checkMacAddress(String macAddress) {
+      assertNotNull(macAddress, String.format(NOT_NULL_OBJECT_FMT, "macAddress", ""));
+      assertTrue(macAddress.matches("^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$"));
+   }
+
    public static void checkComputeCapacity(ComputeCapacity computeCapacity) {
       // Check required fields
       assertNotNull(computeCapacity.getCpu(), "The cpu attribute of a ComputeCapacity must be set");
@@ -516,15 +555,145 @@ public class Checks {
    }
 
    public static void checkVApp(VApp vApp) {
-      // TODO Auto-generated method stub
+      // Check optional fields
+      Owner owner = vApp.getOwner();
+      if (owner != null) checkOwner(owner);
+      // NOTE inMaintenanceMode cannot be checked
+      VAppChildren children = vApp.getChildren();
+      if (children != null) checkVAppChildren(children);
+      // NOTE ovfDescriptorUploaded cannot be checked
       
+      // Check parent type
+      checkAbstractVAppType(vApp);
+   }
+
+   public static void checkVAppChildren(VAppChildren vAppChildren) {
+      // Check optional fields
+      for (VApp vApp : vAppChildren.getVApps()) {
+         checkVApp(vApp);
+      }
+      for (Vm vm : vAppChildren.getVms()) {
+         checkVm(vm);
+      }
+   }
+
+   public static void checkAbstractVAppType(AbstractVAppType<?> abstractVAppType) {
+      // Check optional fields
+      Reference vAppParent = abstractVAppType.getVAppParent();
+      if (vAppParent != null) checkReferenceType(vAppParent);
+      // NOTE deployed cannot be checked
+      for (SectionType<?> section : abstractVAppType.getSections()) {
+         checkSectionType(section);
+      }
+      
+      // Check parent type
+      checkResourceEntityType(abstractVAppType);
    }
 
    public static void checkVAppTemplate(VAppTemplate template) {
-      // TODO Auto-generated method stub
+      // Check required fields
+      assertNotNull(template.getName(), String.format(NOT_NULL_OBJECT_FMT, "Name", "VAppTemplate"));
       
+      // Check optional fields
+      Owner owner = template.getOwner();
+      if (owner != null) checkOwner(owner);
+      for (VAppTemplate child : template.getChildren()) {
+         checkVAppTemplate(child);
+      }
+      for (SectionType<?> section : template.getSections()) {
+         checkSectionType(section);
+      }
+      if (template.getTasks() != null) {
+         for (Task task : template.getTasks()) {
+            checkTask(task);
+         }
+      }
+      if (template.getFiles() != null) {
+         for (File file : template.getFiles()) {
+            checkFile(file);
+         }
+      }
+      
+      // NOTE vAppScopedLocalId cannot be checked
+      // NOTE ovfDescriptorUploaded cannot be checked
+      // NOTE goldMaster cannot be checked
+      
+      // Check parent type
+      checkResourceEntityType(template);
    }
 
+   public static void checkVm(Vm vm) {
+      // Check optional fields
+      EnvironmentType environment = vm.getEnvironment();
+      if (environment != null) checkEnvironmentType(environment);
+      // NOTE vAppScopedLocalId cannot be checked
+      // NOTE needsCustomization cannot be checked
+      
+      // Check parent type
+      checkAbstractVAppType(vm);
+   }
+
+   public static void checkControlAccessParams(ControlAccessParams params) {
+      // Check required fields
+      assertNotNull(params.isSharedToEveryone(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "IsSharedToEveryone"));
+      
+      // Check optional fields, dependant on IsSharedToEveryone state
+      if (params.isSharedToEveryone()) {
+         assertNotNull(params.getEveryoneAccessLevel(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "EveryoneAccessLevel"));
+      } else {
+         AccessSettings accessSettings = params.getAccessSettings();
+         checkAccessSettings(accessSettings);
+      }
+   }
+
+   public static void checkAccessSettings(AccessSettings accessSettings) {
+      if (accessSettings != null && accessSettings.getAccessSettings() != null) {
+	      for (AccessSetting setting : accessSettings.getAccessSettings()) {
+	         checkAccessSetting(setting);
+	      }
+      }
+   }
+
+   public static void checkAccessSetting(AccessSetting setting) {
+      // Check required fields
+      assertNotNull(setting.getSubject(), String.format(OBJ_FIELD_REQ, "AccessSetting", "Subject"));
+      checkReferenceType(setting.getSubject());
+      assertNotNull(setting.getAccessLevel(), String.format(OBJ_FIELD_REQ, "AccessSetting", "AccessLevel"));
+   }
+
+   public static void checkEnvironmentType(EnvironmentType environment) {
+      // TODO
+   }
+
+   public static void checkSectionType(SectionType<?> section) {
+      // Check optional fields
+      // NOTE info cannot be checked
+      // NOTE required cannot be checked
+   }
+
+   public static void checkVirtualHardwareSection(VirtualHardwareSection hardware) {
+      // Check optional fields
+      VirtualSystemSettingData virtualSystem = hardware.getSystem();
+      if (virtualSystem != null) checkVirtualSystemSettingData(virtualSystem);
+      for (String transport : hardware.getTransports()) {
+         // NOTE transport cannot be checked
+      }
+      for (ResourceAllocationSettingData item : hardware.getItems()) {
+         checkResourceAllocationSettingData(item);
+      }
+      
+      // Check parent type
+      checkSectionType(hardware);
+   }
+
+   public static void checkVirtualSystemSettingData(VirtualSystemSettingData virtualSystem) {
+      // TODO
+   }
+
+   public static void checkResourceAllocationSettingData(ResourceAllocationSettingData item) {
+      // TODO
+   }
+   
    public static void checkMediaFor(String client, Media media) {
       // required
       assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, client, "imageType"));
@@ -795,6 +964,259 @@ public class Checks {
    
    public static void checkTelephone(String number) {
       // TODO: regex validate telephone 
+   }
+
+   public static void checkCustomizationSection(CustomizationSection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "CustomizationSection", ""));
+      
+      // Check optional fields
+      if (val.getLinks() != null) {
+         for (Link link : val.getLinks()) {
+            checkLink(link);
+         }
+      }
+      if (val.getType() != null) {
+         checkType(val.getType());
+      }
+      if (val.getHref() != null) {
+         checkHref(val.getHref());
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   public static void checkProductSectionList(ProductSectionList val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "ProductSectionList", ""));
+      
+      for (ProductSection productSection : val) {
+         checkOvfProductSection(productSection);
+      }
+      
+      checkResourceType(val);
+   }
+
+   public static void checkGuestCustomizationSection(GuestCustomizationSection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "GuestCustomizationSection", ""));
+      
+      if (!val.isJoinDomainEnabled()) {
+         assertFalse(val.isUseOrgSettings());
+         assertNull(val.getDomainName());
+         assertNull(val.getDomainUserName());
+         assertNull(val.getDomainUserPassword());
+      }
+      
+      if (!val.isAdminPasswordEnabled()) {
+         assertFalse(val.isAdminPasswordAuto());
+         assertFalse(val.isResetPasswordRequired());
+         if (val.isAdminPasswordAuto()) {
+            assertNull(val.getAdminPassword());
+         }
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   public static void checkLeaseSettingsSection(LeaseSettingsSection val) {
+      if (val.getLinks() != null) {
+         for (Link link : val.getLinks()) {
+            checkLink(link);
+         }
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   public static void checkNetworkConfigSection(NetworkConfigSection val) {
+      if (val.getNetworkConfigs() != null) {
+         for (VAppNetworkConfiguration networkConfig : val.getNetworkConfigs()) {
+            checkVAppNetworkConfig(networkConfig);
+         }
+      }
+      if (val.getLinks() != null) {
+         for (Link link : val.getLinks()) {
+            checkLink(link);
+         }
+      }
+      if (val.getHref() != null) {
+         checkHref(val.getHref());
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   private static void checkVAppNetworkConfig(VAppNetworkConfiguration val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "VAppNetworkConfiguration", ""));
+      
+      // required fields
+      assertNotNull(val.getNetworkName(), String.format(NOT_NULL_OBJECT_FMT, "NetworkName", "VAppNetworkConfiguration"));
+      checkNetworkConfiguration(val.getConfiguration());
+      
+      checkResourceType(val);
+   }
+
+   public static void checkNetworkConnectionSection(NetworkConnectionSection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "VAppConnectionSection", ""));
+      
+      // Check optional fields
+      if (val.getLinks() != null) {
+         for (Link link : val.getLinks()) {
+            checkLink(link);
+         }
+      }
+      if (val.getHref() != null) {
+         checkHref(val.getHref());
+      }
+      if (val.getNetworkConnections() != null) {
+         for (NetworkConnection networkConnection : val.getNetworkConnections()) {
+            checkNetworkConnection(networkConnection);
+         }
+      }
+      if (val.getType() != null) {
+         checkType(val.getType());
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   private static void checkNetworkConnection(NetworkConnection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "NetworkConnection", ""));
+      
+      // Check required fields
+      assertNotNull(val.getNetwork(), String.format(NOT_NULL_OBJECT_FMT, "Network", "NetworkConnection"));
+      assertNotNull(val.getIpAddressAllocationMode(), String.format(NOT_NULL_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection"));
+      IpAddressAllocationMode mode = NetworkConnection.IpAddressAllocationMode.valueOf(val.getIpAddressAllocationMode());
+      assertTrue(NetworkConnection.IpAddressAllocationMode.ALL.contains(mode), 
+               String.format(REQUIRED_VALUE_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection", val.getIpAddressAllocationMode(), Iterables.toString(NetworkConnection.IpAddressAllocationMode.ALL)));
+      
+      // Check optional fields
+      if (val.getIpAddress() != null) {
+         checkIpAddress(val.getIpAddress());
+      }
+      if (val.getExternalIpAddress() != null) {
+         checkIpAddress(val.getExternalIpAddress());
+      }
+
+      if (val.getMACAddress() != null) {
+         checkMacAddress(val.getMACAddress());
+      }
+      
+      // FIXME Missing?
+      //val.getVCloudExtension();
+   }
+
+   public static void checkOvfSectionType(SectionType<?> section) {
+      assertNotNull(section, String.format(NOT_NULL_OBJECT_FMT, "SectionType", ""));
+   }
+   
+   public static void checkOvfProductSection(ProductSection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "ProductSection", ""));
+
+      if (val.getProperties() != null) {
+         for (org.jclouds.vcloud.director.v1_5.domain.ovf.Property property : val.getProperties()) {
+            checkOvfProperty(property);
+         }
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   private static void checkOvfProperty(org.jclouds.vcloud.director.v1_5.domain.ovf.Property val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "Property", ""));
+   }
+
+   public static void checkOvfNetworkSection(NetworkSection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "NetworkSection", ""));
+
+      if (val.getNetworks() != null) {
+         for (Network network : val.getNetworks()) {
+            checkOvfNetwork(network);
+         }
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   private static void checkOvfNetwork(Network val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "Network", ""));
+   }
+
+   public static void checkOvfEnvelope(Envelope val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "Envelope", ""));
+      
+      if (val.getDiskSections() != null) {
+         for (DiskSection diskSection : val.getDiskSections()) {
+            checkOvfDiskSection(diskSection);
+         }
+      }
+      if (val.getNetworkSections() != null) {
+         for (NetworkSection networkSection : val.getNetworkSections()) {
+            checkOvfNetworkSection(networkSection);
+         }
+      }
+      if (val.getVirtualSystem() != null) {
+         checkOvfVirtualSystem(val.getVirtualSystem());
+      }
+   }
+
+   private static void checkOvfVirtualSystem(VirtualSystem val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "VirtualSystem", ""));
+      
+      if (val.getProductSections() != null) {
+         for (ProductSection productSection : val.getProductSections()) {
+            checkOvfProductSection(productSection);
+         }
+      }
+      if (val.getVirtualHardwareSections() != null) {
+         for (VirtualHardwareSection virtualHardwareSection : val.getVirtualHardwareSections()) {
+            checkOvfVirtualHardwareSection(virtualHardwareSection);
+         }
+      }
+      if (val.getOperatingSystemSection() != null) {
+         checkOvfOperationSystemSection(val.getOperatingSystemSection());
+      }
+   }
+
+   private static void checkOvfDiskSection(DiskSection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "DiskSection", ""));
+      
+      if (val.getDisks() != null) {
+         for (Disk disk : val.getDisks()) {
+            checkOvfDisk(disk);
+         }
+      }
+   }
+   
+   private static void checkOvfDisk(Disk val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "Disk", ""));
+   }
+
+   private static void checkOvfOperationSystemSection(OperatingSystemSection val) {
+      checkOvfSectionType(val);
+   }
+
+   private static void checkOvfVirtualHardwareSection(VirtualHardwareSection val) {
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "VirtualHardwareSection", ""));
+      
+      if (val.getItems() != null) {
+         for (ResourceAllocationSettingData item : val.getItems()) {
+            checkCimResourceAllocationSettingData(item);
+         }
+      }
+      if (val.getSystem() != null) {
+         checkCimVirtualSystemSettingData(val.getSystem());
+      }
+      
+      checkOvfSectionType(val);
+   }
+
+   private static void checkCimVirtualSystemSettingData(VirtualSystemSettingData val) {
+      // TODO Could do more assertions...
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "VirtualSystemSettingData", ""));
+   }
+
+   private static void checkCimResourceAllocationSettingData(ResourceAllocationSettingData val) {
+      // TODO Could do more assertions...
+      assertNotNull(val, String.format(NOT_NULL_OBJECT_FMT, "ResouorceAllocatoinSettingData", ""));
    }
 
    public static void checkAdminVdc(AdminVdc vdc) {

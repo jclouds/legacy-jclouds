@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,11 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Set;
@@ -30,32 +28,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents the owner of this entity.
- * <p/>
- * <p/>
- * <p>Java class for Owner complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Owner">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}ResourceType">
- *       &lt;sequence>
- *         &lt;element name="User" type="{http://www.vmware.com/vcloud/v1.5}ReferenceType"/>
- *       &lt;/sequence>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Owner" /&;
  * </pre>
+ *
+ * @since 1.5
  */
 @XmlRootElement(name = "Owner")
-@XmlType(propOrder = {"user"})
+@XmlType(name = "OwnerType")
 public class Owner extends ResourceType<Owner> {
 
    public static Builder builder() {
@@ -69,17 +54,17 @@ public class Owner extends ResourceType<Owner> {
 
    public static class Builder extends ResourceType.Builder<Owner> {
 
-      private Reference user;
+      private ReferenceType<?> user;
 
       /**
        * @see Owner#getUser()
        */
-      public Builder user(Reference user) {
+      public Builder user(ReferenceType<?> user) {
          this.user = user;
          return this;
       }
 
-
+      @Override
       public Owner build() {
          return new Owner(href, type, links, user);
       }
@@ -107,8 +92,7 @@ public class Owner extends ResourceType<Owner> {
        */
       @Override
       public Builder links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -116,8 +100,7 @@ public class Owner extends ResourceType<Owner> {
        */
       @Override
       public Builder link(Link link) {
-         super.link(link);
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
 
@@ -132,26 +115,22 @@ public class Owner extends ResourceType<Owner> {
       }
    }
 
-   @SuppressWarnings("unused")
-   private Owner() {
+   protected Owner() {
       // for JAXB
    }
 
-   public Owner(URI href, String type, Set<Link> links, Reference user) {
+   public Owner(URI href, String type, Set<Link> links, ReferenceType<?> user) {
       super(href, type, links);
       this.user = user;
    }
 
    @XmlElement(name = "User", required = true)
-   protected Reference user;
+   protected ReferenceType<?> user;
 
    /**
     * Gets the value of the user property.
-    *
-    * @return possible object is
-    *         {@link Reference }
     */
-   public Reference getUser() {
+   public ReferenceType<?> getUser() {
       return user;
    }
 
@@ -162,18 +141,16 @@ public class Owner extends ResourceType<Owner> {
       if (o == null || getClass() != o.getClass())
          return false;
       Owner that = Owner.class.cast(o);
-      return equal(user, that.user);
+      return super.equals(that) && equal(this.user, that.user);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(user);
+      return Objects.hashCode(super.hashCode(), user);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
-            .add("user", user).toString();
+   public ToStringHelper string() {
+      return super.string().add("user", user);
    }
-
 }

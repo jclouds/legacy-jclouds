@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a Network vCloud query as a record.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="QueryResultNetworkRecord" /&gt;
  * </pre>
@@ -43,6 +43,7 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultNetworkRecord> {
+
    @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();

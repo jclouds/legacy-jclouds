@@ -45,7 +45,6 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "DeploymentOptionSection")
 public class DeploymentOptionSection extends SectionType<DeploymentOptionSection> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -93,8 +92,8 @@ public class DeploymentOptionSection extends SectionType<DeploymentOptionSection
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<DeploymentOptionSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<DeploymentOptionSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

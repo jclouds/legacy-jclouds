@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -21,24 +21,77 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Arrays;
+
+import javax.annotation.Resource;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * The standard error message type used in the vCloud REST API.
- * <p/>
+ *
  * <pre>
- * &lt;xs:complexType name="ErrorType"&gt;
+ * &lt;xs:complexType name="ErrorType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Error")
 public class Error {
+
+   @Resource
+   protected static Logger logger = Logger.NULL;
+
+   public static enum Code {
+
+      OK(200),
+      CREATED(201),
+      ACCEPTED(202),
+      NO_CONTENT(204),
+      SEE_OTHER(303),
+      BAD_REQUEST(400),
+      UNAUTHORIZED(401),
+      FORBIDDEN(403), // NOTE also means 'not found' for entities
+      NOT_FOUND(404),
+      NOT_ALLOWED(405),
+      INTERNAL_ERROR(500),
+      NOT_IMPLEMENTED(501),
+      UNAVAILABLE(503),
+      UNRECOGNIZED(-1);
+
+      private Integer majorErrorCode;
+      
+      private Code(Integer majorErrorCode) {
+         this.majorErrorCode = majorErrorCode;
+      }
+
+      public Integer getCode() {
+         return majorErrorCode;
+      }
+
+      public static Code fromCode(final int majorErrorCode) {
+         Optional<Code> found = Iterables.tryFind(Arrays.asList(values()), new Predicate<Code>() {
+            @Override
+            public boolean apply(Code code) {
+               return code.getCode().equals(majorErrorCode);
+            }
+         });
+         if (found.isPresent()) {
+            return found.get();
+         } else {
+            logger.warn("Unrecognized major error code '%d'", majorErrorCode);
+            return UNRECOGNIZED;
+         }
+      }
+   }
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ERROR;
 

@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Base type for query result Records. Subtypes define more specific elements.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="QueryResultRecordType" /&gt;
  * </pre>

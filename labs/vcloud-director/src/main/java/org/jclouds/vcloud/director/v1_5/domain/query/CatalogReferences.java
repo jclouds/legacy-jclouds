@@ -33,7 +33,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a vCloud query as references.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="QueryResultReferences" /&gt;
  * </pre>
@@ -43,6 +43,7 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "CatalogReferences")
 public class CatalogReferences extends QueryResultReferences<CatalogReference> {
 
+   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 
@@ -38,17 +39,18 @@ import com.google.common.collect.Sets;
 
 /**
  * Basic entity type in the vCloud object model.
- * <p/>
- * Includes a name, an optional description, and an optional list of links
- * <p/>
+ *
+ * Includes the entity name and an optional id, description, and set of running {@link Task}s.
+ *
  * <pre>
- * &lt;xs:complexType name="EntityType"&gt;
+ * &lt;xs:complexType name="EntityType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  * @author Adam Lowe
  */
-public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T> {
+@XmlType(name = "EntityType")
+public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
    
    public static abstract class NewBuilder<T extends NewBuilder<T>> extends ResourceType.NewBuilder<T> {
       
@@ -96,7 +98,12 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       }
    }
 
-   public static abstract class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
+   @Override
+   public Builder<T> toBuilder() {
+      return new Builder<T>().fromEntityType(this);
+   }
+
+   public static class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
 
       protected String description;
       protected Set<Task> tasks;
@@ -146,6 +153,11 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
          return this;
       }
 
+      @Override
+      public EntityType<T> build() {
+         return new EntityType<T>(href, type, links, description, tasks, id, name);
+      }
+
       /**
        * @see ResourceType#getHref()
        */
@@ -167,7 +179,6 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       /**
        * @see ResourceType#getLinks()
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> links(Set<Link> links) {
          return Builder.class.cast(super.links(links));
@@ -176,7 +187,6 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       /**
        * @see ResourceType#getLinks()
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> link(Link link) {
          return Builder.class.cast(super.link(link));
@@ -185,7 +195,6 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
       public Builder<T> fromResourceType(ResourceType<T> in) {
          return Builder.class.cast(super.fromResourceType(in));
@@ -228,6 +237,10 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
       return description;
    }
 
+   public void setDescription(String description) {
+      this.description = description;
+   }
+
    /**
     * A list of queued, running, or recently completed tasks associated with this entity.
     */
@@ -237,7 +250,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    /**
     * The resource identifier, expressed in URN format.
-    * <p/>
+    *
     * The value of this attribute uniquely identifies the resource, persists for the life of the
     * resource, and is never reused.
     */
@@ -250,6 +263,10 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
     */
    public String getName() {
       return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 
    @Override
@@ -276,7 +293,7 @@ public abstract class EntityType<T extends EntityType<T>> extends ResourceType<T
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(description, tasks, id, name);
+      return Objects.hashCode(super.hashCode(), description, tasks, id, name);
    }
 
    @Override

@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
 
@@ -41,7 +40,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlRootElement(name = "DiskSection", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "DiskSection")
 @XmlType(propOrder = {
       "disks"
 })
@@ -61,7 +60,7 @@ public class DiskSection extends SectionType<DiskSection> {
    }
 
    public static class Builder extends SectionType.Builder<DiskSection> {
-      protected Set<Disk> disks = Sets.newLinkedHashSet();
+      private Set<Disk> disks = Sets.newLinkedHashSet();
 
       /**
        * @see DiskSection#getDisks
@@ -95,8 +94,8 @@ public class DiskSection extends SectionType<DiskSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<DiskSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<DiskSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
       
       /**

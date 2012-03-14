@@ -174,7 +174,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(networkConfiguration);
+      return Objects.hashCode(super.hashCode(), networkConfiguration);
    }
 
    @Override

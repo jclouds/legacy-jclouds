@@ -41,6 +41,7 @@ import org.jclouds.vcloud.director.v1_5.features.QueryAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.UserAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
 
@@ -108,15 +109,20 @@ public interface VCloudDirectorAsyncClient {
    @Delegate
    UploadAsyncClient getUploadClient();
    
+   /**
+    * @return asynchronous access to {@link VApp} features
+    */
+   @Delegate
+   VAppAsyncClient getVAppClient();
 
    /**
-    * @return asynchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} features
+    * @return asynchronous access to {@link VAppTemplate} features
     */
    @Delegate
    VAppTemplateAsyncClient getVAppTemplateClient();
    
    /**
-    * @return asynchronous access to {@link Catalog} features
+    * @return asynchronous access to {@link Catalog} admin features
     */
    @Delegate
    AdminCatalogAsyncClient getAdminCatalogClient();

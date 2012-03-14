@@ -29,13 +29,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.ovf.DeploymentOptionSection;
-import org.jclouds.ovf.DiskSection;
-import org.jclouds.ovf.OperatingSystemSection;
-import org.jclouds.ovf.ProductSection;
-import org.jclouds.ovf.Section;
-import org.jclouds.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.DeploymentOptionSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -84,7 +85,7 @@ public class CaptureVAppParams
    public static class Builder extends ParamsType.Builder<CaptureVAppParams> {
 
       private Reference source;
-      private Set<? extends Section<?>> sections = ImmutableSet.of();
+      private Set<? extends SectionType<?>> sections = ImmutableSet.of();
 
       /**
        * @see CaptureVAppParams#getSource()
@@ -97,7 +98,7 @@ public class CaptureVAppParams
       /**
        * @see CaptureVAppParams#getSections()
        */
-      public Builder sections(Set<? extends Section<?>> sections) {
+      public Builder sections(Set<? extends SectionType<?>> sections) {
          this.sections = checkNotNull(sections, "sections");
          return this;
       }
@@ -118,7 +119,7 @@ public class CaptureVAppParams
       }
    }
 
-   private CaptureVAppParams(String description, String name, Reference source, Set<? extends Section<?>> sections) {
+   private CaptureVAppParams(String description, String name, Reference source, Set<? extends SectionType<?>> sections) {
       super(description, name);
       this.source = source;
       this.sections = sections;
@@ -128,14 +129,14 @@ public class CaptureVAppParams
       // for JAXB
    }
 
-   private CaptureVAppParams(Set<? extends Section<?>> sections) {
+   private CaptureVAppParams(Set<? extends SectionType<?>> sections) {
       this.sections = ImmutableSet.copyOf(sections);
    }
 
    @XmlElement(name = "Source", required = true)
    protected Reference source;
    @XmlElementRef
-   protected Set<? extends Section<?>> sections = Sets.newLinkedHashSet();
+   protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
 
    /**
     * Gets the value of the source property.
@@ -153,7 +154,7 @@ public class CaptureVAppParams
     *  Gets the value of the section property.
     *    
     * Objects of the following type(s) are allowed in the list
-    * {@link Section }
+    * {@link SectionType }
     * {@link VirtualHardwareSection }
     * {@link LeaseSettingsSection }
     * {@link EulaSection }
@@ -172,7 +173,7 @@ public class CaptureVAppParams
     * {@link DiskSection }
     * {@link InstallSection }
     */
-   public Set<? extends Section<?>> getSections() {
+   public Set<? extends SectionType<?>> getSections() {
       return Collections.unmodifiableSet(this.sections);
    }
 

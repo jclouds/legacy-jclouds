@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,33 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-
 /**
  * Essentially a container with a list of product sections.
- * <p/>
- * <p>Java class for ProductSectionList complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ProductSectionList">
  *   &lt;complexContent>
@@ -56,14 +56,10 @@ import com.google.common.collect.Sets;
  * &lt;/complexType>
  * </pre>
  */
-@XmlType(name = "ProductSectionList", propOrder = {
-      "productSections"
-})
-public class ProductSectionList
-      extends ResourceType<ProductSectionList>
-
-{
-   @SuppressWarnings("unchecked")
+@XmlRootElement(name = "ProductSectionList")
+@XmlType(name = "ProductSectionListType")
+public class ProductSectionList extends ResourceType<ProductSectionList> implements Set<ProductSection> {
+   
    public static Builder builder() {
       return new Builder();
    }
@@ -81,13 +77,24 @@ public class ProductSectionList
        * @see ProductSectionList#getProductSections()
        */
       public Builder productSections(Set<ProductSection> productSections) {
-         this.productSections = checkNotNull(productSections, "productSection");
+         if (checkNotNull(productSections, "productSections").size() > 0)
+            this.productSections = Sets.newLinkedHashSet(productSections);
          return this;
       }
 
+      /**
+       * @see ProductSectionList#getProductSections()
+       */
+      public Builder productSections(ProductSection productSection) {
+         if (productSections == null)
+            productSections = Sets.newLinkedHashSet();
+         this.productSections.add(checkNotNull(productSection, "productSection"));
+         return this;
+      }
 
+      @Override
       public ProductSectionList build() {
-         ProductSectionList productSectionList = new ProductSectionList(productSections);
+         ProductSectionList productSectionList = new ProductSectionList(href, type, links, productSections);
          return productSectionList;
       }
 
@@ -114,8 +121,7 @@ public class ProductSectionList
        */
       @Override
       public Builder links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return Builder.class.cast(super.links(links));
       }
 
       /**
@@ -123,8 +129,7 @@ public class ProductSectionList
        */
       @Override
       public Builder link(Link link) {
-         super.link(link);
-         return this;
+         return Builder.class.cast(super.link(link));
       }
 
 
@@ -135,7 +140,7 @@ public class ProductSectionList
 
       public Builder fromProductSectionList(ProductSectionList in) {
          return fromResourceType(in)
-               .productSections(in.getProductSections());
+               .productSections(ImmutableSet.copyOf(in));
       }
    }
 
@@ -143,19 +148,20 @@ public class ProductSectionList
       // for JAXB
    }
 
-   private ProductSectionList(Set<ProductSection> productSections) {
-      this.productSections = ImmutableSet.copyOf(productSections);
+   private ProductSectionList(URI href, String type, @Nullable Set<Link> links, @Nullable Set<ProductSection> productSections) {
+      super(href, type, links);
+      this.productSections = productSections != null && productSections.isEmpty() ? null : productSections;
    }
 
 
-   @XmlElement(name = "ProductSection", namespace = "http://schemas.dmtf.org/ovf/envelope/1")
-   protected Set<ProductSection> productSections = Sets.newLinkedHashSet();
+   @XmlElement(name = "ProductSection", namespace = VCloudDirectorConstants.VCLOUD_OVF_NS)
+   protected Set<ProductSection> productSections;
 
    /**
     * Gets the value of the productSection property.
     */
    public Set<ProductSection> getProductSections() {
-      return Collections.unmodifiableSet(this.productSections);
+      return productSections == null ? ImmutableSet.<ProductSection>of() : Collections.unmodifiableSet(productSections);
    }
 
    @Override
@@ -165,18 +171,92 @@ public class ProductSectionList
       if (o == null || getClass() != o.getClass())
          return false;
       ProductSectionList that = ProductSectionList.class.cast(o);
-      return equal(productSections, that.productSections);
+      return super.equals(that) && equal(this.productSections, that.productSections);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(productSections);
+      return Objects.hashCode(super.hashCode(), productSections);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
-            .add("productSections", productSections).toString();
+   public ToStringHelper string() {
+      return super.string().add("productSections", productSections);
+   }
+   
+   /**
+    * The delegate always returns a {@link Set} even if {@link #productSections} is {@literal null}.
+    * 
+    * The delegated {@link Set} is used by the methods implementing its interface.
+    * <p>
+    * NOTE Annoying lack of multiple inheritance for using ForwardingList!
+    */
+   private Set<ProductSection> delegate() {
+      return getProductSections();
    }
 
+   @Override
+   public boolean add(ProductSection arg0) {
+      return delegate().add(arg0);
+   }
+
+   @Override
+   public boolean addAll(Collection<? extends ProductSection> arg0) {
+      return delegate().addAll(arg0);
+   }
+
+   @Override
+   public void clear() {
+      delegate().clear();
+   }
+
+   @Override
+   public boolean contains(Object arg0) {
+      return delegate().contains(arg0);
+   }
+
+   @Override
+   public boolean containsAll(Collection<?> arg0) {
+      return delegate().containsAll(arg0);
+   }
+
+   @Override
+   public boolean isEmpty() {
+      return delegate().isEmpty();
+   }
+
+   @Override
+   public Iterator<ProductSection> iterator() {
+      return delegate().iterator();
+   }
+
+   @Override
+   public boolean remove(Object arg0) {
+      return delegate().remove(arg0);
+   }
+
+   @Override
+   public boolean removeAll(Collection<?> arg0) {
+      return delegate().removeAll(arg0);
+   }
+
+   @Override
+   public boolean retainAll(Collection<?> arg0) {
+      return delegate().retainAll(arg0);
+   }
+
+   @Override
+   public int size() {
+      return delegate().size();
+   }
+
+   @Override
+   public Object[] toArray() {
+      return delegate().toArray();
+   }
+
+   @Override
+   public <T> T[] toArray(T[] arg0) {
+      return delegate().toArray(arg0);
+   }
 }

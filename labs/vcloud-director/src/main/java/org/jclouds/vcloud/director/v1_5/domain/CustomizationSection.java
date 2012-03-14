@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -34,20 +33,15 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-
 /**
  * Represents a vApp template customization settings section.
- * <p/>
- * <p/>
- * <p>Java class for CustomizationSection complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="CustomizationSection">
  *   &lt;complexContent>
@@ -66,15 +60,13 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "CustomizationSection")
-@XmlType(propOrder = {
-      "customizeOnInstantiate",
-      "links"
-})
 public class CustomizationSection extends SectionType<CustomizationSection> {
+
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromCustomizationSection(this);
    }
@@ -118,12 +110,13 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
       }
 
 
+      @Override
       public CustomizationSection build() {
          return new CustomizationSection(info, required, customizeOnInstantiate, links, href, type);
       }
 
       public Builder fromCustomizationSection(CustomizationSection in) {
-         return fromSection(in)
+         return fromSectionType(in)
                .customizeOnInstantiate(in.isCustomizeOnInstantiate())
                .links(in.getLinks())
                .href(in.getHref())
@@ -134,8 +127,8 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<CustomizationSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<CustomizationSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

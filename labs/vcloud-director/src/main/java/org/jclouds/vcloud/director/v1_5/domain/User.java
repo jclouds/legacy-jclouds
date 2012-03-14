@@ -94,10 +94,8 @@ import com.google.common.collect.Sets;
       "password",
       "groups"
 })
-public class User
-      extends EntityType<User>
+public class User extends EntityType<User> {
 
-{
    public static Builder builder() {
       return new Builder();
    }

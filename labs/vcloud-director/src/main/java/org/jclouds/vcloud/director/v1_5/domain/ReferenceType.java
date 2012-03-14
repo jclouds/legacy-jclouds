@@ -23,28 +23,31 @@ import static com.google.common.base.Objects.equal;
 import java.net.URI;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSeeAlso;
+
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A reference to a resource.
- * <p/>
+ *
  * Contains an href attribute and optional name and type attributes.
- * <p/>
+ * <p>
  * <pre>
  * &lt;xs:complexType name="ReferenceType"&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlSeeAlso({
-      CatalogReference.class,
-      Reference.class
-})
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ReferenceType<T extends ReferenceType<T>> {
+
+   @javax.annotation.Resource
+   protected static Logger logger = Logger.NULL;
 
    public static <T extends ReferenceType<T>> Builder<T> builder() {
       return new Builder<T>();
