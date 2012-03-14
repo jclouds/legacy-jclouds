@@ -28,6 +28,7 @@ import java.util.UUID;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.AuthenticationMechanism;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorType;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
@@ -1052,7 +1053,8 @@ public class Checks {
       // Check required fields
       assertNotNull(val.getNetwork(), String.format(NOT_NULL_OBJECT_FMT, "Network", "NetworkConnection"));
       assertNotNull(val.getIpAddressAllocationMode(), String.format(NOT_NULL_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection"));
-      assertTrue(NetworkConnection.IpAddressAllocationMode.ALL.contains(val.getIpAddressAllocationMode()), 
+      IpAddressAllocationMode mode = NetworkConnection.IpAddressAllocationMode.valueOf(val.getIpAddressAllocationMode());
+      assertTrue(NetworkConnection.IpAddressAllocationMode.ALL.contains(mode), 
                String.format(REQUIRED_VALUE_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection", val.getIpAddressAllocationMode(), Iterables.toString(NetworkConnection.IpAddressAllocationMode.ALL)));
       
       // Check optional fields

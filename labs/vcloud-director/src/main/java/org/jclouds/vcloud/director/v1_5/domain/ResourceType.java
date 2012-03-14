@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -51,6 +52,9 @@ import com.google.common.collect.Sets;
  */
 @XmlType(name = "ResourceType")
 public class ResourceType<T extends ResourceType<T>> {
+
+   @javax.annotation.Resource
+   protected static Logger logger = Logger.NULL;
    
    public NewBuilder<?> toNewBuilder() {
       throw new UnsupportedOperationException("New builder not yet implemented for this class");

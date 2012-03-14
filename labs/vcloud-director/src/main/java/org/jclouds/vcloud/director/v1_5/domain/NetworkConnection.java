@@ -20,8 +20,8 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 
 /**
@@ -69,15 +70,31 @@ import com.google.common.base.Objects;
 })
 public class NetworkConnection {
    
-   public static class IpAddressAllocationMode {
-      public static final String POOL = "pool";
-      public static final String DHCP = "dhcp";
-      public static final String MANUAL = "manual";
-      public static final String NONE = "none";
-
-      public static final List<String> ALL = Arrays.asList(
-            POOL, DHCP, MANUAL, NONE
-      );
+   public static enum IpAddressAllocationMode {
+      POOL("pool"),
+      DHCP("dhcp"),
+      MANUAL("manual"),
+      NONE("none"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<IpAddressAllocationMode> ALL = ImmutableList.of(POOL, DHCP, MANUAL, NONE);
+      
+      private final String label;
+      private IpAddressAllocationMode(String label) {
+         this.label = label;
+      }
+      
+      public String getLabel() {
+         return label;
+      }
+      
+      public static IpAddressAllocationMode fromValue(String value) {
+         try {
+            return valueOf(checkNotNull(value, "value").toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
    }
 
    public static Builder builder() {

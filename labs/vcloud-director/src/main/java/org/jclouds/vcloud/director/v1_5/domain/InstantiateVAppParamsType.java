@@ -18,14 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * Represents vApp instantiation parameters.
@@ -205,6 +205,7 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>> e
       }
 
       @Override
+      @SuppressWarnings("unchecked")
       public Builder<T> fromVAppCreationParamsType(VAppCreationParamsType<T> in) {
          return Builder.class.cast(super.fromVAppCreationParamsType(in));
       }

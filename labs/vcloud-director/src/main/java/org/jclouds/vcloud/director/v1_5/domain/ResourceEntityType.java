@@ -19,8 +19,8 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -29,8 +29,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorRuntimeException;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -71,7 +69,10 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
       UPLOAD_COPYING(12, "Upload initiated, copying contents.", true, false, false),
       UPLOAD_DISK_PENDING(13, "Upload initiated , disk contents pending.", true, false, false),
       UPLOAD_QUARANTINED(14, "Upload has been quarantined.", true, false, false),
-      UPLOAD_QUARANTINE_EXPIRED(15, "Upload quarantine period has expired.", true, false, false);
+      UPLOAD_QUARANTINE_EXPIRED(15, "Upload quarantine period has expired.", true, false, false),
+      
+      // Convention is "UNRECOGNIZED", but that is already a valid state name! so using UNRECOGNIZED_VALUE
+      UNRECOGNIZED_VALUE(404, "Unrecognized", false, false, false);
       
       private Integer value;
       private String description;
@@ -117,7 +118,8 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
          if (found.isPresent()) {
             return found.get();
          } else {
-            throw new VCloudDirectorRuntimeException(String.format("Illegal status value '%d'", value));
+            logger.warn("Illegal status value '%d'", value);
+            return UNRECOGNIZED_VALUE;
          }
       }
    }
