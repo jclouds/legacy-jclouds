@@ -231,9 +231,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
             @Override
             public boolean apply(@Nullable Network network) {
                return network.isDefault() &&
-                  network.getGuestIPType() == GuestIPType.VIRTUAL &&
-                  network.getNetworkOfferingId() == 6 &&
-                  network.getId() == 204;
+                  network.getGuestIPType() == GuestIPType.VIRTUAL;
             }
          }));
          logger.info("Required network: " + requiredNetwork);
