@@ -18,6 +18,7 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
 
@@ -28,7 +29,9 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
@@ -48,6 +51,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 @Singleton
