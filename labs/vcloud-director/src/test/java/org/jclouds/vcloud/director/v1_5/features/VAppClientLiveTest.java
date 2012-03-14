@@ -420,7 +420,6 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
    public void testModifyGuestCustomizationSection() {
       GuestCustomizationSection section = vAppClient.getGuestCustomizationSection(vApp.getHref());
-
       // section.setX()
 
       // The method under test

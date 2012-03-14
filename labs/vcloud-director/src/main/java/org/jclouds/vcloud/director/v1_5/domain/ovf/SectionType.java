@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
