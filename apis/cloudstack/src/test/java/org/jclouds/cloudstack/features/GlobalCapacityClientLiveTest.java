@@ -45,7 +45,7 @@ public class GlobalCapacityClientLiveTest extends BaseCloudStackClientLiveTest {
       for (Capacity capacity : response) {
          assertTrue(capacity.getCapacityTotal() > 0);
          assertTrue(capacity.getCapacityUsed() > 0);
-         assertTrue(capacity.getPercentUsed() > 0);
+         assertTrue(capacity.getPercentUsed() >= 0);
          assertTrue(capacity.getType() != Capacity.Type.UNRECOGNIZED);
          assertNotNull(capacity.getZoneName());
          count++;
