@@ -82,6 +82,8 @@ public class VCloudDirectorMediaType {
    
    public static final String VAPP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
    
+   public static final String VM = "application/vnd.vmware.vcloud.vm+xml";
+   
    public static final String CAPTURE_VAPP_PARAMS = "application/vnd.vmware.vcloud.captureVAppParams+xml";
    
    public static final String CLONE_MEDIA_PARAMS = "application/vnd.vmware.vcloud.cloneMediaParams+xml";
@@ -184,8 +186,14 @@ public class VCloudDirectorMediaType {
    
    public static final String ADMIN_VDC = "application/vnd.vmware.admin.vdc+xml";
    
+   public static final String OVF_TEXT_XML = "text/xml";
+
+   public static final List<String> ALL_OVF = ImmutableList.of(
+            OVF_TEXT_XML
+         );
+
    /**
-    * All acceptable media types.
+    * All acceptable vcloud-specific media types.
     *
     * This list must be updated whenever a new media type constant is added.
     */
@@ -193,7 +201,7 @@ public class VCloudDirectorMediaType {
          SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY, METADATA_VALUE,
          ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK, CATALOG, CATALOG_ITEM,
          CATALOG_ITEMS, CATALOGS_LIST, PROPERTY, MEDIA, OWNER, VDC, ADMIN_USER,
-         VAPP, VAPP_TEMPLATE, CAPTURE_VAPP_PARAMS, CLONE_MEDIA_PARAMS,
+         VAPP, VAPP_TEMPLATE, VM, CAPTURE_VAPP_PARAMS, CLONE_MEDIA_PARAMS,
          CLONE_VAPP_PARAMS, CLONE_VAPP_TEMPLATE_PARAMS, COMPOSE_VAPP_PARAMS,
          INSTANTIATE_VAPP_TEMPLATE_PARAMS, UPLOAD_VAPP_TEMPLATE_PARAMS,
          QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
