@@ -31,6 +31,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -240,5 +242,13 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       public HttpResponse.Builder httpResponseBuilder() {
          return builder;
       }
+   }
+   
+   public URI toAdminUri(ReferenceType<?> ref) {
+      return toAdminUri(ref.getHref());
+   }
+   
+   public URI toAdminUri(URI uri) {
+      return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
    }
 }

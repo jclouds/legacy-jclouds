@@ -29,7 +29,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -50,7 +50,7 @@ public interface NetworkAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<OrgNetwork> getNetwork(@EndpointParam URI networkUri);
+   ListenableFuture<? extends Network> getNetwork(@EndpointParam URI networkUri);
    
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

@@ -18,9 +18,11 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Network;
 
 /**
  * Provides synchronous access to admin {@link Network} objects.
@@ -31,7 +33,20 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminNetworkClient extends NetworkClient {
    
-   // GET /admin/network/{id}
+   /**
+    * Gets admin representation of network. This operation could return admin 
+    * representation of organization network or external network. vApp networks 
+    * do not have admin representation.
+    *
+    * <pre>
+    * GET /admin/network/{id}
+    * </pre>
+    *
+    * @param catalogUri the reference for the catalog
+    * @return a catalog
+    */
+   @Override
+   Network getNetwork(URI networkRef);
    
    // PUT /admin/network/{id}
    

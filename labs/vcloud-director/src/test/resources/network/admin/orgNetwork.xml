@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OrgNetwork xmlns="http://www.vmware.com/vcloud/v1.5" name="ilsolation01-Jclouds" id="urn:vcloud:network:f3ba8256-6f48-4512-aad6-600e85b4dc38" type="application/vnd.vmware.vcloud.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"/>
+    <Link rel="edit" type="application/vnd.vmware.admin.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"/>
+    <Link rel="up" type="application/vnd.vmware.admin.organization+xml" href="https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+    <Link rel="repair" type="application/vnd.vmware.admin.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38/action/reset"/>
+    <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38/metadata"/>
+    <Description/>
+    <Configuration>
+        <IpScope>
+            <IsInherited>false</IsInherited>
+            <Gateway>192.168.1.1</Gateway>
+            <Netmask>255.255.255.0</Netmask>
+            <Dns1>173.240.111.52</Dns1>
+            <Dns2>173.240.111.53</Dns2>
+            <IpRanges>
+                <IpRange>
+                    <StartAddress>192.168.1.100</StartAddress>
+                    <EndAddress>192.168.1.199</EndAddress>
+                </IpRange>
+            </IpRanges>
+        </IpScope>
+        <FenceMode>isolated</FenceMode>
+        <RetainNetInfoAcrossDeployments>false</RetainNetInfoAcrossDeployments>
+        <Features>
+            <DhcpService>
+                <IsEnabled>false</IsEnabled>
+                <DefaultLeaseTime>3600</DefaultLeaseTime>
+                <MaxLeaseTime>7200</MaxLeaseTime>
+                <IpRange>
+                    <StartAddress>192.168.1.2</StartAddress>
+                    <EndAddress>192.168.1.99</EndAddress>
+                </IpRange>
+            </DhcpService>
+        </Features>
+        <SyslogServerSettings/>
+    </Configuration>
+    <NetworkPool type="application/vnd.vmware.admin.networkPool+xml" name="vcdni01" href="https://vcloudbeta.bluelock.com/api/admin/extension/networkPool/e86bfdb5-b3e0-4ece-9125-e764ac64c95c"/>
+    <AllowedExternalIpAddresses/>
+</OrgNetwork>

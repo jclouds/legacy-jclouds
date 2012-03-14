@@ -18,36 +18,62 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.fail;
+
+import java.net.URI;
+
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Network;
+import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests live behavior of {@link AdminCatalogClient}.
+ * Tests live behavior of {@link AdminNetworkClient}.
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "group" }, singleThreaded = true, testName = "CatalogClientLiveTest")
+@Test(groups = { "live", "admin", "network" }, singleThreaded = true, testName = "AdminNetworkLiveTest")
 public class AdminNetworkLiveTest extends BaseVCloudDirectorClientLiveTest {
    
-   public static final String GROUP = "admin group";
+   public static final String NETWORK = "AdminNetwork";
 
    /*
     * Convenience references to API clients.
     */
-
    private AdminNetworkClient networkClient;
 
    /*
     * Shared state between dependant tests.
     */
-
+   Reference networkRef;
+   Network network;
+   
    @BeforeClass(inheritGroups = true)
-   public void setupRequiredClients() {
+   protected void setupRequiredClients() {
       networkClient = context.getApi().getAdminNetworkClient();
+      networkRef = Reference.builder().href(networkURI).build().toAdminReference(endpoint);
    }
    
-   // GET /admin/network/{id}
+   @Test(testName = "GET /admin/network/{id}")
+   public void testGetNetwork() {
+      assertNotNull(networkRef, String.format(REF_REQ_LIVE, NETWORK));
+      network = networkClient.getNetwork(networkRef.getHref());
+      
+      if(network instanceof ExternalNetwork) {
+         Checks.checkExternalNetwork(Network.<ExternalNetwork>toSubType(network));
+      } else if (network instanceof OrgNetwork) {
+         Checks.checkOrgNetwork(Network.<OrgNetwork>toSubType(network));
+      } else {
+         fail(String.format(REQUIRED_VALUE_OBJECT_FMT, ".class", NETWORK, 
+               network.getClass(),"ExternalNetwork,. OrgNetwork"));
+      }
+   }
    
    // PUT /admin/network/{id}
    

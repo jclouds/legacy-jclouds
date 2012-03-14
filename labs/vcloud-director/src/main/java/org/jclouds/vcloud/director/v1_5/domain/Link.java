@@ -100,6 +100,7 @@ public class Link extends Reference {
       public static final String UPGRADE = "upgrade";
       public static final String UPLOAD_ALTERNATE = "upload:alternate";
       public static final String UPLOAD_DEFAULT = "upload:default";
+      public static final String REPAIR = "repair";
 
       /**
        * All acceptable {@link Link#getRel()} values.
@@ -117,7 +118,8 @@ public class Link extends Reference {
             REJECT, RELOCATE, REMOVE, REPAIR, SCREEN_ACQUIRE_TICKET,
             SCREEN_THUMBNAIL, TASK_CANCEL, BLOCKING_TASK, TASK_OWNER,
             TASK_PARAMS, TASK_REQUEST, UNDEPLOY, UNLOCK, UNREGISTER, UP,
-            UPDATE_PROGRESS, UPGRADE, UPLOAD_ALTERNATE, UPLOAD_DEFAULT
+            UPDATE_PROGRESS, UPGRADE, UPLOAD_ALTERNATE, UPLOAD_DEFAULT,
+            UPLOAD_DEFAULT, REPAIR
       );
    }
 

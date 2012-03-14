@@ -21,54 +21,42 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-@XmlRootElement(name = "NetworkType")
-public class NetworkType extends EntityType {
-
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
-   }
-
-   public Builder<?> toBuilder() {
-      return builder().fromNetworkType(this);
-   }
-
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-   }
-   
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
-
-      private NetworkConfiguration networkConfiguration;
+@XmlSeeAlso( {OrgNetwork.class, ExternalNetwork.class} )
+public abstract class Network extends EntityType {
+   public abstract static class Builder<T extends Builder<T>> extends EntityType.Builder<T> {
+      protected NetworkConfiguration networkConfiguration;
 
       /**
-       * @see NetworkType#getConfiguration()
+       * @see Network#getConfiguration()
        */
-      public B configuration(NetworkConfiguration networkConfiguration) {
+      public T configuration(NetworkConfiguration networkConfiguration) {
          this.networkConfiguration = networkConfiguration;
          return self();
       }
 
-      @Override
-      public NetworkType build() {
-         return new NetworkType(this);
-      }
-
-      public B fromNetworkType(NetworkType in) {
+      public T fromNetworkType(Network in) {
          return fromEntityType(in).configuration(in.getConfiguration());
       }
    }
-
-   public NetworkType(Builder<?> builder) {
-      super(builder);
-      this.networkConfiguration = builder.networkConfiguration;
+   
+   public Network(Builder<?> b) {
+      super(b);
+      networkConfiguration = b.networkConfiguration;
    }
 
-   protected NetworkType() {
+   protected Network() {
       // for JAXB
+   }
+   
+   @SuppressWarnings("unchecked")
+   public static <T extends Network> T toSubType(Network clazz) {
+      assert clazz instanceof Network;
+      return (T)clazz;
    }
 
    @XmlElement(name = "Configuration")
@@ -85,18 +73,17 @@ public class NetworkType extends EntityType {
    public boolean equals(Object o) {
       if (!super.equals(o))
          return false;
-      NetworkType that = NetworkType.class.cast(o);
+      Network that = Network.class.cast(o);
       return super.equals(that) && equal(networkConfiguration, that.networkConfiguration);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), networkConfiguration);
+      return super.hashCode() + Objects.hashCode(networkConfiguration);
    }
 
    @Override
    public ToStringHelper string() {
       return super.string().add("configuration", networkConfiguration);
    }
-
 }

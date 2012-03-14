@@ -360,7 +360,7 @@ public class Checks {
             "The Image type of a Media must be one of the allowed list");
    }
 
-   public static void checkNetworkType(NetworkType network) {
+   public static void checkNetworkType(Network network) {
       // Check optional fields
       NetworkConfiguration config = network.getConfiguration();
       if (config != null) {
@@ -1365,6 +1365,29 @@ public class Checks {
    private static void checkCimResourceAllocationSettingData(ResourceAllocationSettingData val) {
       // TODO Could do more assertions...
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ResouorceAllocatoinSettingData"));
+
+   public static void checkOrgNetwork(OrgNetwork network) {
+      // optional
+      ReferenceType<?> networkPoolRef = network.getNetworkPool();
+      if (networkPoolRef != null) {
+         Checks.checkReferenceType(networkPoolRef);
+      }
+      IpAddresses allowedExternalIpAddresses = network.getAllowedExternalIpAddresses();
+      if (allowedExternalIpAddresses != null) {
+         Checks.checkIpAddresses(allowedExternalIpAddresses);
+      }
+      
+      // parent type
+      checkNetworkType(network);
+   }
+   
+   public static void checkExternalNetwork(ExternalNetwork network) {
+      // required
+      assertNotNull(network.getProviderInfo(), String.format(OBJ_FIELD_REQ, 
+            "ExternalNetwork", "providerInfo"));
+      
+      // parent type
+      checkNetworkType(network);
    }
 
    public static void checkAdminVdc(AdminVdc vdc) {

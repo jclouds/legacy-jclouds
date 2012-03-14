@@ -44,6 +44,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminNetworkAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminVdcAsyncClient;

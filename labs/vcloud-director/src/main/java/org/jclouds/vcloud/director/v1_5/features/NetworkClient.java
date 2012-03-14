@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Network;
 
 /**
  * Provides synchronous access to Network.
@@ -42,7 +42,7 @@ public interface NetworkClient {
     * 
     * @return the network or null if not found
     */
-   OrgNetwork getNetwork(URI networkUri);
+   Network getNetwork(URI networkUri);
    
    /**
     * @return synchronous access to {@link Metadata.Readable} features
