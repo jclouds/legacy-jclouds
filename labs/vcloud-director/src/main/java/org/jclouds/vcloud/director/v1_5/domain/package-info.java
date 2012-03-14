@@ -16,18 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-@XmlSchema(namespace = VCLOUD_1_5_NS, location="http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd", elementFormDefault = XmlNsForm.QUALIFIED,
+@XmlSchema(namespace = VCLOUD_1_5_NS,
+      location = "http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd",
+      elementFormDefault = XmlNsForm.QUALIFIED,
       xmlns = {
-            @XmlNs(prefix = "cim", namespaceURI=VCLOUD_CIM_NS),
-            @XmlNs(prefix = "ovf", namespaceURI=VCLOUD_OVF_NS)
+            @XmlNs(prefix = "", namespaceURI = VCLOUD_1_5_NS),
+            @XmlNs(prefix = "cim", namespaceURI = VCLOUD_CIM_NS),
+            @XmlNs(prefix = "ovf", namespaceURI = VCLOUD_OVF_NS),
+            @XmlNs(prefix = "env", namespaceURI = VCLOUD_OVF_ENV_NS)
       }
 )
+@XmlAccessorType(XmlAccessType.FIELD)
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_ENV_NS;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;

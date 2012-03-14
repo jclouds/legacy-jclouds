@@ -39,7 +39,6 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "NetworkSection")
 public class NetworkSection extends SectionType<NetworkSection> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -87,8 +86,8 @@ public class NetworkSection extends SectionType<NetworkSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<NetworkSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<NetworkSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

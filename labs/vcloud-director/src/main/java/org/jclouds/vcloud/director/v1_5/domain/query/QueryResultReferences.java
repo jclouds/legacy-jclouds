@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a vCloud query as references.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="QueryResultReferences" /&gt;
  * </pre>
@@ -197,7 +197,7 @@ public class QueryResultReferences<T extends ReferenceType<T>> extends Container
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(references);
+      return Objects.hashCode(super.hashCode(), references);
    }
 
    @Override

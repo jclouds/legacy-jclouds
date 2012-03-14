@@ -72,6 +72,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
       /**
        * @see NetworkType#getConfiguration()
        */
+      @Override
       public Builder configuration(NetworkConfiguration networkConfiguration) {
          this.networkConfiguration = networkConfiguration;
          return this;
@@ -150,12 +151,12 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
       }
 
       @Override
-      public Builder fromEntityType(EntityType<OrgNetwork> in) {
+      public Builder fromNetworkType(NetworkType<OrgNetwork> in) {
          return Builder.class.cast(super.fromEntityType(in));
       }
 
       public Builder fromOrgNetwork(OrgNetwork in) {
-         return fromEntityType(in).configuration(in.getConfiguration())
+         return fromNetworkType(in).configuration(in.getConfiguration())
                .networkPool(in.getNetworkPool())
                .allowedExternalIpAddresses(in.getAllowedExternalIpAddresses());
       }
@@ -202,7 +203,7 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(networkPool, allowedExternalIpAddresses);
+      return Objects.hashCode(super.hashCode(), networkPool, allowedExternalIpAddresses);
    }
 
    @Override

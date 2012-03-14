@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
 
 /**
  * The virtual hardware required by a virtual machine is specified in VirtualHardwareSection.
- * <p/>
+ *
  * This specification supports abstract or incomplete hardware descriptions in which only the major
  * devices are described. The hypervisor is allowed to create additional virtual hardware
  * controllers and devices, as long as the required devices listed in the descriptor are realized.
@@ -43,10 +43,9 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlRootElement(name = "VirtualHardwareSection", namespace = VCLOUD_OVF_NS)
+@XmlRootElement(name = "VirtualHardwareSection")
 public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -114,7 +113,7 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
       }
 
       public Builder fromVirtualHardwareSection(VirtualHardwareSection in) {
-         return fromSection(in).items(in.getItems()).transports(in.getTransports()).system(
+         return fromSectionType(in).items(in.getItems()).transports(in.getTransports()).system(
                in.getSystem()).info(in.getInfo());
       }
 
@@ -122,8 +121,8 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<VirtualHardwareSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<VirtualHardwareSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

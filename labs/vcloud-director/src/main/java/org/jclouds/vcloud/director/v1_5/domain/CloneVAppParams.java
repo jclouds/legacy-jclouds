@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,51 +16,106 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
  * Represents parameters for copying a vApp and optionally deleting the source.
- * <p/>
- * <p/>
- * <p>Java class for CloneVAppParams complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * 
  * <pre>
- * &lt;complexType name="CloneVAppParams">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}InstantiateVAppParamsType">
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CloneVAppParams" /&gt;
  * </pre>
+ * 
+ * @author grkvlt@apache.org
  */
 @XmlType(name = "CloneVAppParams")
-public class CloneVAppParams
-      extends InstantiateVAppParamsType<CloneVAppParams> {
+public class CloneVAppParams extends InstantiateVAppParamsType<CloneVAppParams> {
 
+   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromCloneVAppParams(this);
    }
 
    public static class Builder extends InstantiateVAppParamsType.Builder<CloneVAppParams> {
 
+      @Override
       public CloneVAppParams build() {
-         return new CloneVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, source, isSourceDelete, linkedClone);
+         return new CloneVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#getSource()
+       */
+      @Override
+      public Builder source(ReferenceType<?> source) {
+         this.source = source;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isSourceDelete()
+       */
+      @Override
+      public Builder isSourceDelete(Boolean sourceDelete) {
+         this.sourceDelete = sourceDelete;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isSourceDelete()
+       */
+      @Override
+      public Builder sourceDelete() {
+         this.sourceDelete = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isSourceDelete()
+       */
+      @Override
+      public Builder notSourceDelete() {
+         this.sourceDelete = Boolean.FALSE;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isLinkedClone()
+       */
+      @Override
+      public Builder isLinkedClone(Boolean linkedClone) {
+         this.linkedClone = linkedClone;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isLinkedClone()
+       */
+      @Override
+      public Builder linkedClone() {
+         this.linkedClone = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see InstantiateVAppParamsType#isLinkedClone()
+       */
+      @Override
+      public Builder notLinkedClone() {
+         this.linkedClone = Boolean.FALSE;
+         return this;
       }
 
       /**
        * @see ParamsType#getDescription()
        */
+      @Override
       public Builder description(String description) {
          super.description(description);
          return this;
@@ -69,6 +124,7 @@ public class CloneVAppParams
       /**
        * @see ParamsType#getName()
        */
+      @Override
       public Builder name(String name) {
          super.name(name);
          return this;
@@ -77,56 +133,72 @@ public class CloneVAppParams
       /**
        * @see VAppCreationParamsType#getVAppParent()
        */
+      @Override
       public Builder vAppParent(Reference vAppParent) {
-         super.vAppParent(vAppParent);
+         this.vAppParent = vAppParent;
          return this;
       }
 
       /**
        * @see VAppCreationParamsType#getInstantiationParams()
        */
+      @Override
       public Builder instantiationParams(InstantiationParams instantiationParams) {
-         super.instantiationParams(instantiationParams);
+         this.instantiationParams = instantiationParams;
          return this;
       }
 
       /**
        * @see VAppCreationParamsType#isDeploy()
        */
+      @Override
       public Builder deploy(Boolean deploy) {
-         super.deploy(deploy);
+         this.deploy = deploy;
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#isDeploy()
+       */
+      @Override
+      public Builder deploy() {
+         this.deploy = Boolean.TRUE;
+         return this;
+      }
+
+      /**
+       * @see VAppCreationParamsType#isDeploy()
+       */
+      @Override
+      public Builder notDeploy() {
+         this.deploy = Boolean.FALSE;
          return this;
       }
 
       /**
        * @see VAppCreationParamsType#isPowerOn()
        */
+      @Override
       public Builder powerOn(Boolean powerOn) {
-         super.powerOn(powerOn);
+         this.powerOn = powerOn;
          return this;
       }
 
       /**
-       * @see InstantiateVAppParamsType#getSource()
+       * @see VAppCreationParamsType#isPowerOn()
        */
-      public Builder source(Reference source) {
-         super.source(source);
+      @Override
+      public Builder powerOn() {
+         this.powerOn = Boolean.TRUE;
          return this;
       }
 
       /**
-       * @see InstantiateVAppParamsType#isSourceDelete()
+       * @see VAppCreationParamsType#isPowerOn()
        */
-      public Builder isSourceDelete(Boolean isSourceDelete) {
-         super.isSourceDelete(isSourceDelete);
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isLinkedClone()
-       */
-      public Builder linkedClone(Boolean linkedClone) {
-         super.linkedClone(linkedClone);
+      @Override
+      public Builder notPowerOn() {
+         this.powerOn = Boolean.FALSE;
          return this;
       }
 
@@ -140,12 +212,12 @@ public class CloneVAppParams
       }
    }
 
-   private CloneVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn, Reference source, Boolean sourceDelete, Boolean linkedClone) {
+   protected CloneVAppParams() {
+      // For JAXB and builder use
+   }
+
+   public CloneVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
+						         Boolean deploy, Boolean powerOn, ReferenceType<?> source, Boolean sourceDelete, Boolean linkedClone) {
       super(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
    }
-
-   private CloneVAppParams() {
-      // For JAXB
-   }
-
- }
+}

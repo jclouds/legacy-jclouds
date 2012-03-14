@@ -181,7 +181,7 @@ public class MetadataEntry extends ResourceType<MetadataEntry> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(key, value);
+      return Objects.hashCode(super.hashCode(), key, value);
    }
 
    @Override

@@ -18,9 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static com.google.common.base.Objects.*;
+import static com.google.common.base.Preconditions.*;
 
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
@@ -29,10 +34,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
@@ -41,13 +43,13 @@ import com.google.common.collect.Sets;
 public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends SectionType<T> {
 
    public static abstract class Builder<T extends BaseVirtualSystem<T>> extends SectionType.Builder<T> {
+
       protected String id;
       protected String name;
       protected OperatingSystemSection operatingSystem;
       protected Set<VirtualHardwareSection> virtualHardwareSections = Sets.newLinkedHashSet();
       protected Set<ProductSection> productSections = Sets.newLinkedHashSet();
-      @SuppressWarnings("unchecked")
-      protected Multimap<String, SectionType> additionalSections = LinkedHashMultimap.create();
+      protected Set<SectionType<?>> additionalSections = Sets.newLinkedHashSet();
 
       /**
        * @see BaseVirtualSystem#getName
@@ -109,19 +111,16 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       /**
        * @see BaseVirtualSystem#getAdditionalSections
        */
-      @SuppressWarnings("unchecked")
-      public Builder<T> additionalSection(String name, SectionType additionalSection) {
-         this.additionalSections.put(checkNotNull(name, "name"), checkNotNull(additionalSection, "additionalSection"));
+      public Builder<T> additionalSection(SectionType<?> additionalSection) {
+         this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
          return this;
       }
 
       /**
        * @see BaseVirtualSystem#getAdditionalSections
        */
-      @SuppressWarnings("unchecked")
-      public Builder<T> additionalSections(Multimap<String, SectionType> additionalSections) {
-         this.additionalSections = ImmutableMultimap.<String, SectionType> copyOf(checkNotNull(additionalSections,
-                  "additionalSections"));
+      public Builder<T> additionalSections(Set<SectionType<?>> additionalSections) {
+         this.additionalSections = checkNotNull(additionalSections, "additionalSections");
          return this;
       }
 
@@ -132,9 +131,10 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       public abstract BaseVirtualSystem<T> build();
 
       public Builder<T> fromVirtualSystem(BaseVirtualSystem<T> in) {
-         return fromSection(in).id(in.getId()).name(in.getName())
-                  .operatingSystemSection(in.getOperatingSystemSection()).virtualHardwareSections(
-                           in.getVirtualHardwareSections()).productSections(in.getProductSections())
+         return fromSectionType(in).id(in.getId()).name(in.getName())
+                  .operatingSystemSection(in.getOperatingSystemSection())
+                  .virtualHardwareSections(in.getVirtualHardwareSections())
+                  .productSections(in.getProductSections())
                   .additionalSections(in.getAdditionalSections());
       }
 
@@ -142,8 +142,8 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<T> fromSection(SectionType<T> in) {
-         return (Builder<T>) super.fromSection(in);
+      public Builder<T> fromSectionType(SectionType<T> in) {
+         return (Builder<T>) super.fromSectionType(in);
       }
 
       /**
@@ -156,25 +156,30 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
 
    }
 
+   @XmlAttribute(namespace = VCLOUD_OVF_NS)
    private String id;
+   @XmlElement(name = "Name")
    private String name;
+   @XmlElement(name = "OperatingSystemSection")
    private OperatingSystemSection operatingSystem;
+   @XmlElement(name = "VirtualHardwareSection")
    private Set<VirtualHardwareSection> virtualHardwareSections;
+   @XmlElement(name = "ProductSection")
    private Set<ProductSection> productSections;
-   @SuppressWarnings("unchecked")
-   private Multimap<String, SectionType> additionalSections;
 
-   @SuppressWarnings("unchecked")
+   // NOTE what is the right annotation here?
+   private Set<SectionType<?>> additionalSections;
+
    protected BaseVirtualSystem(String id, String info, @Nullable Boolean required, String name, OperatingSystemSection operatingSystem,
             Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
-            Iterable<? extends ProductSection> productSections, Multimap<String, SectionType> additionalSections) {
+            Iterable<? extends ProductSection> productSections, Iterable<? extends SectionType<?>> additionalSections) {
       super(info, required);
       this.id = id;
       this.name = name;
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
       this.virtualHardwareSections = ImmutableSet.copyOf(checkNotNull(virtualHardwareSections, "virtualHardwareSections"));
       this.productSections = ImmutableSet.copyOf(checkNotNull(productSections, "productSections"));
-      this.additionalSections = ImmutableMultimap.copyOf(checkNotNull(additionalSections, "additionalSections"));
+      this.additionalSections = ImmutableSet.copyOf(checkNotNull(additionalSections, "additionalSections"));
    }
 
    protected BaseVirtualSystem() {
@@ -210,8 +215,7 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       return productSections;
    }
 
-   @SuppressWarnings("unchecked")
-   public Multimap<String, SectionType> getAdditionalSections() {
+   public Set<SectionType<?>> getAdditionalSections() {
       return additionalSections;
    }
 
@@ -228,14 +232,15 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
 
       BaseVirtualSystem<?> other = (BaseVirtualSystem<?>) obj;
       return super.equals(other) 
-            && Objects.equal(id, other.id)
-            && Objects.equal(name, other.name)
-            && Objects.equal(operatingSystem, other.operatingSystem)
-            && Objects.equal(virtualHardwareSections, other.virtualHardwareSections)
-            && Objects.equal(productSections, other.productSections)
-            && Objects.equal(additionalSections, other.additionalSections);
+            && equal(id, other.id)
+            && equal(name, other.name)
+            && equal(operatingSystem, other.operatingSystem)
+            && equal(virtualHardwareSections, other.virtualHardwareSections)
+            && equal(productSections, other.productSections)
+            && equal(additionalSections, other.additionalSections);
    }
 
+   @Override
    protected Objects.ToStringHelper string() {
       return super.string().add("id", id).add("name", name)
             .add("operatingSystem", operatingSystem).add("virtualHardwareSections", virtualHardwareSections)

@@ -22,8 +22,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import java.net.URI;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -49,7 +47,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "AdminCatalog")
 public class AdminCatalog extends CatalogType<AdminCatalog> {
    

@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-
 /**
  * Constants used by VCloudDirector clients
  *
@@ -30,6 +29,8 @@ public class VCloudDirectorConstants {
    public static final String VCLOUD_1_5_NS = "http://www.vmware.com/vcloud/v1.5";
 
    public static final String VCLOUD_OVF_NS = "http://schemas.dmtf.org/ovf/envelope/1";
+
+   public static final String VCLOUD_OVF_ENV_NS = "http://schemas.dmtf.org/ovf/environment/1";
 
    public static final String VCLOUD_CIM_NS = "http://schemas.dmtf.org/wbem/wscim/1/common";
 

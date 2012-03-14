@@ -32,10 +32,9 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlRootElement(name = "VirtualHardwareSection")
+@XmlRootElement(name = "OperatingSystemSection")
 public class OperatingSystemSection extends SectionType<OperatingSystemSection> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -93,8 +92,8 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<OperatingSystemSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<OperatingSystemSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

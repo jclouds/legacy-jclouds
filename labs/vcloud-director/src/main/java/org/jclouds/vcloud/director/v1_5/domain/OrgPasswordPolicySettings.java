@@ -35,28 +35,11 @@ import com.google.common.base.Objects.ToStringHelper;
 
 
 /**
- *  1.5
- * 
- * <p>Java class for OrgPasswordPolicySettings complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * Java class for OrgPasswordPolicySettings complex type.
  * 
  * <pre>
- * &lt;complexType name="OrgPasswordPolicySettings">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}ResourceType">
- *       &lt;sequence>
- *         &lt;element name="AccountLockoutEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="InvalidLoginsBeforeLockout" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="AccountLockoutIntervalMinutes" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *       &lt;/sequence>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="OrgPasswordPolicySettings" /&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "OrgPasswordPolicySettings")

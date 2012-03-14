@@ -23,14 +23,15 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -58,7 +59,10 @@ import com.google.common.collect.Lists;
 @XmlType(name = "FilesList", propOrder = {
       "files"
 })
-public class FilesList {
+public class FilesList extends ForwardingSet<File> {
+   
+   // TODO Investigate using the same wrapper (e.g. see Tasks); can we eliminate this class?
+   
    public static Builder builder() {
       return new Builder();
    }
@@ -69,13 +73,13 @@ public class FilesList {
 
    public static class Builder {
 
-      private List<File> files = Lists.newLinkedList();
+      private Set<File> files = Sets.newLinkedHashSet();
       
       /**
        * @see FilesList#getFiles()
        */
-      public Builder files(List<File> files) {
-         this.files = Lists.newLinkedList(checkNotNull(files, "files"));
+      public Builder files(Iterable<File> files) {
+         this.files = Sets.newLinkedHashSet(checkNotNull(files, "files"));
          return this;
       }
 
@@ -97,23 +101,22 @@ public class FilesList {
       }
    }
 
+   @XmlElement(name = "File", required = true)
+   private Set<File> files = Sets.newLinkedHashSet();
+
    private FilesList() {
       // for JAXB
    }
 
-   private FilesList(List<File> files) {
-      this.files = ImmutableList.copyOf(files);
+   private FilesList(Iterable<File> files) {
+      this.files = ImmutableSet.copyOf(files);
    }
-
-
-   @XmlElement(name = "File", required = true)
-   protected List<File> files = Lists.newLinkedList();
 
    /**
     * Gets the value of the file property.
     */
-   public List<File> getFiles() {
-      return Collections.unmodifiableList(this.files);
+   public Set<File> getFiles() {
+      return Collections.unmodifiableSet(this.files);
    }
 
    @Override
@@ -137,4 +140,8 @@ public class FilesList {
             .add("file", files).toString();
    }
 
+   @Override
+   protected Set<File> delegate() {
+      return getFiles();
+   }
 }

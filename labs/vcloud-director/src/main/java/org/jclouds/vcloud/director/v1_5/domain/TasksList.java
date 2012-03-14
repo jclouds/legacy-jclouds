@@ -170,11 +170,7 @@ public class TasksList extends ResourceType<TasksList> implements Set<Task> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(delegate(), name);
-   }
-
-   private Set<Task> delegate() {
-      return tasks == null ? ImmutableSet.<Task>of() : Collections.unmodifiableSet(tasks);
+      return Objects.hashCode(super.hashCode(), delegate(), name);
    }
 
    @Override
@@ -187,6 +183,15 @@ public class TasksList extends ResourceType<TasksList> implements Set<Task> {
       return new Builder().fromTasksList(this);
    }
 
+   
+   /*
+    * Methods below are for implementing Set; annoying lack of multiple inheritance for using ForwardingSet!
+    */
+   
+   private Set<Task> delegate() {
+      return tasks == null ? ImmutableSet.<Task>of() : Collections.unmodifiableSet(tasks);
+   }
+   
    @Override
    public Iterator<Task> iterator() {
       return delegate().iterator();

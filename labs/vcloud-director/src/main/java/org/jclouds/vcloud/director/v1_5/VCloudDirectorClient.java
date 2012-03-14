@@ -45,6 +45,7 @@ import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadClient;
 import org.jclouds.vcloud.director.v1_5.features.UserClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 
@@ -107,19 +108,25 @@ public interface VCloudDirectorClient {
    VdcClient getVdcClient();
 
    /**
-    * @return synchronous access to {@link Upload} features
+    * @return synchronous access to upload features
     */
    @Delegate
    UploadClient getUploadClient();
    
    /**
-    * @return synchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} features
+    * @return synchronous access to {@link VApp} features
+    */
+   @Delegate
+   VAppClient getVAppClient();
+
+   /**
+    * @return synchronous access to {@link VAppTemplate} features
     */
    @Delegate
    VAppTemplateClient getVAppTemplateClient();
    
    /**
-    * @return synchronous access to {@link Catalog} features
+    * @return synchronous access to {@link Catalog} admin features
     */
    @Delegate
    AdminCatalogClient getAdminCatalogClient();

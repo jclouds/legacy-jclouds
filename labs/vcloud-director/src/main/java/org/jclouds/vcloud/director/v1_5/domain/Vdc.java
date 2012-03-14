@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -24,61 +23,22 @@ import static com.google.common.base.Objects.equal;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-
 /**
  * Represents a virtual data center (vDC).
- * <p/>
- * <p/>
- * <p>Java class for Vdc complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Vdc">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}EntityType">
- *       &lt;sequence>
- *         &lt;element name="AllocationModel" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="StorageCapacity" type="{http://www.vmware.com/vcloud/v1.5}CapacityWithUsageType"/>
- *         &lt;element name="ComputeCapacity" type="{http://www.vmware.com/vcloud/v1.5}ComputeCapacityType"/>
- *         &lt;element name="ResourceEntities" type="{http://www.vmware.com/vcloud/v1.5}ResourceEntitiesType" minOccurs="0"/>
- *         &lt;element name="AvailableNetworks" type="{http://www.vmware.com/vcloud/v1.5}AvailableNetworksType" minOccurs="0"/>
- *         &lt;element name="Capabilities" type="{http://www.vmware.com/vcloud/v1.5}CapabilitiesType" minOccurs="0"/>
- *         &lt;element name="NicQuota" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="NetworkQuota" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="VmQuota" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;element name="IsEnabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Vdc" /&gt;
  * </pre>
  */
 @XmlRootElement(name = "Vdc")
-@XmlType(propOrder = {
-      "allocationModel",
-      "storageCapacity",
-      "computeCapacity",
-      "resourceEntities",
-      "availableNetworks",
-      "capabilities",
-      "nicQuota",
-      "networkQuota",
-      "vmQuota",
-      "isEnabled"
-})
-@XmlSeeAlso({
-    AdminVdc.class
-})
+@XmlType(name = "VdcType")
 public class Vdc extends EntityType<Vdc> {
+
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
@@ -89,7 +49,7 @@ public class Vdc extends EntityType<Vdc> {
    }
    
    @Override
-   public ResourceType.Builder<Vdc> toBuilder() {
+   public EntityType.Builder<Vdc> toBuilder() {
       throw new UnsupportedOperationException("Use new builder");
    }
    
@@ -100,8 +60,8 @@ public class Vdc extends EntityType<Vdc> {
       private ResourceEntities resourceEntities;
       private AvailableNetworks availableNetworks;
       private Capabilities capabilities;
-      private int nicQuota;
-      private int networkQuota;
+      private Integer nicQuota;
+      private Integer networkQuota;
       private Integer vmQuota;
       private Boolean isEnabled;
       private Integer status;
@@ -157,7 +117,7 @@ public class Vdc extends EntityType<Vdc> {
       /**
        * @see Vdc#getNicQuota()
        */
-      public T nicQuota(int nicQuota) {
+      public T nicQuota(Integer nicQuota) {
          this.nicQuota = nicQuota;
          return self();
       }
@@ -165,7 +125,7 @@ public class Vdc extends EntityType<Vdc> {
       /**
        * @see Vdc#getNetworkQuota()
        */
-      public T networkQuota(int networkQuota) {
+      public T networkQuota(Integer networkQuota) {
          this.networkQuota = networkQuota;
          return self();
       }
@@ -194,6 +154,7 @@ public class Vdc extends EntityType<Vdc> {
          return self();
       }
 
+      @Override
       public Vdc build() {
          return new Vdc(this);
       }
@@ -235,7 +196,7 @@ public class Vdc extends EntityType<Vdc> {
       this.nicQuota = b.nicQuota;
       this.networkQuota = b.networkQuota;
       this.vmQuota = b.vmQuota;
-      isEnabled = b.isEnabled;
+      this.isEnabled = b.isEnabled;
       this.status = b.status;
    }
 
@@ -252,9 +213,9 @@ public class Vdc extends EntityType<Vdc> {
    @XmlElement(name = "Capabilities")
    protected Capabilities capabilities;
    @XmlElement(name = "NicQuota")
-   protected int nicQuota;
+   protected Integer nicQuota;
    @XmlElement(name = "NetworkQuota")
-   protected int networkQuota;
+   protected Integer networkQuota;
    @XmlElement(name = "VmQuota")
    protected Integer vmQuota;
    @XmlElement(name = "IsEnabled")
@@ -264,9 +225,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the allocationModel property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getAllocationModel() {
       return allocationModel;
@@ -274,9 +232,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the storageCapacity property.
-    *
-    * @return possible object is
-    *         {@link CapacityWithUsage }
     */
    public CapacityWithUsage getStorageCapacity() {
       return storageCapacity;
@@ -284,9 +239,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the computeCapacity property.
-    *
-    * @return possible object is
-    *         {@link ComputeCapacity }
     */
    public ComputeCapacity getComputeCapacity() {
       return computeCapacity;
@@ -294,9 +246,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the resourceEntities property.
-    *
-    * @return possible object is
-    *         {@link ResourceEntities }
     */
    public ResourceEntities getResourceEntities() {
       return resourceEntities;
@@ -304,9 +253,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the availableNetworks property.
-    *
-    * @return possible object is
-    *         {@link AvailableNetworks }
     */
    public AvailableNetworks getAvailableNetworks() {
       return availableNetworks;
@@ -314,9 +260,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the capabilities property.
-    *
-    * @return possible object is
-    *         {@link Capabilities }
     */
    public Capabilities getCapabilities() {
       return capabilities;
@@ -325,22 +268,19 @@ public class Vdc extends EntityType<Vdc> {
    /**
     * Gets the value of the nicQuota property.
     */
-   public int getNicQuota() {
+   public Integer getNicQuota() {
       return nicQuota;
    }
 
    /**
     * Gets the value of the networkQuota property.
     */
-   public int getNetworkQuota() {
+   public Integer getNetworkQuota() {
       return networkQuota;
    }
 
    /**
     * Gets the value of the vmQuota property.
-    *
-    * @return possible object is
-    *         {@link Integer }
     */
    public Integer getVmQuota() {
       return vmQuota;
@@ -348,9 +288,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the isEnabled property.
-    *
-    * @return possible object is
-    *         {@link Boolean }
     */
    public Boolean isEnabled() {
       return isEnabled;
@@ -358,9 +295,6 @@ public class Vdc extends EntityType<Vdc> {
 
    /**
     * Gets the value of the status property.
-    *
-    * @return possible object is
-    *         {@link Integer }
     */
    public Integer getStatus() {
       return status;
@@ -374,33 +308,23 @@ public class Vdc extends EntityType<Vdc> {
          return false;
       Vdc that = Vdc.class.cast(o);
       return super.equals(that) &&
-            equal(allocationModel, that.allocationModel) &&
-            equal(storageCapacity, that.storageCapacity) &&
-            equal(computeCapacity, that.computeCapacity) &&
-            equal(resourceEntities, that.resourceEntities) &&
-            equal(availableNetworks, that.availableNetworks) &&
-            equal(capabilities, that.capabilities) &&
-            equal(nicQuota, that.nicQuota) &&
-            equal(networkQuota, that.networkQuota) &&
-            equal(vmQuota, that.vmQuota) &&
-            equal(isEnabled, that.isEnabled) &&
-            equal(status, that.status);
+            equal(this.allocationModel, that.allocationModel) &&
+            equal(this.storageCapacity, that.storageCapacity) &&
+            equal(this.computeCapacity, that.computeCapacity) &&
+            equal(this.resourceEntities, that.resourceEntities) &&
+            equal(this.availableNetworks, that.availableNetworks) &&
+            equal(this.capabilities, that.capabilities) &&
+            equal(this.nicQuota, that.nicQuota) &&
+            equal(this.networkQuota, that.networkQuota) &&
+            equal(this.vmQuota, that.vmQuota) &&
+            equal(this.isEnabled, that.isEnabled) &&
+            equal(this.status, that.status);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), 
-            allocationModel,
-            storageCapacity,
-            computeCapacity,
-            resourceEntities,
-            availableNetworks,
-            capabilities,
-            nicQuota,
-            networkQuota,
-            vmQuota,
-            isEnabled,
-            status);
+      return Objects.hashCode(super.hashCode(), allocationModel, storageCapacity, computeCapacity, resourceEntities, availableNetworks,
+            capabilities, nicQuota, networkQuota, vmQuota, isEnabled, status);
    }
 
    @Override

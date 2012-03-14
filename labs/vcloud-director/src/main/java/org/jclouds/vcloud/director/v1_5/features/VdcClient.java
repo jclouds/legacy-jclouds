@@ -38,7 +38,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 
 /**
  * Provides synchronous access to a vDC.
- * <p/>
  * 
  * @see VdcAsyncClient
  * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
@@ -116,6 +115,10 @@ public interface VdcClient {
    /**
     * Instantiate a vApp template into a new vApp. 
     * The status of vApp will be in UNRESOLVED(0) until the instantiate task is finished.
+    *
+    * <pre>
+    * POST /vdc/{id}/action/instantiateVAppTemplate
+    * </pre>
     * 
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
