@@ -170,7 +170,7 @@ public class ModifyRequest {
       int indexOfFirstEquals = stringToParse.indexOf('=');
       String key = indexOfFirstEquals == -1 ? stringToParse : stringToParse.substring(0, indexOfFirstEquals);
       String value = indexOfFirstEquals == -1 ? null : stringToParse.substring(indexOfFirstEquals + 1);
-      map.put(key, Strings2.urlDecode(value));
+      map.put(Strings2.urlDecode(key), Strings2.urlDecode(value));
    }
 
    public static String makeQueryLine(Multimap<String, String> params,
