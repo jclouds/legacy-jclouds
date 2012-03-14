@@ -109,7 +109,7 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
       assertEquals(portForwardingRule.getIPAddressId(), ip.getId());
       assertEquals(portForwardingRule.getVirtualMachineId(), vm.getId());
       assertEquals(portForwardingRule.getPublicPort(), 22);
-      assertEquals(portForwardingRule.getProtocol(), "tcp");
+      assertEquals(portForwardingRule.getProtocol(), PortForwardingRule.Protocol.TCP);
 
       checkPortForwardingRule(portForwardingRule);
       checkSSH(new IPSocket(ip.getIPAddress(), 22));
