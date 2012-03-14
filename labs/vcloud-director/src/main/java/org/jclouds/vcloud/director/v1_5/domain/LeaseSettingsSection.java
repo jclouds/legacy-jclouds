@@ -159,7 +159,7 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
       }
 
       public Builder fromLeaseSettingsSection(LeaseSettingsSection in) {
-         return fromSection(in)
+         return fromSectionType(in)
                .links(in.getLinks())
                .deploymentLeaseInSeconds(in.getDeploymentLeaseInSeconds())
                .storageLeaseInSeconds(in.getStorageLeaseInSeconds())
@@ -173,8 +173,8 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<LeaseSettingsSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<LeaseSettingsSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

@@ -34,6 +34,10 @@ public class VCloudDirectorMediaType {
 
    public static final String ANY = "*/*";
 
+   public static final String ANY_IMAGE = "image/*";
+
+   public static final String APPLICATION_XML_1_5 = "application/*+xml;version=1.5";
+
    public static final String SESSION = "application/vnd.vmware.vcloud.session+xml";
 
    public static final String ERROR = "application/vnd.vmware.vcloud.error+xml";
@@ -74,30 +78,23 @@ public class VCloudDirectorMediaType {
 
    public static final String ADMIN_USER = "application/vnd.vmware.admin.user+xml";
    
-   public static final String V_APP = "application/vnd.vmware.vcloud.vApp+xml";
+   public static final String VAPP = "application/vnd.vmware.vcloud.vApp+xml";
    
-   public static final String V_APP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   public static final String VAPP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
    
-   public static final String CAPTURE_VAPP_PARAMS = 
-         "application/vnd.vmware.vcloud.captureVAppParams+xml";
+   public static final String CAPTURE_VAPP_PARAMS = "application/vnd.vmware.vcloud.captureVAppParams+xml";
    
-   public static final String CLONE_MEDIA_PARAMS = 
-         "application/vnd.vmware.vcloud.cloneMediaParams+xml";
+   public static final String CLONE_MEDIA_PARAMS = "application/vnd.vmware.vcloud.cloneMediaParams+xml";
    
-   public static final String CLONE_V_APP_PARAMS = 
-         "application/vnd.vmware.vcloud.cloneVAppParams+xml";
+   public static final String CLONE_VAPP_PARAMS = "application/vnd.vmware.vcloud.cloneVAppParams+xml";
    
-   public static final String CLONE_V_APP_TEMPLATE_PARAMS = 
-         "application/vnd.vmware.vcloud.cloneVAppTemplateParams+xml";
+   public static final String CLONE_VAPP_TEMPLATE_PARAMS = "application/vnd.vmware.vcloud.cloneVAppTemplateParams+xml";
    
-   public static final String COMPOSE_VAPP_PARAMS = 
-         "application/vnd.vmware.vcloud.composeVAppParams+xml";
+   public static final String COMPOSE_VAPP_PARAMS = "application/vnd.vmware.vcloud.composeVAppParams+xml";
    
-   public static final String INSTANTIATE_VAPP_TEMPLATE_PARAMS = 
-         "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml";
+   public static final String INSTANTIATE_VAPP_TEMPLATE_PARAMS = "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml";
          
-   public static final String UPLOAD_VAPP_TEMPLATE_PARAMS = 
-         "application/vnd.vmware.vcloud.uploadVAppTemplateParams+xml";
+   public static final String UPLOAD_VAPP_TEMPLATE_PARAMS = "application/vnd.vmware.vcloud.uploadVAppTemplateParams+xml";
          
    public static final String QUERY_RESULT_RECORDS = "application/vnd.vmware.vcloud.query.records+xml";
  
@@ -107,11 +104,11 @@ public class VCloudDirectorMediaType {
          
    public static final String CONTROL_ACCESS = "application/vnd.vmware.vcloud.controlAccess+xml";
 
-   public static final String VAPP_TEMPLATE = "application/vnd.vmware.vcloud.vAppTemplate+xml";
-
    public static final String CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.customizationSection+xml";
 
    public static final String GUEST_CUSTOMIZATION_SECTION = "application/vnd.vmware.vcloud.guestCustomizationSection+xml";
+
+   public static final String LEASE_SETTINGS_SECTION =  "application/vnd.vmware.vcloud.leaseSettingsSection+xml";
 
    public static final String NETWORK_SECTION = "application/vnd.vmware.vcloud.networkSection+xml";
 
@@ -119,13 +116,25 @@ public class VCloudDirectorMediaType {
 
    public static final String NETWORK_CONNECTION_SECTION = "application/vnd.vmware.vcloud.networkConnectionSection+xml";
    
+   public static final String OPERATING_SYSTEM_SECTION = "application/vnd.vmware.vcloud.operatingSystemSection+xml";
+   
    public static final String PRODUCT_SECTION_LIST = "application/vnd.vmware.vcloud.productSection+xml";
 
-   public static final String RELOCATE_TEMPLATE = "application/vnd.vmware.vcloud.relocateTemplate+xml";
+   public static final String STARTUP_SECTION = "application/vnd.vmware.vcloud.startupSection+xml";
 
-   public static final String LEASE_SETTINGS_SECTION =  "application/vnd.vmware.vcloud.leaseSettingsSection+xml";
+   public static final String VIRTUAL_HARDWARE_SECTION = "application/vnd.vmware.vcloud.virtualHardwareSection+xml";
+
+   public static final String RELOCATE_TEMPLATE = "application/vnd.vmware.vcloud.relocateTemplate+xml";
    
    public static final String ENVELOPE =  "application/vnd.???";
+   
+   public static final String VM_PENDING_ANSWER = "application/vnd.vmware.vcloud.vmPendingAnswer+xml";
+   
+   public static final String VM_PENDING_QUESTION = "application/vnd.vmware.vcloud.vmPendingQuestion+xml";
+
+   public static final String OVF_RASD_ITEM = "application/vnd.vmware.vcloud.rasdItem+xml";
+   
+   public static final String OVF_RASD_ITEMS_LIST = "application/vnd.vmware.vcloud.rasdItemsList+xml";
    
    public static final String ADMIN_CATALOG = "application/vnd.vmware.admin.catalog+xml";
    
@@ -156,6 +165,14 @@ public class VCloudDirectorMediaType {
    public static final String USER = "application/vnd.vmware.admin.user+xml";
    
    public static final String ROLE = "application/vnd.vmware.admin.role+xml";
+    
+   public static final String DEPLOY_VAPP_PARAMS = "application/vnd.vmware.vcloud.deployVAppParams+xml";
+   
+   public static final String RECOMPOSE_VAPP_PARAMS = "application/vnd.vmware.vcloud.recomposeVAppParams+xml";
+   
+   public static final String RELOCATE_VM_PARAMS = "application/vnd.vmware.vcloud.relocateVmParams+xml";
+   
+   public static final String UNDEPLOY_VAPP_PARAMS = "application/vnd.vmware.vcloud.undeployVAppParams+xml";
    
    public static final String ADMIN_VDC = "application/vnd.vmware.admin.vdc+xml";
    
@@ -165,20 +182,23 @@ public class VCloudDirectorMediaType {
     * This list must be updated whenever a new media type constant is added.
     */
    public static final List<String> ALL = ImmutableList.of(
-            SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY,
-            METADATA_VALUE, ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK,
-            CATALOG, CATALOG_ITEM, CATALOG_ITEMS, CATALOGS_LIST, PROPERTY,
-            MEDIA, OWNER, VDC, ADMIN_USER, V_APP, V_APP_TEMPLATE, 
-            CAPTURE_VAPP_PARAMS, CLONE_V_APP_PARAMS, CLONE_V_APP_TEMPLATE_PARAMS,
-            COMPOSE_VAPP_PARAMS, INSTANTIATE_VAPP_TEMPLATE_PARAMS,
-            UPLOAD_VAPP_TEMPLATE_PARAMS, ADMIN_CATALOG, ADMIN_ORG,
-            QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
-            CONTROL_ACCESS, VAPP_TEMPLATE, CUSTOMIZATION_SECTION, GUEST_CUSTOMIZATION_SECTION, 
-            NETWORK_SECTION, NETWORK_CONFIG_SECTION, NETWORK_CONNECTION_SECTION,   
-            CLONE_MEDIA_PARAMS, LEASE_SETTINGS_SECTION, RELOCATE_TEMPLATE, ENVELOPE,
-            PUBLISH_CATALOG_PARAMS, GROUP, ORG_VAPP_TEMPLATE_LEASE_SETTINGS,
-            ORG_LEASE_SETTINGS, ORG_PASSWORD_POLICY_SETTINGS, ORG_LDAP_SETTINGS,
-            ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
-            ADMIN_ORG_NETWORK, USER, ROLE, ADMIN_VDC
+         SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY, METADATA_VALUE,
+         ORG, TASKS_LIST, TASK, NETWORK, ORG_NETWORK, CATALOG, CATALOG_ITEM,
+         CATALOG_ITEMS, CATALOGS_LIST, PROPERTY, MEDIA, OWNER, VDC, ADMIN_USER,
+         VAPP, VAPP_TEMPLATE, CAPTURE_VAPP_PARAMS, CLONE_MEDIA_PARAMS,
+         CLONE_VAPP_PARAMS, CLONE_VAPP_TEMPLATE_PARAMS, COMPOSE_VAPP_PARAMS,
+         INSTANTIATE_VAPP_TEMPLATE_PARAMS, UPLOAD_VAPP_TEMPLATE_PARAMS,
+         QUERY_RESULT_RECORDS, QUERY_RESULT_REFERENCES, QUERY_RESULT_ID_RECORDS,
+         CONTROL_ACCESS, CUSTOMIZATION_SECTION, GUEST_CUSTOMIZATION_SECTION,
+         LEASE_SETTINGS_SECTION, NETWORK_SECTION, NETWORK_CONFIG_SECTION,
+         NETWORK_CONNECTION_SECTION, OPERATING_SYSTEM_SECTION,
+         PRODUCT_SECTION_LIST, STARTUP_SECTION, VIRTUAL_HARDWARE_SECTION,
+         RELOCATE_TEMPLATE, ENVELOPE, VM_PENDING_ANSWER, VM_PENDING_QUESTION,
+         OVF_RASD_ITEM, OVF_RASD_ITEMS_LIST, ADMIN_CATALOG,
+         PUBLISH_CATALOG_PARAMS, GROUP, ORG_VAPP_TEMPLATE_LEASE_SETTINGS,
+         ORG_LEASE_SETTINGS, ORG_PASSWORD_POLICY_SETTINGS, ORG_LDAP_SETTINGS,
+         ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
+         ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
+         RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC
       );
 }

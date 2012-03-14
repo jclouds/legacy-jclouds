@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static com.google.common.base.Preconditions.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.Set;
 
@@ -46,7 +46,6 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "VirtualHardwareSection", namespace = VCLOUD_OVF_NS)
 public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -114,7 +113,7 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
       }
 
       public Builder fromVirtualHardwareSection(VirtualHardwareSection in) {
-         return fromSection(in).items(in.getItems()).transports(in.getTransports()).system(
+         return fromSectionType(in).items(in.getItems()).transports(in.getTransports()).system(
                in.getSystem()).info(in.getInfo());
       }
 
@@ -122,8 +121,8 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<VirtualHardwareSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<VirtualHardwareSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

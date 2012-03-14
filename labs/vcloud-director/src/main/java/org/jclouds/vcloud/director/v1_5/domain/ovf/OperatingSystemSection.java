@@ -93,8 +93,8 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<OperatingSystemSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<OperatingSystemSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**

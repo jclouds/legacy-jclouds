@@ -258,7 +258,7 @@ public class Media extends ResourceEntityType<Media> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(owner, imageType, size);
+      return Objects.hashCode(super.hashCode(), owner, imageType, size);
    }
 
    @Override

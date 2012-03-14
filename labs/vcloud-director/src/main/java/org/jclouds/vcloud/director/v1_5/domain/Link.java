@@ -45,31 +45,80 @@ import com.google.common.base.Objects.ToStringHelper;
 public class Link extends ReferenceType<Link> {
 
    public static final class Rel {
-      public static final String UP = "up";
-      public static final String DOWN = "down";
-      public static final String EDIT = "edit";
       public static final String ADD = "add";
-      public static final String DELETE = "delete";
-      public static final String REMOVE = "remove";
-      public static final String CATALOG_ITEM = "catalogItem";
-      public static final String TASK_CANCEL = "task:cancel";
       public static final String ALTERNATE = "alternate";
-      public static final String NEXT_PAGE = "nextPage";
-      public static final String PREVIOUS_PAGE = "previousPage";
-      public static final String LAST_PAGE = "lastPage";
-      public static final String FIRST_PAGE = "firstPage";
+      public static final String CATALOG_ITEM = "catalogItem";
+      public static final String COLLABORATION_ABORT = "collaboration:abort";
+      public static final String COLLABORATION_FAIL = "collaboration:fail";
+      public static final String COLLABORATION_RESUME = "collaboration:resume";
+      public static final String CONSOLIDATE = "consolidate";
       public static final String CONTROL_ACCESS = "controlAccess";
+      public static final String COPY = "copy";
+      public static final String DEPLOY = "deploy";
+      public static final String DISABLE = "disable";
+      public static final String DISCARD_STATE = "discardState";
+      public static final String DOWN = "down";
+      public static final String DOWNLOAD_ALTERNATE = "download:alternate";
+      public static final String DOWNLOAD_DEFAULT = "download:default";
+      public static final String EDIT = "edit";
+      public static final String ENABLE = "enable";
+      public static final String FIRST_PAGE = "firstPage";
+      public static final String INSTALL_VMWARE_TOOLS = "installVmwareTools";
+      public static final String LAST_PAGE = "lastPage";
+      public static final String EJECT_MEDIA = "media:ejectMedia";
+      public static final String INSERT_MEDIA = "media:insertMedia";
+      public static final String MOVE = "move";
+      public static final String NEXT_PAGE = "nextPage";
+      public static final String OVA = "ova";
+      public static final String OVF = "ovf";
+      public static final String POWER_OFF = "power:powerOff";
+      public static final String POWER_ON = "power:powerOn";
+      public static final String REBOOT = "power:reboot";
+      public static final String RESET = "power:reset";
+      public static final String SHUTDOWN = "power:shutdown";
+      public static final String SUSPEND = "power:suspend";
+      public static final String PREVIOUS_PAGE = "previousPage";
+      public static final String PUBLISH = "publish";
+      public static final String RECOMPOSE = "recompose";
+      public static final String RECONNECT = "reconnect";
+      public static final String REGISTER = "register";
+      public static final String REJECT = "reject";
+      public static final String RELOCATE = "relocate";
+      public static final String REMOVE = "remove";
+      public static final String REPAIR = "repair";
+      public static final String SCREEN_ACQUIRE_TICKET = "screen:acquireTicket";
+      public static final String SCREEN_THUMBNAIL = "screen:thumbnail";
+      public static final String TASK_CANCEL = "task:cancel";
+      public static final String BLOCKING_TASK = "blockingTask";
+      public static final String TASK_OWNER = "taskOwner";
+      public static final String TASK_PARAMS = "taskParams";
+      public static final String TASK_REQUEST = "taskRequest";
+      public static final String UNDEPLOY = "undeploy";
+      public static final String UNLOCK = "unlock";
+      public static final String UNREGISTER = "unregister";
+      public static final String UP = "up";
+      public static final String UPDATE_PROGRESS = "updateProgress";
+      public static final String UPGRADE = "upgrade";
+      public static final String UPLOAD_ALTERNATE = "upload:alternate";
       public static final String UPLOAD_DEFAULT = "upload:default";
 
       /**
        * All acceptable {@link Link#getRel()} values.
-       * <p/>
+       *
        * This list must be updated whenever a new relationship is added.
        */
       public static final List<String> ALL = Arrays.asList(
-            UP, DOWN, EDIT, ADD, DELETE, REMOVE, CATALOG_ITEM, TASK_CANCEL,
-            ALTERNATE, NEXT_PAGE, PREVIOUS_PAGE, LAST_PAGE, FIRST_PAGE,
-               CONTROL_ACCESS, UPLOAD_DEFAULT
+            ADD, ALTERNATE, CATALOG_ITEM, COLLABORATION_ABORT,
+            COLLABORATION_FAIL, COLLABORATION_RESUME, CONSOLIDATE,
+            CONTROL_ACCESS, COPY, DEPLOY, DISABLE, DISCARD_STATE, DOWN,
+            DOWNLOAD_ALTERNATE, DOWNLOAD_DEFAULT, EDIT, ENABLE, FIRST_PAGE,
+            INSTALL_VMWARE_TOOLS, LAST_PAGE, EJECT_MEDIA, INSERT_MEDIA, MOVE,
+            NEXT_PAGE, OVA, OVF, POWER_OFF, POWER_ON, REBOOT, RESET, SHUTDOWN,
+            SUSPEND, PREVIOUS_PAGE, PUBLISH, RECOMPOSE, RECONNECT, REGISTER,
+            REJECT, RELOCATE, REMOVE, REPAIR, SCREEN_ACQUIRE_TICKET,
+            SCREEN_THUMBNAIL, TASK_CANCEL, BLOCKING_TASK, TASK_OWNER,
+            TASK_PARAMS, TASK_REQUEST, UNDEPLOY, UNLOCK, UNREGISTER, UP,
+            UPDATE_PROGRESS, UPGRADE, UPLOAD_ALTERNATE, UPLOAD_DEFAULT
       );
    }
 
@@ -198,7 +247,7 @@ public class Link extends ReferenceType<Link> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(rel);
+      return Objects.hashCode(super.hashCode(), rel);
    }
 
    @Override

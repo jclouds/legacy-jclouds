@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -39,39 +38,14 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-
 /**
  * Represents a list of network cards existing in a VM.
- * <p/>
- * <p/>
- * <p>Java class for NetworkConnectionSection complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * 
  * <pre>
- * &lt;complexType name="NetworkConnectionSection">
- *   &lt;complexContent>
- *     &lt;extension base="{http://schemas.dmtf.org/ovf/envelope/1}Section_Type">
- *       &lt;sequence>
- *         &lt;element name="PrimaryNetworkConnectionIndex" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
- *         &lt;element name="NetworkConnection" type="{http://www.vmware.com/vcloud/v1.5}NetworkConnectionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="Link" type="{http://www.vmware.com/vcloud/v1.5}LinkType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;any processContents='lax' namespace='##other' maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
- *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;anyAttribute processContents='lax'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="NetworkConnectionSection" /&gt;
  * </pre>
  */
 @XmlRootElement(name = "NetworkConnectionSection")
-@XmlType(propOrder = {
-      "primaryNetworkConnectionIndex",
-      "networkConnections",
-      "links"
-})
 public class NetworkConnectionSection extends SectionType<NetworkConnectionSection> {
 
    public static Builder builder() {
@@ -130,27 +104,22 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
          return this;
       }
 
-
       public NetworkConnectionSection build() {
          return new NetworkConnectionSection(info, required, primaryNetworkConnectionIndex, networkConnections, links, href, type);
 
       }
 
       public Builder fromNetworkConnectionSection(NetworkConnectionSection in) {
-         return fromSection(in)
-               .primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex())
-               .networkConnections(in.getNetworkConnections())
-               .links(in.getLinks())
-               .href(in.getHref())
-               .type(in.getType());
+         return fromSectionType(in).primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex()).networkConnections(in.getNetworkConnections()).links(in.getLinks()).href(in.getHref()).type(
+               in.getType());
       }
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<NetworkConnectionSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<NetworkConnectionSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**
@@ -171,8 +140,8 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
 
    }
 
-   private NetworkConnectionSection(@Nullable String info, @Nullable Boolean required, Integer primaryNetworkConnectionIndex,
-                                    Set<NetworkConnection> networkConnections, Set<Link> links, URI href, String type) {
+   private NetworkConnectionSection(@Nullable String info, @Nullable Boolean required, Integer primaryNetworkConnectionIndex, Set<NetworkConnection> networkConnections, Set<Link> links, URI href,
+                                    String type) {
       super(info, required);
       this.primaryNetworkConnectionIndex = primaryNetworkConnectionIndex;
       this.networkConnections = ImmutableSet.copyOf(networkConnections);
@@ -199,9 +168,8 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
 
    /**
     * Gets the value of the primaryNetworkConnectionIndex property.
-    *
-    * @return possible object is
-    *         {@link Integer }
+    * 
+    * @return possible object is {@link Integer }
     */
    public Integer getPrimaryNetworkConnectionIndex() {
       return primaryNetworkConnectionIndex;
@@ -210,8 +178,7 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
    /**
     * Gets the value of the networkConnection property.
     * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link NetworkConnection }
+    * Objects of the following type(s) are allowed in the list {@link NetworkConnection }
     */
    public Set<NetworkConnection> getNetworkConnections() {
       return Collections.unmodifiableSet(this.networkConnections);
@@ -220,8 +187,7 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
    /**
     * Gets the value of the link property.
     * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link Link }
+    * Objects of the following type(s) are allowed in the list {@link Link }
     */
    public Set<Link> getLinks() {
       return Collections.unmodifiableSet(this.links);
@@ -236,9 +202,8 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
 
    /**
     * Gets the value of the type property.
-    *
-    * @return possible object is
-    *         {@link String }
+    * 
+    * @return possible object is {@link String }
     */
    public String getType() {
       return type;
@@ -253,30 +218,17 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
       NetworkConnectionSection that = NetworkConnectionSection.class.cast(o);
       return super.equals(that) &&
             equal(primaryNetworkConnectionIndex, that.primaryNetworkConnectionIndex) &&
-            equal(networkConnections, that.networkConnections) &&
-            equal(links, that.links) &&
-            equal(href, that.href) &&
-            equal(type, that.type);
+            equal(networkConnections, that.networkConnections) && equal(links, that.links) &&
+            equal(href, that.href) && equal(type, that.type);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(),
-            primaryNetworkConnectionIndex,
-            networkConnections,
-            links,
-            href,
-            type);
+      return Objects.hashCode(super.hashCode(), primaryNetworkConnectionIndex, networkConnections, links, href, type);
    }
 
    @Override
    public Objects.ToStringHelper string() {
-      return super.string()
-            .add("primaryNetworkConnectionIndex", primaryNetworkConnectionIndex)
-            .add("networkConnection", networkConnections)
-            .add("links", links)
-            .add("href", href)
-            .add("type", type);
+      return super.string().add("primaryNetworkConnectionIndex", primaryNetworkConnectionIndex).add("networkConnection", networkConnections).add("links", links).add("href", href).add("type", type);
    }
-
 }

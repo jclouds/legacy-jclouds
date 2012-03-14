@@ -153,7 +153,7 @@ public class MetadataValue extends ResourceType<MetadataValue> {
 
    @Override
    public int hashCode() {
-      return super.hashCode() + Objects.hashCode(value);
+      return Objects.hashCode(super.hashCode(), value);
    }
 
    @Override

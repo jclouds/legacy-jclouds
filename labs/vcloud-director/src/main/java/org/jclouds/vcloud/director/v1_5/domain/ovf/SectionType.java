@@ -81,7 +81,7 @@ public abstract class SectionType<T extends SectionType<T>> {
          return this;
       }
 
-      public Builder<T> fromSection(SectionType<T> in) {
+      public Builder<T> fromSectionType(SectionType<T> in) {
          return info(in.getInfo()).required(in.isRequired());
       }
    }
@@ -108,6 +108,10 @@ public abstract class SectionType<T extends SectionType<T>> {
     */
    public String getInfo() {
       return info;
+   }
+
+   public void setInfo(String info) {
+      this.info = info;
    }
 
    public Boolean isRequired() {

@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -37,7 +38,7 @@ import com.google.common.collect.Sets;
 
 /**
  * The base type for all objects in the vCloud model.
- * <p/>
+ *
  * Has an optional list of links and href and type attributes.
  * <p/>
  * <pre>
@@ -128,7 +129,8 @@ public abstract class ResourceType<T extends ResourceType<T>> {
        * @see ResourceType#getLinks()
        */
       public Builder<T> links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         if (checkNotNull(links, "links").size() > 0)
+            this.links = Sets.newLinkedHashSet(links);
          return this;
       }
 
@@ -156,11 +158,11 @@ public abstract class ResourceType<T extends ResourceType<T>> {
    @XmlElement(name = "Link")
    private Set<Link> links;
 
-   protected ResourceType(URI href, String type, @Nullable Set<Link> links) {
+   public ResourceType(URI href, String type, @Nullable Set<Link> links) {
       this.href = href;
       this.type = type;
       // nullable so that jaxb wont persist empty collections
-      this.links = links != null && links.size() == 0 ? null : links;
+      this.links = links != null && links.isEmpty() ? null : links;
    }
 
    protected ResourceType() {
@@ -169,7 +171,7 @@ public abstract class ResourceType<T extends ResourceType<T>> {
 
    /**
     * Contains the URI to the entity.
-    * <p/>
+    *
     * An object reference, expressed in URL format. Because this URL includes the object identifier
     * portion of the id attribute value, it uniquely identifies the object, persists for the life of
     * the object, and is never reused. The value of the href attribute is a reference to a view of
@@ -186,7 +188,7 @@ public abstract class ResourceType<T extends ResourceType<T>> {
 
    /**
     * Contains the type of the the entity.
-    * <p/>
+    *
     * The object type, specified as a MIME content type, of the object that the link references.
     * This attribute is present only for links to objects. It is not present for links to actions.
     *

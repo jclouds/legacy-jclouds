@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -33,7 +33,6 @@ import com.google.common.collect.Multimap;
 @XmlRootElement(name = "Envelope", namespace = VCLOUD_OVF_NS)
 public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
 
-   @SuppressWarnings("unchecked")
    public static Builder builder() {
       return new Builder();
    }
@@ -41,6 +40,7 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
    /**
     * {@inheritDoc}
     */
+   @Override
    public Builder toBuilder() {
       return new Builder().fromEnvelope(this);
    }
@@ -50,6 +50,7 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
       /**
        * {@inheritDoc}
        */
+      @Override
       public Envelope build() {
          return new Envelope(diskSections, networkSections, additionalSections, virtualSystem);
       }
@@ -57,18 +58,16 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
-      public Builder additionalSection(String name, SectionType additionalSection) {
+      public Builder additionalSection(String name, SectionType<?> additionalSection) {
          return Builder.class.cast(super.additionalSection(name, additionalSection));
       }
 
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
-      public Builder additionalSections(Multimap<String, SectionType> additionalSections) {
+      public Builder additionalSections(Multimap<String, SectionType<?>> additionalSections) {
          return Builder.class.cast(super.additionalSections(additionalSections));
       }
 
@@ -122,9 +121,8 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
 
    }
 
-   @SuppressWarnings("unchecked")
    private Envelope(Iterable<? extends DiskSection> diskSections, Iterable<? extends NetworkSection> networkSections,
-            Multimap<String, SectionType> additionalSections, VirtualSystem virtualSystem) {
+            Multimap<String, SectionType<?>> additionalSections, VirtualSystem virtualSystem) {
       super(diskSections, networkSections, additionalSections, virtualSystem);
    }
    

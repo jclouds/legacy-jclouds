@@ -52,7 +52,6 @@ import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 import com.google.common.util.concurrent.ListenableFuture;
  
 /**
- 
  * @see VdcClient
  * @author danikov
  */
@@ -73,7 +72,7 @@ public interface VdcAsyncClient {
     */
    @POST
    @Path("/action/captureVApp")
-   @Consumes(VCloudDirectorMediaType.V_APP_TEMPLATE)
+   @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
@@ -97,8 +96,8 @@ public interface VdcAsyncClient {
     */
    @POST
    @Path("/action/cloneVApp")
-   @Consumes(VCloudDirectorMediaType.V_APP)
-   @Produces(VCloudDirectorMediaType.CLONE_V_APP_PARAMS) //TODO fix these etc.
+   @Consumes(VCloudDirectorMediaType.VAPP)
+   @Produces(VCloudDirectorMediaType.CLONE_VAPP_PARAMS) //TODO fix these etc.
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VApp> cloneVApp(@EndpointParam URI vdcURI,
@@ -109,8 +108,8 @@ public interface VdcAsyncClient {
     */
    @POST
    @Path("/action/cloneVAppTemplate")
-   @Consumes(VCloudDirectorMediaType.V_APP_TEMPLATE)
-   @Produces(VCloudDirectorMediaType.CLONE_V_APP_TEMPLATE_PARAMS)
+   @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
+   @Produces(VCloudDirectorMediaType.CLONE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam URI vdcURI,
@@ -121,7 +120,7 @@ public interface VdcAsyncClient {
     */
    @POST
    @Path("/action/composeVApp")
-   @Consumes(VCloudDirectorMediaType.V_APP)
+   @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
@@ -133,7 +132,7 @@ public interface VdcAsyncClient {
     */
    @POST
    @Path("/action/instantiateVApp")
-   @Consumes(VCloudDirectorMediaType.V_APP)
+   @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
@@ -145,7 +144,7 @@ public interface VdcAsyncClient {
     */
    @POST
    @Path("/action/uploadVAppTemplate")
-   @Consumes(VCloudDirectorMediaType.V_APP_TEMPLATE)
+   @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.UPLOAD_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -24,24 +24,34 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 /**
  * @author grkvlt@apache.org
  */
-public class VCloudDirectorException extends RuntimeException {
+public class VCloudDirectorException extends VCloudDirectorRuntimeException {
 
    /** The serialVersionUID. */
    private static final long serialVersionUID = -5292516858598372960L;
+
+   private static final String MSG_FMT = "%s: %s";   
 
    private final Error error;
    private final Task task;
 
    public VCloudDirectorException(Error error) {
-      super("ERR-801: Error: " + error.getMessage());
+      super(String.format(MSG_FMT, "Error", error.getMessage()));
       this.error = error;
       this.task = null;
    }
 
    public VCloudDirectorException(Task task) {
-      super("ERR-802: Task error: " + task.getError().getMessage());
+      super(String.format(MSG_FMT, "Task error", task.getError().getMessage()));
       this.error = task.getError();
       this.task = task;
+   }
+
+   public Integer getMajorErrorCode() {
+      return error.getMajorErrorCode();
+   }
+
+   public Error.Code getCode() {
+      return Error.Code.fromCode(error.getMajorErrorCode());
    }
 
    public Error getError() {
@@ -55,5 +65,4 @@ public class VCloudDirectorException extends RuntimeException {
    public Task getTask() {
       return task;
    }
-
 }

@@ -17,8 +17,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.config;
 
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import static com.google.common.base.Throwables.*;
+import static org.jclouds.rest.config.BinderUtils.*;
 
 import java.net.URI;
 import java.util.Map;
@@ -66,6 +66,8 @@ import org.jclouds.vcloud.director.v1_5.features.UploadAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadClient;
 import org.jclouds.vcloud.director.v1_5.features.UserAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.UserClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
@@ -104,6 +106,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
             .put(VdcClient.class, VdcAsyncClient.class)
+            .put(VAppClient.class, VAppAsyncClient.class)
             .put(VAppTemplateClient.class, VAppTemplateAsyncClient.class)
             .put(UploadClient.class, UploadAsyncClient.class)
             .put(MetadataClient.Readable.class, MetadataAsyncClient.Readable.class)
@@ -124,6 +127,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
       bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
       bindClientAndAsyncClient(binder(), OrgClient.class, OrgAsyncClient.class);
       bindClientAndAsyncClient(binder(), TaskClient.class, TaskAsyncClient.class);
+      bindClientAndAsyncClient(binder(), VAppClient.class, VAppAsyncClient.class);
 
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
 

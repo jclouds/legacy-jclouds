@@ -123,7 +123,7 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
       }
 
       public Builder fromCustomizationSection(CustomizationSection in) {
-         return fromSection(in)
+         return fromSectionType(in)
                .customizeOnInstantiate(in.isCustomizeOnInstantiate())
                .links(in.getLinks())
                .href(in.getHref())
@@ -134,8 +134,8 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromSection(SectionType<CustomizationSection> in) {
-         return Builder.class.cast(super.fromSection(in));
+      public Builder fromSectionType(SectionType<CustomizationSection> in) {
+         return Builder.class.cast(super.fromSectionType(in));
       }
 
       /**
