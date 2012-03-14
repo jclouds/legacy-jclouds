@@ -50,7 +50,7 @@ public class DomainDomainClientLiveTest extends BaseCloudStackClientLiveTest {
       assertEquals(root.getLevel(), 0);
       assertEquals(root.getParentDomainId(), 0);
       assertNull(root.getParentDomainName());
-      if (allDomains.size() > 0) {
+      if (allDomains.size() > 1) {
          assertTrue(root.hasChild());
       }
 
