@@ -47,7 +47,6 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAlloca
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;

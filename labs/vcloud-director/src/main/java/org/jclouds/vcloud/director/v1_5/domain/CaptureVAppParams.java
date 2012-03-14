@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DeploymentOptionSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
