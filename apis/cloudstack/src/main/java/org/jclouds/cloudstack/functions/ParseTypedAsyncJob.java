@@ -39,10 +39,12 @@ import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.SecurityGroup;
+import org.jclouds.cloudstack.domain.Snapshot;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateExtraction;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.Volume;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
@@ -73,7 +75,10 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
       .put("network", Network.class)
       .put("ipaddress", PublicIPAddress.class)
       .put("virtualmachine", VirtualMachine.class)
-      .put("loadbalancer", LoadBalancerRule.class).build();
+      .put("loadbalancer", LoadBalancerRule.class)
+      .put("snapshot", Snapshot.class)
+      .put("template", Template.class)
+      .put("volume", Volume.class).build();
    private final Json json;
 
    @Inject
