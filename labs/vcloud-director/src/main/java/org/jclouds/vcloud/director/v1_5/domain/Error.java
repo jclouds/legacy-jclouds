@@ -18,16 +18,17 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Arrays;
 
+import javax.annotation.Resource;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorRuntimeException;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -46,6 +47,9 @@ import com.google.common.collect.Iterables;
 @XmlRootElement(name = "Error")
 public class Error {
 
+   @Resource
+   protected static Logger logger = Logger.NULL;
+
    public static enum Code {
 
       OK(200),
@@ -60,10 +64,11 @@ public class Error {
       NOT_ALLOWED(405),
       INTERNAL_ERROR(500),
       NOT_IMPLEMENTED(501),
-      UNAVAILABLE(503);
+      UNAVAILABLE(503),
+      UNRECOGNIZED(-1);
 
       private Integer majorErrorCode;
-
+      
       private Code(Integer majorErrorCode) {
          this.majorErrorCode = majorErrorCode;
       }
@@ -82,7 +87,8 @@ public class Error {
          if (found.isPresent()) {
             return found.get();
          } else {
-            throw new VCloudDirectorRuntimeException(String.format("Illegal major error code '%d'", majorErrorCode));
+            logger.warn("Unrecognized major error code '%d'", majorErrorCode);
+            return UNRECOGNIZED;
          }
       }
    }

@@ -24,7 +24,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 /**
  * @author grkvlt@apache.org
  */
-public class VCloudDirectorException extends VCloudDirectorRuntimeException {
+public class VCloudDirectorException extends RuntimeException {
 
    /** The serialVersionUID. */
    private static final long serialVersionUID = -5292516858598372960L;
