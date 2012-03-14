@@ -147,4 +147,12 @@ public class ModifyRequestTest {
       assertEquals(parsedMap.get("publickey"), expected);
    }
 
+   @Test
+   public void testParseQueryWithKeysThatRequireDecoding() {
+      Multimap<String, String> parsedMap = parseQueryToMap("network%5B0%5D.id=23&network%5B0%5D.address=192.168.0.1");
+
+      assertEquals(parsedMap.get("network[0].id"), ImmutableSet.of("23"));
+      assertEquals(parsedMap.get("network[0].address"), ImmutableSet.of("192.168.0.1"));
+   }
+
 }
