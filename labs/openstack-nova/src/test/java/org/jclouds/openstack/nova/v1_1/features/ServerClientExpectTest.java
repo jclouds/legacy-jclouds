@@ -26,7 +26,7 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerListTest;
 import org.testng.annotations.Test;
 
@@ -39,7 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ServerAsyncClientTest")
-public class ServerClientExpectTest extends BaseNovaRestClientExpectTest {
+public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
       HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(

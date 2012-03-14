@@ -33,6 +33,7 @@ import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 
+import com.google.common.base.Optional;
 import com.google.inject.Provides;
 
 /**
@@ -85,7 +86,7 @@ public interface NovaAsyncClient {
     * Provides asynchronous access to Floating IP features.
     */
    @Delegate
-   FloatingIPAsyncClient getFloatingIPClientForRegion(
+   Optional<FloatingIPAsyncClient> getFloatingIPExtensionForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**

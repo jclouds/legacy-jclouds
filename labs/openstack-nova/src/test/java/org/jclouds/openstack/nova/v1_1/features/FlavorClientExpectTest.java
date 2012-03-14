@@ -27,7 +27,7 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseFlavorListTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseFlavorTest;
 import org.testng.annotations.Test;
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Jeremy Daggett
  */
 @Test(groups = "unit", testName = "FlavorClientExpectTest")
-public class FlavorClientExpectTest extends BaseNovaRestClientExpectTest {
+public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testListFlavorsWhenResponseIs2xx() throws Exception {
       HttpRequest listFlavors = HttpRequest

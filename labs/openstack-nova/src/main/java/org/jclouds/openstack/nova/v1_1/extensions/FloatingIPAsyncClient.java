@@ -32,6 +32,8 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
+import org.jclouds.openstack.services.Extension;
+import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -50,10 +52,13 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see FloatingIPClient
  * @author Jeremy Daggett
  * @see ExtensionAsyncClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html" />
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ *      />
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://wiki.openstack.org/os_api_floating_ip"/>
  */
+@Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface FloatingIPAsyncClient {
@@ -98,7 +103,7 @@ public interface FloatingIPAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path("/os-floating-ips/{id}")
    ListenableFuture<Void> deallocate(@PathParam("id") String id);
-   
+
    /**
     * @see FloatingIPClient#addFloatingIP
     */
@@ -107,9 +112,7 @@ public interface FloatingIPAsyncClient {
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"addFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
-   ListenableFuture<Void> addFloatingIP(
-		 @PathParam("server") String serverId,
-         @PayloadParam("address") String address);
+   ListenableFuture<Void> addFloatingIP(@PathParam("server") String serverId, @PayloadParam("address") String address);
 
    /**
     * @see FloatingIPClient#removeFloatingIP
@@ -119,8 +122,6 @@ public interface FloatingIPAsyncClient {
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"removeFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
-   ListenableFuture<Void> removeFloatingIP(
-		 @PathParam("server") String serverId,
-         @PayloadParam("address") String address);
+   ListenableFuture<Void> removeFloatingIP(@PathParam("server") String serverId, @PayloadParam("address") String address);
 
 }

@@ -32,6 +32,8 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
+import org.jclouds.openstack.services.Extension;
+import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
@@ -54,6 +56,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://wiki.openstack.org/os-security-groups" />
  */
+@Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SECURITY_GROUPS)
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface SecurityGroupAsyncClient {

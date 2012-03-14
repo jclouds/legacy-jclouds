@@ -21,21 +21,20 @@ package org.jclouds.openstack.nova.v1_1.internal;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.rest.BaseRestClientExpectTest;
 
 /**
- * Base class for writing KeyStone Rest Client Expect tests
+ * Base class for writing Nova Expect tests
  * 
  * @author Adrian Cole
  */
-public class BaseNovaRestClientExpectTest extends BaseRestClientExpectTest<NovaClient> {
+public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected HttpRequest keystoneAuthWithUsernameAndPassword;
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
    protected String authToken;
    protected HttpResponse responseWithKeystoneAccess;
 
-   public BaseNovaRestClientExpectTest() {
+   public BaseNovaExpectTest() {
       provider = "openstack-nova";
       keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
                credential);
