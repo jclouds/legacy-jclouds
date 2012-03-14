@@ -26,6 +26,8 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Injector;
@@ -59,17 +61,18 @@ public class ClientProvider<S, A> implements Provider<S> {
    @Singleton
    public S get() {
       A client = (A) injector.getInstance(Key.get(asyncClientType));
+      Function<Object, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<Object, Optional<Object>>>() {
+      }));
       LoadingCache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
                new TypeLiteral<LoadingCache<ClassMethodArgs, Object>>() {
                }, Names.named("sync")));
+      Map<String, Long> timeoutsMap = injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
+      }, Names.named("TIMEOUTS")));
       try {
-         return (S) SyncProxy.proxy(syncClientType, client, delegateMap, sync2Async,
-                 injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
-               }, Names.named("TIMEOUTS"))));
+         return (S) SyncProxy.proxy(optionalConverter, syncClientType, client, delegateMap, sync2Async,
+               timeoutsMap);
       } catch (Exception e) {
-         Throwables.propagate(e);
-         assert false : "should have propagated";
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 }

@@ -71,19 +71,19 @@ public class BinderUtils {
     *           interface for the sync client (ex. LoginClient)
     * @param asyncClientType
     *           interface for the async client (ex. LoginAsyncClient)
-    * @param delegates
+    * @param sync2Async
     *           presuming your clients are annotated with @Delegate, contains the sync to async
     *           classes relating to these methods
     */
    public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<S> syncClientType, Class<A> asyncClientType,
-            Map<Class<?>, Class<?>> delegates) {
-      bindClient(binder, syncClientType, asyncClientType, delegates);
+            Map<Class<?>, Class<?>> sync2Async) {
+      bindClient(binder, syncClientType, asyncClientType, sync2Async);
       bindAsyncClient(binder, asyncClientType);
    }
 
    public static <K, V> void bindClient(Binder binder, Class<K> syncClientType, Class<V> asyncClientType,
-            Map<Class<?>, Class<?>> delegates) {
-      Provider<K> asyncProvider = new ClientProvider<K, V>(syncClientType, asyncClientType, delegates);
+            Map<Class<?>, Class<?>> sync2Async) {
+      Provider<K> asyncProvider = new ClientProvider<K, V>(syncClientType, asyncClientType, sync2Async);
       binder.requestInjection(asyncProvider);
       binder.bind(syncClientType).toProvider(asyncProvider);
    }

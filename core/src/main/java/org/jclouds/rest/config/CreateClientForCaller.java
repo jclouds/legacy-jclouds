@@ -33,7 +33,10 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.util.Optionals2;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
@@ -61,19 +64,19 @@ public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> 
 
    @Override
    public Object load(ClassMethodArgs from) throws ExecutionException {
-      Class<?> syncClass = from.getMethod().getReturnType();
+      Class<?> syncClass = Optionals2.returnTypeOrTypeOfOptional(from.getMethod());
       Class<?> asyncClass = sync2Async.get(syncClass);
       checkState(asyncClass != null, "configuration error, sync class " + syncClass + " not mapped to an async class");
       Object asyncClient = asyncMap.get(from);
       checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
+      Function<Object, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<Object, Optional<Object>>>() {
+      }));
+      Map<String, Long> timeoutsMap = injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
+      }, Names.named("TIMEOUTS")));
       try {
-         return SyncProxy.proxy(syncClass, asyncClient, delegateMap.get(), sync2Async,
-                 injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
-                 }, Names.named("TIMEOUTS"))));
+         return SyncProxy.proxy(optionalConverter, syncClass, asyncClient, delegateMap.get(), sync2Async, timeoutsMap);
       } catch (Exception e) {
-         Throwables.propagate(e);
-         assert false : "should have propagated";
-         return null;
+         throw Throwables.propagate(e);
       }
 
    }

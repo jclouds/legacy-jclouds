@@ -41,9 +41,11 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.util.Optionals2;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
@@ -97,6 +99,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    @Resource
    protected Logger logger = Logger.NULL;
+   private final Function<Object, Optional<Object>> optionalConverter;
    private final LoadingCache<ClassMethodArgs, Object> delegateMap;
 
    @SuppressWarnings("unchecked")
@@ -104,6 +107,8 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
             TypeLiteral<T> typeLiteral, @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap) {
       this.injector = injector;
+      this.optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<Object, Optional<Object>>>() {
+      }));
       this.annotationProcessor = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.commandFactory = factory;
@@ -144,7 +149,12 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    }
 
    public Object propagateContextToDelegate(Method method, Object[] args) throws ExecutionException {
-      return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
+      Class<?> asyncClass = Optionals2.returnTypeOrTypeOfOptional(method);
+      Object returnVal = delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
+      if (Optionals2.isReturnTypeOptional(method)){
+         return optionalConverter.apply(returnVal);
+      }
+      return returnVal;
    }
 
    public Object lookupValueFromGuice(Method method) {

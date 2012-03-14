@@ -32,13 +32,14 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.rest.functions.AlwaysPresentImplicitOptionalConverter;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Functions;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -185,7 +186,7 @@ public class SyncProxyTest {
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
-      sync = SyncProxy.proxy(Sync.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
+      sync = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), Sync.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
             ImmutableMap.of("Sync.takeXMillisecondsPropOverride", 250L));
       // just to warm up
       sync.string();
@@ -260,7 +261,7 @@ public class SyncProxyTest {
          IOException {
       LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
-      SyncProxy.proxy(SyncWrongException.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
+      SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), SyncWrongException.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
             ImmutableMap.<String, Long> of());
    }
 
@@ -280,7 +281,7 @@ public class SyncProxyTest {
          IOException {
       LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
-      SyncProxy.proxy(SyncNoTimeOut.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
+      SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), SyncNoTimeOut.class, new Async(), cache, ImmutableMap.<Class<?>, Class<?>> of(),
             ImmutableMap.<String, Long> of());
    }
 
@@ -301,7 +302,7 @@ public class SyncProxyTest {
    public void testClassOverridePropTimeout() throws Exception {
       LoadingCache<ClassMethodArgs, Object> cache = CacheBuilder.newBuilder().build(
             CacheLoader.from(Functions.<Object> constant(null)));
-      final SyncClassOverride sync2 = SyncProxy.proxy(SyncClassOverride.class, new Async(), cache,
+      final SyncClassOverride sync2 = SyncProxy.proxy(new AlwaysPresentImplicitOptionalConverter(), SyncClassOverride.class, new Async(), cache,
             ImmutableMap.<Class<?>, Class<?>> of(), ImmutableMap.<String, Long> of("SyncClassOverride", 100L));
 
       assertEquals(sync2.takeXMillisecondsPropOverride(200), "foo");
