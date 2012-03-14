@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -34,11 +34,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Outputs test status to the logger {@code jclouds.vcloud.api}
+ * Outputs test status to the {@code jclouds.vcloud.api} logger.
  * 
- * adapted from the following class:
+ * Adapted from {@link org.jclouds.test.testng.UnitTestTestNGListener}.
  * 
- * @see org.jclouds.test.testng.UnitTestTestNGListener
  * @author Adrian Cole
  */
 public class FormatApiResultsListener implements ITestListener {
@@ -49,16 +48,14 @@ public class FormatApiResultsListener implements ITestListener {
 
    private ThreadLocal<Long> threadTestStart = new ThreadLocal<Long>();
 
+   @Override
    public void onTestStart(ITestResult res) {
       if (methodInApiGroup(res)) {
          threadTestStart.set(System.currentTimeMillis());
       }
    }
 
-   private boolean methodInApiGroup(ITestResult res) {
-      return Iterables.any(Arrays.asList(res.getMethod().getGroups()), Predicates.in(apis));
-   }
-
+   @Override
    synchronized public void onTestSuccess(ITestResult res) {
       if (methodInApiGroup(res)) {
          String statusLine = resultForState(res, "succeeded");
@@ -66,6 +63,7 @@ public class FormatApiResultsListener implements ITestListener {
       }
    }
 
+   @Override
    synchronized public void onTestFailure(ITestResult res) {
       if (methodInApiGroup(res)) {
          String statusLine = resultForState(res, "failed");
@@ -73,6 +71,7 @@ public class FormatApiResultsListener implements ITestListener {
       }
    }
 
+   @Override
    synchronized public void onTestSkipped(ITestResult res) {
       if (methodInApiGroup(res)) {
          String statusLine = resultForState(res, "skipped");
@@ -80,13 +79,20 @@ public class FormatApiResultsListener implements ITestListener {
       }
    }
 
+   @Override
    public void onTestFailedButWithinSuccessPercentage(ITestResult arg0) {
    }
 
+   @Override
    public void onStart(ITestContext arg0) {
    }
 
+   @Override
    public void onFinish(ITestContext arg0) {
+   }
+
+   private boolean methodInApiGroup(ITestResult res) {
+      return Iterables.any(Arrays.asList(res.getMethod().getGroups()), Predicates.in(apis));
    }
 
    private String resultForState(ITestResult res, String state) {
@@ -102,7 +108,7 @@ public class FormatApiResultsListener implements ITestListener {
    }
 
    private String getDuration() {
-      return (System.currentTimeMillis() - threadTestStart.get()) + "";
+      Long start = threadTestStart.get();
+      return (start == null) ? "" : Long.toString(System.currentTimeMillis() - start);
    }
-
 }

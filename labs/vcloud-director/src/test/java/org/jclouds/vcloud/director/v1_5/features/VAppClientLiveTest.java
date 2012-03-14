@@ -42,7 +42,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -284,7 +283,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testGetVApp" })
    public void testDiscardSuspendedState() {
       // The method under test
       Task discardSuspendedState = vAppClient.discardSuspendedState(vApp.getHref());
@@ -316,7 +315,10 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(retryTaskSuccess.apply(installVMwareTools), String.format(TASK_COMPLETE_TIMELY, "installVMwareTools"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/recomposeVApp", dependsOnMethods = { "testGetVApp" })
+   // FIXME "Could not bind object to request[method=POST, endpoint=https://mycloud.greenhousedata.com/api/vApp/vapp-e124f3f0-adb9-4268-ad49-e54fb27e40af/action/recomposeVApp,
+   //    headers={Accept=[application/vnd.vmware.vcloud.task+xml]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null,
+   //    contentLength=0, contentMD5=null, contentType=application/vnd.vmware.vcloud.recomposeVAppParams+xml], written=false]]: Could not marshall object"
+   @Test(testName = "POST /vApp/{id}/action/recomposeVApp", dependsOnMethods = { "testGetVApp" })
    public void testRecomposeVApp() {
       RecomposeVAppParams params = RecomposeVAppParams.builder()
             .build();
@@ -326,7 +328,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(retryTaskSuccess.apply(recomposeVApp), String.format(TASK_COMPLETE_TIMELY, "recomposeVApp"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
    public void testRelocate() {
       RelocateParams params = RelocateParams.builder()
             .build();
@@ -350,14 +352,14 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(vApp.getStatus(), resolvedStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", resolvedStatus, vApp.getStatus()));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/upgradeHardwareVersion", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/upgradeHardwareVersion", dependsOnMethods = { "testGetVApp" })
    public void testUpgradeHardwareVersion() {
       // The method under test
       Task upgradeHardwareVersion = vAppClient.upgradeHardwareVersion(vApp.getHref());
       assertTrue(retryTaskSuccess.apply(upgradeHardwareVersion), String.format(TASK_COMPLETE_TIMELY, "upgradeHardwareVersion"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testGetVApp" })
    public void testReboot() {
       // The method under test
       Task reboot = vAppClient.reboot(vApp.getHref());
@@ -368,7 +370,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(vApp.getStatus(), poweredOnStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus, "powered off"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testGetVApp" })
    public void testReset() {
       // The method under test
       Task reset = vAppClient.reset(vApp.getHref());
@@ -379,7 +381,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(vApp.getStatus(), poweredOffStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus, "powered off"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testGetVApp" })
    public void testShutdown() {
       // The method under test
       Task shutdown = vAppClient.shutdown(vApp.getHref());
@@ -390,7 +392,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(vApp.getStatus(), poweredOffStatus, String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus, "powered off"));
    }
 
-   @Test(enabled = false, testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testGetVApp" })
    public void testSuspend() {
       // The method under test
       Task suspend = vAppClient.suspend(vApp.getHref());
@@ -415,7 +417,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkGuestCustomizationSection(section);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
+   @Test(testName = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
    public void testModifyGuestCustomizationSection() {
       GuestCustomizationSection section = vAppClient.getGuestCustomizationSection(vApp.getHref());
 
@@ -436,7 +438,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkLeaseSettingsSection(section);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
+   @Test(testName = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
    public void testModifyLeaseSettingsSection() {
       LeaseSettingsSection section = vAppClient.getLeaseSettingsSection(vApp.getHref());
 
@@ -451,7 +453,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    // FIXME "Error: validation error : EntityRef has incorrect type, expected type is com.vmware.vcloud.entity.vm."
-   @Test(enabled = false, testName = "PUT /vApp/{id}/media/action/insertMedia", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "PUT /vApp/{id}/media/action/insertMedia", dependsOnMethods = { "testGetVApp" })
    public void testInsertMedia() {
       MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
             .media(Reference.builder().href(mediaURI).type(MEDIA).build())
@@ -462,7 +464,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(retryTaskSuccess.apply(insertMedia), String.format(TASK_COMPLETE_TIMELY, "insertMedia"));
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/media/action/ejectMedia", dependsOnMethods = { "testInsertMedia" })
+   @Test(testName = "PUT /vApp/{id}/media/action/ejectMedia", dependsOnMethods = { "testInsertMedia" })
    public void testEjectMedia() {
       MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
             .media(Reference.builder().href(mediaURI).type(MEDIA).build())
@@ -480,7 +482,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkNetworkConfigSection(section);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetNetworkConfigSection" })
+   @Test(testName = "PUT /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetNetworkConfigSection" })
    public void testModifyNetworkConfigSection() {
       NetworkConfigSection section = vAppClient.getNetworkConfigSection(vApp.getHref());
 
@@ -501,7 +503,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkNetworkConnectionSection(section);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
+   @Test(testName = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
    public void testModifyNetworkConnectionSection() {
       NetworkConnectionSection section = vAppClient.getNetworkConnectionSection(vApp.getHref());
 
@@ -515,21 +517,21 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getX, "");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkSection() {
       // The method under test
       NetworkSection section = vAppClient.getNetworkSection(vApp.getHref());
 //      checkNetworkSection(section);
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetVApp" })
    public void testGetOperatingSystemSection() {
       // The method under test
       OperatingSystemSection section = vAppClient.getOperatingSystemSection(vApp.getHref());
 //      checkOperatingSystemSection(section);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetOperatingSystemSection" })
+   @Test(testName = "PUT /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetOperatingSystemSection" })
    public void testModifyOperatingSystemSection() {
       OperatingSystemSection section = vAppClient.getOperatingSystemSection(vApp.getHref());
 
@@ -573,7 +575,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkProductSectionList(sectionList);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
+   @Test(testName = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
    public void testModifyProductSections() {
       ProductSectionList sectionList = vAppClient.getProductSections(vApp.getHref());
 
@@ -587,7 +589,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getX, "");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/question", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testGetVApp" })
    public void testGetPendingQuestion() {
       // TODO how to test?
       // The method under test
@@ -595,7 +597,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 //      checkQuestion(question);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
+   @Test(testName = "PUT /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
    public void testAnswerQuestion() {
       // TODO add builder
 //      VmQuestionAnswer answer = VmQuestionAnswer.builer()
@@ -606,21 +608,21 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // TODO how to test?
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/runtimeInfoSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/runtimeInfoSection", dependsOnMethods = { "testGetVApp" })
    public void testGetRuntimeInfoSection() {
       // The method under test
       RuntimeInfoSection section = vAppClient.getRuntimeInfoSection(vApp.getHref());
 //      checkRuntimeInfoSection(section);
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testGetVApp" })
    public void testGetScreenImage() {
       // The method under test
       byte[] image = vAppClient.getScreenImage(vApp.getHref());
       // TODO how to check?
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testGetVApp" })
    public void testGetScreenTicket() {
       // The method under test
       byte[] image = vAppClient.getScreenImage(vApp.getHref());
@@ -628,14 +630,14 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
    public void testGetStartupSection() {
       // The method under test
       StartupSection section = vAppClient.getStartupSection(vApp.getHref());
 //      checkStartupSection(section);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
+   @Test(testName = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
    public void testModifyStartupSection() {
       StartupSection section = vAppClient.getStartupSection(vApp.getHref());
 
@@ -669,13 +671,13 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(modified.getInfo(), "New Info");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionCpu() {
       RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
 //       checkRASD(rasd);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
+   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
    public void testModifyVirtualHardwareSectionCpu() {
       RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
       // rasd.setX("New Info");
@@ -689,13 +691,13 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionDisks() {
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vApp.getHref());
       // checkRasdItemsList(rasdItems);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSectionDisks" })
+   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSectionDisks" })
    public void testModifyVirtualHardwareSectionDisks() {
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vApp.getHref());
       // rasd.setX("New Info");
@@ -708,19 +710,19 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getInfo(), "New Info");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection/media", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/media", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMedia() {
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vApp.getHref());
       // checkRasdItemsList(rasdItems);
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMemory() {
       RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
       // checkRASD(rasd);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
+   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
    public void testModifyVirtualHardwareSectionMemory() {
       RASD rasd = vAppClient.getVirtualHardwareSectionMemory(vApp.getHref());
       // rasd.setX("New Info");
@@ -733,13 +735,13 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getInfo(), "New Info");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionNetworkCards() {
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vApp.getHref());
       // checkRasdItemsList(rasdItems);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSectionNetworkCards" })
+   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSectionNetworkCards" })
    public void testModifyVirtualHardwareSectionNetworkCards() {
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vApp.getHref());
       // rasd.setX("New Info");
@@ -752,13 +754,13 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // assertEquals(modified.getInfo(), "New Info");
    }
 
-   @Test(enabled = false, testName = "GET /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionSerialPorts() {
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vApp.getHref());
       // checkRasdItemsList(rasdItems);
    }
 
-   @Test(enabled = false, testName = "PUT /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSectionSerialPorts" })
+   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSectionSerialPorts" })
    public void testModifyVirtualHardwareSectionSerialPorts() {
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vApp.getHref());
       // rasd.setX("New Info");

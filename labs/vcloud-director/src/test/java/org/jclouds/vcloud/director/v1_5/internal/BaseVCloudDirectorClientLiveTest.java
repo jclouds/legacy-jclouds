@@ -59,7 +59,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @author grkvlt@apache.org
  */
-//@Listeners(FormatApiResultsListener.class)
+@Listeners(FormatApiResultsListener.class)
 @Test(groups = "live")
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
 
