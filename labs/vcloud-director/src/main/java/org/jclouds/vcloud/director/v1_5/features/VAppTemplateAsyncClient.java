@@ -223,7 +223,7 @@ public interface VAppTemplateAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Metadata> getVAppTemplateMetadata(@EndpointParam URI templateURI);
 
-   @PUT
+   @POST
    @Produces(METADATA)
    @Consumes(TASK)
    @Path("/metadata")
@@ -320,18 +320,6 @@ public interface VAppTemplateAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<NetworkSection> getVAppTemplateNetworkSection(@EndpointParam URI templateURI);
-
-   /**
-    * @see VAppTemplateClient#editVAppTemplateNetworkSection(URI, NetworkSection)
-    */
-   @PUT
-   @Produces(NETWORK_SECTION)
-   @Consumes(TASK)
-   @Path("/networkSection")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> editVAppTemplateNetworkSection(@EndpointParam URI templateURI,
-                                                         @BinderParam(BindToXMLPayload.class) NetworkSection section);
 
    /**
     * @see VAppTemplateClient#getVAppTemplateOvf(URI)
