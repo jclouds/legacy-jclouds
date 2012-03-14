@@ -18,7 +18,18 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupListTest;
 import org.testng.annotations.Test;
+
+import java.net.URI;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests annotation parsing of {@code SecurityGroupAsyncClient}
@@ -26,5 +37,30 @@ import org.testng.annotations.Test;
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "SecurityGroupClientExpectTest")
-public class SecurityGroupClientExpectTest {
+public class SecurityGroupClientExpectTest extends BaseNovaRestClientExpectTest {
+    public void testListSecurityGroupsWhenResponseIs2xx() throws Exception {
+        HttpRequest listSecurityGroups = HttpRequest
+                .builder()
+                .method("GET")
+                .endpoint(
+                        URI.create("https://compute.north.host/v1.1/3456/os-security-groups"))
+                .headers(
+                        ImmutableMultimap.<String, String> builder()
+                                .put("Accept", "application/json")
+                                .put("X-Auth-Token", authToken).build()).build();
+
+        HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200)
+                .payload(payloadFromResource("/securitygroups_list.json")).build();
+
+        NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(
+                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+                listSecurityGroups, listSecurityGroupsResponse);
+
+        assertEquals(clientWhenSecurityGroupsExist.getConfiguredRegions(),
+                ImmutableSet.of("North"));
+
+        assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North")
+                .listSecurityGroups().toString(), new ParseSecurityGroupListTest().expected()
+                .toString());
+    }
 }
