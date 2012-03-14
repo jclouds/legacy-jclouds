@@ -18,7 +18,19 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CUSTOMIZATION_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.LEASE_SETTINGS_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_ENTRY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONFIG_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.OWNER;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.PRODUCT_SECTION_LIST;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.RELOCATE_TEMPLATE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 
 import java.net.URI;
 
@@ -31,8 +43,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.jclouds.ovf.Envelope;
-import org.jclouds.ovf.NetworkSection;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -51,6 +61,8 @@ import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -139,7 +151,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#getVAppTemplateCustomizationSection(URI)
     */
    @GET
-   @Consumes(CUSTOMIZATION_SECTION)
+   @Consumes
    @Path("/customizationSection")
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
@@ -325,7 +337,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#getVAppTemplateOvf(URI)
     */
    @GET
-   @Consumes(ENVELOPE)
+   @Consumes
    @Path("/ovf")
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)

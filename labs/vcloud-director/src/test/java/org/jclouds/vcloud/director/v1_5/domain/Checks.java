@@ -18,10 +18,25 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
-import static org.testng.Assert.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_BE_WELL_FORMED_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_CONTAIN_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -81,7 +96,16 @@ public class Checks {
       checkResourceType(entity);
    }
 
+   /**
+    * Assumes the validTypes to be vcloud-specific types.
+    * 
+    * @see checkReferenceType(ReferenceType, Collection<String>)
+    */
    public static void checkReferenceType(ReferenceType<?> reference) {
+      checkReferenceType(reference, VCloudDirectorMediaType.ALL);
+   }
+   
+   public static void checkReferenceType(ReferenceType<?> reference, Collection<String> validTypes) {
       // Check required fields
       assertNotNull(reference.getHref(), String.format(NOT_NULL_OBJECT_FMT, "Href", "ReferenceType"));
 
@@ -89,7 +113,7 @@ public class Checks {
       String id = reference.getId();
       if (id != null) checkId(id);
       String type = reference.getType();
-      if (type != null) checkType(type);
+      if (type != null) checkType(type, validTypes);
       // NOTE name cannot be checked
    }
 
@@ -118,7 +142,11 @@ public class Checks {
    }
 
    public static void checkType(String type) {
-      assertTrue(VCloudDirectorMediaType.ALL.contains(type), String.format(REQUIRED_VALUE_FMT, "Type", type, Iterables.toString(VCloudDirectorMediaType.ALL)));
+      checkType(type, VCloudDirectorMediaType.ALL);
+   }
+
+   public static void checkType(String type, Collection<String> validTypes) {
+      assertTrue(validTypes.contains(type), String.format(REQUIRED_VALUE_FMT, "Type", type, Iterables.toString(validTypes)));
    }
 
    // NOTE this does not currently check anything
@@ -138,7 +166,11 @@ public class Checks {
       assertTrue(Link.Rel.ALL.contains(link.getRel()), String.format(REQUIRED_VALUE_OBJECT_FMT, "Rel", "Link", link.getRel(), Iterables.toString(Link.Rel.ALL)));
 
       // Check parent type
-      checkReferenceType(link);
+      if (link.getRel().equals(Link.Rel.OVF)) {
+         checkReferenceType(link, VCloudDirectorMediaType.ALL_OVF);
+      } else {
+         checkReferenceType(link);
+      }
    }
 
    public static void checkTask(Task task) {

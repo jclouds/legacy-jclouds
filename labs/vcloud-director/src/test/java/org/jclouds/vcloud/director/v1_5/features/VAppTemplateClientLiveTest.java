@@ -18,12 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-
-import org.jclouds.ovf.Envelope;
-import org.jclouds.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
@@ -37,6 +34,8 @@ import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -54,11 +53,7 @@ import com.google.common.collect.Iterables;
 @Test(groups = {"live", "unit", "user"}, testName = "VAppTemplateClientLiveTest")
 public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
-   private static final long TIMEOUT_MS = 60*1000;
-   
    private VAppTemplateClient vappTemplateClient;
-   private TaskClient taskClient;
-   private URI vAppTemplateURI; // FIXME Delete, and use super's
 
    // FIXME IS timezone setting needed in live test?
 //   public VAppTemplateClientLiveTest() {
@@ -70,7 +65,6 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    public void setupRequiredClients() {
       try {
          vappTemplateClient = context.getApi().getVAppTemplateClient();
-         taskClient = context.getApi().getTaskClient();
       } catch (Exception e) {
          // TODO Declare super as throws Exception?
          throw Throwables.propagate(e);
@@ -90,7 +84,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       Owner owner = vappTemplateClient.getOwnerOfVAppTemplate(vAppTemplateURI);
       
       Checks.checkOwner(owner);
-      assertEquals(owner, vappTemplateClient.getVAppTemplate(vAppTemplateURI).getOwner());
+      assertEquals(owner.getUser(), vappTemplateClient.getVAppTemplate(vAppTemplateURI).getOwner().getUser());
    }
    
    @Test
@@ -129,7 +123,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       Checks.checkMetadata(metadata);
    }
 
-   @Test
+   @Test(enabled=false) // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
    public void testGetVAppTemplateMetadataValue() {
       Metadata metadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
@@ -158,14 +152,14 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    public void testGetVAppTemplateNetworkSection() {
       NetworkSection networkSection = vappTemplateClient.getVAppTemplateNetworkSection(vAppTemplateURI);
 
-//      Checks.checkNetworkSection(networkSection);
+      Checks.checkOvfNetworkSection(networkSection);
    }
 
    @Test
    public void testGetVAppTemplateOvf() {
       Envelope envelope = vappTemplateClient.getVAppTemplateOvf(vAppTemplateURI);
       
-//      Checks.checkEnvelope(envelope);
+      Checks.checkOvfEnvelope(envelope);
    }
 
    @Test
