@@ -139,17 +139,20 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * 
     * If the input location is null, then the data isn't location sensitive
     * 
-    * If the input location is a parent of the specified location, then we are ok.
+    * If the input location is a child (descendent, recursively) of the specified location, then we are ok.
     */
    final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
       @Override
       public boolean apply(ComputeMetadata input) {
-         boolean returnVal = true;
-         if (location != null && input.getLocation() != null)
-            returnVal = location.equals(input.getLocation()) || location.getParent() != null
-                  && location.getParent().equals(input.getLocation()) || location.getParent().getParent() != null
-                  && location.getParent().getParent().equals(input.getLocation());
-         return returnVal;
+         if (location == null) return true;
+         Location inputLocation = input.getLocation();
+         if (inputLocation == null) return true;
+         while (inputLocation!=null) {
+            if (location.equals(inputLocation))
+               return true;
+            inputLocation = inputLocation.getParent();
+         }
+         return false;
       }
 
       @Override
