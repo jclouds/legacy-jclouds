@@ -18,9 +18,9 @@
  */
 package org.jclouds.virtualbox.functions;
 
+import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.scriptbuilder.domain.Statements.call;
 
 import java.net.URI;
 import java.util.List;
@@ -121,18 +121,18 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 				"timed out waiting for guest %s to be accessible via ssh",
 				vmName);
 
-		//logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
-		//checkState(guestAdditionsInstaller.apply(vm));
+		logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
+		checkState(guestAdditionsInstaller.apply(vm));
 
 		logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
 
-		NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
+//		NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
 
-		ListenableFuture<ExecResponse> execFuture =
-		machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
+//		ListenableFuture<ExecResponse> execFuture =
+//		machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
 
-		ExecResponse execResponse = Futures.getUnchecked(execFuture);
-		checkState(execResponse.getExitStatus() == 0);
+//		ExecResponse execResponse = Futures.getUnchecked(execFuture);
+//		checkState(execResponse.getExitStatus() == 0);
 
 		logger.debug(
 				"<< installation of image complete. Powering down node(%s)",

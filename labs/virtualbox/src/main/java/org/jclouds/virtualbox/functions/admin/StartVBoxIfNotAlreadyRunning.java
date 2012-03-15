@@ -25,6 +25,7 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 
 import java.net.URI;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -58,8 +59,8 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    private final RetryIfSocketNotYetOpen socketTester;
    private final Supplier<NodeMetadata> host;
    private final Supplier<URI> providerSupplier;
-   private final String identity;
-   private final String credential;
+//   private final String identity;
+//   private final String credential;
    private final Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode;
    private transient VirtualBoxManager manager;
 
@@ -67,14 +68,15 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    @Inject
    public StartVBoxIfNotAlreadyRunning(Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode,
             Factory runScriptOnNodeFactory, RetryIfSocketNotYetOpen socketTester, Supplier<NodeMetadata> host,
-            @Provider Supplier<URI> providerSupplier, @Identity String identity, @Credential String credential) {
+            @Provider Supplier<URI> providerSupplier, @Nullable @Identity String identity,
+            @Nullable @Credential String credential) {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.socketTester = checkNotNull(socketTester, "socketTester");
       this.socketTester.seconds(3L);
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
-      this.identity = checkNotNull(identity, "identity");
-      this.credential = checkNotNull(credential, "credential");
+//      this.identity = checkNotNull(identity, "identity");
+//      this.credential = checkNotNull(credential, "credential");
       this.managerForNode = checkNotNull(managerForNode, "managerForNode");
    }
 
@@ -99,7 +101,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
          }
       }
       manager = managerForNode.apply(host);
-      manager.connect(provider.toASCIIString(), identity, credential);
+      manager.connect(provider.toASCIIString(), "", "");
       if (logger.isDebugEnabled())
          if (manager.getSessionObject().getState() != SessionState.Unlocked)
             logger.warn("manager is not in unlocked state " + manager.getSessionObject().getState());
