@@ -61,9 +61,6 @@ public class SecurityGroupClientExpectTest extends BaseNovaRestClientExpectTest 
         assertEquals(clientWhenSecurityGroupsExist.getConfiguredRegions(),
                 ImmutableSet.of("North"));
 
-        Logger.getAnonymousLogger().info("*********EXPECTED*****\n" + clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North").listSecurityGroups().toString());
-        Logger.getAnonymousLogger().info("*********WAS*****\n" + new ParseSecurityGroupListTest().expected().toString());
-
         assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North")
                 .listSecurityGroups().toString(), new ParseSecurityGroupListTest().expected()
                 .toString());
