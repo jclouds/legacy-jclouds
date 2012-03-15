@@ -44,165 +44,72 @@ import com.google.common.collect.Lists;
  */
 @XmlRootElement(name = "ComposeVAppParams")
 @XmlType(name = "ComposeVAppParamsType")
-public class ComposeVAppParams extends VAppCreationParamsType<ComposeVAppParams> {
+public class ComposeVAppParams extends VAppCreationParamsType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromComposeVAppParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromComposeVAppParams(this);
    }
 
-   public static class Builder extends VAppCreationParamsType.Builder<ComposeVAppParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParamsType.Builder<B> {
 
-      protected List<SourcedCompositionItemParam> sourcedItems = Lists.newArrayList();
-      protected Boolean allEULAsAccepted;
-      protected Boolean linkedClone;
+      private List<SourcedCompositionItemParam> sourcedItems = Lists.newArrayList();
+      private Boolean allEULAsAccepted;
+      private Boolean linkedClone;
 
       /**
        * @see ComposeVAppParams#getSourcedItems()
        */
-      public Builder sourcedItems(List<SourcedCompositionItemParam> sourcedItems) {
+      public B sourcedItems(List<SourcedCompositionItemParam> sourcedItems) {
          this.sourcedItems = Lists.newArrayList(checkNotNull(sourcedItems, "sourcedItems"));
-         return this;
+         return self();
       }
 
       /**
        * @see ComposeVAppParams#getSourcedItem()
        */
-      public Builder sourcedItem(SourcedCompositionItemParam sourcedItem) {
+      public B sourcedItem(SourcedCompositionItemParam sourcedItem) {
          this.sourcedItems.add(checkNotNull(sourcedItem, "sourcedItem"));
-         return this;
+         return self();
       }
 
       /**
        * @see ComposeVAppParams#isAllEULAsAccepted()
        */
-      public Builder allEULAsAccepted(Boolean allEULAsAccepted) {
+      public B allEULAsAccepted(Boolean allEULAsAccepted) {
          this.allEULAsAccepted = allEULAsAccepted;
-         return this;
+         return self();
       }
 
       /**
        * @see ComposeVAppParams#isLinkedClone()
        */
-      public Builder linkedClone(Boolean linkedClone) {
+      public B linkedClone(Boolean linkedClone) {
          this.linkedClone = linkedClone;
-         return this;
+         return self();
       }
 
       @Override
       public ComposeVAppParams build() {
-         return new ComposeVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, sourcedItems, allEULAsAccepted, linkedClone);
+         return new ComposeVAppParams(this);
       }
 
-      /**
-       * @see VAppCreationParamsType#getVAppParent()
-       */
-      @Override
-      public Builder vAppParent(Reference vAppParent) {
-         this.vAppParent = vAppParent;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#getInstantiationParams()
-       */
-      @Override
-      public Builder instantiationParams(InstantiationParams instantiationParams) {
-         this.instantiationParams = instantiationParams;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder deploy(Boolean deploy) {
-         this.deploy = deploy;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder deploy() {
-         this.deploy = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder notDeploy() {
-         this.deploy = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder powerOn(Boolean powerOn) {
-         this.powerOn = powerOn;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder powerOn() {
-         this.powerOn = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder notPowerOn() {
-         this.powerOn = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      @Override
-      public Builder fromVAppCreationParamsType(VAppCreationParamsType<ComposeVAppParams> in) {
-         return Builder.class.cast(super.fromVAppCreationParamsType(in));
-      }
-
-      public Builder fromComposeVAppParams(ComposeVAppParams in) {
+      public B fromComposeVAppParams(ComposeVAppParams in) {
          return fromVAppCreationParamsType(in).sourcedItems(in.getSourcedItems()).allEULAsAccepted(in.isAllEULAsAccepted()).linkedClone(in.isLinkedClone());
       }
    }
 
-   public ComposeVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn,
-                            List<SourcedCompositionItemParam> sourcedItems, Boolean allEULAsAccepted, Boolean linkedClone) {
-      super(description, name, vAppParent, instantiationParams, deploy, powerOn);
-      this.sourcedItems = ImmutableList.copyOf(sourcedItems);
-      this.allEULAsAccepted = allEULAsAccepted;
-      this.linkedClone = linkedClone;
+   public ComposeVAppParams(Builder<?> builder) {
+      super(builder);
+      this.sourcedItems = ImmutableList.copyOf(builder.sourcedItems);
+      this.allEULAsAccepted = builder.allEULAsAccepted;
+      this.linkedClone = builder.linkedClone;
    }
 
    protected ComposeVAppParams() {

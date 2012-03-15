@@ -151,7 +151,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#getVAppTemplateCustomizationSection(URI)
     */
    @GET
-   @Consumes
+   @Consumes(CUSTOMIZATION_SECTION)
    @Path("/customizationSection")
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)

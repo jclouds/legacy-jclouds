@@ -42,7 +42,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -71,10 +70,10 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Shared state between dependant tests.
     */
 
-   private ReferenceType<?> catalogRef;
-   private ReferenceType<?> catalogItemRef;
-   private ReferenceType<?> newCatalogItemRef;
-   private CatalogType<?> catalog;
+   private Reference catalogRef;
+   private Reference catalogItemRef;
+   private Reference newCatalogItemRef;
+   private CatalogType catalog;
    private CatalogItem catalogItem;
    private CatalogItem newCatalogItem;
    private Metadata catalogMetadata;
@@ -124,7 +123,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /catalogItem/{id}", dependsOnMethods = { "testAddCatalogItem" }, enabled = false)
    public void testUpdateCatalogItem() {
-      CatalogType<?> catalog = catalogClient.getCatalog(catalogRef.getHref());
+      CatalogType catalog = catalogClient.getCatalog(catalogRef.getHref());
       newCatalogItemRef = Iterables.find(catalog.getCatalogItems().getCatalogItems(), new Predicate<Reference>() {
          @Override
          public boolean apply(Reference input) {

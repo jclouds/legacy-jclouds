@@ -20,14 +20,13 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -35,7 +34,6 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * Base type that represents a resource entity such as a vApp template or virtual media.
@@ -49,7 +47,7 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "ResourceEntityType")
-public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extends EntityType<T> {
+public abstract class ResourceEntityType extends EntityType {
 
    public static enum Status {
       
@@ -124,113 +122,63 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
       }
    }
        
-   public static abstract class Builder<T extends ResourceEntityType<T>> extends EntityType.Builder<T> {
-      protected FilesList files;
-      protected Integer status;
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return builder().fromResourceEntityType(this);
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+      private Set<File> files;
+      private Integer status;
 
       /**
        * @see ResourceEntityType#getFiles()
        */
-      public Builder<T> files(FilesList files) {
+      public B files(Set<File> files) {
          this.files = files;
-         return this;
+         return self();
       }
 
       /**
        * @see ResourceEntityType#getStatus()
        */
-      public Builder<T> status(Integer status) {
+      public B status(Integer status) {
          this.status = status;
-         return this;
+         return self();
       }
 
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder<T> id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder<T> tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder<T> href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder<T> type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder<T> links(Set<Link> links) {
-         if (checkNotNull(links, "links").size() > 0)
-            this.links = Sets.newLinkedHashSet(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder<T> link(Link link) {
-         if (links == null)
-            links = Sets.newLinkedHashSet();
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      @Override
-      public Builder<T> fromEntityType(EntityType<T> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder<T> fromResourceEntityType(ResourceEntityType<T> in) {
+      public B fromResourceEntityType(ResourceEntityType in) {
          return fromEntityType(in).files(in.getFiles()).status(in.getStatus());
       }
    }
 
-   @XmlElement(name = "Files")
-   protected FilesList files;
+   @XmlElementWrapper(name = "Files")
+   @XmlElement(name = "File")
+   private Set<File> files;
+   
    @XmlAttribute
-   protected Integer status;
+   private Integer status;
 
-   public ResourceEntityType(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, FilesList files, Integer status) {
-      super(href, type, links, description, tasks, id, name);
-      this.files = files;
-      this.status = status;
+   public ResourceEntityType(Builder<?> builder) {
+      super(builder);
+      this.files = builder.files;
+      this.status = builder.status;
    }
 
    protected ResourceEntityType() {
       // for JAXB
    }
 
-   
    /**
     * Gets the value of the files property.
     */
-   public FilesList getFiles() {
+   public Set<File> getFiles() {
       return files;
    }
 
@@ -247,7 +195,7 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      ResourceEntityType<?> that = ResourceEntityType.class.cast(o);
+      ResourceEntityType that = ResourceEntityType.class.cast(o);
       return super.equals(that) && equal(this.files, that.files) && equal(this.status, that.status);
    }
    
@@ -257,7 +205,7 @@ public abstract class ResourceEntityType<T extends ResourceEntityType<T>> extend
          return false;
       if (o == null || getClass() != o.getClass())
          return false;
-      ResourceEntityType<?> that = ResourceEntityType.class.cast(o);
+      ResourceEntityType that = ResourceEntityType.class.cast(o);
       return super.clone(that) && equal(this.files, that.files);
    }
 

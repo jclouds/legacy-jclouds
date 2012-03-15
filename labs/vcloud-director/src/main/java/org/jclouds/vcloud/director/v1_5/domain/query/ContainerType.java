@@ -21,12 +21,8 @@ package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceType;
 
 import com.google.common.base.Objects;
@@ -41,111 +37,83 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author grkvlt@apache.org
  */
-public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
+public class ContainerType extends ResourceType {
 
-   public static <T extends ContainerType<T>> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromContainerType(this);
+   public Builder<?> toBuilder() {
+      return builder().fromContainerType(this);
    }
 
-   public static class Builder<T extends ContainerType<T>> extends ResourceType.Builder<T> {
+   public static class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
-      protected String name;
-      protected Integer page;
-      protected Integer pageSize;
-      protected Long total;
+      private String name;
+      private Integer page;
+      private Integer pageSize;
+      private Long total;
 
       /**
        * @see ContainerType#getName()
        */
-      public Builder<T> name(String name) {
+      public B name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
       /**
        * @see ContainerType#getPage()
        */
-      public Builder<T> page(Integer page) {
+      public B page(Integer page) {
          this.page = page;
-         return this;
+         return self();
       }
 
       /**
        * @see ContainerType#getPageSize()
        */
-      public Builder<T> pageSize(Integer pageSize) {
+      public B pageSize(Integer pageSize) {
          this.pageSize = pageSize;
-         return this;
+         return self();
       }
 
       /**
        * @see ContainerType#getTotal()
        */
-      public Builder<T> total(Long total) {
+      public B total(Long total) {
          this.total = total;
-         return this;
+         return self();
       }
 
       @Override
-      public ContainerType<T> build() {
-         return new ContainerType<T>(href, type, links, name, page, pageSize, total);
+      public ContainerType build() {
+         return new ContainerType(this);
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder<T> href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder<T> links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder<T> link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-      @Override
-      public Builder<T> fromResourceType(ResourceType<T> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      public Builder<T> fromContainerType(ContainerType<T> in) {
+      public B fromContainerType(ContainerType in) {
          return fromResourceType(in).name(in.getName()).page(in.getPage()).pageSize(in.getPageSize()).total(in.getTotal());
       }
    }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
    @XmlAttribute
-   protected String name;
+   private String name;
    @XmlAttribute
-   protected Integer page;
+   private Integer page;
    @XmlAttribute
-   protected Integer pageSize;
+   private Integer pageSize;
    @XmlAttribute
-   protected Long total;
+   private Long total;
 
-   public ContainerType(URI href, String type, Set<Link> links, String name, Integer page, Integer pageSize, Long total) {
-      super(href, type, links);
-      this.name = name;
-      this.page = page;
-      this.pageSize = pageSize;
-      this.total = total;
+   protected ContainerType(Builder<?> builder) {
+      super(builder);
+      this.name = builder.name;
+      this.page = builder.page;
+      this.pageSize = builder.pageSize;
+      this.total = builder.total;
    }
 
    protected ContainerType() {
@@ -186,7 +154,7 @@ public class ContainerType<T extends ContainerType<T>> extends ResourceType<T> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      ContainerType<T> that = ContainerType.class.cast(o);
+      ContainerType that = ContainerType.class.cast(o);
       return super.equals(that) &&
             equal(this.name, that.name) && equal(this.page, that.page) &&
             equal(this.pageSize, that.pageSize) && equal(this.total, that.total);

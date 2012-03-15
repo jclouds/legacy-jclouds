@@ -18,11 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
-
-import java.net.URI;
-import java.util.Set;
+import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -31,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Represents a VApp network configuration.
@@ -42,18 +37,20 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "NetworkConfiguration")
 @XmlType(name = "VAppNetworkConfiguration")
-public class VAppNetworkConfiguration extends ResourceType<VAppNetworkConfiguration> {
+public class VAppNetworkConfiguration extends ResourceType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromVAppNetworkConfiguration(this);
+   public Builder<?> toBuilder() {
+      return builder().fromVAppNetworkConfiguration(this);
    }
 
-   public static class Builder extends ResourceType.Builder<VAppNetworkConfiguration> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
       private String description;
       private NetworkConfiguration configuration;
@@ -63,85 +60,41 @@ public class VAppNetworkConfiguration extends ResourceType<VAppNetworkConfigurat
       /**
        * @see VAppNetworkConfiguration#getDescription()
        */
-      public Builder description(String description) {
+      public B description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppNetworkConfiguration#getConfiguration()
        */
-      public Builder configuration(NetworkConfiguration configuration) {
+      public B configuration(NetworkConfiguration configuration) {
          this.configuration = configuration;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppNetworkConfiguration#isDeployed()
        */
-      public Builder isDeployed(Boolean deployed) {
+      public B isDeployed(Boolean deployed) {
          this.deployed = deployed;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppNetworkConfiguration#getNetworkName()
        */
-      public Builder networkName(String networkName) {
+      public B networkName(String networkName) {
          this.networkName = networkName;
-         return this;
+         return self();
       }
 
       @Override
       public VAppNetworkConfiguration build() {
-         return new VAppNetworkConfiguration(href, type, links, description, configuration, deployed, networkName);
+         return new VAppNetworkConfiguration(this);
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResourceType(ResourceType<VAppNetworkConfiguration> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      public Builder fromVAppNetworkConfiguration(VAppNetworkConfiguration in) {
+      public B fromVAppNetworkConfiguration(VAppNetworkConfiguration in) {
          return fromResourceType(in)
                .description(in.getDescription())
                .configuration(in.getConfiguration())
@@ -151,21 +104,20 @@ public class VAppNetworkConfiguration extends ResourceType<VAppNetworkConfigurat
    }
 
    @XmlElement(name = "Description")
-   protected String description;
+   private String description;
    @XmlElement(name = "Configuration", required = true)
-   protected NetworkConfiguration configuration;
+   private NetworkConfiguration configuration;
    @XmlElement(name = "IsDeployed")
-   protected Boolean deployed;
+   private Boolean deployed;
    @XmlAttribute(required = true)
-   protected String networkName;
+   private String networkName;
 
-   public VAppNetworkConfiguration(URI href, String type, Set<Link> links, String description,
-                                   NetworkConfiguration configuration, Boolean deployed, String networkName) {
-      super(href, type, links);
-      this.description = description;
-      this.configuration = configuration;
-      this.deployed = deployed;
-      this.networkName = networkName;
+   protected VAppNetworkConfiguration(Builder<?> builder) {
+      super(builder);
+      this.description = builder.description;
+      this.configuration = builder.configuration;
+      this.deployed = builder.deployed;
+      this.networkName = builder.networkName;
    }
 
    protected VAppNetworkConfiguration() {

@@ -33,14 +33,16 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends BaseEnvelope<V, E>> {
+public abstract class BaseEnvelope<V extends BaseVirtualSystem, E extends BaseEnvelope<V, E>> {
 
+   // FIXME Fix builder pattern used
+   
    public abstract Builder<V, E> toBuilder();
 
-   public static abstract class Builder<V extends BaseVirtualSystem<V>, E extends BaseEnvelope<V, E>> {
+   public static abstract class Builder<V extends BaseVirtualSystem, E extends BaseEnvelope<V, E>> {
       protected Set<DiskSection> diskSections = Sets.newLinkedHashSet();
       protected Set<NetworkSection> networkSections = Sets.newLinkedHashSet();
-      protected Set<SectionType<?>> additionalSections = Sets.newLinkedHashSet();
+      protected Set<SectionType> additionalSections = Sets.newLinkedHashSet();
       protected V virtualSystem;
 
       /**
@@ -78,7 +80,7 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
       /**
        * @see BaseEnvelope#getAdditionalSections
        */
-      public Builder<V, E> additionalSection(SectionType<?> additionalSection) {
+      public Builder<V, E> additionalSection(SectionType additionalSection) {
          this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
          return this;
       }
@@ -86,8 +88,8 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
       /**
        * @see BaseEnvelope#getAdditionalSections
        */
-      public Builder<V, E> additionalSections(Iterable<? extends SectionType<?>> additionalSections) {
-         this.additionalSections = ImmutableSet.<SectionType<?>> copyOf(checkNotNull(additionalSections, "additionalSections"));
+      public Builder<V, E> additionalSections(Iterable<? extends SectionType> additionalSections) {
+         this.additionalSections = ImmutableSet.<SectionType> copyOf(checkNotNull(additionalSections, "additionalSections"));
          return this;
       }
 
@@ -110,11 +112,11 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
 
    private Set<DiskSection> diskSections;
    private Set<NetworkSection> networkSections;
-   private Set<SectionType<?>> additionalSections;
+   private Set<SectionType> additionalSections;
    private V virtualSystem;
 
    protected BaseEnvelope(Iterable<? extends DiskSection> diskSections, Iterable<? extends NetworkSection> networkSections,
-					           Iterable<? extends SectionType<?>> additionalSections, V virtualSystem) {
+					           Iterable<? extends SectionType> additionalSections, V virtualSystem) {
       this.diskSections = ImmutableSet.copyOf(checkNotNull(diskSections, "diskSections"));
       this.networkSections = ImmutableSet.copyOf(checkNotNull(networkSections, "networkSections"));
       this.additionalSections = ImmutableSet.copyOf(checkNotNull(additionalSections, "additionalSections"));
@@ -133,7 +135,7 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem<V>, E extends Bas
       return diskSections;
    }
 
-   public Set<SectionType<?>> getAdditionalSections() {
+   public Set<SectionType> getAdditionalSections() {
       return additionalSections;
    }
 

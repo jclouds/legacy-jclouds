@@ -20,7 +20,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
@@ -42,20 +41,22 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "CatalogItem")
-public class CatalogItem extends EntityType<CatalogItem> {
+public class CatalogItem extends EntityType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG_ITEM;
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromCatalogItem(this);
+   public Builder<?> toBuilder() {
+      return builder().fromCatalogItem(this);
    }
 
-   public static class Builder extends EntityType.Builder<CatalogItem> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
       private Reference entity;
       private Set<Property> properties = Sets.newLinkedHashSet();
@@ -63,119 +64,44 @@ public class CatalogItem extends EntityType<CatalogItem> {
       /**
        * @see CatalogItem#getEntity()
        */
-      public Builder entity(Reference entity) {
+      public B entity(Reference entity) {
          this.entity = entity;
-         return this;
+         return self();
       }
 
       /**
        * @see CatalogItem#getProperties()
        */
-      public Builder properties(Set<Property> properties) {
+      public B properties(Set<Property> properties) {
          this.properties = Sets.newLinkedHashSet(checkNotNull(properties, "properties"));
-         return this;
+         return self();
       }
 
       /**
        * @see CatalogItem#getProperties()
        */
-      public Builder property(Property property) {
+      public B property(Property property) {
          this.properties.add(checkNotNull(property, "property"));
-         return this;
+         return self();
       }
 
       @Override
       public CatalogItem build() {
-         return new CatalogItem(href, type, links, description, tasks, id, name, entity, properties);
+         return new CatalogItem(this);
       }
 
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-      @Override
-      public Builder fromEntityType(EntityType<CatalogItem> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder fromCatalogItem(CatalogItem in) {
+      public B fromCatalogItem(CatalogItem in) {
          return fromEntityType(in).entity(in.getEntity()).properties(in.getProperties());
       }
    }
 
-   private CatalogItem(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name, Reference entity, Set<Property> properties) {
-      super(href, type, links, description, tasks, id, name);
-      this.entity = entity;
-      this.properties = ImmutableSet.copyOf(properties);
+   protected CatalogItem(Builder<?> builder) {
+      super(builder);
+      this.entity = builder.entity;
+      this.properties = ImmutableSet.copyOf(builder.properties);
    }
 
-   private CatalogItem() {
+   protected CatalogItem() {
       // for JAXB
    }
 

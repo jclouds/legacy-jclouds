@@ -18,9 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -29,73 +26,36 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Resource")
-public class Resource extends ResourceType<Resource> {
+public class Resource extends ResourceType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromResource(this);
+   public Builder<?> toBuilder() {
+      return builder().fromResource(this);
    }
 
-   public static class Builder extends ResourceType.Builder<Resource> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
       @Override
       public Resource build() {
-         return new Resource(href, type, links);
+         return new Resource(this);
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-      @Override
-      protected Builder fromResourceType(ResourceType<Resource> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      protected Builder fromResource(Resource in) {
+      protected B fromResource(Resource in) {
          return fromResourceType(in);
       }
    }
 
-   private Resource(URI href, String type, Set<Link> links) {
-      super(href, type, links);
+   protected Resource(Builder<?> builder) {
+      super(builder);
    }
 
-   private Resource() {
+   protected Resource() {
       // For JAXB
    }
 

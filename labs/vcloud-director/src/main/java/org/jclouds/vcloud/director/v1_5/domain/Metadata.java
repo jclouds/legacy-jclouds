@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
@@ -45,100 +44,58 @@ import com.google.common.collect.Sets;
  * @author danikov
  */
 @XmlRootElement(name = "Metadata")
-public class Metadata extends ResourceType<Metadata> {
+public class Metadata extends ResourceType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA;
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromMetadata(this);
+   public Builder<?> toBuilder() {
+      return builder().fromMetadata(this);
    }
 
-   public static class Builder extends ResourceType.Builder<Metadata> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
       private Set<MetadataEntry> metadataEntries = Sets.newLinkedHashSet();
 
       /**
        * @see Metadata#getMetadataEntries()
        */
-      public Builder entries(Set<MetadataEntry> metadataEntries) {
+      public B entries(Set<MetadataEntry> metadataEntries) {
          this.metadataEntries = Sets.newLinkedHashSet(checkNotNull(metadataEntries, "metadataEntries"));
-         return this;
+         return self();
       }
 
       /**
        * @see Metadata#getMetadataEntries()
        */
-      public Builder entry(MetadataEntry metadataEntry) {
+      public B entry(MetadataEntry metadataEntry) {
          metadataEntries.add(checkNotNull(metadataEntry, "metadataEntry"));
-         return this;
+         return self();
       }
 
       @Override
       public Metadata build() {
-         return new Metadata(href, type, links, metadataEntries);
+         return new Metadata(this);
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      public Builder fromMetadata(Metadata in) {
+      public B fromMetadata(Metadata in) {
          return fromResourceType(in).entries(in.getMetadataEntries());
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResourceType(ResourceType<Metadata> in) {
-         return Builder.class.cast(super.fromResourceType(in));
       }
    }
 
-   private Metadata() {
+   protected Metadata() {
       // For JAXB
    }
 
-   private Metadata(URI href, String type, Set<Link> links, Set<MetadataEntry> metadataEntries) {
-      super(href, type, links);
-      this.metadataEntries = ImmutableSet.copyOf(metadataEntries);
+   protected Metadata(Builder<?> builder) {
+      super(builder);
+      this.metadataEntries = ImmutableSet.copyOf(builder.metadataEntries);
    }
 
 

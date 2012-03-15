@@ -34,205 +34,44 @@ import com.google.common.base.Objects.ToStringHelper;
  * </pre>
  */
 @XmlRootElement(name = "InstantiateVAppTemplateParams")
-public class InstantiateVAppTemplateParams extends InstantiateVAppParamsType<InstantiateVAppTemplateParams> {
+public class InstantiateVAppTemplateParams extends InstantiateVAppParamsType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromInstantiateVAppTemplateParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromInstantiateVAppTemplateParams(this);
    }
 
-   public static class Builder extends InstantiateVAppParamsType.Builder<InstantiateVAppTemplateParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends InstantiateVAppParamsType.Builder<B> {
 
       private Boolean allEULAsAccepted;
 
       /**
        * @see InstantiateVAppTemplateParams#isAllEULAsAccepted()
        */
-      public Builder allEULAsAccepted(Boolean allEULAsAccepted) {
+      public B allEULAsAccepted(Boolean allEULAsAccepted) {
          this.allEULAsAccepted = allEULAsAccepted;
-         return this;
+         return self();
       }
 
       @Override
       public InstantiateVAppTemplateParams build() {
-         return new InstantiateVAppTemplateParams(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone, allEULAsAccepted);
+         return new InstantiateVAppTemplateParams(this);
       }
 
-      /**
-       * @see InstantiateVAppParamsType#getSource()
-       */
-      @Override
-      public Builder source(ReferenceType<?> source) {
-         this.source = source;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isSourceDelete()
-       */
-      @Override
-      public Builder isSourceDelete(Boolean sourceDelete) {
-         this.sourceDelete = sourceDelete;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isSourceDelete()
-       */
-      @Override
-      public Builder sourceDelete() {
-         this.sourceDelete = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isSourceDelete()
-       */
-      @Override
-      public Builder notSourceDelete() {
-         this.sourceDelete = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isLinkedClone()
-       */
-      @Override
-      public Builder isLinkedClone(Boolean linkedClone) {
-         this.linkedClone = linkedClone;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isLinkedClone()
-       */
-      @Override
-      public Builder linkedClone() {
-         this.linkedClone = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isLinkedClone()
-       */
-      @Override
-      public Builder notLinkedClone() {
-         this.linkedClone = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         super.description(description);
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         super.name(name);
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#getVAppParent()
-       */
-      @Override
-      public Builder vAppParent(Reference vAppParent) {
-         this.vAppParent = vAppParent;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#getInstantiationParams()
-       */
-      @Override
-      public Builder instantiationParams(InstantiationParams instantiationParams) {
-         this.instantiationParams = instantiationParams;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder deploy(Boolean deploy) {
-         this.deploy = deploy;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder deploy() {
-         this.deploy = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder notDeploy() {
-         this.deploy = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder powerOn(Boolean powerOn) {
-         this.powerOn = powerOn;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder powerOn() {
-         this.powerOn = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder notPowerOn() {
-         this.powerOn = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromInstantiateVAppParamsType(InstantiateVAppParamsType<InstantiateVAppTemplateParams> in) {
-         return Builder.class.cast(super.fromInstantiateVAppParamsType(in));
-      }
-
-      public Builder fromInstantiateVAppTemplateParams(InstantiateVAppTemplateParams in) {
+      public B fromInstantiateVAppTemplateParams(InstantiateVAppTemplateParams in) {
          return fromInstantiateVAppParamsType(in).allEULAsAccepted(in.isAllEULAsAccepted());
       }
    }
 
-   public InstantiateVAppTemplateParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
-                                        Boolean deploy, Boolean powerOn, ReferenceType<?> source, Boolean sourceDelete, Boolean linkedClone, Boolean allEULAsAccepted) {
-      super(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
-      this.allEULAsAccepted = allEULAsAccepted;
+   protected InstantiateVAppTemplateParams(Builder<?> builder) {
+      super(builder);
+      this.allEULAsAccepted = builder.allEULAsAccepted;
    }
 
    protected InstantiateVAppTemplateParams() {

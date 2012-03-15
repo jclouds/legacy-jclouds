@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -66,16 +63,20 @@ import com.google.common.base.Objects;
     "usersList",
     "role"
 })
-public class Group extends EntityType<Group> {
-   public static Builder builder() {
-      return new Builder();
+public class Group extends EntityType {
+   
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromGroup(this);
+   public Builder<?> toBuilder() {
+      return builder().fromGroup(this);
    }
 
-   public static class Builder extends EntityType.Builder<Group> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
       
       private String nameInSource;
       private UsersList usersList;
@@ -84,109 +85,32 @@ public class Group extends EntityType<Group> {
       /**
        * @see Group#getNameInSource()
        */
-      public Builder nameInSource(String nameInSource) {
+      public B nameInSource(String nameInSource) {
          this.nameInSource = nameInSource;
-         return this;
+         return self();
       }
 
       /**
        * @see Group#getUsersList()
        */
-      public Builder usersList(UsersList usersList) {
+      public B usersList(UsersList usersList) {
          this.usersList = usersList;
-         return this;
+         return self();
       }
 
       /**
        * @see Group#getRole()
        */
-      public Builder role(Reference role) {
+      public B role(Reference role) {
          this.role = role;
-         return this;
+         return self();
       }
 
       public Group build() {
-         return new Group(href, type, links, description, tasks, id, name, 
-               nameInSource, usersList, role);
+         return new Group(this);
       }
       
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         super.name(name);
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String idname) {
-         super.description(name);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         super.id(id);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      @Override
-      public Builder fromEntityType(EntityType<Group> in) {
-          return Builder.class.cast(super.fromEntityType(in));
-      }
-      public Builder fromGroup(Group in) {
+      public B fromGroup(Group in) {
          return fromEntityType(in)
             .nameInSource(in.getNameInSource())
             .usersList(in.getUsersList())
@@ -199,13 +123,11 @@ public class Group extends EntityType<Group> {
       // For JAXB
    }
    
-   public Group(URI href, String type, Set<Link> links, String description, 
-         Set<Task> tasks, String id, String name, String nameInSource, 
-         UsersList usersList, Reference role) {
-      super(href, type, links, description, tasks, id, name);
-      this.nameInSource = nameInSource;
-      this.usersList = usersList;
-      this.role = role;
+   protected Group(Builder<?> builder) {
+      super(builder);
+      this.nameInSource = builder.nameInSource;
+      this.usersList = builder.usersList;
+      this.role = builder.role;
    }
 
     @XmlElement(name = "NameInSource")

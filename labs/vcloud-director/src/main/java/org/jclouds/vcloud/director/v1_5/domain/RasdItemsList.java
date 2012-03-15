@@ -18,12 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -33,7 +31,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Represents a list of RASD items.
@@ -45,96 +42,57 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "RasdItemsList")
-public class RasdItemsList extends ResourceType<RasdItemsList> {
+public class RasdItemsList extends ResourceType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromRasdItemsList(this);
+   public Builder<?> toBuilder() {
+      return builder().fromRasdItemsList(this);
    }
 
-   public static class Builder extends ResourceType.Builder<RasdItemsList> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
       private List<RASD> items = Lists.newArrayList();
 
       /**
        * @see RasdItemsList#getItems()
        */
-      public Builder items(List<RASD> items) {
+      public B items(List<RASD> items) {
          this.items = checkNotNull(items, "items");
-         return this;
+         return self();
       }
 
       /**
        * @see RasdItemsList#getItems()
        */
-      public Builder item(RASD item) {
+      public B item(RASD item) {
          this.items.add(checkNotNull(item, "item"));
-         return this;
+         return self();
       }
 
       @Override
       public RasdItemsList build() {
-         RasdItemsList rasdItemsList = new RasdItemsList(href, type, links, items);
+         RasdItemsList rasdItemsList = new RasdItemsList(this);
          return rasdItemsList;
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      @Override
-      public Builder fromResourceType(ResourceType<RasdItemsList> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      public Builder fromRasdItemsList(RasdItemsList in) {
+      public B fromRasdItemsList(RasdItemsList in) {
          return fromResourceType(in).items(in.getItems());
       }
    }
 
    protected RasdItemsList() {
-      // For JAXB and builder use
+      // For JAXB and B use
    }
 
-   public RasdItemsList(URI href, String type, Set<Link> links, List<RASD> items) {
-      super(href, type, links);
-      this.items = items;
+   protected RasdItemsList(Builder<?> builder) {
+      super(builder);
+      this.items = builder.items;
    }
 
    @XmlElement(name = "Item")

@@ -69,74 +69,68 @@ import com.google.common.collect.Sets;
       "source",
       "sections"
 })
-public class CaptureVAppParams
-      extends ParamsType<CaptureVAppParams>
-
-{
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+public class CaptureVAppParams extends ParamsType {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromCaptureVAppParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromCaptureVAppParams(this);
    }
 
-   public static class Builder extends ParamsType.Builder<CaptureVAppParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private Reference source;
-      private Set<? extends SectionType<?>> sections = ImmutableSet.of();
+      private Set<? extends SectionType> sections = ImmutableSet.of();
 
       /**
        * @see CaptureVAppParams#getSource()
        */
-      public Builder source(Reference source) {
+      public B source(Reference source) {
          this.source = source;
-         return this;
+         return self();
       }
 
       /**
        * @see CaptureVAppParams#getSections()
        */
-      public Builder sections(Set<? extends SectionType<?>> sections) {
+      public B sections(Set<? extends SectionType> sections) {
          this.sections = checkNotNull(sections, "sections");
-         return this;
+         return self();
       }
 
       public CaptureVAppParams build() {
-         return new CaptureVAppParams(description, name, source, sections);
+         return new CaptureVAppParams(this);
       }
 
-      @Override
-      public Builder fromParamsType(ParamsType<CaptureVAppParams> in) {
-         return Builder.class.cast(super.fromParamsType(in));
-      }
-
-      public Builder fromCaptureVAppParams(CaptureVAppParams in) {
+      public B fromCaptureVAppParams(CaptureVAppParams in) {
          return fromParamsType(in)
                .source(in.getSource())
                .sections(in.getSections());
       }
    }
 
-   private CaptureVAppParams(String description, String name, Reference source, Set<? extends SectionType<?>> sections) {
-      super(description, name);
-      this.source = source;
-      this.sections = sections;
+   private CaptureVAppParams(Builder<?> builder) {
+      super(builder);
+      this.source = builder.source;
+      this.sections = builder.sections;
    }
 
    private CaptureVAppParams() {
       // for JAXB
    }
 
-   private CaptureVAppParams(Set<? extends SectionType<?>> sections) {
+   private CaptureVAppParams(Set<? extends SectionType> sections) {
       this.sections = ImmutableSet.copyOf(sections);
    }
 
    @XmlElement(name = "Source", required = true)
    protected Reference source;
    @XmlElementRef
-   protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
+   protected Set<? extends SectionType> sections = Sets.newLinkedHashSet();
 
    /**
     * Gets the value of the source property.
@@ -173,7 +167,7 @@ public class CaptureVAppParams
     * {@link DiskSection }
     * {@link InstallSection }
     */
-   public Set<? extends SectionType<?>> getSections() {
+   public Set<? extends SectionType> getSections() {
       return Collections.unmodifiableSet(this.sections);
    }
 

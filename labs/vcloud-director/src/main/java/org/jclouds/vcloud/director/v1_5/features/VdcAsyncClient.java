@@ -137,7 +137,7 @@ public interface VdcAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VApp> instantiateVApp(@EndpointParam URI vdcURI,
-         @BinderParam(BindToXMLPayload.class) InstantiateVAppParamsType<?> params);
+         @BinderParam(BindToXMLPayload.class) InstantiateVAppParamsType params);
    
    /**
     * @see VdcClient#uploadVAppTemplate(URI, UploadVAppTemplateParams)

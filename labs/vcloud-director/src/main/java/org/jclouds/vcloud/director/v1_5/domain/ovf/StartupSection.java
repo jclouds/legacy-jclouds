@@ -8,7 +8,6 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,8 +16,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -32,18 +29,20 @@ import com.google.common.collect.ImmutableList;
  * </pre>
  */
 @XmlRootElement(name = "StartupSection")
-public class StartupSection extends SectionType<StartupSection> {
+public class StartupSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
+   public Builder<?> toBuilder() {
       return builder().fromStartupSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<StartupSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
       private List<StartupSectionItem> item = Collections.emptyList();
       private List<Object> any = Collections.emptyList();
@@ -51,26 +50,26 @@ public class StartupSection extends SectionType<StartupSection> {
       /**
        * @see StartupSection#getItem()
        */
-      public Builder item(List<StartupSectionItem> item) {
+      public B item(List<StartupSectionItem> item) {
          this.item = item;
-         return this;
+         return self();
       }
 
       /**
        * @see StartupSection#getAny()
        */
-      public Builder any(List<Object> any) {
+      public B any(List<Object> any) {
          this.any = any;
-         return this;
+         return self();
       }
 
       @Override
       public StartupSection build() {
-         return new StartupSection(info, required, item, any);
+         return new StartupSection(this);
       }
       
-      public Builder fromStartupSection(StartupSection in) {
-         return Builder.class.cast(super.fromSectionType(in)).item(item).any(any);
+      public B fromStartupSection(StartupSection in) {
+         return fromSectionType(in).item(item).any(any);
       }
    }
 
@@ -83,10 +82,10 @@ public class StartupSection extends SectionType<StartupSection> {
       // For JAXB
    }
 
-   public StartupSection(@Nullable String info, @Nullable Boolean required, List<StartupSectionItem> item, List<Object> any) {
-      super(info, required);
-      this.item = (item != null) ? ImmutableList.<StartupSectionItem>copyOf(item) : Collections.<StartupSectionItem>emptyList();
-      this.any = (any != null) ? ImmutableList.<Object>copyOf(any) : Collections.<Object>emptyList();
+   public StartupSection(Builder<?> builder) {
+      super(builder);
+      this.item = (item != null) ? ImmutableList.<StartupSectionItem>copyOf(builder.item) : Collections.<StartupSectionItem>emptyList();
+      this.any = (any != null) ? ImmutableList.<Object>copyOf(builder.any) : Collections.<Object>emptyList();
    }
 
    /**

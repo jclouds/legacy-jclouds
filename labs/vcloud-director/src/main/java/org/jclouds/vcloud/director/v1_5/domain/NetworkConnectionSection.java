@@ -30,9 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -46,18 +44,20 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "NetworkConnectionSection")
-public class NetworkConnectionSection extends SectionType<NetworkConnectionSection> {
+public class NetworkConnectionSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromNetworkConnectionSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromNetworkConnectionSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<NetworkConnectionSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
       private Integer primaryNetworkConnectionIndex;
       private Set<NetworkConnection> networkConnections = Sets.newLinkedHashSet();
@@ -68,88 +68,62 @@ public class NetworkConnectionSection extends SectionType<NetworkConnectionSecti
       /**
        * @see NetworkConnectionSection#getPrimaryNetworkConnectionIndex()
        */
-      public Builder primaryNetworkConnectionIndex(Integer primaryNetworkConnectionIndex) {
+      public B primaryNetworkConnectionIndex(Integer primaryNetworkConnectionIndex) {
          this.primaryNetworkConnectionIndex = primaryNetworkConnectionIndex;
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkConnectionSection#getNetworkConnections()
        */
-      public Builder networkConnections(Set<NetworkConnection> networkConnections) {
+      public B networkConnections(Set<NetworkConnection> networkConnections) {
          this.networkConnections = checkNotNull(networkConnections, "networkConnection");
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkConnectionSection#getLinks()
        */
-      public Builder links(Set<Link> links) {
+      public B links(Set<Link> links) {
          this.links = checkNotNull(links, "links");
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkConnectionSection#getHref()
        */
-      public Builder href(URI href) {
+      public B href(URI href) {
          this.href = href;
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkConnectionSection#getType()
        */
-      public Builder type(String type) {
+      public B type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
       @Override
       public NetworkConnectionSection build() {
-         return new NetworkConnectionSection(info, required, primaryNetworkConnectionIndex, networkConnections, links, href, type);
+         return new NetworkConnectionSection(this);
 
       }
 
-      public Builder fromNetworkConnectionSection(NetworkConnectionSection in) {
+      public B fromNetworkConnectionSection(NetworkConnectionSection in) {
          return fromSectionType(in).primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex()).networkConnections(in.getNetworkConnections()).links(in.getLinks()).href(in.getHref()).type(
                in.getType());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<NetworkConnectionSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
-
    }
 
-   private NetworkConnectionSection(@Nullable String info, @Nullable Boolean required, Integer primaryNetworkConnectionIndex, Set<NetworkConnection> networkConnections, Set<Link> links, URI href,
-                                    String type) {
-      super(info, required);
-      this.primaryNetworkConnectionIndex = primaryNetworkConnectionIndex;
-      this.networkConnections = ImmutableSet.copyOf(networkConnections);
-      this.links = ImmutableSet.copyOf(links);
-      this.href = href;
-      this.type = type;
+   private NetworkConnectionSection(Builder<?> builder) {
+      super(builder);
+      this.primaryNetworkConnectionIndex = builder.primaryNetworkConnectionIndex;
+      this.networkConnections = ImmutableSet.copyOf(builder.networkConnections);
+      this.links = ImmutableSet.copyOf(builder.links);
+      this.href = builder.href;
+      this.type = builder.type;
    }
 
    private NetworkConnectionSection() {

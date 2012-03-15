@@ -54,20 +54,19 @@ import com.google.common.base.Objects;
       "source",
       "isSourceDelete"
 })
-public class CloneVAppTemplateParams
-      extends ParamsType<CloneVAppTemplateParams>
-
-{
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+public class CloneVAppTemplateParams extends ParamsType {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromCloneVAppTemplateParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromCloneVAppTemplateParams(this);
    }
 
-   public static class Builder extends ParamsType.Builder<CloneVAppTemplateParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private Reference source;
       private Boolean isSourceDelete;
@@ -75,39 +74,34 @@ public class CloneVAppTemplateParams
       /**
        * @see CloneVAppTemplateParams#getSource()
        */
-      public Builder source(Reference source) {
+      public B source(Reference source) {
          this.source = source;
-         return this;
+         return self();
       }
 
       /**
        * @see CloneVAppTemplateParams#isSourceDelete()
        */
-      public Builder isSourceDelete(Boolean isSourceDelete) {
+      public B isSourceDelete(Boolean isSourceDelete) {
          this.isSourceDelete = isSourceDelete;
-         return this;
+         return self();
       }
 
       public CloneVAppTemplateParams build() {
-         return new CloneVAppTemplateParams(description, name, source, isSourceDelete);
+         return new CloneVAppTemplateParams(this);
       }
 
-      @Override
-      public Builder fromParamsType(ParamsType<CloneVAppTemplateParams> in) {
-         return Builder.class.cast(super.fromParamsType(in));
-      }
-
-      public Builder fromCloneVAppTemplateParams(CloneVAppTemplateParams in) {
+      public B fromCloneVAppTemplateParams(CloneVAppTemplateParams in) {
          return fromParamsType(in)
                .source(in.getSource())
                .isSourceDelete(in.isSourceDelete());
       }
    }
 
-   public CloneVAppTemplateParams(String description, String name, Reference source, Boolean sourceDelete) {
-      super(description, name);
-      this.source = source;
-      isSourceDelete = sourceDelete;
+   protected CloneVAppTemplateParams(Builder<?> builder) {
+      super(builder);
+      this.source = builder.source;
+      isSourceDelete = builder.isSourceDelete;
    }
 
    private CloneVAppTemplateParams() {

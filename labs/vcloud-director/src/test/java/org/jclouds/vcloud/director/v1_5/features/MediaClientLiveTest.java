@@ -125,9 +125,9 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMediaFor(MEDIA, media);
       
       assertNotNull(media.getFiles(), String.format(OBJ_FIELD_REQ, MEDIA, "files"));
-      assertTrue(media.getFiles().getFiles().size() == 1, String.format(OBJ_FIELD_EQ, MEDIA, "files.size()", "1", 
-            media.getFiles().getFiles().size()));
-      File uploadFile = getFirst(media.getFiles().getFiles(), null);
+      assertTrue(media.getFiles().size() == 1, String.format(OBJ_FIELD_EQ, MEDIA, "files.size()", "1", 
+            media.getFiles().size()));
+      File uploadFile = getFirst(media.getFiles(), null);
       assertNotNull(uploadFile, String.format(OBJ_FIELD_REQ, MEDIA, "files.first"));
       assertTrue(equal(uploadFile.getSize(), sourceMedia.getSize()), String.format(OBJ_FIELD_EQ, MEDIA, "uploadFile.size()",
             sourceMedia.getSize(), uploadFile.getSize()));
@@ -147,7 +147,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       assertEquals(task.getStatus(), "running");
       
-      File file = Iterables.getOnlyElement(media.getFiles().getFiles());
+      File file = Iterables.getOnlyElement(media.getFiles());
       assertEquals(file.getSize(), new Long(iso.length));
       assertEquals(file.getBytesTransferred(), new Long(iso.length));
 

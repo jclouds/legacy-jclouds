@@ -20,9 +20,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -39,149 +36,72 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author danikov
  */
 @XmlRootElement(name = "Catalog")
-public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
+public class CatalogType extends EntityType {
 
-   public static <T extends CatalogType<T>> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromCatalogType(this);
+   public Builder<?> toBuilder() {
+      return builder().fromCatalogType(this);
    }
 
-   public static class Builder<T extends CatalogType<T>> extends EntityType.Builder<T> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
-      protected Owner owner;
-      protected CatalogItems catalogItems;
-      protected Boolean isPublished;
+      private Owner owner;
+      private CatalogItems catalogItems;
+      private Boolean isPublished;
 
       /**
        * @see CatalogType#getOwner()
        */
-      public Builder<T> owner(Owner owner) {
+      public B owner(Owner owner) {
          this.owner = owner;
-         return this;
+         return self();
       }
 
       /**
        * @see CatalogType#getCatalogItems()
        */
-      public Builder<T> catalogItems(CatalogItems catalogItems) {
+      public B catalogItems(CatalogItems catalogItems) {
          this.catalogItems = catalogItems;
-         return this;
+         return self();
       }
 
       /**
        * @see CatalogType#isPublished()
        */
-      public Builder<T> isPublished(Boolean isPublished) {
+      public B isPublished(Boolean isPublished) {
          this.isPublished = isPublished;
-         return this;
+         return self();
       }
 
       /**
        * @see CatalogType#isPublished()
        */
-      public Builder<T> published() {
+      public B published() {
          this.isPublished = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       @Override
-      public CatalogType<T> build() {
-         return new CatalogType<T>(href, type, links, description, tasks, id, name, owner, catalogItems, isPublished);
+      public CatalogType build() {
+         return new CatalogType(this);
       }
 
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder<T> name(String name) {
-         super.name(name);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder<T> description(String description) {
-         super.description(description);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder<T> id(String id) {
-         super.id(id);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder<T> tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder<T> href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder<T> type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder<T> links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder<T> link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> fromEntityType(EntityType<T> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder<T> fromCatalogType(CatalogType<T> in) {
+      public B fromCatalogType(CatalogType in) {
          return fromEntityType(in).owner(in.getOwner()).catalogItems(in.getCatalogItems()).isPublished(in.isPublished());
       }
    }
 
-   public CatalogType(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
-                  String name, Owner owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasks, id, name);
-      this.owner = owner;
-      this.catalogItems = catalogItems;
-      this.isPublished = published;
+   protected CatalogType(Builder<?> builder) {
+      super(builder);
+      this.owner = builder.owner;
+      this.catalogItems = builder.catalogItems;
+      this.isPublished = builder.isPublished;
    }
 
    protected CatalogType() {
@@ -222,7 +142,7 @@ public class CatalogType<T extends CatalogType<T>> extends EntityType<T> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      CatalogType<?> that = CatalogType.class.cast(o);
+      CatalogType that = CatalogType.class.cast(o);
       return super.equals(that) &&
             equal(this.owner, that.owner) && 
             equal(this.catalogItems, that.catalogItems) &&

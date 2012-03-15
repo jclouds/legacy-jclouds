@@ -51,26 +51,36 @@ import com.google.common.collect.Sets;
  * @since 0.9
  */
 @XmlType(name = "ResourceType")
-public class ResourceType<T extends ResourceType<T>> {
+public class ResourceType {
 
    @javax.annotation.Resource
    protected static Logger logger = Logger.NULL;
    
-   public NewBuilder<?> toNewBuilder() {
-      throw new UnsupportedOperationException("New builder not yet implemented for this class");
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return builder().fromResourceType(this);
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class NewBuilder<T extends NewBuilder<T>> {
-      protected abstract T self();
-      
-      protected URI href;
-      protected String type;
-      protected Set<Link> links;
+   public static abstract class Builder<B extends Builder<B>> {
+      private URI href;
+      private String type;
+      private Set<Link> links;
 
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
+      
       /**
        * @see ResourceType#getHref()
        */
-      public T href(URI href) {
+      public B href(URI href) {
          this.href = href;
          return self();
       }
@@ -78,7 +88,7 @@ public class ResourceType<T extends ResourceType<T>> {
       /**
        * @see ResourceType#getType()
        */
-      public T type(String type) {
+      public B type(String type) {
          this.type = type;
          return self();
       }
@@ -86,7 +96,7 @@ public class ResourceType<T extends ResourceType<T>> {
       /**
        * @see ResourceType#getLinks()
        */
-      public T links(Set<Link> links) {
+      public B links(Set<Link> links) {
          this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
          return self();
       }
@@ -94,70 +104,18 @@ public class ResourceType<T extends ResourceType<T>> {
       /**
        * @see ResourceType#getLinks()
        */
-      public T link(Link link) {
+      public B link(Link link) {
          if (links == null)
             links = Sets.newLinkedHashSet();
          this.links.add(checkNotNull(link, "link"));
          return self();
       }
 
-      public abstract ResourceType<?> build();
-
-      protected T fromResourceType(ResourceType<?> in) {
-         return href(in.getHref()).type(in.getType()).links(in.getLinks());
-      }
-   }
-
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromResourceType(this);
-   }
-   
-   public static class Builder<T extends ResourceType<T>> {
-
-      protected URI href;
-      protected String type;
-      protected Set<Link> links;
-
-      /**
-       * @see ResourceType#getHref()
-       */
-      public Builder<T> href(URI href) {
-         this.href = href;
-         return this;
+      public ResourceType build() {
+         return new ResourceType(this);
       }
 
-      /**
-       * @see ResourceType#getType()
-       */
-      public Builder<T> type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      public Builder<T> links(Set<Link> links) {
-         if (checkNotNull(links, "links").size() > 0)
-            this.links = Sets.newLinkedHashSet(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      public Builder<T> link(Link link) {
-         if (links == null)
-            links = Sets.newLinkedHashSet();
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      public ResourceType<T> build() {
-         return new ResourceType<T>(href, type, links);
-      }
-
-      protected Builder<T> fromResourceType(ResourceType<T> in) {
+      protected B fromResourceType(ResourceType in) {
          return href(in.getHref()).type(in.getType()).links(in.getLinks());
       }
    }
@@ -169,6 +127,12 @@ public class ResourceType<T extends ResourceType<T>> {
    @XmlElement(name = "Link")
    private Set<Link> links;
 
+   protected ResourceType(Builder<?> builder) {
+      this.href = builder.href;
+      this.type = builder.type;
+      this.links = builder.links;
+   }
+     
    public ResourceType(URI href, String type, @Nullable Set<Link> links) {
       this.href = href;
       this.type = type;
@@ -222,7 +186,7 @@ public class ResourceType<T extends ResourceType<T>> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      ResourceType<?> that = ResourceType.class.cast(o);
+      ResourceType that = ResourceType.class.cast(o);
       return equal(this.href, that.href) && equal(this.links, that.links) && equal(this.type, that.type);
    }
    
@@ -231,7 +195,7 @@ public class ResourceType<T extends ResourceType<T>> {
          return false;
       if (o == null || getClass() != o.getClass())
          return false;
-      ResourceType<?> that = ResourceType.class.cast(o);
+      ResourceType that = ResourceType.class.cast(o);
       return equal(this.type, that.type);
    }
 

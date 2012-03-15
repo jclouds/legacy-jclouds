@@ -22,10 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -76,19 +73,23 @@ import com.google.common.collect.ImmutableList;
     "fromEmailAddress",
     "defaultSubjectPrefix",
     "isAlertEmailToAllAdmins",
-    "alertEmailsTo",
+    "alertEmailTo",
     "smtpServerSettings"
 })
-public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
-   public static Builder builder() {
-      return new Builder();
+public class OrgEmailSettings extends ResourceType {
+   
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromOrgEmailSettings(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOrgEmailSettings(this);
    }
 
-   public static class Builder extends ResourceType.Builder<OrgEmailSettings> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private boolean isDefaultSmtpServer;
       private boolean isDefaultOrgEmail;
@@ -101,123 +102,79 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
       /**
        * @see OrgEmailSettings#getIsDefaultSmtpServer()
        */
-      public Builder isDefaultSmtpServer(boolean isDefaultSmtpServer) {
+      public B isDefaultSmtpServer(boolean isDefaultSmtpServer) {
          this.isDefaultSmtpServer = isDefaultSmtpServer;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgEmailSettings#getIsDefaultOrgEmail()
        */
-      public Builder isDefaultOrgEmail(boolean isDefaultOrgEmail) {
+      public B isDefaultOrgEmail(boolean isDefaultOrgEmail) {
          this.isDefaultOrgEmail = isDefaultOrgEmail;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgEmailSettings#getFromEmailAddress()
        */
-      public Builder fromEmailAddress(String fromEmailAddress) {
+      public B fromEmailAddress(String fromEmailAddress) {
          this.fromEmailAddress = fromEmailAddress;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgEmailSettings#getDefaultSubjectPrefix()
        */
-      public Builder defaultSubjectPrefix(String defaultSubjectPrefix) {
+      public B defaultSubjectPrefix(String defaultSubjectPrefix) {
          this.defaultSubjectPrefix = defaultSubjectPrefix;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgEmailSettings#getIsAlertEmailToAllAdmins()
        */
-      public Builder isAlertEmailToAllAdmins(boolean isAlertEmailToAllAdmins) {
+      public B isAlertEmailToAllAdmins(boolean isAlertEmailToAllAdmins) {
          this.isAlertEmailToAllAdmins = isAlertEmailToAllAdmins;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgEmailSettings#getAlertEmailTo()
        */
-      public Builder alertEmailsTo(List<String> alertEmailsTo) {
-         this.alertEmailTo = alertEmailsTo == null ? null : ImmutableList.copyOf(alertEmailsTo);
-         return this;
+      public B alertEmailTo(List<String> alertEmailTo) {
+         this.alertEmailTo = alertEmailTo == null ? null : ImmutableList.copyOf(alertEmailTo);
+         return self();
       }
       
       /**
        * @see OrgEmailSettings#getAlertEmailTo()
        */
-      public Builder alertEmailTo(String alertEmailTo) {
+      public B alertEmailTo(String alertEmailTo) {
          this.alertEmailTo.add(checkNotNull(alertEmailTo, "alertEmailTo"));
-         return this;
+         return self();
       }
 
       /**
        * @see OrgEmailSettings#getSmtpServerSettings()
        */
-      public Builder smtpServerSettings(SmtpServerSettings smtpServerSettings) {
+      public B smtpServerSettings(SmtpServerSettings smtpServerSettings) {
          this.smtpServerSettings = smtpServerSettings;
-         return this;
+         return self();
       }
 
       public OrgEmailSettings build() {
-         return new OrgEmailSettings(href, type, links, isDefaultSmtpServer, 
-               isDefaultOrgEmail, fromEmailAddress, defaultSubjectPrefix, 
-               isAlertEmailToAllAdmins, alertEmailTo, smtpServerSettings);
+         return new OrgEmailSettings(this);
       }
-
       
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-
-      @Override
-      public Builder fromResourceType(ResourceType<OrgEmailSettings> in) {
-          return Builder.class.cast(super.fromResourceType(in));
-      }
-      public Builder fromOrgEmailSettings(OrgEmailSettings in) {
+      public B fromOrgEmailSettings(OrgEmailSettings in) {
          return fromResourceType(in)
             .isDefaultSmtpServer(in.isDefaultSmtpServer())
             .isDefaultOrgEmail(in.isDefaultOrgEmail())
             .fromEmailAddress(in.getFromEmailAddress())
             .defaultSubjectPrefix(in.getDefaultSubjectPrefix())
             .isAlertEmailToAllAdmins(in.isAlertEmailToAllAdmins())
-            .alertEmailsTo(in.getAlertEmailsTo())
+            .alertEmailTo(in.getAlertEmailTo())
             .smtpServerSettings(in.getSmtpServerSettings());
       }
    }
@@ -226,34 +183,31 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
       // For JAXB
    }
 
-   private OrgEmailSettings(URI href, String type, Set<Link> links, 
-         boolean isDefaultSmtpServer, boolean isDefaultOrgEmail, 
-         String fromEmailAddress, String defaultSubjectPrefix, boolean isAlertEmailToAllAdmins, 
-         List<String> alertEmailTo, SmtpServerSettings smtpServerSettings) {
-      super(href, type, links);
-      this.isDefaultSmtpServer = isDefaultSmtpServer;
-      this.isDefaultOrgEmail = isDefaultOrgEmail;
-      this.fromEmailAddress = fromEmailAddress;
-      this.defaultSubjectPrefix = defaultSubjectPrefix;
-      this.isAlertEmailToAllAdmins = isAlertEmailToAllAdmins;
-      this.alertEmailsTo = alertEmailTo;
-      this.smtpServerSettings = smtpServerSettings;
+   private OrgEmailSettings(Builder<?> builder) {
+      super(builder);
+      this.isDefaultSmtpServer = builder.isDefaultSmtpServer;
+      this.isDefaultOrgEmail = builder.isDefaultOrgEmail;
+      this.fromEmailAddress = builder.fromEmailAddress;
+      this.defaultSubjectPrefix = builder.defaultSubjectPrefix;
+      this.isAlertEmailToAllAdmins = builder.isAlertEmailToAllAdmins;
+      this.alertEmailTo = builder.alertEmailTo;
+      this.smtpServerSettings = builder.smtpServerSettings;
    }
 
     @XmlElement(name = "IsDefaultSmtpServer")
-    protected boolean isDefaultSmtpServer;
+    private boolean isDefaultSmtpServer;
     @XmlElement(name = "IsDefaultOrgEmail")
-    protected boolean isDefaultOrgEmail;
+    private boolean isDefaultOrgEmail;
     @XmlElement(name = "FromEmailAddress", required = true)
-    protected String fromEmailAddress;
+    private String fromEmailAddress;
     @XmlElement(name = "DefaultSubjectPrefix", required = true)
-    protected String defaultSubjectPrefix;
+    private String defaultSubjectPrefix;
     @XmlElement(name = "IsAlertEmailToAllAdmins")
-    protected boolean isAlertEmailToAllAdmins;
+    private boolean isAlertEmailToAllAdmins;
     @XmlElement(name = "AlertEmailTo")
-    protected List<String> alertEmailsTo;
+    private List<String> alertEmailTo;
     @XmlElement(name = "SmtpServerSettings")
-    protected SmtpServerSettings smtpServerSettings;
+    private SmtpServerSettings smtpServerSettings;
 
     /**
      * Gets the value of the isDefaultSmtpServer property.
@@ -325,8 +279,8 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
      * 
      * 
      */
-    public List<String> getAlertEmailsTo() {
-        return this.alertEmailsTo;
+    public List<String> getAlertEmailTo() {
+        return this.alertEmailTo;
     }
 
     /**
@@ -354,7 +308,7 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
            equal(fromEmailAddress, that.fromEmailAddress) && 
            equal(defaultSubjectPrefix, that.defaultSubjectPrefix) && 
            equal(isAlertEmailToAllAdmins, that.isAlertEmailToAllAdmins) && 
-           equal(alertEmailsTo, that.alertEmailsTo) && 
+           equal(alertEmailTo, that.alertEmailTo) && 
            equal(smtpServerSettings, that.smtpServerSettings);
    }
 
@@ -366,7 +320,7 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
            fromEmailAddress, 
            defaultSubjectPrefix, 
            isAlertEmailToAllAdmins, 
-           alertEmailsTo, 
+           alertEmailTo, 
            smtpServerSettings);
    }
 
@@ -378,7 +332,7 @@ public class OrgEmailSettings extends ResourceType<OrgEmailSettings> {
             .add("fromEmailAddress", fromEmailAddress)
             .add("defaultSubjectPrefix", defaultSubjectPrefix)
             .add("isAlertEmailToAllAdmins", isAlertEmailToAllAdmins)
-            .add("alertEmailsTo", alertEmailsTo)
+            .add("alertEmailTo", alertEmailTo)
             .add("smtpServerSettings", smtpServerSettings);
    }
 

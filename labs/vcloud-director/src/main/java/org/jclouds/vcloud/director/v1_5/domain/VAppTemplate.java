@@ -18,10 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
@@ -30,7 +29,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jclouds.vcloud.director.v1_5.domain.ovf.DeploymentOptionSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -44,21 +50,23 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "VAppTemplate")
-public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
+public class VAppTemplate extends ResourceEntityType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromVAppTemplate(this);
+   public Builder<?> toBuilder() {
+      return builder().fromVAppTemplate(this);
    }
 
-   public static class Builder extends ResourceEntityType.Builder<VAppTemplate> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceEntityType.Builder<B> {
       private Owner owner;
       private Set<VAppTemplate> children = Sets.newLinkedHashSet();
-      private Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
+      private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
       private String vAppScopedLocalId;
       private Boolean ovfDescriptorUploaded;
       private Boolean goldMaster;
@@ -66,62 +74,57 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
       /**
        * @see VAppTemplate#getOwner()
        */
-      public Builder owner(Owner owner) {
+      public B owner(Owner owner) {
          this.owner = owner;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppTemplate#getChildren()
        */
-      public Builder children(Set<VAppTemplate> children) {
+      public B children(Set<VAppTemplate> children) {
          this.children = checkNotNull(children, "children");
-         return this;
+         return self();
       }
 
       /**
        * @see VAppTemplate#getSections()
        */
-      public Builder sections(Set<? extends SectionType<?>> sections) {
+      public B sections(Set<? extends SectionType> sections) {
          this.sections = checkNotNull(sections, "sections");
-         return this;
+         return self();
       }
 
       /**
        * @see VAppTemplate#getVAppScopedLocalId()
        */
-      public Builder vAppScopedLocalId(String vAppScopedLocalId) {
+      public B vAppScopedLocalId(String vAppScopedLocalId) {
          this.vAppScopedLocalId = vAppScopedLocalId;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppTemplate#isOvfDescriptorUploaded()
        */
-      public Builder ovfDescriptorUploaded(Boolean ovfDescriptorUploaded) {
+      public B ovfDescriptorUploaded(Boolean ovfDescriptorUploaded) {
          this.ovfDescriptorUploaded = ovfDescriptorUploaded;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppTemplate#isGoldMaster()
        */
-      public Builder goldMaster(Boolean goldMaster) {
+      public B goldMaster(Boolean goldMaster) {
          this.goldMaster = goldMaster;
-         return this;
+         return self();
       }
 
       @Override
       public VAppTemplate build() {
-         return new VAppTemplate(href, type, links, description, tasks, id, name, files, status, owner, children, sections, vAppScopedLocalId, ovfDescriptorUploaded, goldMaster);
+         return new VAppTemplate(this);
       }
 
-      @Override
-      public Builder fromResourceEntityType(ResourceEntityType<VAppTemplate> in) {
-         return Builder.class.cast(super.fromResourceEntityType(in));
-      }
-
-      public Builder fromVAppTemplate(VAppTemplate in) {
+      public B fromVAppTemplate(VAppTemplate in) {
          return fromResourceEntityType(in)
                .owner(in.getOwner())
                .children(in.getChildren())
@@ -130,125 +133,32 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
                .ovfDescriptorUploaded(in.isOvfDescriptorUploaded())
                .goldMaster(in.isGoldMaster());
       }
-
-
-      /**
-       * @see ResourceEntityType#getFiles()
-       */
-      @Override
-      public Builder files(FilesList files) {
-         super.files(files);
-         return this;
-      }
-
-      /**
-       * @see ResourceEntityType#getStatus()
-       */
-      @Override
-      public Builder status(Integer status) {
-         super.status(status);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         super.name(name);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         super.description(description);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         super.id(id);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
    }
 
    @XmlElement(name = "Owner")
-   protected Owner owner;
+   private Owner owner;
    @XmlElement(name = "Children")
-   protected VAppTemplateChildren children = VAppTemplateChildren.builder().build();
+   private VAppTemplateChildren children = VAppTemplateChildren.builder().build();
    @XmlElementRef
-   protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
+   private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
    @XmlElement(name = "VAppScopedLocalId")
-   protected String vAppScopedLocalId;
+   private String vAppScopedLocalId;
    @XmlAttribute
-   protected Boolean ovfDescriptorUploaded;
+   private Boolean ovfDescriptorUploaded;
    @XmlAttribute
-   protected Boolean goldMaster;
+   private Boolean goldMaster;
 
-   private VAppTemplate(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
-                        String id, String name, FilesList files, Integer status, Owner owner, Set<VAppTemplate> children,
-                        Set<? extends SectionType<?>> sections, String vAppScopedLocalId, Boolean ovfDescriptorUploaded, Boolean goldMaster) {
-      super(href, type, links, description, tasks, id, name, files, status);
-      this.owner = owner;
-      this.children = VAppTemplateChildren.builder().vms(children).build();
-      this.sections = ImmutableSet.copyOf(sections);
-      this.vAppScopedLocalId = vAppScopedLocalId;
-      this.ovfDescriptorUploaded = ovfDescriptorUploaded;
-      this.goldMaster = goldMaster;
+   protected VAppTemplate(Builder<?> builder) {
+      super(builder);
+      this.owner = builder.owner;
+      this.children = VAppTemplateChildren.builder().vms(builder.children).build();
+      this.sections = ImmutableSet.copyOf(builder.sections);
+      this.vAppScopedLocalId = builder.vAppScopedLocalId;
+      this.ovfDescriptorUploaded = builder.ovfDescriptorUploaded;
+      this.goldMaster = builder.goldMaster;
    }
 
-   private VAppTemplate() {
+   protected VAppTemplate() {
       // For JAXB
    }
 
@@ -296,7 +206,7 @@ public class VAppTemplate extends ResourceEntityType<VAppTemplate> {
     * {@link DiskSection }
     * {@link InstallSection }
     */
-   public Set<? extends SectionType<?>> getSections() {
+   public Set<? extends SectionType> getSections() {
       return Collections.unmodifiableSet(this.sections);
    }
 

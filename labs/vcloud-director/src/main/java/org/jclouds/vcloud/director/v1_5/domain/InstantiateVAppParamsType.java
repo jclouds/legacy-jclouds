@@ -37,180 +37,87 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "InstantiateVAppParams")
-public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>> extends VAppCreationParamsType<T> {
+public class InstantiateVAppParamsType extends VAppCreationParamsType {
 
-   public static <T extends InstantiateVAppParamsType<T>> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromInstantiateVAppParamsType(this);
+   public Builder<?> toBuilder() {
+      return builder().fromInstantiateVAppParamsType(this);
    }
 
-   public static class Builder<T extends InstantiateVAppParamsType<T>> extends VAppCreationParamsType.Builder<T> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParamsType.Builder<B> {
 
-      protected ReferenceType<?> source;
-      protected Boolean sourceDelete;
-      protected Boolean linkedClone;
+      private Reference source;
+      private Boolean sourceDelete;
+      private Boolean linkedClone;
 
       /**
        * @see InstantiateVAppParamsType#getSource()
        */
-      public Builder<T> source(ReferenceType<?> source) {
+      public B source(Reference source) {
          this.source = source;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateVAppParamsType#isSourceDelete()
        */
-      public Builder<T> isSourceDelete(Boolean sourceDelete) {
+      public B isSourceDelete(Boolean sourceDelete) {
          this.sourceDelete = sourceDelete;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateVAppParamsType#isSourceDelete()
        */
-      public Builder<T> sourceDelete() {
+      public B sourceDelete() {
          this.sourceDelete = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateVAppParamsType#isSourceDelete()
        */
-      public Builder<T> notSourceDelete() {
+      public B notSourceDelete() {
          this.sourceDelete = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateVAppParamsType#isLinkedClone()
        */
-      public Builder<T> isLinkedClone(Boolean linkedClone) {
+      public B isLinkedClone(Boolean linkedClone) {
          this.linkedClone = linkedClone;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateVAppParamsType#isLinkedClone()
        */
-      public Builder<T> linkedClone() {
+      public B linkedClone() {
          this.linkedClone = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateVAppParamsType#isLinkedClone()
        */
-      public Builder<T> notLinkedClone() {
+      public B notLinkedClone() {
          this.linkedClone = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       @Override
-      public InstantiateVAppParamsType<T> build() {
-         return new InstantiateVAppParamsType<T>(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
+      public InstantiateVAppParamsType build() {
+         return new InstantiateVAppParamsType(this);
       }
 
-      /**
-       * @see ParamsType#getDescription()
-       */
-      @Override
-      public Builder<T> description(String description) {
-         super.description(description);
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getName()
-       */
-      @Override
-      public Builder<T> name(String name) {
-         super.name(name);
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#getVAppParent()
-       */
-      @Override
-      public Builder<T> vAppParent(Reference vAppParent) {
-         this.vAppParent = vAppParent;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#getInstantiationParams()
-       */
-      @Override
-      public Builder<T> instantiationParams(InstantiationParams instantiationParams) {
-         this.instantiationParams = instantiationParams;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder<T> deploy(Boolean deploy) {
-         this.deploy = deploy;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder<T> deploy() {
-         this.deploy = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder<T> notDeploy() {
-         this.deploy = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder<T> powerOn(Boolean powerOn) {
-         this.powerOn = powerOn;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder<T> powerOn() {
-         this.powerOn = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder<T> notPowerOn() {
-         this.powerOn = Boolean.FALSE;
-         return this;
-      }
-
-      @Override
-      @SuppressWarnings("unchecked")
-      public Builder<T> fromVAppCreationParamsType(VAppCreationParamsType<T> in) {
-         return Builder.class.cast(super.fromVAppCreationParamsType(in));
-      }
-
-      public Builder<T> fromInstantiateVAppParamsType(InstantiateVAppParamsType<T> in) {
+      public B fromInstantiateVAppParamsType(InstantiateVAppParamsType in) {
          return fromVAppCreationParamsType(in)
                .source(in.getSource())
                .isSourceDelete(in.isSourceDelete())
@@ -222,25 +129,24 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>> e
       // For JAXB and builder use
    }
 
-   public InstantiateVAppParamsType(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
-                                    Boolean deploy, Boolean powerOn, ReferenceType<?> source, Boolean sourceDelete, Boolean linkedClone) {
-      super(description, name, vAppParent, instantiationParams, deploy, powerOn);
-      this.source = source;
-      this.sourceDelete = sourceDelete;
-      this.linkedClone = linkedClone;
+   public InstantiateVAppParamsType(Builder<?> builder) {
+      super(builder);
+      this.source = builder.source;
+      this.sourceDelete = builder.sourceDelete;
+      this.linkedClone = builder.linkedClone;
    }
 
    @XmlElement(name = "Source", required = true)
-   protected ReferenceType<?> source;
+   private Reference source;
    @XmlElement(name = "IsSourceDelete")
-   protected Boolean sourceDelete;
+   private Boolean sourceDelete;
    @XmlAttribute
-   protected Boolean linkedClone;
+   private Boolean linkedClone;
 
    /**
     * Gets the value of the source property.
     */
-   public ReferenceType<?> getSource() {
+   public Reference getSource() {
       return source;
    }
 
@@ -264,7 +170,7 @@ public class InstantiateVAppParamsType<T extends InstantiateVAppParamsType<T>> e
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      InstantiateVAppParamsType<?> that = InstantiateVAppParamsType.class.cast(o);
+      InstantiateVAppParamsType that = InstantiateVAppParamsType.class.cast(o);
       return super.equals(that) &&
             equal(this.source, that.source) &&
             equal(this.sourceDelete, that.sourceDelete) &&

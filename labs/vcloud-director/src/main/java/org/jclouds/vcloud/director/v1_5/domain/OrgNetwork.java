@@ -20,9 +20,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,158 +27,71 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 @XmlRootElement(name = "OrgNetwork")
-public class OrgNetwork extends NetworkType<OrgNetwork> {
+public class OrgNetwork extends NetworkType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromOrgNetwork(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOrgNetwork(this);
    }
 
-   public static class Builder extends NetworkType.Builder<OrgNetwork> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends NetworkType.Builder<B> {
 
-      private ReferenceType<?> networkPool;
+      private Reference networkPool;
       private IpAddresses allowedExternalIpAddresses;
 
       /**
        * @see OrgNetwork#getNetworkPool()
        */
-      public Builder networkPool(ReferenceType<?> networkPool) {
+      public B networkPool(Reference networkPool) {
          this.networkPool = networkPool;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgNetwork#getAllowedExternalIpAddresses()
        */
-      public Builder allowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
+      public B allowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
          this.allowedExternalIpAddresses = allowedExternalIpAddresses;
-         return this;
+         return self();
       }
 
       @Override
       public OrgNetwork build() {
-         return new OrgNetwork(href, type, links, description, tasks, id, name, networkConfiguration,
-               networkPool, allowedExternalIpAddresses);
+         return new OrgNetwork(this);
       }
 
-      /**
-       * @see NetworkType#getConfiguration()
-       */
-      @Override
-      public Builder configuration(NetworkConfiguration networkConfiguration) {
-         this.networkConfiguration = networkConfiguration;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      @Override
-      public Builder fromNetworkType(NetworkType<OrgNetwork> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder fromOrgNetwork(OrgNetwork in) {
+      public B fromOrgNetwork(OrgNetwork in) {
          return fromNetworkType(in).configuration(in.getConfiguration())
                .networkPool(in.getNetworkPool())
                .allowedExternalIpAddresses(in.getAllowedExternalIpAddresses());
       }
    }
 
-   private OrgNetwork() {
+   protected OrgNetwork() {
       // For JAXB
    }
 
-   private OrgNetwork(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
-                      String id, String name, NetworkConfiguration networkConfiguration, ReferenceType<?> networkPool, IpAddresses allowedExternalIpAddresses) {
-      super(href, type, links, description, tasks, id, name, networkConfiguration);
-      this.networkPool = networkPool;
-      this.allowedExternalIpAddresses = allowedExternalIpAddresses;
+   protected OrgNetwork(Builder<?> builder) {
+      super(builder);
+      this.networkPool = builder.networkPool;
+      this.allowedExternalIpAddresses = builder.allowedExternalIpAddresses;
    }
 
    @XmlElement(name = "NetworkPool")
-   private ReferenceType<?> networkPool;
+   private Reference networkPool;
    @XmlElement(name = "AllowedExternalIpAddresses")
    private IpAddresses allowedExternalIpAddresses;
 
    /**
     * @return optional network pool
     */
-   public ReferenceType<?> getNetworkPool() {
+   public Reference getNetworkPool() {
       return networkPool;
    }
 
@@ -211,5 +121,4 @@ public class OrgNetwork extends NetworkType<OrgNetwork> {
       return super.string().add("networkPool", networkPool)
             .add("allowedExternalIpAddresses", allowedExternalIpAddresses);
    }
-
 }

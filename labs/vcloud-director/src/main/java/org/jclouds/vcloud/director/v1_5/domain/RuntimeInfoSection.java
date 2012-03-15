@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
 import java.util.List;
 
@@ -26,9 +26,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -44,18 +42,20 @@ import com.google.common.collect.Lists;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "RuntimeInfoSection")
-public class RuntimeInfoSection extends SectionType<RuntimeInfoSection> {
+public class RuntimeInfoSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromRuntimeInfoSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromRuntimeInfoSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<RuntimeInfoSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
       private VMWareTools vmWareTools;
       private List<Object> any = Lists.newArrayList();
@@ -63,31 +63,26 @@ public class RuntimeInfoSection extends SectionType<RuntimeInfoSection> {
       /**
        * @see RuntimeInfoSection#getVmWareTools()
        */
-      public Builder vmWareTools(VMWareTools vmWareTools) {
+      public B vmWareTools(VMWareTools vmWareTools) {
          this.vmWareTools = vmWareTools;
-         return this;
+         return self();
       }
 
       /**
        * @see RuntimeInfoSection#getAny()
        */
-      public Builder any(List<Object> any) {
+      public B any(List<Object> any) {
          this.any = any;
-         return this;
+         return self();
       }
 
       @Override
       public RuntimeInfoSection build() {
-         RuntimeInfoSection runtimeInfoSection = new RuntimeInfoSection(info, required, vmWareTools, any);
+         RuntimeInfoSection runtimeInfoSection = new RuntimeInfoSection(this);
          return runtimeInfoSection;
       }
 
-      @Override
-      public Builder fromSectionType(SectionType<RuntimeInfoSection> in) {
-          return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      public Builder fromRuntimeInfoSection(RuntimeInfoSection in) {
+      public B fromRuntimeInfoSection(RuntimeInfoSection in) {
          return fromSectionType(in)
             .vmWareTools(in.getVMWareTools())
             .any(in.getAny());
@@ -95,13 +90,13 @@ public class RuntimeInfoSection extends SectionType<RuntimeInfoSection> {
    }
 
    protected RuntimeInfoSection() {
-      // For JAXB and builder use
+      // For JAXB and B use
    }
 
-   public RuntimeInfoSection(@Nullable String info, @Nullable Boolean required, VMWareTools vmWareTools, List<Object> any) {
-      super(info, required);
-      this.vmWareTools = vmWareTools;
-      this.any = any;
+   protected RuntimeInfoSection(Builder<?> builder) {
+      super(builder);
+      this.vmWareTools = builder.vmWareTools;
+      this.any = builder.any;
    }
 
 

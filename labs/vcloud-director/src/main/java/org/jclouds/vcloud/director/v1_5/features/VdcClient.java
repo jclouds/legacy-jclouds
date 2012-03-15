@@ -123,7 +123,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
     */
-   VApp instantiateVApp(URI vdcUri, InstantiateVAppParamsType<?> params);
+   VApp instantiateVApp(URI vdcUri, InstantiateVAppParamsType params);
    
    /**
     * Uploading vApp template to a vDC. The operation is separate on several steps: 

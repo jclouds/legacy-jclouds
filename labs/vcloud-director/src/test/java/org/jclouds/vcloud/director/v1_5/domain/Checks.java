@@ -68,19 +68,19 @@ import com.google.common.net.InetAddresses;
  */
 public class Checks {
 
-   public static void checkResourceEntityType(ResourceEntityType<?> resourceEntity) {
+   public static void checkResourceEntityType(ResourceEntityType resourceEntity) {
       // Check optional fields
       // NOTE status cannot be checked (TODO: doesn't status have a range of valid values?)
-      FilesList files = resourceEntity.getFiles();
-      if (files != null && files.getFiles() != null && !files.getFiles().isEmpty()) {
-         for (File file : files.getFiles()) checkFile(file);
+      Set<File> files = resourceEntity.getFiles();
+      if (files != null && !files.isEmpty()) {
+         for (File file : files) checkFile(file);
       }
       
       // Check parent type
       checkEntityType(resourceEntity);
    }
    
-   public static void checkEntityType(EntityType<?> entity) {
+   public static void checkEntityType(EntityType entity) {
       // Check required fields
       assertNotNull(entity.getName(), String.format(NOT_NULL_OBJECT_FMT, "Name", "EntityType"));
 
@@ -100,11 +100,11 @@ public class Checks {
     * 
     * @see checkReferenceType(ReferenceType, Collection<String>)
     */
-   public static void checkReferenceType(ReferenceType<?> reference) {
+   public static void checkReferenceType(Reference reference) {
       checkReferenceType(reference, VCloudDirectorMediaType.ALL);
    }
    
-   public static void checkReferenceType(ReferenceType<?> reference, Collection<String> validTypes) {
+   public static void checkReferenceType(Reference reference, Collection<String> validTypes) {
       // Check required fields
       assertNotNull(reference.getHref(), String.format(NOT_NULL_OBJECT_FMT, "Href", "ReferenceType"));
 
@@ -116,7 +116,7 @@ public class Checks {
       // NOTE name cannot be checked
    }
 
-   public static void checkResourceType(ResourceType<?> resource) {
+   public static void checkResourceType(ResourceType resource) {
       // Check optional fields
       URI href = resource.getHref();
       if (href != null) checkHref(href);
@@ -183,13 +183,13 @@ public class Checks {
       // NOTE startTime cannot be checked
       // NOTE endTime cannot be checked
       // NOTE expiryTimecannot be checked
-      ReferenceType<?> owner = task.getOwner();
+      Reference owner = task.getOwner();
       if (owner != null) checkReferenceType(owner);
       Error error = task.getError();
       if (error != null) checkError(error);
-      ReferenceType<?> user = task.getUser();
+      Reference user = task.getUser();
       if (user != null) checkReferenceType(user);
-      ReferenceType<?> org = task.getOrg();
+      Reference org = task.getOrg();
       if (org != null) checkReferenceType(org);
       Integer progress = task.getProgress();
       if (progress != null) checkProgress(progress);
@@ -311,7 +311,7 @@ public class Checks {
       checkCatalogType(catalog);
    }
 
-   public static void checkCatalogType(CatalogType<?> catalog) {
+   public static void checkCatalogType(CatalogType catalog) {
       // Check optional elements/attributes
       Owner owner = catalog.getOwner();
       if (owner != null) checkOwner(owner);
@@ -347,7 +347,7 @@ public class Checks {
             "The Image type of a Media must be one of the allowed list");
    }
 
-   public static void checkNetworkType(NetworkType<?> network) {
+   public static void checkNetworkType(NetworkType network) {
       // Check optional fields
       NetworkConfiguration config = network.getConfiguration();
       if (config != null) {
@@ -577,12 +577,12 @@ public class Checks {
       }
    }
 
-   public static void checkAbstractVAppType(AbstractVAppType<?> abstractVAppType) {
+   public static void checkAbstractVAppType(AbstractVAppType abstractVAppType) {
       // Check optional fields
       Reference vAppParent = abstractVAppType.getVAppParent();
       if (vAppParent != null) checkReferenceType(vAppParent);
       // NOTE deployed cannot be checked
-      for (SectionType<?> section : abstractVAppType.getSections()) {
+      for (SectionType section : abstractVAppType.getSections()) {
          checkSectionType(section);
       }
       
@@ -600,7 +600,7 @@ public class Checks {
       for (VAppTemplate child : template.getChildren()) {
          checkVAppTemplate(child);
       }
-      for (SectionType<?> section : template.getSections()) {
+      for (SectionType section : template.getSections()) {
          checkSectionType(section);
       }
       if (template.getTasks() != null) {
@@ -665,7 +665,7 @@ public class Checks {
       // TODO
    }
 
-   public static void checkSectionType(SectionType<?> section) {
+   public static void checkSectionType(SectionType section) {
       // Check optional fields
       // NOTE info cannot be checked
       // NOTE required cannot be checked
@@ -1104,7 +1104,7 @@ public class Checks {
       //val.getVCloudExtension();
    }
 
-   public static void checkOvfSectionType(SectionType<?> section) {
+   public static void checkOvfSectionType(SectionType section) {
       assertNotNull(section, String.format(NOT_NULL_OBJECT_FMT, "SectionType", ""));
    }
    

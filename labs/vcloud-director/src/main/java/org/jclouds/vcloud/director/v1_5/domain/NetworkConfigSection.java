@@ -31,9 +31,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -47,18 +45,20 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "NetworkConfigSection")
-public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
+public class NetworkConfigSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromNetworkConfigSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromNetworkConfigSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<NetworkConfigSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
       private Set<Link> links = Sets.newLinkedHashSet();
       private Set<VAppNetworkConfiguration> networkConfigs = Sets.newLinkedHashSet();
@@ -68,73 +68,48 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
       /**
        * @see NetworkConfigSection#getLinks()
        */
-      public Builder links(Set<Link> links) {
+      public B links(Set<Link> links) {
          this.links = checkNotNull(links, "links");
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkConfigSection#getNetworkConfigs()
        */
-      public Builder networkConfigs(Set<VAppNetworkConfiguration> networkConfigs) {
+      public B networkConfigs(Set<VAppNetworkConfiguration> networkConfigs) {
          this.networkConfigs = checkNotNull(networkConfigs, "networkConfigs");
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkConfigSection#getHref()
        */
-      public Builder href(URI href) {
+      public B href(URI href) {
          this.href = href;
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkConfigSection#getType()
        */
-      public Builder type(String type) {
+      public B type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
 
       @Override
       public NetworkConfigSection build() {
-         return new NetworkConfigSection(info, required, links, networkConfigs, href, type);
+         return new NetworkConfigSection(this);
       }
 
-      public Builder fromNetworkConfigSection(NetworkConfigSection in) {
+      public B fromNetworkConfigSection(NetworkConfigSection in) {
          return fromSectionType(in)
                .links(in.getLinks())
                .networkConfigs(in.getNetworkConfigs())
                .href(in.getHref())
                .type(in.getType());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<NetworkConfigSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
-
    }
 
    @XmlElement(name = "Link")
@@ -147,13 +122,12 @@ public class NetworkConfigSection extends SectionType<NetworkConfigSection> {
    @XmlAttribute
    protected String type;
 
-   public NetworkConfigSection(@Nullable String info, @Nullable Boolean required, Set<Link> links, Set<VAppNetworkConfiguration> networkConfigs,
-                               URI href, String type) {
-      super(info, required);
-      this.links = ImmutableSet.copyOf(links);
-      this.networkConfigs = ImmutableSet.copyOf(networkConfigs);
-      this.href = href;
-      this.type = type;
+   public NetworkConfigSection(Builder<?> builder) {
+      super(builder);
+      this.links = ImmutableSet.copyOf(builder.links);
+      this.networkConfigs = ImmutableSet.copyOf(builder.networkConfigs);
+      this.href = builder.href;
+      this.type = builder.type;
    }
 
    protected NetworkConfigSection() {

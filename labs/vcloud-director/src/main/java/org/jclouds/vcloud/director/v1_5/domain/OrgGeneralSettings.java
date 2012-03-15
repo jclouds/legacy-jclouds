@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -71,16 +68,20 @@ import com.google.common.base.Objects.ToStringHelper;
     "useServerBootSequence",
     "delayAfterPowerOnSeconds"
 })
-public class OrgGeneralSettings extends ResourceType<OrgGeneralSettings> {
-   public static Builder builder() {
-      return new Builder();
+public class OrgGeneralSettings extends ResourceType {
+   
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromOrgGeneralSettings(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOrgGeneralSettings(this);
    }
 
-   public static class Builder extends ResourceType.Builder<OrgGeneralSettings> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private Boolean canPublishCatalogs;
       private Integer deployedVMQuota;
@@ -91,92 +92,48 @@ public class OrgGeneralSettings extends ResourceType<OrgGeneralSettings> {
       /**
        * @see OrgGeneralSettings#getCanPublishCatalogs()
        */
-      public Builder canPublishCatalogs(Boolean canPublishCatalogs) {
+      public B canPublishCatalogs(Boolean canPublishCatalogs) {
          this.canPublishCatalogs = canPublishCatalogs;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgGeneralSettings#getDeployedVMQuota()
        */
-      public Builder deployedVMQuota(Integer deployedVMQuota) {
+      public B deployedVMQuota(Integer deployedVMQuota) {
          this.deployedVMQuota = deployedVMQuota;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgGeneralSettings#getStoredVmQuota()
        */
-      public Builder storedVmQuota(Integer storedVmQuota) {
+      public B storedVmQuota(Integer storedVmQuota) {
          this.storedVmQuota = storedVmQuota;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgGeneralSettings#getUseServerBootSequence()
        */
-      public Builder useServerBootSequence(Boolean useServerBootSequence) {
+      public B useServerBootSequence(Boolean useServerBootSequence) {
          this.useServerBootSequence = useServerBootSequence;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgGeneralSettings#getDelayAfterPowerOnSeconds()
        */
-      public Builder delayAfterPowerOnSeconds(Integer delayAfterPowerOnSeconds) {
+      public B delayAfterPowerOnSeconds(Integer delayAfterPowerOnSeconds) {
          this.delayAfterPowerOnSeconds = delayAfterPowerOnSeconds;
-         return this;
+         return self();
       }
-
 
       public OrgGeneralSettings build() {
-         return new OrgGeneralSettings(href, type, links, 
-               canPublishCatalogs, deployedVMQuota, 
-               storedVmQuota, useServerBootSequence, delayAfterPowerOnSeconds);
+         return new OrgGeneralSettings(this);
       }
 
-      
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      @Override
-      public Builder fromResourceType(ResourceType<OrgGeneralSettings> in) {
-          return Builder.class.cast(super.fromResourceType(in));
-      }
-      public Builder fromOrgGeneralSettings(OrgGeneralSettings in) {
+      public B fromOrgGeneralSettings(OrgGeneralSettings in) {
          return fromResourceType(in)
             .canPublishCatalogs(in.canPublishCatalogs())
             .deployedVMQuota(in.getDeployedVMQuota())
@@ -186,20 +143,17 @@ public class OrgGeneralSettings extends ResourceType<OrgGeneralSettings> {
       }
    }
 
-   @SuppressWarnings("unused")
-   private OrgGeneralSettings() {
+   protected OrgGeneralSettings() {
       // For JAXB
    }
 
-    public OrgGeneralSettings(URI href, String type, Set<Link> links, 
-          Boolean canPublishCatalogs, Integer deployedVMQuota, 
-          Integer storedVmQuota, Boolean useServerBootSequence, Integer delayAfterPowerOnSeconds) {
-      super(href, type, links);
-      this.canPublishCatalogs = canPublishCatalogs;
-      this.deployedVMQuota = deployedVMQuota;
-      this.storedVmQuota = storedVmQuota;
-      this.useServerBootSequence = useServerBootSequence;
-      this.delayAfterPowerOnSeconds = delayAfterPowerOnSeconds;
+   protected OrgGeneralSettings(Builder<?> builder) {
+      super(builder);
+      this.canPublishCatalogs = builder.canPublishCatalogs;
+      this.deployedVMQuota = builder.deployedVMQuota;
+      this.storedVmQuota = builder.storedVmQuota;
+      this.useServerBootSequence = builder.useServerBootSequence;
+      this.delayAfterPowerOnSeconds = builder.delayAfterPowerOnSeconds;
    }
 
    @XmlElement(name = "CanPublishCatalogs")

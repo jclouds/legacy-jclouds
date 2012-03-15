@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -65,16 +62,19 @@ import com.google.common.base.Objects.ToStringHelper;
     "deleteOnStorageLeaseExpiration",
     "storageLeaseSeconds"
 })
-public class OrgVAppTemplateLeaseSettings extends ResourceType<OrgVAppTemplateLeaseSettings> {
-   public static Builder builder() {
-      return new Builder();
+public class OrgVAppTemplateLeaseSettings extends ResourceType {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromOrgVAppTemplateLeaseSettings(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOrgVAppTemplateLeaseSettings(this);
    }
 
-   public static class Builder extends ResourceType.Builder<OrgVAppTemplateLeaseSettings> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private Boolean deleteOnStorageLeaseExpiration;
       private Integer storageLeaseSeconds;
@@ -82,89 +82,45 @@ public class OrgVAppTemplateLeaseSettings extends ResourceType<OrgVAppTemplateLe
       /**
        * @see OrgVAppTemplateLeaseSettings#getDeleteOnStorageLeaseExpiration()
        */
-      public Builder deleteOnStorageLeaseExpiration(Boolean deleteOnStorageLeaseExpiration) {
+      public B deleteOnStorageLeaseExpiration(Boolean deleteOnStorageLeaseExpiration) {
          this.deleteOnStorageLeaseExpiration = deleteOnStorageLeaseExpiration;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgVAppTemplateLeaseSettings#getStorageLeaseSeconds()
        */
-      public Builder storageLeaseSeconds(Integer storageLeaseSeconds) {
+      public B storageLeaseSeconds(Integer storageLeaseSeconds) {
          this.storageLeaseSeconds = storageLeaseSeconds;
-         return this;
+         return self();
       }
 
 
       public OrgVAppTemplateLeaseSettings build() {
-         return new OrgVAppTemplateLeaseSettings(href, type, links, deleteOnStorageLeaseExpiration, storageLeaseSeconds);
+         return new OrgVAppTemplateLeaseSettings(this);
       }
 
-      
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-
-      @Override
-      public Builder fromResourceType(ResourceType<OrgVAppTemplateLeaseSettings> in) {
-          return Builder.class.cast(super.fromResourceType(in));
-      }
-      public Builder fromOrgVAppTemplateLeaseSettings(OrgVAppTemplateLeaseSettings in) {
+      public B fromOrgVAppTemplateLeaseSettings(OrgVAppTemplateLeaseSettings in) {
          return fromResourceType(in)
             .deleteOnStorageLeaseExpiration(in.deleteOnStorageLeaseExpiration())
             .storageLeaseSeconds(in.getStorageLeaseSeconds());
       }
    }
 
-   @SuppressWarnings("unused")
-   private OrgVAppTemplateLeaseSettings() {
-      // For JAXB and builder use
+   protected OrgVAppTemplateLeaseSettings() {
+      // For JAXB and B use
    }
 
-    public OrgVAppTemplateLeaseSettings(URI href, String type, Set<Link> links,
-         Boolean deleteOnStorageLeaseExpiration, Integer storageLeaseSeconds) {
-      super(href, type, links);
-      this.deleteOnStorageLeaseExpiration = deleteOnStorageLeaseExpiration;
-      this.storageLeaseSeconds = storageLeaseSeconds;
+   protected OrgVAppTemplateLeaseSettings(Builder<?> builder) {
+      super(builder);
+      this.deleteOnStorageLeaseExpiration = builder.deleteOnStorageLeaseExpiration;
+      this.storageLeaseSeconds = builder.storageLeaseSeconds;
    }
 
    @XmlElement(name = "DeleteOnStorageLeaseExpiration")
-    protected Boolean deleteOnStorageLeaseExpiration;
-    @XmlElement(name = "StorageLeaseSeconds")
-    protected Integer storageLeaseSeconds;
+   private Boolean deleteOnStorageLeaseExpiration;
+   @XmlElement(name = "StorageLeaseSeconds")
+   private Integer storageLeaseSeconds;
 
     /**
      * Gets the value of the deleteOnStorageLeaseExpiration property.

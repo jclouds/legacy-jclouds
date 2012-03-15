@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -67,16 +64,19 @@ import com.google.common.base.Objects.ToStringHelper;
     "deploymentLeaseSeconds",
     "storageLeaseSeconds"
 })
-public class OrgLeaseSettings extends ResourceType<OrgLeaseSettings> {
-   public static Builder builder() {
-      return new Builder();
+public class OrgLeaseSettings extends ResourceType {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromOrgLeaseSettings(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOrgLeaseSettings(this);
    }
 
-   public static class Builder extends ResourceType.Builder<OrgLeaseSettings> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private Boolean deleteOnStorageLeaseExpiration;
       private Integer deploymentLeaseSeconds;
@@ -85,76 +85,32 @@ public class OrgLeaseSettings extends ResourceType<OrgLeaseSettings> {
       /**
        * @see OrgLeaseSettings#getDeleteOnStorageLeaseExpiration()
        */
-      public Builder deleteOnStorageLeaseExpiration(Boolean deleteOnStorageLeaseExpiration) {
+      public B deleteOnStorageLeaseExpiration(Boolean deleteOnStorageLeaseExpiration) {
          this.deleteOnStorageLeaseExpiration = deleteOnStorageLeaseExpiration;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgLeaseSettings#getDeploymentLeaseSeconds()
        */
-      public Builder deploymentLeaseSeconds(Integer deploymentLeaseSeconds) {
+      public B deploymentLeaseSeconds(Integer deploymentLeaseSeconds) {
          this.deploymentLeaseSeconds = deploymentLeaseSeconds;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgLeaseSettings#getStorageLeaseSeconds()
        */
-      public Builder storageLeaseSeconds(Integer storageLeaseSeconds) {
+      public B storageLeaseSeconds(Integer storageLeaseSeconds) {
          this.storageLeaseSeconds = storageLeaseSeconds;
-         return this;
+         return self();
       }
-
 
       public OrgLeaseSettings build() {
-         return new OrgLeaseSettings(href, type, links, deleteOnStorageLeaseExpiration, 
-               deploymentLeaseSeconds, storageLeaseSeconds);
+         return new OrgLeaseSettings(this);
       }
 
-      
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-
-      @Override
-      public Builder fromResourceType(ResourceType<OrgLeaseSettings> in) {
-          return Builder.class.cast(super.fromResourceType(in));
-      }
-      public Builder fromOrgLeaseSettings(OrgLeaseSettings in) {
+      public B fromOrgLeaseSettings(OrgLeaseSettings in) {
          return fromResourceType(in)
             .deleteOnStorageLeaseExpiration(in.deleteOnStorageLeaseExpiration())
             .deploymentLeaseSeconds(in.getDeploymentLeaseSeconds())
@@ -162,26 +118,23 @@ public class OrgLeaseSettings extends ResourceType<OrgLeaseSettings> {
       }
    }
 
-   @SuppressWarnings("unused")
-   private OrgLeaseSettings() {
+   protected OrgLeaseSettings() {
       // For JAXB
    }
 
-    public OrgLeaseSettings(URI href, String type, Set<Link> links,
-         Boolean deleteOnStorageLeaseExpiration,
-         Integer deploymentLeaseSeconds, Integer storageLeaseSeconds) {
-      super(href, type, links);
-      this.deleteOnStorageLeaseExpiration = deleteOnStorageLeaseExpiration;
-      this.deploymentLeaseSeconds = deploymentLeaseSeconds;
-      this.storageLeaseSeconds = storageLeaseSeconds;
+   protected OrgLeaseSettings(Builder<?> builder) {
+      super(builder);
+      this.deleteOnStorageLeaseExpiration = builder.deleteOnStorageLeaseExpiration;
+      this.deploymentLeaseSeconds = builder.deploymentLeaseSeconds;
+      this.storageLeaseSeconds = builder.storageLeaseSeconds;
    }
 
    @XmlElement(name = "DeleteOnStorageLeaseExpiration")
-    protected Boolean deleteOnStorageLeaseExpiration;
+    private Boolean deleteOnStorageLeaseExpiration;
     @XmlElement(name = "DeploymentLeaseSeconds")
-    protected Integer deploymentLeaseSeconds;
+    private Integer deploymentLeaseSeconds;
     @XmlElement(name = "StorageLeaseSeconds")
-    protected Integer storageLeaseSeconds;
+    private Integer storageLeaseSeconds;
 
     /**
      * Gets the value of the deleteOnStorageLeaseExpiration property.

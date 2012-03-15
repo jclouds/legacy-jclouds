@@ -20,9 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -41,18 +39,20 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "VmPendingQuestion")
-public class VmPendingQuestion extends ResourceType<VmPendingQuestion> {
+public class VmPendingQuestion extends ResourceType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromVmPendingQuestion(this);
+   public Builder<?> toBuilder() {
+      return builder().fromVmPendingQuestion(this);
    }
 
-   public static class Builder extends ResourceType.Builder<VmPendingQuestion> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
       private String question;
       private String questionId;
@@ -61,94 +61,55 @@ public class VmPendingQuestion extends ResourceType<VmPendingQuestion> {
       /**
        * @see VmPendingQuestion#getQuestion()
        */
-      public Builder question(String question) {
+      public B question(String question) {
          this.question = question;
-         return this;
+         return self();
       }
 
       /**
        * @see VmPendingQuestion#getQuestionId()
        */
-      public Builder questionId(String questionId) {
+      public B questionId(String questionId) {
          this.questionId = questionId;
-         return this;
+         return self();
       }
 
       /**
        * @see VmPendingQuestion#getChoices()
        */
-      public Builder choices(List<VmQuestionAnswerChoice> choices) {
+      public B choices(List<VmQuestionAnswerChoice> choices) {
          this.choices = choices;
-         return this;
+         return self();
       }
 
       @Override
       public VmPendingQuestion build() {
-         VmPendingQuestion vmPendingQuestion = new VmPendingQuestion(href, type, links, question, questionId, choices);
+         VmPendingQuestion vmPendingQuestion = new VmPendingQuestion(this);
          return vmPendingQuestion;
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-      @Override
-      public Builder fromResourceType(ResourceType<VmPendingQuestion> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      public Builder fromVmPendingQuestion(VmPendingQuestion in) {
+      public B fromVmPendingQuestion(VmPendingQuestion in) {
          return fromResourceType(in).question(in.getQuestion()).questionId(in.getQuestionId()).choices(in.getChoices());
       }
    }
 
-   protected VmPendingQuestion() {
-      // For JAXB and builder use
-   }
-
-   public VmPendingQuestion(URI href, String type, Set<Link> links, String question, String questionId, List<VmQuestionAnswerChoice> choices) {
-      super(href, type, links);
-      this.question = question;
-      this.questionId = questionId;
-      this.choices = choices;
-   }
-
    @XmlElement(name = "Question", required = true)
-   protected String question;
+   private String question;
    @XmlElement(name = "QuestionId", required = true)
-   protected String questionId;
+   private String questionId;
    @XmlElement(name = "Choices", required = true)
-   protected List<VmQuestionAnswerChoice> choices;
+   private List<VmQuestionAnswerChoice> choices;
+
+   protected VmPendingQuestion() {
+      // For JAXB and B use
+   }
+
+   public VmPendingQuestion(Builder<?> builder) {
+      super(builder);
+      this.question = builder.question;
+      this.questionId = builder.questionId;
+      this.choices = builder.choices;
+   }
 
    /**
     * Gets the value of the question property.

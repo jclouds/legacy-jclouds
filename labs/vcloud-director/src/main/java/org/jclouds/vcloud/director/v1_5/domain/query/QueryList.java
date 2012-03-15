@@ -33,38 +33,39 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "QueryList")
-public class QueryList extends ContainerType<QueryList> {
+public class QueryList extends ContainerType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   // FIXME Should this class have fields?!
+   
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromQueryList(this);
+   public Builder<?> toBuilder() {
+      return builder().fromQueryList(this);
    }
 
-   public static class Builder extends ContainerType.Builder<QueryList> {
+   public static class Builder<B extends Builder<B>> extends ContainerType.Builder<B> {
 
       @Override
       public QueryList build() {
-         QueryList queryList = new QueryList();
-         return queryList;
+         return new QueryList(this);
       }
 
-      @Override
-      public Builder fromContainerType(ContainerType<QueryList> in) {
-         return Builder.class.cast(super.fromContainerType(in));
-      }
-
-      public Builder fromQueryList(QueryList in) {
+      public Builder<?> fromQueryList(QueryList in) {
          return fromContainerType(in);
       }
    }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
    private QueryList() {
       // for JAXB
+   }
+
+   protected QueryList(Builder<?> builder) {
+      super(builder);
    }
 
    @Override

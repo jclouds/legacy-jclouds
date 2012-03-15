@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -56,17 +53,20 @@ import com.google.common.base.Objects.ToStringHelper;
  * </pre>
  */
 @XmlType(name = "File")
-public class File extends EntityType<File> {
-   public static Builder builder() {
-      return new Builder();
+public class File extends EntityType {
+   
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromFile(this);
+   public Builder<?> toBuilder() {
+      return builder().fromFile(this);
    }
 
-   public static class Builder extends EntityType.Builder<File> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
       private Long size;
       private Long bytesTransferred;
@@ -75,105 +75,30 @@ public class File extends EntityType<File> {
       /**
        * @see File#getSize()
        */
-      public Builder size(Long size) {
+      public B size(Long size) {
          this.size = size;
-         return this;
+         return self();
       }
 
       /**
        * @see File#getBytesTransferred()
        */
-      public Builder bytesTransferred(Long bytesTransferred) {
+      public B bytesTransferred(Long bytesTransferred) {
          this.bytesTransferred = bytesTransferred;
-         return this;
+         return self();
       }
 
       /**
        * @see File#getChecksum()
        */
-      public Builder checksum(String checksum) {
+      public B checksum(String checksum) {
          this.checksum = checksum;
-         return this;
+         return self();
       }
 
       public File build() {
-         return new File(href, type, links, description, tasks, id, name, size, bytesTransferred, checksum);
+         return new File(this);
 
-      }
-
-      /**
-       * @see EntityType#getName()
-       */
-      public Builder name(String name) {
-         super.name(name);
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getDescription()
-       */
-      public Builder description(String description) {
-         super.description(description);
-         return this;
-      }
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         super.id(id);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks (tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-
-      @Override
-      public Builder fromEntityType(EntityType<File> in) {
-         return Builder.class.cast(super.fromEntityType(in));
       }
 
       public Builder fromFile(File in) {
@@ -184,12 +109,11 @@ public class File extends EntityType<File> {
       }
    }
 
-   public File(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
-               String name, Long size, Long bytesTransferred, String checksum) {
-      super(href, type, links, description, tasks, id, name);
-      this.size = size;
-      this.bytesTransferred = bytesTransferred;
-      this.checksum = checksum;
+   public File(Builder<?> builder) {
+      super(builder);
+      this.size = builder.size;
+      this.bytesTransferred = builder.bytesTransferred;
+      this.checksum = builder.checksum;
    }
 
    @SuppressWarnings("unused")
