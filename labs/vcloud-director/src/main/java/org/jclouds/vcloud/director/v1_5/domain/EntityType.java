@@ -19,9 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
@@ -30,12 +28,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Basic entity type in the vCloud object model.
@@ -50,19 +45,30 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlType(name = "EntityType")
-public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
+public class EntityType extends ResourceType {
    
-   public static abstract class NewBuilder<T extends NewBuilder<T>> extends ResourceType.NewBuilder<T> {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return builder().fromEntityType(this);
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
-      protected String description;
-      protected Set<Task> tasks;
-      protected String name;
-      protected String id;
+      private String description;
+      private Set<Task> tasks;
+      private String name;
+      private String id;
 
       /**
        * @see EntityType#getName()
        */
-      public T name(String name) {
+      public B name(String name) {
          this.name = name;
          return self();
       }
@@ -70,7 +76,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       /**
        * @see EntityType#getDescription()
        */
-      public T description(String description) {
+      public B description(String description) {
          this.description = description;
          return self();
       }
@@ -78,7 +84,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       /**
        * @see EntityType#getId()
        */
-      public T id(String id) {
+      public B id(String id) {
          this.id = id;
          return self();
       }
@@ -86,121 +92,17 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
       /**
        * @see EntityType#getTasks()
        */
-      public T tasks(Set<Task> tasks) {
+      public B tasks(Set<Task> tasks) {
          this.tasks = tasks;
          return self();
       }
 
-      public T fromEntityType(EntityType<?> in) {
-         return fromResourceType(in)
-               .description(in.getDescription()).tasks(in.getTasks())
-               .id(in.getId()).name(in.getName());
-      }
-   }
-
-   @Override
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromEntityType(this);
-   }
-
-   public static class Builder<T extends EntityType<T>> extends ResourceType.Builder<T> {
-
-      protected String description;
-      protected Set<Task> tasks;
-      protected String name;
-      protected String id;
-
-      /**
-       * @see EntityType#getName()
-       */
-      public Builder<T> name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      public Builder<T> description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      public Builder<T> id(String id) {
-         this.id = id;
-         return this;
+      @Override
+      public EntityType build() {
+         return new EntityType(this);
       }
       
-      /**
-       * @see EntityType#getTasks()
-       */
-      public Builder<T> tasks(Set<Task> tasks) {
-         if (checkNotNull(tasks, "tasks").size() > 0)
-            this.tasks = Sets.newLinkedHashSet(tasks);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      public Builder<T> task(Task task) {
-         if (tasks == null)
-            tasks = Sets.newLinkedHashSet();
-         this.tasks.add(checkNotNull(task, "task"));
-         return this;
-      }
-
-      @Override
-      public EntityType<T> build() {
-         return new EntityType<T>(href, type, links, description, tasks, id, name);
-      }
-
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder<T> href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder<T> type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder<T> links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder<T> link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder<T> fromResourceType(ResourceType<T> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      public Builder<T> fromEntityType(EntityType<T> in) {
+      public B fromEntityType(EntityType in) {
          return fromResourceType(in)
                .description(in.getDescription()).tasks(in.getTasks())
                .id(in.getId()).name(in.getName());
@@ -217,13 +119,13 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
    @XmlAttribute(required = true)
    private String name;
 
-   public EntityType(URI href, String type, @Nullable Set<Link> links, String description, @Nullable Set<Task> tasks, String id, String name) {
-      super(href, type, links);
-      this.description = description;
+   protected EntityType(Builder<?> builder) {
+      super(builder);
+      this.description = builder.description;
       // nullable so that jaxb wont persist empty collections
-      this.tasks = tasks != null && tasks.size() == 0 ? null : tasks;
-      this.id = id;
-      this.name = name;
+      this.tasks = builder.tasks != null && builder.tasks.size() == 0 ? null : builder.tasks;
+      this.id = builder.id;
+      this.name = builder.name;
    }
 
    protected EntityType() {
@@ -275,7 +177,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      EntityType<?> that = EntityType.class.cast(o);
+      EntityType that = EntityType.class.cast(o);
       return super.equals(that) &&
             equal(this.id, that.id) && equal(this.description, that.description) &&
             equal(this.tasks, that.tasks) && equal(this.name, that.name);
@@ -287,7 +189,7 @@ public class EntityType<T extends EntityType<T>> extends ResourceType<T> {
          return false;
       if (o == null || getClass() != o.getClass())
          return false;
-      EntityType<?> that = EntityType.class.cast(o);
+      EntityType that = EntityType.class.cast(o);
       return super.clone(that);
    }
 

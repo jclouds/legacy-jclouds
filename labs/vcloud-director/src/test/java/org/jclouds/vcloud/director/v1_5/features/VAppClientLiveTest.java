@@ -64,7 +64,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
@@ -805,7 +804,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .notPowerOn()
             .description("Test VApp")
             .instantiationParams(instantiationParams())
-            .source(ReferenceType.<Reference>builder().href(vAppTemplateURI).build())
+            .source(Reference.builder().href(vAppTemplateURI).build())
             .build();
       
       // debug(instantiate);

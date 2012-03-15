@@ -56,20 +56,19 @@ import com.google.common.base.Objects;
       "source",
       "isSourceDelete"
 })
-public class CloneMediaParams
-      extends ParamsType<CloneMediaParams>
-
-{
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+public class CloneMediaParams extends ParamsType {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromCloneMediaParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromCloneMediaParams(this);
    }
 
-   public static class Builder extends ParamsType.Builder<CloneMediaParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private Reference source;
       private Boolean isSourceDelete;
@@ -77,55 +76,34 @@ public class CloneMediaParams
       /**
        * @see CloneMediaParams#getSource()
        */
-      public Builder source(Reference source) {
+      public B source(Reference source) {
          this.source = source;
-         return this;
+         return self();
       }
 
       /**
        * @see CloneMediaParams#isSourceDelete()
        */
-      public Builder isSourceDelete(Boolean isSourceDelete) {
+      public B isSourceDelete(Boolean isSourceDelete) {
          this.isSourceDelete = isSourceDelete;
-         return this;
+         return self();
       }
 
       public CloneMediaParams build() {
-         return new CloneMediaParams(description, name, source, isSourceDelete);
+         return new CloneMediaParams(this);
       }
 
-      
-      /**
-       * @see ParamsType#getDescription()
-       */
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getName()
-       */
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-      @Override
-      public Builder fromParamsType(ParamsType<CloneMediaParams> in) {
-         return Builder.class.cast(super.fromParamsType(in));
-      }
-
-      public Builder fromCloneMediaParams(CloneMediaParams in) {
+      public B fromCloneMediaParams(CloneMediaParams in) {
          return fromParamsType(in)
                .source(in.getSource())
                .isSourceDelete(in.isSourceDelete());
       }
    }
 
-   private CloneMediaParams(String description, String name, Reference source, Boolean sourceDelete) {
-      super(description, name);
-      this.source = source;
-      isSourceDelete = sourceDelete;
+   private CloneMediaParams(Builder<?> builder) {
+      super(builder);
+      this.source = builder.source;
+      isSourceDelete = builder.isSourceDelete;
    }
 
    private CloneMediaParams() {

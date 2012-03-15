@@ -18,16 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf.internal;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
@@ -40,120 +39,97 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends SectionType<T> {
+public abstract class BaseVirtualSystem extends SectionType {
 
-   public static abstract class Builder<T extends BaseVirtualSystem<T>> extends SectionType.Builder<T> {
+   public static abstract class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
-      protected String id;
-      protected String name;
-      protected OperatingSystemSection operatingSystem;
-      protected Set<VirtualHardwareSection> virtualHardwareSections = Sets.newLinkedHashSet();
-      protected Set<ProductSection> productSections = Sets.newLinkedHashSet();
-      protected Set<SectionType<?>> additionalSections = Sets.newLinkedHashSet();
+      private String id;
+      private String name;
+      private OperatingSystemSection operatingSystem;
+      private Set<VirtualHardwareSection> virtualHardwareSections = Sets.newLinkedHashSet();
+      private Set<ProductSection> productSections = Sets.newLinkedHashSet();
+      private Set<SectionType> additionalSections = Sets.newLinkedHashSet();
 
       /**
        * @see BaseVirtualSystem#getName
        */
-      public Builder<T> name(String name) {
+      public B name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getId
        */
-      public Builder<T> id(String id) {
+      public B id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getOperatingSystemSection
        */
-      public Builder<T> operatingSystemSection(OperatingSystemSection operatingSystem) {
+      public B operatingSystemSection(OperatingSystemSection operatingSystem) {
          this.operatingSystem = operatingSystem;
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getVirtualHardwareSections
        */
-      public Builder<T> virtualHardwareSection(VirtualHardwareSection virtualHardwareSection) {
+      public B virtualHardwareSection(VirtualHardwareSection virtualHardwareSection) {
          this.virtualHardwareSections.add(checkNotNull(virtualHardwareSection, "virtualHardwareSection"));
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getVirtualHardwareSections
        */
-      public Builder<T> virtualHardwareSections(Iterable<? extends VirtualHardwareSection> virtualHardwareSections) {
+      public B virtualHardwareSections(Iterable<? extends VirtualHardwareSection> virtualHardwareSections) {
          this.virtualHardwareSections = ImmutableSet.<VirtualHardwareSection> copyOf(checkNotNull(virtualHardwareSections,
                   "virtualHardwareSections"));
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getProductSections
        */
-      public Builder<T> productSection(ProductSection productSection) {
+      public B productSection(ProductSection productSection) {
          this.productSections.add(checkNotNull(productSection, "productSection"));
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getProductSections
        */
-      public Builder<T> productSections(Iterable<? extends ProductSection> productSections) {
+      public B productSections(Iterable<? extends ProductSection> productSections) {
          this.productSections = ImmutableSet.<ProductSection> copyOf(checkNotNull(productSections, "productSections"));
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getAdditionalSections
        */
-      public Builder<T> additionalSection(SectionType<?> additionalSection) {
+      public B additionalSection(SectionType additionalSection) {
          this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
-         return this;
+         return self();
       }
 
       /**
        * @see BaseVirtualSystem#getAdditionalSections
        */
-      public Builder<T> additionalSections(Set<SectionType<?>> additionalSections) {
+      public B additionalSections(Set<SectionType> additionalSections) {
          this.additionalSections = checkNotNull(additionalSections, "additionalSections");
-         return this;
+         return self();
       }
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public abstract BaseVirtualSystem<T> build();
-
-      public Builder<T> fromVirtualSystem(BaseVirtualSystem<T> in) {
+      public B fromBaseVirtualSystem(BaseVirtualSystem in) {
          return fromSectionType(in).id(in.getId()).name(in.getName())
                   .operatingSystemSection(in.getOperatingSystemSection())
                   .virtualHardwareSections(in.getVirtualHardwareSections())
                   .productSections(in.getProductSections())
                   .additionalSections(in.getAdditionalSections());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder<T> fromSectionType(SectionType<T> in) {
-         return (Builder<T>) super.fromSectionType(in);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder<T> info(String info) {
-         return (Builder<T>) super.info(info);
-      }
-
    }
 
    @XmlAttribute(namespace = VCLOUD_OVF_NS)
@@ -168,18 +144,16 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
    private Set<ProductSection> productSections;
 
    // NOTE what is the right annotation here?
-   private Set<SectionType<?>> additionalSections;
+   private Set<SectionType> additionalSections;
 
-   protected BaseVirtualSystem(String id, String info, @Nullable Boolean required, String name, OperatingSystemSection operatingSystem,
-            Iterable<? extends VirtualHardwareSection> virtualHardwareSections,
-            Iterable<? extends ProductSection> productSections, Iterable<? extends SectionType<?>> additionalSections) {
-      super(info, required);
-      this.id = id;
-      this.name = name;
-      this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
-      this.virtualHardwareSections = ImmutableSet.copyOf(checkNotNull(virtualHardwareSections, "virtualHardwareSections"));
-      this.productSections = ImmutableSet.copyOf(checkNotNull(productSections, "productSections"));
-      this.additionalSections = ImmutableSet.copyOf(checkNotNull(additionalSections, "additionalSections"));
+   protected BaseVirtualSystem(Builder<?> builder) {
+      super(builder);
+      this.id = builder.id;
+      this.name = builder.name;
+      this.operatingSystem = checkNotNull(builder.operatingSystem, "operatingSystem");
+      this.virtualHardwareSections = ImmutableSet.copyOf(checkNotNull(builder.virtualHardwareSections, "virtualHardwareSections"));
+      this.productSections = ImmutableSet.copyOf(checkNotNull(builder.productSections, "productSections"));
+      this.additionalSections = ImmutableSet.copyOf(checkNotNull(builder.additionalSections, "additionalSections"));
    }
 
    protected BaseVirtualSystem() {
@@ -215,7 +189,7 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       return productSections;
    }
 
-   public Set<SectionType<?>> getAdditionalSections() {
+   public Set<SectionType> getAdditionalSections() {
       return additionalSections;
    }
 
@@ -230,7 +204,7 @@ public abstract class BaseVirtualSystem<T extends BaseVirtualSystem<T>> extends 
       if (obj == null) return false;
       if (getClass() != obj.getClass()) return false;
 
-      BaseVirtualSystem<?> other = (BaseVirtualSystem<?>) obj;
+      BaseVirtualSystem other = (BaseVirtualSystem) obj;
       return super.equals(other) 
             && equal(id, other.id)
             && equal(name, other.name)

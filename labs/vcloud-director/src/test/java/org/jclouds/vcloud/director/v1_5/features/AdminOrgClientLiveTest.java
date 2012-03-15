@@ -33,7 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -60,7 +60,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    /*
     * Shared state between dependant tests.
     */
-   private ReferenceType<?> orgRef;
+   private Reference orgRef;
    private OrgSettings settings, newSettings;
    private OrgEmailSettings emailSettings, newEmailSettings;
    private OrgGeneralSettings generalSettings, newGeneralSettings;

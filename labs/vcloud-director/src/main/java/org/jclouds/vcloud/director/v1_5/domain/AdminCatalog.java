@@ -19,9 +19,6 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -48,131 +45,26 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement(name = "AdminCatalog")
-public class AdminCatalog extends CatalogType<AdminCatalog> {
+public class AdminCatalog extends CatalogType {
    
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromAdminCatalog(this);
+   public Builder<?> toBuilder() {
+      return builder().fromAdminCatalog(this);
    }
 
-   public static class Builder extends CatalogType.Builder<AdminCatalog> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends CatalogType.Builder<B> {
       
       public AdminCatalog build() {
-         return new AdminCatalog(href, type, links, description, tasks, id, name, owner, catalogItems, isPublished);
-      }
-      
-      /**
-       * @see CatalogType#getOwner()
-       */
-      public Builder owner(Owner owner) {
-         super.owner(owner);
-         return this;
+         return new AdminCatalog(this);
       }
 
-      /**
-       * @see CatalogType#getCatalogItems()
-       */
-      public Builder catalogItems(CatalogItems catalogItems) {
-         super.catalogItems(catalogItems);
-         return this;
-      }
-
-      /**
-       * @see CatalogType#isPublished()
-       */
-      public Builder isPublished(Boolean isPublished) {
-         super.isPublished(isPublished);
-         return this;
-      }
-
-      /**
-       * @see CatalogType#isPublished()
-       */
-      public Builder published() {
-         super.published();
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-      
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-      
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-
-      @Override
-      public Builder fromCatalogType(CatalogType<AdminCatalog> in) {
-          return Builder.class.cast(super.fromCatalogType(in));
-      }
-      public Builder fromAdminCatalog(AdminCatalog in) {
+      public B fromAdminCatalog(AdminCatalog in) {
          return fromCatalogType(in);
       }
    }
@@ -182,8 +74,7 @@ public class AdminCatalog extends CatalogType<AdminCatalog> {
       // For JAXB
    }
    
-   public AdminCatalog(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
-         String name, Owner owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasks, id, name, owner, catalogItems, published);
+   protected AdminCatalog(Builder<?> builder) {
+      super(builder);
    }
 }

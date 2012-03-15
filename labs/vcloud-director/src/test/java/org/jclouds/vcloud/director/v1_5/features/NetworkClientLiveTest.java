@@ -35,7 +35,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -76,7 +76,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkNetworkType(network);
        
       // optional
-      ReferenceType<?> networkPoolRef = network.getNetworkPool();
+      Reference networkPoolRef = network.getNetworkPool();
       if (networkPoolRef != null) {
          Checks.checkReferenceType(networkPoolRef);
       }

@@ -20,9 +20,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,124 +27,44 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 @XmlRootElement(name = "NetworkType")
-public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
+public class NetworkType extends EntityType {
 
-   public static <T extends NetworkType<T>> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromNetworkType(this);
+   public Builder<?> toBuilder() {
+      return builder().fromNetworkType(this);
    }
 
-   public static class Builder<T extends NetworkType<T>> extends EntityType.Builder<T> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
-      protected NetworkConfiguration networkConfiguration;
+      private NetworkConfiguration networkConfiguration;
 
       /**
        * @see NetworkType#getConfiguration()
        */
-      public Builder<T> configuration(NetworkConfiguration networkConfiguration) {
+      public B configuration(NetworkConfiguration networkConfiguration) {
          this.networkConfiguration = networkConfiguration;
-         return this;
+         return self();
       }
 
       @Override
-      public NetworkType<T> build() {
-         return new NetworkType<T>(href, type, links, description, tasks, id, name, networkConfiguration);
+      public NetworkType build() {
+         return new NetworkType(this);
       }
 
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder<T> name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder<T> description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder<T> id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder<T> tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder<T> href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder<T> type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder<T> links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder<T> link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @SuppressWarnings("unchecked")
-      @Override
-      public Builder<T> fromEntityType(EntityType<T> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder<T> fromNetworkType(NetworkType<T> in) {
+      public B fromNetworkType(NetworkType in) {
          return fromEntityType(in).configuration(in.getConfiguration());
       }
    }
 
-   public NetworkType(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
-                      String id, String name, NetworkConfiguration networkConfiguration) {
-      super(href, type, links, description, tasks, id, name);
-      this.networkConfiguration = networkConfiguration;
+   public NetworkType(Builder<?> builder) {
+      super(builder);
+      this.networkConfiguration = builder.networkConfiguration;
    }
 
    protected NetworkType() {
@@ -168,7 +85,7 @@ public class NetworkType<T extends NetworkType<T>> extends EntityType<T> {
    public boolean equals(Object o) {
       if (!super.equals(o))
          return false;
-      NetworkType<?> that = NetworkType.class.cast(o);
+      NetworkType that = NetworkType.class.cast(o);
       return super.equals(that) && equal(networkConfiguration, that.networkConfiguration);
    }
 

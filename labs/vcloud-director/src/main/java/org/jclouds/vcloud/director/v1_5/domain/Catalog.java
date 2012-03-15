@@ -18,16 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-
-import com.google.common.collect.Sets;
 
 /**
  * Container for references to VappTemplate and Media objects.
@@ -39,144 +32,35 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Catalog")
-public class Catalog extends CatalogType<Catalog> {
+public class Catalog extends CatalogType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG;
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromCatalog(this);
+   public Builder<?> toBuilder() {
+      return builder().fromCatalog(this);
    }
 
-   public static class Builder extends CatalogType.Builder<Catalog> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends CatalogType.Builder<B> {
 
       @Override
       public Catalog build() {
-         return new Catalog(href, type, links, description, tasks, id, name, owner, catalogItems, isPublished);
+         return new Catalog(this);
       }
       
-      /**
-       * @see Catalog#getOwner()
-       */
-      public Builder owner(Owner owner) {
-         super.owner(owner);
-         return this;
-      }
-
-      /**
-       * @see Catalog#getCatalogItems()
-       */
-      public Builder catalogItems(CatalogItems catalogItems) {
-         super.catalogItems(catalogItems);
-         return this;
-      }
-
-      /**
-       * @see Catalog#isPublished()
-       */
-      public Builder isPublished(Boolean isPublished) {
-         super.isPublished(isPublished);
-         return this;
-      }
-
-      /**
-       * @see Catalog#isPublished()
-       */
-      public Builder published() {
-         super.isPublished(isPublished);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      @Override
-      public Builder fromCatalogType(CatalogType<Catalog> in) {
-         return Builder.class.cast(super.fromCatalogType(in));
-      }
-
-      public Builder fromCatalog(Catalog in) {
-         return fromCatalogType(in).owner(in.getOwner()).catalogItems(in.getCatalogItems()).isPublished(in.isPublished());
+      public B fromCatalog(Catalog in) {
+         return fromCatalogType(in);
       }
    }
 
-   public Catalog(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
-                  String name, Owner owner, CatalogItems catalogItems, Boolean published) {
-      super(href, type, links, description, tasks, id, name, owner, catalogItems, published);
+   public Catalog(Builder<?> builder) {
+      super(builder);
    }
 
    @SuppressWarnings("unused")

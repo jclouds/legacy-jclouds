@@ -53,7 +53,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Shared state between dependant tests.
     */
 
-   private QueryResultRecords<?> catalogRecords;
+   private QueryResultRecords catalogRecords;
    private CatalogReferences catalogReferences;
 
    @Test(testName = "GET /catalogs/query")

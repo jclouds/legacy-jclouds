@@ -21,23 +21,19 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Represents a base type for VAppType and VmType.
@@ -49,174 +45,97 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "AbstractVAppType")
-public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends ResourceEntityType<T> {
+public abstract class AbstractVAppType extends ResourceEntityType {
 
-   public static abstract class Builder<T extends AbstractVAppType<T>> extends ResourceEntityType.Builder<T> {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
 
-      protected Boolean deployed;
-      protected Reference vAppParent;
-      protected List<SectionType<?>> sections = Lists.newArrayList();
+   public Builder<?> toBuilder() {
+      return builder().fromResourceEntityType(this);
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceEntityType.Builder<B> {
+
+      private Boolean deployed;
+      private Reference vAppParent;
+      private List<SectionType> sections = Lists.newArrayList();
 
       /**
        * @see AbstractVAppType#isDeployed()
        */
-      public Builder<T> isDeployed(Boolean deployed) {
+      public B isDeployed(Boolean deployed) {
          this.deployed = deployed;
-         return this;
+         return self();
       }
 
       /**
        * @see AbstractVAppType#isDeployed()
        */
-      public Builder<T> deployed() {
+      public B deployed() {
          this.deployed = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see AbstractVAppType#isDeployed()
        */
-      public Builder<T> notDeployed() {
+      public B notDeployed() {
          this.deployed = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       /**
        * @see AbstractVAppType#getVAppParent()
        */
-      public Builder<T> parent(Reference vAppParent) {
+      public B parent(Reference vAppParent) {
          this.vAppParent = vAppParent;
-         return this;
+         return self();
       }
 
       /**
        * @see AbstractVAppType#getSections()
        */
-      public Builder<T> sections(List<SectionType<?>> sections) {
+      public B sections(List<SectionType> sections) {
          if (checkNotNull(sections, "sections").size() > 0)
             this.sections = Lists.newArrayList(sections);
-         return this;
+         return self();
       }
 
       /**
        * @see AbstractVAppType#getSections()
        */
-      public Builder<T> section(SectionType<?> section) {
+      public B section(SectionType section) {
          if (this.sections == null)
             this.sections = Lists.newArrayList();
          this.sections.add(checkNotNull(section, "section"));
-         return this;
+         return self();
       }
 
-      /**
-       * @see ResourceEntityType#getFiles()
-       */
-      @Override
-      public Builder<T> files(FilesList files) {
-         this.files = files;
-         return this;
-      }
-
-      /**
-       * @see ResourceEntityType#getStatus()
-       */
-      @Override
-      public Builder<T> status(Integer status) {
-         this.status = status;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder<T> id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder<T> tasks(Set<Task> tasks) {
-         if (checkNotNull(tasks, "tasks").size() > 0)
-            this.tasks = Sets.newLinkedHashSet(tasks);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder<T> task(Task task) {
-         if (tasks == null)
-            tasks = Sets.newLinkedHashSet();
-         this.tasks.add(checkNotNull(task, "task"));
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder<T> href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder<T> type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder<T> links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder<T> link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-      @Override
-      public Builder<T> fromResourceEntityType(ResourceEntityType<T> in) {
-         return Builder.class.cast(super.fromResourceEntityType(in));
-      }
-
-      public Builder<T> fromAbstractVAppType(AbstractVAppType<T> in) {
+      public B fromAbstractVAppType(AbstractVAppType in) {
          return fromResourceEntityType(in).parent(vAppParent).sections(sections).isDeployed(deployed);
       }
    }
 
    @XmlElement(name = "VAppParent")
-   protected Reference vAppParent;
+   private Reference vAppParent;
    @XmlElementRef(name = "Section", namespace = VCloudDirectorConstants.VCLOUD_OVF_NS)
-   protected List<SectionType<?>> sections = Lists.newArrayList();
+   private List<SectionType> sections = Lists.newArrayList();
    @XmlAttribute
-   protected Boolean deployed;
+   private Boolean deployed;
 
    protected AbstractVAppType() {
       // for JAXB and Builders
    }
 
-   public AbstractVAppType(URI href, String type, @Nullable Set<Link> links, String description, @Nullable Set<Task> tasks, String id, String name, FilesList files, Integer status, Reference vAppParent,
-                           @Nullable List<SectionType<?>> sections, Boolean deployed) {
-      super(href, type, links, description, tasks, id, name, files, status);
-      this.vAppParent = vAppParent;
-      this.sections = sections;
-      this.deployed = deployed;
+   protected AbstractVAppType(Builder<?> builder) {
+      super(builder);
+      this.vAppParent = builder.vAppParent;
+      this.sections = builder.sections;
+      this.deployed = builder.deployed;
    }
 
    /**
@@ -251,7 +170,7 @@ public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends Re
     * <li>InstallSectionType
     * </ul>
     */
-   public List<SectionType<?>> getSections() {
+   public List<SectionType> getSections() {
       return this.sections;
    }
 
@@ -268,7 +187,7 @@ public abstract class AbstractVAppType<T extends AbstractVAppType<T>> extends Re
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      AbstractVAppType<?> that = AbstractVAppType.class.cast(o);
+      AbstractVAppType that = AbstractVAppType.class.cast(o);
       return super.equals(that) &&
             equal(this.vAppParent, that.vAppParent) && equal(this.sections, that.sections) && equal(this.deployed, that.deployed);
    }

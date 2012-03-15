@@ -1,5 +1,5 @@
 /**
- * Licensed to jclouds, Inc. (jclouds) under one or more
+f * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -20,10 +20,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -40,7 +38,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * </pre>
  */
 @XmlRootElement(name = "Media")
-public class Media extends ResourceEntityType<Media> {
+public class Media extends ResourceEntityType {
 
    public static final class ImageType {
       public static final String ISO = "iso";
@@ -49,16 +47,18 @@ public class Media extends ResourceEntityType<Media> {
       public static final List<String> ALL = Arrays.asList(ISO, FLOPPY);
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromMedia(this);
+   public Builder<?> toBuilder() {
+      return builder().fromMedia(this);
    }
 
-   public static class Builder extends ResourceEntityType.Builder<Media> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceEntityType.Builder<B> {
 
       private Owner owner;
       private String imageType;
@@ -67,142 +67,46 @@ public class Media extends ResourceEntityType<Media> {
       /**
        * @see Media#getOwner()
        */
-      public Builder owner(Owner owner) {
+      public B owner(Owner owner) {
          this.owner = owner;
-         return this;
+         return self();
       }
 
       /**
        * @see Media#getImageType()
        */
-      public Builder imageType(String imageType) {
+      public B imageType(String imageType) {
          this.imageType = imageType;
-         return this;
+         return self();
       }
 
       /**
        * @see Media#getSize()
        */
-      public Builder size(long size) {
+      public B size(long size) {
          this.size = size;
-         return this;
+         return self();
       }
 
       @Override
       public Media build() {
-         return new Media(href, type, links, description, tasks, id, name, files, status, owner, imageType, size);
+         return new Media(this);
       }
 
-      /**
-       * @see ResourceEntityType#getFiles()
-       */
-      @Override
-      public Builder files(FilesList files) {
-         super.files(files);
-         return this;
-      }
-
-      /**
-       * @see ResourceEntityType#getStatus()
-       */
-      @Override
-      public Builder status(Integer status) {
-         super.status(status);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         super.name(name);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         super.description(description);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         super.id(id);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      @Override
-      public Builder fromResourceEntityType(ResourceEntityType<Media> in) {
-         return Builder.class.cast(super.fromResourceEntityType(in));
-      }
-
-      public Builder fromMedia(Media in) {
+      public B fromMedia(Media in) {
          return fromResourceEntityType(in).owner(in.getOwner()).imageType(in.getImageType()).size(in.getSize());
       }
    }
 
 
-   public Media(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, 
-                String name, FilesList files, Integer status, Owner owner, String imageType, long size) {
-      super(href, type, links, description, tasks, id, name, files, status);
-      this.owner = owner;
-      this.imageType = imageType;
-      this.size = size;
+   public Media(Builder<?> builder) {
+      super(builder);
+      this.owner = builder.owner;
+      this.imageType = builder.imageType;
+      this.size = builder.size;
    }
 
-   private Media() {
+   protected Media() {
       // for JAXB
    }
 

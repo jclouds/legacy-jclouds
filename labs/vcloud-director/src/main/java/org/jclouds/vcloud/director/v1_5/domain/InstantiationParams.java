@@ -55,12 +55,12 @@ public class InstantiationParams {
    }
 
    public static class Builder {
-      private Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
+      private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
 
       /**
        * @see InstantiationParams#getSections()
        */
-      public Builder sections(Set<? extends SectionType<?>> sections) {
+      public Builder sections(Set<? extends SectionType> sections) {
          this.sections = checkNotNull(sections, "sections");
          return this;
       }
@@ -79,12 +79,12 @@ public class InstantiationParams {
       // for JAXB
    }
 
-   private InstantiationParams(Set<? extends SectionType<?>> sections) {
+   private InstantiationParams(Set<? extends SectionType> sections) {
       this.sections = sections;
    }
 
    @XmlElementRef
-   protected Set<? extends SectionType<?>> sections = Sets.newLinkedHashSet();
+   protected Set<? extends SectionType> sections = Sets.newLinkedHashSet();
 
    /**
     * An {@code ovf:Section} to configure for instantiation.
@@ -111,7 +111,7 @@ public class InstantiationParams {
     * <li>{@link InstallSection}
     * </ul>
     */
-   public Set<? extends SectionType<?>> getSections() {
+   public Set<? extends SectionType> getSections() {
       return Collections.unmodifiableSet(this.sections);
    }
 

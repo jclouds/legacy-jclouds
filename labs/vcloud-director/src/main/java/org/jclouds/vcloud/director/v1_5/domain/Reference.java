@@ -18,88 +18,187 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
+
 import java.net.URI;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlSeeAlso;
+
+import org.jclouds.logging.Logger;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * A reference to a resource.
  *
+ * Contains an href attribute and optional name and type attributes.
+ * <p>
+ * <pre>
+ * &lt;xs:complexType name="ReferenceType"&gt;
+ * </pre>
+ *
  * @author grkvlt@apache.org
  */
-public class Reference extends ReferenceType<Reference> {
+@XmlSeeAlso({
+         CatalogReference.class
+})
+//@XmlAccessorType(XmlAccessType.FIELD)
+public class Reference {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   @javax.annotation.Resource
+   protected static Logger logger = Logger.NULL;
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromReference(this);
+   public Builder<?> toBuilder() {
+      return builder().fromReference(this);
    }
 
-   public static class Builder extends ReferenceType.Builder<Reference> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> {
 
-      @Override
-      public Reference build() {
-         return new Reference(href, id, name, type);
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      @Override
-      public Builder fromReferenceType(ReferenceType<Reference> in) {
-         return Builder.class.cast(super.fromReferenceType(in));
-      }
-
-      public Builder fromReference(Reference in) {
-         return fromReferenceType(in);
-      }
+      private URI href;
+      private String id;
+      private String name;
+      private String type;
       
-      public Builder fromEntity(EntityType<?> in) {
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
+
+      /**
+       * @see Reference#getHref()
+       */
+      public B href(URI href) {
+         this.href = href;
+         return self();
+      }
+
+      /**
+       * @see Reference#getId()
+       */
+      public B id(String id) {
+         this.id = id;
+         return self();
+      }
+
+      /**
+       * @see Reference#getType()
+       */
+      public B type(String type) {
+         this.type = type;
+         return self();
+      }
+
+      /**
+       * @see Reference#getName()
+       */
+      public B name(String name) {
+         this.name = name;
+         return self();
+      }
+
+      public Reference build() {
+         return new Reference(this);
+      }
+
+      protected B fromReference(Reference in) {
          return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
       }
+
+      public B fromEntity(EntityType in) {
+         return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
+      }
+      
+      protected B fromAttributes(Map<String, String> attributes) {
+         return href(URI.create(attributes.get("href"))).id(attributes.get("id")).name(attributes.get("name")).type(attributes.get("type"));
+      }
    }
 
-   public Reference(URI href, String id, String name, String type) {
-      super(href, id, name, type);
+   @XmlAttribute(required = true)
+   private URI href;
+   @XmlAttribute
+   private String id;
+   @XmlAttribute
+   private String name;
+   @XmlAttribute
+   private String type;
+
+   protected Reference(Builder<?> builder) {
+      this.href = builder.href;
+      this.id = builder.id;
+      this.name = builder.name;
+      this.type = builder.type;
+   }
+
+   protected Reference(URI href, String id, String name, String type) {
+      this.href = href;
+      this.id = id;
+      this.name = name;
+      this.type = type;
    }
 
    protected Reference() {
       // For JAXB
+   }
+
+   /**
+    * Contains the URI to the entity.
+    * <p/>
+    * An object reference, expressed in URL format. Because this URL includes the object identifier
+    * portion of the id attribute value, it uniquely identifies the object, persists for the life of
+    * the object, and is never reused. The value of the href attribute is a reference to a view of
+    * the object, and can be used to access a representation of the object that is valid in a
+    * particular context. Although URLs have a well-known syntax and a well-understood
+    * interpretation, a client should treat each href as an opaque string. The rules that govern how
+    * the server constructs href strings might change in future releases.
+    *
+    * @return an opaque reference and should never be parsed
+    */
+   public URI getHref() {
+      return href;
+   }
+
+   /**
+    * The resource identifier, expressed in URN format.
+    * <p/>
+    * The value of this attribute uniquely identifies the resource, persists for the life of the
+    * resource, and is never reused.
+    */
+   public String getId() {
+      return id;
+   }
+
+   /**
+    * Contains the name of the the entity.
+    * <p/>
+    * The object type, specified as a MIME content type, of the object that the link references.
+    * This attribute is present only for links to objects. It is not present for links to actions.
+    *
+    * @return type definition, type, expressed as an HTTP Content-Type
+    */
+   public String getName() {
+      return name;
+   }
+
+   /**
+    * Contains the type of the the entity.
+    * <p/>
+    * The object type, specified as a MIME content type, of the object that the link references.
+    * This attribute is present only for links to objects. It is not present for links to actions.
+    *
+    * @return type definition, type, expressed as an HTTP Content-Type
+    */
+   public String getType() {
+      return type;
    }
 
    @Override
@@ -109,10 +208,24 @@ public class Reference extends ReferenceType<Reference> {
       if (o == null || getClass() != o.getClass())
          return false;
       Reference that = Reference.class.cast(o);
-      return super.equals(that);
+      return equal(this.href, that.href) && equal(this.id, that.id) && equal(this.name, that.name) && equal(this.type, that.type);
    }
 
-   public ReferenceType<?> toAdminReference(String endpoint) {
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(href, id, name, type);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("href", href).add("id", id).add("name", name).add("type", type);
+   }
+   
+   public Reference toAdminReference(String endpoint) {
       return toBuilder()
         .type(null)
         .href(URI.create(getHref().toASCIIString().replace(endpoint, endpoint+"/admin")))

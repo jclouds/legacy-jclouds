@@ -48,68 +48,76 @@ import com.google.common.collect.Sets;
       QueryResultCatalogRecord.class,
       QueryResultNetworkRecord.class}
 )
-public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
+public class QueryResultRecordType {
 
-   public static <T extends QueryResultRecordType<T>> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromQueryResultRecordType(this);
+   public Builder<?> toBuilder() {
+      return builder().fromQueryResultRecordType(this);
    }
 
-   public static class Builder<T extends QueryResultRecordType<T>> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> {
 
-      protected URI href;
-      protected String id;
-      protected String type;
-      protected Set<Link> links = Sets.newLinkedHashSet();
+      private URI href;
+      private String id;
+      private String type;
+      private Set<Link> links = Sets.newLinkedHashSet();
+
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
 
       /**
        * @see QueryResultRecordType#getHref()
        */
-      public Builder<T> href(URI href) {
+      public B href(URI href) {
          this.href = href;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultRecordType#getId()
        */
-      public Builder<T> id(String id) {
+      public B id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultRecordType#getType()
        */
-      public Builder<T> type(String type) {
+      public B type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultRecordType#getLinks()
        */
-      public Builder<T> links(Set<Link> links) {
+      public B links(Set<Link> links) {
          this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultRecordType#getLinks()
        */
-      public Builder<T> link(Link link) {
+      public B link(Link link) {
          this.links.add(checkNotNull(link, "link"));
-         return this;
+         return self();
       }
 
-      public QueryResultRecordType<T> build() {
-         return new QueryResultRecordType<T>(links, href, id, type);
+      public QueryResultRecordType build() {
+         return new QueryResultRecordType(this);
       }
 
-      public Builder<T> fromQueryResultRecordType(QueryResultRecordType<T> in) {
+      public B fromQueryResultRecordType(QueryResultRecordType in) {
          return href(in.getHref()).id(in.getId()).type(in.getType());
       }
    }
@@ -123,6 +131,13 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
    private String id;
    @XmlAttribute
    private String type;
+
+   protected QueryResultRecordType(Builder<?> builder) {
+      this.links = builder.links;
+      this.href = builder.href;
+      this.id = builder.id;
+      this.type = builder.type;
+   }
 
    public QueryResultRecordType(Set<Link> links, URI href, String id, String type) {
       this.links = links;
@@ -183,7 +198,7 @@ public class QueryResultRecordType<T extends QueryResultRecordType<T>> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      QueryResultRecordType<?> that = QueryResultRecordType.class.cast(o);
+      QueryResultRecordType that = QueryResultRecordType.class.cast(o);
       return equal(this.href, that.href) && equal(this.id, that.id) &&
             equal(this.type, that.type) && equal(this.links, that.links);
    }

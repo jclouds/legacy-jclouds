@@ -60,7 +60,7 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
        * {@inheritDoc}
        */
       @Override
-      public Builder additionalSection(SectionType<?> additionalSection) {
+      public Builder additionalSection(SectionType additionalSection) {
          this.additionalSections.add(checkNotNull(additionalSection, "additionalSection"));
          return this;
       }
@@ -69,8 +69,8 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
        * {@inheritDoc}
        */
       @Override
-      public Builder additionalSections(Iterable<? extends SectionType<?>> additionalSections) {
-         this.additionalSections = ImmutableSet.<SectionType<?>> copyOf(checkNotNull(additionalSections, "additionalSections"));
+      public Builder additionalSections(Iterable<? extends SectionType> additionalSections) {
+         this.additionalSections = ImmutableSet.<SectionType> copyOf(checkNotNull(additionalSections, "additionalSections"));
          return this;
       }
 
@@ -125,7 +125,7 @@ public class Envelope extends BaseEnvelope<VirtualSystem, Envelope> {
    }
 
    private Envelope(Iterable<? extends DiskSection> diskSections, Iterable<? extends NetworkSection> networkSections,
-            Iterable<? extends SectionType<?>> additionalSections, VirtualSystem virtualSystem) {
+            Iterable<? extends SectionType> additionalSections, VirtualSystem virtualSystem) {
       super(diskSections, networkSections, additionalSections, virtualSystem);
    }
    

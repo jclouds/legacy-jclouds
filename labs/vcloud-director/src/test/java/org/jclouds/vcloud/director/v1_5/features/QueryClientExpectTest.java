@@ -62,7 +62,7 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
       
-      QueryResultRecords<QueryResultCatalogRecord> expected = QueryResultRecords.<QueryResultCatalogRecord>builder()
+      QueryResultRecords expected = QueryResultRecords.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=records"))
             .type("application/vnd.vmware.vcloud.query.records+xml")
             .name("catalog")
@@ -120,7 +120,7 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       assertEquals(client.getQueryClient().catalogsQueryAll(), expected);
    }
 
-   @Test(enabled = false)//TODO
+   @Test
    public void testQueryAllCatalogReferences() {
       HttpRequest queryRequest = HttpRequest.builder()
               .method("GET")

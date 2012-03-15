@@ -19,13 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
 
@@ -44,21 +42,20 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "VirtualHardwareSection")
-public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> {
+public class VirtualHardwareSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
+   public Builder<?> toBuilder() {
       return builder().fromVirtualHardwareSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<VirtualHardwareSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       protected VirtualSystemSettingData virtualSystem;
       protected Set<String> transports = Sets.newLinkedHashSet();
       protected Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
@@ -66,42 +63,42 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
       /**
        * @see VirtualHardwareSection#getSystem
        */
-      public Builder system(VirtualSystemSettingData virtualSystem) {
+      public B system(VirtualSystemSettingData virtualSystem) {
          this.virtualSystem = virtualSystem;
-         return this;
+         return self();
       }
 
       /**
        * @see VirtualHardwareSection#getTransports
        */
-      public Builder transport(String transport) {
+      public B transport(String transport) {
          this.transports.add(checkNotNull(transport, "transport"));
-         return this;
+         return self();
       }
 
       /**
        * @see VirtualHardwareSection#getTransports
        */
-      public Builder transports(Iterable<String> transports) {
+      public B transports(Iterable<String> transports) {
          this.transports = ImmutableSet.<String>copyOf(checkNotNull(transports, "transports"));
-         return this;
+         return self();
       }
 
       /**
        * @see VirtualHardwareSection#getItems
        */
-      public Builder item(ResourceAllocationSettingData item) {
+      public B item(ResourceAllocationSettingData item) {
          this.items.add(checkNotNull(item, "item"));
-         return this;
+         return self();
       }
 
       /**
        * @see VirtualHardwareSection#getItems
        */
-      public Builder items(Iterable<? extends ResourceAllocationSettingData> items) {
+      public B items(Iterable<? extends ResourceAllocationSettingData> items) {
          this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(
                items, "items"));
-         return this;
+         return self();
       }
 
       /**
@@ -109,36 +106,12 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
        */
       @Override
       public VirtualHardwareSection build() {
-         return new VirtualHardwareSection(info, required, transports, virtualSystem, items);
+         return new VirtualHardwareSection(this);
       }
 
-      public Builder fromVirtualHardwareSection(VirtualHardwareSection in) {
+      public B fromVirtualHardwareSection(VirtualHardwareSection in) {
          return fromSectionType(in).items(in.getItems()).transports(in.getTransports()).system(
                in.getSystem()).info(in.getInfo());
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<VirtualHardwareSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
       }
    }
 
@@ -146,12 +119,11 @@ public class VirtualHardwareSection extends SectionType<VirtualHardwareSection> 
    private Set<String> transports;
    private Set<ResourceAllocationSettingData> items;
 
-   private VirtualHardwareSection(@Nullable String info, @Nullable Boolean required, Iterable<String> transports, VirtualSystemSettingData virtualSystem,
-                                  Iterable<? extends ResourceAllocationSettingData> items) {
-      super(info, required);
-      this.virtualSystem = virtualSystem;
-      this.transports = ImmutableSet.<String>copyOf(checkNotNull(transports, "transports"));
-      this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(items, "items"));
+   private VirtualHardwareSection(Builder<?> builder) {
+      super(builder);
+      this.virtualSystem = builder.virtualSystem;
+      this.transports = ImmutableSet.<String>copyOf(checkNotNull(builder.transports, "transports"));
+      this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(builder.items, "items"));
    }
 
    private VirtualHardwareSection() {

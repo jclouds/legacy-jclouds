@@ -22,8 +22,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 
 /**
@@ -33,21 +31,20 @@ import com.google.common.base.Objects;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "OperatingSystemSection")
-public class OperatingSystemSection extends SectionType<OperatingSystemSection> {
+public class OperatingSystemSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
+   public Builder<?> toBuilder() {
       return builder().fromOperatingSystemSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<OperatingSystemSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       private Integer id;
       private String description;
       private String version;
@@ -55,25 +52,25 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
       /**
        * @see OperatingSystemSection#getId()
        */
-      public Builder id(Integer id) {
+      public B id(Integer id) {
          this.id = id;
-         return this;
+         return self();
       }
 
       /**
        * @see OperatingSystemSection#getVersion()
        */
-      public Builder version(String version) {
+      public B version(String version) {
          this.version = version;
-         return this;
+         return self();
       }
 
       /**
        * @see OperatingSystemSection#getDescription
        */
-      public Builder description(String description) {
+      public B description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
       /**
@@ -81,35 +78,11 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
        */
       @Override
       public OperatingSystemSection build() {
-         return new OperatingSystemSection(info, required, id, version, description);
+         return new OperatingSystemSection(this);
       }
 
-      public Builder fromOperatingSystemSection(OperatingSystemSection in) {
+      public B fromOperatingSystemSection(OperatingSystemSection in) {
          return id(in.getId()).info(in.getInfo()).description(in.getDescription());
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<OperatingSystemSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
       }
    }
 
@@ -120,11 +93,11 @@ public class OperatingSystemSection extends SectionType<OperatingSystemSection> 
    @XmlElement
    protected String description;
 
-   public OperatingSystemSection(@Nullable String info, @Nullable Boolean required, @Nullable Integer id, @Nullable String version, @Nullable String description) {
-      super(info, required);
-      this.id = id;
-      this.description = description;
-      this.version = version;
+   public OperatingSystemSection(Builder<?> builder) {
+      super(builder);
+      this.id = builder.id;
+      this.description = builder.description;
+      this.version = builder.version;
    }
 
    protected OperatingSystemSection() {

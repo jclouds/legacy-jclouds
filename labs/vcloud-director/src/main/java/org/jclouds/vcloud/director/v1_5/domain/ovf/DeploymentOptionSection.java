@@ -26,8 +26,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -43,37 +41,36 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "DeploymentOptionSection")
-public class DeploymentOptionSection extends SectionType<DeploymentOptionSection> {
+public class DeploymentOptionSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
+   public Builder<?> toBuilder() {
       return builder().fromDeploymentOptionSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<DeploymentOptionSection> {
-      protected Set<Configuration> configurations = Sets.newLinkedHashSet();
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
+      private Set<Configuration> configurations = Sets.newLinkedHashSet();
 
       /**
        * @see DeploymentOptionSection#getConfigurations
        */
-      public Builder configuration(Configuration configuration) {
+      public B configuration(Configuration configuration) {
          this.configurations.add(checkNotNull(configuration, "configuration"));
-         return this;
+         return self();
       }
 
       /**
        * @see DeploymentOptionSection#getConfigurations
        */
-      public Builder configurations(Iterable<Configuration> configurations) {
+      public B configurations(Iterable<Configuration> configurations) {
          this.configurations = ImmutableSet.<Configuration>copyOf(checkNotNull(configurations, "configurations"));
-         return this;
+         return self();
       }
 
       /**
@@ -81,45 +78,20 @@ public class DeploymentOptionSection extends SectionType<DeploymentOptionSection
        */
       @Override
       public DeploymentOptionSection build() {
-         return new DeploymentOptionSection(info, required, configurations);
+         return new DeploymentOptionSection(this);
       }
-
-      public Builder fromDeploymentOptionSection(DeploymentOptionSection in) {
-         return info(in.getInfo()).configurations(in.getConfigurations());
+      
+      public B fromDeploymentOptionSection(DeploymentOptionSection in) {
+         return fromSectionType(in).configurations(in.getConfigurations());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<DeploymentOptionSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
-
    }
 
    @XmlElement(name = "Configuration")
    protected Set<Configuration> configurations;
 
-   private DeploymentOptionSection(@Nullable String info, @Nullable Boolean required, Iterable<Configuration> configurations) {
-      super(info, required);
-      this.configurations = ImmutableSet.copyOf(configurations);
+   private DeploymentOptionSection(Builder<?> builder) {
+      super(builder);
+      this.configurations = ImmutableSet.copyOf(builder.configurations);
    }
 
    private DeploymentOptionSection() {

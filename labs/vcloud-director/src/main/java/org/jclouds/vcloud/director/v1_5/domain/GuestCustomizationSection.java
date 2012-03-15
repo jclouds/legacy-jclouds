@@ -31,9 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -90,18 +88,20 @@ import com.google.common.collect.Sets;
       "computerName",
       "links"
 })
-public class GuestCustomizationSection extends SectionType<GuestCustomizationSection> {
+public class GuestCustomizationSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromGuestCustomizationSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromGuestCustomizationSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<GuestCustomizationSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       private Boolean enabled;
       private Boolean changeSid;
       private String virtualMachineId;
@@ -123,150 +123,145 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#isEnabled()
        */
-      public Builder enabled(Boolean enabled) {
+      public B enabled(Boolean enabled) {
          this.enabled = enabled;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#isChangeSid()
        */
-      public Builder changeSid(Boolean changeSid) {
+      public B changeSid(Boolean changeSid) {
          this.changeSid = changeSid;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getVirtualMachineId()
        */
-      public Builder virtualMachineId(String virtualMachineId) {
+      public B virtualMachineId(String virtualMachineId) {
          this.virtualMachineId = virtualMachineId;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#isJoinDomainEnabled()
        */
-      public Builder joinDomainEnabled(Boolean joinDomainEnabled) {
+      public B joinDomainEnabled(Boolean joinDomainEnabled) {
          this.joinDomainEnabled = joinDomainEnabled;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#isUseOrgSettings()
        */
-      public Builder useOrgSettings(Boolean useOrgSettings) {
+      public B useOrgSettings(Boolean useOrgSettings) {
          this.useOrgSettings = useOrgSettings;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getDomainName()
        */
-      public Builder domainName(String domainName) {
+      public B domainName(String domainName) {
          this.domainName = domainName;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getDomainUserName()
        */
-      public Builder domainUserName(String domainUserName) {
+      public B domainUserName(String domainUserName) {
          this.domainUserName = domainUserName;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getDomainUserPassword()
        */
-      public Builder domainUserPassword(String domainUserPassword) {
+      public B domainUserPassword(String domainUserPassword) {
          this.domainUserPassword = domainUserPassword;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#isAdminPasswordEnabled()
        */
-      public Builder adminPasswordEnabled(Boolean adminPasswordEnabled) {
+      public B adminPasswordEnabled(Boolean adminPasswordEnabled) {
          this.adminPasswordEnabled = adminPasswordEnabled;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#isAdminPasswordAuto()
        */
-      public Builder adminPasswordAuto(Boolean adminPasswordAuto) {
+      public B adminPasswordAuto(Boolean adminPasswordAuto) {
          this.adminPasswordAuto = adminPasswordAuto;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getAdminPassword()
        */
-      public Builder adminPassword(String adminPassword) {
+      public B adminPassword(String adminPassword) {
          this.adminPassword = adminPassword;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#isResetPasswordRequired()
        */
-      public Builder resetPasswordRequired(Boolean resetPasswordRequired) {
+      public B resetPasswordRequired(Boolean resetPasswordRequired) {
          this.resetPasswordRequired = resetPasswordRequired;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getCustomizationScript()
        */
-      public Builder customizationScript(String customizationScript) {
+      public B customizationScript(String customizationScript) {
          this.customizationScript = customizationScript;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getComputerName()
        */
-      public Builder computerName(String computerName) {
+      public B computerName(String computerName) {
          this.computerName = computerName;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getLinks()
        */
-      public Builder links(Set<Link> links) {
+      public B links(Set<Link> links) {
          this.links = checkNotNull(links, "links");
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getHref()
        */
-      public Builder href(URI href) {
+      public B href(URI href) {
          this.href = href;
-         return this;
+         return self();
       }
 
       /**
        * @see org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection#getType()
        */
-      public Builder type(String type) {
+      public B type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
-
 
       @Override
       public GuestCustomizationSection build() {
-         return new GuestCustomizationSection(info, required, enabled, changeSid, virtualMachineId,
-               joinDomainEnabled, useOrgSettings, domainName, domainUserName,
-               domainUserPassword, adminPasswordEnabled, adminPasswordAuto,
-               adminPassword, resetPasswordRequired, customizationScript,
-               computerName, links, href, type);
+         return new GuestCustomizationSection(this);
       }
 
-      public Builder fromGuestCustomizationSection(GuestCustomizationSection in) {
+      public B fromGuestCustomizationSection(GuestCustomizationSection in) {
          return fromSectionType(in)
                .enabled(in.isEnabled())
                .changeSid(in.isChangeSid())
@@ -286,55 +281,27 @@ public class GuestCustomizationSection extends SectionType<GuestCustomizationSec
                .href(in.getHref())
                .type(in.getType());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<GuestCustomizationSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
    }
 
-   private GuestCustomizationSection(@Nullable String info, @Nullable Boolean required, Boolean enabled, Boolean changeSid, String virtualMachineId,
-                                     Boolean joinDomainEnabled, Boolean useOrgSettings, String domainName, String domainUserName,
-                                     String domainUserPassword, Boolean adminPasswordEnabled, Boolean adminPasswordAuto,
-                                     String adminPassword, Boolean resetPasswordRequired, String customizationScript,
-                                     String computerName, Set<Link> links,  URI href, String type) {
-      super(info, required);
-      this.enabled = enabled;
-      this.changeSid = changeSid;
-      this.virtualMachineId = virtualMachineId;
-      this.joinDomainEnabled = joinDomainEnabled;
-      this.useOrgSettings = useOrgSettings;
-      this.domainName = domainName;
-      this.domainUserName = domainUserName;
-      this.domainUserPassword = domainUserPassword;
-      this.adminPasswordEnabled = adminPasswordEnabled;
-      this.adminPasswordAuto = adminPasswordAuto;
-      this.adminPassword = adminPassword;
-      this.resetPasswordRequired = resetPasswordRequired;
-      this.customizationScript = customizationScript;
-      this.computerName = computerName;
-      this.links = ImmutableSet.copyOf(links);
-      this.href = href;
-      this.type = type;
+   private GuestCustomizationSection(Builder<?> builder) {
+      super(builder);
+      this.enabled = builder.enabled;
+      this.changeSid = builder.changeSid;
+      this.virtualMachineId = builder.virtualMachineId;
+      this.joinDomainEnabled = builder.joinDomainEnabled;
+      this.useOrgSettings = builder.useOrgSettings;
+      this.domainName = builder.domainName;
+      this.domainUserName = builder.domainUserName;
+      this.domainUserPassword = builder.domainUserPassword;
+      this.adminPasswordEnabled = builder.adminPasswordEnabled;
+      this.adminPasswordAuto = builder.adminPasswordAuto;
+      this.adminPassword = builder.adminPassword;
+      this.resetPasswordRequired = builder.resetPasswordRequired;
+      this.customizationScript = builder.customizationScript;
+      this.computerName = builder.computerName;
+      this.href = builder.href;
+      this.links = ImmutableSet.copyOf(builder.links);
+      this.type = builder.type;
    }
 
    private GuestCustomizationSection() {
