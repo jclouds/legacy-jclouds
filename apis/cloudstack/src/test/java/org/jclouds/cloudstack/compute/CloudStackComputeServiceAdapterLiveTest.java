@@ -143,6 +143,10 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       keyPairName = prefix + "-adapter-test-keypair";
       try {
          keyPair = ComputeTestUtils.setupKeyPair();
+
+         client.getSSHKeyPairClient().deleteSSHKeyPair(keyPairName);
+         client.getSSHKeyPairClient().registerSSHKeyPair(keyPairName, keyPair.get("public"));
+
       } catch (IOException e) {
          fail("Unable to create keypair", e);
       }
