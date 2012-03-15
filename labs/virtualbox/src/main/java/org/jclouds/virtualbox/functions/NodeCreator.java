@@ -43,6 +43,7 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.statements.DeleteGShadowLock;
 import org.jclouds.virtualbox.statements.SetIpAddress;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
@@ -152,6 +153,10 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       IMachine cloned = cloner.apply(cloneSpec);
 
       new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
+
+      // see DeleteGShadowLock for a detailed explanation
+      machineUtils
+               .runScriptOnNode(imachineToNodeMetadata.apply(cloned), new DeleteGShadowLock(), RunScriptOptions.NONE);
 
       // CASE NAT + HOST-ONLY
       machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
