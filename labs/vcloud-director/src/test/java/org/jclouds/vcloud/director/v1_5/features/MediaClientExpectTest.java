@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = { "unit", "media" }, singleThreaded = true, testName = "MediaClientExpectTest")
 public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
-   @Test(enabled = false)//TODO
+   @Test
    public void testCreateMedia() {
       URI uploadLink = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/media");
 
@@ -76,7 +76,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       assertEquals(client.getMediaClient().createMedia(uploadLink, source), expected);
    }
    
-   @Test(enabled = false)//TODO
+   @Test
    public void testCloneMedia() {
       URI cloneUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia");
 
@@ -106,7 +106,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       assertEquals(client.getMediaClient().cloneMedia(cloneUri, params), expected);
    }
    
-   @Test(enabled = false)//TODO
+   @Test
    public void testGetMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
@@ -210,7 +210,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       }
    }
    
-   @Test(enabled = false)//TODO
+   @Test
    public void testUpdateMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
@@ -344,7 +344,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       assertEquals(client.getMediaClient().getMetadataClient().deleteMetadataEntry(mediaUri, "key"), expectedTask);
    }
    
-   @Test(enabled = false)//TODO
+   @Test
    public void testGetOwner() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 

@@ -120,7 +120,7 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
       assertEquals(client.getQueryClient().catalogsQueryAll(), expected);
    }
 
-   @Test(enabled = false)//TODO
+   @Test
    public void testQueryAllCatalogReferences() {
       HttpRequest queryRequest = HttpRequest.builder()
               .method("GET")
