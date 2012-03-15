@@ -19,35 +19,42 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 
 import java.net.URI;
 
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.resource.Resource;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.IsoSpec;
 
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheLoader;
 import com.google.inject.Singleton;
 
 /**
- * @author Andrea Turli
+ * Sets up jetty so that it can serve the preseed.cfg file to automate master creation.
+ * 
+ * TODO - Probably we can make this only start jetty. This has not been used to serve isos.
+ * 
+ * @author Andrea Turli, David Alves
  */
 @Singleton
 public class StartJettyIfNotAlreadyRunning extends CacheLoader<IsoSpec, URI> {
 
-   @Resource
+   @javax.annotation.Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private Server jetty;
@@ -60,7 +67,7 @@ public class StartJettyIfNotAlreadyRunning extends CacheLoader<IsoSpec, URI> {
    }
 
    @Override
-      public URI load(IsoSpec isoSpec) throws Exception {
+   public URI load(IsoSpec isoSpec) throws Exception {
       try {
          start();
       } catch (Exception e) {
@@ -74,24 +81,31 @@ public class StartJettyIfNotAlreadyRunning extends CacheLoader<IsoSpec, URI> {
       if (jetty.getState().equals(Server.STARTED)) {
          logger.debug("not starting jetty, as existing host is serving %s", preconfigurationUrl);
       } else {
-         logger.debug(">> starting jetty to serve %s", preconfigurationUrl);
-         ResourceHandler resourceHandler = new ResourceHandler();
-         resourceHandler.setDirectoriesListed(true);
-         resourceHandler.setWelcomeFiles(new String[]{"index.html"});
-
-         resourceHandler.setResourceBase("");
-         HandlerList handlers = new HandlerList();
-         handlers.setHandlers(new Handler[]{resourceHandler, new DefaultHandler()});
-         jetty.setHandler(handlers);
-
          try {
+            logger.debug(">> starting jetty to serve %s", preconfigurationUrl);
+
+            Resource resource = Resource.newClassPathResource("preseed.cfg");
+            checkState(resource.getInputStream() != null, "cannot find preseed.cfg");
+
+            ContextHandler capHandler = new ContextHandler();
+            capHandler.setContextPath("/preseed.cfg");
+            
+            ResourceHandler resourceHandler = new ResourceHandler();
+            resourceHandler.setBaseResource(resource);
+            capHandler.setHandler(resourceHandler);
+
+            HandlerList handlers = new HandlerList();
+            handlers.setHandlers(new Handler[] { capHandler, new DefaultHandler() });
+            jetty.setHandler(handlers);
+
             jetty.start();
+            
+            logger.debug("<< serving %s", resourceHandler.getBaseResource());
          } catch (Exception e) {
             logger.error(e, "Server jetty could not be started for %s", preconfigurationUrl);
+            throw Throwables.propagate(e);
          }
-         logger.debug("<< serving %s", resourceHandler.getBaseResource());
       }
-
    }
 
    @PreDestroy()

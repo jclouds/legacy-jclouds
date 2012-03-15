@@ -26,7 +26,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Deletes /etc/gshadow.lock https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/732864.
+ * Deletes /etc/gshadow.lock. see https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/732864.
  * 
  * @author dralves
  * 
