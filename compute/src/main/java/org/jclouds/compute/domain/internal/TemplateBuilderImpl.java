@@ -70,7 +70,6 @@ import com.google.common.primitives.Doubles;
  * @author Adrian Cole
  */
 public class TemplateBuilderImpl implements TemplateBuilder {
-
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -134,29 +133,14 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       this.defaultTemplateProvider = defaultTemplateProvider;
    }
 
-   /**
-    * If the current location id is null, then we don't care where to launch a node.
-    * 
-    * If the input location is null, then the data isn't location sensitive
-    * 
-    * If the input location is a parent of the specified location, then we are ok.
-    */
-   final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
-      @Override
-      public boolean apply(ComputeMetadata input) {
-         boolean returnVal = true;
-         if (location != null && input.getLocation() != null)
-            returnVal = location.equals(input.getLocation()) || location.getParent() != null
-                  && location.getParent().equals(input.getLocation()) || location.getParent().getParent() != null
-                  && location.getParent().getParent().equals(input.getLocation());
-         return returnVal;
-      }
+   final Predicate<ComputeMetadata> locationPredicate = new LocationPredicate(new Supplier<Location>(){
 
       @Override
-      public String toString() {
-         return location == null ? "anyLocation()" : "locationEqualsOrChildOf(" + location.getId() + ")";
+      public Location get() {
+         return location;
       }
-   };
+      
+   });
 
    private final Predicate<Image> idPredicate = new Predicate<Image>() {
       @Override
