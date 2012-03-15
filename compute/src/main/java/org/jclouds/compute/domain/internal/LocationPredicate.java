@@ -17,9 +17,11 @@
  * under the License.
  */
 package org.jclouds.compute.domain.internal;
+import static com.google.common.base.Preconditions.*;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -29,7 +31,7 @@ import com.google.common.base.Supplier;
  * 
  * If the input location is null, then the data isn't location sensitive
  * 
- * If the input location is a parent of the specified location, then we are ok.
+ * If the input location equals, is a parent or grandparent of the specified location, then we are ok.
  */
 public class LocationPredicate implements Predicate<ComputeMetadata> {
    private final Supplier<Location> locationSupplier;
@@ -41,12 +43,28 @@ public class LocationPredicate implements Predicate<ComputeMetadata> {
    @Override
    public boolean apply(ComputeMetadata input) {
       Location location = locationSupplier.get();
-      boolean returnVal = true;
-      if (location != null && input.getLocation() != null)
-         returnVal = location.equals(input.getLocation()) || location.getParent() != null
+      if (location == null)
+         return true;
+      
+      if (location.equals(input.getLocation()))
+         return true;
+      
+      checkArgument(
+            location.getParent() != null || location.getScope() == LocationScope.PROVIDER,
+            "only locations of scope PROVIDER can have a null parent; arg: %s",
+            location);
+      
+      if (input.getLocation() == null)
+         return true;
+      
+      checkState(
+            input.getLocation().getParent() != null || input.getLocation().getScope() == LocationScope.PROVIDER,
+            "only locations of scope PROVIDER can have a null parent; input: %s",
+            input.getLocation());
+      
+      return location.equals(input.getLocation()) || location.getParent() != null
                && location.getParent().equals(input.getLocation()) || location.getParent().getParent() != null
                && location.getParent().getParent().equals(input.getLocation());
-      return returnVal;
    }
 
    @Override

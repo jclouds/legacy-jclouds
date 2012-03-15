@@ -18,10 +18,10 @@
  */
 package org.jclouds.ec2.compute.internal;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
 import static org.testng.Assert.assertEquals;
 
@@ -39,8 +39,6 @@ import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.domain.internal.TemplateBuilderImplTest;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationBuilder;
-import org.jclouds.domain.LocationScope;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.functions.ImagesToRegionAndIdMap;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
@@ -49,9 +47,9 @@ import org.testng.annotations.Test;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -104,10 +102,9 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testParseOnDemand() {
-      Location location = new LocationBuilder().scope(LocationScope.REGION).id("region").description("region").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(location));
+            .<Location> of(region));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(Sets
             .<Image> newLinkedHashSet());
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
@@ -121,8 +118,8 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
-      expect(knownImage.getId()).andReturn("region/ami").atLeastOnce();
-      expect(knownImage.getLocation()).andReturn(location).atLeastOnce();
+      expect(knownImage.getId()).andReturn("us-east-1/ami").atLeastOnce();
+      expect(knownImage.getLocation()).andReturn(region).atLeastOnce();
       expect(knownImage.getName()).andReturn(null).atLeastOnce();
       expect(knownImage.getDescription()).andReturn(null).atLeastOnce();
       expect(knownImage.getVersion()).andReturn(null).atLeastOnce();
@@ -143,10 +140,10 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(knownImage, locations, images, sizes, location,
+      TemplateBuilderImpl template = createTemplateBuilder(knownImage, locations, images, sizes, region,
             optionsProvider, templateBuilderProvider);
 
-      assertEquals(template.imageId("region/ami").build().getImage(), knownImage);
+      assertEquals(template.imageId("us-east-1/ami").build().getImage(), knownImage);
 
       verify(knownImage);
       verify(os);
@@ -158,10 +155,9 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testParseOnDemandWithoutRegionEncodedIntoId() {
-      Location location = new LocationBuilder().scope(LocationScope.REGION).id("region").description("region").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(location));
+            .<Location> of(region));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
             .<Hardware> of(c1_medium().build()));
@@ -172,7 +168,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       Image knownImage = createMock(Image.class);
       expect(knownImage.getId()).andReturn("region/ami").anyTimes();
       expect(knownImage.getProviderId()).andReturn("ami").anyTimes();
-      expect(knownImage.getLocation()).andReturn(location).anyTimes();
+      expect(knownImage.getLocation()).andReturn(region).anyTimes();
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
@@ -181,7 +177,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(knownImage, locations, images, sizes, location,
+      TemplateBuilderImpl template = createTemplateBuilder(knownImage, locations, images, sizes, region,
             optionsProvider, templateBuilderProvider);
       try {
          template.imageId("ami").build();
@@ -198,10 +194,9 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = NoSuchElementException.class)
    public void testParseOnDemandNotFound() {
-      Location location = new LocationBuilder().scope(LocationScope.REGION).id("region").description("region").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(location));
+            .<Location> of(region));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
             .<Hardware> of(c1_medium().build()));
@@ -213,7 +208,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
       Image knownImage = createMock(Image.class);
       expect(knownImage.getId()).andReturn("region/ami").anyTimes();
       expect(knownImage.getProviderId()).andReturn("ami").anyTimes();
-      expect(knownImage.getLocation()).andReturn(location).anyTimes();
+      expect(knownImage.getLocation()).andReturn(region).anyTimes();
 
       expect(defaultLocation.getId()).andReturn("region");
       expect(optionsProvider.get()).andReturn(defaultOptions);

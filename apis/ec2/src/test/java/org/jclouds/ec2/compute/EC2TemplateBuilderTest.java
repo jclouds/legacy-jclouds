@@ -80,8 +80,10 @@ import com.google.common.collect.ImmutableSet;
  * @author Oleksiy Yarmula
  */
 public class EC2TemplateBuilderTest {
-   private static final Location location = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1")
-            .description("us-east-1").build();
+   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
+
+   protected Location location = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description("us-east-1")
+         .parent(provider).build();
 
    public static final Hardware CC1_4XLARGE = cc1_4xlarge().supportsImageIds(ImmutableSet.of("us-east-1/cc-image"))
             .build();
