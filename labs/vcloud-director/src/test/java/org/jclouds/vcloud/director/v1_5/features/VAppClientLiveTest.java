@@ -42,6 +42,9 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +52,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSettings;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
@@ -56,6 +60,9 @@ import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
+import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
@@ -91,8 +98,10 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 
 /**
  * Tests behavior of {@code VAppClient}
@@ -115,7 +124,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    protected VAppClient vAppClient;
    protected VAppTemplateClient vAppTemplateClient;
    protected VdcClient vdcClient;
-   protected MetadataClient metadataClient;
+   protected MetadataClient.Writeable metadataClient;
 
    /*
     * Objects shared between tests.
@@ -127,6 +136,8 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private VApp vApp;
    private VAppTemplate vAppTemplate;
 
+   private final Random random = new Random();
+   
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() {
@@ -769,6 +780,68 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       RasdItemsList modified = vAppClient.getVirtualHardwareSectionSerialPorts(vApp.getHref());
       // assertEquals(modified.getInfo(), "New Info");
+   }
+
+   @Test(testName = "GET /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
+   public void testGetMetadata() {
+      Metadata metadata = metadataClient.getMetadata(vApp.getHref());
+      
+      Checks.checkMetadataFor(VAPP, metadata);
+   }
+
+   @Test(testName = "PUT & GET /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
+   public void testSetAndGetMetadataValue() {
+      // Store a value
+      String key = ""+random.nextInt();
+      String value = ""+random.nextInt();
+      MetadataValue metadataValue = MetadataValue.builder().value(value).build();
+      metadataClient.setMetadata(vApp.getHref(), key, metadataValue);
+
+      // Retrieve the value, and assert it was set correctly
+      MetadataValue newMetadataValue = metadataClient.getMetadataValue(vApp.getHref(), key);
+      Checks.checkMetadataValueFor(VAPP, newMetadataValue, value);
+   }
+
+   @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetAndGetMetadataValue" })
+   public void testDeleteMetadataEntry() {
+      // Store a value, to be deleted
+      String key = ""+random.nextInt();
+      MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
+      metadataClient.setMetadata(vApp.getHref(), key, metadataValue);
+      
+      // Delete the entry
+      Task task = metadataClient.deleteMetadataEntry(vApp.getHref(), key);
+      retryTaskSuccess.apply(task);
+
+      // Confirm the entry has been deleted
+      Metadata newMetadata = metadataClient.getMetadata(vApp.getHref());
+      Checks.checkMetadataKeyAbsentFor(VAPP, newMetadata, key);
+   }
+
+   @Test(testName = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
+   public void testMergeMetadata() {
+      Metadata oldMetadata = metadataClient.getMetadata(vApp.getHref());
+      Map<String,String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
+      
+      // Store a value, to be deleted
+      String key = ""+random.nextInt();
+      String value = ""+random.nextInt();
+      Metadata addedMetadata = Metadata.builder()
+               .entry(MetadataEntry.builder()
+                        .key(key)
+                        .value(value)
+                        .build())
+               .build();
+      Task task = metadataClient.mergeMetadata(vApp.getHref(), addedMetadata);
+      retryTaskSuccess.apply(task);
+      
+      // Confirm the entry contains everything that was there, and everything that was being added
+      Metadata newMetadata = metadataClient.getMetadata(vApp.getHref());
+      Map<String,String> expectedMetadataMap = ImmutableMap.<String,String>builder()
+               .putAll(oldMetadataMap)
+               .put(key, value)
+               .build();
+      Checks.checkMetadataFor(VAPP, newMetadata, expectedMetadataMap);
    }
 
    /**
