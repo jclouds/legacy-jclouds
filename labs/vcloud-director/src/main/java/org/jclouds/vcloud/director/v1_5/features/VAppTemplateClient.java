@@ -85,7 +85,7 @@ public interface VAppTemplateClient {
     * @param templateUri the URI of the template
     * @return the task performing the action
     */
-   Task disableDownloadVappTemplate(URI templateUri);
+   void disableDownloadVappTemplate(URI templateUri);
 
    /**
     * Enables downloading of the ovf of a vApp template.

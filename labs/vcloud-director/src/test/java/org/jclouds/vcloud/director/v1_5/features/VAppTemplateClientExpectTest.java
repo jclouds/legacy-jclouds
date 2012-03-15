@@ -174,13 +174,12 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = requestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/disableDownload").acceptMedia(TASK).httpRequestBuilder().build(),
-            new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/disableDownload").httpRequestBuilder().build(),
+            new VcloudHttpResponsePrimer().httpResponseBuilder().build()
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Task task = client.disableDownloadVappTemplate(uri);
-      assertNotNull(task);
+      client.disableDownloadVappTemplate(uri);
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -189,7 +188,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/disableDownload").acceptMedia(TASK).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("POST", templateId + "/action/disableDownload").httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
       client.disableDownloadVappTemplate(uri);
