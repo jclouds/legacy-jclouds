@@ -33,6 +33,7 @@ import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.AsyncJob.Builder;
 import org.jclouds.cloudstack.domain.AsyncJobError;
+import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.Network;
@@ -72,6 +73,7 @@ public class ParseTypedAsyncJob implements Function<AsyncJob<Map<String, JsonBal
       .put("securitygroup", SecurityGroup.class)
       .put("portforwardingrule", PortForwardingRule.class)
       .put("ipforwardingrule", IPForwardingRule.class)
+      .put("firewallrule", FirewallRule.class)
       .put("network", Network.class)
       .put("ipaddress", PublicIPAddress.class)
       .put("virtualmachine", VirtualMachine.class)
