@@ -51,6 +51,6 @@ public class LocationPredicate implements Predicate<ComputeMetadata> {
 
    @Override
    public String toString() {
-      return locationSupplier.get() == null ? "anyLocation()" : "locationEqualsOrChildOf(" + locationSupplier.get().getId() + ")";
+      return locationSupplier.get() == null ? "anyLocation()" : "locationEqualsParentOrGrandparentOf(" + locationSupplier.get().getId() + ")";
    }
 }
