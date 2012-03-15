@@ -23,9 +23,8 @@ import static com.google.common.base.Objects.equal;
 import java.net.URI;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.jclouds.logging.Logger;
 
@@ -43,7 +42,10 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso({
+         CatalogReference.class
+})
+//@XmlAccessorType(XmlAccessType.FIELD)
 public class Reference {
 
    @javax.annotation.Resource

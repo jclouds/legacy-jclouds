@@ -67,7 +67,7 @@ import com.google.common.collect.Multimaps;
 @Test(groups = { "unit", "user", "vapp" }, singleThreaded = true, testName = "VAppClientExpectTest")
 public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
-   private String vAppId = "";
+   private String vAppId = "vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be";
    private URI vAppURI = URI.create(endpoint + vAppId);
    
    @BeforeClass
@@ -79,7 +79,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
       VCloudDirectorClient client = orderedRequestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", vAppId)
-               .acceptAnyMedia()
+               .acceptMedia(VCloudDirectorMediaType.VAPP)
                .httpRequestBuilder().build(), 
             new VcloudHttpResponsePrimer()
                .xmlFilePayload("/vApp/vApp.xml", VCloudDirectorMediaType.VAPP)
@@ -1084,9 +1084,26 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    }
 
    public static VApp getVApp() {
+      // FIXME Does not match XML
       VApp vApp = VApp.builder()
+            .href(URI.create("https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be"))
+//            .link(Link.builder()
+//                     .href(URI.create())
+//                     .build())
             .build();
 
+//      <Link rel="power:powerOn" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/power/action/powerOn"/>
+//      <Link rel="deploy" type="application/vnd.vmware.vcloud.deployVAppParams+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/action/deploy"/>
+//      <Link rel="down" type="application/vnd.vmware.vcloud.vAppNetwork+xml" name="orgNet-cloudsoft-External" href="https://mycloud.greenhousedata.com/api/network/2a2e2da4-446a-4ebc-a086-06df7c9570f0"/>
+//      <Link rel="down" type="application/vnd.vmware.vcloud.controlAccess+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/controlAccess/"/>
+//      <Link rel="controlAccess" type="application/vnd.vmware.vcloud.controlAccess+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/action/controlAccess"/>
+//      <Link rel="recompose" type="application/vnd.vmware.vcloud.recomposeVAppParams+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/action/recomposeVApp"/>
+//      <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml" href="https://mycloud.greenhousedata.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f"/>
+//      <Link rel="edit" type="application/vnd.vmware.vcloud.vApp+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be"/>
+//      <Link rel="remove" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be"/>
+//      <Link rel="down" type="application/vnd.vmware.vcloud.owner+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/owner"/>
+//      <Link rel="down" type="application/vnd.vmware.vcloud.metadata+xml" href="https://mycloud.greenhousedata.com/api/vApp/vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be/metadata"/>
+      
       return vApp;
    }
 

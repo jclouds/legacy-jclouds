@@ -358,7 +358,13 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/owner.xml", VCloudDirectorMediaType.OWNER)
                .httpResponseBuilder().build());
       
-      Owner expected = owner();
+      Owner expected = owner().toBuilder()
+               .link(Link.builder()
+                        .rel("up")
+                        .type("application/vnd.vmware.vcloud.media+xml")
+                        .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
+                        .build())
+               .build();
       
       assertEquals(client.getMediaClient().getOwner(mediaUri), expected);
    }

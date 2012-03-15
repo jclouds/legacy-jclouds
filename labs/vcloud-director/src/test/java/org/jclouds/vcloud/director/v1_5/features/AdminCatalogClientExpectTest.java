@@ -132,7 +132,18 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                .xmlFilePayload("/catalog/admin/owner.xml", VCloudDirectorMediaType.OWNER)
                .httpResponseBuilder().build());
       
-      Owner expected = owner();
+      Owner expected = owner().toBuilder()
+               .link(Link.builder()
+                        .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+                        .type("application/vnd.vmware.vcloud.catalog+xml")
+                        .rel("up")
+                        .build())
+               .link(Link.builder()
+                        .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner"))
+                        .type("application/vnd.vmware.vcloud.owner+xml")
+                        .rel("edit")
+                        .build())
+               .build();
 
       assertEquals(client.getAdminCatalogClient().getOwner(catalogRef.getHref()), expected);
    }
@@ -345,7 +356,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
          .isPublished(false)
          .build();
    }
-   
+
    private static Owner owner() {
       return Owner.builder()
          .type("application/vnd.vmware.vcloud.owner+xml")

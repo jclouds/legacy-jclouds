@@ -73,12 +73,10 @@ import com.google.common.collect.ImmutableList;
     "fromEmailAddress",
     "defaultSubjectPrefix",
     "isAlertEmailToAllAdmins",
-    "alertEmailsTo",
+    "alertEmailTo",
     "smtpServerSettings"
 })
 public class OrgEmailSettings extends ResourceType {
-   
-   // FIXME Should it be getAlertEmailsTo or getAlertEmailTo
    
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -144,8 +142,8 @@ public class OrgEmailSettings extends ResourceType {
       /**
        * @see OrgEmailSettings#getAlertEmailTo()
        */
-      public B alertEmailsTo(List<String> alertEmailsTo) {
-         this.alertEmailTo = alertEmailsTo == null ? null : ImmutableList.copyOf(alertEmailsTo);
+      public B alertEmailTo(List<String> alertEmailTo) {
+         this.alertEmailTo = alertEmailTo == null ? null : ImmutableList.copyOf(alertEmailTo);
          return self();
       }
       
@@ -176,7 +174,7 @@ public class OrgEmailSettings extends ResourceType {
             .fromEmailAddress(in.getFromEmailAddress())
             .defaultSubjectPrefix(in.getDefaultSubjectPrefix())
             .isAlertEmailToAllAdmins(in.isAlertEmailToAllAdmins())
-            .alertEmailsTo(in.getAlertEmailsTo())
+            .alertEmailTo(in.getAlertEmailTo())
             .smtpServerSettings(in.getSmtpServerSettings());
       }
    }
@@ -281,7 +279,7 @@ public class OrgEmailSettings extends ResourceType {
      * 
      * 
      */
-    public List<String> getAlertEmailsTo() {
+    public List<String> getAlertEmailTo() {
         return this.alertEmailTo;
     }
 
@@ -334,7 +332,7 @@ public class OrgEmailSettings extends ResourceType {
             .add("fromEmailAddress", fromEmailAddress)
             .add("defaultSubjectPrefix", defaultSubjectPrefix)
             .add("isAlertEmailToAllAdmins", isAlertEmailToAllAdmins)
-            .add("alertEmailsTo", alertEmailTo)
+            .add("alertEmailTo", alertEmailTo)
             .add("smtpServerSettings", smtpServerSettings);
    }
 
