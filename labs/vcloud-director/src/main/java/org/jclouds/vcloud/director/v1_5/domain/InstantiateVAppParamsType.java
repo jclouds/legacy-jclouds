@@ -52,14 +52,14 @@ public class InstantiateVAppParamsType extends VAppCreationParamsType {
    
    public static abstract class Builder<B extends Builder<B>> extends VAppCreationParamsType.Builder<B> {
 
-      private ReferenceType source;
+      private Reference source;
       private Boolean sourceDelete;
       private Boolean linkedClone;
 
       /**
        * @see InstantiateVAppParamsType#getSource()
        */
-      public B source(ReferenceType source) {
+      public B source(Reference source) {
          this.source = source;
          return self();
       }
@@ -137,7 +137,7 @@ public class InstantiateVAppParamsType extends VAppCreationParamsType {
    }
 
    @XmlElement(name = "Source", required = true)
-   private ReferenceType source;
+   private Reference source;
    @XmlElement(name = "IsSourceDelete")
    private Boolean sourceDelete;
    @XmlAttribute
@@ -146,7 +146,7 @@ public class InstantiateVAppParamsType extends VAppCreationParamsType {
    /**
     * Gets the value of the source property.
     */
-   public ReferenceType getSource() {
+   public Reference getSource() {
       return source;
    }
 

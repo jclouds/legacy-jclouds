@@ -32,13 +32,13 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 
-public class ReferenceTypePredicates {
+public class ReferencePredicates {
 
    /**
     * matches references of the given name
     * 
     * @param <T>
-    *           type of the ReferenceType, ex. {@link Link}
+    *           type of the Reference, ex. {@link Link}
     * @param name
     *           ex. {@code context.getApi().getCurrentSession().getOrg()}
     * @return predicate that will match references of the given name
@@ -63,7 +63,7 @@ public class ReferenceTypePredicates {
     * matches references of the given type
     * 
     * @param <T>
-    *           type of the ReferenceType, ex. {@link Link}
+    *           type of the Reference, ex. {@link Link}
     * @param type
     *           ex. {@link VCloudDirectorMediaType#CATALOG}
     * @return predicate that will match references of the given type

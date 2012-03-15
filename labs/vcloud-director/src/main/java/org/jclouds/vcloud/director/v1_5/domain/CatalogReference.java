@@ -5,20 +5,20 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CatalogReference")
-public class CatalogReference extends ReferenceType {
+public class CatalogReference extends Reference {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
    public Builder<?> toBuilder() {
-      return builder().fromReferenceType(this);
+      return builder().fromCatalogReference(this);
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static class Builder<B extends Builder<B>> extends ReferenceType.Builder<B> {
+   public static class Builder<B extends Builder<B>> extends Reference.Builder<B> {
 
       @Override
       public CatalogReference build() {
@@ -26,7 +26,7 @@ public class CatalogReference extends ReferenceType {
       }
 
       protected B fromCatalogReference(CatalogReference in) {
-         return fromReferenceType(in);
+         return fromReference(in);
       }
    }
 

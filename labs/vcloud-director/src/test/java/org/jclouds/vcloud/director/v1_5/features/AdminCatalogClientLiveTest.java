@@ -36,7 +36,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -62,7 +61,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    /*
     * Shared state between dependant tests.
     */
-   private ReferenceType orgRef;
+   private Reference orgRef;
    private AdminCatalog catalog;
    private Owner owner;
 

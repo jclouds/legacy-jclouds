@@ -42,13 +42,13 @@ public class OrgNetwork extends NetworkType {
    
    public static abstract class Builder<B extends Builder<B>> extends NetworkType.Builder<B> {
 
-      private ReferenceType networkPool;
+      private Reference networkPool;
       private IpAddresses allowedExternalIpAddresses;
 
       /**
        * @see OrgNetwork#getNetworkPool()
        */
-      public B networkPool(ReferenceType networkPool) {
+      public B networkPool(Reference networkPool) {
          this.networkPool = networkPool;
          return self();
       }
@@ -84,14 +84,14 @@ public class OrgNetwork extends NetworkType {
    }
 
    @XmlElement(name = "NetworkPool")
-   private ReferenceType networkPool;
+   private Reference networkPool;
    @XmlElement(name = "AllowedExternalIpAddresses")
    private IpAddresses allowedExternalIpAddresses;
 
    /**
     * @return optional network pool
     */
-   public ReferenceType getNetworkPool() {
+   public Reference getNetworkPool() {
       return networkPool;
    }
 

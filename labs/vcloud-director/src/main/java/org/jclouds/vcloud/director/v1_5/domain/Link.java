@@ -41,7 +41,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Adrian Cole
  */
 @XmlRootElement(name = "Link")
-public class Link extends ReferenceType {
+public class Link extends Reference {
 
    public static final class Rel {
       public static final String ADD = "add";
@@ -132,7 +132,7 @@ public class Link extends ReferenceType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static class Builder<B extends Builder<B>> extends ReferenceType.Builder<B> {
+   public static class Builder<B extends Builder<B>> extends Reference.Builder<B> {
 
       private String rel;
 
@@ -150,7 +150,7 @@ public class Link extends ReferenceType {
       }
 
       public B fromLink(Link in) {
-         return fromReferenceType(in).rel(in.getRel());
+         return fromReference(in).rel(in.getRel());
       }
 
       /**

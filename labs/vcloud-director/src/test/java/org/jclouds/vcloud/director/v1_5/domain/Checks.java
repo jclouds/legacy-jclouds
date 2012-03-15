@@ -100,11 +100,11 @@ public class Checks {
     * 
     * @see checkReferenceType(ReferenceType, Collection<String>)
     */
-   public static void checkReferenceType(ReferenceType reference) {
+   public static void checkReferenceType(Reference reference) {
       checkReferenceType(reference, VCloudDirectorMediaType.ALL);
    }
    
-   public static void checkReferenceType(ReferenceType reference, Collection<String> validTypes) {
+   public static void checkReferenceType(Reference reference, Collection<String> validTypes) {
       // Check required fields
       assertNotNull(reference.getHref(), String.format(NOT_NULL_OBJECT_FMT, "Href", "ReferenceType"));
 
@@ -183,13 +183,13 @@ public class Checks {
       // NOTE startTime cannot be checked
       // NOTE endTime cannot be checked
       // NOTE expiryTimecannot be checked
-      ReferenceType owner = task.getOwner();
+      Reference owner = task.getOwner();
       if (owner != null) checkReferenceType(owner);
       Error error = task.getError();
       if (error != null) checkError(error);
-      ReferenceType user = task.getUser();
+      Reference user = task.getUser();
       if (user != null) checkReferenceType(user);
-      ReferenceType org = task.getOrg();
+      Reference org = task.getOrg();
       if (org != null) checkReferenceType(org);
       Integer progress = task.getProgress();
       if (progress != null) checkProgress(progress);

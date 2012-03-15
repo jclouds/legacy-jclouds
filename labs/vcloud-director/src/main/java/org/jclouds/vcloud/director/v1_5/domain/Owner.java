@@ -53,12 +53,12 @@ public class Owner extends ResourceType {
    
    public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
-      private ReferenceType user;
+      private Reference user;
 
       /**
        * @see Owner#getUser()
        */
-      public B user(ReferenceType user) {
+      public B user(Reference user) {
          this.user = user;
          return self();
       }
@@ -84,12 +84,12 @@ public class Owner extends ResourceType {
    }
 
    @XmlElement(name = "User", required = true)
-   private ReferenceType user;
+   private Reference user;
 
    /**
     * Gets the value of the user property.
     */
-   public ReferenceType getUser() {
+   public Reference getUser() {
       return user;
    }
 

@@ -30,7 +30,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -88,8 +87,6 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       AdminCatalog expected = catalog();
 
-//      assertEquals(client.getAdminCatalogClient().getCatalog(catalogRef.getHref()), expected);
-      
       AdminCatalog actual = client.getAdminCatalogClient().getCatalog(catalogRef.getHref());
       assertEquals(actual.getHref(), expected.getHref());
       assertEquals(actual.getLinks(), expected.getLinks());
@@ -98,10 +95,13 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
       System.out.println(actual.getOwner());
       System.out.println(expected.getOwner());
       
-      assertEquals(actual.getOwner().getUser(), expected.getOwner().getUser());
+      Reference actualUser = actual.getOwner().getUser();
+      Reference expectedUser = expected.getOwner().getUser();
+      assertEquals(actualUser, expectedUser);
 
       assertEquals(actual.getOwner(), expected.getOwner());
-
+      
+      assertEquals(client.getAdminCatalogClient().getCatalog(catalogRef.getHref()), expected);
    }
    
    @Test(enabled = false)//TODO

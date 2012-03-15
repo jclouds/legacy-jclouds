@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElementRef;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -60,12 +60,12 @@ public class QueryResultReferences extends ContainerType {
    
    public static class Builder<B extends Builder<B>> extends ContainerType.Builder<B> {
 
-      private Set<ReferenceType> references = Sets.newLinkedHashSet();
+      private Set<Reference> references = Sets.newLinkedHashSet();
 
       /**
        * @see QueryResultReferences#getReferences()
        */
-      public B references(Set<? extends ReferenceType> references) {
+      public B references(Set<? extends Reference> references) {
          this.references = Sets.newLinkedHashSet(checkNotNull(references, "references"));
          return self();
       }
@@ -73,7 +73,7 @@ public class QueryResultReferences extends ContainerType {
       /**
        * @see QueryResultReferences#getReferences()
        */
-      public B reference(ReferenceType reference) {
+      public B reference(Reference reference) {
          this.references.add(reference);
          return self();
       }
@@ -99,12 +99,12 @@ public class QueryResultReferences extends ContainerType {
 
    // NOTE add other types as they are used. probably not the best way to do this.
    @XmlElementRef
-   private Set<ReferenceType> references = Sets.newLinkedHashSet();
+   private Set<Reference> references = Sets.newLinkedHashSet();
 
    /**
     * Set of references representing query results.
     */
-   public Set<ReferenceType> getReferences() {
+   public Set<Reference> getReferences() {
       return references;
    }
 
