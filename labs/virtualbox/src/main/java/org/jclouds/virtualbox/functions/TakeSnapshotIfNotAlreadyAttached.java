@@ -64,6 +64,7 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
          try {
             session = manager.get().openMachineSession(machine);
             IProgress progress = session.getConsole().takeSnapshot(snapshotName, snapshotDesc);
+            progress.waitForCompletion(-1);
             if (progress.getCompleted())
                logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc, machine.getName());
          } catch (Exception e) {

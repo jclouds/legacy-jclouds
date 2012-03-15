@@ -47,6 +47,7 @@ import org.jclouds.virtualbox.statements.SetIpAddress;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -116,7 +117,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          } catch (Exception e) {
             throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
          }
-         session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
+         IProgress progress = session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
+         progress.waitForCompletion(-1);
          session.unlockMachine();
       }
       String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
