@@ -93,13 +93,13 @@ public interface NovaAsyncClient {
     * Provides asynchronous access to Security Group features.
     */
    @Delegate
-   SecurityGroupAsyncClient getSecurityGroupClientForRegion(
+   Optional<SecurityGroupAsyncClient> getSecurityGroupClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides asynchronous access to Key Pair features.
     */
    @Delegate
-   KeyPairAsyncClient getKeyPairClientForRegion(
+   Optional<KeyPairAsyncClient> getKeyPairClientForRegion(
             @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 }

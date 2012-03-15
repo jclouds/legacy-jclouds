@@ -20,8 +20,10 @@ package org.jclouds.openstack.nova.v1_1.parse;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
@@ -40,20 +42,18 @@ import java.util.Set;
  *
  * @author Michael Arnold
  */
-@Test(groups = "unit", testName = "ParseSecurityGroupListTest")
-public class ParseSecurityGroupListTest extends BaseSetParserTest<SecurityGroup> {
+@Test(groups = "unit", testName = "ParseSecurityGroupTest")
+public class ParseSecurityGroupTest extends BaseItemParserTest<SecurityGroup> {
 
     @Override
     public String resource() {
-        return "/securitygroup_list.json";
+        return "/securitygroup_details.json";
     }
 
     @Override
-    @SelectJson("security_groups")
+    @SelectJson("security_group")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Set<SecurityGroup> expected() {
-
-        Map<String, String> anyCidr = ImmutableMap.<String, String> of("cidr", "0.0.0.0/0");
+    public SecurityGroup expected() {
 
         Set<SecurityGroupRule> securityGroupRules = ImmutableSet.<SecurityGroupRule> of(
                 SecurityGroupRule
@@ -62,43 +62,30 @@ public class ParseSecurityGroupListTest extends BaseSetParserTest<SecurityGroup>
                         .group(new HashMap<String, String>())
                         .ipProtocol(SecurityGroupRule.IpProtocol.TCP)
                         .toPort(22)
-                        .parentGroupId("3")
-                        .ipRange(anyCidr)
-                        .id("107")
+                        .parentGroupId("28")
+                        .ipRange(ImmutableMap.of("cidr", "10.2.6.0/24"))
+                        .id("108")
                         .build(),
                 SecurityGroupRule
                         .builder()
-                        .fromPort(7600)
-                        .group(new HashMap<String, String>())
+                        .fromPort(22)
+                        .group(ImmutableMap.of("tenant_id","admin", "name", "11111"))
                         .ipProtocol(SecurityGroupRule.IpProtocol.TCP)
-                        .toPort(7600)
-                        .parentGroupId("3")
-                        .ipRange(anyCidr)
-                        .id("118")
-                        .build(),
-                SecurityGroupRule
-                        .builder()
-                        .fromPort(8084)
-                        .group(new HashMap<String, String>())
-                        .ipProtocol(SecurityGroupRule.IpProtocol.TCP)
-                        .toPort(8084)
-                        .parentGroupId("3")
-                        .ipRange(anyCidr)
-                        .id("119")
+                        .toPort(22)
+                        .parentGroupId("28")
+                        .ipRange(new HashMap<String, String>())
+                        .id("109")
                         .build()
         );
 
-        return ImmutableSet
-                .of(
-                        SecurityGroup
-                                .builder()
-                                .description("description1")
-                                .id("1")
-                                .tenantId("tenant1")
-                                .rules(securityGroupRules)
-                                .name("name1")
-                                .build()
-                );
+        return SecurityGroup
+                .builder()
+                .description("description0")
+                .id("0")
+                .tenantId("tenant0")
+                .rules(securityGroupRules)
+                .name("name0")
+                .build();
     }
 
     protected Injector injector() {
