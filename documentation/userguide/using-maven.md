@@ -148,7 +148,7 @@ Here is an example of a complete _settings.xml_ file you can save to the ~/.m2 d
       </activation>
       <properties>
         <test.aws.identity>123908109d</test.aws.identity>
-        <test.aws.crendential>SDAIFJASKL9uiojfd</test.aws.crendential>
+        <test.aws.credential>SDAIFJASKL9uiojfd</test.aws.credential>
         <test.trmk-vcloudexpress.identity>adrian@jclouds.org</test.trmk-vcloudexpress.identity>
         <test.trmk-vcloudexpress.credential>veggieBurgersInParadise</test.trmk-vcloudexpress.credential>
       </properties>
