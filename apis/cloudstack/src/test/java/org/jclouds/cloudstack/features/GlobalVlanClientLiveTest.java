@@ -18,22 +18,30 @@
  */
 package org.jclouds.cloudstack.features;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkOffering;
+import org.jclouds.cloudstack.domain.TrafficType;
 import org.jclouds.cloudstack.domain.VlanIPRange;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.CreateVlanIPRangeOptions;
+import org.jclouds.cloudstack.options.ListNetworksOptions;
 import org.jclouds.cloudstack.options.ListVlanIPRangesOptions;
 import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
 import org.jclouds.cloudstack.predicates.ZonePredicates;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.getFirst;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.zoneId;
 import static org.testng.Assert.*;
 
 /**
@@ -45,6 +53,8 @@ import static org.testng.Assert.*;
 public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
 
    private Network network;
+   private boolean usingExistingNetwork;
+
    private VlanIPRange range;
 
    public void testListVlanIPRanges() throws Exception {
@@ -72,10 +82,28 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    public void testCreateVlanIPRange() {
-      Zone zone = Iterables.find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
-      NetworkOffering offering = find(client.getOfferingClient().listNetworkOfferings(), NetworkOfferingPredicates.supportsGuestVirtualNetworks());
+      final Zone zone = Iterables.find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
+      final NetworkOffering offering = find(client.getOfferingClient().listNetworkOfferings(),
+         NetworkOfferingPredicates.supportsGuestVirtualNetworks());
+      
+      Set<Network> suitableNetworks = Sets.filter(client.getNetworkClient().listNetworks(
+            zoneId(zone.getId()).isSystem(false).trafficType(TrafficType.GUEST)),
+         new Predicate<Network>() {
+            @Override
+            public boolean apply(Network network) {
+               return network.getNetworkOfferingId() == offering.getId();
+            }
+         });
 
-      network = client.getNetworkClient().createNetworkInZone(zone.getId(), offering.getId(), "net-"+prefix, "jclouds test "+prefix);
+      if (suitableNetworks.size() > 0) {
+         network = Iterables.get(suitableNetworks, 0);
+         usingExistingNetwork = true;
+         
+      } else if (network == null) {
+         network = client.getNetworkClient().createNetworkInZone(zone.getId(),
+            offering.getId(), "net-" + prefix, "jclouds test " + prefix);
+         usingExistingNetwork = false;
+      }
 
       range = globalAdminClient.getVlanClient().createVlanIPRange("172.19.1.1", "172.19.1.199", CreateVlanIPRangeOptions.Builder
          .accountInDomain(user.getAccount(), user.getDomainId())
@@ -91,7 +119,7 @@ public class GlobalVlanClientLiveTest extends BaseCloudStackClientLiveTest {
          globalAdminClient.getVlanClient().deleteVlanIPRange(range.getId());
          range = null;
       }
-      if (network != null) {
+      if (network != null && !usingExistingNetwork) {
          client.getNetworkClient().deleteNetwork(network.getId());
          network = null;
       }
