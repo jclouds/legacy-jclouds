@@ -97,7 +97,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             RunScriptOnNode.Factory scriptRunnerFactory, Supplier<NodeMetadata> hostSupplier) {
       this.manager = manager;
       this.cloner = cloner;
-      this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
+      this.nodePorts = new AtomicInteger(NODE_PORT_INIT + 1);
       this.nodeIps = new AtomicInteger(1);
       this.machineUtils = machineUtils;
       this.imachineToNodeMetadata = imachineToNodeMetadata;
