@@ -20,6 +20,7 @@ package org.jclouds.cloudstack.compute;
 
 import static com.google.common.collect.Iterables.getFirst;
 import static com.google.inject.name.Names.bindProperties;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.fail;
@@ -33,20 +34,26 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule.GetIPForwardingRulesByVirtualMachine;
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.compute.strategy.CloudStackComputeServiceAdapter;
+import org.jclouds.cloudstack.compute.strategy.OptionsConverter;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.ServiceOffering;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.features.BaseCloudStackClientLiveTest;
 import org.jclouds.cloudstack.functions.StaticNATVirtualMachineInNetwork;
+import org.jclouds.cloudstack.functions.ZoneIdToZone;
 import org.jclouds.cloudstack.predicates.JobComplete;
 import org.jclouds.cloudstack.predicates.TemplatePredicates;
 import org.jclouds.cloudstack.suppliers.GetCurrentUser;
 import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
+import org.jclouds.cloudstack.suppliers.ZoneIdToZoneSupplier;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeTestUtils;
@@ -65,6 +72,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -76,6 +84,7 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.name.Names;
 
 @Test(groups = "live", singleThreaded = true, testName = "CloudStackComputeServiceAdapterLiveTest")
 public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClientLiveTest {
@@ -103,6 +112,13 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
             bind(new TypeLiteral<Map<String, Credentials>>() {
             }).toInstance(credentialStore);
             bind(CloudStackClient.class).toInstance(context.getApi());
+            bind(new TypeLiteral<Map<NetworkType, ? extends OptionsConverter>>() {}).
+               toInstance(new CloudStackComputeServiceContextModule().optionsConverters());
+            bind(Long.class).annotatedWith(Names.named(PROPERTY_SESSION_INTERVAL)).toInstance(60L);
+            bind(new TypeLiteral<CacheLoader<Long, Zone>>() {}).
+               to(ZoneIdToZone.class);
+            bind(new TypeLiteral<Supplier<LoadingCache<Long, Zone>>>() {}).
+               to(ZoneIdToZoneSupplier.class);
             install(new FactoryModuleBuilder().build(StaticNATVirtualMachineInNetwork.Factory.class));
          }
 
