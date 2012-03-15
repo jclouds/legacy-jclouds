@@ -150,32 +150,12 @@ public class LocationPredicateTest {
       Hardware md = new HardwareBuilder().id("foo").location(otherRegion).build();
       assertFalse(predicate.apply(md));
    }
-   
-   /**
-    * a provider is not an assignable location.
-    * 
-    * For example, all cloud providers to date, vms are assigned to zones or
-    * regions, and listAssignableLocations does not include elements of PROVIDER scope.
-    * <p/>
-    * 
-    * If someone somehow gets a hold of a provider instance, this should throw an IllegalArgumentException.
-    * Asking to assign this to a provider, is not the correct syntax for
-    * 
-    * FIXME: this should not NPE,
-    */
-   @Test(enabled = false, expectedExceptions = IllegalArgumentException.class)
-   public void testThrowIllegalArgumentExceptionWhenWhenISpecifyAProviderAndInputLocationAsOpposedToNull() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(provider));
-      Hardware md = new HardwareBuilder().id("foo").location(region).build();
-      predicate.apply(md);
-   }
 
    /**
     * Only the PROVIDER scope should have a null parent, It is an illegal state if a ZONE or REGION are orphaned
     * 
-    * FIXME: this should not NPE,
     */
-   @Test(enabled = false, expectedExceptions = IllegalStateException.class)
+   @Test(expectedExceptions = IllegalStateException.class)
    public void testThrowIllegalStateExceptionWhenInputIsAnOrphanedRegion() {
       LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(region));
       Hardware md = new HardwareBuilder().id("foo").location(orphanedRegion).build();
@@ -185,9 +165,8 @@ public class LocationPredicateTest {
    /**
     * Only the PROVIDER scope should have a null parent, It is an illegal state if a ZONE or REGION are orphaned
     * 
-    * FIXME: this should not NPE,
     */
-   @Test(enabled = false, expectedExceptions = IllegalStateException.class)
+   @Test(expectedExceptions = IllegalStateException.class)
    public void testThrowIllegalStateExceptionWhenInputIsAnOrphanedZone() {
       LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(region));
       Hardware md = new HardwareBuilder().id("foo").location(orphanedZone).build();
@@ -197,9 +176,8 @@ public class LocationPredicateTest {
    /**
     * Only the PROVIDER scope should have a null parent, It is an illegal state if a ZONE or REGION are orphaned
     * 
-    * FIXME: this should not NPE,
     */
-   @Test(enabled = false, expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = IllegalArgumentException.class)
    public void testThrowIllegalArgumentExceptionWhenWhenISpecifyAnOrphanedRegion() {
       LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(orphanedRegion));
       Hardware md = new HardwareBuilder().id("foo").location(region).build();
@@ -209,9 +187,8 @@ public class LocationPredicateTest {
    /**
     * Only the PROVIDER scope should have a null parent, It is an illegal state if a ZONE or REGION are orphaned
     * 
-    * FIXME: this should not NPE,
     */
-   @Test(enabled = false, expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = IllegalArgumentException.class)
    public void testThrowIllegalArgumentExceptionWhenWhenISpecifyAnOrphanedZone() {
       LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(orphanedZone));
       Hardware md = new HardwareBuilder().id("foo").location(region).build();
