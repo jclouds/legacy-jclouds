@@ -74,7 +74,7 @@ import com.google.common.collect.Maps;
  * 
  */
 @Singleton
-public class MastersCache extends AbstractLoadingCache<Image, Master> {
+public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
    
    // TODO parameterize
    public static final int MASTER_PORT = 2222;
@@ -94,7 +94,7 @@ public class MastersCache extends AbstractLoadingCache<Image, Master> {
    private String version;
 
    @Inject
-   public MastersCache(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
+   public MastersLoadingCache(@Named(Constants.PROPERTY_BUILD_VERSION) String version,
             @Named(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE) String installationKeySequence,
             @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<MasterSpec, IMachine> masterLoader,
             Supplier<Map<Image, YamlImage>> yamlMapper, Supplier<VirtualBoxManager> manager,

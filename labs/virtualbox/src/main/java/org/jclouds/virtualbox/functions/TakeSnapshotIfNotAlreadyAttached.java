@@ -71,7 +71,9 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
             Throwables.propagate(e);
             assert false;
          } finally {
-            session.unlockMachine();
+            if (session != null) {
+               session.unlockMachine();
+            }
          }
       }
       return machine.getCurrentSnapshot();

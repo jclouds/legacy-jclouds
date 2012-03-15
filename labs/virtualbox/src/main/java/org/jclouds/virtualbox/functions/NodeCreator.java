@@ -95,7 +95,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    }
 
    @Override
-   public NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
+   public synchronized NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
 
       checkNotNull(nodeSpec, "NodeSpec");
 

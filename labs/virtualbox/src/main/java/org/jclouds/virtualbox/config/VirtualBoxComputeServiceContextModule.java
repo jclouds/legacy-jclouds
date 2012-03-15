@@ -70,7 +70,7 @@ import org.jclouds.virtualbox.functions.IMachineToHardware;
 import org.jclouds.virtualbox.functions.IMachineToImage;
 import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
 import org.jclouds.virtualbox.functions.IMachineToSshClient;
-import org.jclouds.virtualbox.functions.MastersCache;
+import org.jclouds.virtualbox.functions.MastersLoadingCache;
 import org.jclouds.virtualbox.functions.NodeCreator;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
 import org.jclouds.virtualbox.functions.admin.FileDownloadFromURI;
@@ -141,7 +141,7 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to((Class) YamlImagesFromFileConfig.class);
       // the master machines cache
       bind(new TypeLiteral<LoadingCache<Image, Master>>() {
-      }).to((Class) MastersCache.class);
+      }).to((Class) MastersLoadingCache.class);
       // the master creating function
       bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
       }).to((Class) CreateAndInstallVm.class);
