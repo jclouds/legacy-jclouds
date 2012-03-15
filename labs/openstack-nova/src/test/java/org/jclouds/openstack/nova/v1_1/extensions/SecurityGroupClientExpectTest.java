@@ -28,6 +28,7 @@ import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupListTest;
 import org.testng.annotations.Test;
 
 import java.net.URI;
+import java.util.logging.Logger;
 
 import static org.testng.Assert.assertEquals;
 
@@ -50,7 +51,8 @@ public class SecurityGroupClientExpectTest extends BaseNovaRestClientExpectTest 
                                 .put("X-Auth-Token", authToken).build()).build();
 
         HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/securitygroups_list.json")).build();
+                .payload(payloadFromResource("/securitygroup_list.json")).build();
+
 
         NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(
                 keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
@@ -58,6 +60,9 @@ public class SecurityGroupClientExpectTest extends BaseNovaRestClientExpectTest 
 
         assertEquals(clientWhenSecurityGroupsExist.getConfiguredRegions(),
                 ImmutableSet.of("North"));
+
+        Logger.getAnonymousLogger().info("*********EXPECTED*****\n" + clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North").listSecurityGroups().toString());
+        Logger.getAnonymousLogger().info("*********WAS*****\n" + new ParseSecurityGroupListTest().expected().toString());
 
         assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North")
                 .listSecurityGroups().toString(), new ParseSecurityGroupListTest().expected()
