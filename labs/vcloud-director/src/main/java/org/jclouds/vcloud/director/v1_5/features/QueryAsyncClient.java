@@ -60,21 +60,21 @@ public interface QueryAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> queryAll(@QueryParam("type") String type);
+   ListenableFuture<QueryResultRecords> queryAll(@QueryParam("type") String type);
 
    @GET
    @Path("/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> query(@QueryParam("type") String type, @QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> query(@QueryParam("type") String type, @QueryParam("filter") String filter);
 
    @GET
    @Path("/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> query(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
+   ListenableFuture<QueryResultRecords> query(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
          @QueryParam("format") String format, @QueryParam("type") String type, @QueryParam("filter") String filter);
 
    /**
@@ -85,21 +85,21 @@ public interface QueryAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> catalogsQueryAll();
+   ListenableFuture<QueryResultRecords> catalogsQueryAll();
 
    @GET
    @Path("/catalogs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> catalogsQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> catalogsQuery(@QueryParam("filter") String filter);
 
    @GET
    @Path("/catalogs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> catalogsQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
+   ListenableFuture<QueryResultRecords> catalogsQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
          @QueryParam("filter") String filter);
 
    @GET

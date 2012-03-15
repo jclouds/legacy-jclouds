@@ -43,11 +43,11 @@ public interface QueryClient {
     */
    QueryList queryList();
    
-   QueryResultRecords<?> queryAll(String type);
+   QueryResultRecords queryAll(String type);
 
-   QueryResultRecords<?> query(String type, String filter);
+   QueryResultRecords query(String type, String filter);
 
-   QueryResultRecords<?> query(Integer page, Integer pageSize, String format, String type, String filter);
+   QueryResultRecords query(Integer page, Integer pageSize, String format, String type, String filter);
 
    /**
     * Retrieves a list of Catalogs by using REST API general QueryHandler.
@@ -60,11 +60,11 @@ public interface QueryClient {
     * GET /catalogs/query
     * </pre>
     */
-   QueryResultRecords<?> catalogsQueryAll();
+   QueryResultRecords catalogsQueryAll();
 
-   QueryResultRecords<?> catalogsQuery(String filter);
+   QueryResultRecords catalogsQuery(String filter);
 
-   QueryResultRecords<?> catalogsQuery(Integer page, Integer pageSize, String filter);
+   QueryResultRecords catalogsQuery(Integer page, Integer pageSize, String filter);
 
    CatalogReferences catalogReferencesQueryAll();
 
