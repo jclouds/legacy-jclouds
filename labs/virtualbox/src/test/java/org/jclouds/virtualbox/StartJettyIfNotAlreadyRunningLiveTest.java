@@ -18,6 +18,8 @@
  */
 package org.jclouds.virtualbox;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.Properties;
@@ -52,8 +54,9 @@ public class StartJettyIfNotAlreadyRunningLiveTest {
 
       starter.load(null);
 
-      // if this opens up a file we're golden
-      IOUtils.toString(new URL("http://127.0.0.1:" + port + "/preseed.cfg").openStream());
+      String preseedFileFromJetty = IOUtils.toString(new URL("http://127.0.0.1:" + port + "/preseed.cfg").openStream());
+      String preseedFileFromFile = IOUtils
+               .toString(this.getClass().getClassLoader().getResourceAsStream("preseed.cfg")) + "\n";
+      assertEquals(preseedFileFromFile, preseedFileFromJetty);
    }
-
 }

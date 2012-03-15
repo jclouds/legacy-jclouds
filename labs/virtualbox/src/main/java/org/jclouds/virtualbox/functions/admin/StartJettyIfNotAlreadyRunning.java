@@ -23,14 +23,21 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -82,25 +89,30 @@ public class StartJettyIfNotAlreadyRunning extends CacheLoader<IsoSpec, URI> {
          logger.debug("not starting jetty, as existing host is serving %s", preconfigurationUrl);
       } else {
          try {
-            logger.debug(">> starting jetty to serve %s", preconfigurationUrl);
 
-            Resource resource = Resource.newClassPathResource("preseed.cfg");
-            checkState(resource.getInputStream() != null, "cannot find preseed.cfg");
+            // find the the parent dir inside the jar to serve the file from
 
-            ContextHandler capHandler = new ContextHandler();
-            capHandler.setContextPath("/preseed.cfg");
-            
-            ResourceHandler resourceHandler = new ResourceHandler();
-            resourceHandler.setBaseResource(resource);
-            capHandler.setHandler(resourceHandler);
+            final String preseedFile = IOUtils
+                     .toString(Resource.newSystemResource("preseed.cfg").getURL().openStream());
 
-            HandlerList handlers = new HandlerList();
-            handlers.setHandlers(new Handler[] { capHandler, new DefaultHandler() });
-            jetty.setHandler(handlers);
+            checkState(preseedFile != null);
+
+            // since we're only serving the preseed.cfg file respond to all requests with it
+            jetty.setHandler(new AbstractHandler() {
+
+               @Override
+               public void handle(String target, Request baseRequest, HttpServletRequest request,
+                        HttpServletResponse response) throws IOException, ServletException {
+                  response.setContentType("text/plain;charset=utf-8");
+                  response.setStatus(HttpServletResponse.SC_OK);
+                  baseRequest.setHandled(true);
+                  response.getWriter().println(preseedFile);
+               }
+
+            });
 
             jetty.start();
-            
-            logger.debug("<< serving %s", resourceHandler.getBaseResource());
+
          } catch (Exception e) {
             logger.error(e, "Server jetty could not be started for %s", preconfigurationUrl);
             throw Throwables.propagate(e);
