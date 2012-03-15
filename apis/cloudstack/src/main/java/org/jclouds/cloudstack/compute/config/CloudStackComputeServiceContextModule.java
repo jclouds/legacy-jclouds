@@ -212,7 +212,7 @@ public class CloudStackComputeServiceContextModule
 
    @Provides
    @Singleton
-   Map<NetworkType, ? extends OptionsConverter> optionsConverters(){
+   public Map<NetworkType, ? extends OptionsConverter> optionsConverters(){
       return ImmutableMap.of(
          NetworkType.ADVANCED, new AdvancedNetworkOptionsConverter(),
          NetworkType.BASIC, new BasicNetworkOptionsConverter());
