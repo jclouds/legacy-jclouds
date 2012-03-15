@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.v1_1.extensions;
 
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
