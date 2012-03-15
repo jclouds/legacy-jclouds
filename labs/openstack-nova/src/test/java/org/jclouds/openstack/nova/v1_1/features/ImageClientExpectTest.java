@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableSet;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseImageTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseImageListTest;
 import org.testng.annotations.Test;
@@ -40,7 +40,7 @@ import static org.testng.Assert.assertTrue;
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "ImageAsyncClientTest")
-public class ImageClientExpectTest  extends BaseNovaRestClientExpectTest {
+public class ImageClientExpectTest  extends BaseNovaClientExpectTest {
     public void testListImagesWhenResponseIs2xx() throws Exception {
         HttpRequest listImages = HttpRequest
                 .builder()

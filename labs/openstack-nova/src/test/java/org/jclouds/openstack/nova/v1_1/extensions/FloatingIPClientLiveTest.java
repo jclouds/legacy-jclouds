@@ -25,6 +25,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
@@ -52,8 +53,10 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
    @Test
    public void testListFloatingIPs() throws Exception {
       for (String regionId : context.getApi().getConfiguredRegions()) {
-         
-         FloatingIPClient client = context.getApi().getFloatingIPClientForRegion(regionId);
+         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+         if (!clientOption.isPresent())
+            continue;
+         FloatingIPClient client = clientOption.get();
          Set<FloatingIP> response = client.listFloatingIPs();
          assert null != response;
          assertTrue(response.size() >= 0);
@@ -73,7 +76,10 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
     @Test
     public void testAllocateAndDeallocateFloatingIPs() throws Exception {
         for (String regionId : context.getApi().getConfiguredRegions()) {
-            FloatingIPClient client = context.getApi().getFloatingIPClientForRegion(regionId);
+            Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+            if (!clientOption.isPresent())
+              continue;
+            FloatingIPClient client = clientOption.get();
             FloatingIP floatingIP = client.allocate();
             assertNotNull(floatingIP);
 
@@ -101,7 +107,10 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
     @Test
     public void testAddAndRemoveFloatingIp() throws Exception {
         for (String regionId : context.getApi().getConfiguredRegions()) {
-            FloatingIPClient client = context.getApi().getFloatingIPClientForRegion(regionId);
+            Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+            if (!clientOption.isPresent())
+               continue;
+            FloatingIPClient client = clientOption.get();
             ServerClient serverClient = context.getApi().getServerClientForRegion(regionId);
             Server server = serverClient.createServer("test", imageIdForRegion(regionId), flavorRefForRegion(regionId));
             blockUntilServerActive(server.getId(), serverClient);

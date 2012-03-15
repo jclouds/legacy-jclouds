@@ -18,33 +18,32 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import static org.testng.Assert.assertEquals;
+import static org.jclouds.rest.RestContextFactory.createContext;
 
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+
 /**
+ * Base class for writing KeyStone Rest Client Expect tests
+ * 
  * @author Adrian Cole
  */
-public abstract class BaseNovaAsyncClientTest<T> extends RestClientTest<T> {
-
-   @Override
-   protected void checkFilters(HttpRequest request) {
-      assertEquals(request.getFilters().size(), 1);
-      assertEquals(request.getFilters().get(0).getClass(), AuthenticateRequest.class);
+public class BaseNovaAsyncClientExpectTest extends BaseNovaExpectTest<NovaAsyncClient> {
+   public NovaAsyncClient createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+      RestContextSpec<NovaClient, NovaAsyncClient> contextSpec = new RestContextFactory(setupRestProperties())
+            .createContextSpec(provider, identity, credential, new Properties());
+      return createContext(contextSpec,
+            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).getAsyncApi();
    }
-
-   @Override
-   public RestContextSpec<NovaClient, NovaAsyncClient> createContextSpec() {
-      Properties props = new Properties();
-      return new RestContextFactory().createContextSpec("openstack-nova", "accountId", "accessKey", props);
-   }
-
 }

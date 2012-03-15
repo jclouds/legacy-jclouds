@@ -135,6 +135,7 @@ import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.util.Strings2;
 import org.jclouds.xml.XMLParser;
 import org.testng.Assert;
@@ -144,6 +145,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
@@ -184,8 +186,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       protected void configure() {
          super.configure();
          bind(new TypeLiteral<Supplier<URI>>() {
-         }).annotatedWith(Localhost2.class).toInstance(
-                  Suppliers.ofInstance(URI.create("http://localhost:1111")));
+         }).annotatedWith(Localhost2.class).toInstance(Suppliers.ofInstance(URI.create("http://localhost:1111")));
          bind(IOExceptionRetryHandler.class).toInstance(IOExceptionRetryHandler.NEVER_RETRY);
       }
 
@@ -201,17 +202,20 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @Endpoint(Localhost2.class)
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Caller {
-      
+
       // tests that we can pull from suppliers
       @Provides
       @Localhost2
       URI getURI();
-      
+
       @Delegate
       public Callee getCallee();
 
       @Delegate
       public Callee getCallee(@EndpointParam URI endpoint);
+
+      @Delegate
+      public Optional<Callee> getOptionalCallee(@EndpointParam URI endpoint);
    }
 
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
@@ -224,21 +228,25 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Provides
       @Localhost2
       URI getURI();
-      
+
       @Delegate
       public AsyncCallee getCallee();
 
       @Delegate
       public AsyncCallee getCallee(@EndpointParam URI endpoint);
+
+      @Delegate
+      public Optional<AsyncCallee> getOptionalCallee(@EndpointParam URI endpoint);
    }
 
-   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException, ExecutionException {
+   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException,
+         ExecutionException {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
          public Future<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(),
-                     "GET http://localhost:9999/client/1/foo HTTP/1.1");
+                  "GET http://localhost:9999/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
 
@@ -255,13 +263,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    }
 
-   public void testDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException, ExecutionException {
+   public void testDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException,
+         ExecutionException {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
          public Future<HttpResponse> submit(HttpCommand command) {
             assertEquals(command.getCurrentRequest().getRequestLine(),
-                     "GET http://localhost:1111/client/1/foo HTTP/1.1");
+                  "GET http://localhost:1111/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
 
@@ -278,15 +287,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       child.getInstance(Caller.class).getCallee().onePath("foo");
 
    }
-   
 
-   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException, ExecutionException {
+   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException,
+         ExecutionException {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
          public Future<HttpResponse> submit(HttpCommand command) {
-            assertEquals(command.getCurrentRequest().getRequestLine(),
-                     "GET http://howdyboys/client/1/foo HTTP/1.1");
+            assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
 
@@ -305,13 +313,77 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    }
 
-   public void testDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException, ExecutionException {
+   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPathOptionalPresent()
+         throws InterruptedException, ExecutionException {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
 
          @Override
          public Future<HttpResponse> submit(HttpCommand command) {
-            assertEquals(command.getCurrentRequest().getRequestLine(),
-                     "GET http://howdyboys/client/1/foo HTTP/1.1");
+            assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
+         }
+
+      });
+
+      try {
+         child.getInstance(AsyncCallee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      child.getInstance(AsyncCaller.class).getOptionalCallee(URI.create("http://howdyboys")).get().onePath("foo").get();
+
+      assertEquals(child.getInstance(AsyncCaller.class).getURI(), URI.create("http://localhost:1111"));
+
+   }
+
+   public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPathCanOverrideOptionalBehaviour()
+         throws InterruptedException, ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
+
+         @Override
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
+            return Futures.immediateFuture(HttpResponse.builder().build());
+         }
+
+      }, new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            bind(ImplicitOptionalConverter.class).toInstance(new ImplicitOptionalConverter() {
+
+               @Override
+               public Optional<Object> apply(Object input) {
+                  return Optional.absent();
+               }
+
+            });
+         }
+
+      });
+
+      try {
+         child.getInstance(AsyncCallee.class);
+         assert false : "Callee shouldn't be bound yet";
+      } catch (ConfigurationException e) {
+
+      }
+
+      assert !child.getInstance(AsyncCaller.class).getOptionalCallee(URI.create("http://howdyboys")).isPresent();
+
+      assertEquals(child.getInstance(AsyncCaller.class).getURI(), URI.create("http://localhost:1111"));
+
+   }
+
+   public void testDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException,
+         ExecutionException {
+      Injector child = injectorForCaller(new HttpCommandExecutorService() {
+
+         @Override
+         public Future<HttpResponse> submit(HttpCommand command) {
+            assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://howdyboys/client/1/foo HTTP/1.1");
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
 
@@ -327,12 +399,21 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(child.getInstance(Caller.class).getURI(), URI.create("http://localhost:1111"));
 
    }
-   
-   private Injector injectorForCaller(HttpCommandExecutorService service) {
 
-      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "",
-               "userfoo", null, Caller.class, AsyncCaller.class, ImmutableSet.<Module> of(new MockModule(service),
-                        new NullLoggingModule(), new CallerModule()));
+   private Injector injectorForCaller(HttpCommandExecutorService service, Module... modules) {
+
+      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec(
+            "test",
+            "http://localhost:9999",
+            "1",
+            "",
+            "",
+            "userfoo",
+            null,
+            Caller.class,
+            AsyncCaller.class,
+            ImmutableSet.<Module> builder().add(new MockModule(service)).add(new NullLoggingModule())
+                  .add(new CallerModule()).addAll(ImmutableSet.<Module> copyOf(modules)).build());
 
       return createContextBuilder(contextSpec).buildInjector();
 
@@ -1822,9 +1903,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestTransformers> processor = factory(TestTransformers.class);
       Method method = TestTransformers.class.getMethod("oneTransformerWithContext");
-      GeneratedHttpRequest<TestTransformers> request = GeneratedHttpRequest.<TestTransformers>requestBuilder().method("GET")
-            .endpoint(URI.create("http://localhost")).declaring(TestTransformers.class).javaMethod(method)
-            .args(new Object[] {}).build();
+      GeneratedHttpRequest<TestTransformers> request = GeneratedHttpRequest.<TestTransformers> requestBuilder()
+            .method("GET").endpoint(URI.create("http://localhost")).declaring(TestTransformers.class)
+            .javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ReturnStringIf200Context.class);
       assertEquals(((ReturnStringIf200Context) transformer).request, request);
@@ -2354,9 +2435,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreateJAXBResponseParserWithAnnotation() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAnnotation");
-      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser>requestBuilder()
-            .method("GET").endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class)
-            .javaMethod(method).args(new Object[] {}).build();
+      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest
+            .<TestJAXBResponseParser> requestBuilder().method("GET").endpoint(URI.create("http://localhost"))
+            .declaring(TestJAXBResponseParser.class).javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ParseXMLWithJAXB.class);
    }
@@ -2365,9 +2446,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreateJAXBResponseParserWithAcceptHeader() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestJAXBResponseParser> processor = factory(TestJAXBResponseParser.class);
       Method method = TestJAXBResponseParser.class.getMethod("jaxbGetWithAcceptHeader");
-      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest.<TestJAXBResponseParser>requestBuilder()
-            .method("GET").endpoint(URI.create("http://localhost")).declaring(TestJAXBResponseParser.class)
-            .javaMethod(method).args(new Object[] {}).build();
+      GeneratedHttpRequest<TestJAXBResponseParser> request = GeneratedHttpRequest
+            .<TestJAXBResponseParser> requestBuilder().method("GET").endpoint(URI.create("http://localhost"))
+            .declaring(TestJAXBResponseParser.class).javaMethod(method).args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ParseXMLWithJAXB.class);
    }
@@ -2409,40 +2490,40 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @Test(expectedExceptions = NullPointerException.class)
-   public void testAddHostNullWithHost() throws Exception{
-       assertNull(RestAnnotationProcessor.addHostIfMissing(null,null));
+   public void testAddHostNullWithHost() throws Exception {
+      assertNull(RestAnnotationProcessor.addHostIfMissing(null, null));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testAddHostWithHostHasNoHost() throws Exception{
-       assertNull(RestAnnotationProcessor.addHostIfMissing(null,new URI("/no/host")));
+   public void testAddHostWithHostHasNoHost() throws Exception {
+      assertNull(RestAnnotationProcessor.addHostIfMissing(null, new URI("/no/host")));
    }
 
    @Test
-   public void testAddHostNullOriginal() throws Exception{
-       assertNull(RestAnnotationProcessor.addHostIfMissing(null,new URI("http://foo")));
+   public void testAddHostNullOriginal() throws Exception {
+      assertNull(RestAnnotationProcessor.addHostIfMissing(null, new URI("http://foo")));
    }
 
    @Test
-   public void testAddHostOriginalHasHost() throws Exception{
+   public void testAddHostOriginalHasHost() throws Exception {
 
-       URI original = new URI("http://hashost/foo");
-       URI result = RestAnnotationProcessor.addHostIfMissing(original,new URI("http://foo"));
-       assertEquals(original,result);
+      URI original = new URI("http://hashost/foo");
+      URI result = RestAnnotationProcessor.addHostIfMissing(original, new URI("http://foo"));
+      assertEquals(original, result);
    }
 
    @Test
-   public void testAddHostIfMissing() throws Exception{
-       URI result = RestAnnotationProcessor.addHostIfMissing(new URI("/bar"),new URI("http://foo"));
-       assertEquals(new URI("http://foo/bar"),result);
+   public void testAddHostIfMissing() throws Exception {
+      URI result = RestAnnotationProcessor.addHostIfMissing(new URI("/bar"), new URI("http://foo"));
+      assertEquals(new URI("http://foo/bar"), result);
    }
 
    DateService dateService = new SimpleDateFormatDateService();
 
    @BeforeClass
    void setupFactory() {
-      RestContextSpec<Callee, AsyncCallee> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "", "userfoo",
-            null, Callee.class, AsyncCallee.class,
+      RestContextSpec<Callee, AsyncCallee> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "",
+            "userfoo", null, Callee.class, AsyncCallee.class,
             ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
 
                @Override
@@ -2453,7 +2534,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                   }).annotatedWith(Names.named("bar")).toInstance(ImmutableSet.of("bar"));
                   bind(new TypeLiteral<Supplier<URI>>() {
                   }).annotatedWith(Localhost2.class).toInstance(
-                           Suppliers.ofInstance(URI.create("http://localhost:1111")));
+                        Suppliers.ofInstance(URI.create("http://localhost:1111")));
                }
 
                @SuppressWarnings("unused")

@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.services.Extension;
+import org.jclouds.openstack.services.ServiceType;
 
 /**
  * Provides synchronous access to Floating IPs.
@@ -31,6 +33,7 @@ import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
  * @see FloatingIPAsyncClient
  * @author Jeremy Daggett
  */
+@Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface FloatingIPClient {
 

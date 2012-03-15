@@ -27,7 +27,7 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseFloatingIPListTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseFloatingIPTest;
 import org.testng.annotations.Test;
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "FloatingIPClientExpectTest")
-public class FloatingIPClientExpectTest extends BaseNovaRestClientExpectTest {
+public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
 
     public void testListFloatingIPsWhenResponseIs2xx() throws Exception {
         HttpRequest listFloatingIPs = HttpRequest
@@ -64,7 +64,7 @@ public class FloatingIPClientExpectTest extends BaseNovaRestClientExpectTest {
         assertEquals(clientWhenFloatingIPsExist.getConfiguredRegions(),
                 ImmutableSet.of("North"));
 
-        assertEquals(clientWhenFloatingIPsExist.getFloatingIPClientForRegion("North")
+        assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get()
                 .listFloatingIPs().toString(), new ParseFloatingIPListTest().expected()
                 .toString());
     }
@@ -87,7 +87,7 @@ public class FloatingIPClientExpectTest extends BaseNovaRestClientExpectTest {
                 keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
                 listFloatingIPs, listFloatingIPsResponse);
 
-        assertTrue(clientWhenNoServersExist.getFloatingIPClientForRegion("North")
+        assertTrue(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get()
                 .listFloatingIPs().isEmpty());
     }
     
@@ -109,7 +109,7 @@ public class FloatingIPClientExpectTest extends BaseNovaRestClientExpectTest {
                 keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
                 getFloatingIP, getFloatingIPResponse);
 
-        assertEquals(clientWhenFloatingIPsExist.getFloatingIPClientForRegion("North")
+        assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get()
                 .getFloatingIP("1").toString(),
                 new ParseFloatingIPTest().expected().toString());
     }
@@ -131,7 +131,7 @@ public class FloatingIPClientExpectTest extends BaseNovaRestClientExpectTest {
                 keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
                 getFloatingIP, getFloatingIPResponse);
 
-        assertNull(clientWhenNoServersExist.getFloatingIPClientForRegion("North")
+        assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get()
                 .getFloatingIP("1"));
     }
 
@@ -154,7 +154,7 @@ public class FloatingIPClientExpectTest extends BaseNovaRestClientExpectTest {
                 keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
                 allocateFloatingIP, allocateFloatingIPResponse);
 
-        assertEquals(clientWhenFloatingIPsExist.getFloatingIPClientForRegion("North")
+        assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get()
                 .allocate().toString(),
                 new ParseFloatingIPTest().expected().toString());
 
@@ -178,7 +178,7 @@ public class FloatingIPClientExpectTest extends BaseNovaRestClientExpectTest {
                 keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
                 allocateFloatingIP, allocateFloatingIPResponse);
 
-        assertNull(clientWhenNoServersExist.getFloatingIPClientForRegion("North")
+        assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get()
                 .allocate());
     }
     

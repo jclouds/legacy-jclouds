@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
+import org.jclouds.openstack.services.Extension;
+import org.jclouds.openstack.services.ServiceType;
 
 /**
  * Provides synchronous access to Security Groups.
@@ -32,6 +34,7 @@ import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
  * @see SecurityGroupAsyncClient
  * @author Jeremy Daggett
  */
+@Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SECURITY_GROUPS)
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface SecurityGroupClient {
 

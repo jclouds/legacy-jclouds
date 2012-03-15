@@ -16,17 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
+package org.jclouds.openstack.nova.v1_1.extensions;
+
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaRestClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupListTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupTest;
 import org.testng.annotations.Test;
 
-import java.net.URI;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -38,7 +43,7 @@ import static org.testng.Assert.assertTrue;
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "SecurityGroupClientExpectTest")
-public class SecurityGroupClientExpectTest extends BaseNovaRestClientExpectTest {
+public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
     public void testListSecurityGroupsWhenResponseIs2xx() throws Exception {
         HttpRequest listSecurityGroups = HttpRequest
                 .builder()

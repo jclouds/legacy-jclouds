@@ -31,8 +31,11 @@ import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.rest.internal.RestContextImpl;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
@@ -55,14 +58,14 @@ public class RestClientModule<S, A> extends AbstractModule {
    
    protected final Class<A> asyncClientType;
    protected final Class<S> syncClientType;
-   protected final Map<Class<?>, Class<?>> delegates;
+   protected final Map<Class<?>, Class<?>> sync2Async;
    protected final AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
 
    public RestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegates) {
+         Map<Class<?>, Class<?>> sync2Async) {
       this.asyncClientType = asyncClientType;
       this.syncClientType = syncClientType;
-      this.delegates = delegates;
+      this.sync2Async = sync2Async;
    }
 
    public RestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
@@ -77,6 +80,7 @@ public class RestClientModule<S, A> extends AbstractModule {
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {
+      bind(new TypeLiteral<Function<Object, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
       // this will help short circuit scenarios that can otherwise lock out users
       bind(new TypeLiteral<AtomicReference<AuthorizationException>>(){}).toInstance(authException);
       // Ensures the restcontext can be looked up without generic types.
@@ -136,7 +140,7 @@ public class RestClientModule<S, A> extends AbstractModule {
 
    protected void bindClient() {
       BinderUtils.bindClient(binder(), syncClientType, asyncClientType,
-            delegates);
+            sync2Async);
    }
 
 
@@ -145,7 +149,7 @@ public class RestClientModule<S, A> extends AbstractModule {
    @Named("sync")
    LoadingCache<ClassMethodArgs, Object> provideSyncDelegateMap(
          CreateClientForCaller createClientForCaller) {
-      createClientForCaller.sync2Async = delegates;
+      createClientForCaller.sync2Async = sync2Async;
       return CacheBuilder.newBuilder().build(createClientForCaller);
    }
 

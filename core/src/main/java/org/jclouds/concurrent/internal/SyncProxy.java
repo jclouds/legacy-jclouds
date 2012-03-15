@@ -35,8 +35,11 @@ import javax.inject.Named;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.util.Optionals2;
 import org.jclouds.util.Throwables2;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -51,14 +54,15 @@ import com.google.inject.ProvisionException;
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
-   public static <T> T proxy(Class<T> clazz, Object async,
+   public static <T> T proxy(Function<Object, Optional<Object>> optionalConverter, Class<T> clazz, Object async,
          @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap,
          Map<Class<?>, Class<?>> sync2Async, Map<String, Long> timeouts) throws IllegalArgumentException, SecurityException,
          NoSuchMethodException {
       return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
-              new SyncProxy(clazz, async, delegateMap, sync2Async, timeouts));
+              new SyncProxy(optionalConverter, clazz, async, delegateMap, sync2Async, timeouts));
    }
 
+   private final Function<Object, Optional<Object>> optionalConverter;
    private final Object delegate;
    private final Class<?> declaring;
    private final Map<Method, Method> methodMap;
@@ -69,10 +73,11 @@ public class SyncProxy implements InvocationHandler {
    private static final Set<Method> objectMethods = ImmutableSet.copyOf(Object.class.getMethods());
 
    @Inject
-   private SyncProxy(Class<?> declaring, Object async,
+   private SyncProxy(Function<Object, Optional<Object>> optionalConverter, Class<?> declaring, Object async,
          @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap, Map<Class<?>,
            Class<?>> sync2Async, final Map<String, Long> timeouts)
          throws SecurityException, NoSuchMethodException {
+      this.optionalConverter = optionalConverter;
       this.delegateMap = delegateMap;
       this.delegate = async;
       this.declaring = declaring;
@@ -125,10 +130,19 @@ public class SyncProxy implements InvocationHandler {
       } else if (method.getName().equals("toString")) {
          return this.toString();
       } else if (method.isAnnotationPresent(Delegate.class)) {
-         Class<?> asyncClass = sync2Async.get(method.getReturnType());
-         checkState(asyncClass != null, "please configure corresponding async class for " + method.getReturnType()
+         Class<?> syncClass = Optionals2.returnTypeOrTypeOfOptional(method);
+         // get the return type of the asynchronous class associated with this client
+         // ex. FloatingIPClient is associated with FloatingIPAsyncClient
+         Class<?> asyncClass = sync2Async.get(syncClass);
+         checkState(asyncClass != null, "please configure corresponding async class for " + syncClass
                + " in your RestClientModule");
+         // pass any parameters necessary to get a relevant instance of that async class
+         // ex. getClientForRegion("north") might return an instance whose endpoint is
+         // different that "south"
          Object returnVal = delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
+         if (Optionals2.isReturnTypeOptional(method)){
+            return optionalConverter.apply(returnVal);
+         }
          return returnVal;
       } else if (syncMethodMap.containsKey(method)) {
          return syncMethodMap.get(method).invoke(delegate, args);

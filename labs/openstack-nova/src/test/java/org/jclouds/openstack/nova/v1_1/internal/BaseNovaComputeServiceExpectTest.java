@@ -25,43 +25,22 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.BaseRestClientExpectTest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
- * Base class for writing KeyStone Expect tests with the ComputeService abstraction
- *
+ * Base class for writing KeyStone Expect tests with the ComputeService
+ * abstraction
+ * 
  * @author Matt Stephenson
  */
-public class BaseNovaComputeServiceExpectTest extends BaseRestClientExpectTest<ComputeService>
-{
-   protected HttpRequest keystoneAuthWithUsernameAndPassword;
-   protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
-   protected String authToken;
-   protected HttpResponse responseWithKeystoneAccess;
-
-   public BaseNovaComputeServiceExpectTest()
-   {
-      provider = "openstack-nova";
-      keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
-         credential);
-      keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
-         credential);
-      authToken = KeystoneFixture.INSTANCE.getAuthToken();
-      responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
-      // now, createContext arg will need tenant prefix
-      identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
-   }
-
+public class BaseNovaComputeServiceExpectTest extends BaseNovaExpectTest<ComputeService> {
 
    @Override
-   public ComputeService createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props)
-   {
+   public ComputeService createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
       return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, identity, credential,
-         ImmutableSet.<Module>of(new ExpectModule(fn), new NullLoggingModule(), module), props).getComputeService();
+            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).getComputeService();
    }
 }

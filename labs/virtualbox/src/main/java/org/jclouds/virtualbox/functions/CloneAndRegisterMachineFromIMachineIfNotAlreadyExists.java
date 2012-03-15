@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
@@ -100,6 +99,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
                .getVBox()
                .createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(),
                         vmSpec.isForceOverwrite());
+      
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       if (isLinkedClone)
          options.add(CloneOptions.Link);

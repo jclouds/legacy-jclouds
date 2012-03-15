@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.services.Extension;
+import org.jclouds.openstack.services.ServiceType;
 
 /**
  * Provides synchronous access to Security Groups.
@@ -32,6 +34,7 @@ import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
  * @see KeyPairAsyncClient
  * @author Jeremy Daggett
  */
+@Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.KEYPAIRS)
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface KeyPairClient {
 
