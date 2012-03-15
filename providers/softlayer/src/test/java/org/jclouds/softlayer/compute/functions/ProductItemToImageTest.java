@@ -40,7 +40,7 @@ import static org.testng.AssertJUnit.*;
  */
 @Test(groups = "unit")
 public class ProductItemToImageTest {
-   // Operating Systems available SEPT 2011
+   // Operating Systems available MAR 2012
    private static final List<String> operatingSystems = Arrays.asList(
          "CentOS 5 - LAMP Install (32 bit)",
          "CentOS 5 - LAMP Install (64 bit)",
@@ -77,6 +77,8 @@ public class ProductItemToImageTest {
          "Ubuntu Linux 8 LTS Hardy Heron - LAMP Install (64 bit)",
          "Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (32 bit)",
          "Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)",
+         "CloudLinux 6 (32 bit)", 
+         "CloudLinux 6 (64 bit)",          
          "Windows Server 2003 Datacenter SP2 with R2 (32 bit)",
          "Windows Server 2003 Datacenter SP2 with R2 (64 bit)",
          "Windows Server 2003 Enterprise SP2 with R2 (64 bit)",
