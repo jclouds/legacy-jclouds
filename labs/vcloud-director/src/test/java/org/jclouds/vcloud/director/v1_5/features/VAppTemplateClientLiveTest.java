@@ -53,8 +53,8 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTes
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -200,7 +200,8 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       // FIXME Cleanup after ourselves..
       
       Metadata oldMetadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
-      
+      Map<String,String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
+
       String uid = ""+random.nextInt();
       String key = "mykey-"+uid;
       String val = "myval-"+uid;
@@ -211,16 +212,11 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       retryTaskSuccess.apply(task);
 
       Metadata newMetadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
-      Map<String,String> newMetadataMap = metadataToMap(newMetadata);
-      assertEquals(newMetadataMap.get(key), val, "newMetadata="+newMetadata);
-   }
-   
-   private Map<String,String> metadataToMap(Metadata metadata) {
-      Map<String,String> result = Maps.newLinkedHashMap();
-      for (MetadataEntry entry : metadata.getMetadataEntries()) {
-         result.put(entry.getKey(), entry.getValue());
-      }
-      return result;
+      Map<String,String> expectedMetadataMap = ImmutableMap.<String,String>builder()
+               .putAll(oldMetadataMap)
+               .put(key, val)
+               .build();
+      Checks.checkMetadataFor("vAppTemplate", newMetadata, expectedMetadataMap);
    }
    
    @Test
@@ -247,12 +243,13 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       final Task task = vappTemplateClient.editVAppTemplateMetadataValue(vAppTemplateURI, key, metadataValue);
       retryTaskSuccess.apply(task);
       
+      // Then delete the entry
       final Task deletionTask = vappTemplateClient.deleteVAppTemplateMetadataValue(vAppTemplateURI, key);
       retryTaskSuccess.apply(deletionTask);
 
+      // Then confirm the entry is not there
       Metadata newMetadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
-      Map<String,String> newMetadataMap = metadataToMap(newMetadata);
-      assertFalse(newMetadataMap.containsKey(key), "newMetadata="+newMetadata);
+      Checks.checkMetadataKeyAbsentFor("vAppTemplate", newMetadata, key);
    }
 
    @Test // FIXME Failing because template does not have a guest customization section to be got

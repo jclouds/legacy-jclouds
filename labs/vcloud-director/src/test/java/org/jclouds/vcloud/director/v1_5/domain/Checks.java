@@ -22,6 +22,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.C
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_BE_WELL_FORMED_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MUST_CONTAIN_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
@@ -37,6 +38,7 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -59,6 +61,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
 
+import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.net.InetAddresses;
@@ -542,18 +545,42 @@ public class Checks {
    }
 
    public static void checkMetadataValueFor(String client, MetadataValue metadataValue) {
+      checkMetadataValueFor(client, metadataValue, "value");
+   }
+   
+   public static void checkMetadataValueFor(String client, MetadataValue metadataValue, String expectedValue) {
       // Check required fields
       String value = metadataValue.getValue();
       assertNotNull(value, 
             String.format(OBJ_FIELD_ATTRB_REQ, client, "MetadataEntry", 
                   metadataValue.toString(), "value"));
-      assertEquals(value, "value", 
-            String.format(OBJ_FIELD_EQ, client, "metadataEntry.value", "value", value));
+      assertEquals(value, expectedValue, 
+            String.format(OBJ_FIELD_EQ, client, "metadataEntry.value", expectedValue, value));
       
       // Check parent type
       checkResourceType(metadataValue);
    }
 
+   public static void checkMetadataKeyAbsentFor(String client, Metadata metadata, String key) {
+      Map<String,String> metadataMap = metadataToMap(metadata);
+      assertFalse(metadataMap.containsKey(key), 
+               String.format(OBJ_DEL, client+" metadata key", key));
+   }
+
+   public static void checkMetadataFor(String client, Metadata metadata, Map<String, String> expectedMap) {
+      Map<String,String> actualMap = Checks.metadataToMap(metadata);
+      assertEquals(actualMap, expectedMap,
+               String.format(OBJ_FIELD_EQ, client, "metadata entries", expectedMap, actualMap));
+   }
+
+   public static Map<String,String> metadataToMap(Metadata metadata) {
+      Map<String,String> result = Maps.newLinkedHashMap();
+      for (MetadataEntry entry : metadata.getMetadataEntries()) {
+         result.put(entry.getKey(), entry.getValue());
+      }
+      return result;
+   }
+   
    public static void checkVApp(VApp vApp) {
       // Check optional fields
       Owner owner = vApp.getOwner();
