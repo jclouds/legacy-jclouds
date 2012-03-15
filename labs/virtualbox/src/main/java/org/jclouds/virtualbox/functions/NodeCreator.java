@@ -54,6 +54,13 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
+/**
+ * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
+ * synchronized mainly because of snapshot creation (must be synchronized on a per-master-basis).
+ * 
+ * @author dralves
+ * 
+ */
 @Singleton
 public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials<IMachine>> {
 

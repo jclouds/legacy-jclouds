@@ -64,18 +64,21 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.AbstractLoadingCache;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
- * Does most of the work wrt to creating the master image.
+ * A {@link LoadingCache} for masters. If the requested master has been previously created this
+ * returns it, if not it coordinates its creation including downloading isos and creating
+ * cache/config directories.
  * 
  * @author dralves
  * 
  */
 @Singleton
 public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
-   
+
    // TODO parameterize
    public static final int MASTER_PORT = 2222;
 
@@ -114,7 +117,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
       this.version = Iterables.get(Splitter.on('r').split(version), 0);
       this.isoDownloader = isoDownloader;
    }
-   
+
    @PostConstruct
    public void createCacheDirStructure() {
       if (!new File(workingDir).exists()) {
@@ -201,7 +204,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
       }
       return null;
    }
-   
+
    private String getFilePathOrDownload(String httpUrl) throws ExecutionException {
       String fileName = httpUrl.substring(httpUrl.lastIndexOf('/') + 1, httpUrl.length());
       File localFile = new File(isosDir, fileName);
