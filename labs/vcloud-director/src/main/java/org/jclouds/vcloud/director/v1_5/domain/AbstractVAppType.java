@@ -51,6 +51,7 @@ public abstract class AbstractVAppType extends ResourceEntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromResourceEntityType(this);
    }

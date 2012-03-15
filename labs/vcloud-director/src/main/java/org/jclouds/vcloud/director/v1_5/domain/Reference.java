@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.logging.Logger;
 
@@ -45,7 +46,7 @@ import com.google.common.base.Objects.ToStringHelper;
 @XmlSeeAlso({
          CatalogReference.class
 })
-//@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ReferenceType")
 public class Reference {
 
    @javax.annotation.Resource

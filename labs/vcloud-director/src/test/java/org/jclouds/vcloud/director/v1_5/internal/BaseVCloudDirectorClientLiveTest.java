@@ -61,6 +61,9 @@ import com.google.inject.Module;
 @Listeners(FormatApiResultsListener.class)
 @Test(groups = "live")
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
+   
+   protected static final long TASK_TIMEOUT_SECONDS = 10L;
+   protected static final long LONG_TASK_TIMEOUT_SECONDS = 300L;
 
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
@@ -70,10 +73,16 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    public abstract void setupRequiredClients();
 
    public Predicate<Task> retryTaskSuccess;
+   public Predicate<Task> retryTaskSuccessLong;
 
    @Inject
    protected void initTaskSuccess(TaskSuccess taskSuccess) {
-      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, 1000L);
+      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 1000L);
+   }
+
+   @Inject
+   protected void initTaskSuccessLong(TaskSuccess taskSuccess) {
+      retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
 
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
