@@ -20,6 +20,8 @@ package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.Map;
@@ -31,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
@@ -316,6 +319,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
                .build();
       Set<VAppNetworkConfiguration> vappNetworkConfigurations = ImmutableSet.of(vappNetworkConfiguration);
       NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
+               .info("my info")
                .networkConfigs(vappNetworkConfigurations)
                .build();
       
@@ -363,16 +367,34 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
 
    @Test
    public void testDisableVAppTemplateDownload() throws Exception {
-      // TODO Need assertion that command had effect
-      final Task task = vappTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
-      retryTaskSuccess.apply(task);
+      vappTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
+      
+      // Assert that "download" link is now not offered
+      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      Set<Link> links = vAppTemplate.getLinks();
+      assertFalse(hasLinkMatchingRel(links, "download.*"), "Should not offer download link after disabling download: "+vAppTemplate);
    }
    
    @Test
    public void testEnableVAppTemplateDownload() throws Exception {
-      // TODO Need assertion that command had effect
+      // First disable so that enable really has some work to do...
+      vappTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
       final Task task = vappTemplateClient.enableDownloadVappTemplate(vAppTemplateURI);
       retryTaskSuccess.apply(task);
+      
+      // Assert that "download" link is now offered
+      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      Set<Link> links = vAppTemplate.getLinks();
+      assertTrue(hasLinkMatchingRel(links, "download.*"), "Should offer download link after enabling download: "+vAppTemplate);
+   }
+   
+   private boolean hasLinkMatchingRel(Set<Link> links, String regex) {
+      for (Link link : links) {
+         if (link.getRel() != null && link.getRel().matches(regex)) {
+            return true;
+         }
+      }
+      return false;
    }
    
    @Test
@@ -392,5 +414,27 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       
       final Task task = vappTemplateClient.relocateVappTemplate(vAppTemplateURI, relocateParams);
       retryTaskSuccess.apply(task);
+   }
+   
+   @Test
+   public void testCompletedTaskNotIncludedInVAppTemplate() throws Exception {
+      // Kick off a task, and wait for it to complete
+      vappTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
+      final Task task = vappTemplateClient.enableDownloadVappTemplate(vAppTemplateURI);
+      retryTaskSuccess.apply(task);
+
+      // Ask the VAppTemplate for its tasks, and the status of the matching task if it exists
+      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      Set<Task> tasks = vAppTemplate.getTasks();
+      if (tasks != null) {
+         for (Task contender : tasks) {
+            if (task.getId().equals(contender.getId())) {
+               String status = contender.getStatus();
+               if (status.equals(Task.Status.QUEUED) || status.equals(Task.Status.PRE_RUNNING) || status.equals(Task.Status.RUNNING)) {
+                  fail("Task "+contender+" reported complete, but is included in VAppTemplate in status "+status);
+               }
+            }
+         }
+      }
    }
 }

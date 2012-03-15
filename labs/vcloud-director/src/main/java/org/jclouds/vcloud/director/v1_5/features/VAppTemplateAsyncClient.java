@@ -119,11 +119,10 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#disableDownloadVappTemplate(URI)
     */
    @POST
-   @Consumes(TASK)
    @Path("/action/disableDownload")
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> disableDownloadVappTemplate(@EndpointParam URI templateURI);
+   ListenableFuture<Void> disableDownloadVappTemplate(@EndpointParam URI templateURI);
 
    /**
     * @see VAppTemplateClient#enableDownloadVappTemplate(URI)
