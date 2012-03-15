@@ -22,9 +22,11 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -132,13 +134,13 @@ public abstract class ResourceEntityType extends EntityType {
    }
    
    public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
-      private FilesList files;
+      private Set<File> files;
       private Integer status;
 
       /**
        * @see ResourceEntityType#getFiles()
        */
-      public B files(FilesList files) {
+      public B files(Set<File> files) {
          this.files = files;
          return self();
       }
@@ -156,8 +158,10 @@ public abstract class ResourceEntityType extends EntityType {
       }
    }
 
-   @XmlElement(name = "Files")
-   private FilesList files;
+   @XmlElementWrapper(name = "Files")
+   @XmlElement(name = "File")
+   private Set<File> files;
+   
    @XmlAttribute
    private Integer status;
 
@@ -171,11 +175,10 @@ public abstract class ResourceEntityType extends EntityType {
       // for JAXB
    }
 
-   
    /**
     * Gets the value of the files property.
     */
-   public FilesList getFiles() {
+   public Set<File> getFiles() {
       return files;
    }
 

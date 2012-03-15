@@ -71,9 +71,9 @@ public class Checks {
    public static void checkResourceEntityType(ResourceEntityType resourceEntity) {
       // Check optional fields
       // NOTE status cannot be checked (TODO: doesn't status have a range of valid values?)
-      FilesList files = resourceEntity.getFiles();
-      if (files != null && files.getFiles() != null && !files.getFiles().isEmpty()) {
-         for (File file : files.getFiles()) checkFile(file);
+      Set<File> files = resourceEntity.getFiles();
+      if (files != null && !files.isEmpty()) {
+         for (File file : files) checkFile(file);
       }
       
       // Check parent type
