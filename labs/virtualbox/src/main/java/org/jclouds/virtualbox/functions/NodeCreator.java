@@ -55,148 +55,124 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 @Singleton
-public class NodeCreator implements
-		Function<NodeSpec, NodeAndInitialCredentials<IMachine>> {
+public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials<IMachine>> {
 
-	// TODO parameterize
-	public static final int NODE_PORT_INIT = 3000;
+   // TODO parameterize
+   public static final int NODE_PORT_INIT = 3000;
 
-	// TODO parameterize
-	public static final String VMS_NETWORK = "33.33.33.";
+   // TODO parameterize
+   public static final String VMS_NETWORK = "33.33.33.";
 
-	// TODO parameterize
-	public static final String HOST_ONLY_IFACE_NAME = "vboxnet0";
+   // TODO parameterize
+   public static final String HOST_ONLY_IFACE_NAME = "vboxnet0";
 
-	// TODO parameterize
-	public static final boolean USE_LINKED = true;
+   // TODO parameterize
+   public static final boolean USE_LINKED = true;
 
-	private final Supplier<VirtualBoxManager> manager;
-	private final Function<CloneSpec, IMachine> cloner;
-	private final AtomicInteger nodePorts;
-	private final AtomicInteger nodeIps;
-	private MachineUtils machineUtils;
-	private Function<IMachine, NodeMetadata> imachineToNodeMetadata;
+   private final Supplier<VirtualBoxManager> manager;
+   private final Function<CloneSpec, IMachine> cloner;
+   private final AtomicInteger nodePorts;
+   private final AtomicInteger nodeIps;
+   private MachineUtils machineUtils;
+   private Function<IMachine, NodeMetadata> imachineToNodeMetadata;
 
-	private final RunScriptOnNode.Factory scriptRunnerFactory;
-	private final Supplier<NodeMetadata> hostSupplier;
+   private final RunScriptOnNode.Factory scriptRunnerFactory;
+   private final Supplier<NodeMetadata> hostSupplier;
 
-	@Inject
-	public NodeCreator(Supplier<VirtualBoxManager> manager,
-			Function<CloneSpec, IMachine> cloner, MachineUtils machineUtils,
-			Function<IMachine, NodeMetadata> imachineToNodeMetadata,
-			RunScriptOnNode.Factory scriptRunnerFactory,
-			Supplier<NodeMetadata> hostSupplier) {
-		this.manager = manager;
-		this.cloner = cloner;
-		this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
-		this.nodeIps = new AtomicInteger(1);
-		this.machineUtils = machineUtils;
-		this.imachineToNodeMetadata = imachineToNodeMetadata;
-		this.scriptRunnerFactory = scriptRunnerFactory;
-		this.hostSupplier = hostSupplier;
+   @Inject
+   public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,
+            MachineUtils machineUtils, Function<IMachine, NodeMetadata> imachineToNodeMetadata,
+            RunScriptOnNode.Factory scriptRunnerFactory, Supplier<NodeMetadata> hostSupplier) {
+      this.manager = manager;
+      this.cloner = cloner;
+      this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
+      this.nodeIps = new AtomicInteger(1);
+      this.machineUtils = machineUtils;
+      this.imachineToNodeMetadata = imachineToNodeMetadata;
+      this.scriptRunnerFactory = scriptRunnerFactory;
+      this.hostSupplier = hostSupplier;
 
-	}
+   }
 
-	@Override
-	public NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
+   @Override
+   public NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
 
-		checkNotNull(nodeSpec, "NodeSpec");
+      checkNotNull(nodeSpec, "NodeSpec");
 
-		Master master = nodeSpec.getMaster();
-		checkNotNull(master, "Master");
+      Master master = nodeSpec.getMaster();
+      checkNotNull(master, "Master");
 
-		if (master.getMachine().getCurrentSnapshot() != null) {
-			ISession session;
-			try {
-				session = manager.get().openMachineSession(master.getMachine());
-			} catch (Exception e) {
-				throw new RuntimeException(
-						"error opening vbox machine session: " + e.getMessage(),
-						e);
-			}
-			session.getConsole().deleteSnapshot(
-					master.getMachine().getCurrentSnapshot().getId());
-			session.unlockMachine();
-		}
-		String masterNameWithoutPrefix = master.getSpec().getVmSpec()
-				.getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
+      if (master.getMachine().getCurrentSnapshot() != null) {
+         ISession session;
+         try {
+            session = manager.get().openMachineSession(master.getMachine());
+         } catch (Exception e) {
+            throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
+         }
+         session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
+         session.unlockMachine();
+      }
+      String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
 
-		String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix
-				+ "-" + nodeSpec.getTag() + "-" + nodeSpec.getName();
+      String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + "-" + nodeSpec.getTag() + "-"
+               + nodeSpec.getName();
 
-		VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName)
-				.memoryMB(512).cleanUpMode(CleanupMode.Full)
-				.forceOverwrite(true).build();
+      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
+               .forceOverwrite(true).build();
 
-		
-		// CASE NAT + HOST-ONLY 
-		NetworkAdapter natAdapter = NetworkAdapter
-				.builder()
-				.networkAttachmentType(NetworkAttachmentType.NAT)
-				.tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(),
-						"", 22).build();
-		NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder()
-				.addNetworkAdapter(natAdapter).slot(0L).build();
+      // CASE NAT + HOST-ONLY
+      NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+               .tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22).build();
+      NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(0L).build();
 
-		NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder()
-				.networkAttachmentType(NetworkAttachmentType.HostOnly)
-				.staticIp(VMS_NETWORK + this.nodeIps.getAndIncrement()).build();
+      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
+               .staticIp(VMS_NETWORK + this.nodeIps.getAndIncrement()).build();
 
-		NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder()
-				.addNetworkAdapter(hostOnlyAdapter)
-				.addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();		
-		
-		NetworkSpec networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
-		////
-		
-		// CASE BRIDGED
-		//NetworkSpec networkSpec = createNetworkSpecForBridgedNIC();
+      NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
+               .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();
 
-		CloneSpec cloneSpec = CloneSpec.builder().linked(USE_LINKED)
-				.master(master.getMachine()).network(networkSpec)
-				.vm(cloneVmSpec).build();
+      NetworkSpec networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
+      // //
 
-		IMachine cloned = cloner.apply(cloneSpec);
+      // CASE BRIDGED
+      // NetworkSpec networkSpec = createNetworkSpecForBridgedNIC();
 
-		new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI,
-				"").apply(cloned);
+      CloneSpec cloneSpec = CloneSpec.builder().linked(USE_LINKED).master(master.getMachine()).network(networkSpec)
+               .vm(cloneVmSpec).build();
 
-		
-		 // CASE NAT + HOST-ONLY
-		 machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned),
-		 new SetIpAddress(hostOnlyIfaceCard), RunScriptOptions.NONE);
-		 ////
-		 
+      IMachine cloned = cloner.apply(cloneSpec);
 
-		// TODO get credentials from somewhere else (they are also HC in
-		// IMachineToSshClient)
-		NodeAndInitialCredentials<IMachine> nodeAndInitialCredentials = new NodeAndInitialCredentials<IMachine>(
-				cloned, cloneName, LoginCredentials.builder().user("toor")
-						.password("password").authenticateSudo(true).build());
+      new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
 
-		return nodeAndInitialCredentials;
-	}
+      // CASE NAT + HOST-ONLY
+      machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
+               RunScriptOptions.NONE);
+      // //
 
-	private NetworkSpec createNetworkSpecForHostOnlyNATNICs(NetworkInterfaceCard natIfaceCard, NetworkInterfaceCard hostOnlyIfaceCard) {
-		return NetworkSpec.builder().addNIC(natIfaceCard)
-				.addNIC(hostOnlyIfaceCard).build();
-	}
+      // TODO get credentials from somewhere else (they are also HC in
+      // IMachineToSshClient)
+      NodeAndInitialCredentials<IMachine> nodeAndInitialCredentials = new NodeAndInitialCredentials<IMachine>(cloned,
+               cloneName, LoginCredentials.builder().user("toor").password("password").authenticateSudo(true).build());
 
-	private NetworkSpec createNetworkSpecForBridgedNIC() {
-		List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(
-				scriptRunnerFactory).apply(hostSupplier.get());
-		BridgedIf bridgedActiveInterface = checkNotNull(
-				activeBridgedInterfaces.get(0), "activeBridgedIf");
+      return nodeAndInitialCredentials;
+   }
 
-		NetworkAdapter bridgedAdapter = NetworkAdapter.builder()
-				.networkAttachmentType(NetworkAttachmentType.Bridged).build();
-		NetworkInterfaceCard bridgedNIC = NetworkInterfaceCard.builder()
-				.addNetworkAdapter(bridgedAdapter)
-				.addHostInterfaceName(bridgedActiveInterface.getName())
-				.slot(0L).build();
+   private NetworkSpec createNetworkSpecForHostOnlyNATNICs(NetworkInterfaceCard natIfaceCard,
+            NetworkInterfaceCard hostOnlyIfaceCard) {
+      return NetworkSpec.builder().addNIC(natIfaceCard).addNIC(hostOnlyIfaceCard).build();
+   }
 
-		NetworkSpec networkSpec = NetworkSpec.builder().addNIC(bridgedNIC)
-				.build();
-		return networkSpec;
-	}
+   private NetworkSpec createNetworkSpecForBridgedNIC() {
+      List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory)
+               .apply(hostSupplier.get());
+      BridgedIf bridgedActiveInterface = checkNotNull(activeBridgedInterfaces.get(0), "activeBridgedIf");
+
+      NetworkAdapter bridgedAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.Bridged)
+               .build();
+      NetworkInterfaceCard bridgedNIC = NetworkInterfaceCard.builder().addNetworkAdapter(bridgedAdapter)
+               .addHostInterfaceName(bridgedActiveInterface.getName()).slot(0L).build();
+
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(bridgedNIC).build();
+      return networkSpec;
+   }
 }
