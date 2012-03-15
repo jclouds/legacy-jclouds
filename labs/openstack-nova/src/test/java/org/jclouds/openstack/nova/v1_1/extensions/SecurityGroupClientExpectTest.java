@@ -28,7 +28,6 @@ import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupListTest;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.util.logging.Logger;
 
 import static org.testng.Assert.assertEquals;
 
