@@ -47,5 +47,6 @@ public interface AdminVdcAsyncClient extends VdcAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @Override
    ListenableFuture<AdminVdc> getVdc(@EndpointParam URI vdcRef);
 }
