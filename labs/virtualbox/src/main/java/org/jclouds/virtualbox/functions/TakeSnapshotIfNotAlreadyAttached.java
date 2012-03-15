@@ -40,15 +40,13 @@ import com.google.common.base.Throwables;
  */
 public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISnapshot> {
 
-   
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   
+
    private Supplier<VirtualBoxManager> manager;
    private String snapshotName;
    private String snapshotDesc;
-
 
    public TakeSnapshotIfNotAlreadyAttached(Supplier<VirtualBoxManager> manager, String snapshotName, String snapshotDesc) {
       this.manager = manager;
@@ -60,18 +58,34 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
    public ISnapshot apply(@Nullable IMachine machine) {
       // Snapshot a machine
       ISession session = null;
-      if(machine.getCurrentSnapshot() == null ) {
-         try {
-            session = manager.get().openMachineSession(machine);
-            IProgress progress = session.getConsole().takeSnapshot(snapshotName, snapshotDesc);
-            if (progress.getCompleted())
-               logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc, machine.getName());
-         } catch (Exception e) {
-            logger.error(e, "Problem creating snapshot %s (descripton: %s) from machine %s", snapshotName, snapshotDesc, machine.getName());
-            Throwables.propagate(e);
-            assert false;
-         } finally {
-            session.unlockMachine();
+      if (machine.getCurrentSnapshot() == null) {
+         int retries = 10;
+         while (true) {
+            try {
+               session = manager.get().openMachineSession(machine);
+               IProgress progress = session.getConsole().takeSnapshot(snapshotName, snapshotDesc);
+               progress.waitForCompletion(-1);
+               logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc,
+                        machine.getName());
+               break;
+            } catch (Exception e) {
+               if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
+                  retries--;
+                  if (retries == 0) {
+                     logger.error(e,
+                              "Problem creating snapshot (too many retries) %s (descripton: %s) from machine %s",
+                              snapshotName, snapshotDesc, machine.getName());
+                     throw Throwables.propagate(e);
+                  }
+               }
+               logger.error(e, "Problem creating snapshot %s (descripton: %s) from machine %s", snapshotName,
+                        snapshotDesc, machine.getName());
+               throw Throwables.propagate(e);
+            } finally {
+               if (session != null) {
+                  session.unlockMachine();
+               }
+            }
          }
       }
       return machine.getCurrentSnapshot();

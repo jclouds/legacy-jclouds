@@ -18,9 +18,9 @@
  */
 package org.jclouds.virtualbox.functions;
 
-import static org.jclouds.scriptbuilder.domain.Statements.call;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.scriptbuilder.domain.Statements.call;
 
 import java.net.URI;
 import java.util.List;
@@ -44,12 +44,10 @@ import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.LockType;
-import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -62,7 +60,6 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
 	protected Logger logger = Logger.NULL;
 
-	private final Supplier<VirtualBoxManager> manager;
 	private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
 	private final GuestAdditionsInstaller guestAdditionsInstaller;
 	private final Predicate<SshClient> sshResponds;
@@ -75,7 +72,6 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
 	@Inject
 	public CreateAndInstallVm(
-			Supplier<VirtualBoxManager> manager,
 			CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
 			GuestAdditionsInstaller guestAdditionsInstaller,
 			IMachineToNodeMetadata imachineToNodeMetadata,
@@ -83,7 +79,6 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 			Function<IMachine, SshClient> sshClientForIMachine,
 			MachineUtils machineUtils,
 			@Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration, MachineController machineController) {
-		this.manager = manager;
 		this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
 		this.sshResponds = sshResponds;
 		this.sshClientForIMachine = sshClientForIMachine;
@@ -113,6 +108,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
 		configureOsInstallationWithKeyboardSequence(vmName,
 				installationKeySequence);
+		
 		SshClient client = sshClientForIMachine.apply(vm);
 
 		logger.debug(">> awaiting installation to finish node(%s)", vmName);
@@ -126,13 +122,13 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
 		logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
 
-//		NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
+		NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
 
-//		ListenableFuture<ExecResponse> execFuture =
-//		machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
+		ListenableFuture<ExecResponse> execFuture =
+		machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
 
-//		ExecResponse execResponse = Futures.getUnchecked(execFuture);
-//		checkState(execResponse.getExitStatus() == 0);
+		ExecResponse execResponse = Futures.getUnchecked(execFuture);
+		checkState(execResponse.getExitStatus() == 0);
 
 		logger.debug(
 				"<< installation of image complete. Powering down node(%s)",

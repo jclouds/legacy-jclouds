@@ -99,6 +99,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
                .getVBox()
                .createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(),
                         vmSpec.isForceOverwrite());
+      
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       if (isLinkedClone)
          options.add(CloneOptions.Link);
