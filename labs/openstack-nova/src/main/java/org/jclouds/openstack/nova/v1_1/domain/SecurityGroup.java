@@ -120,7 +120,7 @@ public class SecurityGroup {
    }
    
    public Set<SecurityGroupRule> getRules() {
-      return rules;
+      return this.rules;
    }
    
    
