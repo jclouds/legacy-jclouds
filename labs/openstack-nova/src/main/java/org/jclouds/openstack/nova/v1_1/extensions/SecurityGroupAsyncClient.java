@@ -103,7 +103,6 @@ public interface SecurityGroupAsyncClient {
    @Path("/os-security-groups/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes
-   @Produces(MediaType.APPLICATION_JSON)
    ListenableFuture<Boolean> deleteSecurityGroup(@PathParam("id") String id);
 
 
@@ -135,7 +134,6 @@ public interface SecurityGroupAsyncClient {
    @Path("/os-security-group-rules/{security_group_rule_ID}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Consumes
-   @Produces(MediaType.APPLICATION_JSON)
    ListenableFuture<Boolean> deleteSecurityGroupRule(@PathParam("security_group_rule_ID") String security_group_rule_ID);
 
 }
