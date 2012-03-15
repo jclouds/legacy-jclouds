@@ -10,6 +10,5 @@ function installModuleAssistantIfNeeded {
       mkdir /etc/udev/rules.d/70-persistent-net.rules;
       rm -rf /dev/.udev/;
       rm /lib/udev/rules.d/75-persistent-net-generator.rules
-      rm -f /etc/passwd.lock /etc/group.lock /etc/gshadow.lock
    fi
 }

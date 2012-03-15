@@ -43,10 +43,12 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.statements.DeleteGShadowLock;
 import org.jclouds.virtualbox.statements.SetIpAddress;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -54,6 +56,13 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
+/**
+ * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
+ * synchronized mainly because of snapshot creation (must be synchronized on a per-master-basis).
+ * 
+ * @author dralves
+ * 
+ */
 @Singleton
 public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials<IMachine>> {
 
@@ -68,6 +77,9 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
    // TODO parameterize
    public static final boolean USE_LINKED = true;
+
+   // TODO parameterize
+   public static final ExecutionType EXECUTION_TYPE = ExecutionType.HEADLESS;
 
    private final Supplier<VirtualBoxManager> manager;
    private final Function<CloneSpec, IMachine> cloner;
@@ -95,7 +107,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    }
 
    @Override
-   public NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
+   public synchronized NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
 
       checkNotNull(nodeSpec, "NodeSpec");
 
@@ -109,7 +121,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          } catch (Exception e) {
             throw new RuntimeException("error opening vbox machine session: " + e.getMessage(), e);
          }
-         session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
+         IProgress progress = session.getConsole().deleteSnapshot(master.getMachine().getCurrentSnapshot().getId());
+         progress.waitForCompletion(-1);
          session.unlockMachine();
       }
       String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
@@ -142,7 +155,11 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       IMachine cloned = cloner.apply(cloneSpec);
 
-      new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
+      new LaunchMachineIfNotAlreadyRunning(manager.get(), EXECUTION_TYPE, "").apply(cloned);
+
+      // see DeleteGShadowLock for a detailed explanation
+      machineUtils
+               .runScriptOnNode(imachineToNodeMetadata.apply(cloned), new DeleteGShadowLock(), RunScriptOptions.NONE);
 
       // CASE NAT + HOST-ONLY
       machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),

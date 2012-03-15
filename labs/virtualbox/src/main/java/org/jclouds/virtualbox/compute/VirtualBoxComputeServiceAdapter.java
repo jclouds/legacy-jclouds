@@ -96,7 +96,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
          NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
          return cloneCreator.apply(nodeSpec);
       } catch (Exception e) {
-         throw new RuntimeException(e);
+         throw Throwables.propagate(e);
       }
    }
 
