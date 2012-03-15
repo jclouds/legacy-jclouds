@@ -45,7 +45,7 @@ public enum OsFamily {
    SCIENTIFIC,
    SIGAR, 
    SLACKWARE,
-   SOLARIS, SUSE, TURBOLINUX, UBUNTU, WINDOWS;
+   SOLARIS, SUSE, TURBOLINUX, CLOUD_LINUX, UBUNTU, WINDOWS;
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }

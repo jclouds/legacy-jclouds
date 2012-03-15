@@ -54,6 +54,7 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
    private static final String RHEL    = "Red Hat Enterprise Linux";
    private static final String UBUNTU  = "Ubuntu Linux";
    private static final String WINDOWS = "Windows Server";
+   private static final String CLOUD_LINUX = "CloudLinux";
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -96,6 +97,7 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
                else if(description.startsWith(RHEL)) return OsFamily.RHEL;
                else if(description.startsWith(UBUNTU)) return OsFamily.UBUNTU;
                else if(description.startsWith(WINDOWS)) return OsFamily.WINDOWS;
+               else if(description.startsWith(CLOUD_LINUX)) return OsFamily.CLOUD_LINUX;
                return OsFamily.UNRECOGNIZED;
             }
         };
@@ -120,6 +122,7 @@ public class ProductItemToImage implements Function<ProductItem, Image> {
                else if(family.equals(OsFamily.RHEL)) return parseVersion(description, RHEL);
                else if(family.equals(OsFamily.UBUNTU)) return parseVersion(description, UBUNTU);
                else if(family.equals(OsFamily.WINDOWS)) return parseVersion(description, WINDOWS);
+               else if(family.equals(OsFamily.CLOUD_LINUX)) return parseVersion(description, CLOUD_LINUX);
                else throw new NoSuchElementException("No os version for item:"+productItem);
             }
         };
