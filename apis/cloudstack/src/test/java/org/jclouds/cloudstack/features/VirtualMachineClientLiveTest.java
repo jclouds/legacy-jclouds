@@ -25,6 +25,7 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getFirst;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Sets.filter;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.isDefault;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -88,7 +89,7 @@ public class VirtualMachineClientLiveTest extends BaseCloudStackClientLiveTest {
 
    public static VirtualMachine createVirtualMachine(CloudStackClient client, Long defaultTemplate,
          RetryablePredicate<Long> jobComplete, RetryablePredicate<VirtualMachine> virtualMachineRunning) {
-      Set<Network> networks = client.getNetworkClient().listNetworks();
+      Set<Network> networks = client.getNetworkClient().listNetworks(isDefault(true));
       if (networks.size() > 0) {
          Network network = get(networks, 0);
          return createVirtualMachineInNetwork(network,
