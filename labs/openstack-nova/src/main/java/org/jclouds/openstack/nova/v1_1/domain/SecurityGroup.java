@@ -19,9 +19,11 @@
 package org.jclouds.openstack.nova.v1_1.domain;
 
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
@@ -98,6 +100,7 @@ public class SecurityGroup {
       this.tenantId = tenantId;
       this.name = name;
       this.description = description;
+      this.rules = ImmutableSet.copyOf(checkNotNull(rules, "rules"));
    }
 
    public String getId() {
@@ -117,7 +120,7 @@ public class SecurityGroup {
    }
    
    public Set<SecurityGroupRule> getRules() {
-      return this.rules;
+      return rules;
    }
    
    
