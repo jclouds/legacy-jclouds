@@ -78,6 +78,9 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    // TODO parameterize
    public static final boolean USE_LINKED = true;
 
+   // TODO parameterize
+   public static final ExecutionType EXECUTION_TYPE = ExecutionType.HEADLESS;
+
    private final Supplier<VirtualBoxManager> manager;
    private final Function<CloneSpec, IMachine> cloner;
    private final AtomicInteger nodePorts;
@@ -152,7 +155,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       IMachine cloned = cloner.apply(cloneSpec);
 
-      new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
+      new LaunchMachineIfNotAlreadyRunning(manager.get(), EXECUTION_TYPE, "").apply(cloned);
 
       // see DeleteGShadowLock for a detailed explanation
       machineUtils
