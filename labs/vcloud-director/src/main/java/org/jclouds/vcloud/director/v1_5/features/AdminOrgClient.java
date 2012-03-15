@@ -53,6 +53,7 @@ public interface AdminOrgClient extends OrgClient {
     * @param orgRef the reference for the admin org
     * @return the admin org
     */
+   @Override
    AdminOrg getOrg(URI orgRef);
    
    /**

@@ -434,7 +434,7 @@ public interface VAppClient {
    Task insertMedia(URI vAppURI, MediaInsertOrEjectParams mediaParams);
 
    /**
-    * @return synchronous access to {@link Metadata.Writeable} features
+    * @return synchronous access to {@link Metadata} features
     */
    @Delegate
    MetadataClient.Writeable getMetadataClient();

@@ -44,5 +44,6 @@ public interface AdminVdcClient extends VdcClient {
     * 
     * @return the admin vDC or null if not found
     */
+   @Override
    AdminVdc getVdc(URI vdcRef);
 }

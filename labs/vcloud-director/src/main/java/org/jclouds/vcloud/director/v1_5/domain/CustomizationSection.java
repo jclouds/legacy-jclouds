@@ -135,7 +135,7 @@ public class CustomizationSection extends SectionType {
       // For JAXB
    }
 
-   @XmlElement(name = "CustomizeOnInstantiate")
+   @XmlElement(name = "CustomizeOnInstantiate", required = true)
    protected boolean customizeOnInstantiate;
    @XmlElement(name = "Link")
    protected Set<Link> links = Sets.newLinkedHashSet();

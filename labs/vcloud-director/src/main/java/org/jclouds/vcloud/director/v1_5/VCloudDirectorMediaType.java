@@ -32,11 +32,16 @@ import com.google.common.collect.ImmutableList;
  */
 public class VCloudDirectorMediaType {
 
+   // Wildcarded media types
+
    public static final String ANY = "*/*";
 
    public static final String ANY_IMAGE = "image/*";
 
+   /** The default {@literal Accept} header for the vCloud API. */
    public static final String APPLICATION_XML_1_5 = "application/*+xml;version=1.5";
+   
+   // Specific media types
 
    public static final String SESSION = "application/vnd.vmware.vcloud.session+xml";
 
@@ -188,14 +193,15 @@ public class VCloudDirectorMediaType {
    
    public static final String OVF_TEXT_XML = "text/xml";
 
+   /**
+    * All acceptable OVF-specific media types.
+    */
    public static final List<String> ALL_OVF = ImmutableList.of(
             OVF_TEXT_XML
          );
 
    /**
-    * All acceptable vcloud-specific media types.
-    *
-    * This list must be updated whenever a new media type constant is added.
+    * All acceptable vCloud-specific media types.
     */
    public static final List<String> ALL = ImmutableList.of(
          SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY, METADATA_VALUE,
@@ -215,7 +221,10 @@ public class VCloudDirectorMediaType {
          ORG_LEASE_SETTINGS, ORG_PASSWORD_POLICY_SETTINGS, ORG_LDAP_SETTINGS,
          ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
          ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
-         RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC, MEDIA_PARAMS, RUNTIME_INFO_SECTION,
-         SCREEN_TICKET, VAPP_NETWORK
+         RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC, MEDIA_PARAMS,
+         RUNTIME_INFO_SECTION, SCREEN_TICKET, VAPP_NETWORK
       );
+
+   // NOTE These lists must be updated whenever a new media type constant is added.
+
 }

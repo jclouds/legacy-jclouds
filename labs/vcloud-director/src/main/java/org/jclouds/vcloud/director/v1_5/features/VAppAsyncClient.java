@@ -361,7 +361,7 @@ public interface VAppAsyncClient {
                                       @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
-    * @return asynchronous access to {@link Writable} features
+    * @return asynchronous access to {@link Metadata} features
     */
    @Delegate
    MetadataAsyncClient.Writable getMetadataClient();
