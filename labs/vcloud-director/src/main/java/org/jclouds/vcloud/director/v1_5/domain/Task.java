@@ -20,11 +20,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -47,7 +45,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Task")
-public class Task extends EntityType<Task> {
+public class Task extends EntityType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
 
@@ -66,16 +64,18 @@ public class Task extends EntityType<Task> {
       );
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromTask(this);
+   public Builder<?> toBuilder() {
+      return builder().fromTask(this);
    }
 
-   public static class Builder extends EntityType.Builder<Task> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
       private Error error;
       private Reference org;
@@ -93,182 +93,105 @@ public class Task extends EntityType<Task> {
       /**
        * @see Task#getError()
        */
-      public Builder error(Error error) {
+      public B error(Error error) {
          this.error = error;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getOrg()
        */
-      public Builder org(Reference org) {
+      public B org(Reference org) {
          this.org = org;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getOwner()
        */
-      public Builder owner(Reference owner) {
+      public B owner(Reference owner) {
          this.owner = owner;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getUser()
        */
-      public Builder user(Reference user) {
+      public B user(Reference user) {
          this.user = user;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getParams()
        */
-      public Builder params(Object params) {
+      public B params(Object params) {
          this.params = params;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getProgress()
        */
-      public Builder progress(Integer progress) {
+      public B progress(Integer progress) {
          this.progress = progress;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getStatus()
        */
-      public Builder status(String status) {
+      public B status(String status) {
          this.status = status;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getOperation()
        */
-      public Builder operation(String operation) {
+      public B operation(String operation) {
          this.operation = operation;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getOperationName()
        */
-      public Builder operationName(String operationName) {
+      public B operationName(String operationName) {
          this.operationName = operationName;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getStartTime()
        */
-      public Builder startTime(Date startTime) {
+      public B startTime(Date startTime) {
          this.startTime = startTime;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getEndTime()
        */
-      public Builder endTime(Date endTime) {
+      public B endTime(Date endTime) {
          this.endTime = endTime;
-         return this;
+         return self();
       }
 
       /**
        * @see Task#getExpiryTime()
        */
-      public Builder expiryTime(Date expiryTime) {
+      public B expiryTime(Date expiryTime) {
          this.expiryTime = expiryTime;
-         return this;
+         return self();
       }
 
       @Override
       public Task build() {
-         return new Task(href, type, links, description, tasks, id, name,
-               error, org, progress, owner, user, params, status, operation, operationName, startTime, endTime, expiryTime);
+         return new Task(this);
       }
 
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-
-      @Override
-      public Builder fromEntityType(EntityType<Task> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder fromTask(Task in) {
+      public B fromTask(Task in) {
          return fromEntityType(in)
                .error(in.getError())
                .org(in.getOrg())
@@ -285,23 +208,20 @@ public class Task extends EntityType<Task> {
       }
    }
 
-   public Task(URI href, String type, Set<Link> links, String description, Set<Task> tasks,
-               String id, String name, Error error, Reference org, Integer progress, Reference owner,
-               Reference user, Object params, String status, String operation, String operationName,
-               Date startTime, Date endTime, Date expiryTime) {
-      super(href, type, links, description, tasks, id, name);
-      this.error = error;
-      this.org = org;
-      this.progress = progress;
-      this.owner = owner;
-      this.user = user;
-      this.params = params;
-      this.status = status;
-      this.operation = operation;
-      this.operationName = operationName;
-      this.startTime = startTime;
-      this.endTime = endTime;
-      this.expiryTime = expiryTime;
+   protected Task(Builder<?> builder) {
+      super(builder);
+      this.error = builder.error;
+      this.org = builder.org;
+      this.progress = builder.progress;
+      this.owner = builder.owner;
+      this.user = builder.user;
+      this.params = builder.params;
+      this.status = builder.status;
+      this.operation = builder.operation;
+      this.operationName = builder.operationName;
+      this.startTime = builder.startTime;
+      this.endTime = builder.endTime;
+      this.expiryTime = builder.expiryTime;
    }
 
    protected Task() {

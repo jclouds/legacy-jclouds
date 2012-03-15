@@ -33,9 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -66,18 +64,20 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "LeaseSettingsSection")
 @XmlType(name = "LeaseSettingsSection")
-public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
+public class LeaseSettingsSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromLeaseSettingsSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromLeaseSettingsSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<LeaseSettingsSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       private Set<Link> links = Sets.newLinkedHashSet();
       private Integer deploymentLeaseInSeconds;
       private Integer storageLeaseInSeconds;
@@ -89,68 +89,66 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
       /**
        * @see LeaseSettingsSection#getLinks()
        */
-      public Builder links(Set<Link> links) {
+      public B links(Set<Link> links) {
          this.links = checkNotNull(links, "links");
-         return this;
+         return self();
       }
 
       /**
        * @see LeaseSettingsSection#getDeploymentLeaseInSeconds()
        */
-      public Builder deploymentLeaseInSeconds(Integer deploymentLeaseInSeconds) {
+      public B deploymentLeaseInSeconds(Integer deploymentLeaseInSeconds) {
          this.deploymentLeaseInSeconds = deploymentLeaseInSeconds;
-         return this;
+         return self();
       }
 
       /**
        * @see LeaseSettingsSection#getStorageLeaseInSeconds()
        */
-      public Builder storageLeaseInSeconds(Integer storageLeaseInSeconds) {
+      public B storageLeaseInSeconds(Integer storageLeaseInSeconds) {
          this.storageLeaseInSeconds = storageLeaseInSeconds;
-         return this;
+         return self();
       }
 
       /**
        * @see LeaseSettingsSection#getDeploymentLeaseExpiration()
        */
-      public Builder deploymentLeaseExpiration(Date deploymentLeaseExpiration) {
+      public B deploymentLeaseExpiration(Date deploymentLeaseExpiration) {
          this.deploymentLeaseExpiration = deploymentLeaseExpiration;
-         return this;
+         return self();
       }
 
       /**
        * @see LeaseSettingsSection#getStorageLeaseExpiration()
        */
-      public Builder storageLeaseExpiration(Date storageLeaseExpiration) {
+      public B storageLeaseExpiration(Date storageLeaseExpiration) {
          this.storageLeaseExpiration = storageLeaseExpiration;
-         return this;
+         return self();
       }
 
       /**
        * @see LeaseSettingsSection#getHref()
        */
-      public Builder href(URI href) {
+      public B href(URI href) {
          this.href = href;
-         return this;
+         return self();
       }
 
       /**
        * @see LeaseSettingsSection#getType()
        */
-      public Builder type(String type) {
+      public B type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
 
       @Override
       public LeaseSettingsSection build() {
-         return new LeaseSettingsSection(info, required, links, deploymentLeaseInSeconds,
-               storageLeaseInSeconds, deploymentLeaseExpiration,
-               storageLeaseExpiration, href, type);
+         return new LeaseSettingsSection(this);
       }
 
-      public Builder fromLeaseSettingsSection(LeaseSettingsSection in) {
+      public B fromLeaseSettingsSection(LeaseSettingsSection in) {
          return fromSectionType(in)
                .links(in.getLinks())
                .deploymentLeaseInSeconds(in.getDeploymentLeaseInSeconds())
@@ -160,61 +158,35 @@ public class LeaseSettingsSection extends SectionType<LeaseSettingsSection> {
                .href(in.getHref())
                .type(in.getType());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<LeaseSettingsSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
    }
 
    @XmlElement(name = "Link")
-   protected Set<Link> links;
+   private Set<Link> links;
    @XmlElement(name = "DeploymentLeaseInSeconds")
-   protected Integer deploymentLeaseInSeconds;
+   private Integer deploymentLeaseInSeconds;
    @XmlElement(name = "StorageLeaseInSeconds")
-   protected Integer storageLeaseInSeconds;
+   private Integer storageLeaseInSeconds;
    @XmlElement(name = "DeploymentLeaseExpiration")
    @XmlSchemaType(name = "dateTime")
-   protected Date deploymentLeaseExpiration;
+   private Date deploymentLeaseExpiration;
    @XmlElement(name = "StorageLeaseExpiration")
    @XmlSchemaType(name = "dateTime")
-   protected Date storageLeaseExpiration;
+   private Date storageLeaseExpiration;
    @XmlAttribute
    @XmlSchemaType(name = "anyURI")
-   protected URI href;
+   private URI href;
    @XmlAttribute
-   protected String type;
+   private String type;
 
-   private LeaseSettingsSection(@Nullable String info, @Nullable Boolean required, Set<Link> links, Integer deploymentLeaseInSeconds,
-                                Integer storageLeaseInSeconds, Date deploymentLeaseExpiration,
-                                Date storageLeaseExpiration, URI href, String type) {
-      super(info, required);
-      this.links = ImmutableSet.copyOf(links);
-      this.deploymentLeaseInSeconds = deploymentLeaseInSeconds;
-      this.storageLeaseInSeconds = storageLeaseInSeconds;
-      this.deploymentLeaseExpiration = deploymentLeaseExpiration;
-      this.storageLeaseExpiration = storageLeaseExpiration;
-      this.href = href;
-      this.type = type;
+   private LeaseSettingsSection(Builder<?> builder) {
+      super(builder);
+      this.links = ImmutableSet.copyOf(builder.links);
+      this.deploymentLeaseInSeconds = builder.deploymentLeaseInSeconds;
+      this.storageLeaseInSeconds = builder.storageLeaseInSeconds;
+      this.deploymentLeaseExpiration = builder.deploymentLeaseExpiration;
+      this.storageLeaseExpiration = builder.storageLeaseExpiration;
+      this.href = builder.href;
+      this.type = builder.type;
    }
 
    private LeaseSettingsSection() {

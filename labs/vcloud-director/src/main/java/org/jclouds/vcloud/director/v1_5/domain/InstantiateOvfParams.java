@@ -18,14 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -41,17 +40,20 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InstantiateOvfParams")
-public class InstantiateOvfParams extends VAppCreationParamsType<InstantiateOvfParams> {
+public class InstantiateOvfParams extends VAppCreationParamsType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromInstantiateOvfParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromInstantiateOvfParams(this);
    }
 
-   public static class Builder extends VAppCreationParamsType.Builder<InstantiateOvfParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParamsType.Builder<B> {
 
       private Boolean allEULAsAccepted;
       private String transferFormat;
@@ -59,150 +61,54 @@ public class InstantiateOvfParams extends VAppCreationParamsType<InstantiateOvfP
       /**
        * @see InstantiateOvfParams#isAllEULAsAccepted()
        */
-      public Builder isAllEULAsAccepted(Boolean allEULAsAccepted) {
+      public B isAllEULAsAccepted(Boolean allEULAsAccepted) {
          this.allEULAsAccepted = allEULAsAccepted;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateOvfParams#isAllEULAsAccepted()
        */
-      public Builder allEULAsAccepted() {
+      public B allEULAsAccepted() {
          this.allEULAsAccepted = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateOvfParams#isAllEULAsAccepted()
        */
-      public Builder allEULAsNotAccepted() {
+      public B allEULAsNotAccepted() {
          this.allEULAsAccepted = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       /**
        * @see InstantiateOvfParams#getTransferFormat()
        */
-      public Builder transferFormat(String transferFormat) {
+      public B transferFormat(String transferFormat) {
          this.transferFormat = transferFormat;
-         return this;
+         return self();
       }
 
       @Override
       public InstantiateOvfParams build() {
-         InstantiateOvfParams instantiateOvfParams = new InstantiateOvfParams(description, name, vAppParent, instantiationParams, deploy, powerOn, allEULAsAccepted, transferFormat);
+         InstantiateOvfParams instantiateOvfParams = new InstantiateOvfParams(this);
          return instantiateOvfParams;
       }
 
-      /**
-       * @see VAppCreationParamsType#getVAppParent()
-       */
-      @Override
-      public Builder vAppParent(Reference vAppParent) {
-         this.vAppParent = vAppParent;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#getInstantiationParams()
-       */
-      @Override
-      public Builder instantiationParams(InstantiationParams instantiationParams) {
-         this.instantiationParams = instantiationParams;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder deploy(Boolean deploy) {
-         this.deploy = deploy;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder deploy() {
-         this.deploy = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isDeploy()
-       */
-      @Override
-      public Builder notDeploy() {
-         this.deploy = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder powerOn(Boolean powerOn) {
-         this.powerOn = powerOn;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder powerOn() {
-         this.powerOn = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParamsType#isPowerOn()
-       */
-      @Override
-      public Builder notPowerOn() {
-         this.powerOn = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      @Override
-      public Builder fromVAppCreationParamsType(VAppCreationParamsType<InstantiateOvfParams> in) {
-         return Builder.class.cast(super.fromVAppCreationParamsType(in));
-      }
-
-      public Builder fromInstantiateOvfParams(InstantiateOvfParams in) {
+      public B fromInstantiateOvfParams(InstantiateOvfParams in) {
          return fromVAppCreationParamsType(in).isAllEULAsAccepted(in.isAllEULAsAccepted()).transferFormat(in.getTransferFormat());
       }
    }
 
    protected InstantiateOvfParams() {
-      // For JAXB and builder use
+      // For JAXB and B use
    }
 
-   public InstantiateOvfParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn, Boolean allEULAsAccepted,
-                               String transferFormat) {
-      super(description, name, vAppParent, instantiationParams, deploy, powerOn);
-      this.allEULAsAccepted = allEULAsAccepted;
-      this.transferFormat = transferFormat;
+   public InstantiateOvfParams(Builder<?> builder) {
+      super(builder);
+      this.allEULAsAccepted = builder.allEULAsAccepted;
+      this.transferFormat = builder.transferFormat;
    }
 
    @XmlElement(name = "AllEULAsAccepted")

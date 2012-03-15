@@ -21,9 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -33,7 +31,6 @@ import javax.xml.bind.annotation.XmlType;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Represents users in the vCloud system.
@@ -94,18 +91,20 @@ import com.google.common.collect.Sets;
       "password",
       "groups"
 })
-public class User extends EntityType<User> {
+public class User extends EntityType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromUser(this);
+   public Builder<?> toBuilder() {
+      return builder().fromUser(this);
    }
 
-   public static class Builder extends EntityType.Builder<User> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
       private String fullName;
       private String emailAddress;
@@ -129,233 +128,160 @@ public class User extends EntityType<User> {
       /**
        * @see User#getFullName()
        */
-      public Builder fullName(String fullName) {
+      public B fullName(String fullName) {
          this.fullName = fullName;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getEmailAddress()
        */
-      public Builder emailAddress(String emailAddress) {
+      public B emailAddress(String emailAddress) {
          this.emailAddress = emailAddress;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getTelephone()
        */
-      public Builder telephone(String telephone) {
+      public B telephone(String telephone) {
          this.telephone = telephone;
-         return this;
+         return self();
       }
 
       /**
        * @see User#isEnabled()
        */
-      public Builder isEnabled(Boolean isEnabled) {
+      public B isEnabled(Boolean isEnabled) {
          this.isEnabled = isEnabled;
-         return this;
+         return self();
       }
 
       /**
        * @see User#isLocked()
        */
-      public Builder isLocked(Boolean isLocked) {
+      public B isLocked(Boolean isLocked) {
          this.isLocked = isLocked;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getIM()
        */
-      public Builder im(String im) {
+      public B im(String im) {
          this.im = im;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getNameInSource()
        */
-      public Builder nameInSource(String nameInSource) {
+      public B nameInSource(String nameInSource) {
          this.nameInSource = nameInSource;
-         return this;
+         return self();
       }
 
       /**
        * @see User#isAlertEnabled()
        */
-      public Builder isAlertEnabled(Boolean isAlertEnabled) {
+      public B isAlertEnabled(Boolean isAlertEnabled) {
          this.isAlertEnabled = isAlertEnabled;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getAlertEmailPrefix()
        */
-      public Builder alertEmailPrefix(String alertEmailPrefix) {
+      public B alertEmailPrefix(String alertEmailPrefix) {
          this.alertEmailPrefix = alertEmailPrefix;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getAlertEmail()
        */
-      public Builder alertEmail(String alertEmail) {
+      public B alertEmail(String alertEmail) {
          this.alertEmail = alertEmail;
-         return this;
+         return self();
       }
 
       /**
        * @see User#isExternal()
        */
-      public Builder isExternal(Boolean isExternal) {
+      public B isExternal(Boolean isExternal) {
          this.isExternal = isExternal;
-         return this;
+         return self();
       }
 
       /**
        * @see User#isDefaultCached()
        */
-      public Builder isDefaultCached(Boolean isDefaultCached) {
+      public B isDefaultCached(Boolean isDefaultCached) {
          this.isDefaultCached = isDefaultCached;
-         return this;
+         return self();
       }
 
       /**
        * @see User#isGroupRole()
        */
-      public Builder isGroupRole(Boolean isGroupRole) {
+      public B isGroupRole(Boolean isGroupRole) {
          this.isGroupRole = isGroupRole;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getStoredVmQuota()
        */
-      public Builder storedVmQuota(Integer storedVmQuota) {
+      public B storedVmQuota(Integer storedVmQuota) {
          this.storedVmQuota = storedVmQuota;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getDeployedVmQuota()
        */
-      public Builder deployedVmQuota(Integer deployedVmQuota) {
+      public B deployedVmQuota(Integer deployedVmQuota) {
          this.deployedVmQuota = deployedVmQuota;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getRole()
        */
-      public Builder role(Reference role) {
+      public B role(Reference role) {
          this.role = role;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getPassword()
        */
-      public Builder password(String password) {
+      public B password(String password) {
          this.password = password;
-         return this;
+         return self();
       }
 
       /**
        * @see User#getGroups()
        */
-      public Builder groups(List<Reference> groups) {
+      public B groups(List<Reference> groups) {
          this.groups = groups == null ? null : ImmutableList.copyOf(groups);
-         return this;
+         return self();
       }
       
       /**
        * @see User#getGroups()
        */
-      public Builder group(Reference group) {
+      public B group(Reference group) {
          this.groups.add(checkNotNull(group, "group"));
-         return this;
+         return self();
       }
 
       public User build() {
-         return new User(href, type, links, description, tasks, id,
-               name, fullName, emailAddress, telephone, isEnabled, isLocked,
-               im, nameInSource, isAlertEnabled, alertEmailPrefix, alertEmail,
-               isExternal, isDefaultCached, isGroupRole, storedVmQuota, deployedVmQuota,
-               role, password, groups);
+         return new User(this);
       }
 
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-
-      @Override
-      public Builder fromEntityType(EntityType<User> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder fromUser(User in) {
+      public B fromUser(User in) {
          return fromEntityType(in)
                .fullName(in.getFullName())
                .emailAddress(in.getEmailAddress())
@@ -379,72 +305,67 @@ public class User extends EntityType<User> {
    }
 
    @XmlElement(name = "FullName")
-   protected String fullName;
+   private String fullName;
    @XmlElement(name = "EmailAddress")
-   protected String emailAddress;
+   private String emailAddress;
    @XmlElement(name = "Telephone")
-   protected String telephone;
+   private String telephone;
    @XmlElement(name = "IsEnabled")
-   protected Boolean isEnabled;
+   private Boolean isEnabled;
    @XmlElement(name = "IsLocked")
-   protected Boolean isLocked;
+   private Boolean isLocked;
    @XmlElement(name = "IM")
-   protected String im;
+   private String im;
    @XmlElement(name = "NameInSource")
-   protected String nameInSource;
+   private String nameInSource;
    @XmlElement(name = "IsAlertEnabled")
-   protected Boolean isAlertEnabled;
+   private Boolean isAlertEnabled;
    @XmlElement(name = "AlertEmailPrefix")
-   protected String alertEmailPrefix;
+   private String alertEmailPrefix;
    @XmlElement(name = "AlertEmail")
-   protected String alertEmail;
+   private String alertEmail;
    @XmlElement(name = "IsExternal")
-   protected Boolean isExternal;
+   private Boolean isExternal;
    @XmlElement(name = "IsDefaultCached")
-   protected Boolean isDefaultCached;
+   private Boolean isDefaultCached;
    @XmlElement(name = "IsGroupRole")
-   protected Boolean isGroupRole;
+   private Boolean isGroupRole;
    @XmlElement(name = "StoredVmQuota")
-   protected Integer storedVmQuota;
+   private Integer storedVmQuota;
    @XmlElement(name = "DeployedVmQuota")
-   protected Integer deployedVmQuota;
+   private Integer deployedVmQuota;
    @XmlElement(name = "Role")
-   protected Reference role;
+   private Reference role;
    @XmlElement(name = "Password")
-   protected String password;
+   private String password;
    @XmlElementWrapper(name = "GroupReferences")
-   protected List<Reference> groups;
+   private List<Reference> groups;
 
-   public User(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id,
-               String name, String fullName, String emailAddress, String telephone, Boolean enabled, Boolean locked,
-               String im, String nameInSource, Boolean alertEnabled, String alertEmailPrefix, String alertEmail,
-               Boolean external, Boolean defaultCached, Boolean groupRole, Integer storedVmQuota, Integer deployedVmQuota,
-               Reference role, String password, List<Reference> groups) {
-      super(href, type, links, description, tasks, id, name);
-      this.fullName = fullName;
-      this.emailAddress = emailAddress;
-      this.telephone = telephone;
-      isEnabled = enabled;
-      isLocked = locked;
-      this.im = checkNotNull(im, "im");
-      this.nameInSource = nameInSource;
-      isAlertEnabled = alertEnabled;
-      this.alertEmailPrefix = alertEmailPrefix;
-      this.alertEmail = alertEmail;
-      isExternal = external;
-      isDefaultCached = defaultCached;
-      isGroupRole = groupRole;
-      this.storedVmQuota = storedVmQuota;
-      this.deployedVmQuota = deployedVmQuota;
-      this.role = role;
-      this.password = password;
-      this.groups = groups;
+   protected User(Builder<?> builder) {
+      super(builder);
+      this.fullName = builder.fullName;
+      this.emailAddress = builder.emailAddress;
+      this.telephone = builder.telephone;
+      isEnabled = builder.isEnabled;
+      isLocked = builder.isLocked;
+      this.im = checkNotNull(builder.im, "im");
+      this.nameInSource = builder.nameInSource;
+      isAlertEnabled = builder.isAlertEnabled;
+      this.alertEmailPrefix = builder.alertEmailPrefix;
+      this.alertEmail = builder.alertEmail;
+      isExternal = builder.isExternal;
+      isDefaultCached = builder.isDefaultCached;
+      isGroupRole = builder.isGroupRole;
+      this.storedVmQuota = builder.storedVmQuota;
+      this.deployedVmQuota = builder.deployedVmQuota;
+      this.role = builder.role;
+      this.password = builder.password;
+      this.groups = builder.groups;
    }
 
-   private User() {
+   protected User() {
       // For JAXB
    }
-
 
    /**
     * Gets the value of the fullName property.

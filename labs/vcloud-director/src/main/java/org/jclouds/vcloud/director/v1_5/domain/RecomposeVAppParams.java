@@ -51,16 +51,18 @@ import com.google.common.base.Objects.ToStringHelper;
 @XmlType(name = "RecomposeVAppParamsType")
 public class RecomposeVAppParams extends ComposeVAppParams {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromRecomposeVAppParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromRecomposeVAppParams(this);
    }
 
-   public static class Builder extends ComposeVAppParams.Builder {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ComposeVAppParams.Builder<B> {
 
       private List<Vm> createItem;
       private List<Reference> deleteItem;
@@ -68,43 +70,37 @@ public class RecomposeVAppParams extends ComposeVAppParams {
       /**
        * @see RecomposeVAppParams#getCreateItem()
        */
-      public Builder createItem(List<Vm> createItem) {
+      public B createItem(List<Vm> createItem) {
          this.createItem = createItem;
-         return this;
+         return self();
       }
 
       /**
        * @see RecomposeVAppParams#getDeleteItem()
        */
-      public Builder deleteItem(List<Reference> deleteItem) {
+      public B deleteItem(List<Reference> deleteItem) {
          this.deleteItem = deleteItem;
-         return this;
+         return self();
       }
 
       @Override
       public RecomposeVAppParams build() {
-         return new RecomposeVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, sourcedItems, allEULAsAccepted, linkedClone, createItem, deleteItem);
+         return new RecomposeVAppParams(this);
       }
 
-      @Override
-      public Builder fromComposeVAppParams(ComposeVAppParams in) {
-         return Builder.class.cast(super.fromComposeVAppParams(in));
-      }
-
-      public Builder fromRecomposeVAppParams(RecomposeVAppParams in) {
+      public B fromRecomposeVAppParams(RecomposeVAppParams in) {
          return fromComposeVAppParams(in).createItem(in.getCreateItem()).deleteItem(in.getDeleteItem());
       }
    }
 
    private RecomposeVAppParams() {
-      // For JAXB and builder use
+      // For JAXB and B use
    }
 
-   private RecomposeVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams, Boolean deploy, Boolean powerOn,
-									    List<SourcedCompositionItemParam> sourcedItems, Boolean allEULAsAccepted, Boolean linkedClone, List<Vm> createItem, List<Reference> deleteItem) {
-      super(description, name, vAppParent, instantiationParams, deploy, powerOn, sourcedItems, allEULAsAccepted, linkedClone);
-      this.createItem = createItem;
-      this.deleteItem = deleteItem;
+   private RecomposeVAppParams(Builder<?> builder) {
+      super(builder);
+      this.createItem = builder.createItem;
+      this.deleteItem = builder.deleteItem;
    }
 
    @XmlElement(name = "CreateItem")

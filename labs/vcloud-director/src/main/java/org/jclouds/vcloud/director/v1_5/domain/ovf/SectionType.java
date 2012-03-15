@@ -18,13 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
@@ -57,33 +56,36 @@ import com.google.common.base.Objects;
    StartupSection.class,
    VirtualHardwareSection.class,
    VirtualSystem.class })
-public abstract class SectionType<T extends SectionType<T>> {
+public abstract class SectionType {
 
-   public abstract Builder<T> toBuilder();
+   public static abstract class Builder<B extends Builder<B>> {
+      private String info;
+      private Boolean required;
 
-   public static abstract class Builder<T extends SectionType<T>> {
-      protected String info;
-      protected Boolean required;
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
 
-      public abstract SectionType<T> build();
+      public abstract SectionType build();
 
       /**
        * @see SectionType#getInfo()
        */
-      public Builder<T> info(String info) {
+      public B info(String info) {
          this.info = info;
-         return this;
+         return self();
       }
 
       /**
        * @see SectionType#isRequired()
        */
-      public Builder<T> required(Boolean required) {
+      public B required(Boolean required) {
          this.required = required;
-         return this;
+         return self();
       }
 
-      public Builder<T> fromSectionType(SectionType<T> in) {
+      public B fromSectionType(SectionType in) {
          return info(in.getInfo()).required(in.isRequired());
       }
    }
@@ -93,9 +95,9 @@ public abstract class SectionType<T extends SectionType<T>> {
    @XmlAttribute(namespace = VCLOUD_OVF_NS)
    private Boolean required;
 
-   protected SectionType(@Nullable String info, @Nullable Boolean required) {
-      this.info = info;
-      this.required = required;
+   protected SectionType(Builder<?> builder) {
+      this.info = builder.info;
+      this.required = builder.required;
    }
 
    protected SectionType() {
@@ -132,7 +134,7 @@ public abstract class SectionType<T extends SectionType<T>> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      SectionType<?> other = (SectionType<?>) obj;
+      SectionType other = (SectionType) obj;
       return Objects.equal(info, other.info) && Objects.equal(required, other.required);
    }
 

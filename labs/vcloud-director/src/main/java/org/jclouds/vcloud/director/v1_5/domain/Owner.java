@@ -20,9 +20,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -41,75 +38,37 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlRootElement(name = "Owner")
 @XmlType(name = "OwnerType")
-public class Owner extends ResourceType<Owner> {
+public class Owner extends ResourceType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromOwner(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOwner(this);
    }
 
-   public static class Builder extends ResourceType.Builder<Owner> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
-      private ReferenceType<?> user;
+      private ReferenceType user;
 
       /**
        * @see Owner#getUser()
        */
-      public Builder user(ReferenceType<?> user) {
+      public B user(ReferenceType user) {
          this.user = user;
-         return this;
+         return self();
       }
 
       @Override
       public Owner build() {
-         return new Owner(href, type, links, user);
+         return new Owner(this);
       }
-
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-
-      @Override
-      public Builder fromResourceType(ResourceType<Owner> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      public Builder fromOwner(Owner in) {
+      
+      public B fromOwner(Owner in) {
          return fromResourceType(in)
                .user(in.getUser());
       }
@@ -119,18 +78,18 @@ public class Owner extends ResourceType<Owner> {
       // for JAXB
    }
 
-   public Owner(URI href, String type, Set<Link> links, ReferenceType<?> user) {
-      super(href, type, links);
-      this.user = user;
+   public Owner(Builder<?> builder) {
+      super(builder);
+      this.user = builder.user;
    }
 
    @XmlElement(name = "User", required = true)
-   protected ReferenceType<?> user;
+   private ReferenceType user;
 
    /**
     * Gets the value of the user property.
     */
-   public ReferenceType<?> getUser() {
+   public ReferenceType getUser() {
       return user;
    }
 

@@ -25,73 +25,37 @@ import java.net.URI;
  *
  * @author grkvlt@apache.org
  */
-public class Reference extends ReferenceType<Reference> {
+public class Reference extends ReferenceType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromReference(this);
+   public Builder<?> toBuilder() {
+      return builder().fromReference(this);
    }
 
-   public static class Builder extends ReferenceType.Builder<Reference> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends ReferenceType.Builder<B> {
 
       @Override
       public Reference build() {
-         return new Reference(href, id, name, type);
+         return new Reference(this);
       }
 
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      @Override
-      public Builder fromReferenceType(ReferenceType<Reference> in) {
-         return Builder.class.cast(super.fromReferenceType(in));
-      }
-
-      public Builder fromReference(Reference in) {
+      public B fromReference(Reference in) {
          return fromReferenceType(in);
       }
       
-      public Builder fromEntity(EntityType<?> in) {
+      public B fromEntity(EntityType in) {
          return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
       }
+   }
+
+   protected Reference(Builder<?> builder) {
+      super(builder);
    }
 
    public Reference(URI href, String id, String name, String type) {
@@ -112,7 +76,7 @@ public class Reference extends ReferenceType<Reference> {
       return super.equals(that);
    }
 
-   public ReferenceType<?> toAdminReference(String endpoint) {
+   public ReferenceType toAdminReference(String endpoint) {
       return toBuilder()
         .type(null)
         .href(URI.create(getHref().toASCIIString().replace(endpoint, endpoint+"/admin")))

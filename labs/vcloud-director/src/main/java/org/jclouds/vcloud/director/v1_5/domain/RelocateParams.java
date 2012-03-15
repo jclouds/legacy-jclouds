@@ -88,7 +88,7 @@ public class RelocateParams {
     * @return possible object is
     *         {@link ReferenceType }
     */
-   public ReferenceType<?> getDatastore() {
+   public ReferenceType getDatastore() {
       return datastore;
    }
 

@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -76,19 +73,19 @@ import com.google.common.base.Objects.ToStringHelper;
     "networks"
 })
 public class AdminOrg extends Org {
+   
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
-   
-   public static Builder<?> newBuilder() {
-      return new ConcreteBuilder();
+
+   public Builder<?> toBuilder() {
+      return builder().fromAdminOrg(this);
    }
 
-   public Builder<?> toNewBuilder() {
-      return new ConcreteBuilder().fromAdminOrg(this);
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<T extends Builder<T>> extends Org.NewBuilder<T> {
+   public static abstract class Builder<B extends Builder<B>> extends Org.Builder<B> {
       
       private OrgSettings settings;
       private UsersList users;
@@ -97,12 +94,10 @@ public class AdminOrg extends Org {
       private Vdcs vdcs;
       private Networks networks;
       
-      protected abstract T self();
-
       /**
        * @see AdminOrg#getSettings()
        */
-      public T settings(OrgSettings settings) {
+      public B settings(OrgSettings settings) {
          this.settings = settings;
          return self();
       }
@@ -110,7 +105,7 @@ public class AdminOrg extends Org {
       /**
        * @see AdminOrg#getUsers()
        */
-      public T users(UsersList users) {
+      public B users(UsersList users) {
          this.users = users;
          return self();
       }
@@ -118,7 +113,7 @@ public class AdminOrg extends Org {
       /**
        * @see AdminOrg#getGroups()
        */
-      public T groups(GroupsList groups) {
+      public B groups(GroupsList groups) {
          this.groups = groups;
          return self();
       }
@@ -126,7 +121,7 @@ public class AdminOrg extends Org {
       /**
        * @see AdminOrg#getCatalogs()
        */
-      public T catalogs(CatalogsList catalogs) {
+      public B catalogs(CatalogsList catalogs) {
          this.catalogs = catalogs;
          return self();
       }
@@ -134,7 +129,7 @@ public class AdminOrg extends Org {
       /**
        * @see AdminOrg#getVdcs()
        */
-      public T vdcs(Vdcs vdcs) {
+      public B vdcs(Vdcs vdcs) {
          this.vdcs = vdcs;
          return self();
       }
@@ -142,17 +137,16 @@ public class AdminOrg extends Org {
       /**
        * @see AdminOrg#getNetworks()
        */
-      public T networks(Networks networks) {
+      public B networks(Networks networks) {
          this.networks = networks;
          return self();
       }
 
       public AdminOrg build() {
-         return new AdminOrg(href, type, links, description, tasks, id, 
-               name, fullName, isEnabled, settings, users, groups, catalogs, vdcs, networks);
+         return new AdminOrg(this);
       }
 
-      public T fromAdminOrg(AdminOrg in) {
+      public B fromAdminOrg(AdminOrg in) {
          return fromOrg(in)
             .settings(in.getSettings())
             .users(in.getUsers())
@@ -163,47 +157,32 @@ public class AdminOrg extends Org {
       }
    }
    
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-      @Override
-      protected ConcreteBuilder self() {
-         return this;
-      }
-   }
-   
-   @Deprecated
-   public Org.Builder toBuilder() {
-      throw new UnsupportedOperationException("Use toNewBuilder() instead");
-   }
-   
    protected AdminOrg() {
       // For JAXB
    }
    
-   protected AdminOrg(URI href, String type, Set<Link> links, String description, 
-         Set<Task> tasks, String id, String name, String fullName, 
-         Boolean enabled, OrgSettings settings, UsersList users, GroupsList groups, 
-         CatalogsList catalogs, Vdcs vdcs, Networks networks) {
-      super(href, type, links, description, tasks, id, name, fullName, enabled);
-      this.settings = settings;
-      this.users = users;
-      this.groups = groups;
-      this.catalogs = catalogs;
-      this.vdcs = vdcs;
-      this.networks = networks;
+   protected AdminOrg(Builder<?> builder) {
+      super(builder);
+      this.settings = builder.settings;
+      this.users = builder.users;
+      this.groups = builder.groups;
+      this.catalogs = builder.catalogs;
+      this.vdcs = builder.vdcs;
+      this.networks = builder.networks;
    }
 
     @XmlElement(name = "Settings", required = true)
-    protected OrgSettings settings;
+    private OrgSettings settings;
     @XmlElement(name = "Users")
-    protected UsersList users;
+    private UsersList users;
     @XmlElement(name = "Groups")
-    protected GroupsList groups;
+    private GroupsList groups;
     @XmlElement(name = "Catalogs")
-    protected CatalogsList catalogs;
+    private CatalogsList catalogs;
     @XmlElement(name = "Vdcs")
-    protected Vdcs vdcs;
+    private Vdcs vdcs;
     @XmlElement(name = "Networks")
-    protected Networks networks;
+    private Networks networks;
 
     /**
      * Gets the value of the settings property.

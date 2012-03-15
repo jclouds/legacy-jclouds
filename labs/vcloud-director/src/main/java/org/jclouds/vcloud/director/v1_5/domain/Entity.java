@@ -18,14 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.google.common.collect.Sets;
 
 /**
  * An entity.
@@ -34,108 +27,33 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "Entity")
-public class Entity extends EntityType<Entity> {
+public class Entity extends EntityType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder();
+   public Builder<?> toBuilder() {
+      return builder().fromEntity(this);
    }
 
-   public static class Builder extends EntityType.Builder<Entity> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
       @Override
       public Entity build() {
-         return new Entity(href, type, links, description, tasks, id, name);
+         return new Entity(this);
       }
 
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         super.tasks(tasks);
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see EntityType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      @Override
-      public Builder fromEntityType(EntityType<Entity> in) {
-         return Builder.class.cast(super.fromEntityType(in));
-      }
-
-      public Builder fromEntity(Entity in) {
+      public B fromEntity(Entity in) {
          return fromEntityType(in);
       }
    }
 
-   private Entity(URI href, String type, Set<Link> links, String description, Set<Task> tasks, String id, String name) {
-      super(href, type, links, description, tasks, id, name);
+   private Entity(Builder<?> builder) {
+      super(builder);
    }
 
    private Entity() {

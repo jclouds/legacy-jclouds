@@ -5,69 +5,33 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "CatalogReference")
-public class CatalogReference extends ReferenceType<CatalogReference> {
+public class CatalogReference extends ReferenceType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromCatalogReference(this);
+   public Builder<?> toBuilder() {
+      return builder().fromReferenceType(this);
    }
 
-   public static class Builder extends ReferenceType.Builder<CatalogReference> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends ReferenceType.Builder<B> {
 
       @Override
       public CatalogReference build() {
-         return new CatalogReference(href, id, name, type);
+         return new CatalogReference(this);
       }
 
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      @Override
-      protected Builder fromReferenceType(ReferenceType<CatalogReference> in) {
-         return Builder.class.cast(super.fromReferenceType(in));
-      }
-
-      protected Builder fromCatalogReference(CatalogReference in) {
+      protected B fromCatalogReference(CatalogReference in) {
          return fromReferenceType(in);
       }
+   }
+
+   public CatalogReference(Builder<?> builder) {
+      super(builder);
    }
 
    public CatalogReference(URI href, String id, String name, String type) {
@@ -87,4 +51,6 @@ public class CatalogReference extends ReferenceType<CatalogReference> {
       CatalogReference that = CatalogReference.class.cast(o);
       return super.equals(that);
    }
+   
+   // Note: hashcode inheritted from ReferenceType
 }

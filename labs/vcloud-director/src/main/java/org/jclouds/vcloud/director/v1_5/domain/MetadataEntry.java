@@ -43,111 +43,106 @@ import com.google.common.collect.Sets;
  * @author danikov
  */
 @XmlRootElement(name = "MetadataEntry")
-public class MetadataEntry extends ResourceType<MetadataEntry> {
+public class MetadataEntry extends ResourceType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromMetadataEntry(this);
+   public Builder<?> toBuilder() {
+      return builder().fromMetadataEntry(this);
    }
 
-   public static class Builder extends ResourceType.Builder<MetadataEntry> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       private String key;
       private String value;
 
       /**
        * @see MetadataEntry#getKey()
        */
-      public Builder key(String key) {
+      public B key(String key) {
          this.key = key;
-         return this;
+         return self();
       }
 
       /**
        * @see MetadataEntry#getValue()
        */
-      public Builder value(String value) {
+      public B value(String value) {
          this.value = value;
-         return this;
+         return self();
       }
 
       /**
        * @see MetadataEntry#getKey()
        * @see MetadataEntry#getValue()
        */
-      public Builder entry(String key, String value) {
+      public B entry(String key, String value) {
          this.key = key;
          this.value = value;
-         return this;
+         return self();
       }
 
       @Override
       public MetadataEntry build() {
-         return new MetadataEntry(href, type, links, key, value);
+         return new MetadataEntry(this);
       }
 
       /**
        * @see ResourceType#getHref()
        */
       @Override
-      public Builder href(URI href) {
+      public B href(URI href) {
          super.href(href);
-         return this;
+         return self();
       }
 
       /**
        * @see ResourceType#getType()
        */
       @Override
-      public Builder type(String type) {
+      public B type(String type) {
          super.type(type);
-         return this;
+         return self();
       }
 
       /**
        * @see ResourceType#getLinks()
        */
       @Override
-      public Builder links(Set<Link> links) {
+      public B links(Set<Link> links) {
          super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return self();
       }
 
       /**
        * @see ResourceType#getLinks()
        */
       @Override
-      public Builder link(Link link) {
+      public B link(Link link) {
          super.link(link);
-         return this;
+         return self();
       }
 
-      public Builder fromMetadataEntry(MetadataEntry in) {
+      public B fromMetadataEntry(MetadataEntry in) {
          return fromResourceType(in).entry(key, value);
       }
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResourceType(ResourceType<MetadataEntry> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
    }
 
    private MetadataEntry() {
       // for JAXB
    }
 
-   public MetadataEntry(URI href, String type, Set<Link> links, String key, String value) {
-      super(href, type, links);
-      this.key = checkNotNull(key, "key");
-      this.value = checkNotNull(value, "value");
+   public MetadataEntry(Builder<?> builder) {
+      super(builder);
+      this.key = checkNotNull(builder.key, "key");
+      this.value = checkNotNull(builder.value, "value");
    }
 
    @XmlElement(name = "Key")

@@ -59,7 +59,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    /*
     * Shared state between dependant tests.
     */
-   private ReferenceType<?> groupRef;
+   private ReferenceType groupRef;
    private Group group;
 
    @Override

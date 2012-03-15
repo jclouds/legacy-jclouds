@@ -76,7 +76,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkNetworkType(network);
        
       // optional
-      ReferenceType<?> networkPoolRef = network.getNetworkPool();
+      ReferenceType networkPoolRef = network.getNetworkPool();
       if (networkPoolRef != null) {
          Checks.checkReferenceType(networkPoolRef);
       }

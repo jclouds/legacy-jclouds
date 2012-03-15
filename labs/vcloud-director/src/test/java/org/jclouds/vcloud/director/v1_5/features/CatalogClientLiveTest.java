@@ -71,10 +71,10 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Shared state between dependant tests.
     */
 
-   private ReferenceType<?> catalogRef;
-   private ReferenceType<?> catalogItemRef;
-   private ReferenceType<?> newCatalogItemRef;
-   private CatalogType<?> catalog;
+   private ReferenceType catalogRef;
+   private ReferenceType catalogItemRef;
+   private ReferenceType newCatalogItemRef;
+   private CatalogType catalog;
    private CatalogItem catalogItem;
    private CatalogItem newCatalogItem;
    private Metadata catalogMetadata;
@@ -124,7 +124,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /catalogItem/{id}", dependsOnMethods = { "testAddCatalogItem" }, enabled = false)
    public void testUpdateCatalogItem() {
-      CatalogType<?> catalog = catalogClient.getCatalog(catalogRef.getHref());
+      CatalogType catalog = catalogClient.getCatalog(catalogRef.getHref());
       newCatalogItemRef = Iterables.find(catalog.getCatalogItems().getCatalogItems(), new Predicate<Reference>() {
          @Override
          public boolean apply(Reference input) {

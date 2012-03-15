@@ -24,8 +24,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -37,37 +35,36 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "NetworkSection")
-public class NetworkSection extends SectionType<NetworkSection> {
+public class NetworkSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
+   public Builder<?> toBuilder() {
       return builder().fromNetworkSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<NetworkSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       protected Set<Network> networks = Sets.newLinkedHashSet();
 
       /**
        * @see NetworkSection#getNetworks
        */
-      public Builder network(Network network) {
+      public B network(Network network) {
          this.networks.add(checkNotNull(network, "network"));
-         return this;
+         return self();
       }
 
       /**
        * @see NetworkSection#getNetworks
        */
-      public Builder networks(Iterable<Network> networks) {
+      public B networks(Iterable<Network> networks) {
          this.networks = ImmutableSet.<Network> copyOf(checkNotNull(networks, "networks"));
-         return this;
+         return self();
       }
 
       /**
@@ -75,43 +72,18 @@ public class NetworkSection extends SectionType<NetworkSection> {
        */
       @Override
       public NetworkSection build() {
-         return new NetworkSection(info, required, networks);
+         return new NetworkSection(this);
       }
 
-      public Builder fromNetworkSection(NetworkSection in) {
+      public B fromNetworkSection(NetworkSection in) {
          return networks(in.getNetworks()).info(in.getInfo());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<NetworkSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
-
    }
 
    private Set<Network> networks;
 
-   private NetworkSection(@Nullable String info, @Nullable Boolean required, Iterable<Network> networks) {
-      super(info, required);
+   private NetworkSection(Builder<?> builder) {
+      super(builder);
       this.networks = ImmutableSet.<Network> copyOf(checkNotNull(networks, "networks"));
    }
    

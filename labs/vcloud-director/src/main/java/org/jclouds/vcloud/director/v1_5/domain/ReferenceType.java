@@ -44,67 +44,75 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ReferenceType<T extends ReferenceType<T>> {
+public class ReferenceType {
 
    @javax.annotation.Resource
    protected static Logger logger = Logger.NULL;
 
-   public static <T extends ReferenceType<T>> Builder<T> builder() {
-      return new Builder<T>();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder<T> toBuilder() {
-      return new Builder<T>().fromReferenceType(this);
+   public Builder<?> toBuilder() {
+      return builder().fromReferenceType(this);
    }
 
-   public static class Builder<T extends ReferenceType<T>> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> {
 
-      protected URI href;
-      protected String id;
-      protected String name;
-      protected String type;
+      private URI href;
+      private String id;
+      private String name;
+      private String type;
+      
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
 
       /**
        * @see ReferenceType#getHref()
        */
-      public Builder<T> href(URI href) {
+      public B href(URI href) {
          this.href = href;
-         return this;
+         return self();
       }
 
       /**
        * @see ReferenceType#getId()
        */
-      public Builder<T> id(String id) {
+      public B id(String id) {
          this.id = id;
-         return this;
+         return self();
       }
 
       /**
        * @see ReferenceType#getType()
        */
-      public Builder<T> type(String type) {
+      public B type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
       /**
        * @see ReferenceType#getName()
        */
-      public Builder<T> name(String name) {
+      public B name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public ReferenceType<T> build() {
-         return new ReferenceType<T>(href, id, name, type);
+      public ReferenceType build() {
+         return new ReferenceType(this);
       }
 
-      protected Builder<T> fromReferenceType(ReferenceType<T> in) {
+      protected B fromReferenceType(ReferenceType in) {
          return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
       }
 
-      protected Builder<T> fromAttributes(Map<String, String> attributes) {
+      protected B fromAttributes(Map<String, String> attributes) {
          return href(URI.create(attributes.get("href"))).id(attributes.get("id")).name(attributes.get("name")).type(attributes.get("type"));
       }
    }
@@ -117,6 +125,13 @@ public class ReferenceType<T extends ReferenceType<T>> {
    private String name;
    @XmlAttribute
    private String type;
+
+   protected ReferenceType(Builder<?> builder) {
+      this.href = builder.href;
+      this.id = builder.id;
+      this.name = builder.name;
+      this.type = builder.type;
+   }
 
    protected ReferenceType(URI href, String id, String name, String type) {
       this.href = href;
@@ -186,7 +201,7 @@ public class ReferenceType<T extends ReferenceType<T>> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      ReferenceType<?> that = ReferenceType.class.cast(o);
+      ReferenceType that = ReferenceType.class.cast(o);
       return equal(this.href, that.href) && equal(this.id, that.id) && equal(this.name, that.name) && equal(this.type, that.type);
    }
 

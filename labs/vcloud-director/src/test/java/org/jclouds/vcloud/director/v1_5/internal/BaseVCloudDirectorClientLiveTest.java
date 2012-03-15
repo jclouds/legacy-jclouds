@@ -155,7 +155,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
          context.close();
    }
    
-   public URI toAdminUri(ReferenceType<?> ref) {
+   public URI toAdminUri(ReferenceType ref) {
       return toAdminUri(ref.getHref());
    }
    

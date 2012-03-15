@@ -20,21 +20,16 @@
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Date;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 
-import org.jclouds.vcloud.director.v1_5.domain.Link;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a Catalog vCloud query as a record.
@@ -46,19 +41,20 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "CatalogRecord")
-public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultCatalogRecord> {
+public class QueryResultCatalogRecord extends QueryResultRecordType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromQueryResultCatalogRecord(this);
+   public Builder<?> toBuilder() {
+      return builder().fromQueryResultCatalogRecord(this);
    }
 
-   public static class Builder extends QueryResultRecordType.Builder<QueryResultCatalogRecord> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends QueryResultRecordType.Builder<B> {
 
       private String name;
       private Boolean isPublished;
@@ -73,183 +69,129 @@ public class QueryResultCatalogRecord extends QueryResultRecordType<QueryResultC
       /**
        * @see QueryResultCatalogRecord#getName()
        */
-      public Builder name(String name) {
+      public B name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#isPublished()
        */
-      public Builder isPublished(Boolean isPublished) {
+      public B isPublished(Boolean isPublished) {
          this.isPublished = isPublished;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#isPublished()
        */
-      public Builder published() {
+      public B published() {
          this.isPublished = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#isPublished()
        */
-      public Builder notPublished() {
+      public B notPublished() {
          this.isPublished = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#isShared()
        */
-      public Builder isShared(Boolean isShared) {
+      public B isShared(Boolean isShared) {
          this.isShared = isShared;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#isShared()
        */
-      public Builder shared() {
+      public B shared() {
          this.isShared = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#isShared()
        */
-      public Builder notShared() {
+      public B notShared() {
          this.isShared = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#getCreationDate()
        */
-      public Builder creationDate(Date creationDate) {
+      public B creationDate(Date creationDate) {
          this.creationDate = creationDate;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#getOrgName()
        */
-      public Builder orgName(String orgName) {
+      public B orgName(String orgName) {
          this.orgName = orgName;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#getOwnerName()
        */
-      public Builder ownerName(String ownerName) {
+      public B ownerName(String ownerName) {
          this.ownerName = ownerName;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#getNumberOfVAppTemplates()
        */
-      public Builder numberOfVAppTemplates(Integer numberOfVAppTemplates) {
+      public B numberOfVAppTemplates(Integer numberOfVAppTemplates) {
          this.numberOfVAppTemplates = numberOfVAppTemplates;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#getNumberOfMedia()
        */
-      public Builder numberOfMedia(Integer numberOfMedia) {
+      public B numberOfMedia(Integer numberOfMedia) {
          this.numberOfMedia = numberOfMedia;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultCatalogRecord#getOwner()
        */
-      public Builder owner(URI owner) {
+      public B owner(URI owner) {
          this.owner = owner;
-         return this;
+         return self();
       }
 
       @Override
       public QueryResultCatalogRecord build() {
-         return new QueryResultCatalogRecord(links, href, id, type,name, isPublished, isShared, creationDate, orgName,
-               ownerName, numberOfVAppTemplates, numberOfMedia, owner);
+         return new QueryResultCatalogRecord(this);
       }
 
-      /**
-       * @see QueryResultRecordType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      @Override
-      public Builder fromQueryResultRecordType(QueryResultRecordType<QueryResultCatalogRecord> in) {
-         return Builder.class.cast(super.fromQueryResultRecordType(in));
-      }
-
-      public Builder fromQueryResultCatalogRecord(QueryResultCatalogRecord in) {
+      public B fromQueryResultCatalogRecord(QueryResultCatalogRecord in) {
          return fromQueryResultRecordType(in).name(in.getName()).isPublished(in.isPublished()).isShared(in.isShared()).creationDate(in.getCreationDate()).orgName(in.getOrgName()).ownerName(
                in.getOwnerName()).numberOfVAppTemplates(in.getNumberOfVAppTemplates()).numberOfMedia(in.getNumberOfMedia()).owner(in.getOwner());
       }
    }
 
-   private QueryResultCatalogRecord(Set<Link> links, URI href, String id, String type, String name,
-                                   Boolean published, Boolean shared, Date creationDate, String orgName, 
-                                   String ownerName, Integer numberOfVAppTemplates, Integer numberOfMedia, 
-                                   URI owner) {
-      super(links, href, id, type);
-      this.name = name;
-      isPublished = published;
-      isShared = shared;
-      this.creationDate = creationDate;
-      this.orgName = orgName;
-      this.ownerName = ownerName;
-      this.numberOfVAppTemplates = numberOfVAppTemplates;
-      this.numberOfMedia = numberOfMedia;
-      this.owner = owner;
+   private QueryResultCatalogRecord(Builder<?> builder) {
+      super(builder);
+      this.name = builder.name;
+      isPublished = builder.isPublished;
+      isShared = builder.isShared;
+      this.creationDate = builder.creationDate;
+      this.orgName = builder.orgName;
+      this.ownerName = builder.ownerName;
+      this.numberOfVAppTemplates = builder.numberOfVAppTemplates;
+      this.numberOfMedia = builder.numberOfMedia;
+      this.owner = builder.owner;
    }
 
    private QueryResultCatalogRecord() {

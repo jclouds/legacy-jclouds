@@ -21,9 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,17 +45,19 @@ import com.google.common.base.Objects.ToStringHelper;
     "invalidLoginsBeforeLockout",
     "accountLockoutIntervalMinutes"
 })
-public class OrgPasswordPolicySettings extends ResourceType<OrgPasswordPolicySettings> {
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+public class OrgPasswordPolicySettings extends ResourceType {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromOrgPasswordPolicySettings(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOrgPasswordPolicySettings(this);
    }
 
-   public static class Builder extends ResourceType.Builder<OrgPasswordPolicySettings> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private boolean accountLockoutEnabled;
       private int invalidLoginsBeforeLockout;
@@ -67,75 +66,32 @@ public class OrgPasswordPolicySettings extends ResourceType<OrgPasswordPolicySet
       /**
        * @see OrgPasswordPolicySettings#getAccountLockoutEnabled()
        */
-      public Builder accountLockoutEnabled(boolean accountLockoutEnabled) {
+      public B accountLockoutEnabled(boolean accountLockoutEnabled) {
          this.accountLockoutEnabled = accountLockoutEnabled;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgPasswordPolicySettings#getInvalidLoginsBeforeLockout()
        */
-      public Builder invalidLoginsBeforeLockout(int invalidLoginsBeforeLockout) {
+      public B invalidLoginsBeforeLockout(int invalidLoginsBeforeLockout) {
          this.invalidLoginsBeforeLockout = invalidLoginsBeforeLockout;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgPasswordPolicySettings#getAccountLockoutIntervalMinutes()
        */
-      public Builder accountLockoutIntervalMinutes(int accountLockoutIntervalMinutes) {
+      public B accountLockoutIntervalMinutes(int accountLockoutIntervalMinutes) {
          this.accountLockoutIntervalMinutes = accountLockoutIntervalMinutes;
-         return this;
+         return self();
       }
 
       public OrgPasswordPolicySettings build() {
-         return new OrgPasswordPolicySettings(href, type, links, accountLockoutEnabled, invalidLoginsBeforeLockout, 
-               accountLockoutIntervalMinutes);
+         return new OrgPasswordPolicySettings(this);
       }
-
       
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-
-      @Override
-      public Builder fromResourceType(ResourceType<OrgPasswordPolicySettings> in) {
-          return Builder.class.cast(super.fromResourceType(in));
-      }
-      public Builder fromOrgPasswordPolicySettings(OrgPasswordPolicySettings in) {
+      public B fromOrgPasswordPolicySettings(OrgPasswordPolicySettings in) {
          return fromResourceType(in)
             .accountLockoutEnabled(in.isAccountLockoutEnabled())
             .invalidLoginsBeforeLockout(in.getInvalidLoginsBeforeLockout())
@@ -143,18 +99,15 @@ public class OrgPasswordPolicySettings extends ResourceType<OrgPasswordPolicySet
       }
    }
 
-   @SuppressWarnings("unused")
-   private OrgPasswordPolicySettings() {
+   protected OrgPasswordPolicySettings() {
       // For JAXB
    }
 
-    public OrgPasswordPolicySettings(URI href, String type, Set<Link> links,
-         boolean accountLockoutEnabled, int invalidLoginsBeforeLockout,
-         int accountLockoutIntervalMinutes) {
-      super(href, type, links);
-      this.accountLockoutEnabled = accountLockoutEnabled;
-      this.invalidLoginsBeforeLockout = invalidLoginsBeforeLockout;
-      this.accountLockoutIntervalMinutes = accountLockoutIntervalMinutes;
+   protected OrgPasswordPolicySettings(Builder<?> builder) {
+      super(builder);
+      this.accountLockoutEnabled = builder.accountLockoutEnabled;
+      this.invalidLoginsBeforeLockout = builder.invalidLoginsBeforeLockout;
+      this.accountLockoutIntervalMinutes = builder.accountLockoutIntervalMinutes;
    }
 
    @XmlElement(name = "AccountLockoutEnabled")

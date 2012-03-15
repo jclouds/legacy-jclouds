@@ -20,18 +20,11 @@
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.jclouds.vcloud.director.v1_5.domain.Link;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Represents the results from a Network vCloud query as a record.
@@ -42,19 +35,20 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultNetworkRecord> {
+public class QueryResultNetworkRecord extends QueryResultRecordType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromQueryResultNetworkRecord(this);
+   public Builder<?> toBuilder() {
+      return builder().fromQueryResultNetworkRecord(this);
    }
 
-   public static class Builder extends QueryResultRecordType.Builder<QueryResultNetworkRecord> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends QueryResultRecordType.Builder<B> {
 
       private String name;
       private String ipScopeId;
@@ -68,140 +62,89 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       /**
        * @see QueryResultNetworkRecord#getName()
        */
-      public Builder name(String name) {
+      public B name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#getIpScopeId()
        */
-      public Builder ipScopeId(String ipScopeId) {
+      public B ipScopeId(String ipScopeId) {
          this.ipScopeId = ipScopeId;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#getGateway()
        */
-      public Builder gateway(String gateway) {
+      public B gateway(String gateway) {
          this.gateway = gateway;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#getNetmask()
        */
-      public Builder netmask(String netmask) {
+      public B netmask(String netmask) {
          this.netmask = netmask;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#getDns1()
        */
-      public Builder dns1(String dns1) {
+      public B dns1(String dns1) {
          this.dns1 = dns1;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#getDns2()
        */
-      public Builder dns2(String dns2) {
+      public B dns2(String dns2) {
          this.dns2 = dns2;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#getDnsSuffix()
        */
-      public Builder dnsSuffix(String dnsSuffix) {
+      public B dnsSuffix(String dnsSuffix) {
          this.dnsSuffix = dnsSuffix;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#isBusy()
        */
-      public Builder isBusy(Boolean isBusy) {
+      public B isBusy(Boolean isBusy) {
          this.isBusy = isBusy;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#isBusy()
        */
-      public Builder busy() {
+      public B busy() {
          this.isBusy = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see QueryResultNetworkRecord#isBusy()
        */
-      public Builder notBusy() {
+      public B notBusy() {
          this.isBusy = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       @Override
       public QueryResultNetworkRecord build() {
-         return new QueryResultNetworkRecord(links, href, id, type,
-               name, ipScopeId, gateway, netmask, dns1, dns2, dnsSuffix, isBusy);
+         return new QueryResultNetworkRecord(this);
       }
 
-      /**
-       * @see QueryResultRecordType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return this;
-      }
-
-      /**
-       * @see QueryResultRecordType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      @Override
-      public Builder fromQueryResultRecordType(QueryResultRecordType<QueryResultNetworkRecord> in) {
-         return Builder.class.cast(super.fromQueryResultRecordType(in));
-      }
-
-      public Builder fromQueryResultNetworkRecord(QueryResultNetworkRecord in) {
+      public B fromQueryResultNetworkRecord(QueryResultNetworkRecord in) {
          return fromQueryResultRecordType(in)
                .name(in.getName()).ipScopeId(in.getIpScopeId()).gateway(in.getGateway())
                .netmask(in.getNetmask()).dns1(in.getDns1()).dns2(in.getDns2())
@@ -209,17 +152,16 @@ public class QueryResultNetworkRecord extends QueryResultRecordType<QueryResultN
       }
    }
 
-   public QueryResultNetworkRecord(Set<Link> links, URI href, String id, String type, String name, String ipScopeId,
-                                   String gateway, String netmask, String dns1, String dns2, String dnsSuffix, Boolean busy) {
-      super(links, href, id, type);
-      this.name = name;
-      this.ipScopeId = ipScopeId;
-      this.gateway = gateway;
-      this.netmask = netmask;
-      this.dns1 = dns1;
-      this.dns2 = dns2;
-      this.dnsSuffix = dnsSuffix;
-      isBusy = busy;
+   public QueryResultNetworkRecord(Builder<?> builder) {
+      super(builder);
+      this.name = builder.name;
+      this.ipScopeId = builder.ipScopeId;
+      this.gateway = builder.gateway;
+      this.netmask = builder.netmask;
+      this.dns1 = builder.dns1;
+      this.dns2 = builder.dns2;
+      this.dnsSuffix = builder.dnsSuffix;
+      isBusy = builder.isBusy;
    }
 
    private QueryResultNetworkRecord() {

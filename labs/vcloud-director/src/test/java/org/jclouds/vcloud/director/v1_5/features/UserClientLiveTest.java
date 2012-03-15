@@ -31,7 +31,6 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.jclouds.vcloud.director.v1_5.domain.User;
@@ -59,7 +58,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    /*
     * Shared state between dependant tests.
     */
-   private ReferenceType<?> orgRef;
+   private ReferenceType orgRef;
    private User user;
 
    @Override

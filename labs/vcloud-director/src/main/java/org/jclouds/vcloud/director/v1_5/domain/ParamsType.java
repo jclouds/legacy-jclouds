@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -35,42 +35,58 @@ import com.google.common.base.Objects.ToStringHelper;
  * </pre>
  */
 @XmlType(name = "Params")
-public class ParamsType<T extends ParamsType<T>> {
+public class ParamsType {
 
-   public static class Builder<T extends ParamsType<T>> {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
 
-      protected String description;
-      protected String name;
+   public Builder<?> toBuilder() {
+      return builder().fromParamsType(this);
+   }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> {
+
+      private String description;
+      private String name;
+
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
+      
       /**
        * @see ParamsType#getDescription()
        */
-      public Builder<T> description(String description) {
+      public B description(String description) {
          this.description = description;
-         return this;
+         return self();
       }
 
       /**
        * @see ParamsType#getName()
        */
-      public Builder<T> name(String name) {
+      public B name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
-      public ParamsType<T> build() {
-         return new ParamsType<T>(description, name);
+      public ParamsType build() {
+         return new ParamsType(this);
       }
 
-      public Builder<T> fromParamsType(ParamsType<T> in) {
+      public B fromParamsType(ParamsType in) {
          return description(in.getDescription())
                .name(in.getName());
       }
    }
 
-   public ParamsType(String description, String name) {
-      this.description = description;
-      this.name = name;
+   protected ParamsType(Builder<?> builder) {
+      this.description = builder.description;
+      this.name = builder.name;
    }
 
    protected ParamsType() {
@@ -103,7 +119,7 @@ public class ParamsType<T extends ParamsType<T>> {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      ParamsType<?> that = ParamsType.class.cast(o);
+      ParamsType that = ParamsType.class.cast(o);
       return equal(this.description, that.description) && equal(this.name, that.name);
    }
 

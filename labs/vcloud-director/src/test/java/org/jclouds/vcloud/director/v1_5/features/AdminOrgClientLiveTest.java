@@ -60,7 +60,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    /*
     * Shared state between dependant tests.
     */
-   private ReferenceType<?> orgRef;
+   private ReferenceType orgRef;
    private OrgSettings settings, newSettings;
    private OrgEmailSettings emailSettings, newEmailSettings;
    private OrgGeneralSettings generalSettings, newGeneralSettings;

@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,8 +29,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -45,93 +42,56 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @XmlRootElement(name = "TasksList")
-public class TasksList extends ResourceType<TasksList> implements Set<Task> {
-   public static Builder builder() {
-      return new Builder();
+public class TasksList extends ResourceType implements Set<Task> {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder extends ResourceType.Builder<TasksList> {
-      protected String name;
+   public Builder<?> toBuilder() {
+      return builder().fromTasksList(this);
+   }
 
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+      private String name;
       private Set<Task> tasks;
 
       /**
        * @see TasksList#getName()
        */
-      public Builder name(String name) {
+      public B name(String name) {
          this.name = name;
-         return this;
+         return self();
       }
 
       /**
        * @see TasksList#getTasks()
        */
-      public Builder tasks(Set<Task> tasks) {
+      public B tasks(Set<Task> tasks) {
          if (checkNotNull(tasks, "tasks").size() > 0)
             this.tasks = Sets.newLinkedHashSet(tasks);
-         return this;
+         return self();
       }
 
       /**
        * @see TasksList#getTasks()
        */
-      public Builder task(Task task) {
+      public B task(Task task) {
          if (tasks == null)
             tasks = Sets.newLinkedHashSet();
          this.tasks.add(checkNotNull(task, "task"));
-         return this;
+         return self();
       }
       
       @Override
       public TasksList build() {
-         return new TasksList(href, type, links, name, tasks);
+         return new TasksList(this);
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-      public Builder fromTasksList(TasksList in) {
+      public B fromTasksList(TasksList in) {
          return fromResourceType(in).tasks(in);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResourceType(ResourceType<TasksList> in) {
-         return Builder.class.cast(super.fromResourceType(in));
       }
    }
 
@@ -140,10 +100,10 @@ public class TasksList extends ResourceType<TasksList> implements Set<Task> {
    @XmlElement(name = "Task")
    private Set<Task> tasks;
 
-   public TasksList(URI href, String type, @Nullable Set<Link> links, String name, @Nullable Set<Task> tasks) {
-      super(href, type, links);
-      this.tasks = tasks;
-      this.name = name;
+   public TasksList(Builder<?> builder) {
+      super(builder);
+      this.tasks = builder.tasks;
+      this.name = builder.name;
    }
 
    protected TasksList() {
@@ -178,12 +138,6 @@ public class TasksList extends ResourceType<TasksList> implements Set<Task> {
       return super.string().add("name", name).add("tasks", delegate());
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromTasksList(this);
-   }
-
-   
    /*
     * Methods below are for implementing Set; annoying lack of multiple inheritance for using ForwardingSet!
     */

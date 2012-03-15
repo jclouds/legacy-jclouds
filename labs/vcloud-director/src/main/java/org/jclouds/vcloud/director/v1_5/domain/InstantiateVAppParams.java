@@ -21,200 +21,39 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 
 
+
 /**
  * Parameters for Instantiating a vApp
  *
  * @author danikov
  */
-public class InstantiateVAppParams extends InstantiateVAppParamsType<InstantiateVAppParams> {
+public class InstantiateVAppParams extends InstantiateVAppParamsType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder();
+   public Builder<?> toBuilder() {
+      return builder().fromInstantiateVAppParams(this);
    }
 
-   public static class Builder extends InstantiateVAppParamsType.Builder<InstantiateVAppParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends InstantiateVAppParamsType.Builder<B> {
 
       @Override
       public InstantiateVAppParams build() {
-         return new InstantiateVAppParams(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
+         return new InstantiateVAppParams(this);
       }
 
-      /**
-       * @see InstantiateVAppParamsType#getSource()
-       */
-      @Override
-      public Builder source(ReferenceType<?> source) {
-         this.source = source;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isSourceDelete()
-       */
-      @Override
-      public Builder isSourceDelete(Boolean sourceDelete) {
-         this.sourceDelete = sourceDelete;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isSourceDelete()
-       */
-      @Override
-      public Builder sourceDelete() {
-         this.sourceDelete = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isSourceDelete()
-       */
-      @Override
-      public Builder notSourceDelete() {
-         this.sourceDelete = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isLinkedClone()
-       */
-      @Override
-      public Builder isLinkedClone(Boolean linkedClone) {
-         this.linkedClone = linkedClone;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isLinkedClone()
-       */
-      @Override
-      public Builder linkedClone() {
-         this.linkedClone = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see InstantiateVAppParamsType#isLinkedClone()
-       */
-      @Override
-      public Builder notLinkedClone() {
-         this.linkedClone = Boolean.FALSE;
-         return this;
-      }
-
-
-      /**
-       * @see ParamsType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         super.description(description);
-         return this;
-      }
-
-      /**
-       * @see ParamsType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         super.name(name);
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#getVAppParent()
-       */
-      @Override
-      public Builder vAppParent(Reference vAppParent) {
-         this.vAppParent = vAppParent;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#getInstantiationParams()
-       */
-      @Override
-      public Builder instantiationParams(InstantiationParams instantiationParams) {
-         this.instantiationParams = instantiationParams;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#isDeploy()
-       */
-      @Override
-      public Builder deploy(Boolean deploy) {
-         this.deploy = deploy;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#isDeploy()
-       */
-      @Override
-      public Builder deploy() {
-         this.deploy = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#isDeploy()
-       */
-      @Override
-      public Builder notDeploy() {
-         this.deploy = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#isPowerOn()
-       */
-      @Override
-      public Builder powerOn(Boolean powerOn) {
-         this.powerOn = powerOn;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#isPowerOn()
-       */
-      @Override
-      public Builder powerOn() {
-         this.powerOn = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see VAppCreationParams#isPowerOn()
-       */
-      @Override
-      public Builder notPowerOn() {
-         this.powerOn = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromInstantiateVAppParamsType(InstantiateVAppParamsType<InstantiateVAppParams> in) {
-         return Builder.class.cast(super.fromVAppCreationParamsType(in));
-      }
-
-      public Builder fromInstantiateVAppParams(InstantiateVAppParams in) {
+      public B fromInstantiateVAppParams(InstantiateVAppParams in) {
          return fromInstantiateVAppParamsType(in);
       }
    }
 
-   public InstantiateVAppParams(String description, String name, Reference vAppParent, InstantiationParams instantiationParams,
-                                Boolean deploy, Boolean powerOn, ReferenceType<?> source, Boolean sourceDelete, Boolean linkedClone) {
-      super(description, name, vAppParent, instantiationParams, deploy, powerOn, source, sourceDelete, linkedClone);
+   public InstantiateVAppParams(Builder<?> builder) {
+      super(builder);
    }
 
    protected InstantiateVAppParams() {

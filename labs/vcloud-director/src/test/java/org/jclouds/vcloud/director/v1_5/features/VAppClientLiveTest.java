@@ -805,7 +805,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .notPowerOn()
             .description("Test VApp")
             .instantiationParams(instantiationParams())
-            .source(ReferenceType.<Reference>builder().href(vAppTemplateURI).build())
+            .source(ReferenceType.builder().href(vAppTemplateURI).build())
             .build();
       
       // debug(instantiate);

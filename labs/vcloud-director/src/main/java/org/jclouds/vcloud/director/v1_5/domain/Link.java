@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Adrian Cole
  */
 @XmlRootElement(name = "Link")
-public class Link extends ReferenceType<Link> {
+public class Link extends ReferenceType {
 
    public static final class Rel {
       public static final String ADD = "add";
@@ -122,73 +121,35 @@ public class Link extends ReferenceType<Link> {
       );
    }
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromLink(this);
+   public Builder<?> toBuilder() {
+      return builder().fromLink(this);
    }
 
-   public static class Builder extends ReferenceType.Builder<Link> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends ReferenceType.Builder<B> {
 
-      protected String rel;
+      private String rel;
 
       /**
        * @see Link#getRel()
        */
-      public Builder rel(String rel) {
+      public B rel(String rel) {
          this.rel = rel;
-         return this;
+         return self();
       }
 
       @Override
       public Link build() {
-         return new Link(href, id, name, type, rel);
+         return new Link(this);
       }
 
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      public Builder fromLink(Link in) {
+      public B fromLink(Link in) {
          return fromReferenceType(in).rel(in.getRel());
       }
 
@@ -196,30 +157,22 @@ public class Link extends ReferenceType<Link> {
        * {@inheritDoc}
        */
       @Override
-      public Builder fromReferenceType(ReferenceType<Link> in) {
-         return Builder.class.cast(super.fromReferenceType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromAttributes(Map<String, String> attributes) {
+      public B fromAttributes(Map<String, String> attributes) {
          super.fromAttributes(attributes);
          rel(attributes.get("rel"));
-         return this;
+         return self();
       }
    }
 
    @XmlAttribute(required = true)
    private String rel;
 
-   private Link(URI href, String id, String name, String type, String rel) {
-      super(href, id, name, type);
-      this.rel = checkNotNull(rel, "rel");
+   protected Link(Builder<?> builder) {
+      super(builder);
+      this.rel = checkNotNull(builder.rel, "rel");
    }
 
-   private Link() {
+   protected Link() {
       // For JAXB
    }
 

@@ -21,10 +21,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -69,7 +67,7 @@ import com.google.common.base.Objects.ToStringHelper;
     "customUsersOu",
     "customOrgLdapSettings"
 })
-public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
+public class OrgLdapSettings extends ResourceType {
    public static final class LdapMode {
       public static final String NONE = "NONE";
       public static final String SYSTEM = "SYSTEM";
@@ -85,15 +83,18 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
       );
    }
    
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromOrgLdapSettings(this);
+   public Builder<?> toBuilder() {
+      return builder().fromOrgLdapSettings(this);
    }
 
-   public static class Builder extends ResourceType.Builder<OrgLdapSettings> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private String ldapMode;
       private String customUsersOu;
@@ -102,76 +103,32 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
       /**
        * @see OrgLdapSettings#getLdapMode()
        */
-      public Builder ldapMode(String ldapMode) {
+      public B ldapMode(String ldapMode) {
          this.ldapMode = ldapMode;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgLdapSettings#getCustomUsersOu()
        */
-      public Builder customUsersOu(String customUsersOu) {
+      public B customUsersOu(String customUsersOu) {
          this.customUsersOu = customUsersOu;
-         return this;
+         return self();
       }
 
       /**
        * @see OrgLdapSettings#getCustomOrgLdapSettings()
        */
-      public Builder customOrgLdapSettings(CustomOrgLdapSettings customOrgLdapSettings) {
+      public B customOrgLdapSettings(CustomOrgLdapSettings customOrgLdapSettings) {
          this.customOrgLdapSettings = customOrgLdapSettings;
-         return this;
+         return self();
       }
 
       public OrgLdapSettings build() {
-         OrgLdapSettings orgLdapSettings = new OrgLdapSettings(href, type, links, 
-               ldapMode, customUsersOu, customOrgLdapSettings);
-         return orgLdapSettings;
+         return new OrgLdapSettings(this);
       }
-
       
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         super.links(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         super.link(link);
-         return this;
-      }
-
-
-      @Override
-      public Builder fromResourceType(ResourceType<OrgLdapSettings> in) {
-          return Builder.class.cast(super.fromResourceType(in));
-      }
-      public Builder fromOrgLdapSettings(OrgLdapSettings in) {
+      public B fromOrgLdapSettings(OrgLdapSettings in) {
          return fromResourceType(in)
             .ldapMode(in.getLdapMode())
             .customUsersOu(in.getCustomUsersOu())
@@ -179,27 +136,23 @@ public class OrgLdapSettings extends ResourceType<OrgLdapSettings> {
       }
    }
 
-   @SuppressWarnings("unused")
-   private OrgLdapSettings() {
+   protected OrgLdapSettings() {
       // For JAXB
    }
 
-    public OrgLdapSettings(URI href, String type, Set<Link> links, 
-          String ldapMode, String customUsersOu, CustomOrgLdapSettings customOrgLdapSettings) {
-      super(href, type, links);
-      this.ldapMode = ldapMode;
-      this.customUsersOu = customUsersOu;
-      this.customOrgLdapSettings = customOrgLdapSettings;
+   protected OrgLdapSettings(Builder<?> builder) {
+      super(builder);
+      this.ldapMode = builder.ldapMode;
+      this.customUsersOu = builder.customUsersOu;
+      this.customOrgLdapSettings = builder.customOrgLdapSettings;
    }
 
-
-
    @XmlElement(name = "OrgLdapMode")
-    protected String ldapMode;
+    private String ldapMode;
     @XmlElement(name = "CustomUsersOu")
-    protected String customUsersOu;
+    private String customUsersOu;
     @XmlElement(name = "CustomOrgLdapSettings")
-    protected CustomOrgLdapSettings customOrgLdapSettings;
+    private CustomOrgLdapSettings customOrgLdapSettings;
 
     /**
      * Gets the value of the orgLdapMode property.

@@ -21,13 +21,11 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -58,104 +56,65 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "ProductSectionList")
 @XmlType(name = "ProductSectionListType")
-public class ProductSectionList extends ResourceType<ProductSectionList> implements Set<ProductSection> {
+public class ProductSectionList extends ResourceType implements Set<ProductSection> {
    
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromProductSectionList(this);
+   public Builder<?> toBuilder() {
+      return builder().fromProductSectionList(this);
    }
 
-   public static class Builder extends ResourceType.Builder<ProductSectionList> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
       private Set<ProductSection> productSections = Sets.newLinkedHashSet();
 
       /**
        * @see ProductSectionList#getProductSections()
        */
-      public Builder productSections(Set<ProductSection> productSections) {
+      public B productSections(Set<ProductSection> productSections) {
          if (checkNotNull(productSections, "productSections").size() > 0)
             this.productSections = Sets.newLinkedHashSet(productSections);
-         return this;
+         return self();
       }
 
       /**
        * @see ProductSectionList#getProductSections()
        */
-      public Builder productSections(ProductSection productSection) {
+      public B productSections(ProductSection productSection) {
          if (productSections == null)
             productSections = Sets.newLinkedHashSet();
          this.productSections.add(checkNotNull(productSection, "productSection"));
-         return this;
+         return self();
       }
 
       @Override
       public ProductSectionList build() {
-         ProductSectionList productSectionList = new ProductSectionList(href, type, links, productSections);
-         return productSectionList;
+         return new ProductSectionList(this);
       }
 
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         super.href(href);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         super.type(type);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-
-      @Override
-      public Builder fromResourceType(ResourceType<ProductSectionList> in) {
-         return Builder.class.cast(super.fromResourceType(in));
-      }
-
-      public Builder fromProductSectionList(ProductSectionList in) {
+      public B fromProductSectionList(ProductSectionList in) {
          return fromResourceType(in)
                .productSections(ImmutableSet.copyOf(in));
       }
    }
 
-   private ProductSectionList() {
+   protected ProductSectionList() {
       // for JAXB
    }
 
-   private ProductSectionList(URI href, String type, @Nullable Set<Link> links, @Nullable Set<ProductSection> productSections) {
-      super(href, type, links);
-      this.productSections = productSections != null && productSections.isEmpty() ? null : productSections;
+   protected ProductSectionList(Builder<?> builder) {
+      super(builder);
+      this.productSections = builder.productSections != null && builder.productSections.isEmpty() ? null : builder.productSections;
    }
 
 
    @XmlElement(name = "ProductSection", namespace = VCloudDirectorConstants.VCLOUD_OVF_NS)
-   protected Set<ProductSection> productSections;
+   private Set<ProductSection> productSections;
 
    /**
     * Gets the value of the productSection property.

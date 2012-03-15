@@ -43,92 +43,85 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "MetadataValue")
-public class MetadataValue extends ResourceType<MetadataValue> {
+public class MetadataValue extends ResourceType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.METADATA_ENTRY;
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromMetadataValue(this);
+   public Builder<?> toBuilder() {
+      return builder().fromMetadataValue(this);
    }
 
-   public static class Builder extends ResourceType.Builder<MetadataValue> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       private String value;
 
       /**
        * @see MetadataValue#getValue
        */
-      public Builder value(String value) {
+      public B value(String value) {
          this.value = value;
-         return this;
+         return self();
       }
 
       @Override
       public MetadataValue build() {
-         return new MetadataValue(href, type, links, value);
+         return new MetadataValue(this);
       }
 
       /**
        * @see ResourceType#getHref()
        */
       @Override
-      public Builder href(URI href) {
+      public B href(URI href) {
          super.href(href);
-         return this;
+         return self();
       }
 
       /**
        * @see ResourceType#getType()
        */
       @Override
-      public Builder type(String type) {
+      public B type(String type) {
          super.type(type);
-         return this;
+         return self();
       }
 
       /**
        * @see ResourceType#getLinks()
        */
       @Override
-      public Builder links(Set<Link> links) {
+      public B links(Set<Link> links) {
          super.links(Sets.newLinkedHashSet(checkNotNull(links, "links")));
-         return this;
+         return self();
       }
 
       /**
        * @see ResourceType#getLinks()
        */
       @Override
-      public Builder link(Link link) {
+      public B link(Link link) {
          super.link(link);
-         return this;
+         return self();
       }
 
-      public Builder fromMetadataValue(MetadataValue in) {
+      public B fromMetadataValue(MetadataValue in) {
          return fromResourceType(in).value(value);
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromResourceType(ResourceType<MetadataValue> in) {
-         return Builder.class.cast(super.fromResourceType(in));
       }
    }
 
-   private MetadataValue() {
+   protected MetadataValue() {
       // For JAXB
    }
 
-   private MetadataValue(URI href, String type, Set<Link> links, String value) {
-      super(href, type, links);
-      this.value = checkNotNull(value, "value");
+   protected MetadataValue(Builder<?> builder) {
+      super(builder);
+      this.value = checkNotNull(builder.value, "value");
    }
 
    @XmlElement(name = "Value", required = true)

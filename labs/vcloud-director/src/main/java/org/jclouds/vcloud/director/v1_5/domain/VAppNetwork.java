@@ -19,20 +19,13 @@
 
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
-import static com.google.common.base.Preconditions.*;
-
-import java.net.URI;
-import java.util.Set;
+import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Sets;
 
 /**
  * Represents a vApp network.
@@ -42,155 +35,53 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlType(name = "VAppNetwork")
-public class VAppNetwork extends NetworkType<VAppNetwork> {
+public class VAppNetwork extends NetworkType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromVAppNetwork(this);
+   public Builder<?> toBuilder() {
+      return builder().fromVAppNetwork(this);
    }
 
-   public static class Builder extends NetworkType.Builder<VAppNetwork> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends NetworkType.Builder<B> {
 
       private Boolean deployed;
 
       /**
        * @see VAppNetwork#isDeployed()
        */
-      public Builder isDeployed(Boolean deployed) {
+      public B isDeployed(Boolean deployed) {
          this.deployed = deployed;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppNetwork#isDeployed()
        */
-      public Builder deployed() {
+      public B deployed() {
          this.deployed = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see VAppNetwork#isDeployed()
        */
-      public Builder notDeployed() {
+      public B notDeployed() {
          this.deployed = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       @Override
       public VAppNetwork build() {
-         VAppNetwork vAppNetwork = new VAppNetwork(href, type, links, description, tasks, id, name, networkConfiguration);
-         vAppNetwork.deployed = deployed;
-         return vAppNetwork;
+         return new VAppNetwork(this);
       }
 
-      /**
-       * @see NetworkType#getConfiguration()
-       */
-      @Override
-      public Builder configuration(NetworkConfiguration networkConfiguration) {
-         this.networkConfiguration = networkConfiguration;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getName()
-       */
-      @Override
-      public Builder name(String name) {
-         this.name = name;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getDescription()
-       */
-      @Override
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         if (checkNotNull(tasks, "tasks").size() > 0)
-            this.tasks = Sets.newLinkedHashSet(tasks);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder task(Task task) {
-         if (tasks == null)
-            tasks = Sets.newLinkedHashSet();
-         this.tasks.add(checkNotNull(task, "task"));
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         if (checkNotNull(links, "links").size() > 0)
-            this.links = Sets.newLinkedHashSet(links);
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         if (links == null)
-            links = Sets.newLinkedHashSet();
-         this.links.add(checkNotNull(link, "link"));
-         return this;
-      }
-
-      @Override
-      public Builder fromNetworkType(NetworkType<VAppNetwork> in) {
-         return Builder.class.cast(super.fromNetworkType(in));
-      }
-
-      public Builder fromVAppNetwork(VAppNetwork in) {
+      public B fromVAppNetwork(VAppNetwork in) {
          return fromNetworkType(in).isDeployed(in.isDeployed());
       }
    }
@@ -199,12 +90,14 @@ public class VAppNetwork extends NetworkType<VAppNetwork> {
       // For JAXB and builder use
    }
 
-   public VAppNetwork(URI href, String type, @Nullable Set<Link> links, String description, @Nullable Set<Task> tasks, String id, String name, NetworkConfiguration networkConfiguration) {
-      super(href, type, links, description, tasks, id, name, networkConfiguration);
+   public VAppNetwork(Builder<?> builder) {
+      super(builder);
+      deployed = builder.deployed;
+
    }
 
    @XmlAttribute
-   protected Boolean deployed;
+   private Boolean deployed;
 
    /**
     * Gets the value of the deployed property.

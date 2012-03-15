@@ -25,8 +25,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -41,38 +39,36 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "ProductSection", namespace = VCLOUD_OVF_NS)
-public class ProductSection extends SectionType<ProductSection> {
+public class ProductSection extends SectionType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
-      return builder().fromDeploymentOptionSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromProductSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<ProductSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       protected Set<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties = Sets.newLinkedHashSet();
 
       /**
        * @see ProductSection#getProperties
        */
-      public Builder property(org.jclouds.vcloud.director.v1_5.domain.ovf.Property property) {
+      public B property(org.jclouds.vcloud.director.v1_5.domain.ovf.Property property) {
          this.properties.add(checkNotNull(property, "property"));
-         return this;
+         return self();
       }
 
       /**
        * @see ProductSection#getProperties
        */
-      public Builder properties(Iterable<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties) {
+      public B properties(Iterable<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties) {
          this.properties = ImmutableSet.<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> copyOf(checkNotNull(properties, "properties"));
-         return this;
+         return self();
       }
 
       /**
@@ -80,44 +76,20 @@ public class ProductSection extends SectionType<ProductSection> {
        */
       @Override
       public ProductSection build() {
-         return new ProductSection(info, required, properties);
+         return new ProductSection(this);
       }
 
-      public Builder fromDeploymentOptionSection(ProductSection in) {
+      public B fromProductSection(ProductSection in) {
          return info(in.getInfo()).properties(in.getProperties());
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<ProductSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
       }
    }
 
    
    private Set<org.jclouds.vcloud.director.v1_5.domain.ovf.Property> properties;
 
-   private ProductSection(@Nullable String info, @Nullable Boolean required, Set<Property> properties) {
-      super(info, required);
-      this.properties = ImmutableSet.copyOf(checkNotNull(properties, "properties"));
+   private ProductSection(Builder<?> builder) {
+      super(builder);
+      this.properties = ImmutableSet.copyOf(checkNotNull(builder.properties, "properties"));
    }
    
    private ProductSection() {

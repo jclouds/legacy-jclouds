@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -44,38 +42,36 @@ import com.google.common.collect.Sets;
 @XmlType(propOrder = {
       "disks"
 })
-public class DiskSection extends SectionType<DiskSection> {
+public class DiskSection extends SectionType {
 
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromDiskSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromDiskSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<DiskSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       private Set<Disk> disks = Sets.newLinkedHashSet();
 
       /**
        * @see DiskSection#getDisks
        */
-      public Builder disk(Disk disk) {
+      public B disk(Disk disk) {
          this.disks.add(checkNotNull(disk, "disk"));
-         return this;
+         return self();
       }
 
       /**
        * @see DiskSection#getDisks
        */
-      public Builder disks(Iterable<Disk> disks) {
+      public B disks(Iterable<Disk> disks) {
          this.disks = ImmutableSet.<Disk>copyOf(checkNotNull(disks, "disks"));
-         return this;
+         return self();
       }
 
       /**
@@ -83,48 +79,23 @@ public class DiskSection extends SectionType<DiskSection> {
        */
       @Override
       public DiskSection build() {
-         return new DiskSection(info, required, disks);
+         return new DiskSection(this);
       }
 
-      public Builder fromDiskSection(DiskSection in) {
+      public B fromDiskSection(DiskSection in) {
          return disks(in.getDisks()).info(in.getInfo());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<DiskSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-      
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
-
-   }
+  }
 
    @XmlElement(name = "Disk")
    private Set<Disk> disks;
 
-   private DiskSection(@Nullable String info, @Nullable Boolean required, Iterable<Disk> disks) {
-      super(info, required);
-      this.disks = ImmutableSet.<Disk>copyOf(checkNotNull(disks, "disks"));
+   protected DiskSection(Builder<?> builder) {
+      super(builder);
+      this.disks = ImmutableSet.<Disk>copyOf(checkNotNull(builder.disks, "disks"));
    }
    
-   private DiskSection() {
+   protected DiskSection() {
       // for JAXB
    }   
 

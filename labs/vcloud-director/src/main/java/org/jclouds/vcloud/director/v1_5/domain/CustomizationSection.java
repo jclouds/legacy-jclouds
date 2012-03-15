@@ -29,11 +29,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType.Builder;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -60,18 +57,20 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "CustomizationSection")
-public class CustomizationSection extends SectionType<CustomizationSection> {
+public class CustomizationSection extends SectionType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromCustomizationSection(this);
+   public Builder<?> toBuilder() {
+      return builder().fromCustomizationSection(this);
    }
 
-   public static class Builder extends SectionType.Builder<CustomizationSection> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
       private boolean customizeOnInstantiate;
       private Set<Link> links = Sets.newLinkedHashSet();
       private URI href;
@@ -80,81 +79,56 @@ public class CustomizationSection extends SectionType<CustomizationSection> {
       /**
        * @see CustomizationSection#isCustomizeOnInstantiate()
        */
-      public Builder customizeOnInstantiate(boolean customizeOnInstantiate) {
+      public B customizeOnInstantiate(boolean customizeOnInstantiate) {
          this.customizeOnInstantiate = customizeOnInstantiate;
-         return this;
+         return self();
       }
 
       /**
        * @see CustomizationSection#getLinks()
        */
-      public Builder links(Set<Link> links) {
+      public B links(Set<Link> links) {
          this.links = checkNotNull(links, "links");
-         return this;
+         return self();
       }
 
       /**
        * @see CustomizationSection#getHref()
        */
-      public Builder href(URI href) {
+      public B href(URI href) {
          this.href = href;
-         return this;
+         return self();
       }
 
       /**
        * @see CustomizationSection#getType()
        */
-      public Builder type(String type) {
+      public B type(String type) {
          this.type = type;
-         return this;
+         return self();
       }
 
 
       @Override
       public CustomizationSection build() {
-         return new CustomizationSection(info, required, customizeOnInstantiate, links, href, type);
+         return new CustomizationSection(this);
       }
 
-      public Builder fromCustomizationSection(CustomizationSection in) {
+      public B fromCustomizationSection(CustomizationSection in) {
          return fromSectionType(in)
                .customizeOnInstantiate(in.isCustomizeOnInstantiate())
                .links(in.getLinks())
                .href(in.getHref())
                .type(in.getType());
       }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromSectionType(SectionType<CustomizationSection> in) {
-         return Builder.class.cast(super.fromSectionType(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder info(String info) {
-         return Builder.class.cast(super.info(info));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder required(Boolean required) {
-         return Builder.class.cast(super.required(required));
-      }
    }
 
-   private CustomizationSection(@Nullable String info, @Nullable Boolean required, boolean customizeOnInstantiate, Set<Link> links,
-                               URI href, String type) {
-      super(info, required);
-      this.customizeOnInstantiate = customizeOnInstantiate;
-      this.links = ImmutableSet.copyOf(links);
-      this.href = href;
-      this.type = type;
+   private CustomizationSection(Builder<?> builder) {
+      super(builder);
+      this.customizeOnInstantiate = builder.customizeOnInstantiate;
+      this.links = ImmutableSet.copyOf(builder.links);
+      this.href = builder.href;
+      this.type = builder.type;
    }
 
    private CustomizationSection() {

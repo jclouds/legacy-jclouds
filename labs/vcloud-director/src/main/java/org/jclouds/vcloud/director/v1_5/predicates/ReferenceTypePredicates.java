@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 
 import com.google.common.base.Predicate;
@@ -42,7 +43,7 @@ public class ReferenceTypePredicates {
     *           ex. {@code context.getApi().getCurrentSession().getOrg()}
     * @return predicate that will match references of the given name
     */
-   public static <T extends ReferenceType<T>> Predicate<T> nameEquals(final String name) {
+   public static <T extends ReferenceType> Predicate<T> nameEquals(final String name) {
       checkNotNull(name, "name must be defined");
 
       return new Predicate<T>() {
@@ -68,7 +69,7 @@ public class ReferenceTypePredicates {
     * @return predicate that will match references of the given type
     * @see VCloudDirectorMediaType
     */
-   public static <T extends ReferenceType<T>> Predicate<T> typeEquals(final String type) {
+   public static <T extends ReferenceType> Predicate<T> typeEquals(final String type) {
       checkNotNull(type, "type must be defined");
 
       return new Predicate<T>() {

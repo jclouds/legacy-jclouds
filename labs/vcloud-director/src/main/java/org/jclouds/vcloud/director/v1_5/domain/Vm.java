@@ -19,24 +19,16 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
+import org.omg.CORBA.Environment;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Represents a VM.
@@ -48,18 +40,20 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "Vm")
-public class Vm extends AbstractVAppType<Vm> {
+public class Vm extends AbstractVAppType {
 
-   public static Builder builder() {
-      return new Builder();
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   @Override
-   public Builder toBuilder() {
-      return new Builder().fromVm(this);
+   public Builder<?> toBuilder() {
+      return builder().fromVm(this);
    }
 
-   public static class Builder extends AbstractVAppType.Builder<Vm> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends AbstractVAppType.Builder<B> {
 
       private String vAppScopedLocalId;
       private EnvironmentType environment;
@@ -68,194 +62,50 @@ public class Vm extends AbstractVAppType<Vm> {
       /**
        * @see Vm#getVAppScopedLocalId()
        */
-      public Builder vAppScopedLocalId(String vAppScopedLocalId) {
+      public B vAppScopedLocalId(String vAppScopedLocalId) {
          this.vAppScopedLocalId = vAppScopedLocalId;
-         return this;
+         return self();
       }
 
       /**
        * @see Vm#getEnvironment()
        */
-      public Builder environment(EnvironmentType environment) {
+      public B environment(EnvironmentType environment) {
          this.environment = environment;
-         return this;
+         return self();
       }
 
       /**
        * @see Vm#getNeedsCustomization()
        */
-      public Builder isNeedsCustomization(Boolean needsCustomization) {
+      public B isNeedsCustomization(Boolean needsCustomization) {
          this.needsCustomization = needsCustomization;
-         return this;
+         return self();
       }
 
       /**
        * @see Vm#getNeedsCustomization()
        */
-      public Builder needsCustomization() {
+      public B needsCustomization() {
          this.needsCustomization = Boolean.TRUE;
-         return this;
+         return self();
       }
 
       /**
        * @see Vm#getNeedsCustomization()
        */
-      public Builder notNeedsCustomization() {
+      public B notNeedsCustomization() {
          this.needsCustomization = Boolean.FALSE;
-         return this;
+         return self();
       }
 
       @Override
       public Vm build() {
-         Vm vm = new Vm(href, type, links, description, tasks, id, name, files, status, vAppParent, sections, deployed, vAppScopedLocalId, environment, needsCustomization);
+         Vm vm = new Vm(this);
          return vm;
       }
 
-      /**
-       * @see AbstractVAppType#isDeployed()
-       */
-      @Override
-      public Builder isDeployed(Boolean deployed) {
-         this.deployed = deployed;
-         return this;
-      }
-
-      /**
-       * @see AbstractVAppType#isDeployed()
-       */
-      @Override
-      public Builder deployed() {
-         this.deployed = Boolean.TRUE;
-         return this;
-      }
-
-      /**
-       * @see AbstractVAppType#isDeployed()
-       */
-      @Override
-      public Builder notDeployed() {
-         this.deployed = Boolean.FALSE;
-         return this;
-      }
-
-      /**
-       * @see AbstractVAppType#getVAppParent()
-       */
-      @Override
-      public Builder parent(Reference vAppParent) {
-         this.vAppParent = vAppParent;
-         return this;
-      }
-
-      /**
-       * @see AbstractVAppType#getSections()
-       */
-      @Override
-      public Builder sections(List<SectionType<?>> sections) {
-         if (checkNotNull(sections, "sections").size() > 0)
-            this.sections = Lists.newArrayList(sections);
-         return this;
-      }
-
-      /**
-       * @see AbstractVAppType#getSections()
-       */
-      @Override
-      public Builder section(SectionType<?> section) {
-         if (this.sections == null)
-            this.sections = Lists.newArrayList();
-         this.sections.add(checkNotNull(section, "section"));
-         return this;
-      }
-
-      /**
-       * @see ResourceEntityType#getFiles()
-       */
-      @Override
-      public Builder files(FilesList files) {
-         this.files = files;
-         return this;
-      }
-
-      /**
-       * @see ResourceEntityType#getStatus()
-       */
-      @Override
-      public Builder status(Integer status) {
-         this.status = status;
-         return this;
-      }
-
-      /**
-       * @see EntityType#getId()
-       */
-      @Override
-      public Builder id(String id) {
-         this.id = id;
-         return this;
-      }
-      
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder tasks(Set<Task> tasks) {
-         if (checkNotNull(tasks, "tasks").size() > 0)
-            this.tasks = Sets.newLinkedHashSet(tasks);
-         return this;
-      }
-
-      /**
-       * @see EntityType#getTasks()
-       */
-      @Override
-      public Builder task(Task task) {
-         if (tasks == null)
-            tasks = Sets.newLinkedHashSet();
-         this.tasks.add(checkNotNull(task, "task"));
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getHref()
-       */
-      @Override
-      public Builder href(URI href) {
-         this.href = href;
-         return this;
-      }
-
-      /**
-       * @see ReferenceType#getType()
-       */
-      @Override
-      public Builder type(String type) {
-         this.type = type;
-         return this;
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder links(Set<Link> links) {
-         return Builder.class.cast(super.links(links));
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      @Override
-      public Builder link(Link link) {
-         return Builder.class.cast(super.link(link));
-      }
-
-      @Override
-      public Builder fromAbstractVAppType(AbstractVAppType<Vm> in) {
-         return Builder.class.cast(super.fromAbstractVAppType(in));
-      }
-
-      public Builder fromVm(Vm in) {
+      public B fromVm(Vm in) {
          return fromAbstractVAppType(in).vAppScopedLocalId(in.getVAppScopedLocalId()).environment(in.getEnvironment()).isNeedsCustomization(in.isNeedsCustomization());
       }
    }
@@ -264,12 +114,11 @@ public class Vm extends AbstractVAppType<Vm> {
       // for JAXB and Builders
    }
 
-   public Vm(URI href, String type, @Nullable Set<Link> links, String description, @Nullable Set<Task> tasks, String id, String name, FilesList files, Integer status, Reference vAppParent,
-             @Nullable List<SectionType<?>> sections, Boolean deployed, String vAppScopedlocalId, EnvironmentType environment, Boolean needsCustomization) {
-      super(href, type, links, description, tasks, id, name, files, status, vAppParent, sections, deployed);
-      this.vAppScopedLocalId = vAppScopedlocalId;
-      this.environment = environment;
-      this.needsCustomization = needsCustomization;
+   protected Vm(Builder<?> builder) {
+      super(builder);
+      this.vAppScopedLocalId = builder.vAppScopedLocalId;
+      this.environment = builder.environment;
+      this.needsCustomization = builder.needsCustomization;
    }
 
    @XmlElement(name = "VAppScopedLocalId")

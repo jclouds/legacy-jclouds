@@ -48,20 +48,19 @@ import com.google.common.base.Objects;
  * </pre>
  */
 @XmlType(name = "UploadVAppTemplateParams")
-public class UploadVAppTemplateParams
-      extends ParamsType<UploadVAppTemplateParams>
-
-{
-   @SuppressWarnings("unchecked")
-   public static Builder builder() {
-      return new Builder();
+public class UploadVAppTemplateParams extends ParamsType {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public Builder toBuilder() {
-      return new Builder().fromUploadVAppTemplateParams(this);
+   public Builder<?> toBuilder() {
+      return builder().fromUploadVAppTemplateParams(this);
    }
 
-   public static class Builder extends ParamsType.Builder<UploadVAppTemplateParams> {
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+   
+   public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private String transferFormat;
       private Boolean manifestRequired;
@@ -69,44 +68,38 @@ public class UploadVAppTemplateParams
       /**
        * @see UploadVAppTemplateParams#getTransferFormat()
        */
-      public Builder transferFormat(String transferFormat) {
+      public B transferFormat(String transferFormat) {
          this.transferFormat = transferFormat;
-         return this;
+         return self();
       }
 
       /**
        * @see UploadVAppTemplateParams#isManifestRequired()
        */
-      public Builder manifestRequired(Boolean manifestRequired) {
+      public B manifestRequired(Boolean manifestRequired) {
          this.manifestRequired = manifestRequired;
-         return this;
+         return self();
       }
 
 
       public UploadVAppTemplateParams build() {
-         return new UploadVAppTemplateParams(description, name, transferFormat, manifestRequired);
+         return new UploadVAppTemplateParams(this);
       }
 
-
-      @Override
-      public Builder fromParamsType(ParamsType<UploadVAppTemplateParams> in) {
-         return Builder.class.cast(super.fromParamsType(in));
-      }
-
-      public Builder fromUploadVAppTemplateParams(UploadVAppTemplateParams in) {
+      public B fromUploadVAppTemplateParams(UploadVAppTemplateParams in) {
          return fromParamsType(in)
                .transferFormat(in.getTransferFormat())
                .manifestRequired(in.isManifestRequired());
       }
    }
 
-   public UploadVAppTemplateParams(String description, String name, String transferFormat, Boolean manifestRequired) {
-      super(description, name);
-      this.transferFormat = transferFormat;
-      this.manifestRequired = manifestRequired;
+   public UploadVAppTemplateParams(Builder<?> builder) {
+      super(builder);
+      this.transferFormat = builder.transferFormat;
+      this.manifestRequired = builder.manifestRequired;
    }
 
-   private UploadVAppTemplateParams() {
+   protected UploadVAppTemplateParams() {
       // For JAXB
    }
 
