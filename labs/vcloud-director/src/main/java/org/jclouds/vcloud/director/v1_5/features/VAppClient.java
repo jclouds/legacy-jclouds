@@ -376,7 +376,7 @@ public interface VAppClient {
     *
     * @since 1.0
     */
-   GuestCustomizationSection getGuestCustomizationSection(URI vAppURI);
+   GuestCustomizationSection getGuestCustomizationSection(URI vmURI);
 
    /**
     * Modifies the guest customization section of a VM.
@@ -387,10 +387,10 @@ public interface VAppClient {
     *
     * @since 1.0
     */
-   Task modifyGuestCustomizationSection(URI vAppURI, GuestCustomizationSection section);
+   Task modifyGuestCustomizationSection(URI vmURI, GuestCustomizationSection section);
 
    /**
-    * Retrieves the lease settings section of a VM.
+    * Retrieves the lease settings section of a vApp or vApp template.
     *
     * <pre>
     * GET /vApp/{id}/leaseSettingsSection
@@ -401,7 +401,7 @@ public interface VAppClient {
    LeaseSettingsSection getLeaseSettingsSection(URI vAppURI);
 
    /**
-    * Modifies the lease settings section of a VM.
+    * Modifies the lease settings section of a vApp or vApp template.
     *
     * <pre>
     * PUT /vApp/{id}/leaseSettingsSection
@@ -596,7 +596,7 @@ public interface VAppClient {
     *
     * @since 1.5
     */
-   RuntimeInfoSection getRuntimeInfoSection(URI vAppURI);
+   RuntimeInfoSection getRuntimeInfoSection(URI vmURI);
 
    /**
     * Retrieves the thumbnail of the screen of a VM.
@@ -628,7 +628,7 @@ public interface VAppClient {
    ScreenTicket getScreenTicket(URI vAppURI);
 
    /**
-    * Retrieves the startup section of a VM.
+    * Retrieves the startup section of a VApp.
     *
     * <pre>
     * GET /vApp/{id}/startupSection
@@ -639,7 +639,7 @@ public interface VAppClient {
    StartupSection getStartupSection(URI vAppURI);
 
    /**
-    * Modifies the startup section of a VM.
+    * Modifies the startup section of a VApp.
     *
     * <pre>
     * PUT /vApp/{id}/startupSection
@@ -658,7 +658,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   VirtualHardwareSection getVirtualHardwareSection(URI vAppURI);
+   VirtualHardwareSection getVirtualHardwareSection(URI vmURI);
 
    /**
     * Modifies the virtual hardware section of a VM.
@@ -669,7 +669,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSection(URI vAppURI, VirtualHardwareSection section);
+   Task modifyVirtualHardwareSection(URI vmURI, VirtualHardwareSection section);
 
    /**
     * Retrieves the CPU properties in virtual hardware section of a VM.

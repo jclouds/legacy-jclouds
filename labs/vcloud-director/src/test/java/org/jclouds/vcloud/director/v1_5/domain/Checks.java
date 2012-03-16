@@ -705,11 +705,15 @@ public class Checks {
       // Check optional fields
       VirtualSystemSettingData virtualSystem = hardware.getSystem();
       if (virtualSystem != null) checkVirtualSystemSettingData(virtualSystem);
-      for (String transport : hardware.getTransports()) {
-         // NOTE transport cannot be checked
+      if (hardware.getTransports() != null) {
+	      for (String transport : hardware.getTransports()) {
+	         // NOTE transport cannot be checked
+	      }
       }
-      for (ResourceAllocationSettingData item : hardware.getItems()) {
-         checkResourceAllocationSettingData(item);
+      if (hardware.getItems() != null) {
+	      for (ResourceAllocationSettingData item : hardware.getItems()) {
+	         checkResourceAllocationSettingData(item);
+	      }
       }
       
       // Check parent type

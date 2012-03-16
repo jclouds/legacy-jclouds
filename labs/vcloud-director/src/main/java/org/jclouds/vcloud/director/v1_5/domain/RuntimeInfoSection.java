@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
@@ -36,12 +37,13 @@ import com.google.common.collect.Lists;
  * Runtime information for a specific vm
  *
  * <pre>
- * &lt;complexType name="RuntimeInfoSection" /&gt;
+ * &lt;complexType name="RuntimeInfoSectionType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
-@XmlType(name = "RuntimeInfoSection")
+@XmlRootElement(name = "RuntimeInfoSection")
+@XmlType(name = "RuntimeInfoSectionType")
 public class RuntimeInfoSection extends SectionType {
 
    public static Builder<?> builder() {

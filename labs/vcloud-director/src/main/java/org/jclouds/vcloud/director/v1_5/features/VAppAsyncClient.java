@@ -300,7 +300,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(@EndpointParam URI vAppURI);
+   ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyGuestCustomizationSection(URI, GuestCustomizationSection)
@@ -311,7 +311,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI vmURI,
                                                           @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
    /**
@@ -516,7 +516,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam URI vAppURI);
+   ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#getScreenImage(URI)
@@ -568,7 +568,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(@EndpointParam URI vAppURI);
+   ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSection(URI, VirtualHardwareSection)
@@ -579,7 +579,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyVirtualHardwareSection(@EndpointParam URI vmURI,
                                                        @BinderParam(BindToXMLPayload.class) VirtualHardwareSection section);
 
    /**
