@@ -20,16 +20,18 @@ package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
@@ -70,16 +72,13 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
 
    private final Random random = new Random();
    private VAppTemplateClient vappTemplateClient;
+   private VdcClient vdcClient;
    
    @BeforeClass(inheritGroups = true)
    @Override
-   public void setupRequiredClients() {
-      try {
-         vappTemplateClient = context.getApi().getVAppTemplateClient();
-      } catch (Exception e) {
-         // TODO Declare super as throws Exception?
-         throw Throwables.propagate(e);
-      }
+   public void setupRequiredClients() throws Exception {
+      vappTemplateClient = context.getApi().getVAppTemplateClient();
+      vdcClient = context.getApi().getVdcClient();
    }
 
    @Test
@@ -175,14 +174,10 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
 
    @Test
    public void testEditVAppTemplate() {
-      // TODO Should we be using the orig vappTemplate? Or a blank one with only the name/description?
-      
-      VAppTemplate oldVAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
-      
       String uid = ""+random.nextInt();
       String name = "myname-"+uid;
       String description = "mydescr-"+uid;
-      VAppTemplate template = oldVAppTemplate.toBuilder()
+      VAppTemplate template = VAppTemplate.builder()
                .name(name)
                .description(description)
                .build();
@@ -344,21 +339,29 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       assertEquals(newNetworkConnectionSection.getInfo(), info);
    }
    
-   @Test // FIXME Need to clone a new template so have something to delete
+   @Test // FIXME cloneVAppTemplate is giving back 500 error
    public void testDeleteVAppTemplate() throws Exception {
-      // FIXME fix case of VappTemplate -> VAppTemplate
-      String newVAppTemplateId = "something";
-      URI newVAppTemplateURI = URI.create(endpoint + "/vAppTemplate/" + newVAppTemplateId);
+      CloneVAppTemplateParams cloneVAppTemplateParams = CloneVAppTemplateParams.builder()
+               .source(Reference.builder().href(vAppTemplateURI).build())
+               .build();
+      VAppTemplate clonedVappTemplate = vdcClient.cloneVAppTemplate(vdcURI, cloneVAppTemplateParams);
+      Task cloneTask = Iterables.getFirst(clonedVappTemplate.getTasks(), null);
+      assertNotNull(cloneTask, "vdcClient.cloneVAppTemplate returned VAppTemplate that did not contain any tasks");
+      retryTaskSuccess.apply(cloneTask);
 
-      final Task task = vappTemplateClient.deleteVappTemplate(newVAppTemplateURI);
+      // Confirm that "get" works pre-delete
+      VAppTemplate vAppTemplatePreDelete = vappTemplateClient.getVAppTemplate(clonedVappTemplate.getHref());
+      Checks.checkVAppTemplate(vAppTemplatePreDelete);
+      
+      // Delete the template
+      final Task task = vappTemplateClient.deleteVappTemplate(clonedVappTemplate.getHref());
       retryTaskSuccess.apply(task);
 
-      // TODO What is the nice way to find out if a template now exists? It's certainly not the code below!
-      // But this gives an idea of what I'm trying to do.
+      // Confirm that can't access post-delete, i.e. template has been deleted
       try {
-         vappTemplateClient.getVAppTemplate(newVAppTemplateURI);
-      } catch (NoSuchElementException e) {
-         // success
+         vappTemplateClient.getVAppTemplate(clonedVappTemplate.getHref());
+      } catch (VCloudDirectorException e) {
+         // success; should get a 403 because vAppTemplate no longer exists
       }
    }
 
@@ -366,10 +369,14 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    public void testDisableVAppTemplateDownload() throws Exception {
       vappTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
       
-      // Assert that "download" link is now not offered
-      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
-      Set<Link> links = vAppTemplate.getLinks();
-      assertFalse(hasLinkMatchingRel(links, "download.*"), "Should not offer download link after disabling download: "+vAppTemplate);
+      // TODO Check that it really is disabled. The only thing I can see for determining this 
+      // is the undocumented "download" link in the VAppTemplate. But that is brittle and we
+      // don't know what timing guarantees there are for adding/removing the link.
+      //
+      // For example:
+      //    VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      //    Set<Link> links = vAppTemplate.getLinks();
+      //    assertFalse(hasLinkMatchingRel(links, "download.*"), "Should not offer download link after disabling download: "+vAppTemplate);
    }
    
    @Test
@@ -379,12 +386,17 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       final Task task = vappTemplateClient.enableDownloadVappTemplate(vAppTemplateURI);
       retryTaskSuccess.apply(task);
       
-      // Assert that "download" link is now offered
-      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
-      Set<Link> links = vAppTemplate.getLinks();
-      assertTrue(hasLinkMatchingRel(links, "download.*"), "Should offer download link after enabling download: "+vAppTemplate);
+      // TODO Check that it really is enabled. The only thing I can see for determining this 
+      // is the undocumented "download" link in the VAppTemplate. But that is brittle and we
+      // don't know what timing guarantees there are for adding/removing the link.
+      //
+      // For example:
+      //    VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      //    Set<Link> links = vAppTemplate.getLinks();
+      //    assertTrue(hasLinkMatchingRel(links, "download.*"), "Should offer download link after enabling download: "+vAppTemplate);
    }
    
+   @SuppressWarnings("unused")
    private boolean hasLinkMatchingRel(Set<Link> links, String regex) {
       for (Link link : links) {
          if (link.getRel() != null && link.getRel().matches(regex)) {
@@ -413,7 +425,9 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       retryTaskSuccess.apply(task);
    }
    
-   @Test
+   // This failed previously, but is passing now. 
+   // However, it's not part of the official API so not necessary to assert it.
+   @Test(enabled = false) 
    public void testCompletedTaskNotIncludedInVAppTemplate() throws Exception {
       // Kick off a task, and wait for it to complete
       vappTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
