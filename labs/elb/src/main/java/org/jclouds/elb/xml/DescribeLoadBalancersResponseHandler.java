@@ -130,9 +130,8 @@ public class DescribeLoadBalancersResponseHandler extends
                contents.add(elb);
             } catch (NullPointerException e) {
                logger.warn(e, "malformed load balancer: %s", localName);
+               this.elb = null;
             }
-
-            this.elb = null;
 
          }
 
