@@ -251,7 +251,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
     * @return the VApp that is being instantiated
     */
    protected VApp instantiateVApp() {
-      return instantiateVApp("test-vapp-"+random.nextInt(Integer.MAX_VALUE));
+      return instantiateVApp("test-vapp-" + random.nextInt(Integer.MAX_VALUE));
    }
    
    protected VApp instantiateVApp(String name) {

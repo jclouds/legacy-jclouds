@@ -199,8 +199,8 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
 
       // If we found any references, delete the VApp they point to
       if (vApps != null && !Iterables.isEmpty(vApps)) {
-         for (Reference each : vApps) {
-            VApp found = vAppClient.getVApp(each.getHref());
+         for (Reference ref : vApps) {
+            VApp found = vAppClient.getVApp(ref.getHref());
             // debug(found);
 
             // Shutdown and power off the VApp if necessary
