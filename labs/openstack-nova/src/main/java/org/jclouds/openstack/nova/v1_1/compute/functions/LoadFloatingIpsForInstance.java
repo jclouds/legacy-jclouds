@@ -41,6 +41,7 @@ import java.util.Set;
 @Singleton
 public class LoadFloatingIpsForInstance extends CacheLoader<RegionAndName, Iterable<String>> {
    private final NovaClient client;
+   // TODO this is unlikely to be required once region support is improved
    private final Iterable<String> regions;
    
    @Inject
