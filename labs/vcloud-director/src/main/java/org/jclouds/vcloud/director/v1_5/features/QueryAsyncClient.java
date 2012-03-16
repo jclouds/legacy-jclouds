@@ -127,6 +127,20 @@ public interface QueryAsyncClient {
    ListenableFuture<CatalogReferences> catalogReferencesQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
          @QueryParam("filter") String filter);
 
+   @GET
+   @Path("/vAppTemplates/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> vAppTemplatesQueryAll();
+
+   @GET
+   @Path("/vAppTemplates/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> vAppTemplatesQuery(@QueryParam("filter") String filter);
+
    /**
     * Retrieves a list of {@link VApp}s by using REST API general QueryHandler.
     */
@@ -176,4 +190,18 @@ public interface QueryAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VAppReferences> vAppReferencesQuery(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize,
          @QueryParam("filter") String filter);
+   
+   @GET
+   @Path("/vms/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> vmsQueryAll();
+
+   @GET
+   @Path("/vms/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> vmsQuery(@QueryParam("filter") String filter);
 }
