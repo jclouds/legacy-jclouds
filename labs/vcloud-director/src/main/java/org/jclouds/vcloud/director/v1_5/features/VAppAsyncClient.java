@@ -402,7 +402,7 @@ public interface VAppAsyncClient {
     * @see VAppClient#modifyNetworkConnectionSection(URI, NetworkConnectionSection)
     */
    @PUT
-   @Path("/networkConfigSection")
+   @Path("/networkConnectionSection")
    @Produces(NETWORK_CONFIG_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser

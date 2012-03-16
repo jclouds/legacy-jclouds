@@ -480,6 +480,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       GuestCustomizationSection oldSection = vAppClient.getGuestCustomizationSection(vmURI);
       GuestCustomizationSection newSection = oldSection.toBuilder()
             .computerName("newComputerName")
+            .adminPassword(null) // Not allowed
             .build();
 
       // The method under test
@@ -689,6 +690,8 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .info("Changed OperatingSystemSection Description")
             .description("Changed OperatingSystemSection Description")
             .build();
+      debug(newSection);
+      assertNotNull(newSection.getId());
 
       // The method under test
       Task modifyOperatingSystemSection = vAppClient.modifyOperatingSystemSection(vmURI, newSection);

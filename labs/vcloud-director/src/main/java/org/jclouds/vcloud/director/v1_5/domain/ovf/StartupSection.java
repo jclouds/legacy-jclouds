@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,14 +55,22 @@ public class StartupSection extends SectionType {
    
    public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
-      private List<StartupSectionItem> item = Collections.emptyList();
+      private List<StartupSectionItem> items = Collections.emptyList();
       private List<Object> any = Collections.emptyList();
 
       /**
        * @see StartupSection#getItem()
        */
-      public B item(List<StartupSectionItem> item) {
-         this.item = item;
+      public B items(List<StartupSectionItem> items) {
+         this.items = checkNotNull(items, "items");
+         return self();
+      }
+
+      /**
+       * @see StartupSection#getItem()
+       */
+      public B item(StartupSectionItem item) {
+         this.items.add(checkNotNull(item, "item"));
          return self();
       }
 
@@ -79,7 +88,7 @@ public class StartupSection extends SectionType {
       }
       
       public B fromStartupSection(StartupSection in) {
-         return fromSectionType(in).item(item).any(any);
+         return fromSectionType(in).items(items).any(any);
       }
    }
 
@@ -94,7 +103,7 @@ public class StartupSection extends SectionType {
 
    public StartupSection(Builder<?> builder) {
       super(builder);
-      this.items = (items != null) ? ImmutableList.<StartupSectionItem>copyOf(builder.item) : Collections.<StartupSectionItem>emptyList();
+      this.items = (items != null) ? ImmutableList.<StartupSectionItem>copyOf(builder.items) : Collections.<StartupSectionItem>emptyList();
       this.any = (any != null) ? ImmutableList.<Object>copyOf(builder.any) : Collections.<Object>emptyList();
    }
 
@@ -130,6 +139,6 @@ public class StartupSection extends SectionType {
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("item", items).add("any", any);
+      return super.string().add("items", items).add("any", any);
    }
 }
