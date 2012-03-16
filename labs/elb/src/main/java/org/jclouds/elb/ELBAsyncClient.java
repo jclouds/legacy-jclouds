@@ -62,7 +62,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @FormParams(keys = VERSION, values = ELBAsyncClient.VERSION)
 @VirtualHost
 public interface ELBAsyncClient {
-   public static final String VERSION = "2010-07-01";
+   public static final String VERSION = "2011-11-15";
 
    // TODO: there are a lot of missing methods
 
