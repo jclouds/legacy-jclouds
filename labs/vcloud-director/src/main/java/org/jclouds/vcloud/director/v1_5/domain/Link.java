@@ -84,7 +84,6 @@ public class Link extends Reference {
       public static final String REJECT = "reject";
       public static final String RELOCATE = "relocate";
       public static final String REMOVE = "remove";
-      public static final String REPAIR = "repair";
       public static final String SCREEN_ACQUIRE_TICKET = "screen:acquireTicket";
       public static final String SCREEN_THUMBNAIL = "screen:thumbnail";
       public static final String TASK_CANCEL = "task:cancel";
@@ -119,7 +118,7 @@ public class Link extends Reference {
             SCREEN_THUMBNAIL, TASK_CANCEL, BLOCKING_TASK, TASK_OWNER,
             TASK_PARAMS, TASK_REQUEST, UNDEPLOY, UNLOCK, UNREGISTER, UP,
             UPDATE_PROGRESS, UPGRADE, UPLOAD_ALTERNATE, UPLOAD_DEFAULT,
-            UPLOAD_DEFAULT, REPAIR
+            UPLOAD_DEFAULT
       );
    }
 

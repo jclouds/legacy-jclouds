@@ -92,7 +92,7 @@ public class AdminNetworkLiveTest extends BaseVCloudDirectorClientLiveTest {
       //TODO: ensure network instanceof OrgNetwork, may require queries
       assertTrue(network instanceof OrgNetwork, String.format(REF_REQ_LIVE, "OrgNetwork"));
       
-      OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network).toNewBuilder()
+      OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network).toBuilder()
          .tasks(null)
          .build();
       

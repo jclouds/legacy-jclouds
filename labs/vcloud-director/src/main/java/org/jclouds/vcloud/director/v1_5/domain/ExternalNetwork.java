@@ -65,15 +65,10 @@ public class ExternalNetwork extends Network {
       return new ConcreteBuilder();
    }
 
-   public Builder<?> toNewBuilder() {
+   public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromExternalNetwork(this);
    }
    
-   @Deprecated
-   public EntityType.Builder<Network> toBuilder() {
-      throw new UnsupportedOperationException("Use toNewBuilder() instead");
-   }
-
    public static abstract class Builder<T extends Builder<T>> extends Network.Builder<T> {
       private String providerInfo;
 

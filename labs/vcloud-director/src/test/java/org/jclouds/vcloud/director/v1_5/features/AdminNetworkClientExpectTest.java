@@ -95,7 +95,7 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
    }
    
    public final OrgNetwork orgNetwork() {
-      return NetworkClientExpectTest.orgNetwork().toNewBuilder()
+      return NetworkClientExpectTest.orgNetwork().toBuilder()
          .href(toAdminUri(NetworkClientExpectTest.orgNetwork().getHref()))
          .links(ImmutableSet.of(
             Link.builder()
@@ -132,7 +132,7 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
    }
    
    public final OrgNetwork updateNetwork() {
-      return orgNetwork().toNewBuilder()
+      return orgNetwork().toBuilder()
             
          .build();
    }

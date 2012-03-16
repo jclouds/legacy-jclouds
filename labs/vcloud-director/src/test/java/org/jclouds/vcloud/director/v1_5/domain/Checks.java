@@ -56,7 +56,6 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
@@ -360,7 +359,7 @@ public class Checks {
             "The Image type of a Media must be one of the allowed list");
    }
 
-   public static void checkNetworkType(Network network) {
+   public static void checkNetwork(Network network) {
       // Check optional fields
       NetworkConfiguration config = network.getConfiguration();
       if (config != null) {
@@ -1276,7 +1275,7 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "NetworkSection"));
 
       if (val.getNetworks() != null) {
-         for (Network network : val.getNetworks()) {
+         for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : val.getNetworks()) {
             checkOvfNetwork(network);
          }
       }
@@ -1284,7 +1283,7 @@ public class Checks {
       checkOvfSectionType(val);
    }
 
-   private static void checkOvfNetwork(Network val) {
+   private static void checkOvfNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network val) {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "Network"));
    }
 
@@ -1372,10 +1371,11 @@ public class Checks {
    private static void checkCimResourceAllocationSettingData(ResourceAllocationSettingData val) {
       // TODO Could do more assertions...
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ResouorceAllocatoinSettingData"));
+   }
 
    public static void checkOrgNetwork(OrgNetwork network) {
       // optional
-      ReferenceType<?> networkPoolRef = network.getNetworkPool();
+      Reference networkPoolRef = network.getNetworkPool();
       if (networkPoolRef != null) {
          Checks.checkReferenceType(networkPoolRef);
       }
@@ -1385,7 +1385,7 @@ public class Checks {
       }
       
       // parent type
-      checkNetworkType(network);
+      checkNetwork(network);
    }
    
    public static void checkExternalNetwork(ExternalNetwork network) {
@@ -1394,7 +1394,7 @@ public class Checks {
             "ExternalNetwork", "providerInfo"));
       
       // parent type
-      checkNetworkType(network);
+      checkNetwork(network);
    }
 
    public static void checkAdminVdc(AdminVdc vdc) {

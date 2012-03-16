@@ -32,7 +32,6 @@ import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ReferenceType;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -244,7 +243,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
       }
    }
    
-   public URI toAdminUri(ReferenceType<?> ref) {
+   public URI toAdminUri(Reference ref) {
       return toAdminUri(ref.getHref());
    }
    
