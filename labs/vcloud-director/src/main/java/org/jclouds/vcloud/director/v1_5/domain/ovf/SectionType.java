@@ -23,6 +23,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OV
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
@@ -41,6 +42,7 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  * @author Adam Lowe
  */
+@XmlType(name = "Section_Type")
 @XmlSeeAlso({
    CustomizationSection.class,
    DeploymentOptionSection.class,
@@ -82,6 +84,22 @@ public abstract class SectionType {
        */
       public B required(Boolean required) {
          this.required = required;
+         return self();
+      }
+
+      /**
+       * @see SectionType#isRequired()
+       */
+      public B required() {
+         this.required = Boolean.TRUE;
+         return self();
+      }
+
+      /**
+       * @see SectionType#isRequired()
+       */
+      public B notRequired() {
+         this.required = Boolean.FALSE;
          return self();
       }
 
@@ -135,7 +153,7 @@ public abstract class SectionType {
       if (getClass() != obj.getClass())
          return false;
       SectionType other = (SectionType) obj;
-      return Objects.equal(info, other.info) && Objects.equal(required, other.required);
+      return Objects.equal(this.info, other.info) && Objects.equal(this.required, other.required);
    }
 
    @Override

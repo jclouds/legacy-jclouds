@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 
@@ -40,10 +41,11 @@ import com.google.common.collect.Sets;
  * Represents a list of network cards existing in a VM.
  * 
  * <pre>
- * &lt;complexType name="NetworkConnectionSection" /&gt;
+ * &lt;complexType name="NetworkConnectionSectionType" /&gt;
  * </pre>
  */
 @XmlRootElement(name = "NetworkConnectionSection")
+@XmlType(name = "NetworkConnectionSectionType")
 public class NetworkConnectionSection extends SectionType {
 
    public static Builder<?> builder() {

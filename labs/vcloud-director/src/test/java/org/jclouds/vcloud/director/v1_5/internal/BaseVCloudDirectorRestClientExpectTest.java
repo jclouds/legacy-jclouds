@@ -54,7 +54,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
    protected static DateService dateService;
 
    @BeforeGroups("unit")
-   protected static void setUpInjector() {
+   protected static void setupDateService() {
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
    }

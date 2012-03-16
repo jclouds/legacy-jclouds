@@ -18,12 +18,15 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import static org.testng.Assert.assertNotNull;
+
 import java.net.URI;
 import java.util.Properties;
 
 import javax.inject.Inject;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.date.DateService;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -41,6 +44,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -50,6 +54,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
@@ -67,6 +72,14 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
 
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
+   }
+
+   protected static DateService dateService;
+
+   @BeforeGroups("live")
+   protected static void setupDateService() {
+      dateService = Guice.createInjector().getInstance(DateService.class);
+      assertNotNull(dateService);
    }
 
    // NOTE Implement as required to populate xxxClient fields, or NOP

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -32,20 +30,14 @@ import com.google.common.base.Objects;
  * Represents vApp/VM undeployment parameters.
  * 
  * <pre>
- * &lt;complexType name="UndeployVAppParams">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}VCloudExtensibleType">
- *       &lt;sequence>
- *         &lt;element name="UndeployPowerAction" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="UndeployVAppParamsType" /&gt;
  * </pre>
+ *
+ * @author grkvlt@apache.org
+ * @since 0.9
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "UndeployVAppParams")
+@XmlRootElement(name = "UndeployVAppParams")
+@XmlType(name = "UndeployVAppParamsType")
 public class UndeployVAppParams {
 
    public static Builder builder() {

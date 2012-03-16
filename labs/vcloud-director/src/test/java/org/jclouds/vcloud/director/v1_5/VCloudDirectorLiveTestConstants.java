@@ -23,9 +23,15 @@ package org.jclouds.vcloud.director.v1_5;
  */
 public class VCloudDirectorLiveTestConstants {
 
+   /* regular expressions for pattern matching */
+   
+   public static final String MAC_ADDRESS_PATTERN = "^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$";
+
+   /* Error code 200 indicates success. */
+
    public static final String OK = "ERR-200: ok";
 
-   /* Error codes from 100 to 199 reflect parsing and other errors in domain objects. */
+   /* Error codes from 100 to 199 reflect parsing and other errors in domain object fields and attributes. */
 
    public static final String REF_REQ_LIVE = "ERR-101: %s reference required to perform live tests";
 
@@ -53,7 +59,7 @@ public class VCloudDirectorLiveTestConstants {
 
    public static final String TASK_COMPLETE_TIMELY = "ERR-113: Task %s should complete in a timely fashion";
 
-   public static final String NOT_NULL_OBJECT_FMT = "ERR-114: The %s field of the %s must not be null";
+   public static final String NOT_NULL_OBJ_FIELD_FMT = "ERR-114: The %s field of the %s must not be null";
    
    public static final String NOT_EMPTY_OBJECT_FMT = "ERR-115: One or more %s fields of the %s must be present";
    
@@ -74,6 +80,12 @@ public class VCloudDirectorLiveTestConstants {
    public static final String OBJ_FIELD_CLONE = "ERR-123: %s %s must be a clone of \"%s\" (%s)";
    
    public static final String OBJ_FIELD_EMPTY_TO_DELETE = "ERR-124: %s must have no %s to be deleted (%s)";
+   
+   public static final String NOT_NULL_OBJ_FMT = "ERR-125: The %s object must not be null";
+
+   public static final String NOT_EMPTY_STRING_FMT = "ERR-126: The %s field must not be an empty string";
+
+   public static final String MATCHES_STRING_FMT = "ERR-127: The %s field must match the pattern \"%s\"";
 
    /* Error codes from 300 to 399 reflect entities and their links and relationship errors. */ 
    

@@ -53,6 +53,7 @@ public class QueryResultRecords extends ContainerType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromQueryResultRecords(this);
    }
