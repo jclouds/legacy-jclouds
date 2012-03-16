@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,6 +36,7 @@ public class CatalogReferences extends QueryResultReferences {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromCatalogReferences(this);
    }
@@ -63,4 +63,16 @@ public class CatalogReferences extends QueryResultReferences {
    protected CatalogReferences() {
       // for JAXB
    }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      CatalogReferences that = CatalogReferences.class.cast(o);
+      return super.equals(that);
+   }
+   
+   // NOTE hashcode inheritted from QueryResultReferences
 }

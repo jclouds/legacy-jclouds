@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
@@ -27,6 +26,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -35,18 +35,20 @@ import com.google.common.base.Objects.ToStringHelper;
  * Represents the results from a Catalog vCloud query as a record.
  *
  * <pre>
- * &lt;complexType name="QueryResultCatalogRecord" /&gt;
+ * &lt;complexType name="QueryResultCatalogRecordType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "CatalogRecord")
+@XmlType(name = "QueryResultCatalogRecordType")
 public class QueryResultCatalogRecord extends QueryResultRecordType {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromQueryResultCatalogRecord(this);
    }
@@ -184,8 +186,8 @@ public class QueryResultCatalogRecord extends QueryResultRecordType {
    private QueryResultCatalogRecord(Builder<?> builder) {
       super(builder);
       this.name = builder.name;
-      isPublished = builder.isPublished;
-      isShared = builder.isShared;
+      this.isPublished = builder.isPublished;
+      this.isShared = builder.isShared;
       this.creationDate = builder.creationDate;
       this.orgName = builder.orgName;
       this.ownerName = builder.ownerName;

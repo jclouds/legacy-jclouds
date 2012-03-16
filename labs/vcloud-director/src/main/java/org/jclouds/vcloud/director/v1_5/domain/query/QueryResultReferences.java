@@ -51,6 +51,7 @@ public class QueryResultReferences extends ContainerType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromQueryResultReferences(this);
    }

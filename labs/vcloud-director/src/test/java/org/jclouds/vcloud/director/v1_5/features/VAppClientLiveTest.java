@@ -435,11 +435,12 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
      assertTrue(retryTaskSuccess.apply(recomposeVApp), String.format(TASK_COMPLETE_TIMELY, "recomposeVApp"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
+   // NOTE This test is disabled, as it is not possible to look up datastores using the User API
+   @Test(enabled = false, testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
    public void testRelocate() {
-      // Relocate to the first available datastore
-      QueryResultRecords records = context.getApi().getQueryClient().query("datastore", "fields==name");
-      QueryResultRecordType datastore = Iterables.get(records.getRecords(), 0);
+      // Relocate to the last of the available datastores
+      QueryResultRecords records = context.getApi().getQueryClient().queryAll("datastore");
+      QueryResultRecordType datastore = Iterables.getLast(records.getRecords());
       RelocateParams params = RelocateParams.builder().datastore(Reference.builder().href(datastore.getHref()).build()).build();
 
       // The method under test

@@ -24,52 +24,117 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
+import org.jclouds.vcloud.director.v1_5.domain.query.VAppReferences;
 
 /**
  * Provides synchronous access to The REST API query interface.
  * 
- * @see TaskAsyncClient
+ * @see QueryAsyncClient
  * @author grkvlt@apache.org
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface QueryClient {
 
    /**
-    * REST API General queries handler.
+    * REST API query {@link Link} list.
     *
     * <pre>
     * GET /query
     * </pre>
     */
    QueryList queryList();
-   
-   QueryResultRecords queryAll(String type);
-
-   QueryResultRecords query(String type, String filter);
-
-   QueryResultRecords query(Integer page, Integer pageSize, String format, String type, String filter);
 
    /**
-    * Retrieves a list of Catalogs by using REST API general QueryHandler.
+    * Retrieves a list of entities by using REST API general QueryHandler.
     *
     * If filter is provided it will be applied to the corresponding result set.
     * Format determines the elements representation - references or records.
     * Default format is references.
     *
     * <pre>
+    * GET /query
+    * </pre>
+    *
+    * @see #queryList()
+    * @see #query(String, String)
+    * @see #query(Integer, Integer, String, String, String)
+    */
+   QueryResultRecords queryAll(String type);
+
+   /** @see #queryAll() */
+   QueryResultRecords query(String type, String filter);
+
+   /** @see #queryAll() */
+   QueryResultRecords query(Integer page, Integer pageSize, String format, String type, String filter);
+
+   /**
+    * Retrieves a list of {@link Catalog}s by using REST API general QueryHandler.
+    *
+    * <pre>
     * GET /catalogs/query
     * </pre>
+    *
+    * @see #queryAll(String)
     */
    QueryResultRecords catalogsQueryAll();
 
+   /** @see #queryAll() */
    QueryResultRecords catalogsQuery(String filter);
 
+   /** @see #queryAll() */
    QueryResultRecords catalogsQuery(Integer page, Integer pageSize, String filter);
 
+
+   /**
+    * Retrieves a list of {@link CatalogReference}s by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /catalogs/query?format=references
+    * </pre>
+    *
+    * @see #queryAll(String)
+    */
    CatalogReferences catalogReferencesQueryAll();
 
+   /** @see #catalogReferencesQueryAll() */
    CatalogReferences catalogReferencesQuery(String filter);
 
+   /** @see #catalogReferencesQueryAll() */
    CatalogReferences catalogReferencesQuery(Integer page, Integer pageSize, String filter);
+
+   /**
+    * Retrieves a list of {@link VApp}s by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /vApps/query
+    * </pre>
+    *
+    * @see #queryAll(String)
+    */
+   QueryResultRecords vAppsQueryAll();
+
+   /** @see #queryAll() */
+   QueryResultRecords vAppsQuery(String filter);
+
+   /** @see #queryAll() */
+   QueryResultRecords vAppsQuery(Integer page, Integer pageSize, String filter);
+
+   /**
+    * Retrieves a list of {@link VAppReference}s by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /vApps/query?format=references
+    * </pre>
+    *
+    * @see #queryAll(String)
+    */
+   /** @see #queryAll() */
+   VAppReferences vAppReferencesQueryAll();
+
+   /** @see #queryAll() */
+   VAppReferences vAppReferencesQuery(String filter);
+
+   /** @see #queryAll() */
+   VAppReferences vAppReferencesQuery(Integer page, Integer pageSize, String filter);
    
 }
