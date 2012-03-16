@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v1_1.config;
 
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
-
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -85,8 +83,6 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    @Override
    protected void configure() {
       install(new NovaParserModule());
-      // ExtensionClient is used directly for determining which are installed
-      bindClientAndAsyncClient(binder(), ExtensionClient.class, ExtensionAsyncClient.class);
       bind(ImplicitOptionalConverter.class).to(
             PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
       super.configure();
