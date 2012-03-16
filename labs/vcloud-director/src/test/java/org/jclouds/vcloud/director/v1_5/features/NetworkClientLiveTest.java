@@ -23,6 +23,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -30,10 +31,10 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.IpAddresses;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -62,29 +63,20 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
    }
-
+   
    @Test(testName = "GET /network/{id}")
    public void testGetNetwork() {
       // required for testing
       assertNotNull(networkURI, String.format(REF_REQ_LIVE, NETWORK));
        
-      OrgNetwork network = networkClient.getNetwork(networkURI);
+      Network abstractNetwork = networkClient.getNetwork(networkURI);
+      assertTrue(abstractNetwork instanceof OrgNetwork, String.format(REQUIRED_VALUE_OBJECT_FMT, 
+            ".class", NETWORK, abstractNetwork.getClass(),"OrgNetwork"));
+      OrgNetwork network = Network.toSubType(abstractNetwork);
       assertNotNull(network, String.format(OBJ_REQ_LIVE, NETWORK));
       assertTrue(!network.getDescription().equals("DO NOT USE"), "Network isn't to be used for testing");
        
-      // parent type
-      Checks.checkNetworkType(network);
-       
-      // optional
-      Reference networkPoolRef = network.getNetworkPool();
-      if (networkPoolRef != null) {
-         Checks.checkReferenceType(networkPoolRef);
-      }
-      
-      IpAddresses allowedExternalIpAddresses = network.getAllowedExternalIpAddresses();
-      if (allowedExternalIpAddresses != null) {
-         Checks.checkIpAddresses(allowedExternalIpAddresses);
-      }
+      Checks.checkOrgNetwork(network);
    }
    
    @Test(testName = "GET /network/{id}/metadata")

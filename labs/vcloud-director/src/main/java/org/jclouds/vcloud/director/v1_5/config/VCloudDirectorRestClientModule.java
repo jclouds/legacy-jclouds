@@ -44,6 +44,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminNetworkAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminVdcAsyncClient;
@@ -118,6 +120,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(MetadataClient.Writeable.class, MetadataAsyncClient.Writable.class)
             .put(GroupClient.class, GroupAsyncClient.class)
             .put(UserClient.class, UserAsyncClient.class)
+            .put(AdminNetworkClient.class, AdminNetworkAsyncClient.class)
             .build();
 
    public VCloudDirectorRestClientModule() {

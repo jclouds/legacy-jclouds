@@ -35,7 +35,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * </pre>
  */
 @XmlType(name = "VAppNetwork")
-public class VAppNetwork extends NetworkType {
+public class VAppNetwork extends Network {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -48,7 +48,7 @@ public class VAppNetwork extends NetworkType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends NetworkType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Network.Builder<B> {
 
       private Boolean deployed;
 
@@ -82,7 +82,7 @@ public class VAppNetwork extends NetworkType {
       }
 
       public B fromVAppNetwork(VAppNetwork in) {
-         return fromNetworkType(in).isDeployed(in.isDeployed());
+         return fromNetwork(in).isDeployed(in.isDeployed());
       }
    }
 

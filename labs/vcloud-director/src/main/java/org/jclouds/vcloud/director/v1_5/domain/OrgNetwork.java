@@ -27,28 +27,24 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 @XmlRootElement(name = "OrgNetwork")
-public class OrgNetwork extends NetworkType {
-
+public class OrgNetwork extends Network {
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
-      return builder().fromOrgNetwork(this);
+      return new ConcreteBuilder().fromOrgNetwork(this);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-   }
-   
-   public static abstract class Builder<B extends Builder<B>> extends NetworkType.Builder<B> {
-
+   public static abstract class Builder<T extends Builder<T>> extends Network.Builder<T> {
       private Reference networkPool;
       private IpAddresses allowedExternalIpAddresses;
 
       /**
        * @see OrgNetwork#getNetworkPool()
        */
-      public B networkPool(Reference networkPool) {
+      public T networkPool(Reference networkPool) {
          this.networkPool = networkPool;
          return self();
       }
@@ -56,7 +52,7 @@ public class OrgNetwork extends NetworkType {
       /**
        * @see OrgNetwork#getAllowedExternalIpAddresses()
        */
-      public B allowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
+      public T allowedExternalIpAddresses(IpAddresses allowedExternalIpAddresses) {
          this.allowedExternalIpAddresses = allowedExternalIpAddresses;
          return self();
       }
@@ -65,22 +61,29 @@ public class OrgNetwork extends NetworkType {
       public OrgNetwork build() {
          return new OrgNetwork(this);
       }
-
-      public B fromOrgNetwork(OrgNetwork in) {
-         return fromNetworkType(in).configuration(in.getConfiguration())
+      
+      public T fromOrgNetwork(OrgNetwork in) {
+         return fromEntityType(in).configuration(in.getConfiguration())
                .networkPool(in.getNetworkPool())
                .allowedExternalIpAddresses(in.getAllowedExternalIpAddresses());
       }
    }
-
+   
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      @Override
+      protected ConcreteBuilder self() {
+         return this;
+      }
+   }
+   
    protected OrgNetwork() {
       // For JAXB
    }
 
-   protected OrgNetwork(Builder<?> builder) {
-      super(builder);
-      this.networkPool = builder.networkPool;
-      this.allowedExternalIpAddresses = builder.allowedExternalIpAddresses;
+   private OrgNetwork(Builder<?> b) {
+      super(b);
+      networkPool = b.networkPool;
+      allowedExternalIpAddresses = b.allowedExternalIpAddresses;
    }
 
    @XmlElement(name = "NetworkPool")
@@ -107,18 +110,22 @@ public class OrgNetwork extends NetworkType {
       if (!super.equals(o))
          return false;
       OrgNetwork that = OrgNetwork.class.cast(o);
-      return super.equals(that) && equal(networkPool, that.networkPool) &&
+      return super.equals(that) && 
+            equal(networkPool, that.networkPool) &&
             equal(allowedExternalIpAddresses, that.allowedExternalIpAddresses);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), networkPool, allowedExternalIpAddresses);
+      return Objects.hashCode(super.hashCode(), 
+            networkPool, 
+            allowedExternalIpAddresses);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("networkPool", networkPool)
+      return super.string()
+            .add("networkPool", networkPool)
             .add("allowedExternalIpAddresses", allowedExternalIpAddresses);
    }
 }

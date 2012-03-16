@@ -36,6 +36,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminVdcClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.GroupClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
@@ -132,7 +133,7 @@ public interface VCloudDirectorClient {
    AdminCatalogClient getAdminCatalogClient();
    
    /**
-    * @return synchronous access to {@link Group} features
+    * @return synchronous access to admin {@link Group} features
     */
    @Delegate
    GroupClient getGroupClient();
@@ -154,4 +155,10 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    AdminVdcClient getAdminVdcClient();
+   
+   /**
+    * @return synchronous access to admin {@link Network} features
+    */
+   @Delegate
+   AdminNetworkClient getAdminNetworkClient();
 }
