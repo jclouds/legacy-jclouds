@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 Test set: TestSuite
 -------------------------------------------------------------------------------
-Tests run: 118, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 2,654.563 sec <<< FAILURE!
-testDestroyNodes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 37.625 sec  <<< FAILURE!
-java.lang.AssertionError: [id=305968, providerId=305968, group=gogrid-, name=gogrid--3a3, location=[id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=5489, os=[name=Ubuntu 10.04 LTS (64-bit), family=ubuntu, version=10.04, arch=64 bit OS, is64Bit=true, description=Ubuntu 10.0.4 LTS Server (64-bit)], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[204.51.240.180], hardware=[id=1, providerId=1, name=null, processors=[[cores=0.5, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=25.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
+Tests run: 118, Failures: 5, Errors: 0, Skipped: 0, Time elapsed: 2,609.5 sec <<< FAILURE!
+testDestroyNodes(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 33.049 sec  <<< FAILURE!
+java.lang.AssertionError: [id=308112, providerId=308112, group=gogrid-, name=gogrid--2b4, location=[id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=5489, os=[name=Ubuntu 10.04 LTS (64-bit), family=ubuntu, version=10.04, arch=64 bit OS, is64Bit=true, description=Ubuntu 10.0.4 LTS Server (64-bit)], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[173.204.165.123], hardware=[id=1, providerId=1, name=null, processors=[[cores=0.5, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=25.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testDestroyNodes(BaseComputeServiceLiveTest.java:561)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
@@ -24,8 +24,8 @@ java.lang.AssertionError: [id=305968, providerId=305968, group=gogrid-, name=gog
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-cleanup(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 68.921 sec  <<< FAILURE!
-java.lang.AssertionError: [id=305968, providerId=305968, group=gogrid-, name=gogrid--3a3, location=[id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=5489, os=[name=Ubuntu 10.04 LTS (64-bit), family=ubuntu, version=10.04, arch=64 bit OS, is64Bit=true, description=Ubuntu 10.0.4 LTS Server (64-bit)], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[204.51.240.180], hardware=[id=1, providerId=1, name=null, processors=[[cores=0.5, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=25.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
+cleanup(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 66.144 sec  <<< FAILURE!
+java.lang.AssertionError: [id=308112, providerId=308112, group=gogrid-, name=gogrid--2b4, location=[id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=5489, os=[name=Ubuntu 10.04 LTS (64-bit), family=ubuntu, version=10.04, arch=64 bit OS, is64Bit=true, description=Ubuntu 10.0.4 LTS Server (64-bit)], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[173.204.165.123], hardware=[id=1, providerId=1, name=null, processors=[[cores=0.5, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=25.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testDestroyNodes(BaseComputeServiceLiveTest.java:561)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.cleanup(BaseComputeServiceLiveTest.java:898)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
@@ -45,8 +45,8 @@ java.lang.AssertionError: [id=305968, providerId=305968, group=gogrid-, name=gog
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-cleanup(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 68.973 sec  <<< FAILURE!
-java.lang.AssertionError: [id=305968, providerId=305968, group=gogrid-, name=gogrid--3a3, location=[id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=5489, os=[name=Ubuntu 10.04 LTS (64-bit), family=ubuntu, version=10.04, arch=64 bit OS, is64Bit=true, description=Ubuntu 10.0.4 LTS Server (64-bit)], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[204.51.240.180], hardware=[id=1, providerId=1, name=null, processors=[[cores=0.5, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=25.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
+cleanup(org.jclouds.gogrid.compute.GoGridComputeServiceLiveTest)  Time elapsed: 66.169 sec  <<< FAILURE!
+java.lang.AssertionError: [id=308112, providerId=308112, group=gogrid-, name=gogrid--2b4, location=[id=1, scope=ZONE, description=US West 1 Datacenter, parent=gogrid, iso3166Codes=[US-CA], metadata={}], uri=null, imageId=5489, os=[name=Ubuntu 10.04 LTS (64-bit), family=ubuntu, version=10.04, arch=64 bit OS, is64Bit=true, description=Ubuntu 10.0.4 LTS Server (64-bit)], state=RUNNING, loginPort=22, hostname=null, privateAddresses=[], publicAddresses=[173.204.165.123], hardware=[id=1, providerId=1, name=null, processors=[[cores=0.5, speed=1.0]], ram=512, volumes=[[id=null, type=LOCAL, size=25.0, device=null, durable=true, isBootDevice=true]], hypervisor=null, supportsImage=ALWAYS_TRUE, tags=[]], loginUser=adriancole, userMetadata={}, tags=[]]
 	at org.jclouds.compute.BaseComputeServiceLiveTest.testDestroyNodes(BaseComputeServiceLiveTest.java:561)
 	at org.jclouds.compute.BaseComputeServiceLiveTest.cleanup(BaseComputeServiceLiveTest.java:898)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
@@ -66,7 +66,7 @@ java.lang.AssertionError: [id=305968, providerId=305968, group=gogrid-, name=gog
 	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at java.lang.Thread.run(Thread.java:680)
-testSaveServerToImage(org.jclouds.gogrid.services.GridImageClientLiveTest)  Time elapsed: 740.252 sec  <<< FAILURE!
+testSaveServerToImage(org.jclouds.gogrid.services.GridImageClientLiveTest)  Time elapsed: 742.609 sec  <<< FAILURE!
 java.lang.AssertionError: expected:<true> but was:<false>
 	at org.testng.Assert.fail(Assert.java:89)
 	at org.testng.Assert.failNotEquals(Assert.java:489)
@@ -74,7 +74,7 @@ java.lang.AssertionError: expected:<true> but was:<false>
 	at org.testng.Assert.assertTrue(Assert.java:47)
 	at org.jclouds.gogrid.services.GridImageClientLiveTest.assertEventuallyImageStateEquals(GridImageClientLiveTest.java:133)
 	at org.jclouds.gogrid.services.GridImageClientLiveTest.testSaveServerToImage(GridImageClientLiveTest.java:116)
-testListJobs(org.jclouds.gogrid.services.GridJobClientLiveTest)  Time elapsed: 11.019 sec  <<< FAILURE!
-java.lang.AssertionError: Job{id=1043460, command=[id=7, name=DeleteVirtualServer, description=Delete Virtual Server], objectType=VirtualServer, createdOn=Mon Mar 12 22:18:48 PDT 2012, lastUpdatedOn=null, currentState=Queued, attempts=1, owner='80b257085c40b430-24076@api.gogrid.com', history=[JobState{id=5220410, updatedOn=Mon Mar 12 22:18:48 PDT 2012, state=Created, note='null'}, JobState{id=5220411, updatedOn=Mon Mar 12 22:18:48 PDT 2012, state=Queued, note='null'}, JobState{id=5220412, updatedOn=Mon Mar 12 22:18:49 PDT 2012, state=Processing, note='null'}], details={ram=512MB, description=null, name=Server5188344, image=ubuntu_10_04_LTS_64_base, type=virtual_server, ip=164.40.141.75}}
+testListJobs(org.jclouds.gogrid.services.GridJobClientLiveTest)  Time elapsed: 11.655 sec  <<< FAILURE!
+java.lang.AssertionError: Job{id=1050965, command=[id=7, name=DeleteVirtualServer, description=Delete Virtual Server], objectType=VirtualServer, createdOn=Thu Mar 15 17:23:47 PDT 2012, lastUpdatedOn=null, currentState=Queued, attempts=1, owner='80b257085c40b430-24076@api.gogrid.com', history=[JobState{id=5256258, updatedOn=Thu Mar 15 17:23:47 PDT 2012, state=Created, note='null'}, JobState{id=5256259, updatedOn=Thu Mar 15 17:23:47 PDT 2012, state=Queued, note='null'}, JobState{id=5256260, updatedOn=Thu Mar 15 17:23:48 PDT 2012, state=Processing, note='null'}], details={ram=512MB, description=null, name=Server6685139, image=ubuntu_10_04_LTS_64_base, type=virtual_server, ip=164.40.141.76}}
 	at org.jclouds.gogrid.services.GridJobClientLiveTest.checkJob(GridJobClientLiveTest.java:62)
 	at org.jclouds.gogrid.services.GridJobClientLiveTest.testListJobs(GridJobClientLiveTest.java:45)
