@@ -45,6 +45,9 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlSeeAlso({
+      QueryResultVAppTemplateRecord.class,
+      QueryResultVAppRecord.class,
+      QueryResultDatastoreRecord.class,
       QueryResultCatalogRecord.class,
       QueryResultNetworkRecord.class}
 )
@@ -125,7 +128,6 @@ public class QueryResultRecordType {
    @XmlElement(name = "Link")
    private Set<Link> links = Sets.newLinkedHashSet();
    @XmlAttribute
-   @XmlSchemaType(name = "anyURI")
    private URI href;
    @XmlAttribute
    private String id;
@@ -150,7 +152,7 @@ public class QueryResultRecordType {
       this.href = href;
    }
 
-   public QueryResultRecordType() {
+   protected QueryResultRecordType() {
       // For JAXB
    }
 

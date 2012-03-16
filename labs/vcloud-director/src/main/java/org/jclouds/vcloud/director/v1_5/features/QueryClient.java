@@ -21,6 +21,11 @@ package org.jclouds.vcloud.director.v1_5.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.director.v1_5.domain.Catalog;
+import org.jclouds.vcloud.director.v1_5.domain.CatalogReference;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
@@ -103,6 +108,20 @@ public interface QueryClient {
    CatalogReferences catalogReferencesQuery(Integer page, Integer pageSize, String filter);
 
    /**
+    * Retrieves a list of {@link VAppTemplate}s by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /vAppTemplates/query
+    * </pre>
+    *
+    * @see #queryAll(String)
+    */
+   QueryResultRecords vAppTemplatesQueryAll();
+
+   /** @see #queryAll() */
+   QueryResultRecords vAppTemplatesQuery(String filter);
+
+   /**
     * Retrieves a list of {@link VApp}s by using REST API general QueryHandler.
     *
     * <pre>
@@ -118,6 +137,20 @@ public interface QueryClient {
 
    /** @see #queryAll() */
    QueryResultRecords vAppsQuery(Integer page, Integer pageSize, String filter);
+
+   /**
+    * Retrieves a list of {@link Vm}s by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /vms/query
+    * </pre>
+    *
+    * @see #queryAll(String)
+    */
+   QueryResultRecords vmsQueryAll();
+
+   /** @see #queryAll() */
+   QueryResultRecords vmsQuery(String filter);
 
    /**
     * Retrieves a list of {@link VAppReference}s by using REST API general QueryHandler.
