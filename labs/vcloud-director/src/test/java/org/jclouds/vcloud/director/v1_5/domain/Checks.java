@@ -78,11 +78,15 @@ import com.google.common.net.InetAddresses;
 public class Checks {
 
    public static void checkResourceEntityType(ResourceEntityType resourceEntity) {
+      checkResourceEntityType(resourceEntity, true);
+   }
+
+   public static void checkResourceEntityType(ResourceEntityType resourceEntity, boolean ready) {
       // Check optional fields
       // NOTE status cannot be checked (TODO: doesn't status have a range of valid values?)
       Set<File> files = resourceEntity.getFiles();
       if (files != null && !files.isEmpty()) {
-         for (File file : files) checkFile(file);
+         for (File file : files) checkFile(file, ready);
       }
       
       // Check parent type
@@ -203,13 +207,17 @@ public class Checks {
       // Check parent type
       checkEntityType(task);
    }
-   
+
    public static void checkFile(File file) {
+      checkFile(file, true);
+   }
+   
+   public static void checkFile(File file, boolean checkSize) {
       // Check optional fields
       // NOTE checksum be checked
       Long size = file.getSize();
-      if(size != null) {
-         assertTrue(file.size >= 0, "File size must be greater than or equal to 0");
+      if(size != null && checkSize) {
+         assertTrue(size >= 0, "File size must be greater than or equal to 0, but was "+size);
       }
       Long bytesTransferred = file.getBytesTransferred();
       if(bytesTransferred != null) {
@@ -619,8 +627,16 @@ public class Checks {
       // Check parent type
       checkResourceEntityType(abstractVAppType);
    }
-
+   
    public static void checkVAppTemplate(VAppTemplate template) {
+      checkVAppTemplate(template, true);
+   }
+   
+   public static void checkVAppTemplateWhenNotReady(VAppTemplate template) {
+      checkVAppTemplate(template, false);
+   }
+   
+   public static void checkVAppTemplate(VAppTemplate template, boolean ready) {
       // Check required fields
       assertNotNull(template.getName(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Name", "VAppTemplate"));
       
@@ -640,7 +656,7 @@ public class Checks {
       }
       if (template.getFiles() != null) {
          for (File file : template.getFiles()) {
-            checkFile(file);
+            checkFile(file, ready);
          }
       }
       
@@ -649,7 +665,7 @@ public class Checks {
       // NOTE goldMaster cannot be checked
       
       // Check parent type
-      checkResourceEntityType(template);
+      checkResourceEntityType(template, ready);
    }
 
    public static void checkVm(Vm vm) {

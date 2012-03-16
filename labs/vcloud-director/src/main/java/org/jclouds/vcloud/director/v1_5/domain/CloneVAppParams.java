@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "CloneVAppParams")
+@XmlRootElement(name = "CloneVAppParams")
 public class CloneVAppParams extends InstantiateVAppParamsType {
 
    public static Builder<?> builder() {

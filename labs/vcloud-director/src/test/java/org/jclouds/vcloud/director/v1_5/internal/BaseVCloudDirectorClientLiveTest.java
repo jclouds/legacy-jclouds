@@ -19,9 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.internal;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -124,6 +126,8 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected URI vdcURI;
    protected URI userURI;
 
+   protected Random random = new Random();
+
    // TODO change properties to URI, not id
    @SuppressWarnings("unchecked")
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
@@ -182,5 +186,13 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    
    public URI toAdminUri(URI uri) {
       return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
+   }
+   
+   protected void assertTaskSucceeds(Task task) {
+      assertTrue(retryTaskSuccess.apply(task));
+   }
+   
+   protected void assertTaskSucceedsLong(Task task) {
+      assertTrue(retryTaskSuccessLong.apply(task));
    }
 }
