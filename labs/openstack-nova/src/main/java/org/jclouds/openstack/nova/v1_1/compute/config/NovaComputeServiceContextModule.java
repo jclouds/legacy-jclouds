@@ -24,6 +24,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
@@ -33,6 +34,7 @@ import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorToHardware;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToImage;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ServerToNodeMetadata;
+import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 
@@ -73,5 +75,7 @@ public class NovaComputeServiceContextModule
       // we aren't converting location from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
       }).to((Class) IdentityFunction.class);
+
+      bind(TemplateOptions.class).to(NovaTemplateOptions.class);
    }
 }
