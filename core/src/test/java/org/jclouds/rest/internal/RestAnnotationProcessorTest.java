@@ -96,6 +96,7 @@ import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
@@ -355,7 +356,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
             bind(ImplicitOptionalConverter.class).toInstance(new ImplicitOptionalConverter() {
 
                @Override
-               public Optional<Object> apply(Object input) {
+               public Optional<Object> apply(ClassMethodArgsAndReturnVal input) {
                   return Optional.absent();
                }
 

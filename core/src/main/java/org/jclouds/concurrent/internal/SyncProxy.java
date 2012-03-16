@@ -34,6 +34,7 @@ import javax.inject.Named;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Optionals2;
 import org.jclouds.util.Throwables2;
@@ -54,7 +55,7 @@ import com.google.inject.ProvisionException;
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
-   public static <T> T proxy(Function<Object, Optional<Object>> optionalConverter, Class<T> clazz, Object async,
+   public static <T> T proxy(Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter, Class<T> clazz, Object async,
          @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap,
          Map<Class<?>, Class<?>> sync2Async, Map<String, Long> timeouts) throws IllegalArgumentException, SecurityException,
          NoSuchMethodException {
@@ -62,7 +63,7 @@ public class SyncProxy implements InvocationHandler {
               new SyncProxy(optionalConverter, clazz, async, delegateMap, sync2Async, timeouts));
    }
 
-   private final Function<Object, Optional<Object>> optionalConverter;
+   private final Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter;
    private final Object delegate;
    private final Class<?> declaring;
    private final Map<Method, Method> methodMap;
@@ -73,7 +74,7 @@ public class SyncProxy implements InvocationHandler {
    private static final Set<Method> objectMethods = ImmutableSet.copyOf(Object.class.getMethods());
 
    @Inject
-   private SyncProxy(Function<Object, Optional<Object>> optionalConverter, Class<?> declaring, Object async,
+   private SyncProxy(Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter, Class<?> declaring, Object async,
          @Named("sync") LoadingCache<ClassMethodArgs, Object> delegateMap, Map<Class<?>,
            Class<?>> sync2Async, final Map<String, Long> timeouts)
          throws SecurityException, NoSuchMethodException {
@@ -105,6 +106,10 @@ public class SyncProxy implements InvocationHandler {
             }
          }
       }
+   }
+
+   public Class<?> getDeclaring() {
+      return declaring;
    }
 
    private Long getTimeout(Method method, long typeNanos, final Map<String,Long> timeouts) {
@@ -139,9 +144,12 @@ public class SyncProxy implements InvocationHandler {
          // pass any parameters necessary to get a relevant instance of that async class
          // ex. getClientForRegion("north") might return an instance whose endpoint is
          // different that "south"
-         Object returnVal = delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
+         ClassMethodArgs cma = new ClassMethodArgs(asyncClass, method, args);
+         Object returnVal = delegateMap.get(cma);
          if (Optionals2.isReturnTypeOptional(method)){
-            return optionalConverter.apply(returnVal);
+            ClassMethodArgsAndReturnVal cmar = ClassMethodArgsAndReturnVal.builder().fromClassMethodArgs(cma)
+                  .returnVal(returnVal).build();
+            return optionalConverter.apply(cmar);
          }
          return returnVal;
       } else if (syncMethodMap.containsKey(method)) {

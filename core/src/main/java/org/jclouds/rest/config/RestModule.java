@@ -40,9 +40,9 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.SeedAnnotationCache;
 
 import com.google.common.base.Function;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -101,7 +101,7 @@ public class RestModule extends AbstractModule {
       @SuppressWarnings( { "unchecked", "rawtypes" })
       @Override
       public Object load(final ClassMethodArgs from) {
-         Class clazz = from.getAsyncClass();
+         Class clazz = from.getClazz();
          TypeLiteral typeLiteral = TypeLiteral.get(clazz);
          RestAnnotationProcessor util = (RestAnnotationProcessor) injector.getInstance(Key.get(TypeLiteral.get(Types
                   .newParameterizedType(RestAnnotationProcessor.class, clazz))));

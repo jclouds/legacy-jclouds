@@ -25,6 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -61,7 +62,7 @@ public class ClientProvider<S, A> implements Provider<S> {
    @Singleton
    public S get() {
       A client = (A) injector.getInstance(Key.get(asyncClientType));
-      Function<Object, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<Object, Optional<Object>>>() {
+      Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>() {
       }));
       LoadingCache<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
                new TypeLiteral<LoadingCache<ClassMethodArgs, Object>>() {

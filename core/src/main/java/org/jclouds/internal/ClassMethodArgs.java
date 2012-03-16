@@ -18,32 +18,91 @@
  */
 package org.jclouds.internal;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class ClassMethodArgs {
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
+   }
+
+   public Builder<?> toBuilder() {
+      return builder().fromClassMethodArgs(this);
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+
+   public static abstract class Builder<B extends Builder<B>> {
+      private Class<?> clazz;
+      private Method method;
+      private Object[] args;
+
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
+
+      /**
+       * @see ClassMethodArgs#getClazz()
+       */
+      public B clazz(Class<?> clazz) {
+         this.clazz = clazz;
+         return self();
+      }
+
+      /**
+       * @see ClassMethodArgs#getMethod()
+       */
+      public B method(Method method) {
+         this.method = method;
+         return self();
+      }
+
+      /**
+       * @see ClassMethodArgs#getArgs()
+       */
+      public B args(Object[] args) {
+         this.args = args;
+         return self();
+      }
+
+      public ClassMethodArgs build() {
+         return new ClassMethodArgs(this);
+      }
+
+      public B fromClassMethodArgs(ClassMethodArgs in) {
+         return clazz(in.getClazz()).method(in.getMethod()).args(in.getArgs());
+      }
+   }
+
+   private final Class<?> clazz;
    private final Method method;
    private final Object[] args;
-   private final Class<?> asyncClass;
 
-   public ClassMethodArgs(Class<?> asyncClass, Method method, @Nullable Object[] args) {
-      this.asyncClass = checkNotNull(asyncClass, "asyncClass");
+   public ClassMethodArgs(Builder<?> builder) {
+      this(builder.clazz, builder.method, builder.args);
+   }
+
+   public ClassMethodArgs(Class<?> clazz, Method method, @Nullable Object[] args) {
+      this.clazz = checkNotNull(clazz, "clazz");
       this.method = checkNotNull(method, "method");
       this.args = args;
    }
 
-   @Override
-   public String toString() {
-      return "[class=" + asyncClass.getSimpleName() + ", method=" + method.getName() + ", args="
-            + Arrays.toString(args) + "]";
+   public Class<?> getClazz() {
+      return clazz;
    }
 
    public Method getMethod() {
@@ -55,40 +114,26 @@ public class ClassMethodArgs {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + Arrays.hashCode(args);
-      result = prime * result + ((asyncClass == null) ? 0 : asyncClass.hashCode());
-      result = prime * result + ((method == null) ? 0 : method.hashCode());
-      return result;
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      ClassMethodArgs that = ClassMethodArgs.class.cast(o);
+      return equal(this.clazz, that.clazz) && equal(this.method, that.method) && equal(this.args, that.args);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ClassMethodArgs other = (ClassMethodArgs) obj;
-      if (!Arrays.equals(args, other.args))
-         return false;
-      if (asyncClass == null) {
-         if (other.asyncClass != null)
-            return false;
-      } else if (!asyncClass.equals(other.asyncClass))
-         return false;
-      if (method == null) {
-         if (other.method != null)
-            return false;
-      } else if (!method.equals(other.method))
-         return false;
-      return true;
+   public int hashCode() {
+      return Objects.hashCode(clazz, method, args);
    }
 
-   public Class<?> getAsyncClass() {
-      return asyncClass;
+   @Override
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("clazz", clazz).add("method", method).add("args", args);
    }
 }

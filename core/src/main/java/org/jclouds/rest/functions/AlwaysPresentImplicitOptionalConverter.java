@@ -18,17 +18,21 @@
  */
 package org.jclouds.rest.functions;
 
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 
 /**
  * 
  * @author Adrian Cole
  */
+@Beta
 public class AlwaysPresentImplicitOptionalConverter implements ImplicitOptionalConverter {
 
    @Override
-   public Optional<Object> apply(Object input) {
-      return Optional.of(input);
+   public Optional<Object> apply(ClassMethodArgsAndReturnVal input) {
+      return Optional.of(input.getReturnVal());
    }
 
 }

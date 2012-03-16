@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -80,7 +81,7 @@ public class RestClientModule<S, A> extends AbstractModule {
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<Object, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
+      bind(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
       // this will help short circuit scenarios that can otherwise lock out users
       bind(new TypeLiteral<AtomicReference<AuthorizationException>>(){}).toInstance(authException);
       // Ensures the restcontext can be looked up without generic types.

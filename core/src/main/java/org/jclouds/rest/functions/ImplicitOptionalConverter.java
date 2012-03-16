@@ -18,15 +18,66 @@
  */
 package org.jclouds.rest.functions;
 
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
+import org.jclouds.rest.config.RestClientModule;
+
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.inject.ImplementedBy;
 
 /**
+ * When a client marked @Delegate is optional, the implementation of this is
+ * responsible for creating the optional object.
+ * 
+ * For example.
+ * 
+ * <pre>
+ * interface MyCloud {
+ *    &#064;Delegate
+ *    Optional&lt;KeyPairClient&gt; getKeyPairExtensionForRegion(String region);
+ * }
+ * </pre>
+ * 
+ * The input object of type {@link ClassMethodArgsAndReturnVal} will include the
+ * following.
+ * <ol>
+ * <li>the class declaring the method that returns optional:
+ * {@link ClassMethodArgsAndReturnVal#getClazz}; in the example above,
+ * {@code MyCloud}</li>
+ * <li>the method returning the optional:
+ * {@link ClassMethodArgsAndReturnVal#getMethod}; in the example above,
+ * {@code getKeyPairExtensionForRegion}</li>
+ * <li>the args passed to that method at runtime:
+ * {@link ClassMethodArgsAndReturnVal#getArgs}; for example {@code North}</li>
+ * <li>the rest client to be enclosed in the optional, should you choose to
+ * return it: {@link ClassMethodArgsAndReturnVal#getReturnVal}; in the example
+ * above, an implementation of {@code KeyPairClient}</li>
+ * </ol>
+ * 
+ * Using this context, your implementation of {@link ImplicitOptionalConverter}
+ * can perform whatever you need, when deciding if the the returnVal is present
+ * and available. Here are some ideas:
+ * <ul>
+ * <li>call a smoke test command</li>
+ * <li>look at the annotations on the class and compare those against a
+ * configuration switch enabling the extension</li>
+ * <li>inspect the health of the client, perhaps looking for error status</li>
+ * <li>call another api which can validate the feature can be presented</li>
+ * </ul>
+ * 
+ * The {@link AlwaysPresentImplicitOptionalConverter default implementation}
+ * always returns present. To override this, add the following in your subclass
+ * override of {@link RestClientModule#configure} method:
+ * 
+ * <pre>
+ * bind(ImplicitOptionalConverter.class).to(MyCustomOptionalConverter.class);
+ * </pre>
  * 
  * @author Adrian Cole
  */
+@Beta
 @ImplementedBy(AlwaysPresentImplicitOptionalConverter.class)
-public interface ImplicitOptionalConverter extends Function<Object, Optional<Object>> {
+public interface ImplicitOptionalConverter extends Function<ClassMethodArgsAndReturnVal, Optional<Object>> {
 
 }

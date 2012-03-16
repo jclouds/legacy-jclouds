@@ -27,19 +27,20 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.util.Optionals2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * CreateClientForCaller is parameterized, so clients it creates aren't singletons. For example,
@@ -69,7 +70,7 @@ public class CreateClientForCaller extends CacheLoader<ClassMethodArgs, Object> 
       checkState(asyncClass != null, "configuration error, sync class " + syncClass + " not mapped to an async class");
       Object asyncClient = asyncMap.get(from);
       checkState(asyncClient != null, "configuration error, sync client for " + from + " not found");
-      Function<Object, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<Object, Optional<Object>>>() {
+      Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>() {
       }));
       Map<String, Long> timeoutsMap = injector.getInstance(Key.get(new TypeLiteral<Map<String, Long>>() {
       }, Names.named("TIMEOUTS")));

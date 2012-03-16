@@ -37,6 +37,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InvocationContext;
@@ -67,24 +68,31 @@ import com.google.inject.util.Types;
  * <p/>
  * Particularly, this code delegates calls to other things.
  * <ol>
- * <li>if the method has a {@link Provides} annotation, it responds via a {@link Injector} lookup</li>
- * <li>if the method has a {@link Delegate} annotation, it responds with an instance of interface
- * set in returnVal, adding the current JAXrs annotations to whatever are on that class.</li>
+ * <li>if the method has a {@link Provides} annotation, it responds via a
+ * {@link Injector} lookup</li>
+ * <li>if the method has a {@link Delegate} annotation, it responds with an
+ * instance of interface set in returnVal, adding the current JAXrs annotations
+ * to whatever are on that class.</li>
  * <ul>
- * <li>ex. if the method with {@link Delegate} has a {@link Path} annotation, and the returnval
- * interface also has {@link Path}, these values are combined.</li>
+ * <li>ex. if the method with {@link Delegate} has a {@link Path} annotation,
+ * and the returnval interface also has {@link Path}, these values are combined.
+ * </li>
  * </ul>
- * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for this, and the
- * returnVal is properly assigned as a {@link ListenableFuture}, it responds with an http
- * implementation.</li>
- * <li>otherwise a RuntimeException is thrown with a message including: {@code method is intended
- * solely to set constants}</li>
+ * <li>if {@link RestAnnotationProcessor#delegationMap} contains a mapping for
+ * this, and the returnVal is properly assigned as a {@link ListenableFuture},
+ * it responds with an http implementation.</li>
+ * <li>otherwise a RuntimeException is thrown with a message including:
+ * {@code method is intended solely to set constants}</li>
  * </ol>
  * 
  * @author Adrian Cole
  */
 @Singleton
 public class AsyncRestClientProxy<T> implements InvocationHandler {
+   public Class<T> getDeclaring() {
+      return declaring;
+   }
+
    private final Injector injector;
    private final RestAnnotationProcessor<T> annotationProcessor;
    private final Class<T> declaring;
@@ -99,16 +107,17 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private final Function<Object, Optional<Object>> optionalConverter;
+   private final Function<ClassMethodArgsAndReturnVal, Optional<Object>> optionalConverter;
    private final LoadingCache<ClassMethodArgs, Object> delegateMap;
 
    @SuppressWarnings("unchecked")
    @Inject
    public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
-            TypeLiteral<T> typeLiteral, @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap) {
+         TypeLiteral<T> typeLiteral, @Named("async") LoadingCache<ClassMethodArgs, Object> delegateMap) {
       this.injector = injector;
-      this.optionalConverter = injector.getInstance(Key.get(new TypeLiteral<Function<Object, Optional<Object>>>() {
-      }));
+      this.optionalConverter = injector.getInstance(Key
+            .get(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>() {
+            }));
       this.annotationProcessor = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.commandFactory = factory;
@@ -139,27 +148,30 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
          return createListenableFutureForHttpRequestMappedToMethodAndArgs(method, args);
       } else {
          throw new RuntimeException(String.format("Method is not annotated as either http or provider method: %s",
-                  method));
+               method));
       }
    }
 
    public boolean isRestCall(Method method) {
       return annotationProcessor.getDelegateOrNull(method) != null
-               && ListenableFuture.class.isAssignableFrom(method.getReturnType());
+            && ListenableFuture.class.isAssignableFrom(method.getReturnType());
    }
 
    public Object propagateContextToDelegate(Method method, Object[] args) throws ExecutionException {
       Class<?> asyncClass = Optionals2.returnTypeOrTypeOfOptional(method);
-      Object returnVal = delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
-      if (Optionals2.isReturnTypeOptional(method)){
-         return optionalConverter.apply(returnVal);
+      ClassMethodArgs cma = new ClassMethodArgs(asyncClass, method, args);
+      Object returnVal = delegateMap.get(cma);
+      if (Optionals2.isReturnTypeOptional(method)) {
+         ClassMethodArgsAndReturnVal cmar = ClassMethodArgsAndReturnVal.builder().fromClassMethodArgs(cma)
+               .returnVal(returnVal).build();
+         return optionalConverter.apply(cmar);
       }
       return returnVal;
    }
 
    public Object lookupValueFromGuice(Method method) {
       try {
-         //TODO: tidy
+         // TODO: tidy
          Type genericReturnType = method.getGenericReturnType();
          try {
             Annotation qualifier = Iterables.find(ImmutableList.copyOf(method.getAnnotations()), isQualifierPresent);
@@ -200,7 +212,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
       // then, try looking via supplier
       binding = injector.getExistingBinding(Key.get(Types.newParameterizedType(Supplier.class, genericReturnType),
-               qualifier));
+            qualifier));
       if (binding != null)
          return Supplier.class.cast(binding.getProvider().get()).get();
 
@@ -208,13 +220,13 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       return injector.getInstance(Key.get(genericReturnType, qualifier));
    }
 
-   @SuppressWarnings( { "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private ListenableFuture<?> createListenableFutureForHttpRequestMappedToMethodAndArgs(Method method, Object[] args)
-            throws ExecutionException {
+         throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
       logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
       Function<Exception, ?> exceptionParser = annotationProcessor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
+            .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
       // in case there is an exception creating the request, we should at least
       // pass in args
       if (exceptionParser instanceof InvocationContext) {
@@ -230,7 +242,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
          Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method, request);
          logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method.getName(), transformer
-                  .getClass().getSimpleName());
+               .getClass().getSimpleName());
 
          logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
          result = commandFactory.create(request, transformer).execute();
@@ -251,7 +263,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
       if (exceptionParser != null) {
          logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method.getName(),
-                  exceptionParser.getClass().getSimpleName());
+               exceptionParser.getClass().getSimpleName());
          result = new ExceptionParsingListenableFuture(result, exceptionParser);
       }
       return result;
