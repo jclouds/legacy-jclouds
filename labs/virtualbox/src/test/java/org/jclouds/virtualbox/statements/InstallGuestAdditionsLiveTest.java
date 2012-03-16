@@ -22,6 +22,7 @@ package org.jclouds.virtualbox.statements;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
+import org.jclouds.virtualbox.functions.GuestAdditionsInstaller;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

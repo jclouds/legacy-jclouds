@@ -133,7 +133,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
                .forceOverwrite(true).build();
 
-      // CASE NAT + HOST-ONLY
+      /*/ CASE NAT + HOST-ONLY
       NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
                .tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22).build();
       NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(0L).build();
@@ -145,25 +145,25 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
                .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();
 
       NetworkSpec networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
-      // //
+      // /*/
 
       // CASE BRIDGED
-      // NetworkSpec networkSpec = createNetworkSpecForBridgedNIC();
+      NetworkSpec networkSpec = createNetworkSpecForBridgedNIC();
 
       CloneSpec cloneSpec = CloneSpec.builder().linked(USE_LINKED).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
 
       IMachine cloned = cloner.apply(cloneSpec);
 
-      new LaunchMachineIfNotAlreadyRunning(manager.get(), EXECUTION_TYPE, "").apply(cloned);
+      new LaunchMachineIfNotAlreadyRunning(manager.get(), ExecutionType.GUI, "").apply(cloned);
 
       // see DeleteGShadowLock for a detailed explanation
       machineUtils
                .runScriptOnNode(imachineToNodeMetadata.apply(cloned), new DeleteGShadowLock(), RunScriptOptions.NONE);
 
       // CASE NAT + HOST-ONLY
-      machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
-               RunScriptOptions.NONE);
+      //machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
+        //       RunScriptOptions.NONE);
       // //
 
       // TODO get credentials from somewhere else (they are also HC in
