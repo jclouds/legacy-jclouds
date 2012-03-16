@@ -17,8 +17,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.config;
 
-import static com.google.common.base.Throwables.*;
-import static org.jclouds.rest.config.BinderUtils.*;
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 
 import java.net.URI;
 import java.util.Map;
@@ -46,6 +46,8 @@ import org.jclouds.vcloud.director.v1_5.features.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminVdcAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.GroupAsyncClient;
@@ -98,7 +100,10 @@ import com.google.inject.name.Named;
 @ConfiguresRestClient
 public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirectorClient, VCloudDirectorAsyncClient> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
+            .put(AdminCatalogClient.class, AdminCatalogAsyncClient.class)
+            .put(AdminOrgClient.class, AdminOrgAsyncClient.class)
+            .put(AdminVdcClient.class, AdminVdcAsyncClient.class)
             .put(CatalogClient.class, CatalogAsyncClient.class)
             .put(NetworkClient.class, NetworkAsyncClient.class)
             .put(OrgClient.class, OrgAsyncClient.class)
@@ -111,8 +116,6 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(UploadClient.class, UploadAsyncClient.class)
             .put(MetadataClient.Readable.class, MetadataAsyncClient.Readable.class)
             .put(MetadataClient.Writeable.class, MetadataAsyncClient.Writable.class)
-            .put(AdminCatalogClient.class, AdminCatalogAsyncClient.class)
-            .put(AdminOrgClient.class, AdminOrgAsyncClient.class)
             .put(GroupClient.class, GroupAsyncClient.class)
             .put(UserClient.class, UserAsyncClient.class)
             .build();
