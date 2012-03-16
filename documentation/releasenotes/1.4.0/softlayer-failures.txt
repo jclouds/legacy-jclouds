@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: TestSuite
+-------------------------------------------------------------------------------
+Tests run: 133, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 5,689.197 sec <<< FAILURE!
+testListVirtualGuests(org.jclouds.softlayer.features.VirtualGuestClientLiveTest)  Time elapsed: 3.869 sec  <<< FAILURE!
+java.lang.AssertionError: [accountId=93750, createDate=Thu Mar 15 08:15:35 PDT 2012, dedicatedAccountHostOnly=false, domain=me.org, fullyQualifiedDomainName=node-652208763.me.org, hostname=node-652208763, id=707928, lastVerifiedDate=null, maxCpu=1, maxCpuUnits=CORE, maxMemory=1024, metricPollDate=null, modifyDate=Thu Mar 15 08:19:59 PDT 2012, notes=null, primaryBackendIpAddress=10.29.0.66, primaryIpAddress=50.23.154.26, privateNetworkOnly=false, startCpus=1, statusId=1001, uuid=6d243fa8-8e12-8b59-836e-11fe74b4b955, billingItemId=9722084, operatingSystem=[id=1271359, passwords=[Password [id=995397, username=root, password=**********]]], datacenter=[id=18171, country=sea01, state=Seattle], locationAddress=null, regions=[]], powerState=[keyName=Running]]
+	at org.jclouds.softlayer.features.VirtualGuestClientLiveTest.checkVirtualGuest(VirtualGuestClientLiveTest.java:155)
+	at org.jclouds.softlayer.features.VirtualGuestClientLiveTest.testListVirtualGuests(VirtualGuestClientLiveTest.java:78)
