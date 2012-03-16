@@ -21,6 +21,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.net.URI;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -82,6 +84,16 @@ public class CloneVAppTemplateParams extends ParamsType {
       }
 
       /**
+       * Sets source to a new Reference that uses this URI as the href.
+       * 
+       * @see CloneVAppTemplateParams#getSource()
+       */
+      public B source(URI source) {
+         this.source = Reference.builder().href(source).build();
+         return self();
+      }
+
+      /**
        * @see CloneVAppTemplateParams#isSourceDelete()
        */
       public B isSourceDelete(Boolean isSourceDelete) {
@@ -106,7 +118,7 @@ public class CloneVAppTemplateParams extends ParamsType {
       isSourceDelete = builder.isSourceDelete;
    }
 
-   private CloneVAppTemplateParams() {
+   protected CloneVAppTemplateParams() {
       // for JAXB
    }
 

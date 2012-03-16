@@ -22,11 +22,13 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DeploymentOptionSection;
@@ -69,6 +71,7 @@ import com.google.common.collect.Sets;
       "source",
       "sections"
 })
+@XmlRootElement(name = "CaptureVAppParams")
 public class CaptureVAppParams extends ParamsType {
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -94,6 +97,16 @@ public class CaptureVAppParams extends ParamsType {
          return self();
       }
 
+      /**
+       * Sets source to a new Reference that uses this URI as the href.
+       * 
+       * @see CaptureVAppParams#getSource()
+       */
+      public B source(URI source) {
+         this.source = Reference.builder().href(source).build();
+         return self();
+      }
+      
       /**
        * @see CaptureVAppParams#getSections()
        */

@@ -79,7 +79,7 @@ public class SourcedCompositionItemParam {
       private Reference source;
       private String vAppScopedLocalId;
       private InstantiationParams instantiationParams;
-      private Set<NetworkAssignment> networkAssignments = Sets.newLinkedHashSet();
+      private Set<NetworkAssignment> networkAssignment = Sets.newLinkedHashSet();
       private Boolean sourceDelete;
 
       /**
@@ -107,10 +107,10 @@ public class SourcedCompositionItemParam {
       }
 
       /**
-       * @see SourcedCompositionItemParam#getNetworkAssignments()
+       * @see SourcedCompositionItemParam#getNetworkAssignment()
        */
-      public Builder networkAssignments(Set<NetworkAssignment> networkAssignments) {
-         this.networkAssignments = ImmutableSet.copyOf(checkNotNull(networkAssignments, "networkAssignments"));
+      public Builder networkAssignment(Set<NetworkAssignment> networkAssignment) {
+         this.networkAssignment = ImmutableSet.copyOf(checkNotNull(networkAssignment, "networkAssignments"));
          return this;
       }
 
@@ -123,24 +123,24 @@ public class SourcedCompositionItemParam {
       }
 
       public SourcedCompositionItemParam build() {
-         return new SourcedCompositionItemParam(source, vAppScopedLocalId, instantiationParams, networkAssignments, sourceDelete);
+         return new SourcedCompositionItemParam(source, vAppScopedLocalId, instantiationParams, networkAssignment, sourceDelete);
       }
 
       public Builder fromSourcedCompositionItemParam(SourcedCompositionItemParam in) {
          return source(in.getSource())
                .vAppScopedLocalId(in.getVAppScopedLocalId())
                .instantiationParams(in.getInstantiationParams())
-               .networkAssignments(in.getNetworkAssignments())
+               .networkAssignment(in.getNetworkAssignment())
                .sourceDelete(in.isSourceDelete());
       }
    }
 
    public SourcedCompositionItemParam(Reference source, String vAppScopedLocalId, InstantiationParams instantiationParams,
-                                      Set<NetworkAssignment> networkAssignments, Boolean sourceDelete) {
+                                      Set<NetworkAssignment> networkAssignment, Boolean sourceDelete) {
       this.source = source;
       this.vAppScopedLocalId = vAppScopedLocalId;
       this.instantiationParams = instantiationParams;
-      this.networkAssignments = ImmutableSet.copyOf(networkAssignments);
+      this.networkAssignment = ImmutableSet.copyOf(networkAssignment);
       this.sourceDelete = sourceDelete;
    }
 
@@ -155,7 +155,7 @@ public class SourcedCompositionItemParam {
    @XmlElement(name = "InstantiationParams")
    protected InstantiationParams instantiationParams;
    @XmlElement(name = "NetworkAssignment")
-   protected Set<NetworkAssignment> networkAssignments = Sets.newLinkedHashSet();
+   protected Set<NetworkAssignment> networkAssignment = Sets.newLinkedHashSet();
    @XmlAttribute
    protected Boolean sourceDelete;
 
@@ -193,8 +193,8 @@ public class SourcedCompositionItemParam {
    /**
     * Gets the value of the networkAssignment property.
     */
-   public Set<NetworkAssignment> getNetworkAssignments() {
-      return Collections.unmodifiableSet(this.networkAssignments);
+   public Set<NetworkAssignment> getNetworkAssignment() {
+      return Collections.unmodifiableSet(this.networkAssignment);
    }
 
    /**
@@ -217,7 +217,7 @@ public class SourcedCompositionItemParam {
       return equal(source, that.source) &&
             equal(vAppScopedLocalId, that.vAppScopedLocalId) &&
             equal(instantiationParams, that.instantiationParams) &&
-            equal(networkAssignments, that.networkAssignments) &&
+            equal(networkAssignment, that.networkAssignment) &&
             equal(sourceDelete, that.sourceDelete);
    }
 
@@ -226,7 +226,7 @@ public class SourcedCompositionItemParam {
       return Objects.hashCode(source,
             vAppScopedLocalId,
             instantiationParams,
-            networkAssignments,
+            networkAssignment,
             sourceDelete);
    }
 
@@ -236,7 +236,7 @@ public class SourcedCompositionItemParam {
             .add("source", source)
             .add("vAppScopedLocalId", vAppScopedLocalId)
             .add("instantiationParams", instantiationParams)
-            .add("networkAssignments", networkAssignments)
+            .add("networkAssignment", networkAssignment)
             .add("sourceDelete", sourceDelete).toString();
    }
 

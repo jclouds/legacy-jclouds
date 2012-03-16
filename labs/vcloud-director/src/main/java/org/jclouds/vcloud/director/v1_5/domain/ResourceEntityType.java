@@ -52,6 +52,7 @@ public abstract class ResourceEntityType extends EntityType {
    public static enum Status {
       
       FAILED_CREATION(-1, "The object could not be created.", true, true, true),
+      NOT_READY(0, "Not ready", true, false, false), // TODO duplicate code, but mentioned in `POST /vdc/{id}/action/uploadVAppTemplate`
       UNRESOLVED(0, "The object is unresolved.", true, true, true),
       RESOLVED(1, "The object is resolved.", true, true, true),
       DEPLOYED(2, "The object is deployed.", false, false, false),
