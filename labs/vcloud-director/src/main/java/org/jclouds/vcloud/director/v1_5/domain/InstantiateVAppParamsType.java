@@ -20,6 +20,8 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.net.URI;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -61,6 +63,16 @@ public class InstantiateVAppParamsType extends VAppCreationParamsType {
        */
       public B source(Reference source) {
          this.source = source;
+         return self();
+      }
+
+      /**
+       * Sets source to a new Reference that uses this URI as the href.
+       * 
+       * @see InstantiateVAppParamsType#getSource()
+       */
+      public B source(URI source) {
+         this.source = Reference.builder().href(source).build();
          return self();
       }
 

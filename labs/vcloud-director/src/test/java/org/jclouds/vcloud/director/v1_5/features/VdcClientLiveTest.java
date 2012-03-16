@@ -18,27 +18,46 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
-import static org.testng.Assert.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
+import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -55,129 +74,140 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience reference to API client.
     */
    protected VdcClient vdcClient;
+   protected VAppTemplateClient vappTemplateClient;
+   protected VAppClient vappClient;
    
+   private VApp instantiatedVApp;
+   private VApp clonedVApp;
+   private VApp composedVApp;
+   private VAppTemplate clonedVAppTemplate;
+   private VAppTemplate capturedVAppTemplate;
+   private VAppTemplate uploadedVAppTemplate;
+   
+   @AfterClass(groups = { "live" })
+   public void cleanUp() {
+      if (clonedVAppTemplate != null) {
+         Task task = vappTemplateClient.deleteVappTemplate(clonedVAppTemplate.getHref());
+         assertTaskSucceeds(task);
+      }
+      if (capturedVAppTemplate != null) {
+         Task task = vappTemplateClient.deleteVappTemplate(capturedVAppTemplate.getHref());
+         assertTaskSucceeds(task);
+      }
+      if (uploadedVAppTemplate != null) {
+         Task task = vappTemplateClient.deleteVappTemplate(uploadedVAppTemplate.getHref());
+         assertTaskSucceeds(task);
+      }
+      if (instantiatedVApp != null) {
+         Task task = vappClient.deleteVApp(instantiatedVApp.getHref());
+         assertTaskSucceeds(task);
+      }
+      if (clonedVApp != null) {
+         Task task = vappClient.deleteVApp(clonedVApp.getHref());
+         assertTaskSucceeds(task);
+      }
+      if (composedVApp != null) {
+         Task task = vappClient.deleteVApp(composedVApp.getHref());
+         assertTaskSucceeds(task);
+      }
+   }
+
    @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       vdcClient = context.getApi().getVdcClient();
+      vappTemplateClient = context.getApi().getVAppTemplateClient();
+      vappClient = context.getApi().getVAppClient();
+      
+      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
    }
    
    @Test(testName = "GET /vdc/{id}")
    public void testGetVdc() {
-      // required for testing
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
-       
       Vdc vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
       assertTrue(!vdc.getDescription().equals("DO NOT USE"), "vDC isn't to be used for testing");
        
-      // parent type
-      Checks.checkEntityType(vdc);
-      
-      // required
-      assertNotNull(vdc.getAllocationModel(), String.format(OBJ_FIELD_REQ, VDC, "allocationModel"));
-      
-      assertNotNull(vdc.getStorageCapacity(), String.format(OBJ_FIELD_REQ, VDC, "storageCapacity"));
-      Checks.checkCapacityWithUsage(vdc.getStorageCapacity());
-      
-      assertNotNull(vdc.getComputeCapacity(), String.format(OBJ_FIELD_REQ, VDC, "computeCapacity"));
-      Checks.checkComputeCapacity(vdc.getComputeCapacity());
-      
-      assertNotNull(vdc.getNicQuota(), String.format(OBJ_FIELD_REQ, VDC, "nicQuota"));
-      assertTrue(vdc.getNicQuota() >= 0, String.format(OBJ_FIELD_GTE_0, VDC, "nicQuota", vdc.getNicQuota()));
-      
-      assertNotNull(vdc.getNetworkQuota(), String.format(OBJ_FIELD_REQ, VDC, "networkQuota"));
-      assertTrue(vdc.getNetworkQuota() >= 0, String.format(OBJ_FIELD_GTE_0, VDC, "networkQuota", vdc.getNetworkQuota()));
-      
-       
-      // optional
-      // NOTE isEnabled cannot be checked
-      if (vdc.getResourceEntities() != null) {
-         Checks.checkResourceEntities(vdc.getResourceEntities());
-      }
-      if (vdc.getAvailableNetworks() != null) {
-         Checks.checkAvailableNetworks(vdc.getAvailableNetworks());
-      }
-      if (vdc.getCapabilities() != null) {
-         Checks.checkCapabilities(vdc.getCapabilities());
-      }
-      if(vdc.getVmQuota() != null) {
-         assertTrue(vdc.getVmQuota() >= 0, String.format(OBJ_FIELD_GTE_0, VDC, "vmQuota", vdc.getVmQuota()));
-      }
-      if(vdc.getVmQuota() != null) {
-         assertTrue(vdc.getVmQuota() >= 0, String.format(OBJ_FIELD_GTE_0, VDC, "vmQuota", vdc.getVmQuota()));
-      }
+      Checks.checkVdc(vdc);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/captureVApp", enabled = false)
+   @Test(testName = "POST /vdc/{id}/action/captureVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
    public void testCaptureVApp() {
-      Reference templateSource = null; // TODO: vApp reference
-      VAppTemplate template = vdcClient.captureVApp(vdcURI, CaptureVAppParams.builder()
-            .source(templateSource)
-                  // TODO: test optional params
-                  //.name("")
-                  //.description("")
-                  //.sections(sections) // TODO: ovf sections
-            .build());
+      String name = "captured-"+random.nextInt(Integer.MAX_VALUE);
       
-      checkVAppTemplate(template);
+      CaptureVAppParams captureVappParams = CaptureVAppParams.builder()
+               .name(name)
+               .source(instantiatedVApp.getHref())
+               // TODO: test optional params
+               //.description("")
+               //.sections(sections) // TODO: ovf sections
+               .build();
       
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
-   }
-   
-   @Test(testName = "POST /vdc/{id}/action/cloneVApp", enabled = false)
-   public void testCloneVApp() {
-      Reference vAppSource = null; // TODO: vApp reference
-      VApp vApp = vdcClient.cloneVApp(vdcURI, CloneVAppParams.builder()
-            .source(vAppSource)
-                  // TODO: test optional params
-                  //.name("") 
-                  //.description("")
-                  //.deploy(true)
-                  //.isSourceDelete(true)
-                  //.powerOn(true)
-                  //.instantiationParams(InstantiationParams.builder()
-                  //      .sections(sections) // TODO: ovf sections? various tests?
-                  //      .build())
+      capturedVAppTemplate = vdcClient.captureVApp(vdcURI, captureVappParams);
 
-                  // Reserved. Unimplemented params; may test eventually when implemented
-                  //.vAppParent(vAppParentRef)
-                  //.linkedClone(true)
-            .build());
+      Task task = Iterables.getFirst(capturedVAppTemplate.getTasks(), null);
+      assertTaskSucceedsLong(task);
+
+      Checks.checkVAppTemplate(capturedVAppTemplate);
       
-      Checks.checkVApp(vApp);
-      
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
+      assertEquals(capturedVAppTemplate.getName(), name, 
+               String.format(OBJ_FIELD_EQ, "VAppTemplate", "name", name, capturedVAppTemplate.getName()));
    }
    
-   @Test(testName = "POST /vdc/{id}/action/cloneVAppTemplate", enabled = false)
+   @Test(testName = "POST /vdc/{id}/action/cloneVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
+   public void testCloneVApp() {
+      CloneVAppParams cloneVappParams = CloneVAppParams.builder()
+               .source(instantiatedVApp.getHref())
+               // TODO: test optional params
+               //.name("") 
+               //.description("")
+               //.deploy(true)
+               //.isSourceDelete(true)
+               //.powerOn(true)
+               //.instantiationParams(InstantiationParams.builder()
+               //      .sections(sections) // TODO: ovf sections? various tests?
+               //      .build())
+   
+               // Reserved. Unimplemented params; may test eventually when implemented
+               //.vAppParent(vAppParentRef)
+               //.linkedClone(true)
+               .build();
+      
+      clonedVApp = vdcClient.cloneVApp(vdcURI, cloneVappParams);
+      
+      Task task = Iterables.getFirst(clonedVApp.getTasks(), null);
+      assertNotNull(task, "vdcClient.cloneVApp returned VApp that did not contain any tasks");
+      assertTaskSucceedsLong(task);
+
+      Checks.checkVApp(clonedVApp);
+   }
+   
+   @Test(testName = "POST /vdc/{id}/action/cloneVAppTemplate")
    public void testCloneVAppTemplate() {
-      Reference templateSource = null; // TODO: vAppTemplate reference
-      VAppTemplate template = vdcClient.cloneVAppTemplate(vdcURI, CloneVAppTemplateParams.builder()
-            .source(templateSource)
-                  // TODO: test optional params
-                  //.name("")
-                  //.description("")
-                  //.isSourceDelete(true)
-                  //.sections(sections) // TODO: ovf sections
-            .build());
+      clonedVAppTemplate = vdcClient.cloneVAppTemplate(vdcURI, CloneVAppTemplateParams.builder()
+               .source(vAppTemplateURI)
+               .build());
       
-      Checks.checkVAppTemplate(template);
+      Task task = Iterables.getFirst(clonedVAppTemplate.getTasks(), null);
+      assertNotNull(task, "vdcClient.cloneVAppTemplate returned VAppTemplate that did not contain any tasks");
+      assertTaskSucceedsLong(task);
       
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
+      Checks.checkVAppTemplate(clonedVAppTemplate);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/composeVApp", enabled = false)
+   @Test(testName = "POST /vdc/{id}/action/composeVApp")
    public void testComposeVApp() {
-      VApp vApp = vdcClient.composeVApp(vdcURI, ComposeVAppParams.builder()
+      String name = "composed-"+random.nextInt(Integer.MAX_VALUE);
+      
+      composedVApp = vdcClient.composeVApp(vdcURI, ComposeVAppParams.builder()
+            .name(name)
             // TODO: test optional params
-            //.name("") 
+            //.sourcedItem(SourcedCompositionItemParam.builder()
+                        //.sourcedItem(vAppTemplateURI)
+                        //.build())
             //.description("")
             //.deploy(true)
-            //.isSourceDelete(true)
+            //.isSourceDelete(false)
             //.powerOn(true)
             //.instantiationParams(InstantiationParams.builder()
             //      .sections(sections) // TODO: ovf sections? various tests?
@@ -186,49 +216,104 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             // Reserved. Unimplemented params; may test eventually when implemented
             //.linkedClone()
             .build());
-      
-      Checks.checkVApp(vApp);
-      
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
+
+      Task task = Iterables.getFirst(composedVApp.getTasks(), null);
+      assertNotNull(task, "vdcClient.composeVApp returned VApp that did not contain any tasks");
+      assertTaskSucceedsLong(task);
+
+      Checks.checkVApp(composedVApp);
+      assertEquals(composedVApp.getName(), name, 
+               String.format(OBJ_FIELD_EQ, "VApp", "name", name, composedVApp.getName()));
    }
    
-   @Test(testName = "POST /vdc/{id}/action/instantiateVAppTemplate", enabled = false)
+   // TODO Duplicates code in VAppClientLiveTest
+   @Test(testName = "POST /vdc/{id}/action/instantiateVAppTemplate")
    public void testInstantiateVAppTemplate() {
-      Reference templateSource = null; // TODO: vApp or vAppTemplate reference
-      VApp vApp = vdcClient.instantiateVApp(vdcURI, InstantiateVAppParams.builder()
-            .source(templateSource)
-                  // TODO: test optional params
-                  //.name("")
-                  //.description("")
-                  //.isSourceDelete(true)
-            .build());
+      Vdc vdc = vdcClient.getVdc(vdcURI);
+
+      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Optional<Reference> parentNetwork = Iterables.tryFind(
+            networks, new Predicate<Reference>() {
+                  @Override
+                  public boolean apply(Reference reference) {
+                     return reference.getHref().equals(networkURI);
+                  }
+            });
+
+      if (!parentNetwork.isPresent()) {
+         fail(String.format("Could not find network %s in vdc", networkURI.toASCIIString()));
+      }
+
+      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
+            .parentNetwork(parentNetwork.get())
+            .fenceMode("bridged")
+            .build();
       
-      Checks.checkVApp(vApp);
+      NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
+               .info("Configuration parameters for logical networks")
+               .networkConfigs(
+                     ImmutableSet.of(VAppNetworkConfiguration.builder()
+                           .networkName("vAppNetwork")
+                           .configuration(networkConfiguration)
+                           .build()))
+               .build();
+
+      InstantiationParams instantiationParams = InstantiationParams.builder()
+                              .sections(ImmutableSet.of(networkConfigSection))
+                              .build();
+                     
+      InstantiateVAppTemplateParams instantiate = InstantiateVAppTemplateParams.builder()
+            .name("test-vapp-"+random.nextInt(Integer.MAX_VALUE))
+            .notDeploy()
+            .notPowerOn()
+            .description("Test VApp")
+            .instantiationParams(instantiationParams)
+            .source(vAppTemplateURI)
+            .build();
+
+      instantiatedVApp = vdcClient.instantiateVApp(vdcURI, instantiate);
+      Task instantiationTask = Iterables.getFirst(instantiatedVApp.getTasks(), null);
+      assertTaskSucceedsLong(instantiationTask);
       
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
+      Checks.checkVApp(instantiatedVApp);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/uploadVAppTemplate", enabled = false)
+   @Test(testName = "POST /vdc/{id}/action/uploadVAppTemplate")
    public void testUploadVAppTemplate() {
-      VAppTemplate template = vdcClient.uploadVAppTemplate(vdcURI, UploadVAppTemplateParams.builder()
-            // TODO: test optional params
-            //.name("")
-            //.description("")
-            //.transferFormat("")
-            //.manifestRequired(true)
-            .build());
+      // TODO Should test all 4 stages of upload; currently doing only stage 1 here.
+      //  1. creating empty vApp template entity 
+      //  2. uploading an OVF of vApp template 
+      //  3. uploading disks described from the OVF 
+      //  4. finishing task for uploading
       
-      Checks.checkVAppTemplate(template);
+      String name = "uploaded-"+random.nextInt(Integer.MAX_VALUE);
       
-      // TODO: await task to complete
-      // TODO: make assertions that the task was successful
+      UploadVAppTemplateParams uploadVAppTemplateParams = UploadVAppTemplateParams.builder()
+               .name(name)
+               // TODO: test optional params
+               //.description("")
+               //.transferFormat("")
+               //.manifestRequired(true)
+               .build();
+      
+      uploadedVAppTemplate = vdcClient.uploadVAppTemplate(vdcURI, uploadVAppTemplateParams);
+      
+      Checks.checkVAppTemplateWhenNotReady(uploadedVAppTemplate);
+      
+      assertEquals(uploadedVAppTemplate.getName(), name, 
+               String.format(OBJ_FIELD_EQ, "VAppTemplate", "name", name, uploadedVAppTemplate.getName()));
+      
+      ResourceEntityType.Status expectedStatus = ResourceEntityType.Status.NOT_READY;
+      Integer actualStatus = uploadedVAppTemplate.getStatus();
+      assertEquals(actualStatus, expectedStatus.getValue(),
+               String.format(OBJ_FIELD_EQ, "VAppTemplate", "status", expectedStatus, actualStatus));
+      
    }
    
-   @Test(testName = "GET /network/{id}/metadata", enabled = false)
+   @Test(testName = "GET /network/{id}/metadata")
    public void testGetMetadata() {
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
+      
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
             String.format(OBJ_FIELD_REQ_LIVE, VDC, "metadata.entries"));
@@ -236,10 +321,16 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(VDC, metadata);
    }
    
-   @Test(testName = "GET /network/{id}/metadata/{key}", enabled = false)
+   @Test(testName = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
    public void testGetMetadataValue() {
-      MetadataValue metadataValue = vdcClient.getMetadataClient().getMetadataValue(vdcURI, "key");
+      // First find a key
+      Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
+      Map<String, String> metadataMap = Checks.metadataToMap(metadata);
+      String key = Iterables.getFirst(metadataMap.keySet(), "MadeUpKey!");
+      String value = metadataMap.get(key);
       
-      Checks.checkMetadataValueFor(VDC, metadataValue);
+      MetadataValue metadataValue = vdcClient.getMetadataClient().getMetadataValue(vdcURI, key);
+      
+      Checks.checkMetadataValueFor(VDC, metadataValue, value);
    }
 }

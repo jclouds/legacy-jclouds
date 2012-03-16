@@ -22,6 +22,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -48,6 +49,7 @@ import com.google.common.base.Objects;
  * </pre>
  */
 @XmlType(name = "UploadVAppTemplateParams")
+@XmlRootElement(name = "UploadVAppTemplateParams")
 public class UploadVAppTemplateParams extends ParamsType {
    public static Builder<?> builder() {
       return new ConcreteBuilder();
