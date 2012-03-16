@@ -64,6 +64,22 @@ public interface AdminNetworkClient extends NetworkClient {
     */
    Task updateNetwork(URI networkRef, OrgNetwork network);
    
-   // POST /admin/network/{id}/action/reset
+   /**
+    * Reset(undeploy & redeploy) networking services on a logical network. 
+    * The reset operation can be performed on: 
+    * - external networks 
+    * - organization networks 
+    * - vApp networks 
+    * The reset operation can be performed only on deployed networks.
+    *
+    * <pre>
+    * POST /admin/network/{id}/action/reset
+    * </pre>
+    *
+    * @param networkRef the reference for the network
+    * @return a task. This operation is asynchronous and the user should monitor the 
+    * returned task status in order to check when it is completed.
+    */
+   Task resetNetwork(URI networkRef);
 
 }

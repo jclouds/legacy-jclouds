@@ -143,6 +143,18 @@ public class AdminNetworkLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
+   @Test(testName = "POST /admin/network/{id}/action/reset")
+   public void testResetNetwork() { 
+      // TODO assert that network is deployed somehow
+      Task resetNetworkTask = networkClient.resetNetwork(network.getHref());
+      Checks.checkTask(resetNetworkTask);
+      assertTrue(retryTaskSuccess.apply(resetNetworkTask), String.format(TASK_COMPLETE_TIMELY, "resetNetworkTask"));
+      network = networkClient.getNetwork(network.getHref());
+      
+      Checks.checkOrgNetwork(Network.<OrgNetwork>toSubType(network));
+      // TODO: other assertions about the reset? that network is deployed when task is complete, for example
+   }
+   
    private static OrgNetwork getMutatedOrgNetwork(OrgNetwork network) {
        OrgNetwork.Builder<?> networkBuilder = OrgNetwork.builder().fromNetwork(network)
           .tasks(null)
@@ -205,6 +217,4 @@ public class AdminNetworkLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       return configBuilder.build();
    }
-   
-   // POST /admin/network/{id}/action/reset
 }

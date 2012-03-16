@@ -61,7 +61,6 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertEquals(client.getAdminNetworkClient().getNetwork(networkRef.getHref()), expected);
    }
    
-   // PUT /admin/network/{id}
    @Test
    public void testUpdateNetwork() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
@@ -79,7 +78,21 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertEquals(client.getAdminNetworkClient().updateNetwork(networkRef.getHref(), updateNetwork()), expected);
    }
    
-   // POST /admin/network/{id}/action/reset
+   @Test(enabled = false)
+   public void testResetNetwork() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("POST", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1/action/reset")
+            .acceptMedia(VCloudDirectorMediaType.TASK)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/network/admin/resetNetworkTask.xml", VCloudDirectorMediaType.TASK)
+            .httpResponseBuilder().build());
+
+      Task expected = resetNetworkTask();
+
+      assertEquals(client.getAdminNetworkClient().resetNetwork(networkRef.getHref()), expected);
+   }
    
    public final OrgNetwork orgNetwork() {
       return NetworkClientExpectTest.orgNetwork().toNewBuilder()
@@ -120,7 +133,13 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
    
    public final OrgNetwork updateNetwork() {
       return orgNetwork().toNewBuilder()
-         
+            
+         .build();
+   }
+   
+   public final Task resetNetworkTask() {
+      return Task.builder()
+            
          .build();
    }
    

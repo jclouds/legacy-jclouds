@@ -22,7 +22,9 @@ import java.net.URI;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
@@ -48,7 +50,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    
    /**
-    * @see NetworkClient#getNetwork(URI)
+    * @see AdminNetworkClient#getNetwork(URI)
     */
    @GET
    @Consumes
@@ -57,6 +59,9 @@ public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    @Override
    ListenableFuture<ExternalNetwork> getNetwork(@EndpointParam URI networkRef);
    
+   /**
+    * @see AdminNetworkClient#updateNetwork(URI, OrgNetwork)
+    */
    @PUT
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
@@ -65,6 +70,13 @@ public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    ListenableFuture<Task> updateNetwork(@EndpointParam URI networkRef, 
          @BinderParam(BindToXMLPayload.class) OrgNetwork network);
    
-   // POST /admin/network/{id}/action/reset
-   
+   /**
+    * @see AdminNetworkClient#resetNetwork(URI)
+    */
+   @POST
+   @Path("/action/reset")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Task> resetNetwork(@EndpointParam URI networkRef);
 }

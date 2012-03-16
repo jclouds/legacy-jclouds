@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OrgNetwork name="ilsolation01-Jclouds" id="urn:vcloud:network:f3ba8256-6f48-4512-aad6-600e85b4dc38" type="application/vnd.vmware.vcloud.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38" xmlns="http://www.vmware.com/vcloud/v1.5">
     <Link rel="alternate" type="application/vnd.vmware.vcloud.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"/>
     <Link rel="edit" type="application/vnd.vmware.admin.orgNetwork+xml" href="https://vcloudbeta.bluelock.com/api/admin/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"/>
