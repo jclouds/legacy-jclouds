@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
@@ -31,6 +32,7 @@ import com.google.common.base.Objects;
  *
  * @author danikov
  */
+@XmlType(name = "NetworkConfiguration")
 @XmlRootElement(name = "NetworkConfiguration")
 public class NetworkConfiguration {
 

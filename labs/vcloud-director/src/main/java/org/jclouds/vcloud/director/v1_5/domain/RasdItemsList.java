@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
@@ -41,6 +42,7 @@ import com.google.common.collect.Lists;
  *
  * @author grkvlt@apache.org
  */
+@XmlRootElement(name = "RasdItemsList")
 @XmlType(name = "RasdItemsList")
 public class RasdItemsList extends ResourceType {
 
