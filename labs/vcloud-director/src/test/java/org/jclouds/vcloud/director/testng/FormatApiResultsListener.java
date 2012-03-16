@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.testng;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -104,7 +106,9 @@ public class FormatApiResultsListener implements ITestListener {
    }
 
    private String getOperation(ITestResult res) {
-      return res.getMethod().getConstructorOrMethod().getMethod().getAnnotation(Test.class).testName();
+      Method method = res.getMethod().getConstructorOrMethod().getMethod();
+      Test test = method.getAnnotation(Test.class);
+      return test != null ? test.testName() : method.getName();
    }
 
    private String getDuration() {

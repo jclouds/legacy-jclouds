@@ -78,7 +78,7 @@ public class NetworkConfiguration {
       }
 
       /**
-       * @see NetworkConfiguration#getRetainNetInfoAcrossDeployments()
+       * @see NetworkConfiguration#retainNetInfoAcrossDeployments()
        */
       public Builder retainNetInfoAcrossDeployments(boolean retainNetInfoAcrossDeployments) {
          this.retainNetInfoAcrossDeployments = retainNetInfoAcrossDeployments;
@@ -115,7 +115,7 @@ public class NetworkConfiguration {
 
       public Builder fromConfiguration(NetworkConfiguration in) {
          return ipScope(in.getIpScope()).parentNetwork(in.getParentNetwork()).fenceMode(in.getFenceMode())
-               .retainNetInfoAcrossDeployments(in.getRetainNetInfoAcrossDeployments())
+               .retainNetInfoAcrossDeployments(in.retainNetInfoAcrossDeployments())
                .features(in.getNetworkFeatures())
                .syslogServerSettings(in.getSyslogServerSettings())
                .routerInfo(in.getRouterInfo());
@@ -133,7 +133,7 @@ public class NetworkConfiguration {
       this.routerInfo = routerInfo;
    }
 
-   private NetworkConfiguration() {
+   protected NetworkConfiguration() {
       // for JAXB
    }
 
@@ -182,7 +182,7 @@ public class NetworkConfiguration {
     * @return whether the network resources such as IP/MAC of router will be retained
     *         across deployments. Default is false.
     */
-   public boolean getRetainNetInfoAcrossDeployments() {
+   public Boolean retainNetInfoAcrossDeployments() {
       return retainNetInfoAcrossDeployments;
    }
 

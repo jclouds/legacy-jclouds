@@ -33,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminVdcAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminNetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.GroupAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
@@ -128,7 +129,7 @@ public interface VCloudDirectorAsyncClient {
    AdminCatalogAsyncClient getAdminCatalogClient();
    
    /**
-    * @return asynchronous access to {@link Group} features
+    * @return asynchronous access to admin {@link Group} features
     */
    @Delegate
    GroupAsyncClient getGroupClient();
@@ -150,4 +151,10 @@ public interface VCloudDirectorAsyncClient {
     */
    @Delegate
    AdminVdcAsyncClient getAdminVdcClient();
+   
+   /**
+    * @return asynchronous access to admin {@link Network} features
+    */
+   @Delegate
+   AdminNetworkAsyncClient getAdminNetworkClient();
 }

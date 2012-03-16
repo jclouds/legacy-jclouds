@@ -56,7 +56,6 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
@@ -360,7 +359,7 @@ public class Checks {
             "The Image type of a Media must be one of the allowed list");
    }
 
-   public static void checkNetworkType(NetworkType network) {
+   public static void checkNetwork(Network network) {
       // Check optional fields
       NetworkConfiguration config = network.getConfiguration();
       if (config != null) {
@@ -372,7 +371,14 @@ public class Checks {
    }
    
    public static void checkNetworkConfiguration(NetworkConfiguration config) {
+      // required
+      assertNotNull(config.getFenceMode(), String.format(OBJ_FIELD_REQ, 
+            "NetworkConfiguration", "fenceMode"));
+      assertTrue(Network.FenceMode.ALL.contains(config.getFenceMode()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
+            "fenceMode", "NetworkConfiguration", config.getFenceMode(), Iterables.toString(Network.FenceMode.ALL)));
+      
       // Check optional fields
+      // NOTE retainNetInfoAcrossDeployments cannot be checked
       if (config.getIpScope() != null) {
          checkIpScope(config.getIpScope());
       }
@@ -1113,7 +1119,7 @@ public class Checks {
       
       // Check optional fields
       if (section.getNetworks() != null) {
-	      for (Network network : section.getNetworks()) {
+	      for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : section.getNetworks()) {
 	         checkNetwork(network);
 	      }
       }
@@ -1122,7 +1128,7 @@ public class Checks {
       checkOvfSectionType(section);
    }
 
-   public static void checkNetwork(Network network) {
+   public static void checkNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network network) {
       assertNotNull(network, String.format(NOT_NULL_OBJ_FMT, "Network"));
       
       // Check optional fields
@@ -1269,7 +1275,7 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "NetworkSection"));
 
       if (val.getNetworks() != null) {
-         for (Network network : val.getNetworks()) {
+         for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : val.getNetworks()) {
             checkOvfNetwork(network);
          }
       }
@@ -1277,7 +1283,7 @@ public class Checks {
       checkOvfSectionType(val);
    }
 
-   private static void checkOvfNetwork(Network val) {
+   private static void checkOvfNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network val) {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "Network"));
    }
 
@@ -1365,6 +1371,30 @@ public class Checks {
    private static void checkCimResourceAllocationSettingData(ResourceAllocationSettingData val) {
       // TODO Could do more assertions...
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ResouorceAllocatoinSettingData"));
+   }
+
+   public static void checkOrgNetwork(OrgNetwork network) {
+      // optional
+      Reference networkPoolRef = network.getNetworkPool();
+      if (networkPoolRef != null) {
+         Checks.checkReferenceType(networkPoolRef);
+      }
+      IpAddresses allowedExternalIpAddresses = network.getAllowedExternalIpAddresses();
+      if (allowedExternalIpAddresses != null) {
+         Checks.checkIpAddresses(allowedExternalIpAddresses);
+      }
+      
+      // parent type
+      checkNetwork(network);
+   }
+   
+   public static void checkExternalNetwork(ExternalNetwork network) {
+      // required
+      assertNotNull(network.getProviderInfo(), String.format(OBJ_FIELD_REQ, 
+            "ExternalNetwork", "providerInfo"));
+      
+      // parent type
+      checkNetwork(network);
    }
 
    public static void checkAdminVdc(AdminVdc vdc) {
