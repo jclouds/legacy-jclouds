@@ -16,12 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -30,17 +31,20 @@ import com.google.common.base.Objects.ToStringHelper;
  * Represents the results from a Network vCloud query as a record.
  *
  * <pre>
- * &lt;complexType name="QueryResultNetworkRecord" /&gt;
+ * &lt;complexType name="QueryResultNetworkRecordType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
+@XmlRootElement(name = "OrgNetworkRecord")
+@XmlType(name = "QueryResultNetworkRecordType")
 public class QueryResultNetworkRecord extends QueryResultRecordType {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromQueryResultNetworkRecord(this);
    }

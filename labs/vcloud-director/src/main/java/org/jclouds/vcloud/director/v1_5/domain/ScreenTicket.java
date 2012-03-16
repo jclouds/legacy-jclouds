@@ -21,8 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -35,8 +34,8 @@ import com.google.common.base.Objects;
  * &lt;complexType name="ScreenTicket" /&gt;
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ScreenTicket")
+@XmlRootElement(name = "ScreenTicket")
+@XmlType(name = "ScreenTicketType")
 public class ScreenTicket {
 
    public static Builder builder() {

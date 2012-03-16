@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,38 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
-
 /**
  * Represents vApp Template upload parameters.
- * <p/>
- * <p/>
- * <p>Java class for UploadVAppTemplateParams complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="UploadVAppTemplateParams">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.vmware.com/vcloud/v1.5}ParamsType">
- *       &lt;attribute name="transferFormat" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="manifestRequired" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="UploadVAppTemplateParamsType" /&gt;
  * </pre>
+ *
+ * @author grkvlt@apache.org
+ * @since 0.9
  */
-@XmlType(name = "UploadVAppTemplateParams")
+@XmlRootElement(name = "UploadVAppTemplateParams")
+@XmlType(name = "UploadVAppTemplateParamsType")
 public class UploadVAppTemplateParams extends ParamsType {
    public static Builder<?> builder() {
       return new ConcreteBuilder();

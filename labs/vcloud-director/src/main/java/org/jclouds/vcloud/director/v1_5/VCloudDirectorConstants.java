@@ -28,6 +28,8 @@ public class VCloudDirectorConstants {
    /** The XML namespace used by the clients. */
    public static final String VCLOUD_1_5_NS = "http://www.vmware.com/vcloud/v1.5";
 
+   public static final String VCLOUD_VMW_NS = "ihttp://www.vmware.com/schema/ovf";
+
    public static final String VCLOUD_OVF_NS = "http://schemas.dmtf.org/ovf/envelope/1";
 
    public static final String VCLOUD_OVF_ENV_NS = "http://schemas.dmtf.org/ovf/environment/1";

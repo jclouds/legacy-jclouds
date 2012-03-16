@@ -300,7 +300,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(@EndpointParam URI vAppURI);
+   ListenableFuture<GuestCustomizationSection> getGuestCustomizationSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyGuestCustomizationSection(URI, GuestCustomizationSection)
@@ -311,7 +311,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyGuestCustomizationSection(@EndpointParam URI vmURI,
                                                           @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
    /**
@@ -345,7 +345,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> ejectMedia(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> ejectMedia(@EndpointParam URI vmURI,
                                      @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
@@ -357,7 +357,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> insertMedia(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> insertMedia(@EndpointParam URI vmURI,
                                       @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
@@ -396,18 +396,18 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<NetworkConnectionSection> getNetworkConnectionSection(@EndpointParam URI vAppURI);
+   ListenableFuture<NetworkConnectionSection> getNetworkConnectionSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyNetworkConnectionSection(URI, NetworkConnectionSection)
     */
    @PUT
-   @Path("/networkConfigSection")
+   @Path("/networkConnectionSection")
    @Produces(NETWORK_CONFIG_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyNetworkConnectionSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyNetworkConnectionSection(@EndpointParam URI vmURI,
                                                          @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
 
    /**
@@ -428,7 +428,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<OperatingSystemSection> getOperatingSystemSection(@EndpointParam URI vAppURI);
+   ListenableFuture<OperatingSystemSection> getOperatingSystemSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyOperatingSystemSection(URI, OperatingSystemSection)
@@ -439,7 +439,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyOperatingSystemSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyOperatingSystemSection(@EndpointParam URI vmURI,
                                                        @BinderParam(BindToXMLPayload.class) OperatingSystemSection section);
 
    /**
@@ -516,7 +516,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam URI vAppURI);
+   ListenableFuture<RuntimeInfoSection> getRuntimeInfoSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#getScreenImage(URI)
@@ -568,7 +568,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(@EndpointParam URI vAppURI);
+   ListenableFuture<VirtualHardwareSection> getVirtualHardwareSection(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSection(URI, VirtualHardwareSection)
@@ -579,7 +579,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> modifyVirtualHardwareSection(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyVirtualHardwareSection(@EndpointParam URI vmURI,
                                                        @BinderParam(BindToXMLPayload.class) VirtualHardwareSection section);
 
    /**

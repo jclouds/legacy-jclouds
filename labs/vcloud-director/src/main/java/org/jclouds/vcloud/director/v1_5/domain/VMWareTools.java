@@ -23,6 +23,7 @@ import static com.google.common.base.Objects.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -30,7 +31,7 @@ import com.google.common.base.Objects;
 /**
  * @author grkvlt@apache.org
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "VMWareTools")
 @XmlType(name = "VMWareTools")
 public class VMWareTools {
 

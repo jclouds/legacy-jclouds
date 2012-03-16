@@ -16,14 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.domain;
-
-import java.net.URI;
+package org.jclouds.vcloud.director.v1_5.domain.query;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "CatalogReference")
-public class CatalogReference extends Reference {
+/**
+ * Represents the results from a vCloud query as references.
+ *
+ * <pre>
+ * &lt;complexType name="QueryResultReferences" /&gt;
+ * </pre>
+ *
+ * @author grkvlt@apache.org
+ */
+@XmlRootElement(name = "VAppReferences")
+public class VAppReferences extends QueryResultReferences {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -31,34 +38,30 @@ public class CatalogReference extends Reference {
 
    @Override
    public Builder<?> toBuilder() {
-      return builder().fromCatalogReference(this);
+      return builder().fromVAppReferences(this);
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static class Builder<B extends Builder<B>> extends Reference.Builder<B> {
+   public static class Builder<B extends Builder<B>> extends QueryResultReferences.Builder<B> {
 
       @Override
-      public CatalogReference build() {
-         return new CatalogReference(this);
+      public VAppReferences build() {
+         return new VAppReferences(this);
       }
 
-      protected B fromCatalogReference(CatalogReference in) {
-         return fromReference(in);
+      public B fromVAppReferences(VAppReferences in) {
+         return fromQueryResultReferences(in);
       }
    }
 
-   public CatalogReference(Builder<?> builder) {
+   protected VAppReferences(Builder<?> builder) {
       super(builder);
    }
 
-   public CatalogReference(URI href, String id, String name, String type) {
-      super(href, id, name, type);
-   }
-
-   protected CatalogReference() {
-      // For JAXB
+   protected VAppReferences() {
+      // for JAXB
    }
 
    @Override
@@ -67,9 +70,9 @@ public class CatalogReference extends Reference {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      CatalogReference that = CatalogReference.class.cast(o);
+      VAppReferences that = VAppReferences.class.cast(o);
       return super.equals(that);
    }
    
-   // NOTE hashcode inheritted from Reference
+   // NOTE hashcode inheritted from QueryResultReferences
 }

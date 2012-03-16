@@ -22,8 +22,8 @@ import java.net.URI;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "CatalogReference")
-public class CatalogReference extends Reference {
+@XmlRootElement(name = "VAppReference")
+public class VAppReference extends Reference {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -31,7 +31,7 @@ public class CatalogReference extends Reference {
 
    @Override
    public Builder<?> toBuilder() {
-      return builder().fromCatalogReference(this);
+      return builder().fromVAppReference(this);
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -40,24 +40,24 @@ public class CatalogReference extends Reference {
    public static class Builder<B extends Builder<B>> extends Reference.Builder<B> {
 
       @Override
-      public CatalogReference build() {
-         return new CatalogReference(this);
+      public VAppReference build() {
+         return new VAppReference(this);
       }
 
-      protected B fromCatalogReference(CatalogReference in) {
+      protected B fromVAppReference(VAppReference in) {
          return fromReference(in);
       }
    }
 
-   public CatalogReference(Builder<?> builder) {
+   public VAppReference(Builder<?> builder) {
       super(builder);
    }
 
-   public CatalogReference(URI href, String id, String name, String type) {
+   public VAppReference(URI href, String id, String name, String type) {
       super(href, id, name, type);
    }
 
-   protected CatalogReference() {
+   protected VAppReference() {
       // For JAXB
    }
 
@@ -67,7 +67,7 @@ public class CatalogReference extends Reference {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      CatalogReference that = CatalogReference.class.cast(o);
+      VAppReference that = VAppReference.class.cast(o);
       return super.equals(that);
    }
    

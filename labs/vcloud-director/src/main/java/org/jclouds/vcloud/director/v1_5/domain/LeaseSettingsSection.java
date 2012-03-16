@@ -63,7 +63,7 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "LeaseSettingsSection")
-@XmlType(name = "LeaseSettingsSection")
+@XmlType(name = "LeaseSettingsSectionType")
 public class LeaseSettingsSection extends SectionType {
 
    public static Builder<?> builder() {
@@ -142,7 +142,6 @@ public class LeaseSettingsSection extends SectionType {
          return self();
       }
 
-
       @Override
       public LeaseSettingsSection build() {
          return new LeaseSettingsSection(this);
@@ -194,17 +193,14 @@ public class LeaseSettingsSection extends SectionType {
    }
 
    /**
-    * Gets the value of the link property.
+    * Gets the value of the links property.
     */
    public Set<Link> getLinks() {
-      return Collections.unmodifiableSet(this.links);
+      return Collections.unmodifiableSet(links);
    }
 
    /**
     * Gets the value of the deploymentLeaseInSeconds property.
-    *
-    * @return possible object is
-    *         {@link Integer }
     */
    public Integer getDeploymentLeaseInSeconds() {
       return deploymentLeaseInSeconds;
@@ -212,9 +208,6 @@ public class LeaseSettingsSection extends SectionType {
 
    /**
     * Gets the value of the storageLeaseInSeconds property.
-    *
-    * @return possible object is
-    *         {@link Integer }
     */
    public Integer getStorageLeaseInSeconds() {
       return storageLeaseInSeconds;
@@ -235,7 +228,7 @@ public class LeaseSettingsSection extends SectionType {
    }
 
    /**
-    * @return the value of the href property.
+    * Gets the value of the href property.
     */
    public URI getHref() {
       return href;
@@ -243,9 +236,6 @@ public class LeaseSettingsSection extends SectionType {
 
    /**
     * Gets the value of the type property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getType() {
       return type;
@@ -259,13 +249,13 @@ public class LeaseSettingsSection extends SectionType {
          return false;
       LeaseSettingsSection that = LeaseSettingsSection.class.cast(o);
       return super.equals(that) && 
-            equal(links, that.links) &&
-            equal(deploymentLeaseInSeconds, that.deploymentLeaseInSeconds) &&
-            equal(storageLeaseInSeconds, that.storageLeaseInSeconds) &&
-            equal(deploymentLeaseExpiration, that.deploymentLeaseExpiration) &&
-            equal(storageLeaseExpiration, that.storageLeaseExpiration) &&
-            equal(href, that.href) &&
-            equal(type, that.type);
+            equal(this.links, that.links) &&
+            equal(this.deploymentLeaseInSeconds, that.deploymentLeaseInSeconds) &&
+            equal(this.storageLeaseInSeconds, that.storageLeaseInSeconds) &&
+            equal(this.deploymentLeaseExpiration, that.deploymentLeaseExpiration) &&
+            equal(this.storageLeaseExpiration, that.storageLeaseExpiration) &&
+            equal(this.href, that.href) &&
+            equal(this.type, that.type);
    }
 
    @Override
