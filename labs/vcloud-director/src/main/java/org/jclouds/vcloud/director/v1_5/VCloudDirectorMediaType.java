@@ -191,17 +191,10 @@ public class VCloudDirectorMediaType {
    
    public static final String ADMIN_VDC = "application/vnd.vmware.admin.vdc+xml";
    
-   public static final String OVF_TEXT_XML = "text/xml";
+   public static final String TEXT_XML = "text/xml";
 
    /**
-    * All acceptable OVF-specific media types.
-    */
-   public static final List<String> ALL_OVF = ImmutableList.of(
-            OVF_TEXT_XML
-         );
-
-   /**
-    * All acceptable vCloud-specific media types.
+    * All acceptable media types.
     */
    public static final List<String> ALL = ImmutableList.of(
          SESSION, ERROR, ORG_LIST, METADATA, METADATA_ENTRY, METADATA_VALUE,
@@ -222,7 +215,9 @@ public class VCloudDirectorMediaType {
          ORG_GENERAL_SETTINGS, ORG_EMAIL_SETTINGS, ORG_SETTINGS, ADMIN_NETWORK,
          ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
          RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC, MEDIA_PARAMS,
-         RUNTIME_INFO_SECTION, SCREEN_TICKET, VAPP_NETWORK
+         RUNTIME_INFO_SECTION, SCREEN_TICKET, VAPP_NETWORK,
+         
+         TEXT_XML
       );
 
    // NOTE These lists must be updated whenever a new media type constant is added.
