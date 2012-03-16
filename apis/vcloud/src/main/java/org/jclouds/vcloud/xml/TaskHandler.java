@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.util.SaxUtils.equalsOrSuffix;
+
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
@@ -69,7 +71,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
-      if (qName.equalsIgnoreCase("Task")) {
+      if (equalsOrSuffix(qName, "Task")) {
          if (attributes.get("href") != null && !inOwner)// queued tasks may not have an
             // href yet
             taskLink = Utils.newReferenceType(attributes);
@@ -82,11 +84,11 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
          if (attributes.containsKey("expiryTime"))
             expiryTime = parseDate(attributes.get("expiryTime"));
          // TODO technically the old Result object should only be owner for copy and delete tasks
-      } else if (qName.equals("Owner") || qName.equals("Result")) {
+      } else if (equalsOrSuffix(qName, "Owner") || equalsOrSuffix(qName, "Result")) {
          owner = Utils.newReferenceType(attributes);
-      } else if (qName.equals("Link") && "self".equals(attributes.get("rel"))) {
+      } else if (equalsOrSuffix(qName, "Link") && "self".equals(attributes.get("rel"))) {
          taskLink = Utils.newReferenceType(attributes);
-      } else if (qName.equals("Error")) {
+      } else if (equalsOrSuffix(qName, "Error")) {
          error = Utils.newError(attributes);
       }
    }
@@ -108,7 +110,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
 
    @Override
    public void endElement(String uri, String localName, String qName) {
-      if (qName.equalsIgnoreCase("Task")) {
+      if (equalsOrSuffix(qName, "Task")) {
          this.task = new TaskImpl(taskLink.getHref(), operation, status, startTime, endTime, expiryTime, owner, error);
          operation = null;
          taskLink = null;
@@ -117,7 +119,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
          endTime = null;
          owner = null;
          error = null;
-      } else if (qName.equalsIgnoreCase("Owner")) {
+      } else if (equalsOrSuffix(qName, "Owner")) {
          inOwner = false;
       }
    }

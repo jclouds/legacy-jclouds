@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vcloud:Task xmlns:vcloud="http://www.vmware.com/vcloud/v1" status="running" startTime="2012-03-15T22:47:02.058-06:00" operation="Updating Virtual Machine UbuntuServer-x64-2GB(c9004a47-5e21-4cf1-860c-670d8965b24a)" expiryTime="2012-06-13T22:47:02.058-06:00" type="application/vnd.vmware.vcloud.task+xml" href="https://mycloud.greenhousedata.com/api/v1.0/task/77a33fd4-3401-423c-8167-6711fc51ee9a" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1 http://mycloud.greenhousedata.com/api/v1.0/schema/master.xsd">
+    <vcloud:Link rel="task:cancel" href="https://mycloud.greenhousedata.com/api/v1.0/task/77a33fd4-3401-423c-8167-6711fc51ee9a/action/cancel"/>
+    <vcloud:Owner type="application/vnd.vmware.vcloud.vm+xml" name="UbuntuServer-x64-2GB" href="https://mycloud.greenhousedata.com/api/v1.0/vApp/vm-c9004a47-5e21-4cf1-860c-670d8965b24a"/>
+</vcloud:Task>
