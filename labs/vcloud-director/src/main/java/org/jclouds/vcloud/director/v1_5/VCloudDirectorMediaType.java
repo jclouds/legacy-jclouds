@@ -218,7 +218,7 @@ public class VCloudDirectorMediaType {
          ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
          RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC, MEDIA_PARAMS,
          RUNTIME_INFO_SECTION, SCREEN_TICKET, VAPP_NETWORK,
-         TEXT_XML, ADMIN_VDC, NETWORK_POOL
+         TEXT_XML, ADMIN_VDC, NETWORK_POOL, ADMIN_ORG
       );
 
    // NOTE These lists must be updated whenever a new media type constant is added.
