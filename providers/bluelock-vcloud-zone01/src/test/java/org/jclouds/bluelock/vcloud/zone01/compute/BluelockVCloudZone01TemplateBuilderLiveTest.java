@@ -53,6 +53,10 @@ public class BluelockVCloudZone01TemplateBuilderLiveTest extends BaseTemplateBui
             switch (input.family) {
                case UBUNTU:
                   return !input.version.equals("") || !input.is64Bit;
+               case RHEL:
+                  return !input.version.equals("");
+               case WINDOWS:
+                  return !input.version.equals("");
                default:
                   return true;
             }
