@@ -20,6 +20,7 @@ package org.jclouds.vcloud.features;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
@@ -42,8 +43,10 @@ public class CatalogClientLiveTest extends BaseVCloudClientLiveTest {
    }
 
    @Test
-   public void testFindCatalogIsWriteable() throws Exception {
-      // default catalog should be the public one, unless we are in vCloud 1.0.0 where public catalogs don't work
-      assertEquals(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly(), buildVersion.startsWith("1.5"));
+   public void testFindCatalogIsWriteableIfNotVersion1_5() throws Exception {
+      // when we are in vCloud 1.0.0 public catalogs don't work, so our default
+      // catalog is private
+      if (!buildVersion.startsWith("1.5"))
+         assertTrue(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly());
    }
 }
