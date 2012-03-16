@@ -22,6 +22,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.C
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_USER;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkControlAccessParams;
@@ -106,7 +107,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
     */
    @Test(testName = "GET /vApp/{id}")
    public void testGetVApp() {
-      VApp vAppInstantiated = instantiateVApp("test-vapp");
+      VApp vAppInstantiated = instantiateVApp();
 
       // Wait for the task to complete
       Task instantiateTask = Iterables.getOnlyElement(vAppInstantiated.getTasks());
@@ -120,7 +121,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
       // Check the required fields are set
       assertEquals(vApp.isDeployed(), Boolean.FALSE, String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
-      assertEquals(vApp.getName(), "test-vapp", String.format(OBJ_FIELD_EQ, VAPP, "name", "test-vapp", vApp.getName()));
+      assertTrue(vApp.getName().startsWith("test-vapp-"), String.format(MATCHES_STRING_FMT, "name", "test-vapp-*", vApp.getName()));
       assertEquals(vApp.getDescription(), "Test VApp", String.format(OBJ_FIELD_EQ, VAPP, "Description", "Test VApp", vApp.getDescription()));
 
       // TODO instantiationParams instantiationParams()
@@ -136,7 +137,10 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
     */
    @Test(testName = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
    public void testModifyVApp() {
-      VApp newVApp = VApp.builder().name("new-name").description("New Description").build();
+      VApp newVApp = VApp.builder()
+            .name("new-name-" + Integer.toString(random.nextInt(Integer.MAX_VALUE)))
+            .description("New Description")
+            .build();
 
       // The method under test
       Task modifyVApp = vAppClient.modifyVApp(vApp.getHref(), newVApp);
@@ -1023,8 +1027,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(testName = "PUT & GET /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testSetAndGetMetadataValue() {
       // Store a value
-      String key = Integer.toString(random.nextInt());
-      String value = Integer.toString(random.nextInt());
+      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+      String value = Integer.toString(random.nextInt(Integer.MAX_VALUE));
       MetadataValue metadataValue = MetadataValue.builder().value(value).build();
       vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
 
@@ -1038,7 +1042,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetAndGetMetadataValue" })
    public void testDeleteMetadataEntry() {
       // Store a value, to be deleted
-      String key = Integer.toString(random.nextInt());
+      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
       MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
       vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
 
@@ -1059,8 +1063,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
 
       // Store a value, to be deleted
-      String key = Integer.toString(random.nextInt());
-      String value = Integer.toString(random.nextInt());
+      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+      String value = Integer.toString(random.nextInt(Integer.MAX_VALUE));
       Metadata addedMetadata = Metadata.builder()
             .entry(MetadataEntry.builder().key(key).value(value).build())
             .build();
