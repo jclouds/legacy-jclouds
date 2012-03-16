@@ -58,11 +58,12 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             .payload(payloadFromResource("/securitygroup_list.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, listSecurityGroups, listSecurityGroupsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
+            listSecurityGroupsResponse);
 
       assertEquals(clientWhenSecurityGroupsExist.getConfiguredRegions(), ImmutableSet.of("North"));
 
-      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North").listSecurityGroups()
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get().listSecurityGroups()
             .toString(), new ParseSecurityGroupListTest().expected().toString());
    }
 
@@ -78,9 +79,10 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listListSecurityGroupsResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, listListSecurityGroups, listListSecurityGroupsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listListSecurityGroups,
+            listListSecurityGroupsResponse);
 
-      assertTrue(clientWhenNoSecurityGroupsExist.getSecurityGroupClientForRegion("North").listSecurityGroups()
+      assertTrue(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get().listSecurityGroups()
             .isEmpty());
    }
 
@@ -98,10 +100,11 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             .payload(payloadFromResource("/securitygroup_details.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, getSecurityGroup, getSecurityGroupResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
+            getSecurityGroupResponse);
 
-      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North").getSecurityGroup("0")
-            .toString(), new ParseSecurityGroupTest().expected().toString());
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+            .getSecurityGroup("0").toString(), new ParseSecurityGroupTest().expected().toString());
    }
 
    public void testGetSecurityGroupWhenResponseIs404() throws Exception {
@@ -116,9 +119,11 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, getSecurityGroup, getSecurityGroupResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
+            getSecurityGroupResponse);
 
-      assertNull(clientWhenNoSecurityGroupsExist.getSecurityGroupClientForRegion("North").getSecurityGroup("0"));
+      assertNull(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+            .getSecurityGroup("0"));
 
    }
 
@@ -139,10 +144,11 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             .payload(payloadFromResource("/securitygroup_created.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, createSecurityGroup, createSecurityGroupResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroup,
+            createSecurityGroupResponse);
 
       assertEquals(
-            clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North")
+            clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
                   .createSecurityGroup("name", "description").toString(), createSecurityGroupExpected().toString());
    }
 
@@ -158,9 +164,10 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse deleteSecurityGroupResponse = HttpResponse.builder().statusCode(202).build();
 
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, deleteSecurityGroup, deleteSecurityGroupResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroup,
+            deleteSecurityGroupResponse);
 
-      assertTrue(clientWhenServersExist.getSecurityGroupClientForRegion("North").deleteSecurityGroup("160"));
+      assertTrue(clientWhenServersExist.getSecurityGroupExtensionForRegion("North").get().deleteSecurityGroup("160"));
 
    }
 
@@ -181,11 +188,11 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             .payload(payloadFromResource("/securitygrouprule_created.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, createSecurityGroupRule, createSecurityGroupRuleResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroupRule,
+            createSecurityGroupRuleResponse);
 
-      assertEquals(
-            clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North")
-                  .createSecurityGroupRule("tcp", "80", "8080", "0.0.0.0/0", "", "161").toString(),
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+            .createSecurityGroupRule("tcp", "80", "8080", "0.0.0.0/0", "", "161").toString(),
             createSecurityGroupRuleExpected().toString());
    }
 
@@ -201,9 +208,11 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse deleteSecurityGroupRuleResponse = HttpResponse.builder().statusCode(202).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, deleteSecurityGroupRule, deleteSecurityGroupRuleResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroupRule,
+            deleteSecurityGroupRuleResponse);
 
-      assertTrue(clientWhenSecurityGroupsExist.getSecurityGroupClientForRegion("North").deleteSecurityGroupRule("161"));
+      assertTrue(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+            .deleteSecurityGroupRule("161"));
 
    }
 

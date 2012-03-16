@@ -18,10 +18,14 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
 import org.jclouds.rest.BaseRestClientExpectTest;
+
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Base class for writing Nova Expect tests
@@ -33,6 +37,9 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
    protected HttpRequest keystoneAuthWithAccessKeyAndSecretKey;
    protected String authToken;
    protected HttpResponse responseWithKeystoneAccess;
+   protected HttpRequest extensionsOfNovaRequest;
+   protected HttpResponse extensionsOfNovaResponse;
+   protected HttpResponse unmatchedExtensionsOfNovaResponse;
 
    public BaseNovaExpectTest() {
       provider = "openstack-nova";
@@ -44,5 +51,20 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
       responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
       // now, createContext arg will need tenant prefix
       identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
+      
+      extensionsOfNovaRequest = HttpRequest
+            .builder()
+            .method("GET")
+             // NOTE THIS IS NOVA, NOT KEYSTONE
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
+
+      extensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/extension_list_normal.json")).build();
+      
+      unmatchedExtensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/extension_list.json")).build();
    }
 }

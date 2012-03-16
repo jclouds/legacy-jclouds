@@ -96,14 +96,14 @@ public interface NovaClient {
     * Provides synchronous access to Security Group features.
     */
    @Delegate
-   SecurityGroupClient getSecurityGroupClientForRegion(
+   Optional<SecurityGroupClient> getSecurityGroupExtensionForRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Key Pair features.
     */
    @Delegate
-   KeyPairClient getKeyPairClientForRegion(
+   Optional<KeyPairClient> getKeyPairExtensionForRegion(
          @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

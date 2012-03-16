@@ -37,7 +37,7 @@ public class KeyPairClientLiveTest extends BaseNovaClientLiveTest {
 
    public void testListKeyPairs() throws Exception {
       for (String regionId : context.getApi().getConfiguredRegions()) {
-         KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
+         KeyPairClient client = context.getApi().getKeyPairExtensionForRegion(regionId).get();
          Set<Map<String, KeyPair>> keyPairsList = client.listKeyPairs();
          assertNotNull(keyPairsList);
       }
@@ -46,7 +46,7 @@ public class KeyPairClientLiveTest extends BaseNovaClientLiveTest {
    public void testCreateAndDeleteKeyPair() throws Exception {
       final String KEYPAIR_NAME = "testkp";
       for (String regionId : context.getApi().getConfiguredRegions()) {
-         KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
+         KeyPairClient client = context.getApi().getKeyPairExtensionForRegion(regionId).get();
          KeyPair keyPair = null;
          try {
             keyPair = client.createKeyPair(KEYPAIR_NAME);
@@ -64,7 +64,7 @@ public class KeyPairClientLiveTest extends BaseNovaClientLiveTest {
       final String PUBLIC_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCrrBREFxz3002l1HuXz0+UOdJQ/mOYD5DiJwwB/TOybwIKQJPOxJWA9gBoo4k9dthTKBTaEYbzrll7iZcp59E80S6mNiAr3mUgi+x5Y8uyXeJ2Ws+h6peVyFVUu9epkwpcTd1GVfdcVWsTajwDz9+lxCDhl0RZKDFoT0scTxbj/w== nova@nv-aw2az2-api0002";
 
       for (String regionId : context.getApi().getConfiguredRegions()) {
-         KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
+         KeyPairClient client = context.getApi().getKeyPairExtensionForRegion(regionId).get();
          KeyPair keyPair = null;
          try {
             keyPair = client.createKeyPairWithPublicKey(KEYPAIR_NAME, PUBLIC_KEY);

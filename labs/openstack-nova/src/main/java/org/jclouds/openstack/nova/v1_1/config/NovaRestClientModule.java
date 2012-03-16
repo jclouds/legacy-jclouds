@@ -18,7 +18,14 @@
  */
 package org.jclouds.openstack.nova.v1_1.config;
 
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -28,6 +35,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.domain.Extension;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
@@ -42,11 +50,17 @@ import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
+import org.jclouds.openstack.nova.v1_1.functions.PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet;
 import org.jclouds.openstack.nova.v1_1.handlers.NovaErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.rest.functions.ImplicitOptionalConverter;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Provides;
 
 /**
  * Configures the Nova connection.
@@ -57,13 +71,9 @@ import com.google.common.collect.ImmutableMap;
 @ConfiguresRestClient
 public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsyncClient> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
-         .<Class<?>, Class<?>> builder()
-         //
-         .put(ServerClient.class, ServerAsyncClient.class)
-         //
-         .put(FlavorClient.class, FlavorAsyncClient.class).put(ImageClient.class, ImageAsyncClient.class)
-         .put(ExtensionClient.class, ExtensionAsyncClient.class)
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
+         .put(ServerClient.class, ServerAsyncClient.class).put(FlavorClient.class, FlavorAsyncClient.class)
+         .put(ImageClient.class, ImageAsyncClient.class).put(ExtensionClient.class, ExtensionAsyncClient.class)
          .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
          .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
          .put(KeyPairClient.class, KeyPairAsyncClient.class).build();
@@ -75,6 +85,10 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    @Override
    protected void configure() {
       install(new NovaParserModule());
+      // ExtensionClient is used directly for determining which are installed
+      bindClientAndAsyncClient(binder(), ExtensionClient.class, ExtensionAsyncClient.class);
+      bind(ImplicitOptionalConverter.class).to(
+            PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
       super.configure();
    }
 
@@ -87,6 +101,20 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       // this to the the
       // ContextBuilder
       install(new KeystoneAuthenticationModule());
+   }
+
+   @Provides
+   @Singleton
+   public LoadingCache<String, Set<Extension>> provideExtensionsByRegion(final Provider<NovaClient> novaClient) {
+      return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
+            .build(new CacheLoader<String, Set<Extension>>() {
+
+               @Override
+               public Set<Extension> load(String key) throws Exception {
+                  return novaClient.get().getExtensionClientForRegion(key).listExtensions();
+               }
+
+            });
    }
 
    @Override

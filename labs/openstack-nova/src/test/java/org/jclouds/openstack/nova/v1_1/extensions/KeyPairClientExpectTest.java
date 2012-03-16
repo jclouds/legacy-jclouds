@@ -55,11 +55,11 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
             .payload(payloadFromResource("/keypair_list.json")).build();
 
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, listKeyPairs, listKeyPairsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
 
-      assertEquals(clientWhenServersExist.getKeyPairClientForRegion("North").listKeyPairs().toString(),
+      assertEquals(clientWhenServersExist.getKeyPairExtensionForRegion("North").get().listKeyPairs().toString(),
             new ParseKeyPairListTest().expected().toString());
    }
 
@@ -75,9 +75,9 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listKeyPairsResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, listKeyPairs, listKeyPairsResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
 
-      assertTrue(clientWhenNoServersExist.getKeyPairClientForRegion("North").listKeyPairs().isEmpty());
+      assertTrue(clientWhenNoServersExist.getKeyPairExtensionForRegion("North").get().listKeyPairs().isEmpty());
 
    }
 
@@ -96,10 +96,10 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
             .payload(payloadFromResource("/keypair_created.json")).build();
 
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, createKeyPair, createKeyPairResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createKeyPair, createKeyPairResponse);
 
-      assertEquals(clientWhenServersExist.getKeyPairClientForRegion("North").createKeyPair("testkeypair").toString(),
-            new ParseKeyPairTest().expected().toString());
+      assertEquals(clientWhenServersExist.getKeyPairExtensionForRegion("North").get().createKeyPair("testkeypair")
+            .toString(), new ParseKeyPairTest().expected().toString());
 
    }
 
@@ -120,11 +120,12 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
             .payload(payloadFromResource("/keypair_created.json")).build();
 
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, createKeyPair, createKeyPairResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createKeyPair, createKeyPairResponse);
 
       assertEquals(
             clientWhenServersExist
-                  .getKeyPairClientForRegion("North")
+                  .getKeyPairExtensionForRegion("North")
+                  .get()
                   .createKeyPairWithPublicKey(
                         "testkeypair",
                         "ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001\n")
@@ -143,8 +144,8 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse deleteKeyPairResponse = HttpResponse.builder().statusCode(202).build();
 
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, deleteKeyPair, deleteKeyPairResponse);
+            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteKeyPair, deleteKeyPairResponse);
 
-      assertTrue(clientWhenServersExist.getKeyPairClientForRegion("North").deleteKeyPair("testkeypair"));
+      assertTrue(clientWhenServersExist.getKeyPairExtensionForRegion("North").get().deleteKeyPair("testkeypair"));
    }
 }

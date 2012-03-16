@@ -39,7 +39,7 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
 
    public void listSecurityGroups() throws Exception {
       for (String regionId : context.getApi().getConfiguredRegions()) {
-         SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
+         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForRegion(regionId).get();
          Set<SecurityGroup> securityGroupsList = client.listSecurityGroups();
          assertNotNull(securityGroupsList);
       }
@@ -47,7 +47,7 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
 
    public void createGetAndDeleteSecurityGroup() throws Exception {
       for (String regionId : context.getApi().getConfiguredRegions()) {
-         SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
+         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForRegion(regionId).get();
          SecurityGroup securityGroup = null;
          String id;
          try {
@@ -66,7 +66,7 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
 
    public void createAndDeleteSecurityGroupRule() throws Exception {
       for (String regionId : context.getApi().getConfiguredRegions()) {
-         SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
+         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForRegion(regionId).get();
          SecurityGroup securityGroup = null;
 
          try {
