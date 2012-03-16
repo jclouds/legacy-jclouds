@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task xmlns="http://www.vmware.com/vcloud/v1.5" status="running" startTime="2012-03-14T12:39:23.720-04:00" operationName="networkUpdateNetwork" operation="Updating Network ilsolation01-Jclouds(f3ba8256-6f48-4512-aad6-600e85b4dc38)" expiryTime="2012-06-12T12:39:23.720-04:00" name="task" id="urn:vcloud:task:49d2e180-7921-4902-ac39-b4ff5406bb94" type="application/vnd.vmware.vcloud.task+xml" href="https://vcloudbeta.bluelock.com/api/task/49d2e180-7921-4902-ac39-b4ff5406bb94" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="task:cancel" href="https://vcloudbeta.bluelock.com/api/task/49d2e180-7921-4902-ac39-b4ff5406bb94/action/cancel"/>
+    <Owner type="application/vnd.vmware.vcloud.network+xml" name="ilsolation01-Jclouds" href="https://vcloudbeta.bluelock.com/api/network/f3ba8256-6f48-4512-aad6-600e85b4dc38"/>
+    <User type="application/vnd.vmware.admin.user+xml" name="dan@cloudsoftcorp.com" href="https://vcloudbeta.bluelock.com/api/admin/user/ae75edd2-12de-414c-8e85-e6ea10442c08"/>
+    <Organization type="application/vnd.vmware.vcloud.org+xml" name="JClouds" href="https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"/>
+</Task>

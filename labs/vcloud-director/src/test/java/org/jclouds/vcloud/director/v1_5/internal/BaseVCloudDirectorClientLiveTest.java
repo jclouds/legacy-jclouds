@@ -85,14 +85,14 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    // NOTE Implement as required to populate xxxClient fields, or NOP
-   public abstract void setupRequiredClients() throws Exception;
+   protected abstract void setupRequiredClients() throws Exception;
 
    public Predicate<Task> retryTaskSuccess;
    public Predicate<Task> retryTaskSuccessLong;
 
    @Inject
    protected void initTaskSuccess(TaskSuccess taskSuccess) {
-      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 1000L);
+      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 10000L);
    }
 
    @Inject
@@ -104,7 +104,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected Session session;
 
    @BeforeClass(groups = { "live" })
-   public void setupContext() throws Exception {
+   protected void setupContext() throws Exception {
       setupCredentials();
       Properties overrides = setupProperties();
 
