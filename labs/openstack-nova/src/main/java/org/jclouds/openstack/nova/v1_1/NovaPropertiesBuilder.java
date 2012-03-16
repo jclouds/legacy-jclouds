@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v1_1;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS;
 
 import java.util.Properties;
 
@@ -41,6 +42,7 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
       properties.setProperty(PROPERTY_API_VERSION, "1.1");
+      properties.setProperty(PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS, "false");
       return properties;
    }
 
