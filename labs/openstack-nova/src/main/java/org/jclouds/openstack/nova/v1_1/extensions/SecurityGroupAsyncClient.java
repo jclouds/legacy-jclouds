@@ -52,7 +52,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see SecurityGroupClient
  * @author Jeremy Daggett
- * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html" />
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ *      />
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://wiki.openstack.org/os-security-groups" />
  */
@@ -70,7 +72,7 @@ public interface SecurityGroupAsyncClient {
    @Path("/os-security-groups")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<SecurityGroup>> listSecurityGroups();
-   
+
    /**
     * @see SecurityGroupClient#getSecurityGroup
     */
@@ -81,7 +83,6 @@ public interface SecurityGroupAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<SecurityGroup> getSecurityGroup(@PathParam("id") String id);
 
-   
    /**
     * @see SecurityGroupClient#createSecurityGroup
     */
@@ -93,8 +94,7 @@ public interface SecurityGroupAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"security_group\":%7B\"name\":\"{name}\",\"description\":\"{description}\"%7D%7D")
    ListenableFuture<SecurityGroup> createSecurityGroup(@PayloadParam("name") String name,
-		   @PayloadParam("description") String description);
-
+         @PayloadParam("description") String description);
 
    /**
     * @see SecurityGroupClient#deleteSecurityGroup
@@ -105,7 +105,6 @@ public interface SecurityGroupAsyncClient {
    @Consumes
    ListenableFuture<Boolean> deleteSecurityGroup(@PathParam("id") String id);
 
-
    /**
     * @see SecurityGroupClient#createSecurityGroupRule
     */
@@ -115,17 +114,13 @@ public interface SecurityGroupAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"security_group_rule\":%7B\"ip_protocol\":\"{ip_protocol}\"," +
-		   "\"from_port\":\"{from_port}\",\"to_port\":\"{to_port}\"," +
-		   "\"cidr\":\"{cidr}\",\"group_id\":\"{group_id}\",\"parent_group_id\":\"{parent_group_id}\"%7D%7D")
-   ListenableFuture<SecurityGroupRule> createSecurityGroupRule(
-		   @PayloadParam("ip_protocol") String ip_protocol,
-		   @PayloadParam("from_port") String from_port,
-		   @PayloadParam("to_port") String to_port,
-		   @PayloadParam("cidr") String cidr,
-		   @PayloadParam("group_id") String group_id,
-		   @PayloadParam("parent_group_id") String parent_group_id);
-
+   @Payload("%7B\"security_group_rule\":%7B\"ip_protocol\":\"{ip_protocol}\","
+         + "\"from_port\":\"{from_port}\",\"to_port\":\"{to_port}\","
+         + "\"cidr\":\"{cidr}\",\"group_id\":\"{group_id}\",\"parent_group_id\":\"{parent_group_id}\"%7D%7D")
+   ListenableFuture<SecurityGroupRule> createSecurityGroupRule(@PayloadParam("ip_protocol") String ip_protocol,
+         @PayloadParam("from_port") String from_port, @PayloadParam("to_port") String to_port,
+         @PayloadParam("cidr") String cidr, @PayloadParam("group_id") String group_id,
+         @PayloadParam("parent_group_id") String parent_group_id);
 
    /**
     * @see SecurityGroupClient#deleteSecurityGroupRule

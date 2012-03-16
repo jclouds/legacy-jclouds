@@ -57,15 +57,16 @@ import com.google.common.collect.ImmutableMap;
 @ConfiguresRestClient
 public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsyncClient> {
 
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(ServerClient.class, ServerAsyncClient.class)//
-            .put(FlavorClient.class, FlavorAsyncClient.class)
-            .put(ImageClient.class, ImageAsyncClient.class)
-            .put(ExtensionClient.class, ExtensionAsyncClient.class)
-            .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
-            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
-            .put(KeyPairClient.class, KeyPairAsyncClient.class)
-            .build();
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
+         .<Class<?>, Class<?>> builder()
+         //
+         .put(ServerClient.class, ServerAsyncClient.class)
+         //
+         .put(FlavorClient.class, FlavorAsyncClient.class).put(ImageClient.class, ImageAsyncClient.class)
+         .put(ExtensionClient.class, ExtensionAsyncClient.class)
+         .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
+         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
+         .put(KeyPairClient.class, KeyPairAsyncClient.class).build();
 
    public NovaRestClientModule() {
       super(NovaClient.class, NovaAsyncClient.class, DELEGATE_MAP);
@@ -80,8 +81,10 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    @Override
    protected void installLocations() {
       super.installLocations();
-      // TODO: select this from KeystoneProperties.VERSION; note you select from a guice provided
-      // property, so it will have to come from somewhere else, maybe we move this to the the
+      // TODO: select this from KeystoneProperties.VERSION; note you select from
+      // a guice provided
+      // property, so it will have to come from somewhere else, maybe we move
+      // this to the the
       // ContextBuilder
       install(new KeystoneAuthenticationModule());
    }

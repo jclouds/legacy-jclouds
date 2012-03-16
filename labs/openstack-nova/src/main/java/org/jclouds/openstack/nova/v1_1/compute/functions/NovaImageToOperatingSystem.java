@@ -43,12 +43,12 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
 /**
- * A function for transforming a nova specific Image into a generic OperatingSystem object.
- *
+ * A function for transforming a nova specific Image into a generic
+ * OperatingSystem object.
+ * 
  * @author Matt Stephenson
  */
-public class NovaImageToOperatingSystem implements Function<Image, OperatingSystem>
-{
+public class NovaImageToOperatingSystem implements Function<Image, OperatingSystem> {
    public static final Pattern DEFAULT_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
    // Windows Server 2008 R2 x64
    public static final Pattern WINDOWS_PATTERN = Pattern.compile("Windows (.*) (x[86][64])");
@@ -60,13 +60,11 @@ public class NovaImageToOperatingSystem implements Function<Image, OperatingSyst
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   public NovaImageToOperatingSystem(Map<OsFamily, Map<String, String>> osVersionMap)
-   {
+   public NovaImageToOperatingSystem(Map<OsFamily, Map<String, String>> osVersionMap) {
       this.osVersionMap = osVersionMap;
    }
 
-   public OperatingSystem apply(final Image from)
-   {
+   public OperatingSystem apply(final Image from) {
       OsFamily osFamily = null;
       String osVersion = null;
 
@@ -74,42 +72,31 @@ public class NovaImageToOperatingSystem implements Function<Image, OperatingSyst
 
       boolean is64Bit = true;
 
-      if (imageName.indexOf("Windows") != -1)
-      {
+      if (imageName.indexOf("Windows") != -1) {
          osFamily = OsFamily.WINDOWS;
          Matcher matcher = WINDOWS_PATTERN.matcher(from.getName());
-         if (matcher.find())
-         {
+         if (matcher.find()) {
             osVersion = ComputeServiceUtils.parseVersionOrReturnEmptyString(osFamily, matcher.group(1), osVersionMap);
             is64Bit = matcher.group(2).equals("x64");
          }
-      }
-      else
-      {
-         if (imageName.contains("Red Hat EL"))
-         {
+      } else {
+         if (imageName.contains("Red Hat EL")) {
             osFamily = OsFamily.RHEL;
-         }
-         else if (imageName.contains("Oracle EL"))
-         {
+         } else if (imageName.contains("Oracle EL")) {
             osFamily = OsFamily.OEL;
-         }
-         else
-         {
-            final Iterable<String> imageNameParts = Splitter.on(CharMatcher.WHITESPACE).trimResults().split(imageName.toLowerCase());
+         } else {
+            final Iterable<String> imageNameParts = Splitter.on(CharMatcher.WHITESPACE).trimResults()
+                  .split(imageName.toLowerCase());
 
-            osFamily = Iterables.find(Arrays.asList(OsFamily.values()), new Predicate<OsFamily>()
-            {
+            osFamily = Iterables.find(Arrays.asList(OsFamily.values()), new Predicate<OsFamily>() {
                @Override
-               public boolean apply(@Nullable OsFamily osFamily)
-               {
+               public boolean apply(@Nullable OsFamily osFamily) {
                   return Iterables.any(imageNameParts, Predicates.equalTo(osFamily.name().toLowerCase()));
                }
             });
          }
          Matcher matcher = DEFAULT_PATTERN.matcher(imageName);
-         if (matcher.find() && matcher.groupCount() >= 3)
-         {
+         if (matcher.find() && matcher.groupCount() >= 3) {
             osVersion = ComputeServiceUtils.parseVersionOrReturnEmptyString(osFamily, matcher.group(3), osVersionMap);
          }
       }

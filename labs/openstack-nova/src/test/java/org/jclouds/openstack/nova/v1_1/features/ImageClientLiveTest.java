@@ -18,64 +18,65 @@
  */
 package org.jclouds.openstack.nova.v1_1.features;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
-import java.util.Set;
-
-import static org.testng.Assert.*;
-
 /**
  * Tests behavior of {@code ImageClient}
- *
+ * 
  * @author Michael Arnold
  */
 @Test(groups = "live", testName = "ImageClientLiveTest")
 public class ImageClientLiveTest extends BaseNovaClientLiveTest {
 
-    @Test
-    public void testListImages() throws Exception {
-        for (String regionId : context.getApi().getConfiguredRegions()) {
-            ImageClient client = context.getApi().getImageClientForRegion(regionId);
-            Set<Resource> response = client.listImages();
-            assertNotNull(response);
-            assertTrue(response.size() >= 0);
-            for (Resource image : response) {
-                Image newDetails = client.getImage(image.getId());
-                assertNotNull(newDetails);
-                assertEquals(newDetails.getId(), image.getId());
-                assertEquals(newDetails.getName(), image.getName());
-                assertEquals(newDetails.getLinks(), image.getLinks());
-            }
-        }
-    }
+   @Test
+   public void testListImages() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         ImageClient client = context.getApi().getImageClientForRegion(regionId);
+         Set<Resource> response = client.listImages();
+         assertNotNull(response);
+         assertTrue(response.size() >= 0);
+         for (Resource image : response) {
+            Image newDetails = client.getImage(image.getId());
+            assertNotNull(newDetails);
+            assertEquals(newDetails.getId(), image.getId());
+            assertEquals(newDetails.getName(), image.getName());
+            assertEquals(newDetails.getLinks(), image.getLinks());
+         }
+      }
+   }
 
-    @Test
-    public void testListImagesInDetail() throws Exception {
-        for (String regionId : context.getApi().getConfiguredRegions()) {
-            ImageClient client = context.getApi().getImageClientForRegion(regionId);
-            Set<Image> response = client.listImagesInDetail();
-            assertNotNull(response);
-            assertTrue(response.size() >= 0);
-            for (Image image : response) {
-                Image newDetails = client.getImage(image.getId());
-                assertNotNull(newDetails);
-                assertEquals(newDetails.getId(), image.getId());
-                assertEquals(newDetails.getName(), image.getName());
-                assertEquals(newDetails.getLinks(), image.getLinks());
-                assertEquals(newDetails.getCreated(), image.getCreated());
-                assertEquals(newDetails.getMinDisk(), image.getMinDisk());
-                assertEquals(newDetails.getMinRam(), image.getMinRam());
-                assertEquals(newDetails.getProgress(), image.getProgress());
-                assertEquals(newDetails.getStatus(), image.getStatus());
-                assertEquals(newDetails.getServer(), image.getServer());
-                assertEquals(newDetails.getTenantId(), image.getTenantId());
-                assertEquals(newDetails.getUpdated(), image.getUpdated());
-                assertEquals(newDetails.getUserId(), image.getUserId());
-            }
-        }
-    }
+   @Test
+   public void testListImagesInDetail() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         ImageClient client = context.getApi().getImageClientForRegion(regionId);
+         Set<Image> response = client.listImagesInDetail();
+         assertNotNull(response);
+         assertTrue(response.size() >= 0);
+         for (Image image : response) {
+            Image newDetails = client.getImage(image.getId());
+            assertNotNull(newDetails);
+            assertEquals(newDetails.getId(), image.getId());
+            assertEquals(newDetails.getName(), image.getName());
+            assertEquals(newDetails.getLinks(), image.getLinks());
+            assertEquals(newDetails.getCreated(), image.getCreated());
+            assertEquals(newDetails.getMinDisk(), image.getMinDisk());
+            assertEquals(newDetails.getMinRam(), image.getMinRam());
+            assertEquals(newDetails.getProgress(), image.getProgress());
+            assertEquals(newDetails.getStatus(), image.getStatus());
+            assertEquals(newDetails.getServer(), image.getServer());
+            assertEquals(newDetails.getTenantId(), image.getTenantId());
+            assertEquals(newDetails.getUpdated(), image.getUpdated());
+            assertEquals(newDetails.getUserId(), image.getUserId());
+         }
+      }
+   }
 }
-

@@ -18,39 +18,32 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
-import com.google.common.collect.ImmutableMap;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.UUID;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.openstack.nova.v1_1.compute.functions.ServerToNodeMetadata;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
- * Tests for the function for transforming a nova specific Server into a generic NodeMetadata object.
- *
+ * Tests for the function for transforming a nova specific Server into a generic
+ * NodeMetadata object.
+ * 
  * @author Matt Stephenson
  */
-public class ServerToNodeMetadataTest
-{
+public class ServerToNodeMetadataTest {
    @Test
-   public void testConversion()
-   {
+   public void testConversion() {
       UUID id = UUID.randomUUID();
-      Server serverToConvert = Server.builder()
-         .id(id.toString())
-         .name("Test Server " + id)
-         .privateAddresses(Address.createV4("10.0.0.1"))
-         .publicAddresses(Address.createV4("1.0.1.1"))
-         .status(ServerStatus.ACTIVE)
-         .metadata(ImmutableMap.of("test", "testing"))
-         .build();
+      Server serverToConvert = Server.builder().id(id.toString()).name("Test Server " + id)
+            .privateAddresses(Address.createV4("10.0.0.1")).publicAddresses(Address.createV4("1.0.1.1"))
+            .status(ServerStatus.ACTIVE).metadata(ImmutableMap.of("test", "testing")).build();
 
       ServerToNodeMetadata converter = new ServerToNodeMetadata();
 
@@ -71,6 +64,6 @@ public class ServerToNodeMetadataTest
 
       assertNotNull(convertedNodeMetadata.getUserMetadata());
       assertEquals(convertedNodeMetadata.getUserMetadata().size(), 1);
-      assertEquals(convertedNodeMetadata.getUserMetadata().get("test"),"testing");
+      assertEquals(convertedNodeMetadata.getUserMetadata().get("test"), "testing");
    }
 }

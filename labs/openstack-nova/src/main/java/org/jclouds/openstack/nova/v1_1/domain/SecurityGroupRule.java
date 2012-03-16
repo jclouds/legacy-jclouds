@@ -30,7 +30,7 @@ import com.google.gson.annotations.SerializedName;
  * 
  */
 public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
-   
+
    public static enum IpProtocol {
       TCP, UDP, ICMP, UNRECOGNIZED;
       public String value() {
@@ -50,8 +50,7 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
          }
       }
    }
-   
-   
+
    public static Builder builder() {
       return new Builder();
    }
@@ -108,17 +107,14 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
       }
 
       public SecurityGroupRule build() {
-         return new SecurityGroupRule(id, fromPort, group, ipProtocol, toPort,
-               parentGroupId, ipRange);
+         return new SecurityGroupRule(id, fromPort, group, ipProtocol, toPort, parentGroupId, ipRange);
       }
 
       public Builder fromSecurityGroupRule(SecurityGroupRule in) {
-         return id(in.getId()).fromPort(in.getFromPort()).group(in.getGroup())
-               .ipProtocol(in.getIpProtocol()).toPort(in.getToPort()).parentGroupId(in.getParentGroupId())
-               .ipRange(in.getIpRange());
+         return id(in.getId()).fromPort(in.getFromPort()).group(in.getGroup()).ipProtocol(in.getIpProtocol())
+               .toPort(in.getToPort()).parentGroupId(in.getParentGroupId()).ipRange(in.getIpRange());
       }
    }
-
 
    protected String id;
 
@@ -139,10 +135,9 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
 
    @SerializedName(value = "ip_range")
    protected Map<String, String> ipRange;
-   
-   
-   protected SecurityGroupRule(String id, int fromPort, Map<String, String> group,
-         IpProtocol ipProtocol, int toPort, String parentGroupId, Map<String, String> ipRange) {
+
+   protected SecurityGroupRule(String id, int fromPort, Map<String, String> group, IpProtocol ipProtocol, int toPort,
+         String parentGroupId, Map<String, String> ipRange) {
       this.id = id;
       this.fromPort = fromPort;
       this.group = group;
@@ -171,20 +166,20 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
    public int getToPort() {
       return this.toPort;
    }
-   
+
    public String getParentGroupId() {
       return this.parentGroupId;
    }
-   
+
    public Map<String, String> getIpRange() {
       return this.ipRange;
    }
 
    @Override
    public int compareTo(SecurityGroupRule o) {
-      return  this.id.compareTo(o.getId());
+      return this.id.compareTo(o.getId());
    }
-   
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -192,11 +187,9 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
       result = prime * result + fromPort;
       result = prime * result + ((group == null) ? 0 : group.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result
-            + ((ipProtocol == null) ? 0 : ipProtocol.hashCode());
+      result = prime * result + ((ipProtocol == null) ? 0 : ipProtocol.hashCode());
       result = prime * result + ((ipRange == null) ? 0 : ipRange.hashCode());
-      result = prime * result
-            + ((parentGroupId == null) ? 0 : parentGroupId.hashCode());
+      result = prime * result + ((parentGroupId == null) ? 0 : parentGroupId.hashCode());
       result = prime * result + toPort;
       return result;
    }
@@ -241,11 +234,9 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("fromPort", fromPort)
-            .add("group", group).add("ipProtocol", ipProtocol)
-            .add("toPort", toPort).add("parentGroupId", parentGroupId)
+      return toStringHelper("").add("id", id).add("fromPort", fromPort).add("group", group)
+            .add("ipProtocol", ipProtocol).add("toPort", toPort).add("parentGroupId", parentGroupId)
             .add("ipRange", ipRange).toString();
    }
-   
 
 }

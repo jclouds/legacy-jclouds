@@ -27,8 +27,8 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.domain.Link.Relation;
+import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
@@ -61,12 +61,8 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
             .tenantId("1234")
             .userId("5678")
             .name("sample-server")
-            .updated(
-                  new SimpleDateFormatDateService()
-                        .iso8601SecondsDateParse("2010-10-10T12:00:00Z"))
-            .created(
-                  new SimpleDateFormatDateService()
-                        .iso8601SecondsDateParse("2010-08-10T12:00:00Z"))
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-10-10T12:00:00Z"))
+            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-08-10T12:00:00Z"))
             .hostId("e4d909c290d0fb1ca068ffaddf22cbd0")
             .accessIPv4("67.23.10.132")
             .accessIPv6("::babe:67.23.10.132")
@@ -85,27 +81,25 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
                                     Relation.BOOKMARK,
                                     URI.create("http://servers.api.openstack.org/1234/images/52415800-8b69-11e0-9b19-734f6f006e54")))
                         .build())
-            .flavor(Resource
-                  .builder()
-                  .id("52415800-8b69-11e0-9b19-734f216543fd")
-                  .name("null")
-                  .links(
-                        Link.create(
-                              Relation.SELF,
-                              URI.create("http://servers.api.openstack.org/v1.1/1234/flavors/52415800-8b69-11e0-9b19-734f216543fd")),
-                        Link.create(
-                              Relation.BOOKMARK,
-                              URI.create("http://servers.api.openstack.org/1234/flavors/52415800-8b69-11e0-9b19-734f216543fd")))
-                  .build())
-            .metadata(new ImmutableMap.Builder<String, String>()
-                        .put("Server Label", "Web Head 1")
+            .flavor(
+                  Resource
+                        .builder()
+                        .id("52415800-8b69-11e0-9b19-734f216543fd")
+                        .name("null")
+                        .links(
+                              Link.create(
+                                    Relation.SELF,
+                                    URI.create("http://servers.api.openstack.org/v1.1/1234/flavors/52415800-8b69-11e0-9b19-734f216543fd")),
+                              Link.create(
+                                    Relation.BOOKMARK,
+                                    URI.create("http://servers.api.openstack.org/1234/flavors/52415800-8b69-11e0-9b19-734f216543fd")))
+                        .build())
+            .metadata(
+                  new ImmutableMap.Builder<String, String>().put("Server Label", "Web Head 1")
                         .put("Image Version", "2.1").build())
-            .publicAddresses(Address.createV4("67.23.10.132"),
-                  Address.createV6("::babe:67.23.10.132"),
-                  Address.createV4("67.23.10.131"),
-                  Address.createV6("::babe:4317:0A83"))
-            .privateAddresses(Address.createV4("10.176.42.16"),
-                  Address.createV6("::babe:10.176.42.16")).build();
+            .publicAddresses(Address.createV4("67.23.10.132"), Address.createV6("::babe:67.23.10.132"),
+                  Address.createV4("67.23.10.131"), Address.createV6("::babe:4317:0A83"))
+            .privateAddresses(Address.createV4("10.176.42.16"), Address.createV6("::babe:10.176.42.16")).build();
 
    }
 

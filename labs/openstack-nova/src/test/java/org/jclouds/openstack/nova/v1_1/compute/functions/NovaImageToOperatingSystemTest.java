@@ -30,7 +30,6 @@ import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,20 +39,20 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests for the function for transforming a nova specific Image into a generic OperatingSystem object.
- *
+ * Tests for the function for transforming a nova specific Image into a generic
+ * OperatingSystem object.
+ * 
  * @author Matt Stephenson
  */
-public class NovaImageToOperatingSystemTest
-{
+public class NovaImageToOperatingSystemTest {
 
    @Test(dataProvider = "getOsFamilyValues")
-   public void testOsFamilyValues(OsFamily family)
-   {
+   public void testOsFamilyValues(OsFamily family) {
 
       Image imageToConvert = Image.builder().id("id-" + family.name()).name(family.name()).build();
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(new HashMap<OsFamily, Map<String, String>>());
+      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(
+            new HashMap<OsFamily, Map<String, String>>());
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
 
@@ -66,21 +65,18 @@ public class NovaImageToOperatingSystemTest
    }
 
    @DataProvider
-   public Object[][] getOsFamilyValues()
-   {
-      return Iterables.toArray(Iterables.transform(Arrays.asList(OsFamily.values()), new Function<OsFamily, Object[]>()
-      {
-         @Override
-         public Object[] apply(@Nullable OsFamily osFamily)
-         {
-            return new Object[]{osFamily};
-         }
-      }), Object[].class);
+   public Object[][] getOsFamilyValues() {
+      return Iterables.toArray(
+            Iterables.transform(Arrays.asList(OsFamily.values()), new Function<OsFamily, Object[]>() {
+               @Override
+               public Object[] apply(@Nullable OsFamily osFamily) {
+                  return new Object[] { osFamily };
+               }
+            }), Object[].class);
    }
 
    @Test
-   public void testWindowsServer2008R2x64()
-   {
+   public void testWindowsServer2008R2x64() {
       String name = "Windows Server 2008 R2 x64";
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
@@ -101,8 +97,7 @@ public class NovaImageToOperatingSystemTest
    }
 
    @Test
-   public void testWindows98x86()
-   {
+   public void testWindows98x86() {
       String name = "Windows 98 x86";
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
@@ -123,13 +118,13 @@ public class NovaImageToOperatingSystemTest
    }
 
    @Test
-   public void testRHEL()
-   {
+   public void testRHEL() {
       String name = "Red Hat EL";
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(new HashMap<OsFamily, Map<String, String>>());
+      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(
+            new HashMap<OsFamily, Map<String, String>>());
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
 
@@ -142,13 +137,13 @@ public class NovaImageToOperatingSystemTest
    }
 
    @Test
-   public void testOEL()
-   {
+   public void testOEL() {
       String name = "Oracle EL";
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(new HashMap<OsFamily, Map<String, String>>());
+      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(
+            new HashMap<OsFamily, Map<String, String>>());
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
 

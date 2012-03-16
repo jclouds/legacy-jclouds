@@ -33,7 +33,8 @@ import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
  * <p/>
  * 
  * @see ServerAsyncClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
  *      />
  * @author Adrian Cole
  */
@@ -65,91 +66,92 @@ public interface ServerClient {
 
    /**
     * Create a new server
-    *
+    * 
     * @param name
-    *              name of the server to create
+    *           name of the server to create
     * @param imageRef
-    *              reference to the image for the server to use
+    *           reference to the image for the server to use
     * @param flavorRef
-    *              reference to the flavor to use when creating the server
+    *           reference to the flavor to use when creating the server
     * @param options
-    *              optional parameters to be passed into the server creation request
+    *           optional parameters to be passed into the server creation
+    *           request
     * @return the newly created server
     */
    Server createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
    /**
     * Terminate and delete a server.
-    *
+    * 
     * @param id
     *           id of the server
     * @return True if successful, False otherwise
     */
    Boolean deleteServer(String id);
 
-    /**
-     * Reboot a server.
-     *
-     * @param id
-     *           id of the server
-     * @param rebootType
-     *           The type of reboot to perform (Hard/Soft)
-     */
+   /**
+    * Reboot a server.
+    * 
+    * @param id
+    *           id of the server
+    * @param rebootType
+    *           The type of reboot to perform (Hard/Soft)
+    */
    void rebootServer(String id, RebootType rebootType);
 
-    /**
-     * Resize a server to a new flavor size.
-     *
-     * @param id
-     *           id of the server
-     * @param flavorId
-     *           id of the new flavor to use
-     */
+   /**
+    * Resize a server to a new flavor size.
+    * 
+    * @param id
+    *           id of the server
+    * @param flavorId
+    *           id of the new flavor to use
+    */
    void resizeServer(String id, String flavorId);
 
-    /**
-     * Confirm a resize operation.
-     *
-     * @param id
-     *           id of the server
+   /**
+    * Confirm a resize operation.
+    * 
+    * @param id
+    *           id of the server
     */
    void confirmResizeServer(String id);
 
-    /**
-     * Revert a resize operation.
-     *
-     * @param id
-     *           id of the server
-     */
+   /**
+    * Revert a resize operation.
+    * 
+    * @param id
+    *           id of the server
+    */
    void revertResizeServer(String id);
 
-    /**
-     * Rebuild a server.
-     *
-     * @param id
-     *           id of the server
-     * @param options
-     *           Optional paramaters to the rebuilding operation.
+   /**
+    * Rebuild a server.
+    * 
+    * @param id
+    *           id of the server
+    * @param options
+    *           Optional paramaters to the rebuilding operation.
     */
    void rebuildServer(String id, RebuildServerOptions... options);
 
-    /**
-     * Change the administrative password to a server.
-     *
-     * @param id
-     *           id of the server
-     * @param adminPass
-     *           The new administrative password to use
+   /**
+    * Change the administrative password to a server.
+    * 
+    * @param id
+    *           id of the server
+    * @param adminPass
+    *           The new administrative password to use
     */
    void changeAdminPass(String id, String adminPass);
 
-    /**
-     * Rename a server.
-     *
-     * @param id
-     *           id of the server
-     * @param newName
-     *           The new name for the server
+   /**
+    * Rename a server.
+    * 
+    * @param id
+    *           id of the server
+    * @param newName
+    *           The new name for the server
     */
    void renameServer(String id, String newName);
 }

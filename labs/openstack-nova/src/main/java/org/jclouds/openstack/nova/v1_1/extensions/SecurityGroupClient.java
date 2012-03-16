@@ -61,22 +61,22 @@ public interface SecurityGroupClient {
 
    /**
     * Delete a Security Group.
-    *
+    * 
     * @return
     */
    Boolean deleteSecurityGroup(String id);
 
    /**
     * Create a Security Group Rule.
-    *
+    * 
     * @return a new Security Group Rule
     */
    SecurityGroupRule createSecurityGroupRule(String ip_protocol, String from_port, String to_port, String cidr,
-		   String group_id, String parent_group_id);
+         String group_id, String parent_group_id);
 
    /**
     * Delete a Security Group Rule.
-    *
+    * 
     * @return
     */
    Boolean deleteSecurityGroupRule(String id);

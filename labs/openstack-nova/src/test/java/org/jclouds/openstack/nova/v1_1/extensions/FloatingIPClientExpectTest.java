@@ -37,149 +37,123 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code FloatingIPAsyncClient}
- *
+ * 
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "FloatingIPClientExpectTest")
 public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
 
-    public void testListFloatingIPsWhenResponseIs2xx() throws Exception {
-        HttpRequest listFloatingIPs = HttpRequest
-                .builder()
-                .method("GET")
-                .endpoint(
-                        URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "application/json")
-                                .put("X-Auth-Token", authToken).build()).build();
+   public void testListFloatingIPsWhenResponseIs2xx() throws Exception {
+      HttpRequest listFloatingIPs = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
-        HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/floatingip_list.json")).build();
+      HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/floatingip_list.json")).build();
 
-        NovaClient clientWhenFloatingIPsExist = requestsSendResponses(
-                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-                listFloatingIPs, listFloatingIPsResponse);
+      NovaClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, listFloatingIPs, listFloatingIPsResponse);
 
-        assertEquals(clientWhenFloatingIPsExist.getConfiguredRegions(),
-                ImmutableSet.of("North"));
+      assertEquals(clientWhenFloatingIPsExist.getConfiguredRegions(), ImmutableSet.of("North"));
 
-        assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get()
-                .listFloatingIPs().toString(), new ParseFloatingIPListTest().expected()
-                .toString());
-    }
-    
-    public void testListFloatingIPsWhenResponseIs404() throws Exception {
-        HttpRequest listFloatingIPs = HttpRequest
-                .builder()
-                .method("GET")
-                .endpoint(
-                        URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "application/json")
-                                .put("X-Auth-Token", authToken).build()).build();
+      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get().listFloatingIPs()
+            .toString(), new ParseFloatingIPListTest().expected().toString());
+   }
 
-        HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(404)
-                .build();
+   public void testListFloatingIPsWhenResponseIs404() throws Exception {
+      HttpRequest listFloatingIPs = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
-        NovaClient clientWhenNoServersExist = requestsSendResponses(
-                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-                listFloatingIPs, listFloatingIPsResponse);
+      HttpResponse listFloatingIPsResponse = HttpResponse.builder().statusCode(404).build();
 
-        assertTrue(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get()
-                .listFloatingIPs().isEmpty());
-    }
-    
-    public void testGetFloatingIPWhenResponseIs2xx() throws Exception {
-        HttpRequest getFloatingIP = HttpRequest
-                .builder()
-                .method("GET")
-                .endpoint(
-                        URI.create("https://compute.north.host/v1.1/3456/os-floating-ips/1"))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "application/json")
-                                .put("X-Auth-Token", authToken).build()).build();
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, listFloatingIPs, listFloatingIPsResponse);
 
-        HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/floatingip_details.json")).build();
+      assertTrue(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get().listFloatingIPs().isEmpty());
+   }
 
-        NovaClient clientWhenFloatingIPsExist = requestsSendResponses(
-                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-                getFloatingIP, getFloatingIPResponse);
+   public void testGetFloatingIPWhenResponseIs2xx() throws Exception {
+      HttpRequest getFloatingIP = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-floating-ips/1"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
-        assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get()
-                .getFloatingIP("1").toString(),
-                new ParseFloatingIPTest().expected().toString());
-    }
-    
-    public void testGetFloatingIPWhenResponseIs404() throws Exception {
-        HttpRequest getFloatingIP = HttpRequest
-                .builder()
-                .method("GET")
-                .endpoint(
-                        URI.create("https://compute.north.host/v1.1/3456/os-floating-ips/1"))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "application/json")
-                                .put("X-Auth-Token", authToken).build()).build();
+      HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/floatingip_details.json")).build();
 
-        HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
+      NovaClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, getFloatingIP, getFloatingIPResponse);
 
-        NovaClient clientWhenNoServersExist = requestsSendResponses(
-                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-                getFloatingIP, getFloatingIPResponse);
+      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get().getFloatingIP("1")
+            .toString(), new ParseFloatingIPTest().expected().toString());
+   }
 
-        assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get()
-                .getFloatingIP("1"));
-    }
+   public void testGetFloatingIPWhenResponseIs404() throws Exception {
+      HttpRequest getFloatingIP = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-floating-ips/1"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
-    public void testAllocateWhenResponseIs2xx() throws Exception {
-        HttpRequest allocateFloatingIP = HttpRequest
-                .builder()
-                .method("POST")
-                .endpoint(
-                        URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "application/json")
-                                .put("X-Auth-Token", authToken).build())
-                .payload(payloadFromStringWithContentType("{}", "application/json")).build();
+      HttpResponse getFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
 
-        HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200)
-                .payload(payloadFromResource("/floatingip_details.json")).build();
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, getFloatingIP, getFloatingIPResponse);
 
-        NovaClient clientWhenFloatingIPsExist = requestsSendResponses(
-                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-                allocateFloatingIP, allocateFloatingIPResponse);
+      assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get().getFloatingIP("1"));
+   }
 
-        assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get()
-                .allocate().toString(),
-                new ParseFloatingIPTest().expected().toString());
+   public void testAllocateWhenResponseIs2xx() throws Exception {
+      HttpRequest allocateFloatingIP = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build())
+            .payload(payloadFromStringWithContentType("{}", "application/json")).build();
 
-    }
+      HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/floatingip_details.json")).build();
 
-    public void testAllocateWhenResponseIs404() throws Exception {
-        HttpRequest allocateFloatingIP = HttpRequest
-                .builder()
-                .method("POST")
-                .endpoint(
-                        URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
-                .headers(
-                        ImmutableMultimap.<String, String> builder()
-                                .put("Accept", "application/json")
-                                .put("X-Auth-Token", authToken).build())
-                .payload(payloadFromStringWithContentType("{}", "application/json")).build();
+      NovaClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, allocateFloatingIP, allocateFloatingIPResponse);
 
-        HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
+      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get().allocate().toString(),
+            new ParseFloatingIPTest().expected().toString());
 
-        NovaClient clientWhenNoServersExist = requestsSendResponses(
-                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-                allocateFloatingIP, allocateFloatingIPResponse);
+   }
 
-        assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get()
-                .allocate());
-    }
-    
+   public void testAllocateWhenResponseIs404() throws Exception {
+      HttpRequest allocateFloatingIP = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build())
+            .payload(payloadFromStringWithContentType("{}", "application/json")).build();
+
+      HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(404).build();
+
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, allocateFloatingIP, allocateFloatingIPResponse);
+
+      assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get().allocate());
+   }
+
 }

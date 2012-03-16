@@ -27,8 +27,8 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.domain.Link.Relation;
+import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
@@ -54,39 +54,30 @@ public class ParseServerListTest extends BaseSetParserTest<Resource> {
    @Consumes(MediaType.APPLICATION_JSON)
    public Set<Resource> expected() {
       return ImmutableSet
-               .of(
-                        Resource
-                                 .builder()
-                                 .id("52415800-8b69-11e0-9b19-734f6af67565")
-                                 .name("sample-server")
-                                 .links(
-                                          Link
-                                                   .create(
-                                                            Relation.SELF,
-                                                            URI
-                                                                     .create("http://servers.api.openstack.org/v1.1/1234/servers/52415800-8b69-11e0-9b19-734f6af67565")),
-                                          Link
-                                                   .create(
-                                                            Relation.BOOKMARK,
-                                                            URI
-                                                                     .create("http://servers.api.openstack.org/1234/servers/52415800-8b69-11e0-9b19-734f6af67565")))
-                                 .build(),
-                        Resource
-                                 .builder()
-                                 .id("52415800-8b69-11e0-9b19-734f1f1350e5")
-                                 .name("sample-server2")
-                                 .links(
-                                          Link
-                                                   .create(
-                                                            Relation.SELF,
-                                                            URI
-                                                                     .create("http://servers.api.openstack.org/v1.1/1234/servers/52415800-8b69-11e0-9b19-734f1f1350e5")),
-                                          Link
-                                                   .create(
-                                                            Relation.BOOKMARK,
-                                                            URI
-                                                                     .create("http://servers.api.openstack.org/1234/servers/52415800-8b69-11e0-9b19-734f1f1350e5")))
-                                 .build());
+            .of(Resource
+                  .builder()
+                  .id("52415800-8b69-11e0-9b19-734f6af67565")
+                  .name("sample-server")
+                  .links(
+                        Link.create(
+                              Relation.SELF,
+                              URI.create("http://servers.api.openstack.org/v1.1/1234/servers/52415800-8b69-11e0-9b19-734f6af67565")),
+                        Link.create(
+                              Relation.BOOKMARK,
+                              URI.create("http://servers.api.openstack.org/1234/servers/52415800-8b69-11e0-9b19-734f6af67565")))
+                  .build(),
+                  Resource
+                        .builder()
+                        .id("52415800-8b69-11e0-9b19-734f1f1350e5")
+                        .name("sample-server2")
+                        .links(
+                              Link.create(
+                                    Relation.SELF,
+                                    URI.create("http://servers.api.openstack.org/v1.1/1234/servers/52415800-8b69-11e0-9b19-734f1f1350e5")),
+                              Link.create(
+                                    Relation.BOOKMARK,
+                                    URI.create("http://servers.api.openstack.org/1234/servers/52415800-8b69-11e0-9b19-734f1f1350e5")))
+                        .build());
    }
 
    protected Injector injector() {

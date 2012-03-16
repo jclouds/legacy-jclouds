@@ -58,12 +58,12 @@ public class Flavor extends Resource {
          this.disk = disk;
          return this;
       }
-      
+
       public Builder vcpus(int vcpus) {
          this.vcpus = vcpus;
          return this;
       }
-      
+
       public Flavor build() {
          return new Flavor(id, name, links, ram, disk, vcpus);
       }
@@ -109,8 +109,7 @@ public class Flavor extends Resource {
    private int disk;
    private int vcpus;
 
-   protected Flavor(String id, String name, Set<Link> links, int ram, int disk,
-         int vcpus) {
+   protected Flavor(String id, String name, Set<Link> links, int ram, int disk, int vcpus) {
       super(id, name, links);
       this.ram = ram;
       this.disk = disk;
@@ -131,8 +130,7 @@ public class Flavor extends Resource {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name)
-            .add("links", links).add("ram", ram).add("disk", disk)
+      return toStringHelper("").add("id", id).add("name", name).add("links", links).add("ram", ram).add("disk", disk)
             .add("vcpus", vcpus).toString();
    }
 

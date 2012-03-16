@@ -37,12 +37,12 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
    public BaseNovaExpectTest() {
       provider = "openstack-nova";
       keystoneAuthWithUsernameAndPassword = KeystoneFixture.INSTANCE.initialAuthWithUsernameAndPassword(identity,
-               credential);
+            credential);
       keystoneAuthWithAccessKeyAndSecretKey = KeystoneFixture.INSTANCE.initialAuthWithAccessKeyAndSecretKey(identity,
-               credential);
+            credential);
       authToken = KeystoneFixture.INSTANCE.getAuthToken();
       responseWithKeystoneAccess = KeystoneFixture.INSTANCE.responseWithAccess();
       // now, createContext arg will need tenant prefix
-      identity =  KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
+      identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
    }
 }

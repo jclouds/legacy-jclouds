@@ -18,13 +18,13 @@
  */
 package org.jclouds.openstack.nova.v1_1.parse;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.util.HashMap;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.json.BaseItemParserTest;
-import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
@@ -32,63 +32,41 @@ import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
- *
+ * 
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "ParseSecurityGroupTest")
 public class ParseSecurityGroupTest extends BaseItemParserTest<SecurityGroup> {
 
-    @Override
-    public String resource() {
-        return "/securitygroup_details.json";
-    }
+   @Override
+   public String resource() {
+      return "/securitygroup_details.json";
+   }
 
-    @Override
-    @SelectJson("security_group")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public SecurityGroup expected() {
+   @Override
+   @SelectJson("security_group")
+   @Consumes(MediaType.APPLICATION_JSON)
+   public SecurityGroup expected() {
 
-        Set<SecurityGroupRule> securityGroupRules = ImmutableSet.<SecurityGroupRule> of(
-                SecurityGroupRule
-                        .builder()
-                        .fromPort(22)
-                        .group(new HashMap<String, String>())
-                        .ipProtocol(SecurityGroupRule.IpProtocol.TCP)
-                        .toPort(22)
-                        .parentGroupId("28")
-                        .ipRange(ImmutableMap.of("cidr", "10.2.6.0/24"))
-                        .id("108")
-                        .build(),
-                SecurityGroupRule
-                        .builder()
-                        .fromPort(22)
-                        .group(ImmutableMap.of("tenant_id","admin", "name", "11111"))
-                        .ipProtocol(SecurityGroupRule.IpProtocol.TCP)
-                        .toPort(22)
-                        .parentGroupId("28")
-                        .ipRange(new HashMap<String, String>())
-                        .id("109")
-                        .build()
-        );
+      Set<SecurityGroupRule> securityGroupRules = ImmutableSet.<SecurityGroupRule> of(
+            SecurityGroupRule.builder().fromPort(22).group(new HashMap<String, String>())
+                  .ipProtocol(SecurityGroupRule.IpProtocol.TCP).toPort(22).parentGroupId("28")
+                  .ipRange(ImmutableMap.of("cidr", "10.2.6.0/24")).id("108").build(),
+            SecurityGroupRule.builder().fromPort(22).group(ImmutableMap.of("tenant_id", "admin", "name", "11111"))
+                  .ipProtocol(SecurityGroupRule.IpProtocol.TCP).toPort(22).parentGroupId("28")
+                  .ipRange(new HashMap<String, String>()).id("109").build());
 
-        return SecurityGroup
-                .builder()
-                .description("description0")
-                .id("0")
-                .tenantId("tenant0")
-                .rules(securityGroupRules)
-                .name("name0")
-                .build();
-    }
+      return SecurityGroup.builder().description("description0").id("0").tenantId("tenant0").rules(securityGroupRules)
+            .name("name0").build();
+   }
 
-    protected Injector injector() {
-        return Guice.createInjector(new NovaParserModule(), new GsonModule());
-    }
+   protected Injector injector() {
+      return Guice.createInjector(new NovaParserModule(), new GsonModule());
+   }
 }

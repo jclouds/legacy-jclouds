@@ -43,7 +43,8 @@ import com.google.inject.Provides;
  * <p/>
  * 
  * @see NovaAsyncClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/" />
+ * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
@@ -55,54 +56,54 @@ public interface NovaClient {
    @Provides
    @Region
    Set<String> getConfiguredRegions();
-   
+
    /**
     * Provides synchronous access to Server features.
     */
    @Delegate
    ServerClient getServerClientForRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Flavor features.
     */
    @Delegate
    FlavorClient getFlavorClientForRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Extension features.
     */
    @Delegate
    ExtensionClient getExtensionClientForRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
-   
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+
    /**
     * Provides synchronous access to Image features.
     */
    @Delegate
    ImageClient getImageClientForRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Floating IP features.
     */
    @Delegate
    Optional<FloatingIPClient> getFloatingIPExtensionForRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Security Group features.
     */
    @Delegate
    SecurityGroupClient getSecurityGroupClientForRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * Provides synchronous access to Key Pair features.
     */
    @Delegate
    KeyPairClient getKeyPairClientForRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

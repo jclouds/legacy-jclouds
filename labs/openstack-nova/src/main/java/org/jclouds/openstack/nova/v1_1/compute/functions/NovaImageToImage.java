@@ -29,33 +29,27 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 /**
- * A function for transforming a nova-specific Image into a generic Image object.
- *
+ * A function for transforming a nova-specific Image into a generic Image
+ * object.
+ * 
  * @author Matt Stephenson
  */
-public class NovaImageToImage implements Function<org.jclouds.openstack.nova.v1_1.domain.Image, Image>
-{
+public class NovaImageToImage implements Function<org.jclouds.openstack.nova.v1_1.domain.Image, Image> {
    private final Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs;
    private final Supplier<Location> defaultLocation;
 
    @Inject
-   public NovaImageToImage(Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs, Supplier<Location> defaultLocation)
-   {
+   public NovaImageToImage(Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem> imageToOs,
+         Supplier<Location> defaultLocation) {
       this.imageToOs = imageToOs;
       this.defaultLocation = defaultLocation;
    }
 
    @Override
-   public Image apply(org.jclouds.openstack.nova.v1_1.domain.Image image)
-   {
+   public Image apply(org.jclouds.openstack.nova.v1_1.domain.Image image) {
       return new ImageBuilder()
-          // TODO: scope id to region, if there's a chance for conflict
-         .id(image.getId()) 
-         .providerId(image.getId())
-         .name(image.getName())
-         .operatingSystem(imageToOs.apply(image))
-         .description(image.getName())
-         .location(defaultLocation.get())
-         .build();
+            // TODO: scope id to region, if there's a chance for conflict
+            .id(image.getId()).providerId(image.getId()).name(image.getName()).operatingSystem(imageToOs.apply(image))
+            .description(image.getName()).location(defaultLocation.get()).build();
    }
 }

@@ -43,10 +43,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see FlavorClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Flavors-d1e4180.html"
  *      />
- * @author Jeremy Daggett
- * TODO: Need a ListFlavorOptions class minDisk=minDiskInGB& minRam=minRamInMB& marker=markerID&limit=int
+ * @author Jeremy Daggett TODO: Need a ListFlavorOptions class
+ *         minDisk=minDiskInGB& minRam=minRamInMB& marker=markerID&limit=int
  */
 @SkipEncoding({ '/', '=' })
 @RequestFilters(AuthenticateRequest.class)

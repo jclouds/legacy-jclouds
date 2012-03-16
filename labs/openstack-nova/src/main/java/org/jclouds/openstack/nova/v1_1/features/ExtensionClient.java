@@ -29,7 +29,8 @@ import org.jclouds.openstack.nova.v1_1.domain.Extension;
  * <p/>
  * 
  * @see ExtensionClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
  *      />
  * @author Adrian Cole
  */

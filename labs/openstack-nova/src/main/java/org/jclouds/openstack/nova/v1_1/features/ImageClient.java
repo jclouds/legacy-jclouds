@@ -30,7 +30,8 @@ import org.jclouds.openstack.nova.v1_1.domain.Image;
  * <p/>
  * 
  * @see ImageAsyncClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
  *      />
  * @author Adrian Cole
  */
@@ -63,9 +64,10 @@ public interface ImageClient {
    /**
     * Delete the specified image
     * 
-    * @param id id of the image
+    * @param id
+    *           id of the image
     * @return server or null if not found
     */
    void deleteImage(String id);
-   
+
 }

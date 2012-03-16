@@ -32,25 +32,15 @@ import org.jclouds.compute.domain.NodeState;
  */
 public enum ServerStatus {
 
-   ACTIVE       (NodeState.RUNNING),
-   BUILD        (NodeState.PENDING),
-   REBUILD      (NodeState.PENDING),
-   SUSPENDED    (NodeState.SUSPENDED),
-   RESIZE       (NodeState.PENDING),
-   VERIFY_RESIZE(NodeState.PENDING),
-   REVERT_RESIZE(NodeState.PENDING),
-   PASSWORD     (NodeState.PENDING),
-   REBOOT       (NodeState.PENDING),
-   HARD_REBOOT  (NodeState.PENDING),
-   DELETED      (NodeState.TERMINATED),
-   UNKNOWN      (NodeState.UNRECOGNIZED),
-   ERROR        (NodeState.ERROR),
-   UNRECOGNIZED (NodeState.UNRECOGNIZED);
+   ACTIVE(NodeState.RUNNING), BUILD(NodeState.PENDING), REBUILD(NodeState.PENDING), SUSPENDED(NodeState.SUSPENDED), RESIZE(
+         NodeState.PENDING), VERIFY_RESIZE(NodeState.PENDING), REVERT_RESIZE(NodeState.PENDING), PASSWORD(
+         NodeState.PENDING), REBOOT(NodeState.PENDING), HARD_REBOOT(NodeState.PENDING), DELETED(NodeState.TERMINATED), UNKNOWN(
+         NodeState.UNRECOGNIZED), ERROR(NodeState.ERROR), UNRECOGNIZED(NodeState.UNRECOGNIZED);
 
    private final NodeState nodeState;
 
    ServerStatus(NodeState nodeState) {
-       this.nodeState = nodeState;
+      this.nodeState = nodeState;
    }
 
    public String value() {
@@ -65,8 +55,7 @@ public enum ServerStatus {
       }
    }
 
-    public NodeState getNodeState()
-    {
-        return nodeState;
-    }
+   public NodeState getNodeState() {
+      return nodeState;
+   }
 }

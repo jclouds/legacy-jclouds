@@ -25,19 +25,18 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 /**
@@ -48,7 +47,7 @@ import com.google.common.collect.Multimap;
 @Test(groups = "live", testName = "FloatingIPClientLiveTest")
 public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
-    private static final int INCONSISTENCY_WINDOW = 5000;
+   private static final int INCONSISTENCY_WINDOW = 5000;
 
    @Test
    public void testListFloatingIPs() throws Exception {
@@ -62,140 +61,137 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
          assertTrue(response.size() >= 0);
          for (FloatingIP ip : response) {
             FloatingIP newDetails = client.getFloatingIP(ip.getId());
-            
-            
+
             assertEquals(newDetails.getId(), ip.getId());
             assertEquals(newDetails.getIp(), ip.getIp());
             assertEquals(newDetails.getFixedIp(), ip.getFixedIp());
             assertEquals(newDetails.getInstanceId(), ip.getInstanceId());
-            
+
          }
       }
    }
-    
-    @Test
-    public void testAllocateAndDeallocateFloatingIPs() throws Exception {
-        for (String regionId : context.getApi().getConfiguredRegions()) {
-            Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
-            if (!clientOption.isPresent())
-              continue;
-            FloatingIPClient client = clientOption.get();
-            FloatingIP floatingIP = client.allocate();
-            assertNotNull(floatingIP);
 
-            Set<FloatingIP> response = client.listFloatingIPs();
-            boolean ipInSet = false;
-            for (FloatingIP ip : response) {
-                if (ip.getId().equals(floatingIP.getId())) ipInSet = true;
+   @Test
+   public void testAllocateAndDeallocateFloatingIPs() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+         if (!clientOption.isPresent())
+            continue;
+         FloatingIPClient client = clientOption.get();
+         FloatingIP floatingIP = client.allocate();
+         assertNotNull(floatingIP);
+
+         Set<FloatingIP> response = client.listFloatingIPs();
+         boolean ipInSet = false;
+         for (FloatingIP ip : response) {
+            if (ip.getId().equals(floatingIP.getId()))
+               ipInSet = true;
+         }
+         assertTrue(ipInSet);
+
+         client.deallocate(floatingIP.getId());
+
+         response = client.listFloatingIPs();
+         ipInSet = false;
+         for (FloatingIP ip : response) {
+            if (ip.getId().equals(floatingIP.getId())) {
+               ipInSet = true;
             }
-            assertTrue(ipInSet);
+         }
+         assertFalse(ipInSet);
+      }
+   }
 
-            client.deallocate(floatingIP.getId());
+   @Test
+   public void testAddAndRemoveFloatingIp() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+         if (!clientOption.isPresent())
+            continue;
+         FloatingIPClient client = clientOption.get();
+         ServerClient serverClient = context.getApi().getServerClientForRegion(regionId);
+         Server server = serverClient.createServer("test", imageIdForRegion(regionId), flavorRefForRegion(regionId));
+         blockUntilServerActive(server.getId(), serverClient);
+         FloatingIP floatingIP = client.allocate();
+         assertNotNull(floatingIP);
+         try {
+            client.addFloatingIP(server.getId(), floatingIP.getIp());
+            assertEventually(new ServerHasFloatingIP(serverClient, server.getId(), floatingIP.getIp()));
+         } finally {
+            client.removeFloatingIP(server.getId(), floatingIP.getIp());
+            serverClient.deleteServer(server.getId());
+         }
+      }
+   }
 
-            response = client.listFloatingIPs();
-            ipInSet = false;
-            for (FloatingIP ip : response) {
-                if (ip.getId().equals(floatingIP.getId())) {
-                    ipInSet = true;
-                }
+   private String imageIdForRegion(String regionId) {
+      ImageClient imageClient = context.getApi().getImageClientForRegion(regionId);
+      return Iterables.getLast(imageClient.listImages()).getId();
+   }
+
+   private String flavorRefForRegion(String regionId) {
+      FlavorClient flavorClient = context.getApi().getFlavorClientForRegion(regionId);
+      return Iterables.getLast(flavorClient.listFlavors()).getId();
+   }
+
+   private void blockUntilServerActive(String serverId, ServerClient client) throws InterruptedException {
+      Server currentDetails = null;
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client
+            .getServer(serverId)) {
+         System.out.printf("blocking on status active%n%s%n", currentDetails);
+         Thread.sleep(5 * 1000);
+      }
+   }
+
+   protected static void assertEventually(Runnable assertion) {
+      long start = System.currentTimeMillis();
+      AssertionError error = null;
+      for (int i = 0; i < 30; i++) {
+         try {
+            assertion.run();
+            if (i > 0)
+               System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
+                     assertion.getClass().getSimpleName());
+            return;
+         } catch (AssertionError e) {
+            error = e;
+         }
+         try {
+            Thread.sleep(INCONSISTENCY_WINDOW / 30);
+         } catch (InterruptedException e) {
+         }
+      }
+      if (error != null)
+         throw error;
+
+   }
+
+   public static final class ServerHasFloatingIP implements Runnable {
+      private final ServerClient client;
+      private final String serverId;
+      private final String floatingIP;
+
+      public ServerHasFloatingIP(ServerClient serverClient, String serverId, String floatingIP) {
+         this.client = serverClient;
+         this.serverId = serverId;
+         this.floatingIP = floatingIP;
+      }
+
+      public void run() {
+         try {
+            Server server = client.getServer(serverId);
+            boolean ipInServerAddresses = false;
+            Multimap<Address.Type, Address> addresses = server.getAddresses();
+            for (Address address : addresses.values()) {
+               if (address.getAddr().equals(floatingIP)) {
+                  ipInServerAddresses = true;
+               }
             }
-            assertFalse(ipInSet);
-        }
-    }
-
-
-    @Test
-    public void testAddAndRemoveFloatingIp() throws Exception {
-        for (String regionId : context.getApi().getConfiguredRegions()) {
-            Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
-            if (!clientOption.isPresent())
-               continue;
-            FloatingIPClient client = clientOption.get();
-            ServerClient serverClient = context.getApi().getServerClientForRegion(regionId);
-            Server server = serverClient.createServer("test", imageIdForRegion(regionId), flavorRefForRegion(regionId));
-            blockUntilServerActive(server.getId(), serverClient);
-            FloatingIP floatingIP = client.allocate();
-            assertNotNull(floatingIP);
-            try {
-                client.addFloatingIP(server.getId(), floatingIP.getIp());
-                assertEventually(new ServerHasFloatingIP(serverClient, server.getId(), floatingIP.getIp()));
-            }
-            finally {
-                client.removeFloatingIP(server.getId(), floatingIP.getIp());
-                serverClient.deleteServer(server.getId());
-            }
-        }
-    }
-
-    private String imageIdForRegion(String regionId) {
-        ImageClient imageClient = context.getApi().getImageClientForRegion(regionId);
-        return Iterables.getLast(imageClient.listImages()).getId();
-    }
-    
-    private String flavorRefForRegion(String regionId) {
-        FlavorClient flavorClient = context.getApi().getFlavorClientForRegion(regionId);
-        return Iterables.getLast(flavorClient.listFlavors()).getId();
-    }
-
-    private void blockUntilServerActive(String serverId, ServerClient client) throws InterruptedException {
-        Server currentDetails = null;
-        for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client
-                .getServer(serverId)) {
-            System.out.printf("blocking on status active%n%s%n", currentDetails);
-            Thread.sleep(5 * 1000);
-        }
-    }
-    
-    protected static void assertEventually(Runnable assertion) {
-        long start = System.currentTimeMillis();
-        AssertionError error = null;
-        for (int i = 0; i < 30; i++) {
-            try {
-                assertion.run();
-                if (i > 0)
-                    System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
-                            assertion.getClass().getSimpleName());
-                return;
-            } catch (AssertionError e) {
-                error = e;
-            }
-            try {
-                Thread.sleep(INCONSISTENCY_WINDOW / 30);
-            } catch (InterruptedException e) {
-            }
-        }
-        if (error != null)
-            throw error;
-
-    }
-
-    public static final class ServerHasFloatingIP implements Runnable {
-        private final ServerClient client;
-        private final String serverId;
-        private final String floatingIP;
-
-        public ServerHasFloatingIP(ServerClient serverClient, String serverId, String floatingIP) {
-            this.client = serverClient;
-            this.serverId = serverId;
-            this.floatingIP = floatingIP;
-        }
-
-        public void run() {
-            try {
-                Server server = client.getServer(serverId);
-                boolean ipInServerAddresses = false;
-                Multimap<Address.Type, Address>addresses = server.getAddresses();
-                for (Address address : addresses.values()){
-                    if (address.getAddr().equals(floatingIP)) {
-                        ipInServerAddresses = true;
-                    }
-                }
-                assertTrue(ipInServerAddresses);
-            } catch (Exception e) {
-                throw new AssertionError(e);
-            }
-        }
-    }
+            assertTrue(ipInServerAddresses);
+         } catch (Exception e) {
+            throw new AssertionError(e);
+         }
+      }
+   }
 
 }
-

@@ -56,45 +56,31 @@ public class ParseExtensionListTest extends BaseSetParserTest<Extension> {
    public Set<Extension> expected() {
       return ImmutableSet
             .of(Extension
-                     .builder()
-                     .alias("RAX-PIE")
-                     .name("Public Image Extension")
-                     .namespace(URI.create("http://docs.rackspacecloud.com/servers/api/ext/pie/v1.0"))
-                     .updated(
-                           new SimpleDateFormatDateService()
-                                 .iso8601SecondsDateParse("2011-01-22T13:25:27-06:00"))
-                     .description("Adds the capability to share an image with other users.")
-                     .links(
-                           ImmutableSet.of(
-                                 Link.create(
-                                       Relation.DESCRIBEDBY,
-                                       "application/pdf",
-                                       URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-pie-20111111.pdf")),
-                                 Link.create(
-                                       Relation.DESCRIBEDBY,
-                                       "application/vnd.sun.wadl+xml",
-                                       URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-pie.wadl"))))
-                     .build(),
-                Extension
-                     .builder()
-                     .alias("RAX-CBS")
-                     .name("Cloud Block Storage")
-                     .namespace(URI.create("http://docs.rackspacecloud.com/servers/api/ext/cbs/v1.0"))
-                     .updated(
-                           new SimpleDateFormatDateService()
-                                 .iso8601SecondsDateParse("2011-01-12T11:22:33-06:00"))
-                     .description("Allows mounting cloud block storage volumes.")
-                     .links(
-                           ImmutableSet.of(
-                                 Link.create(
-                                       Relation.DESCRIBEDBY,
-                                       "application/pdf",
-                                       URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-cbs-20111201.pdf")),
-                                 Link.create(
-                                       Relation.DESCRIBEDBY,
-                                       "application/vnd.sun.wadl+xml",
-                                       URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-cbs.wadl"))))
-                     .build());
+                  .builder()
+                  .alias("RAX-PIE")
+                  .name("Public Image Extension")
+                  .namespace(URI.create("http://docs.rackspacecloud.com/servers/api/ext/pie/v1.0"))
+                  .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-01-22T13:25:27-06:00"))
+                  .description("Adds the capability to share an image with other users.")
+                  .links(
+                        ImmutableSet.of(
+                              Link.create(Relation.DESCRIBEDBY, "application/pdf",
+                                    URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-pie-20111111.pdf")),
+                              Link.create(Relation.DESCRIBEDBY, "application/vnd.sun.wadl+xml",
+                                    URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-pie.wadl")))).build(),
+                  Extension
+                        .builder()
+                        .alias("RAX-CBS")
+                        .name("Cloud Block Storage")
+                        .namespace(URI.create("http://docs.rackspacecloud.com/servers/api/ext/cbs/v1.0"))
+                        .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-01-12T11:22:33-06:00"))
+                        .description("Allows mounting cloud block storage volumes.")
+                        .links(
+                              ImmutableSet.of(Link.create(Relation.DESCRIBEDBY, "application/pdf",
+                                    URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-cbs-20111201.pdf")),
+                                    Link.create(Relation.DESCRIBEDBY, "application/vnd.sun.wadl+xml",
+                                          URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-cbs.wadl"))))
+                        .build());
    }
 
    protected Injector injector() {

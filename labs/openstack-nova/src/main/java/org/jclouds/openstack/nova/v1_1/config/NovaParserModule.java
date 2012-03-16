@@ -38,8 +38,7 @@ public class NovaParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object>of(
-      );
+      return ImmutableMap.<Type, Object> of();
    }
 
    @Override

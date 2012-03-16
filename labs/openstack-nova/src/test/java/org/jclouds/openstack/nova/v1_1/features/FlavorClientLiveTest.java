@@ -56,14 +56,14 @@ public class FlavorClientLiveTest extends BaseNovaClientLiveTest {
          }
       }
    }
-   
+
    /**
     * Tests the listing of Flavors in detail (getFlavor() is tested too!)
     * 
     * @throws Exception
     */
    @Test
-   public void testListFlavorsInDetail() throws Exception {   
+   public void testListFlavorsInDetail() throws Exception {
       for (String regionId : context.getApi().getConfiguredRegions()) {
          FlavorClient client = context.getApi().getFlavorClientForRegion(regionId);
          Set<Flavor> response = client.listFlavorsInDetail();
@@ -79,7 +79,7 @@ public class FlavorClientLiveTest extends BaseNovaClientLiveTest {
             assertEquals(newDetails.getVcpus(), flavor.getVcpus());
          }
       }
-   
+
    }
-   
+
 }

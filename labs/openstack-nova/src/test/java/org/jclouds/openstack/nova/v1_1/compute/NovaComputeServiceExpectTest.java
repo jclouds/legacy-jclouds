@@ -41,16 +41,19 @@ import com.google.common.collect.ImmutableMultimap;
 public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
+      HttpRequest listServers = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/detail"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
-      HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/server_list_details.json")).build();
+      HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/server_list_details.json")).build();
 
       ComputeService clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-               responseWithKeystoneAccess, listServers, listServersResponse);
+            responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertNotNull(clientWhenServersExist.listAssignableLocations());
       assertEquals(clientWhenServersExist.listAssignableLocations().size(), 1);
@@ -63,15 +66,18 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    }
 
    public void testListServersWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
+      HttpRequest listServers = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/detail"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
       ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-               responseWithKeystoneAccess, listServers, listServersResponse);
+            responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.listNodes().isEmpty());
    }

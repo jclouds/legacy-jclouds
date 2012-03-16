@@ -57,23 +57,15 @@ public class ParseExtensionTest extends BaseItemParserTest<Extension> {
             .alias("RS-PIE")
             .name("Public Image Extension")
             .namespace(URI.create("http://docs.rackspacecloud.com/servers/api/ext/pie/v1.0"))
-            .updated(
-                  new SimpleDateFormatDateService()
-                        .iso8601SecondsDateParse("2011-01-22T13:25:27-06:00"))
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-01-22T13:25:27-06:00"))
             .description("Adds the capability to share an image with other users.")
             .links(
                   ImmutableSet.of(
-                        Link.create(
-                              Relation.DESCRIBEDBY,
-                              "application/pdf",
+                        Link.create(Relation.DESCRIBEDBY, "application/pdf",
                               URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-pie-20111111.pdf")),
-                        Link.create(
-                              Relation.DESCRIBEDBY,
-                              "application/vnd.sun.wadl+xml",
-                              URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-pie.wadl"))))
-            .build();
+                        Link.create(Relation.DESCRIBEDBY, "application/vnd.sun.wadl+xml",
+                              URI.create("http://docs.rackspacecloud.com/servers/api/ext/cs-pie.wadl")))).build();
    }
-    
 
    protected Injector injector() {
       return Guice.createInjector(new NovaParserModule(), new GsonModule());

@@ -47,48 +47,38 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listExtensions = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/extensions"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse listExtensionsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_list.json")).build();
 
-      NovaClient clientWhenExtensionsExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            listExtensions, listExtensionsResponse);
+      NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
-      assertEquals(clientWhenExtensionsExist.getConfiguredRegions(),
-            ImmutableSet.of("North"));
+      assertEquals(clientWhenExtensionsExist.getConfiguredRegions(), ImmutableSet.of("North"));
 
-      assertEquals(clientWhenExtensionsExist.getExtensionClientForRegion("North")
-            .listExtensions().toString(), new ParseExtensionListTest().expected()
-            .toString());
+      assertEquals(clientWhenExtensionsExist.getExtensionClientForRegion("North").listExtensions().toString(),
+            new ParseExtensionListTest().expected().toString());
    }
 
    public void testListExtensionsWhenReponseIs404IsEmpty() throws Exception {
       HttpRequest listExtensions = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/extensions"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
-      HttpResponse listExtensionsResponse = HttpResponse.builder().statusCode(404)
-            .build();
+      HttpResponse listExtensionsResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            listExtensions, listExtensionsResponse);
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
-      assertTrue(clientWhenNoServersExist.getExtensionClientForRegion("North")
-            .listExtensions().isEmpty());
+      assertTrue(clientWhenNoServersExist.getExtensionClientForRegion("North").listExtensions().isEmpty());
    }
 
    // TODO: gson deserializer for Multimap
@@ -97,42 +87,35 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getExtension = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/extensions/RS-PIE"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions/RS-PIE"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse getExtensionResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_details.json")).build();
 
-      NovaClient clientWhenExtensionsExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            getExtension, getExtensionResponse);
+      NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
-      assertEquals(clientWhenExtensionsExist.getExtensionClientForRegion("North")
-            .getExtensionByAlias("RS-PIE").toString(),
-            new ParseExtensionTest().expected().toString());
+      assertEquals(clientWhenExtensionsExist.getExtensionClientForRegion("North").getExtensionByAlias("RS-PIE")
+            .toString(), new ParseExtensionTest().expected().toString());
    }
 
    public void testGetExtensionByAliasWhenResponseIs404() throws Exception {
       HttpRequest getExtension = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/extensions/RS-PIE"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions/RS-PIE"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse getExtensionResponse = HttpResponse.builder().statusCode(404)
             .payload(payloadFromResource("/extension_details.json")).build();
 
-      NovaClient clientWhenNoExtensionsExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            getExtension, getExtensionResponse);
+      NovaClient clientWhenNoExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
       assertNull(clientWhenNoExtensionsExist.getExtensionClientForRegion("North").getExtensionByAlias("RS-PIE"));
 

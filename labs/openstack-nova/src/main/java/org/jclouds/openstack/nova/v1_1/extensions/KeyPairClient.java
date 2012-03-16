@@ -43,7 +43,7 @@ public interface KeyPairClient {
     * 
     * @return all Key Pairs
     */
-   Set<Map<String,KeyPair>> listKeyPairs();
+   Set<Map<String, KeyPair>> listKeyPairs();
 
    /**
     * Create a Key Pair.

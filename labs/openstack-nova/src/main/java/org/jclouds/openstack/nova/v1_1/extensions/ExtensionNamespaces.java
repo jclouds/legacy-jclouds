@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
-
 /**
  * Extension namespaces
  * 

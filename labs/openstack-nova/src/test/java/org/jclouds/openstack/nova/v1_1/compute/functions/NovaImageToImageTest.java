@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Location;
-import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToImage;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.testng.annotations.Test;
 
@@ -36,18 +35,18 @@ import com.google.common.base.Suppliers;
 
 /**
  * Tests the function that transforms nova-specific images to generic images.
- *
+ * 
  * @author Matt Stephenson
  */
-public class NovaImageToImageTest
-{
+public class NovaImageToImageTest {
    @Test
-   public void testConversion()
-   {
+   public void testConversion() {
       UUID id = UUID.randomUUID();
       Image novaImageToConvert = Image.builder().id(id.toString()).name("Test Image " + id).build();
-      OperatingSystem operatingSystem = new OperatingSystem(OsFamily.UBUNTU, "My Test OS", "My Test Version", "x86", "My Test OS", true);
-      NovaImageToImage converter = new NovaImageToImage(new MockImageToOsConverter(operatingSystem),Suppliers.<Location>ofInstance(null));
+      OperatingSystem operatingSystem = new OperatingSystem(OsFamily.UBUNTU, "My Test OS", "My Test Version", "x86",
+            "My Test OS", true);
+      NovaImageToImage converter = new NovaImageToImage(new MockImageToOsConverter(operatingSystem),
+            Suppliers.<Location> ofInstance(null));
       org.jclouds.compute.domain.Image convertedImage = converter.apply(novaImageToConvert);
 
       assertEquals(convertedImage.getId(), novaImageToConvert.getId());
@@ -57,25 +56,21 @@ public class NovaImageToImageTest
       assertEquals(convertedImage.getOperatingSystem(), operatingSystem);
    }
 
-   private class MockImageToOsConverter implements Function<Image, OperatingSystem>
-   {
+   private class MockImageToOsConverter implements Function<Image, OperatingSystem> {
 
       private final OperatingSystem operatingSystem;
 
-      public MockImageToOsConverter(OperatingSystem operatingSystem)
-      {
+      public MockImageToOsConverter(OperatingSystem operatingSystem) {
          this.operatingSystem = operatingSystem;
       }
 
       @Override
-      public OperatingSystem apply(@Nullable Image image)
-      {
+      public OperatingSystem apply(@Nullable Image image) {
          return operatingSystem;
       }
 
       @Override
-      public boolean equals(@Nullable Object o)
-      {
+      public boolean equals(@Nullable Object o) {
          return false;
       }
    }

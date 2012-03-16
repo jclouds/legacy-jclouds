@@ -55,7 +55,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see ServerClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Servers-d1e2073.html"
  *      />
  * @author Adrian Cole
  */
@@ -93,14 +94,14 @@ public interface ServerAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Server> getServer(@PathParam("id") String id);
 
-    /**
-     * @see ServerClient#deleteServer
-     */
-    @DELETE
-    @Consumes
-    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-    @Path("/servers/{id}")
-    ListenableFuture<Boolean> deleteServer(@PathParam("id") String id);
+   /**
+    * @see ServerClient#deleteServer
+    */
+   @DELETE
+   @Consumes
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   @Path("/servers/{id}")
+   ListenableFuture<Boolean> deleteServer(@PathParam("id") String id);
 
    /**
     * @see ServerClient#rebootServer
@@ -151,7 +152,7 @@ public interface ServerAsyncClient {
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
    ListenableFuture<Server> createServer(@PayloadParam("name") String name, @PayloadParam("imageRef") String imageRef,
-                                         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
+         @PayloadParam("flavorRef") String flavorRef, CreateServerOptions... options);
 
    /**
     * @see ServerClient#rebuildServer
@@ -161,7 +162,6 @@ public interface ServerAsyncClient {
    @Consumes
    @MapBinder(RebuildServerOptions.class)
    ListenableFuture<Void> rebuildServer(@PathParam("id") String id, RebuildServerOptions... options);
-
 
    /**
     * @see ServerClient#changeAdminPass

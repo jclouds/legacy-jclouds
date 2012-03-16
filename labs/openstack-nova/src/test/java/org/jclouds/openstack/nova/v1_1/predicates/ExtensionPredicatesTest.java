@@ -18,8 +18,10 @@
  */
 package org.jclouds.openstack.nova.v1_1.predicates;
 
+import static org.jclouds.openstack.nova.v1_1.predicates.ExtensionPredicates.aliasEquals;
+import static org.jclouds.openstack.nova.v1_1.predicates.ExtensionPredicates.namespaceEquals;
+
 import java.net.URI;
-import static org.jclouds.openstack.nova.v1_1.predicates.ExtensionPredicates.*;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
@@ -31,10 +33,10 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "ExtensionPredicatesTest")
 public class ExtensionPredicatesTest {
-   Extension ref = Extension.builder().alias("os-keypairs").name("Keypairs").namespace(
-            URI.create("http://docs.openstack.org/ext/keypairs/api/v1.1")).updated(
-            new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-08-08T00:00:00+00:00")).description(
-            "Keypair Support").build();
+   Extension ref = Extension.builder().alias("os-keypairs").name("Keypairs")
+         .namespace(URI.create("http://docs.openstack.org/ext/keypairs/api/v1.1"))
+         .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-08-08T00:00:00+00:00"))
+         .description("Keypair Support").build();
 
    @Test
    public void testAliasEqualsWhenEqual() {

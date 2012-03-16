@@ -41,32 +41,37 @@ import com.google.inject.TypeLiteral;
 
 /**
  * Module for building a compute service context for Nova
- *
+ * 
  * @author Matt Stephenson
  */
-public class NovaComputeServiceContextModule extends
-   ComputeServiceAdapterContextModule<NovaClient, NovaAsyncClient, Server, Flavor, org.jclouds.openstack.nova.v1_1.domain.Image, Location>
-{
-   public NovaComputeServiceContextModule()
-   {
+public class NovaComputeServiceContextModule
+      extends
+      ComputeServiceAdapterContextModule<NovaClient, NovaAsyncClient, Server, Flavor, org.jclouds.openstack.nova.v1_1.domain.Image, Location> {
+   public NovaComputeServiceContextModule() {
       super(NovaClient.class, NovaAsyncClient.class);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   protected void configure()
-   {
+   protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<Server, Flavor, org.jclouds.openstack.nova.v1_1.domain.Image, Location>>(){}).to(NovaComputeServiceAdapter.class);
+      bind(
+            new TypeLiteral<ComputeServiceAdapter<Server, Flavor, org.jclouds.openstack.nova.v1_1.domain.Image, Location>>() {
+            }).to(NovaComputeServiceAdapter.class);
 
-      bind(new TypeLiteral<Function<Server, NodeMetadata>>(){}).to(ServerToNodeMetadata.class);
+      bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
+      }).to(ServerToNodeMetadata.class);
 
-      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, Image>>(){}).to(NovaImageToImage.class);
-      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem>>(){}).to(NovaImageToOperatingSystem.class);
+      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, Image>>() {
+      }).to(NovaImageToImage.class);
+      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem>>() {
+      }).to(NovaImageToOperatingSystem.class);
 
-      bind(new TypeLiteral<Function<Flavor, Hardware>>(){}).to(FlavorToHardware.class);
+      bind(new TypeLiteral<Function<Flavor, Hardware>>() {
+      }).to(FlavorToHardware.class);
 
       // we aren't converting location from a provider-specific type
-      bind(new TypeLiteral<Function<Location, Location>>(){}).to((Class)IdentityFunction.class);
+      bind(new TypeLiteral<Function<Location, Location>>() {
+      }).to((Class) IdentityFunction.class);
    }
 }

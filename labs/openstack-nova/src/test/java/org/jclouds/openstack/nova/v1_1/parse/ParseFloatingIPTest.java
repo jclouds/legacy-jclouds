@@ -18,8 +18,9 @@
  */
 package org.jclouds.openstack.nova.v1_1.parse;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
@@ -27,8 +28,8 @@ import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Michael Arnold
@@ -45,13 +46,7 @@ public class ParseFloatingIPTest extends BaseItemParserTest<FloatingIP> {
    @SelectJson("floating_ip")
    @Consumes(MediaType.APPLICATION_JSON)
    public FloatingIP expected() {
-      return FloatingIP
-            .builder()
-            .id("1")
-            .instanceId("123")
-              .fixedIp("10.0.0.2")
-              .ip("10.0.0.3")
-            .build();
+      return FloatingIP.builder().id("1").instanceId("123").fixedIp("10.0.0.2").ip("10.0.0.3").build();
    }
 
    protected Injector injector() {

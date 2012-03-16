@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
-import java.util.Map;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
@@ -30,33 +28,30 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
- * A function for transforming a nova-specific Server into a generic NodeMetadata object.
- *
+ * A function for transforming a nova-specific Server into a generic
+ * NodeMetadata object.
+ * 
  * @author Matt Stephenson
  */
-public class ServerToNodeMetadata implements Function<Server, NodeMetadata>
-{
+public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Override
-   public NodeMetadata apply(Server server)
-   {
+   public NodeMetadata apply(Server server) {
       return new NodeMetadataBuilder()
-          // TODO: scope id to region, if there's a chance for conflict
-         .id(server.getId()) 
-         .providerId(server.getId())
-         .name(server.getName())
-         .publicAddresses(Iterables.transform(server.getPublicAddresses(), new AddressToStringTransformationFunction()))
-         .privateAddresses(Iterables.transform(server.getPrivateAddresses(), new AddressToStringTransformationFunction()))
-         .state(server.getStatus().getNodeState())
-         .userMetadata(ImmutableMap.copyOf(server.getMetadata()))
-         .build();
+            // TODO: scope id to region, if there's a chance for conflict
+            .id(server.getId())
+            .providerId(server.getId())
+            .name(server.getName())
+            .publicAddresses(
+                  Iterables.transform(server.getPublicAddresses(), new AddressToStringTransformationFunction()))
+            .privateAddresses(
+                  Iterables.transform(server.getPrivateAddresses(), new AddressToStringTransformationFunction()))
+            .state(server.getStatus().getNodeState()).userMetadata(ImmutableMap.copyOf(server.getMetadata())).build();
    }
 
-   private class AddressToStringTransformationFunction implements Function<Address, String>
-   {
+   private class AddressToStringTransformationFunction implements Function<Address, String> {
       @Override
-      public String apply(Address address)
-      {
+      public String apply(Address address) {
          return address.getAddr();
       }
    }

@@ -113,15 +113,13 @@ public class Image extends Resource {
       }
 
       public Image build() {
-         return new Image(id, name, links, updated, created, tenantId, userId,
-               status, progress, minDisk, minRam, server, metadata);
+         return new Image(id, name, links, updated, created, tenantId, userId, status, progress, minDisk, minRam,
+               server, metadata);
       }
 
       public Builder fromImage(Image in) {
-         return fromResource(in).status(in.getStatus())
-               .updated(in.getUpdated()).created(in.getCreated())
-               .progress(in.getProgress()).server(in.getServer())
-               .metadata(in.getMetadata());
+         return fromResource(in).status(in.getStatus()).updated(in.getUpdated()).created(in.getCreated())
+               .progress(in.getProgress()).server(in.getServer()).metadata(in.getMetadata());
       }
 
       /**
@@ -170,10 +168,8 @@ public class Image extends Resource {
    private Resource server;
    private Map<String, String> metadata = Maps.newHashMap();
 
-   protected Image(String id, String name, Set<Link> links, Date updated,
-         Date created, String tenantId, String userId, ImageStatus status,
-         int progress, int minDisk, int minRam, Resource server,
-         Map<String, String> metadata) {
+   protected Image(String id, String name, Set<Link> links, Date updated, Date created, String tenantId, String userId,
+         ImageStatus status, int progress, int minDisk, int minRam, Resource server, Map<String, String> metadata) {
       super(id, name, links);
       this.updated = updated;
       this.created = created;
@@ -229,12 +225,9 @@ public class Image extends Resource {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name)
-            .add("links", links).add("updated", updated)
-            .add("created", created).add("tenantId", tenantId)
-            .add("userId", userId).add("status", status)
-            .add("progress", progress).add("minDisk", minDisk)
-            .add("minRam", minRam).add("server", server)
+      return toStringHelper("").add("id", id).add("name", name).add("links", links).add("updated", updated)
+            .add("created", created).add("tenantId", tenantId).add("userId", userId).add("status", status)
+            .add("progress", progress).add("minDisk", minDisk).add("minRam", minRam).add("server", server)
             .add("metadata", metadata).toString();
    }
 

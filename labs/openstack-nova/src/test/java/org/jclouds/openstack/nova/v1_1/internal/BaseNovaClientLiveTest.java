@@ -44,7 +44,6 @@ public class BaseNovaClientLiveTest extends BaseVersionedServiceLiveTest {
    public BaseNovaClientLiveTest() {
       provider = "openstack-nova";
    }
-   
 
    protected RestContext<NovaClient, NovaAsyncClient> context;
 
@@ -53,7 +52,7 @@ public class BaseNovaClientLiveTest extends BaseVersionedServiceLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()), overrides);
+            ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()), overrides);
    }
 
    @AfterGroups(groups = "live")

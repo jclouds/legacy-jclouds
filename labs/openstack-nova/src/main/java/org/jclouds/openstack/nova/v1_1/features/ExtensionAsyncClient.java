@@ -42,7 +42,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @see ExtensionClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
  *      />
  * @author Adrian Cole
  */
@@ -59,7 +60,6 @@ public interface ExtensionAsyncClient {
    @Path("/extensions")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Extension>> listExtensions();
-
 
    /**
     * @see ExtensionClient#getExtensionByAlias

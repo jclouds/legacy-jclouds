@@ -18,71 +18,71 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
+import static org.testng.Assert.assertNotNull;
+
+import java.util.Set;
+
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
-import java.util.Set;
-
-import static org.testng.Assert.assertNotNull;
-
 /**
  * Tests behavior of {@code SecurityGroupClient}
- *
+ * 
  * @author Michael Arnold
  */
 @Test(groups = "live", testName = "SecurityGroupClientLiveTest")
 public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
 
-    public static final String SECURITY_GROUP_NAME = "testsg";
+   public static final String SECURITY_GROUP_NAME = "testsg";
 
-    public void listSecurityGroups() throws Exception {
-        for (String regionId : context.getApi().getConfiguredRegions()) {
-            SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
-            Set<SecurityGroup> securityGroupsList = client.listSecurityGroups();
-            assertNotNull(securityGroupsList);
-        }
-    }
-    
-    public void createGetAndDeleteSecurityGroup() throws Exception {
-        for(String regionId : context.getApi().getConfiguredRegions()) {
-            SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
-            SecurityGroup securityGroup = null;
-            String id;
-            try {
-                securityGroup = client.createSecurityGroup(SECURITY_GROUP_NAME, "test security group");
-                assertNotNull(securityGroup);
-                id = securityGroup.getId();
-                SecurityGroup theGroup = client.getSecurityGroup(id);
-                assertNotNull(theGroup);
-            } finally {
-                if (securityGroup != null) {
-                    client.deleteSecurityGroup(securityGroup.getId());
-                }
+   public void listSecurityGroups() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
+         Set<SecurityGroup> securityGroupsList = client.listSecurityGroups();
+         assertNotNull(securityGroupsList);
+      }
+   }
+
+   public void createGetAndDeleteSecurityGroup() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
+         SecurityGroup securityGroup = null;
+         String id;
+         try {
+            securityGroup = client.createSecurityGroup(SECURITY_GROUP_NAME, "test security group");
+            assertNotNull(securityGroup);
+            id = securityGroup.getId();
+            SecurityGroup theGroup = client.getSecurityGroup(id);
+            assertNotNull(theGroup);
+         } finally {
+            if (securityGroup != null) {
+               client.deleteSecurityGroup(securityGroup.getId());
             }
-        }
-    }
+         }
+      }
+   }
 
-    public void createAndDeleteSecurityGroupRule() throws Exception {
-        for(String regionId : context.getApi().getConfiguredRegions()) {
-            SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
-            SecurityGroup securityGroup = null;
+   public void createAndDeleteSecurityGroupRule() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         SecurityGroupClient client = context.getApi().getSecurityGroupClientForRegion(regionId);
+         SecurityGroup securityGroup = null;
 
-            try {
-                securityGroup = client.createSecurityGroup(SECURITY_GROUP_NAME, "test security group");
-                assertNotNull(securityGroup);
+         try {
+            securityGroup = client.createSecurityGroup(SECURITY_GROUP_NAME, "test security group");
+            assertNotNull(securityGroup);
 
-                SecurityGroupRule rule =  client.createSecurityGroupRule(
-                        "tcp", "443", "443", "0.0.0.0/0", "", securityGroup.getId());
-                assertNotNull(rule);
+            SecurityGroupRule rule = client.createSecurityGroupRule("tcp", "443", "443", "0.0.0.0/0", "",
+                  securityGroup.getId());
+            assertNotNull(rule);
 
-            } finally {
-                if (securityGroup != null) {
-                    client.deleteSecurityGroup(securityGroup.getId());
-                }
+         } finally {
+            if (securityGroup != null) {
+               client.deleteSecurityGroup(securityGroup.getId());
             }
-        }
+         }
+      }
 
-    }
+   }
 }

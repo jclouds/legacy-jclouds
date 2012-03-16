@@ -31,33 +31,27 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 /**
- * A function for transforming the nova specific Flavor object to the generic Hardware object.
- *
+ * A function for transforming the nova specific Flavor object to the generic
+ * Hardware object.
+ * 
  * @author Matt Stephenson
  */
-public class FlavorToHardware implements Function<Flavor, Hardware>
-{
-   
+public class FlavorToHardware implements Function<Flavor, Hardware> {
+
    private final Supplier<Location> defaultLocation;
 
    @Inject
-   public FlavorToHardware(Supplier<Location> defaultLocation)
-   {
+   public FlavorToHardware(Supplier<Location> defaultLocation) {
       this.defaultLocation = defaultLocation;
    }
 
    @Override
-   public Hardware apply(Flavor flavor)
-   {
+   public Hardware apply(Flavor flavor) {
       return new HardwareBuilder()
-          // TODO: scope id to region, if there's a chance for conflict
-         .id(flavor.getId()) 
-         .providerId(flavor.getId())
-         .name(flavor.getName())
-         .ram(flavor.getRam())
-         .processor(new Processor(flavor.getVcpus(), 1.0))
-         .volume(new VolumeImpl(Float.valueOf(flavor.getDisk()), true, true))
-         .location(defaultLocation.get())
-         .build();
+            // TODO: scope id to region, if there's a chance for conflict
+            .id(flavor.getId()).providerId(flavor.getId()).name(flavor.getName()).ram(flavor.getRam())
+            .processor(new Processor(flavor.getVcpus(), 1.0))
+            .volume(new VolumeImpl(Float.valueOf(flavor.getDisk()), true, true)).location(defaultLocation.get())
+            .build();
    }
 }

@@ -29,11 +29,10 @@ import com.google.inject.Module;
 
 /**
  * A context builder for getting nova clients.
- *
+ * 
  * @author Adrian Cole
  */
-public class NovaContextBuilder extends ComputeServiceContextBuilder<NovaClient, NovaAsyncClient>
-{
+public class NovaContextBuilder extends ComputeServiceContextBuilder<NovaClient, NovaAsyncClient> {
 
    public NovaContextBuilder(Properties props) {
       super(NovaClient.class, NovaAsyncClient.class, props);

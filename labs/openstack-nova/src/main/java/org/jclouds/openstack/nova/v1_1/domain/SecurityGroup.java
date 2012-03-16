@@ -23,15 +23,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
-
 
 /**
  * Defines a security group
- *
+ * 
  */
 public class SecurityGroup {
    public static Builder builder() {
@@ -43,7 +42,7 @@ public class SecurityGroup {
    }
 
    public static class Builder {
-      
+
       private String id;
       private String tenantId;
       private String name;
@@ -69,7 +68,7 @@ public class SecurityGroup {
          this.description = description;
          return this;
       }
-      
+
       public Builder rules(Set<SecurityGroupRule> rules) {
          this.rules = rules;
          return this;
@@ -79,23 +78,22 @@ public class SecurityGroup {
          return new SecurityGroup(id, tenantId, name, description, rules);
       }
 
-      
       public Builder fromSecurityGroup(SecurityGroup in) {
-         return id(in.getId()).tenantId(in.getTenantId()).name(in.getName())
-               .description(in.getDescription()).rules(in.getRules());
+         return id(in.getId()).tenantId(in.getTenantId()).name(in.getName()).description(in.getDescription())
+               .rules(in.getRules());
       }
-      
+
    }
-   
+
    protected String id;
    @SerializedName("tenant_id")
    protected String tenantId;
    protected String name;
    protected String description;
    protected Set<SecurityGroupRule> rules;
-   
-   protected SecurityGroup(String id, String tenantId, @Nullable String name,
-         @Nullable String description, Set<SecurityGroupRule> rules) {
+
+   protected SecurityGroup(String id, String tenantId, @Nullable String name, @Nullable String description,
+         Set<SecurityGroupRule> rules) {
       this.id = id;
       this.tenantId = tenantId;
       this.name = name;
@@ -118,18 +116,16 @@ public class SecurityGroup {
    public String getDescription() {
       return this.description;
    }
-   
+
    public Set<SecurityGroupRule> getRules() {
       return this.rules;
    }
-   
-   
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-            + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((rules == null) ? 0 : rules.hashCode());
@@ -176,9 +172,8 @@ public class SecurityGroup {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name)
-            .add("tenantId", tenantId).add("description", description).add("rules", rules)
-            .toString();
+      return toStringHelper("").add("id", id).add("name", name).add("tenantId", tenantId)
+            .add("description", description).add("rules", rules).toString();
    }
 
 }

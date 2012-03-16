@@ -18,64 +18,62 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
-import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.Map;
 import java.util.Set;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code KeyPairClient}
- *
+ * 
  * @author Michael Arnold
  */
 @Test(groups = "live", testName = "KeyPairClientLiveTest")
-public class KeyPairClientLiveTest  extends BaseNovaClientLiveTest {
+public class KeyPairClientLiveTest extends BaseNovaClientLiveTest {
 
-    public void testListKeyPairs() throws Exception {
-        for (String regionId : context.getApi().getConfiguredRegions()) {
-            KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
-            Set<Map<String, KeyPair>> keyPairsList = client.listKeyPairs();
-            assertNotNull(keyPairsList);
-        }
-    }
-    
-    public void testCreateAndDeleteKeyPair() throws Exception {
-        final String KEYPAIR_NAME = "testkp";
-        for(String regionId : context.getApi().getConfiguredRegions()) {
-            KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
-            KeyPair keyPair = null;
-            try {
-                keyPair = client.createKeyPair(KEYPAIR_NAME);
-                assertNotNull(keyPair);
-            } finally {
-                if (keyPair != null) {
-                    client.deleteKeyPair(KEYPAIR_NAME);
-                }
-            }
-        }
-    }
-    
-    public void testCreateAndDeleteKeyPairWithPublicKey() throws Exception {
-        final String KEYPAIR_NAME = "testkp";
-        final String PUBLIC_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCrrBREFxz3002l1HuXz0+UOdJQ/mOYD5DiJwwB/TOybwIKQJPOxJWA9gBoo4k9dthTKBTaEYbzrll7iZcp59E80S6mNiAr3mUgi+x5Y8uyXeJ2Ws+h6peVyFVUu9epkwpcTd1GVfdcVWsTajwDz9+lxCDhl0RZKDFoT0scTxbj/w== nova@nv-aw2az2-api0002";
+   public void testListKeyPairs() throws Exception {
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
+         Set<Map<String, KeyPair>> keyPairsList = client.listKeyPairs();
+         assertNotNull(keyPairsList);
+      }
+   }
 
-        for(String regionId : context.getApi().getConfiguredRegions()) {
-            KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
-            KeyPair keyPair = null;
-            try {
-                keyPair = client.createKeyPairWithPublicKey(KEYPAIR_NAME, PUBLIC_KEY);
-                assertNotNull(keyPair);
-            } finally {
-                if (keyPair != null) {
-                    client.deleteKeyPair(KEYPAIR_NAME);
-                }
+   public void testCreateAndDeleteKeyPair() throws Exception {
+      final String KEYPAIR_NAME = "testkp";
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
+         KeyPair keyPair = null;
+         try {
+            keyPair = client.createKeyPair(KEYPAIR_NAME);
+            assertNotNull(keyPair);
+         } finally {
+            if (keyPair != null) {
+               client.deleteKeyPair(KEYPAIR_NAME);
             }
-        }
-    }
+         }
+      }
+   }
+
+   public void testCreateAndDeleteKeyPairWithPublicKey() throws Exception {
+      final String KEYPAIR_NAME = "testkp";
+      final String PUBLIC_KEY = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCrrBREFxz3002l1HuXz0+UOdJQ/mOYD5DiJwwB/TOybwIKQJPOxJWA9gBoo4k9dthTKBTaEYbzrll7iZcp59E80S6mNiAr3mUgi+x5Y8uyXeJ2Ws+h6peVyFVUu9epkwpcTd1GVfdcVWsTajwDz9+lxCDhl0RZKDFoT0scTxbj/w== nova@nv-aw2az2-api0002";
+
+      for (String regionId : context.getApi().getConfiguredRegions()) {
+         KeyPairClient client = context.getApi().getKeyPairClientForRegion(regionId);
+         KeyPair keyPair = null;
+         try {
+            keyPair = client.createKeyPairWithPublicKey(KEYPAIR_NAME, PUBLIC_KEY);
+            assertNotNull(keyPair);
+         } finally {
+            if (keyPair != null) {
+               client.deleteKeyPair(KEYPAIR_NAME);
+            }
+         }
+      }
+   }
 }

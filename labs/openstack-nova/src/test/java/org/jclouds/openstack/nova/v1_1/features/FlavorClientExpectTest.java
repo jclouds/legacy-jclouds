@@ -47,48 +47,38 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest listFlavors = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/flavors"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse listFlavorsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/flavor_list.json")).build();
 
-      NovaClient clientWhenFlavorsExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            listFlavors, listFlavorsResponse);
+      NovaClient clientWhenFlavorsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
-      assertEquals(clientWhenFlavorsExist.getConfiguredRegions(),
-            ImmutableSet.of("North"));
+      assertEquals(clientWhenFlavorsExist.getConfiguredRegions(), ImmutableSet.of("North"));
 
-      assertEquals(clientWhenFlavorsExist.getFlavorClientForRegion("North")
-            .listFlavors().toString(), new ParseFlavorListTest().expected()
-            .toString());
+      assertEquals(clientWhenFlavorsExist.getFlavorClientForRegion("North").listFlavors().toString(),
+            new ParseFlavorListTest().expected().toString());
    }
 
    public void testListFlavorsWhenReponseIs404IsEmpty() throws Exception {
       HttpRequest listFlavors = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/flavors"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
-      HttpResponse listFlavorsResponse = HttpResponse.builder().statusCode(404)
-            .build();
+      HttpResponse listFlavorsResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            listFlavors, listFlavorsResponse);
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
-      assertTrue(clientWhenNoServersExist.getFlavorClientForRegion("North")
-            .listFlavors().isEmpty());
+      assertTrue(clientWhenNoServersExist.getFlavorClientForRegion("North").listFlavors().isEmpty());
    }
 
    // TODO: gson deserializer for Multimap
@@ -97,42 +87,36 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest getFlavor = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/flavors/52415800-8b69-11e0-9b19-734f1195ff37"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors/52415800-8b69-11e0-9b19-734f1195ff37"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse getFlavorResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/flavor_details.json")).build();
 
-      NovaClient clientWhenFlavorsExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            getFlavor, getFlavorResponse);
+      NovaClient clientWhenFlavorsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
-      assertEquals(clientWhenFlavorsExist.getFlavorClientForRegion("North")
-            .getFlavor("52415800-8b69-11e0-9b19-734f1195ff37").toString(),
-            new ParseFlavorTest().expected().toString());
+      assertEquals(
+            clientWhenFlavorsExist.getFlavorClientForRegion("North").getFlavor("52415800-8b69-11e0-9b19-734f1195ff37")
+                  .toString(), new ParseFlavorTest().expected().toString());
    }
 
    public void testGetFlavorWhenResponseIs404() throws Exception {
       HttpRequest getFlavor = HttpRequest
             .builder()
             .method("GET")
-            .endpoint(
-                  URI.create("https://compute.north.host/v1.1/3456/flavors/123"))
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/flavors/123"))
             .headers(
-                  ImmutableMultimap.<String, String> builder()
-                        .put("Accept", "application/json")
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse getFlavorResponse = HttpResponse.builder().statusCode(404)
             .payload(payloadFromResource("/flavor_details.json")).build();
 
-      NovaClient clientWhenNoFlavorsExist = requestsSendResponses(
-            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
-            getFlavor, getFlavorResponse);
+      NovaClient clientWhenNoFlavorsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
       assertNull(clientWhenNoFlavorsExist.getFlavorClientForRegion("North").getFlavor("123"));
 

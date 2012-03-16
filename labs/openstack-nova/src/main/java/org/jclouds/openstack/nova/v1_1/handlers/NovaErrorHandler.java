@@ -35,7 +35,7 @@ import org.jclouds.rest.ResourceNotFoundException;
  * @author Adrian Cole
  * 
  */
-//TODO: is there error spec someplace? let's type errors, etc.
+// TODO: is there error spec someplace? let's type errors, etc.
 @Singleton
 public class NovaErrorHandler implements HttpErrorHandler {
 
@@ -45,22 +45,22 @@ public class NovaErrorHandler implements HttpErrorHandler {
       String message = data != null ? new String(data) : null;
 
       Exception exception = message != null ? new HttpResponseException(command, response, message)
-               : new HttpResponseException(command, response);
+            : new HttpResponseException(command, response);
       message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-               response.getStatusLine());
+            response.getStatusLine());
       switch (response.getStatusCode()) {
-         case 401:
-         case 403:
-            exception = new AuthorizationException(message, exception);
-            break;
-         case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-               exception = new ResourceNotFoundException(message, exception);
-            }
-            break;
-         default:
-            exception = new HttpResponseException(command, response, message);
-            break;
+      case 401:
+      case 403:
+         exception = new AuthorizationException(message, exception);
+         break;
+      case 404:
+         if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+            exception = new ResourceNotFoundException(message, exception);
+         }
+         break;
+      default:
+         exception = new HttpResponseException(command, response, message);
+         break;
       }
       command.setException(exception);
    }

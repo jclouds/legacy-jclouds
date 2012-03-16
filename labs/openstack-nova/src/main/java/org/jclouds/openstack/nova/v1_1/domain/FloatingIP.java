@@ -25,8 +25,9 @@ import org.jclouds.javax.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * A Floating IP is an IP address that can be created and associated with a Server instance.
- * Floating IPs can also be disassociated and deleted from a Server instance.
+ * A Floating IP is an IP address that can be created and associated with a
+ * Server instance. Floating IPs can also be disassociated and deleted from a
+ * Server instance.
  * 
  * @author Jeremy Daggett
  * @author chamerling
@@ -71,8 +72,7 @@ public class FloatingIP implements Comparable<FloatingIP> {
       }
 
       public Builder fromFloatingIp(FloatingIP in) {
-         return id(in.getId()).ip(in.getIp()).fixedIp(in.getFixedIp())
-               .instanceId(in.getInstanceId());
+         return id(in.getId()).ip(in.getIp()).fixedIp(in.getFixedIp()).instanceId(in.getInstanceId());
       }
 
    }
@@ -84,8 +84,7 @@ public class FloatingIP implements Comparable<FloatingIP> {
    @SerializedName("instance_id")
    private String instanceId;
 
-   protected FloatingIP(String id, String ip, @Nullable String fixedIp,
-         @Nullable String instanceId) {
+   protected FloatingIP(String id, String ip, @Nullable String fixedIp, @Nullable String instanceId) {
       this.id = id;
       this.ip = ip;
       this.fixedIp = fixedIp;
@@ -119,8 +118,7 @@ public class FloatingIP implements Comparable<FloatingIP> {
       int result = 1;
       result = prime * result + ((fixedIp == null) ? 0 : fixedIp.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result
-            + ((instanceId == null) ? 0 : instanceId.hashCode());
+      result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((ip == null) ? 0 : ip.hashCode());
       return result;
    }
@@ -159,8 +157,8 @@ public class FloatingIP implements Comparable<FloatingIP> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("ip", ip)
-            .add("fixedIp", fixedIp).add("instanceId", instanceId).toString();
+      return toStringHelper("").add("id", id).add("ip", ip).add("fixedIp", fixedIp).add("instanceId", instanceId)
+            .toString();
    }
-   
+
 }

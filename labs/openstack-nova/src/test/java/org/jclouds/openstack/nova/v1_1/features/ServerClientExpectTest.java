@@ -42,33 +42,39 @@ import com.google.common.collect.ImmutableSet;
 public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
+      HttpRequest listServers = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
-      HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/server_list.json")).build();
+      HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/server_list.json")).build();
 
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-               responseWithKeystoneAccess, listServers, listServersResponse);
+            responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
 
       assertEquals(clientWhenServersExist.getServerClientForRegion("North").listServers().toString(),
-               new ParseServerListTest().expected().toString());
+            new ParseServerListTest().expected().toString());
    }
 
    public void testListServersWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
+      HttpRequest listServers = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-               responseWithKeystoneAccess, listServers, listServersResponse);
+            responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.getServerClientForRegion("North").listServers().isEmpty());
    }

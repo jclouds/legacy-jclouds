@@ -18,9 +18,11 @@
  */
 package org.jclouds.openstack.nova.v1_1.parse;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
@@ -28,9 +30,9 @@ import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 
@@ -48,22 +50,8 @@ public class ParseFloatingIPListTest extends BaseSetParserTest<FloatingIP> {
    @SelectJson("floating_ips")
    @Consumes(MediaType.APPLICATION_JSON)
    public Set<FloatingIP> expected() {
-      return ImmutableSet
-               .of(
-                       FloatingIP
-                               .builder()
-                               .id("1")
-                               .instanceId("12")
-                               .ip("10.0.0.3")
-                               .fixedIp("11.0.0.1")
-                               .build(),
-                       FloatingIP
-                               .builder()
-                               .id("2")
-                               .instanceId(null)
-                               .ip("10.0.0.5")
-                               .fixedIp(null)
-                               .build());
+      return ImmutableSet.of(FloatingIP.builder().id("1").instanceId("12").ip("10.0.0.3").fixedIp("11.0.0.1").build(),
+            FloatingIP.builder().id("2").instanceId(null).ip("10.0.0.5").fixedIp(null).build());
    }
 
    protected Injector injector() {

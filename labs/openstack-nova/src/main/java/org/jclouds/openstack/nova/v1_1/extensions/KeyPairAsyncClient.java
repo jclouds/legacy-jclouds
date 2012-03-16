@@ -53,7 +53,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see KeyPairClient
  * @author Jeremy Daggett
  * @see ExtensionAsyncClient
- * @see <a href="http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html" />
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ *      />
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://nova.openstack.org/api_ext/ext_keypairs.html" />
  */
@@ -68,7 +70,6 @@ public interface KeyPairAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<Map<String, KeyPair>>> listKeyPairs();
-   
 
    @POST
    @Path("/os-keypairs")
@@ -85,12 +86,12 @@ public interface KeyPairAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"keypair\":%7B\"name\":\"{name}\",\"public_key\":\"{publicKey}\"%7D%7D")
    ListenableFuture<KeyPair> createKeyPairWithPublicKey(@PayloadParam("name") String name,
-                                           @PayloadParam("publicKey") String publicKey);
+         @PayloadParam("publicKey") String publicKey);
 
    @DELETE
    @Path("/os-keypairs/{name}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    @Consumes
    ListenableFuture<Boolean> deleteKeyPair(@PathParam("name") String name);
-   
+
 }

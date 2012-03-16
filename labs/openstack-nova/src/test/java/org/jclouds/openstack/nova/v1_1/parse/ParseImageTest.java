@@ -27,8 +27,8 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.domain.Link.Relation;
+import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.ImageStatus;
@@ -59,21 +59,17 @@ public class ParseImageTest extends BaseItemParserTest<Image> {
             .builder()
             .id("52415800-8b69-11e0-9b19-734f5736d2a2")
             .name("My Server Backup")
-            .updated(
-                  new SimpleDateFormatDateService()
-                        .iso8601SecondsDateParse("2010-10-10T12:00:00Z"))
-            .created(
-                  new SimpleDateFormatDateService()
-                        .iso8601SecondsDateParse("2010-08-10T12:00:00Z"))
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-10-10T12:00:00Z"))
+            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-08-10T12:00:00Z"))
             .tenantId("12345")
             .userId("joe")
             .status(ImageStatus.SAVING)
             .progress(80)
             .minDisk(5)
             .minRam(256)
-            .metadata(new ImmutableMap.Builder<String, String>()
-                        .put("ImageType", "Gold")
-                        .put("ImageVersion", "1.5").build())
+            .metadata(
+                  new ImmutableMap.Builder<String, String>().put("ImageType", "Gold").put("ImageVersion", "1.5")
+                        .build())
             .server(
                   Resource
                         .builder()

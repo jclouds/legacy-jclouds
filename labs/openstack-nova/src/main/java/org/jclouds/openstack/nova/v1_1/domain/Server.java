@@ -45,8 +45,8 @@ import com.google.common.collect.Multimap;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * A server is a virtual machine instance in the compute system. Flavor and image are requisite
- * elements when creating a server.
+ * A server is a virtual machine instance in the compute system. Flavor and
+ * image are requisite elements when creating a server.
  * 
  * @author Adrian Cole
  * @see <a href=
@@ -194,8 +194,8 @@ public class Server extends Resource {
        * @see Server#getPrivateAddresses()
        */
       public Builder privateAddresses(Set<Address> privateAddresses) {
-         this.addresses.replaceValues(Address.Type.PRIVATE, ImmutableSet.copyOf(checkNotNull(privateAddresses,
-                  "privateAddresses")));
+         this.addresses.replaceValues(Address.Type.PRIVATE,
+               ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses")));
          return this;
       }
 
@@ -210,8 +210,8 @@ public class Server extends Resource {
        * @see Server#getPublicAddresses()
        */
       public Builder publicAddresses(Set<Address> publicAddresses) {
-         this.addresses.replaceValues(Address.Type.PUBLIC, ImmutableSet.copyOf(checkNotNull(publicAddresses,
-                  "publicAddresses")));
+         this.addresses.replaceValues(Address.Type.PUBLIC,
+               ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses")));
          return this;
       }
 
@@ -226,7 +226,7 @@ public class Server extends Resource {
       public Server build() {
          // return new Server(id, name, links, addresses);
          return new Server(id, name, links, tenantId, userId, updated, created, hostId, accessIPv4, accessIPv6, status,
-                  progress, image, flavor, adminPass, addresses, metadata);
+               progress, image, flavor, adminPass, addresses, metadata);
       }
 
       public Builder fromServer(Server in) {
@@ -285,9 +285,9 @@ public class Server extends Resource {
    protected Map<String, String> metadata;
 
    protected Server(String id, String name, Set<Link> links, String tenantId, String userId, Date updated,
-            Date created, String hostId, String accessIPv4, String accessIPv6, ServerStatus status, int progress,
-            Resource image, Resource flavor, String adminPass, Multimap<Address.Type, Address> addresses,
-            Map<String, String> metadata) {
+         Date created, String hostId, String accessIPv4, String accessIPv6, ServerStatus status, int progress,
+         Resource image, Resource flavor, String adminPass, Multimap<Address.Type, Address> addresses,
+         Map<String, String> metadata) {
       super(id, name, links);
       this.tenantId = tenantId;
       this.userId = userId;
@@ -386,13 +386,13 @@ public class Server extends Resource {
       Set<Address> publicAddresses = addresses.get(Address.Type.PUBLIC);
       Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
       if (publicAddresses != null) {
-         returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(publicAddresses, Predicates
-                  .not(IsPrivateAddress.INSTANCE)));
+         returnMapBuilder.putAll(Address.Type.PUBLIC,
+               Iterables.filter(publicAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
       }
       if (privateAddresses != null) {
          returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
-         returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates
-                  .not(IsPrivateAddress.INSTANCE)));
+         returnMapBuilder.putAll(Address.Type.PUBLIC,
+               Iterables.filter(privateAddresses, Predicates.not(IsPrivateAddress.INSTANCE)));
       }
       ImmutableSetMultimap<Type, Address> returnMap = returnMapBuilder.build();
 
@@ -415,10 +415,10 @@ public class Server extends Resource {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("tenantId", tenantId).add("userId", userId).add(
-               "hostId", hostId).add("updated", updated).add("created", created).add("accessIPv4", accessIPv4).add(
-               "accessIPv6", accessIPv6).add("status", status).add("progress", progress).add("image", image).add(
-               "flavor", flavor).add("metadata", metadata).add("links", links).add("addresses", addresses).add(
-               "adminPass", adminPass).toString();
+      return toStringHelper("").add("id", id).add("name", name).add("tenantId", tenantId).add("userId", userId)
+            .add("hostId", hostId).add("updated", updated).add("created", created).add("accessIPv4", accessIPv4)
+            .add("accessIPv6", accessIPv6).add("status", status).add("progress", progress).add("image", image)
+            .add("flavor", flavor).add("metadata", metadata).add("links", links).add("addresses", addresses)
+            .add("adminPass", adminPass).toString();
    }
 }

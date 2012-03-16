@@ -28,12 +28,14 @@ import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 
 /**
- * The OpenStack Compute API is extensible. Extensions serve two purposes: They allow the
- * introduction of new features in the API without requiring a version change and they allow the
- * introduction of vendor specific niche functionality.
+ * The OpenStack Compute API is extensible. Extensions serve two purposes: They
+ * allow the introduction of new features in the API without requiring a version
+ * change and they allow the introduction of vendor specific niche
+ * functionality.
  * 
  * @author Adrian Cole
- * @see <a href= "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ * @see <a href=
+ *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
  *      />
  */
 public class Extension extends Resource {
@@ -78,7 +80,7 @@ public class Extension extends Resource {
 
       public Builder fromExtension(Extension in) {
          return fromResource(in).namespace(in.getNamespace()).alias(in.getAlias()).updated(in.getUpdated())
-                  .description(in.getDescription());
+               .description(in.getDescription());
       }
 
       /**
@@ -119,8 +121,7 @@ public class Extension extends Resource {
    private Date updated;
    private String description;
 
-   protected Extension(String name, Set<Link> links, URI namespace, String alias, Date updated,
-            String description) {
+   protected Extension(String name, Set<Link> links, URI namespace, String alias, Date updated, String description) {
       super(alias, name, links);
       this.namespace = namespace;
       this.alias = alias;
@@ -131,7 +132,7 @@ public class Extension extends Resource {
    public URI getNamespace() {
       return this.namespace;
    }
-   
+
    @Override
    public String getId() {
       return this.alias;
@@ -151,8 +152,8 @@ public class Extension extends Resource {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", getId()).add("name", name).add("links", links).add("namespace", namespace).add(
-               "alias", alias).add("updated", updated).add("description", description).toString();
+      return toStringHelper("").add("id", getId()).add("name", name).add("links", links).add("namespace", namespace)
+            .add("alias", alias).add("updated", updated).add("description", description).toString();
    }
 
 }
