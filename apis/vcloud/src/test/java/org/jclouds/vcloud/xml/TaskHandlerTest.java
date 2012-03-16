@@ -52,6 +52,12 @@ public class TaskHandlerTest extends BaseHandlerTest {
       super.setUpInjector();
       dateService = injector.getInstance(DateService.class);
    }
+   
+   public void testHrefWhenTaskElementIsNamespaced() {
+      InputStream is = getClass().getResourceAsStream("/task-vcd15.xml");
+      Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
+      assertEquals(result.getHref(), URI.create("https://mycloud.greenhousedata.com/api/v1.0/task/77a33fd4-3401-423c-8167-6711fc51ee9a"));
+   }
 
    public void test() {
       InputStream is = getClass().getResourceAsStream("/task-1.0.xml");
