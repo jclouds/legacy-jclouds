@@ -372,8 +372,8 @@ public class Checks {
    
    public static void checkNetworkConfiguration(NetworkConfiguration config) {
       // required
-      assertNotNull(config.getFenceMode(), String.format(NOT_NULL_OBJECT_FMT, 
-            "fenceMode", "NetworkConfiguration"));
+      assertNotNull(config.getFenceMode(), String.format(OBJ_FIELD_REQ, 
+            "NetworkConfiguration", "fenceMode"));
       assertTrue(Network.FenceMode.ALL.contains(config.getFenceMode()), String.format(REQUIRED_VALUE_OBJECT_FMT, 
             "fenceMode", "NetworkConfiguration", config.getFenceMode(), Iterables.toString(Network.FenceMode.ALL)));
       
@@ -1119,7 +1119,7 @@ public class Checks {
       
       // Check optional fields
       if (section.getNetworks() != null) {
-	      for (Network network : section.getNetworks()) {
+	      for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : section.getNetworks()) {
 	         checkNetwork(network);
 	      }
       }
@@ -1128,7 +1128,7 @@ public class Checks {
       checkOvfSectionType(section);
    }
 
-   public static void checkNetwork(Network network) {
+   public static void checkNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network network) {
       assertNotNull(network, String.format(NOT_NULL_OBJ_FMT, "Network"));
       
       // Check optional fields
