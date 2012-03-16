@@ -168,11 +168,7 @@ public class Checks {
       assertTrue(Link.Rel.ALL.contains(link.getRel()), String.format(REQUIRED_VALUE_OBJECT_FMT, "Rel", "Link", link.getRel(), Iterables.toString(Link.Rel.ALL)));
 
       // Check parent type
-      if (link.getRel().equals(Link.Rel.OVF)) {
-         checkReferenceType(link, VCloudDirectorMediaType.ALL_OVF);
-      } else {
-         checkReferenceType(link);
-      }
+      checkReferenceType(link);
    }
 
    public static void checkTask(Task task) {
