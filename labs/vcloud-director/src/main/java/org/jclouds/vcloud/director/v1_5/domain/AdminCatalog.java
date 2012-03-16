@@ -20,6 +20,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -45,6 +46,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  */
 @XmlRootElement(name = "AdminCatalog")
+@XmlType(name = "AdminCatalogType")
 public class AdminCatalog extends CatalogType {
    
    public static Builder<?> builder() {
