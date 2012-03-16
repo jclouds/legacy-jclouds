@@ -125,19 +125,20 @@ public class ResourceType {
    @XmlAttribute
    private String type;
    @XmlElement(name = "Link")
-   private Set<Link> links;
+   private Set<Link> links = Sets.newLinkedHashSet();
 
    protected ResourceType(Builder<?> builder) {
       this.href = builder.href;
       this.type = builder.type;
-      this.links = builder.links;
+      this.links = builder.links == null ? Collections.<Link>emptySet() : builder.links;
    }
      
+   @Deprecated
    public ResourceType(URI href, String type, @Nullable Set<Link> links) {
       this.href = href;
       this.type = type;
-      // nullable so that jaxb wont persist empty collections
-      this.links = links != null && links.isEmpty() ? null : links;
+      // nullable so that jaxb wont persist empty collections?
+      this.links = links == null ? Collections.<Link>emptySet() : links;
    }
 
    protected ResourceType() {
