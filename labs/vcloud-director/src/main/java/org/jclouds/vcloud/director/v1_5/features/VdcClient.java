@@ -134,6 +134,9 @@ public interface VdcClient {
     * The status of vApp template will be NOT_READY(0) until the ovf and all disks are uploaded 
     * to the transfer site. After this a task will run on the vApp template uploading.
     * 
+    * Note that the empty vApp template's getFiles() returns a file of size -1 after step one above, 
+    * because the descriptor.ovf does not yet exist.
+    * 
     * @return a VAppTemplate resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the VAppTemplate.
     */

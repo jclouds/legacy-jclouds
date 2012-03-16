@@ -19,8 +19,10 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.cim.CIMResourceAllocationSettingDataType;
@@ -35,6 +37,7 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.CIMResourceAllocationSettingD
  * @author grkvlt@apache.org
  */
 @XmlType(name = "RASD_Type")
+@XmlRootElement(name = "Item", namespace = VCLOUD_1_5_NS)
 public class RASD extends CIMResourceAllocationSettingDataType {
 
    // TODO Add toString, hashCode and equals

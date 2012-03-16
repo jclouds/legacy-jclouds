@@ -248,9 +248,9 @@ public class CIMResourceAllocationSettingDataType {
     private CimBoolean automaticAllocation;
     @XmlElement(name = "AutomaticDeallocation", nillable = true)
     private CimBoolean automaticDeallocation;
-    @XmlElementRef(name = "Caption", namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData", type = ResourceAllocationCaption.class)
+    @XmlElement(name = "Caption", nillable = true, namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData")
     private ResourceAllocationCaption caption;
-    @XmlElementRef(name = "ChangeableType", namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData", type = ResourceAllocationChangeableType.class)
+    @XmlElement(name = "ChangeableType", nillable = true, namespace = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData")
     private ResourceAllocationChangeableType changeableType;
     @XmlElement(name = "ConfigurationName", nillable = true)
     private CimString configurationName;

@@ -91,6 +91,8 @@ import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
+import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
+import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
@@ -748,16 +750,17 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
    public void testModifyProductSections() {
-      ProductSectionList sectionList = vAppClient.getProductSections(vApp.getHref());
-
-      // sectionList.setX()
-
+      ProductSectionList origSections = vAppClient.getProductSections(vApp.getHref());
+      ProductSectionList newSections = origSections.toBuilder().build();
+      
       // The method under test
-      Task modifyProductSections = vAppClient.modifyProductSections(vApp.getHref(), sectionList);
+      Task modifyProductSections = vAppClient.modifyProductSections(vApp.getHref(), newSections);
       assertTrue(retryTaskSuccess.apply(modifyProductSections), String.format(TASK_COMPLETE_TIMELY, "modifyProductSections"));
 
       ProductSectionList modifiedList = vAppClient.getProductSections(vApp.getHref());
-      // assertEquals(modified.getX, "");
+      Checks.checkProductSectionList(modifiedList);
+      
+      // TODO What to modify, to confirm that changes took effect?
    }
 
    @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testGetVApp" })
@@ -884,31 +887,48 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionCpu() {
-      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
       checkRASD(rasd);
    }
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
    public void testModifyVirtualHardwareSectionCpu() {
-      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
-      // rasd.setX("New Info");
-
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RASD origSection = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      RASD newSection = origSection.toBuilder().build();
+      
       // Method under test
-      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vApp.getHref(), rasd);
+      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionCpu), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionCpu"));
 
       // Retrieve the modified section
-      RASD modified = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
-
-      // Check the retrieved object is well formed
+      RASD modified = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      
+      // Check the retrieved object
       checkRASD(modified);
-
-      // assertEquals(modified.getInfo(), "New Info");
+      
+      // TODO What is modifiable? What can we change, so we can assert the change took effect? 
+      // I tried changing "weight", but it continued to have the value zero when looked up post-modify.
+      //
+      // long weight = random.nextInt(Integer.MAX_VALUE);
+      // RASD newSection = origSection.toBuilder()
+      //         .weight(newCimUnsignedInt(weight))
+      //         .build();
+      // ...
+      // assertEquals(modified.getWeight().getValue(), weight, String.format(OBJ_FIELD_EQ, VAPP, "virtualHardwareSection/cpu/weight", weight, ""+modified.getWeight()));
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionDisks() {
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vApp.getHref());
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vmURI);
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -916,32 +936,49 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSectionDisks" })
    public void testModifyVirtualHardwareSectionDisks() {
-      // Copy the existing items list and add a new item
-      RasdItemsList oldRasdItems = vAppClient.getVirtualHardwareSectionDisks(vApp.getHref());
-      RASD item = RASD.builder().build();
-      RasdItemsList newRasdItems = oldRasdItems.toBuilder()
-            .item(item)
-            .build();
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      // Copy the existing items list and modify the name of an item
+      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionDisks(vmURI);
+      RasdItemsList newSection = oldSection.toBuilder().build();
 
       // Method under test
-      Task modifyVirtualHardwareSectionDisks = vAppClient.modifyVirtualHardwareSectionDisks(vApp.getHref(), newRasdItems);
+      Task modifyVirtualHardwareSectionDisks = vAppClient.modifyVirtualHardwareSectionDisks(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionDisks), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionDisks"));
 
       // Retrieve the modified section
-      RasdItemsList modified = vAppClient.getVirtualHardwareSectionDisks(vApp.getHref());
+      RasdItemsList modified = vAppClient.getVirtualHardwareSectionDisks(vmURI);
 
       // Check the retrieved object is well formed
       checkRasdItemsList(modified);
-
-      // Check the modified items list
-      // assertEquals(modified.getX(), "");
-      assertTrue(modified.getItems().contains(item));
-      assertEquals(modified, newRasdItems);
+      
+      // TODO What is modifiable? What can we change, so we can assert the change took effect? 
+      // I tried changing "elementName" of one of the items, but it continued to have the old value when looked up post-modify.
+      //
+      // List<RASD> newItems = new ArrayList<RASD>(oldSection.getItems());
+      // RASD item0 = newItems.get(0);
+      // String item0InstanceId = item0.getInstanceID().getValue();
+      // String item0ElementName = item0.getElementName().getValue()+"-"+random.nextInt(Integer.MAX_VALUE);
+      // newItems.set(0, item0.toBuilder().elementName(newCimString(item0ElementName)).build());
+      // RasdItemsList newSection = oldSection.toBuilder()
+      //       .items(newItems)
+      //       .build();
+      // ...
+      // long weight = random.nextInt(Integer.MAX_VALUE);
+      // RASD newSection = origSection.toBuilder()
+      //         .weight(newCimUnsignedInt(weight))
+      //         .build();
+      // ...
+      // checkHasMatchingItem("virtualHardwareSection/disk", modified, item0InstanceId, item0ElementName);
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/media", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMedia() {
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vApp.getHref());
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vmURI);
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -949,7 +986,10 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMemory() {
-      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vApp.getHref());
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
 
       // Check the retrieved object is well formed
       checkRASD(rasd);
@@ -957,20 +997,33 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
    public void testModifyVirtualHardwareSectionMemory() {
-      RASD rasd = vAppClient.getVirtualHardwareSectionMemory(vApp.getHref());
-      // rasd.setX("New Info");
-
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RASD origSection = vAppClient.getVirtualHardwareSectionMemory(vmURI);
+      RASD newSection = origSection.toBuilder().build();
+      
       // Method under test
-      Task modifyVirtualHardwareSectionMemory = vAppClient.modifyVirtualHardwareSectionMemory(vApp.getHref(), rasd);
+      Task modifyVirtualHardwareSectionMemory = vAppClient.modifyVirtualHardwareSectionMemory(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionMemory), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionMemory"));
 
-      RASD modified = vAppClient.getVirtualHardwareSectionMemory(vApp.getHref());
-      // assertEquals(modified.getInfo(), "New Info");
+      // Retrieve the modified section
+      RASD modified = vAppClient.getVirtualHardwareSectionMemory(vmURI);
+      
+      // Check the retrieved object
+      checkRASD(modified);
+      
+      // TODO What is modifiable? What can we change, so we can assert the change took effect? 
+      // I tried changing "weight", but it continued to have the value zero when looked up post-modify.
+      // See description under testModifyVirtualHardwareSectionMemoryCpu
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionNetworkCards() {
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vApp.getHref());
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -978,32 +1031,33 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSectionNetworkCards" })
    public void testModifyVirtualHardwareSectionNetworkCards() {
-      // Copy the existing items list and add a new item
-      RasdItemsList oldRasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vApp.getHref());
-      RASD item = RASD.builder().build();
-      RasdItemsList newRasdItems = oldRasdItems.toBuilder()
-            .item(item)
-            .build();
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
+      RasdItemsList newSection = oldSection.toBuilder().build();
 
       // Method under test
-      Task modifyVirtualHardwareSectionNetworkCards = vAppClient.modifyVirtualHardwareSectionNetworkCards(vApp.getHref(), newRasdItems);
+      Task modifyVirtualHardwareSectionNetworkCards = vAppClient.modifyVirtualHardwareSectionNetworkCards(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionNetworkCards), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionNetworkCards"));
 
       // Retrieve the modified section
-      RasdItemsList modified = vAppClient.getVirtualHardwareSectionNetworkCards(vApp.getHref());
+      RasdItemsList modified = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
 
       // Check the retrieved object is well formed
       checkRasdItemsList(modified);
-
-      // Check the modified items list
-      // assertEquals(modified.getX(), "");
-      assertTrue(modified.getItems().contains(item));
-      assertEquals(modified, newRasdItems);
+      
+      // TODO What is modifiable? What can we change, so we can assert the change took effect? 
+      // I tried changing "elementName" of one of the items, but it continued to have the old value when looked up post-modify.
+      // See the description in testModifyVirtualHardwareSectionDisks
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionSerialPorts() {
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vApp.getHref());
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -1011,27 +1065,25 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSectionSerialPorts" })
    public void testModifyVirtualHardwareSectionSerialPorts() {
-      // Copy the existing items list and add a new item
-      RasdItemsList oldRasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vApp.getHref());
-      RASD item = RASD.builder().build();
-      RasdItemsList newRasdItems = oldRasdItems.toBuilder()
-            .item(item)
-            .build();
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      
+      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
+      RasdItemsList newSection = oldSection.toBuilder().build();
 
       // Method under test
-      Task modifyVirtualHardwareSectionSerialPorts = vAppClient.modifyVirtualHardwareSectionSerialPorts(vApp.getHref(), newRasdItems);
+      Task modifyVirtualHardwareSectionSerialPorts = vAppClient.modifyVirtualHardwareSectionSerialPorts(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionSerialPorts), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionSerialPorts"));
 
       // Retrieve the modified section
-      RasdItemsList modified = vAppClient.getVirtualHardwareSectionSerialPorts(vApp.getHref());
+      RasdItemsList modified = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
 
       // Check the retrieved object is well formed
       checkRasdItemsList(modified);
-
-      // Check the modified items list
-      // assertEquals(modified.getX(), "");
-      assertTrue(modified.getItems().contains(item));
-      assertEquals(modified, newRasdItems);
+      
+      // TODO What is modifiable? What can we change, so we can assert the change took effect? 
+      // I tried changing "elementName" of one of the items, but it continued to have the old value when looked up post-modify.
+      // See the description in testModifyVirtualHardwareSectionDisks
    }
 
    @Test(testName = "GET /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
@@ -1244,5 +1296,34 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       } catch (IOException ioe) {
          Throwables.propagate(ioe);
       }
+   }
+   
+   @SuppressWarnings("unused")
+   private CimUnsignedInt newCimUnsignedInt(long val) {
+      CimUnsignedInt result = new CimUnsignedInt();
+      result.setValue(val);
+      return result;
+   }
+   
+   @SuppressWarnings("unused")
+   private CimString newCimString(String val) {
+      CimString result = new CimString();
+      result.setValue(val);
+      return result;
+   }
+   
+   @SuppressWarnings("unused")
+   private void checkHasMatchingItem(String context, RasdItemsList items, String instanceId, String elementName) {
+      boolean found = false;
+      for (RASD item : items.getItems()) {
+         String itemInstanceId = item.getInstanceID().getValue();
+         if (itemInstanceId.equals(instanceId)) {
+            assertEquals(item.getElementName().getValue(), elementName, 
+                     String.format(OBJ_FIELD_EQ, VAPP, context+"/"+instanceId+"/elementName", elementName, ""+item.getElementName().getValue()));
+            found = true;
+            break;
+         }
+      }
+      assertTrue(found, "no "+context+" item found with id "+instanceId+"; only found "+items);
    }
 }
