@@ -135,7 +135,7 @@ public abstract class SectionType {
       if (getClass() != obj.getClass())
          return false;
       SectionType other = (SectionType) obj;
-      return Objects.equal(info, other.info) && Objects.equal(required, other.required);
+      return Objects.equal(this.info, other.info) && Objects.equal(this.required, other.required);
    }
 
    @Override

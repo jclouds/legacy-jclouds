@@ -420,7 +420,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task ejectMedia(URI vAppURI, MediaInsertOrEjectParams mediaParams);
+   Task ejectMedia(URI vmURI, MediaInsertOrEjectParams mediaParams);
 
    /**
     * Inserts a media into a VM.
@@ -431,7 +431,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task insertMedia(URI vAppURI, MediaInsertOrEjectParams mediaParams);
+   Task insertMedia(URI vmURI, MediaInsertOrEjectParams mediaParams);
 
    /**
     * @return synchronous access to {@link Metadata} features
@@ -440,7 +440,7 @@ public interface VAppClient {
    MetadataClient.Writeable getMetadataClient();
 
    /**
-    * Retrieves the network configuration section of a VM.
+    * Retrieves the network config section of a vApp or vApp template.
     *
     * <pre>
     * GET /vApp/{id}/networkConfigSection
@@ -448,10 +448,10 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   NetworkConfigSection getNetworkConfigSection(URI vAppURI);
+   NetworkConfigSection getNetworkConfigSection(URI vmURI);
 
    /**
-    * Modifies the network configuration section of a VM.
+    * Modifies the network config section of a vApp.
     *
     * <pre>
     * PUT /vApp/{id}/networkConfigSection
@@ -459,7 +459,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyNetworkConfigSection(URI vAppURI, NetworkConfigSection section);
+   Task modifyNetworkConfigSection(URI vmURI, NetworkConfigSection section);
 
    /**
     * Retrieves the network connection section of a VM.
@@ -470,7 +470,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   NetworkConnectionSection getNetworkConnectionSection(URI vAppURI);
+   NetworkConnectionSection getNetworkConnectionSection(URI vmURI);
 
    /**
     * Modifies the network connection section of a VM.
@@ -481,10 +481,10 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyNetworkConnectionSection(URI vAppURI, NetworkConnectionSection section);
+   Task modifyNetworkConnectionSection(URI vmURI, NetworkConnectionSection section);
 
    /**
-    * Retrieves the network section of a VM.
+    * Retrieves the network section of a vApp or vApp template.
     *
     * <pre>
     * GET /vApp/{id}/networkSection
@@ -503,7 +503,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   OperatingSystemSection getOperatingSystemSection(URI vAppURI);
+   OperatingSystemSection getOperatingSystemSection(URI vmURI);
 
    /**
     * Modifies the operating system section of a VM.
@@ -514,7 +514,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyOperatingSystemSection(URI vAppURI, OperatingSystemSection section);
+   Task modifyOperatingSystemSection(URI vmURI, OperatingSystemSection section);
 
    /**
     * Retrieves the owner of a vApp.

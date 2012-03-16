@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -17,7 +17,6 @@
  * under the License.
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
-
 
 import javax.xml.bind.annotation.XmlRootElement;
 
