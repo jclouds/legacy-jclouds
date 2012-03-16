@@ -483,7 +483,7 @@ public class Checks {
    public static void checkMacAddress(String macAddress) {
       // Check the string is a valid MAC address
       assertNotNull(macAddress, String.format(NOT_EMPTY_STRING_FMT, "macAddress"));
-      assertTrue(macAddress.toUpperCase().matches(MAC_ADDRESS_PATTERN), String.format(MATCHES_STRING_FMT, "macAddress", MAC_ADDRESS_PATTERN, macAddress));
+      assertTrue(macAddress.matches(MAC_ADDRESS_PATTERN), String.format(MATCHES_STRING_FMT, "macAddress", MAC_ADDRESS_PATTERN, macAddress));
    }
 
    public static void checkComputeCapacity(ComputeCapacity computeCapacity) {
