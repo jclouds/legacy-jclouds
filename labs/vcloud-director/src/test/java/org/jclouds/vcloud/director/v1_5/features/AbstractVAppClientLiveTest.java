@@ -229,10 +229,8 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       return result;
    }
 
-   protected static CimString cimString(String val) {
-      CimString result = new CimString();
-      result.setValue(val);
-      return result;
+   protected static CimString cimString(String value) {
+      return new CimString(value);
    }
 
    protected void checkHasMatchingItem(final String context, final RasdItemsList items, final String instanceId, final String elementName) {
