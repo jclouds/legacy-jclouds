@@ -18,17 +18,25 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.date.DateService;
+import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -38,11 +46,20 @@ import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
@@ -50,6 +67,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
@@ -69,9 +87,34 @@ import com.google.inject.Module;
 @Test(groups = "live")
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
    
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    protected static final long TASK_TIMEOUT_SECONDS = 10L;
    protected static final long LONG_TASK_TIMEOUT_SECONDS = 300L;
 
+   public static final String VAPP = "vApp";
+   public static final String VAPP_TEMPLATE = "vAppTemplate";
+   public static final String VDC = "vdc";
+   
+   public Predicate<Task> retryTaskSuccess;
+   public Predicate<Task> retryTaskSuccessLong;
+
+   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
+   protected Session session;
+
+   protected String catalogName;
+   protected String networkName;
+   protected String userName;
+
+   protected URI vAppTemplateURI;
+   protected URI mediaURI;
+   protected URI networkURI;
+   protected URI vdcURI;
+   protected URI userURI;
+
+   protected Random random = new Random();
+   
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
    }
@@ -83,12 +126,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
    }
-
+   
    // NOTE Implement as required to populate xxxClient fields, or NOP
    protected abstract void setupRequiredClients() throws Exception;
-
-   public Predicate<Task> retryTaskSuccess;
-   public Predicate<Task> retryTaskSuccessLong;
 
    @Inject
    protected void initTaskSuccess(TaskSuccess taskSuccess) {
@@ -99,9 +139,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected void initTaskSuccessLong(TaskSuccess taskSuccess) {
       retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
-
-   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
-   protected Session session;
 
    @BeforeClass(groups = { "live" })
    protected void setupContext() throws Exception {
@@ -115,18 +152,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       initTestParametersFromPropertiesOrLazyDiscover();
       setupRequiredClients();
    }
-
-   protected String catalogName;
-   protected String networkName;
-   protected String userName;
-
-   protected URI vAppTemplateURI;
-   protected URI mediaURI;
-   protected URI networkURI;
-   protected URI vdcURI;
-   protected URI userURI;
-
-   protected Random random = new Random();
 
    // TODO change properties to URI, not id
    @SuppressWarnings("unchecked")
@@ -189,10 +214,90 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
    
    protected void assertTaskSucceeds(Task task) {
-      assertTrue(retryTaskSuccess.apply(task));
+      assertTrue(retryTaskSuccess.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
    }
    
    protected void assertTaskSucceedsLong(Task task) {
-      assertTrue(retryTaskSuccessLong.apply(task));
+      assertTrue(retryTaskSuccessLong.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
+
+   }
+   
+   /**
+    * Instantiate a {@link VApp} in a {@link Vdc} using the {@link VAppTemplate} we have configured for the tests.
+    * 
+    * @return the VApp that is being instantiated
+    */
+   protected VApp instantiateVApp() {
+      return instantiateVApp("test-vapp-"+random.nextInt(Integer.MAX_VALUE));
+   }
+   
+   protected VApp instantiateVApp(String name) {
+      InstantiateVAppTemplateParams instantiate = InstantiateVAppTemplateParams.builder()
+            .name(name)
+            .notDeploy()
+            .notPowerOn()
+            .description("Test VApp")
+            .instantiationParams(instantiationParams())
+            .source(Reference.builder().href(vAppTemplateURI).build())
+            .build();
+
+      VdcClient vdcClient = context.getApi().getVdcClient();
+      VApp vAppInstantiated = vdcClient.instantiateVApp(vdcURI, instantiate);
+      assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
+
+      return vAppInstantiated;
+   }
+
+   /** Build an {@link InstantiationParams} object. */
+   private InstantiationParams instantiationParams() {
+      InstantiationParams instantiationParams = InstantiationParams.builder()
+            .sections(ImmutableSet.of(networkConfigSection()))
+            .build();
+
+      return instantiationParams;
+   }
+
+   /** Build a {@link NetworkConfigSection} object. */
+   private NetworkConfigSection networkConfigSection() {
+      NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
+            .info("Configuration parameters for logical networks")
+            .networkConfigs(
+                  ImmutableSet.of(
+                        VAppNetworkConfiguration.builder()
+                              .networkName("vAppNetwork")
+                              .configuration(networkConfiguration())
+                              .build()))
+            .build();
+
+      return networkConfigSection;
+   }
+
+   /** Build a {@link NetworkConfiguration} object. */
+   private NetworkConfiguration networkConfiguration() {
+      Vdc vdc = context.getApi().getVdcClient().getVdc(vdcURI);
+      assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
+      
+      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+
+      // Look up the network in the Vdc with the id configured for the tests
+      Optional<Reference> parentNetwork = Iterables.tryFind(networks, new Predicate<Reference>() {
+         @Override
+         public boolean apply(Reference reference) {
+            return reference.getHref().equals(networkURI);
+         }
+      });
+
+      // Check we actually found a network reference
+      if (!parentNetwork.isPresent()) {
+         fail(String.format("Could not find network %s in vdc", networkURI.toASCIIString()));
+      }
+
+      // Build the configuration object
+      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
+            .parentNetwork(parentNetwork.get())
+            .fenceMode("bridged")
+            .build();
+
+      return networkConfiguration;
    }
 }

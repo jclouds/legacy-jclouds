@@ -47,6 +47,7 @@ import com.google.common.collect.Sets;
 @XmlSeeAlso({
       QueryResultVAppTemplateRecord.class,
       QueryResultVAppRecord.class,
+      QueryResultVMRecord.class,
       QueryResultDatastoreRecord.class,
       QueryResultCatalogRecord.class,
       QueryResultNetworkRecord.class}
