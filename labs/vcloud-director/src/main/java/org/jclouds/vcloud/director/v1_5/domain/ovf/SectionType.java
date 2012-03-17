@@ -18,7 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+
+import java.util.Collections;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,11 +34,14 @@ import javax.xml.bind.annotation.XmlType;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Metadata about a virtual machine or grouping of them.
@@ -41,6 +50,7 @@ import com.google.common.base.Objects;
  * 
  * @author Adrian Cole
  * @author Adam Lowe
+ * @author grkvlt@apache.org
  */
 @XmlType(name = "Section_Type")
 @XmlSeeAlso({
@@ -63,6 +73,7 @@ public abstract class SectionType {
    public static abstract class Builder<B extends Builder<B>> {
       private String info;
       private Boolean required;
+      private Set<Link> links = Sets.newLinkedHashSet();
 
       @SuppressWarnings("unchecked")
       protected B self() {
@@ -103,19 +114,40 @@ public abstract class SectionType {
          return self();
       }
 
+      /**
+       * @see ResourceType#getLinks()
+       */
+      public B links(Set<Link> links) {
+         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
+         return self();
+      }
+
+      /**
+       * @see ResourceType#getLinks()
+       */
+      public B link(Link link) {
+         if (links == null)
+            links = Sets.newLinkedHashSet();
+         this.links.add(checkNotNull(link, "link"));
+         return self();
+      }
+
       public B fromSectionType(SectionType in) {
-         return info(in.getInfo()).required(in.isRequired());
+         return info(in.getInfo()).required(in.isRequired()).links(Sets.newLinkedHashSet(in.getLinks()));
       }
    }
 
-   @XmlElement(name = "Info")
+   @XmlElement(name = "Info", required = true)
    private String info;
    @XmlAttribute(namespace = VCLOUD_OVF_NS)
    private Boolean required;
+   @XmlElement(name = "Link", namespace = VCLOUD_1_5_NS)
+   private Set<Link> links = Sets.newLinkedHashSet();
 
    protected SectionType(Builder<?> builder) {
       this.info = builder.info;
       this.required = builder.required;
+      this.links = builder.links != null ? ImmutableSet.copyOf(builder.links) : Collections.<Link>emptySet();
    }
 
    protected SectionType() {
@@ -139,9 +171,16 @@ public abstract class SectionType {
       return required;
    }
 
+   /**
+    * Set of optional links to an entity or operation associated with this object.
+    */
+   public Set<Link> getLinks() {
+      return links != null ? ImmutableSet.copyOf(links) : Collections.<Link>emptySet();
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(info, required);
+      return Objects.hashCode(info, required, links);
    }
 
    @Override
@@ -153,7 +192,7 @@ public abstract class SectionType {
       if (getClass() != obj.getClass())
          return false;
       SectionType other = (SectionType) obj;
-      return Objects.equal(this.info, other.info) && Objects.equal(this.required, other.required);
+      return equal(this.info, other.info) && equal(this.required, other.required) && equal(this.links, other.links);
    }
 
    @Override
@@ -162,7 +201,7 @@ public abstract class SectionType {
    }
 
    protected Objects.ToStringHelper string() {
-      return Objects.toStringHelper("").add("info", info).add("required", required);
+      return Objects.toStringHelper("").add("info", info).add("required", required).add("links", links);
    }
 
 }

@@ -18,15 +18,21 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -40,8 +46,10 @@ import com.google.common.collect.Sets;
  *
  * @author Adrian Cole
  * @author Adam Lowe
+ * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "VirtualHardwareSection")
+@XmlType(name = "VirtualHardwareSection_Type")
 public class VirtualHardwareSection extends SectionType {
 
    public static Builder<?> builder() {
@@ -56,8 +64,9 @@ public class VirtualHardwareSection extends SectionType {
    }
    
    public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
+
       protected VirtualSystemSettingData virtualSystem;
-      protected Set<String> transports = Sets.newLinkedHashSet();
+      protected String transport;
       protected Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
 
       /**
@@ -69,23 +78,31 @@ public class VirtualHardwareSection extends SectionType {
       }
 
       /**
-       * @see VirtualHardwareSection#getTransports
+       * @see VirtualHardwareSection#getTransport()
        */
       public B transport(String transport) {
-         this.transports.add(checkNotNull(transport, "transport"));
+         this.transport = transport;
          return self();
       }
 
       /**
-       * @see VirtualHardwareSection#getTransports
+       * @see VirtualHardwareSection#getTransport()
        */
-      public B transports(Iterable<String> transports) {
-         this.transports = ImmutableSet.<String>copyOf(checkNotNull(transports, "transports"));
+      public B transport(Iterable<String> transports) {
+         this.transport = Joiner.on(',').join(transports);
          return self();
       }
 
       /**
-       * @see VirtualHardwareSection#getItems
+       * @see VirtualHardwareSection#getTransport()
+       */
+      public B transport(String...transports) {
+         this.transport = Joiner.on(',').join(transports);
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getItems()
        */
       public B item(ResourceAllocationSettingData item) {
          this.items.add(checkNotNull(item, "item"));
@@ -93,11 +110,10 @@ public class VirtualHardwareSection extends SectionType {
       }
 
       /**
-       * @see VirtualHardwareSection#getItems
+       * @see VirtualHardwareSection#getItems()
        */
       public B items(Iterable<? extends ResourceAllocationSettingData> items) {
-         this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(
-               items, "items"));
+         this.items = Sets.newLinkedHashSet(checkNotNull(items, "items"));
          return self();
       }
 
@@ -110,20 +126,25 @@ public class VirtualHardwareSection extends SectionType {
       }
 
       public B fromVirtualHardwareSection(VirtualHardwareSection in) {
-         return fromSectionType(in).items(in.getItems()).transports(in.getTransports()).system(
-               in.getSystem()).info(in.getInfo());
+         return fromSectionType(in)
+               .items(in.getItems())
+               .transport(in.getTransport())
+               .system(in.getSystem());
       }
    }
 
+   @XmlElement(name = "System")
    private VirtualSystemSettingData virtualSystem;
-   private Set<String> transports;
-   private Set<ResourceAllocationSettingData> items;
+   @XmlAttribute(name = "transport")
+   private String transport;
+   @XmlElement(name = "Item")
+   private Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
 
    private VirtualHardwareSection(Builder<?> builder) {
       super(builder);
       this.virtualSystem = builder.virtualSystem;
-      this.transports = ImmutableSet.<String>copyOf(checkNotNull(builder.transports, "transports"));
-      this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(builder.items, "items"));
+      this.transport = builder.transport;
+      this.items = builder.items != null ? ImmutableSet.copyOf(builder.items) : Collections.<ResourceAllocationSettingData>emptySet();
    }
 
    private VirtualHardwareSection() {
@@ -131,9 +152,11 @@ public class VirtualHardwareSection extends SectionType {
    }
 
    /**
-    * transport types define methods by which the environment document is communicated from the
+    * Comma-separated list of supported transports types for the OVF descriptor.
+    *
+    * Transport types define methods by which the environment document is communicated from the
     * deployment platform to the guest software.
-    * <p/>
+    * <p>
     * To enable interoperability, this specification defines an "iso" transport type which all
     * implementations that support CD-ROM devices are required to support. The iso transport
     * communicates the environment 1346 document by making a dynamically generated ISO image
@@ -141,14 +164,14 @@ public class VirtualHardwareSection extends SectionType {
     * machine, an implementation shall make an ISO 9660 read-only disk image available as backing
     * for a disconnected CD-ROM. If the iso transport is selected for a VirtualHardwareSection, at
     * least one disconnected CD-ROM device shall be present in this section.
-    * <p/>
+    * <p>
     * Support for the "iso" transport type is not a requirement for virtual hardware architectures
     * or guest 1351 operating systems which do not have CD-ROM device support.
     *
     * @return
     */
-   public Set<String> getTransports() {
-      return transports;
+   public String getTransport() {
+      return transport;
    }
 
    public VirtualSystemSettingData getSystem() {
@@ -161,7 +184,7 @@ public class VirtualHardwareSection extends SectionType {
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), transports, virtualSystem, items);
+      return Objects.hashCode(super.hashCode(), transport, virtualSystem, items);
    }
 
    @Override
@@ -169,15 +192,15 @@ public class VirtualHardwareSection extends SectionType {
       if (this == obj) return true;
       if (obj == null) return false;
       if (getClass() != obj.getClass()) return false;
-
-      VirtualHardwareSection other = (VirtualHardwareSection) obj;
-      return super.equals(other) && Objects.equal(transports, other.transports)
-            && Objects.equal(virtualSystem, other.virtualSystem)
-            && Objects.equal(items, other.items);
+      VirtualHardwareSection that = VirtualHardwareSection.class.cast(obj);
+      return super.equals(that) &&
+            equal(this.transport, that.transport) &&
+            equal(this.virtualSystem, that.virtualSystem) &&
+            equal(this.items, that.items);
    }
 
    @Override
    protected Objects.ToStringHelper string() {
-      return super.string().add("transports", transports).add("virtualSystem", virtualSystem).add("items", items);
+      return super.string().add("transport", transport).add("virtualSystem", virtualSystem).add("items", items);
    }
 }

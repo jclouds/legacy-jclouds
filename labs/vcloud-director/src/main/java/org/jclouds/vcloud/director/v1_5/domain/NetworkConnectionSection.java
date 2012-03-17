@@ -79,7 +79,15 @@ public class NetworkConnectionSection extends SectionType {
        * @see NetworkConnectionSection#getNetworkConnections()
        */
       public B networkConnections(Set<NetworkConnection> networkConnections) {
-         this.networkConnections = checkNotNull(networkConnections, "networkConnection");
+         this.networkConnections = checkNotNull(networkConnections, "networkConnections");
+         return self();
+      }
+
+      /**
+       * @see NetworkConnectionSection#getNetworkConnections()
+       */
+      public B networkConnection(NetworkConnection networkConnection) {
+         this.networkConnections.add(checkNotNull(networkConnection, "networkConnection"));
          return self();
       }
 
@@ -110,12 +118,15 @@ public class NetworkConnectionSection extends SectionType {
       @Override
       public NetworkConnectionSection build() {
          return new NetworkConnectionSection(this);
-
       }
 
       public B fromNetworkConnectionSection(NetworkConnectionSection in) {
-         return fromSectionType(in).primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex()).networkConnections(in.getNetworkConnections()).links(in.getLinks()).href(in.getHref()).type(
-               in.getType());
+         return fromSectionType(in)
+               .primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex())
+               .networkConnections(Sets.newLinkedHashSet(in.getNetworkConnections()))
+               .links(Sets.newLinkedHashSet(in.getLinks()))
+               .href(in.getHref())
+               .type(in.getType());
       }
    }
 
