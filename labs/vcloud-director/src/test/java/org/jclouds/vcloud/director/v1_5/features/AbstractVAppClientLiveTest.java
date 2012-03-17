@@ -28,6 +28,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertFalse;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 import java.util.Random;
@@ -44,8 +45,10 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.cim.CimBoolean;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
+import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedLong;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
@@ -223,8 +226,20 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       }
    }
 
+   protected static CimBoolean cimBoolean(boolean val) {
+      CimBoolean result = new CimBoolean();
+      result.setValue(val);
+      return result;
+   }
+
    protected static CimUnsignedInt cimUnsignedInt(long val) {
       CimUnsignedInt result = new CimUnsignedInt();
+      result.setValue(val);
+      return result;
+   }
+
+   protected static CimUnsignedLong cimUnsignedLong(BigInteger val) {
+      CimUnsignedLong result = new CimUnsignedLong();
       result.setValue(val);
       return result;
    }

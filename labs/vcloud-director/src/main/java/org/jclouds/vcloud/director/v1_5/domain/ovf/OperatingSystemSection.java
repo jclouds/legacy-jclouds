@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain.ovf;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_VMW_NS;
 
 import java.net.URI;
@@ -30,6 +31,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 
@@ -44,6 +46,7 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "OperatingSystemSection")
+@XmlType
 public class OperatingSystemSection extends SectionType {
 
    public static Builder<?> builder() {
@@ -58,7 +61,7 @@ public class OperatingSystemSection extends SectionType {
    }
    
    public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
-      private Integer id;
+      private int id;
       private String description;
       private String version;
       private String osType;
@@ -69,7 +72,7 @@ public class OperatingSystemSection extends SectionType {
       /**
        * @see OperatingSystemSection#getId()
        */
-      public B id(Integer id) {
+      public B id(int id) {
          this.id = id;
          return self();
       }
@@ -141,16 +144,17 @@ public class OperatingSystemSection extends SectionType {
       }
 
       public B fromOperatingSystemSection(OperatingSystemSection in) {
-         return fromSectionType(in).id(in.getId()).version(in.getVersion()).description(in.getDescription())
+         return fromSectionType(in)
+               .id(in.getId()).version(in.getVersion()).description(in.getDescription())
                .osType(in.getOsType()).href(in.getHref()).type(in.getType()).links(in.getLinks());
       }
    }
 
-   @XmlAttribute(required = true)
-   protected Integer id;
+   @XmlAttribute(namespace = VCLOUD_OVF_NS, required = true)
+   protected int id;
    @XmlAttribute
    protected String version;
-   @XmlElement
+   @XmlElement(name = "Description")
    protected String description;
    @XmlAttribute(namespace = VCLOUD_VMW_NS)
    protected String osType;
@@ -181,7 +185,7 @@ public class OperatingSystemSection extends SectionType {
     *
     * @see org.jclouds.vcloud.director.v1_5.domain.cim.OSType#getCode()
     */
-   public Integer getId() {
+   public int getId() {
       return id;
    }
 
@@ -230,7 +234,7 @@ public class OperatingSystemSection extends SectionType {
     * @see ResourceType#getLinks()
     */
    public Set<Link> getLinks() {
-      return links == null ? ImmutableSet.<Link>of() : Collections.unmodifiableSet(links);
+      return links == null ? Sets.<Link>newLinkedHashSet() : ImmutableSet.copyOf(links);
    }
 
    @Override
