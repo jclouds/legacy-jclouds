@@ -24,13 +24,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Specifies the order in which entities in a VirtualSystemCollection are powered on and shut down
@@ -55,8 +55,7 @@ public class StartupSection extends SectionType {
    
    public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
-      private List<StartupSectionItem> items = Collections.emptyList();
-      private List<Object> any = Collections.emptyList();
+      private List<StartupSectionItem> items = Lists.newArrayList();
 
       /**
        * @see StartupSection#getItem()
@@ -74,28 +73,18 @@ public class StartupSection extends SectionType {
          return self();
       }
 
-      /**
-       * @see StartupSection#getAny()
-       */
-      public B any(List<Object> any) {
-         this.any = any;
-         return self();
-      }
-
       @Override
       public StartupSection build() {
          return new StartupSection(this);
       }
       
       public B fromStartupSection(StartupSection in) {
-         return fromSectionType(in).items(items).any(any);
+         return fromSectionType(in).items(in.getItems());
       }
    }
 
    @XmlElement(name = "Item")
-   private List<StartupSectionItem> items;
-   @XmlAnyElement(lax = true)
-   private List<Object> any;
+   private List<StartupSectionItem> items = Lists.newArrayList();
 
    protected StartupSection() {
       // For JAXB
@@ -104,23 +93,15 @@ public class StartupSection extends SectionType {
    public StartupSection(Builder<?> builder) {
       super(builder);
       this.items = (items != null) ? ImmutableList.<StartupSectionItem>copyOf(builder.items) : Collections.<StartupSectionItem>emptyList();
-      this.any = (any != null) ? ImmutableList.<Object>copyOf(builder.any) : Collections.<Object>emptyList();
    }
 
    /**
     * Gets the value of the item property.
     */
-   public List<StartupSectionItem> getItem() {
+   public List<StartupSectionItem> getItems() {
       return items;
    }
 
-   /**
-    * Gets the value of the any property.
-    */
-   public List<Object> getAny() {
-      return any;
-   }
-   
    @Override
    public boolean equals(Object o) {
       if (this == o)
@@ -128,17 +109,16 @@ public class StartupSection extends SectionType {
       if (o == null || getClass() != o.getClass())
          return false;
       StartupSection that = StartupSection.class.cast(o);
-      return super.equals(that) &&
-            equal(this.items, that.items) && equal(this.any, that.any);
+      return super.equals(that) && equal(this.items, that.items);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), items, any);
+      return Objects.hashCode(super.hashCode(), items);
    }
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("items", items).add("any", any);
+      return super.string().add("items", items);
    }
 }

@@ -597,6 +597,25 @@ public class Checks {
       }
       return result;
    }
+
+   public static void checkVmPendingQuestion(VmPendingQuestion question) {
+      // Check required fields
+      assertNotNull(question.getQuestion(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "Question"));
+      assertNotNull(question.getQuestionId(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "QuestionId"));
+      for (VmQuestionAnswerChoice choice : question.getChoices()) {
+         checkVmQuestionAnswerChoice(choice);
+      }
+      
+      // Check parent type
+      checkResourceType(question);
+   }
+
+   public static void checkVmQuestionAnswerChoice(VmQuestionAnswerChoice choice) {
+      assertNotNull(choice, String.format(NOT_NULL_OBJ_FMT, "VmQuestionAnswerChoice"));
+      
+      // NOTE the Id field cannot be checked
+      // NOTE the Text field cannot be checked
+   }
    
    public static void checkVApp(VApp vApp) {
       // Check optional fields
@@ -727,11 +746,7 @@ public class Checks {
       // Check optional fields
       VirtualSystemSettingData virtualSystem = hardware.getSystem();
       if (virtualSystem != null) checkVirtualSystemSettingData(virtualSystem);
-      if (hardware.getTransports() != null) {
-	      for (String transport : hardware.getTransports()) {
-	         // NOTE transport cannot be checked
-	      }
-      }
+      // NOTE transport cannot be checked
       if (hardware.getItems() != null) {
 	      for (ResourceAllocationSettingData item : hardware.getItems()) {
 	         checkResourceAllocationSettingData(item);

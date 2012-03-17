@@ -403,7 +403,7 @@ public interface VAppAsyncClient {
     */
    @PUT
    @Path("/networkConnectionSection")
-   @Produces(NETWORK_CONFIG_SECTION)
+   @Produces(NETWORK_CONNECTION_SECTION)
    @Consumes(TASK)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)

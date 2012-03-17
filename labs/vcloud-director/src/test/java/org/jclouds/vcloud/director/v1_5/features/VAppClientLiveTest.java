@@ -44,14 +44,18 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkScreenTicket;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkStartupSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVApp;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVirtualHardwareSection;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVmPendingQuestion;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
@@ -67,6 +71,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
@@ -81,6 +87,9 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
+import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.MsgType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
@@ -93,6 +102,9 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -349,7 +361,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertFalse(vApp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", vApp.isInMaintenanceMode()));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testPowerOnVApp" })
    public void testInstallVMwareTools() {
       // The method under test
       Task installVMwareTools = vAppClient.installVMwareTools(vApp.getHref());
@@ -416,6 +428,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       GuestCustomizationSection oldSection = vAppClient.getGuestCustomizationSection(vmURI);
       GuestCustomizationSection newSection = oldSection.toBuilder()
             .computerName("newComputerName")
+            .enabled(Boolean.FALSE)
             .adminPassword(null) // Not allowed
             .build();
 
@@ -431,6 +444,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
       // Check the modified section fields are set correctly
       assertEquals(modified.getComputerName(), newSection.getComputerName());
+      assertFalse(modified.isEnabled());
 
       // Reset the admin password in the retrieved GuestCustomizationSection for equality check
       modified = modified.toBuilder().adminPassword(null).build();
@@ -567,15 +581,23 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       });
    }
 
+   // FIXME "Task error: Unable to perform this action. Contact your cloud administrator."
    @Test(testName = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
    public void testModifyNetworkConnectionSection() {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
 
+      // Look up a network in the Vdc
+      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Reference network = Iterables.getLast(networks);
+
       // Copy existing section and update fields
       NetworkConnectionSection oldSection = vAppClient.getNetworkConnectionSection(vmURI);
       NetworkConnectionSection newSection = oldSection.toBuilder()
-            .info("Changed NetworkConnectionSection Info")
+            .networkConnection(NetworkConnection.builder()
+                  .ipAddressAllocationMode(IpAddressAllocationMode.DHCP.toString())
+                  .network(network.getName())
+                  .build())
             .build();
 
       // The method under test
@@ -588,8 +610,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Check the retrieved object is well formed
       checkNetworkConnectionSection(modified);
 
-      // Check the modified section fields are set correctly
-      assertEquals(modified.getInfo(), newSection.getInfo());
+      // Check the modified section has an extra network connection
+      assertEquals(modified.getNetworkConnections().size(), newSection.getNetworkConnections().size() + 1);
 
       // Check the section was modified correctly
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "NetworkConnectionSection"));
@@ -621,13 +643,12 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
 
-      // Copy existing section and update fields
-      OperatingSystemSection oldSection = vAppClient.getOperatingSystemSection(vmURI);
-      OperatingSystemSection newSection = oldSection.toBuilder()
-            .info("Changed OperatingSystemSection Description")
-            .description("Changed OperatingSystemSection Description")
+      // Create new OperatingSystemSection
+      OperatingSystemSection newSection = OperatingSystemSection.builder()
+            .info("") // NOTE Required OVF field, ignored
+            .id(OSType.RHEL_64.getCode())
+            .osType("rhel5_64Guest")
             .build();
-      assertNotNull(newSection.getId());
 
       // The method under test
       Task modifyOperatingSystemSection = vAppClient.modifyOperatingSystemSection(vmURI, newSection);
@@ -640,11 +661,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkOperatingSystemSection(modified);
 
       // Check the modified section fields are set correctly
-      assertEquals(modified.getInfo(), newSection.getInfo());
-      assertEquals(modified.getDescription(), newSection.getDescription());
-
-      // Check the section was modified correctly
-      assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "OperatingSystemSection"));
+      assertEquals(modified.getId(), newSection.getId());
    }
 
    @Test(testName = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
@@ -689,7 +706,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       ProductSectionList newSections = oldSections.toBuilder()
             .productSection(ProductSection.builder()
                   .info("Information about the installed software") // Default ovf:Info text
-                  .required(true)
+                  .required()
                   .product(MsgType.builder().value("jclouds").build())
                   .vendor(MsgType.builder().value("jclouds Inc.").build())
                   // NOTE other ProductSection elements not returned by vCloud
@@ -706,21 +723,21 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Check the retrieved object is well formed
       checkProductSectionList(modified);
 
-      // Check the modified section fields are set correctly
+      // Check the modified object has an extra ProductSection
       assertEquals(modified.getProductSections().size(), oldSections.getProductSections().size() + 1);
 
       // Check the section was modified correctly
       assertEquals(modified, newSections, String.format(ENTITY_EQUAL, "ProductSectionList"));
    }
 
-   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testPowerOnVApp" })
    public void testGetPendingQuestion() {
       // TODO how to test?
       // The method under test
       VmPendingQuestion question = vAppClient.getPendingQuestion(vApp.getHref());
 
       // Check the retrieved object is well formed
-      // checkQuestion(question);
+      checkVmPendingQuestion(question);
    }
 
    @Test(testName = "PUT /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
@@ -818,7 +835,24 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
       // Copy existing section and update fields
       VirtualHardwareSection oldSection = vAppClient.getVirtualHardwareSection(vmURI);
-      VirtualHardwareSection newSection = oldSection.toBuilder().build();
+      Optional<? extends ResourceAllocationSettingData> memory = Iterables.tryFind(oldSection.getItems(),
+            new Predicate<ResourceAllocationSettingData>() {
+		         @Override
+		         public boolean apply(ResourceAllocationSettingData item) {
+		            return item.getResourceType() == ResourceType.MEMORY;
+		         }
+	      });
+      if (memory.isPresent()) debug(memory);
+      VirtualHardwareSection newSection = oldSection.toBuilder()
+            .item(ResourceAllocationSettingData.builder()
+                  .elementName(cimString("Memory"))
+                  .instanceID(cimString(UUID.randomUUID().toString()))
+                  .allocationUnits(cimString("byte * 2^20"))
+                  .reservation(cimUnsignedLong(BigInteger.valueOf(0L)))
+                  .virtualQuantity(cimUnsignedLong(BigInteger.valueOf(1024L)))
+                  .weight(cimUnsignedInt(0L))
+                  .build())
+            .build();
 
       // The method under test
       Task modifyVirtualHardwareSection = vAppClient.modifyVirtualHardwareSection(vmURI, newSection);
@@ -840,7 +874,10 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+
+      // Check the retrieved object is well formed
       checkRASD(rasd);
    }
 
@@ -878,6 +915,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vmURI);
 
       // Check the retrieved object is well formed
@@ -928,6 +966,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vmURI);
 
       // Check the retrieved object is well formed
@@ -939,6 +978,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
 
       // Check the retrieved object is well formed
@@ -973,6 +1013,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
 
       // Check the retrieved object is well formed
@@ -1007,6 +1048,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
 
       // Check the retrieved object is well formed

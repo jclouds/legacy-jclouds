@@ -25,7 +25,7 @@ public class VCloudDirectorLiveTestConstants {
 
    /* regular expressions for pattern matching */
    
-   public static final String MAC_ADDRESS_PATTERN = "^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$";
+   public static final String MAC_ADDRESS_PATTERN = "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$";
 
    /* Error code 200 indicates success. */
 
