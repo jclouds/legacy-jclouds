@@ -16,6 +16,10 @@ That's it! Enjoy local cluster goodness by running:
 
 For java guidance look into src/test/java/org/jclouds/virtualbox/compute/VirtualBoxExperimentLiveTest.java.
 
+For now nat+host-only is the only available network configuration, nodes should be accessible from the host by:
+> ssh -i ~/.ssh/id_rsa -o "UserKnownHostsFile /dev/null" -o StrictHostKeyChecking=no dralves@127.0.0.1 -p 300X
+where X is the node index with regard to creation order (0,1,2,etc...)
+
 It *should* behave as anyother provider, if not please report.
 
 #Notes:
