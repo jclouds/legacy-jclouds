@@ -54,7 +54,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
@@ -65,15 +64,12 @@ import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
@@ -87,7 +83,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
@@ -107,13 +102,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -123,10 +115,6 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = { "live", "user", "vapp" }, singleThreaded = true, testName = "VAppClientLiveTest")
 public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
-
-   public static final String VAPP = "vApp";
-   public static final String VAPP_TEMPLATE = "vAppTemplate";
-   public static final String VDC = "vdc";
 
    /*
     * Convenience reference to API clients.
@@ -176,7 +164,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    @Test(testName = "GET /vApp/{id}")
    public void testGetVApp() {
-      VApp vAppInstantiated = instantiateVApp();
+      VApp vAppInstantiated = instantiateVApp("test-vapp");
 
       // Wait for the task to complete
       Task instantiateTask = Iterables.getOnlyElement(vAppInstantiated.getTasks());
@@ -1209,77 +1197,6 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             retryTaskSuccess.apply(deleteTask);
          }
       }
-   }
-
-   /**
-    * Instantiate a {@link VApp} in a {@link Vdc} using the {@link VAppTemplate} we have configured for the tests.
-    * 
-    * @return the VApp that is being instantiated
-    */
-   private VApp instantiateVApp() {
-      InstantiateVAppTemplateParams instantiate = InstantiateVAppTemplateParams.builder()
-            .name("test-vapp")
-            .notDeploy()
-            .notPowerOn()
-            .description("Test VApp")
-            .instantiationParams(instantiationParams())
-            .source(Reference.builder().href(vAppTemplateURI).build())
-            .build();
-
-      VApp vAppInstantiated = vdcClient.instantiateVApp(vdcURI, instantiate);
-      assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
-
-      return vAppInstantiated;
-   }
-
-   /** Build an {@link InstantiationParams} object. */
-   private InstantiationParams instantiationParams() {
-      InstantiationParams instantiationParams = InstantiationParams.builder()
-            .sections(ImmutableSet.of(networkConfigSection()))
-            .build();
-
-      return instantiationParams;
-   }
-
-   /** Build a {@link NetworkConfigSection} object. */
-   private NetworkConfigSection networkConfigSection() {
-      NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
-            .info("Configuration parameters for logical networks")
-            .networkConfigs(
-                  ImmutableSet.of(
-                        VAppNetworkConfiguration.builder()
-                              .networkName("vAppNetwork")
-                              .configuration(networkConfiguration())
-                              .build()))
-            .build();
-
-      return networkConfigSection;
-   }
-
-   /** Build a {@link NetworkConfiguration} object. */
-   private NetworkConfiguration networkConfiguration() {
-      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
-
-      // Look up the network in the Vdc with the id configured for the tests
-      Optional<Reference> parentNetwork = Iterables.tryFind(networks, new Predicate<Reference>() {
-         @Override
-         public boolean apply(Reference reference) {
-            return reference.getHref().equals(networkURI);
-         }
-      });
-
-      // Check we actually found a network reference
-      if (!parentNetwork.isPresent()) {
-         fail(String.format("Could not find network %s in vdc", networkURI.toASCIIString()));
-      }
-
-      // Build the configuration object
-      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
-            .parentNetwork(parentNetwork.get())
-            .fenceMode("bridged")
-            .build();
-
-      return networkConfiguration;
    }
 
    /**

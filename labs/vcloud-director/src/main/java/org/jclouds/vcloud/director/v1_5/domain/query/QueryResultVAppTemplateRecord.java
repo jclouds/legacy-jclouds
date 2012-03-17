@@ -30,13 +30,13 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * Represents the results from a Datastore vCloud query as a record.
+ * Represents the results from a VAppTemplate vCloud query as a record.
  * 
  * <pre>
- * &lt;complexType name="QueryResultDatastoreRecordType" /&gt;
+ * &lt;complexType name="QueryResultVAppTemplateRecordType" /&gt;
  * </pre>
  * 
- * @author grkvlt@apache.org
+ * @author Aled Sage
  */
 @XmlRootElement(name = "VAppTemplateRecord")
 @XmlType(name = "QueryResultVAppTemplateRecordType")
@@ -48,7 +48,7 @@ public class QueryResultVAppTemplateRecord extends QueryResultRecordType {
 
    @Override
    public Builder<?> toBuilder() {
-      return builder().fromQueryResultDatastoreRecord(this);
+      return builder().fromQueryResultVappTemplateRecord(this);
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
@@ -179,7 +179,7 @@ public class QueryResultVAppTemplateRecord extends QueryResultRecordType {
          return new QueryResultVAppTemplateRecord(this);
       }
 
-      public B fromQueryResultDatastoreRecord(QueryResultVAppTemplateRecord in) {
+      public B fromQueryResultVappTemplateRecord(QueryResultVAppTemplateRecord in) {
          return fromQueryResultRecordType(in)
                .ownerName(in.getOwnerName())
                .catalogName(in.getCatalogName())
