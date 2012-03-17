@@ -18,50 +18,65 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 
-import java.util.HashMap;
-import java.util.Map;
+import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import javax.xml.namespace.QName;
+
+import com.google.common.base.Objects;
 
 /**
  * Java class for cimString complex type.
- *
+ * 
  * <pre>
  * &lt;complexType name="cimString" /&gt;
  * </pre>
  */
-@XmlType(name = "cimString", namespace = "http://schemas.dmtf.org/wbem/wscim/1/common")
+@XmlType(name = "cimString")
 public class CimString {
 
-    @XmlValue
-    protected String value;
-    @XmlAnyAttribute
-    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
+   public CimString() {
+      // JAXB
+   }
 
-    /**
-     * Gets the value of the value property.
-     */
-    public String getValue() {
-        return value;
-    }
+   public CimString(String value) {
+      this.value = value;
+   }
 
-    /**
-     * Sets the value of the value property.
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
+   @XmlValue
+   protected String value;
 
-    /**
-     * Gets a map that contains attributes that aren't bound to any typed property on this class.
-     */
-    public Map<QName, String> getOtherAttributes() {
-        return otherAttributes;
-    }
+   /**
+    * Gets the value of the value property.
+    */
+   public String getValue() {
+      return value;
+   }
+
+   public void setValue(String value) {
+      this.value = value;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(value);
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      CimString that = CimString.class.cast(obj);
+      return equal(this.value, that.value);
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper("").add("value", value).toString();
+   }
 
 }
