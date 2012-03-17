@@ -40,6 +40,8 @@ import org.jclouds.vcloud.director.v1_5.domain.query.VAppReferences;
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface QueryClient {
 
+   // TODO Add a typed object for filter syntax, or at least a fluent builder
+   
    /**
     * REST API query {@link Link} list.
     *
