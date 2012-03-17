@@ -62,6 +62,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromProductSectionList(this);
    }
@@ -85,7 +86,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
       /**
        * @see ProductSectionList#getProductSections()
        */
-      public B productSections(ProductSection productSection) {
+      public B productSection(ProductSection productSection) {
          if (productSections == null)
             productSections = Sets.newLinkedHashSet();
          this.productSections.add(checkNotNull(productSection, "productSection"));
@@ -99,7 +100,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
 
       public B fromProductSectionList(ProductSectionList in) {
          return fromResourceType(in)
-               .productSections(ImmutableSet.copyOf(in));
+               .productSections(Sets.newLinkedHashSet(in));
       }
    }
 
@@ -120,7 +121,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
     * Gets the value of the productSection property.
     */
    public Set<ProductSection> getProductSections() {
-      return productSections == null ? ImmutableSet.<ProductSection>of() : Collections.unmodifiableSet(productSections);
+      return productSections != null ? ImmutableSet.copyOf(productSections) : Collections.<ProductSection>emptySet();
    }
 
    @Override

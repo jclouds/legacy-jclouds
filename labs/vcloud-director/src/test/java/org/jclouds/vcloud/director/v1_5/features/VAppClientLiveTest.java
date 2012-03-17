@@ -20,9 +20,9 @@ package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MATCHES_STRING_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.*;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_USER;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkControlAccessParams;
@@ -81,8 +81,10 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.MsgType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
@@ -430,6 +432,9 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Check the modified section fields are set correctly
       assertEquals(modified.getComputerName(), newSection.getComputerName());
 
+      // Reset the admin password in the retrieved GuestCustomizationSection for equality check
+      modified = modified.toBuilder().adminPassword(null).build();
+
       // Check the section was modified correctly
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "GuestCustomizationSection"));
    }
@@ -622,7 +627,6 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .info("Changed OperatingSystemSection Description")
             .description("Changed OperatingSystemSection Description")
             .build();
-      debug(newSection);
       assertNotNull(newSection.getId());
 
       // The method under test
@@ -680,17 +684,33 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
    public void testModifyProductSections() {
-      ProductSectionList origSections = vAppClient.getProductSections(vApp.getHref());
-      ProductSectionList newSections = origSections.toBuilder().build();
-      
+      // Copy existing section and update fields
+      ProductSectionList oldSections = vAppClient.getProductSections(vApp.getHref());
+      ProductSectionList newSections = oldSections.toBuilder()
+            .productSection(ProductSection.builder()
+                  .info("Information about the installed software") // Default ovf:Info text
+                  .required(true)
+                  .product(MsgType.builder().value("jclouds").build())
+                  .vendor(MsgType.builder().value("jclouds Inc.").build())
+                  // NOTE other ProductSection elements not returned by vCloud
+                  .build())
+            .build();
+
       // The method under test
       Task modifyProductSections = vAppClient.modifyProductSections(vApp.getHref(), newSections);
       assertTrue(retryTaskSuccess.apply(modifyProductSections), String.format(TASK_COMPLETE_TIMELY, "modifyProductSections"));
 
-      ProductSectionList modifiedList = vAppClient.getProductSections(vApp.getHref());
-      Checks.checkProductSectionList(modifiedList);
-      
-      // TODO What to modify, to confirm that changes took effect?
+      // Retrieve the modified section
+      ProductSectionList modified = vAppClient.getProductSections(vApp.getHref());
+
+      // Check the retrieved object is well formed
+      checkProductSectionList(modified);
+
+      // Check the modified section fields are set correctly
+      assertEquals(modified.getProductSections().size(), oldSections.getProductSections().size() + 1);
+
+      // Check the section was modified correctly
+      assertEquals(modified, newSections, String.format(ENTITY_EQUAL, "ProductSectionList"));
    }
 
    @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testGetVApp" })
