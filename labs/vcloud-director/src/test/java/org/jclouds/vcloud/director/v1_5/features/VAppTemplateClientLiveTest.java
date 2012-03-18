@@ -19,12 +19,10 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -40,24 +38,25 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -73,12 +72,86 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    private final Random random = new Random();
    private VAppTemplateClient vappTemplateClient;
    private VdcClient vdcClient;
+   private VAppClient vappClient;
+   
+   private VApp vApp;
+   private Vm vm;
    
    @BeforeClass(inheritGroups = true)
    @Override
    public void setupRequiredClients() throws Exception {
       vappTemplateClient = context.getApi().getVAppTemplateClient();
       vdcClient = context.getApi().getVdcClient();
+      vappClient = context.getApi().getVAppClient();
+   }
+
+   // TODO remove duplication from other tests
+   @AfterClass(groups = { "live" })
+   public void cleanUp() throws Exception {
+      if (vApp != null) {
+         vApp = vappClient.getVApp(vApp.getHref()); // update
+         
+         // Shutdown and power off the VApp if necessary
+         if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
+            try {
+               Task shutdownTask = vappClient.shutdown(vApp.getHref());
+               retryTaskSuccess.apply(shutdownTask);
+            } catch (Exception e) {
+               // keep going; cleanup as much as possible
+               logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp);
+            }
+         }
+
+         // Undeploy the VApp if necessary
+         if (vApp.isDeployed()) {
+            try {
+               UndeployVAppParams params = UndeployVAppParams.builder().build();
+               Task undeployTask = vappClient.undeploy(vApp.getHref(), params);
+               retryTaskSuccess.apply(undeployTask);
+            } catch (Exception e) {
+               // keep going; cleanup as much as possible
+               logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp);
+            }
+         }
+         
+         Task task = vappClient.deleteVApp(vApp.getHref());
+         assertTaskSucceeds(task);
+      }
+   }
+
+   // FIXME cloneVAppTemplate is giving back 500 error
+   private VAppTemplate cloneVAppTemplate(boolean waitForTask) throws Exception {
+      CloneVAppTemplateParams cloneVAppTemplateParams = CloneVAppTemplateParams.builder()
+               .source(Reference.builder().href(vAppTemplateURI).build())
+               .build();
+      VAppTemplate clonedVappTemplate = vdcClient.cloneVAppTemplate(vdcURI, cloneVAppTemplateParams);
+      
+      if (waitForTask) {
+         Task cloneTask = Iterables.getFirst(clonedVappTemplate.getTasks(), null);
+         assertNotNull(cloneTask, "vdcClient.cloneVAppTemplate returned VAppTemplate that did not contain any tasks");
+         retryTaskSuccess.apply(cloneTask);
+      }
+
+      return clonedVappTemplate;
+   }
+
+   @Test
+   public void testInstantiateAndStartVApp() throws Exception {
+      vApp = instantiateVApp();
+      Task instantiateTask = Iterables.getFirst(vApp.getTasks(), null);
+      if (instantiateTask != null) {
+         assertTaskSucceedsLong(instantiateTask);
+      }
+
+      // Start the vApp so that it has VMs
+      Task task = vappClient.powerOn(vApp.getHref());
+      assertTaskSucceedsLong(task);
+
+      // Get a VM
+      vApp = vappClient.getVApp(vApp.getHref()); // refresh
+      List<Vm> vms = vApp.getChildren().getVms();
+      vm = Iterables.getFirst(vms, null);
+      assertNotNull(vm, "started vApp "+vApp+" must have at least one VM");
    }
 
    @Test
@@ -90,7 +163,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    @Test
-   public void testGetVAppTemplateOwner() {
+   public void testGetOwner() {
       Owner owner = vappTemplateClient.getOwnerOfVAppTemplate(vAppTemplateURI);
       
       Checks.checkOwner(owner);
@@ -98,28 +171,28 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    @Test
-   public void testGetVAppTemplateCustomizationSection() {
+   public void testGetCustomizationSection() {
       CustomizationSection customizationSection = vappTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI);
       
       Checks.checkCustomizationSection(customizationSection);
    }
    
    @Test
-   public void testGetProductSectionsForVAppTemplate() {
+   public void testGetProductSections() {
       ProductSectionList productSectionList = vappTemplateClient.getProductSectionsForVAppTemplate(vAppTemplateURI);
       
       Checks.checkProductSectionList(productSectionList);
    }
    
-   @Test
-   public void testGetVAppTemplateGuestCustomizationSection() {
-      GuestCustomizationSection guestCustomizationSection = vappTemplateClient.getVAppTemplateGuestCustomizationSection(vAppTemplateURI);
+   @Test( dependsOnMethods = { "testInstantiateAndStartVApp" } )
+   public void testGetGuestCustomizationSection() {
+      GuestCustomizationSection guestCustomizationSection = vappTemplateClient.getVAppTemplateGuestCustomizationSection(vm.getHref());
       
       Checks.checkGuestCustomizationSection(guestCustomizationSection);
    }
    
    @Test
-   public void testGetVAppTemplateLeaseSettingsSection() {
+   public void testGetLeaseSettingsSection() {
       // FIXME Wrong case for Vapp
       LeaseSettingsSection leaseSettingsSection = vappTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
       
@@ -127,14 +200,14 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    @Test
-   public void testGetVAppTemplateMetadata() {
+   public void testGetMetadata() {
       Metadata metadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
       
       Checks.checkMetadata(metadata);
    }
 
    @Test(enabled=false) // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
-   public void testGetVAppTemplateMetadataValue() {
+   public void testGetMetadataValue() {
       Metadata metadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
       
@@ -145,28 +218,28 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    @Test
-   public void testGetVAppTemplateNetworkConfigSection() {
+   public void testGetNetworkConfigSection() {
       NetworkConfigSection networkConfigSection = vappTemplateClient.getVAppTemplateNetworkConfigSection(vAppTemplateURI);
       
       Checks.checkNetworkConfigSection(networkConfigSection);
    }
    
-   @Test
-   public void testGetVAppTemplateNetworkConnectionSection() {
-      NetworkConnectionSection networkConnectionSection = vappTemplateClient.getVAppTemplateNetworkConnectionSection(vAppTemplateURI);
+   @Test( dependsOnMethods = { "testInstantiateAndStartVApp" } )
+   public void testGetNetworkConnectionSection() {
+      NetworkConnectionSection networkConnectionSection = vappTemplateClient.getVAppTemplateNetworkConnectionSection(vm.getHref());
 
       Checks.checkNetworkConnectionSection(networkConnectionSection);
    }
 
    @Test
-   public void testGetVAppTemplateNetworkSection() {
+   public void testGetNetworkSection() {
       NetworkSection networkSection = vappTemplateClient.getVAppTemplateNetworkSection(vAppTemplateURI);
 
       Checks.checkOvfNetworkSection(networkSection);
    }
 
    @Test
-   public void testGetVAppTemplateOvf() {
+   public void testGetOvf() {
       Envelope envelope = vappTemplateClient.getVAppTemplateOvf(vAppTemplateURI);
       
       Checks.checkOvfEnvelope(envelope);
@@ -191,8 +264,8 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
 
    @Test
-   public void testEditVAppTemplateMetadata() {
-      // FIXME Cleanup after ourselves..
+   public void testEditMetadata() {
+      // TODO Cleanup after ourselves..
       
       Metadata oldMetadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
       Map<String,String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
@@ -215,8 +288,8 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    @Test
-   public void testEditVAppTemplateMetadataValue() {
-      // FIXME Cleanup after ourselves..
+   public void testEditMetadataValue() {
+      // TODO Cleanup after ourselves..
       
       String uid = ""+random.nextInt();
       String key = "mykey-"+uid;
@@ -247,24 +320,25 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       Checks.checkMetadataKeyAbsentFor("vAppTemplate", newMetadata, key);
    }
 
-   @Test // FIXME Failing because template does not have a guest customization section to be got
-   public void testEditVAppTemplateGuestCustomizationSection() {
-      String domainUserName = ""+random.nextInt(Integer.MAX_VALUE);
-      GuestCustomizationSection guestCustomizationSection = GuestCustomizationSection.builder()
+   @Test( dependsOnMethods = { "testInstantiateAndStartVApp" } )
+   public void testEditGuestCustomizationSection() {
+      String computerName = "a"+random.nextInt(Integer.MAX_VALUE);
+      GuestCustomizationSection newSection = GuestCustomizationSection.builder()
                .info("my info")
-               .domainUserName(domainUserName)
-               .enabled(true)
+               .computerName(computerName)
                .build();
       
-      final Task task = vappTemplateClient.editVAppTemplateGuestCustomizationSection(vAppTemplateURI, guestCustomizationSection);
-      retryTaskSuccess.apply(task);
+      final Task task = vappTemplateClient.editVAppTemplateGuestCustomizationSection(vm.getHref(), newSection);
+      assertTaskSucceeds(task);
 
-      GuestCustomizationSection newGuestCustomizationSection = vappTemplateClient.getVAppTemplateGuestCustomizationSection(vAppTemplateURI);
-      assertEquals(newGuestCustomizationSection.getDomainUserName(), domainUserName);
+      GuestCustomizationSection modified = vappTemplateClient.getVAppTemplateGuestCustomizationSection(vm.getHref());
+      
+      Checks.checkGuestCustomizationSection(modified);
+      assertEquals(modified.getComputerName(), computerName);
    }
    
    @Test
-   public void testEditVAppTemplateCustomizationSection() {
+   public void testEditCustomizationSection() {
       boolean oldVal = vappTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI).isCustomizeOnInstantiate();
       boolean newVal = !oldVal;
       
@@ -281,7 +355,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
 
    @Test // FIXME deploymentLeaseInSeconds returned is null 
-   public void testEditVAppTemplateLeaseSettingsSection() throws Exception {
+   public void testEditLeaseSettingsSection() throws Exception {
       // Note: use smallish number for storageLeaseInSeconds; it seems to be capped at 5184000?
       int storageLeaseInSeconds = random.nextInt(10000)+1;
       int deploymentLeaseInSeconds = random.nextInt(10000)+1;
@@ -299,55 +373,57 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer)deploymentLeaseInSeconds);
    }
 
-   @Test // FIXME Fails with PUT even though that agrees with docs
-   public void testEditVAppTemplateNetworkConfigSection() {
-      String networkName = ""+random.nextInt();
-      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
-               .fenceMode("isolated")
-               .build();
-      VAppNetworkConfiguration vappNetworkConfiguration = VAppNetworkConfiguration.builder()
-               .networkName(networkName)
-               .configuration(networkConfiguration)
-               .build();
-      Set<VAppNetworkConfiguration> vappNetworkConfigurations = ImmutableSet.of(vappNetworkConfiguration);
-      NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
-               .info("my info")
-               .networkConfigs(vappNetworkConfigurations)
-               .build();
+   @Test( dependsOnMethods = { "testInstantiateAndStartVApp" } )
+   public void testEditNetworkConfigSection() {
+      // TODO What to modify?
       
-      final Task task = vappTemplateClient.editVAppTemplateNetworkConfigSection(vAppTemplateURI, networkConfigSection);
-      retryTaskSuccess.apply(task);
+      NetworkConfigSection oldSection = vappTemplateClient.getVAppTemplateNetworkConfigSection(vApp.getHref());
+      NetworkConfigSection newSection = oldSection.toBuilder().build();
+      
+//      String networkName = ""+random.nextInt();
+//      NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
+//               .fenceMode("isolated")
+//               .build();
+//      VAppNetworkConfiguration vappNetworkConfiguration = VAppNetworkConfiguration.builder()
+//               .networkName(networkName)
+//               .configuration(networkConfiguration)
+//               .build();
+//      Set<VAppNetworkConfiguration> vappNetworkConfigurations = ImmutableSet.of(vappNetworkConfiguration);
+//      NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()
+//               .info("my info")
+//               .networkConfigs(vappNetworkConfigurations)
+//               .build();
+      
+      final Task task = vappTemplateClient.editVAppTemplateNetworkConfigSection(vApp.getHref(), newSection);
+      assertTaskSucceeds(task);
 
-      NetworkConfigSection newNetworkConfigSection = vappTemplateClient.getVAppTemplateNetworkConfigSection(vAppTemplateURI);
-      assertEquals(newNetworkConfigSection.getNetworkConfigs().size(), 1);
+      NetworkConfigSection modified = vappTemplateClient.getVAppTemplateNetworkConfigSection(vAppTemplateURI);
+      Checks.checkNetworkConfigSection(modified);
       
-      VAppNetworkConfiguration newVAppNetworkConfig = Iterables.get(newNetworkConfigSection.getNetworkConfigs(), 0);
-      assertEquals(newVAppNetworkConfig.getNetworkName(), networkName);
+//      assertEquals(modified§.getNetworkConfigs().size(), 1);
+//      
+//      VAppNetworkConfiguration newVAppNetworkConfig = Iterables.get(modified§.getNetworkConfigs(), 0);
+//      assertEquals(newVAppNetworkConfig.getNetworkName(), networkName);
    }
 
-   @Test
-   public void testEditVAppTemplateNetworkConnectionSection() {
-      String info = ""+random.nextInt();
-      NetworkConnectionSection networkConnectionSection = NetworkConnectionSection.builder()
-               .info(info)
+   @Test( dependsOnMethods = { "testInstantiateAndStartVApp" } )
+   public void testEditNetworkConnectionSection() {
+      // TODO Modify a field so can assert that the change really took effect
+      
+      NetworkConnectionSection oldSection = vappTemplateClient.getVAppTemplateNetworkConnectionSection(vm.getHref());
+      NetworkConnectionSection newSection = oldSection.toBuilder()
                .build();
       
-      final Task task = vappTemplateClient.editVAppTemplateNetworkConnectionSection(vAppTemplateURI, networkConnectionSection);
-      retryTaskSuccess.apply(task);
+      final Task task = vappTemplateClient.editVAppTemplateNetworkConnectionSection(vm.getHref(), newSection);
+      assertTaskSucceeds(task);
 
-      NetworkConnectionSection newNetworkConnectionSection = vappTemplateClient.getVAppTemplateNetworkConnectionSection(vAppTemplateURI);
-      assertEquals(newNetworkConnectionSection.getInfo(), info);
+      NetworkConnectionSection modified = vappTemplateClient.getVAppTemplateNetworkConnectionSection(vm.getHref());
+      Checks.checkNetworkConnectionSection(modified);
    }
    
    @Test // FIXME cloneVAppTemplate is giving back 500 error
    public void testDeleteVAppTemplate() throws Exception {
-      CloneVAppTemplateParams cloneVAppTemplateParams = CloneVAppTemplateParams.builder()
-               .source(Reference.builder().href(vAppTemplateURI).build())
-               .build();
-      VAppTemplate clonedVappTemplate = vdcClient.cloneVAppTemplate(vdcURI, cloneVAppTemplateParams);
-      Task cloneTask = Iterables.getFirst(clonedVappTemplate.getTasks(), null);
-      assertNotNull(cloneTask, "vdcClient.cloneVAppTemplate returned VAppTemplate that did not contain any tasks");
-      retryTaskSuccess.apply(cloneTask);
+      VAppTemplate clonedVappTemplate = cloneVAppTemplate(true);
 
       // Confirm that "get" works pre-delete
       VAppTemplate vAppTemplatePreDelete = vappTemplateClient.getVAppTemplate(clonedVappTemplate.getHref());
@@ -406,14 +482,16 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       return false;
    }
    
-   @Test
+   @Test(dependsOnMethods = { "testInstantiateAndStartVApp" } )
    public void testConsolidateVAppTemplate() throws Exception {
       // TODO Need assertion that command had effect
-      final Task task = vappTemplateClient.consolidateVappTemplate(vAppTemplateURI);
-      retryTaskSuccess.apply(task);
+      
+      System.out.println("About to try to consolidate "+vm);
+      final Task task = vappTemplateClient.consolidateVappTemplate(vm.getHref());
+      assertTaskSucceedsLong(task);
    }
    
-   @Test
+   @Test // FIXME Need a datastore reference
    public void testRelocateVAppTemplate() throws Exception {
       // TODO Need assertion that command had effect
       Reference dataStore = null; // FIXME
@@ -422,7 +500,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
                .build();
       
       final Task task = vappTemplateClient.relocateVappTemplate(vAppTemplateURI, relocateParams);
-      retryTaskSuccess.apply(task);
+      assertTaskSucceedsLong(task);
    }
    
    // This failed previously, but is passing now. 

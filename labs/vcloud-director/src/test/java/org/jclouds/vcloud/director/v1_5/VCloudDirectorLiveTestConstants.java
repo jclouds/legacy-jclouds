@@ -85,7 +85,7 @@ public class VCloudDirectorLiveTestConstants {
 
    public static final String NOT_EMPTY_STRING_FMT = "ERR-126: The %s field must not be an empty string";
 
-   public static final String MATCHES_STRING_FMT = "ERR-127: The %s field must match the pattern \"%s\"";
+   public static final String MATCHES_STRING_FMT = "ERR-127: The %s field must match the pattern \"%s\" (%s)";
 
    /* Error codes from 300 to 399 reflect entities and their links and relationship errors. */ 
    
