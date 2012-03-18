@@ -22,17 +22,19 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.domain.Flavor;
-import org.jclouds.openstack.nova.v1_1.domain.Image;
-import org.jclouds.openstack.nova.v1_1.domain.RebootType;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v1_1.domain.*;
+import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
@@ -40,11 +42,14 @@ import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * The adapter used by the NovaComputeServiceContextModule to interface the
  * nova-specific domain model to the computeService generic domain model.
- * 
+ *
  * @author Matt Stephenson
  */
 public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, Flavor, Image, Location> {
@@ -54,6 +59,12 @@ public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, 
    private final FlavorClient defaultFlavorClient;
    private final ImageClient defaultImageClient;
    private final Set<String> regions;
+   private final String defaultRegion;
+
+   @Inject
+   @Named(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS)
+   @VisibleForTesting
+   boolean autoAllocateFloatingIps = false;
 
    @Inject
    public NovaComputeServiceAdapter(NovaClient novaClient) {
@@ -63,20 +74,47 @@ public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, 
          throw new IllegalStateException(
                "No regions exist for this compute service.  The Nova compute service requires at least 1 region.");
       }
-      String region = regions.iterator().next();
-      this.defaultLocationServerClient = novaClient.getServerClientForRegion(region);
-      this.defaultFlavorClient = novaClient.getFlavorClientForRegion(region);
-      this.defaultImageClient = novaClient.getImageClientForRegion(region);
+      this.defaultRegion = regions.iterator().next();
+      this.defaultLocationServerClient = novaClient.getServerClientForRegion(defaultRegion);
+      this.defaultFlavorClient = novaClient.getFlavorClientForRegion(defaultRegion);
+      this.defaultImageClient = novaClient.getImageClientForRegion(defaultRegion);
    }
 
    @Override
    public NodeAndInitialCredentials<Server> createNodeWithGroupEncodedIntoName(String tag, String name,
          Template template) {
-      ServerClient serverClient = template.getLocation() != null ? novaClient.getServerClientForRegion(template
-            .getLocation().getId()) : defaultLocationServerClient;
+      String region = template.getLocation() == null ? defaultRegion : template.getLocation().getId();
+      ServerClient serverClient = template.getLocation() != null ? novaClient.getServerClientForRegion(template.getLocation().getId()) : defaultLocationServerClient;
       // TODO: make NovaTemplateOptions with the following:
       // security group, key pair, floating ip (attach post server-create?)
+      NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(template.getOptions());
+      
+      boolean autoAllocateFloatingIps = templateOptions.getFloatingIps().isEmpty() &&
+            (this.autoAllocateFloatingIps || templateOptions.isAutoAssignFloatingIp());
+      Set<String> floatingIps = templateOptions.getFloatingIps();
+      FloatingIPClient floatingIPClient = null;
+
+      if (autoAllocateFloatingIps || !templateOptions.getFloatingIps().isEmpty()) {
+         Optional<FloatingIPClient> floatingIPClientWrapper = novaClient.getFloatingIPExtensionForRegion(region);
+         checkArgument(floatingIPClientWrapper.isPresent(), "Floating IP settings are required by configuration, but the extension is not available!");
+         floatingIPClient = floatingIPClientWrapper.get();
+      }
+
+      // Allocate floating ip(s)
+      if (floatingIPClient != null && autoAllocateFloatingIps) {
+         floatingIps.add(floatingIPClient.allocate().getId());
+      }
+
       Server server = serverClient.createServer(name, template.getImage().getId(), template.getHardware().getId());
+
+      // Attaching floating ip(s) to server
+      // TODO what if we're creating n nodes in group? the user would likely expect a single floatingIp per server!
+      if (floatingIPClient != null) {
+         for (String floatingIp : floatingIps) {
+            floatingIPClient.addFloatingIP(server.getId(), floatingIp);
+         }
+      }
+
       return new NodeAndInitialCredentials<Server>(server, server.getId() + "", LoginCredentials.builder()
             .password(server.getAdminPass()).build());
    }
