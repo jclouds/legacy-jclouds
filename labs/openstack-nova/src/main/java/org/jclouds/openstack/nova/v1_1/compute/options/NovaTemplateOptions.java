@@ -18,19 +18,15 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.options;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
+import java.util.Map;
+
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import com.google.common.base.Objects;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on
@@ -63,12 +59,10 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       if (to instanceof NovaTemplateOptions) {
          NovaTemplateOptions eTo = NovaTemplateOptions.class.cast(to);
          eTo.autoAssignFloatingIp(isAutoAssignFloatingIp());
-         eTo.floatingIps(getFloatingIps());
       }
    }
 
    private boolean autoAssignFloatingIp = false;
-   private Set<String> floatingIps = ImmutableSet.of();
 
    public static final NovaTemplateOptions NONE = new NovaTemplateOptions();
 
@@ -76,7 +70,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
     * @see #isAutoAssignFloatingIp()
     */
    public NovaTemplateOptions autoAssignFloatingIp(boolean enable) {
-      checkState(floatingIps.isEmpty(), "Cannot auto assign when a floating ip is configured");
       this.autoAssignFloatingIp = enable;
       return this;
    }
@@ -88,22 +81,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       return autoAssignFloatingIp;
    }
 
-   /**
-    * @see #getFloatingIps()
-    */
-   public NovaTemplateOptions floatingIps(Set<String> floatingIps) {
-      checkState(!autoAssignFloatingIp, "Cannot assign a floating ip when auto assign floating up is enabled");
-      this.floatingIps = ImmutableSet.copyOf(checkNotNull(floatingIps, "floatingIps"));
-      return this;
-   }
-
-   /**
-    * @return the ids of the configured floating ips
-    */
-   public Set<String> getFloatingIps() {
-      return floatingIps;
-   }
-
    public static class Builder {
 
       /**
@@ -111,13 +88,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
        */
       public static NovaTemplateOptions autoAssignFloatingIp(boolean enable) {
          return new NovaTemplateOptions().autoAssignFloatingIp(enable);
-      }
-
-      /**
-       * @see NovaTemplateOptions#
-       */
-      public static NovaTemplateOptions floatingIp(Set<String> floatingIps) {
-         return new NovaTemplateOptions().floatingIps(floatingIps);
       }
 
       // methods that only facilitate returning the correct object type
@@ -389,6 +359,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
 
    @Override
    public String toString() {
-      return String.format("[autoAssignFloatingIp=%s, floatingIps=%s]", autoAssignFloatingIp, floatingIps);
+      return String.format("[autoAssignFloatingIp=%s]", autoAssignFloatingIp);
    }
 }

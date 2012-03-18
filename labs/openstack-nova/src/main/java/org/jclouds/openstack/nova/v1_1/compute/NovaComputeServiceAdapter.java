@@ -18,14 +18,14 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
@@ -33,18 +33,19 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
-import org.jclouds.openstack.nova.v1_1.domain.*;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
+import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
+import org.jclouds.openstack.nova.v1_1.domain.RebootType;
+import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
+import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * The adapter used by the NovaComputeServiceContextModule to interface the
@@ -89,32 +90,21 @@ public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, 
       // security group, key pair, floating ip (attach post server-create?)
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(template.getOptions());
       
-      boolean autoAllocateFloatingIps = templateOptions.getFloatingIps().isEmpty() &&
+      boolean autoAllocateFloatingIps = 
             (this.autoAllocateFloatingIps || templateOptions.isAutoAssignFloatingIp());
-      Set<String> floatingIps = templateOptions.getFloatingIps();
-      FloatingIPClient floatingIPClient = null;
-
-      if (autoAllocateFloatingIps || !templateOptions.getFloatingIps().isEmpty()) {
-         Optional<FloatingIPClient> floatingIPClientWrapper = novaClient.getFloatingIPExtensionForRegion(region);
-         checkArgument(floatingIPClientWrapper.isPresent(), "Floating IP settings are required by configuration, but the extension is not available!");
-         floatingIPClient = floatingIPClientWrapper.get();
-      }
-
-      // Allocate floating ip(s)
-      if (floatingIPClient != null && autoAllocateFloatingIps) {
-         floatingIps.add(floatingIPClient.allocate().getId());
+      
+      String floatingIp = null;
+      if (autoAllocateFloatingIps) {
+         checkArgument(novaClient.getFloatingIPExtensionForRegion(region).isPresent(), "Floating IP settings are required by configuration, but the extension is not available!");
+         floatingIp = novaClient.getFloatingIPExtensionForRegion(region).get().allocate().getId();
       }
 
       Server server = serverClient.createServer(name, template.getImage().getId(), template.getHardware().getId());
 
       // Attaching floating ip(s) to server
-      // TODO what if we're creating n nodes in group? the user would likely expect a single floatingIp per server!
-      if (floatingIPClient != null) {
-         for (String floatingIp : floatingIps) {
-            floatingIPClient.addFloatingIP(server.getId(), floatingIp);
-         }
-      }
-
+      if (floatingIp != null) 
+         novaClient.getFloatingIPExtensionForRegion(region).get().addFloatingIP(server.getId(), floatingIp);
+    
       return new NodeAndInitialCredentials<Server>(server, server.getId() + "", LoginCredentials.builder()
             .password(server.getAdminPass()).build());
    }
