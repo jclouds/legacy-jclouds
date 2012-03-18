@@ -61,12 +61,11 @@ public class LoadFloatingIpsForInstance extends CacheLoader<RegionAndName, Itera
                   public boolean apply(FloatingIP input) {
                      return key.getName().equals(input.getInstanceId());
                   }
-
                }),
                new Function<FloatingIP, String>() {
                   @Override
                   public String apply(FloatingIP input) {
-                     return input.getInstanceId();
+                     return input.getIp();
                   }
                });
       }
