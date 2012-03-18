@@ -70,9 +70,9 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    public BaseVirtualBoxClientLiveTest() {
       provider = "virtualbox";
    }
-   
+
    protected ComputeServiceContext context;
-   
+
    @Inject
    protected MachineController machineController;
 
@@ -106,8 +106,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
    @Inject
    protected LoadingCache<Image, Master> mastersCache;
-   
-   private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor(); 
+
+   private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor();
 
    @Override
    protected void setupCredentials() {
@@ -119,10 +119,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    protected void ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults() {
-      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder().build();
       if (!System.getProperties().containsKey("test." + provider + ".identity"))
-         System.setProperty("test." + provider + ".identity",
-                  defaultVBoxProperties.getProperty(Constants.PROPERTY_IDENTITY));
+         System.setProperty("test." + provider + ".identity", "administrator");
    }
 
    @BeforeClass(groups = "live")
@@ -133,7 +131,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
                .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), new ExecutorServiceModule(
                         singleThreadExec, singleThreadExec)), overrides);
-      
+
       context.utils().injector().injectMembers(this);
 
       imageId = "ubuntu-11.04-server-i386";
@@ -142,20 +140,17 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
-      
+
       // try and get a master from the cache, this will initialize the config/download isos and
       // prepare everything IF a master is not available, subsequent calls should be pretty fast
       Template template = context.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
    }
 
-
    protected void undoVm(VmSpec vmSpecification) {
       machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(),
                new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
    }
-
-
 
    public String adminDisk(String vmName) {
       return workingDir + File.separator + vmName + ".vdi";
