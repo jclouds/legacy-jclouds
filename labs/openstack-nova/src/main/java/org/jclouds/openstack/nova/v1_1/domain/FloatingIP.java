@@ -104,7 +104,7 @@ public class FloatingIP implements Comparable<FloatingIP> {
    }
 
    public String getInstanceId() {
-      return this.fixedIp;
+      return this.instanceId;
    }
 
    @Override
