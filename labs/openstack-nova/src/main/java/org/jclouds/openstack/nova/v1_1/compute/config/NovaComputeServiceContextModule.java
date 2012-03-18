@@ -18,11 +18,9 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.config;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.inject.Provides;
-import com.google.inject.name.Names;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
@@ -36,16 +34,22 @@ import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
-import org.jclouds.openstack.nova.v1_1.compute.functions.*;
+import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorToHardware;
+import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToImage;
+import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ServerToNodeMetadata;
+import org.jclouds.openstack.nova.v1_1.compute.loaders.LoadFloatingIpsForInstance;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 
 import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.name.Names;
 
 /**
  * Module for building a compute service context for Nova

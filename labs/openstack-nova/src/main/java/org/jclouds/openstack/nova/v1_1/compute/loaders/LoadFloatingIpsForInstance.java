@@ -16,7 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.functions;
+package org.jclouds.openstack.nova.v1_1.compute.loaders;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
+import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -24,16 +32,6 @@ import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
-import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 /**
  * @author Adam Lowe
