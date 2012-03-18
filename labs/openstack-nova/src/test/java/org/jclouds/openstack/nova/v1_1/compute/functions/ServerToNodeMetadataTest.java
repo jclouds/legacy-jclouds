@@ -23,7 +23,11 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.UUID;
 
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+import org.easymock.EasyMock;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
@@ -45,8 +49,11 @@ public class ServerToNodeMetadataTest {
             .privateAddresses(Address.createV4("10.0.0.1")).publicAddresses(Address.createV4("1.0.1.1"))
             .status(ServerStatus.ACTIVE).metadata(ImmutableMap.of("test", "testing")).build();
 
-      ServerToNodeMetadata converter = new ServerToNodeMetadata();
+      LoadingCache<RegionAndName, Iterable<String>> mockLoadingCache = EasyMock.createMock(LoadingCache.class);
+      EasyMock.expect(mockLoadingCache.getUnchecked(new RegionAndName(null, id.toString()))).andReturn(ImmutableSet.<String>of());
+      EasyMock.replay(mockLoadingCache);
 
+      ServerToNodeMetadata converter = new ServerToNodeMetadata(mockLoadingCache);
       NodeMetadata convertedNodeMetadata = converter.apply(serverToConvert);
 
       assertEquals(serverToConvert.getId(), convertedNodeMetadata.getId());
@@ -65,5 +72,7 @@ public class ServerToNodeMetadataTest {
       assertNotNull(convertedNodeMetadata.getUserMetadata());
       assertEquals(convertedNodeMetadata.getUserMetadata().size(), 1);
       assertEquals(convertedNodeMetadata.getUserMetadata().get("test"), "testing");
-   }
+
+      EasyMock.verify(mockLoadingCache);
+   }   
 }

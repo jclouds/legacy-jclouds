@@ -23,7 +23,9 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -34,26 +36,52 @@ import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests the compute service abstraction of the nova client.
- * 
+ *
  * @author Matt Stephenson
  */
 @Test(groups = "unit", testName = "NovaComputeServiceExpectTest")
 public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
 
    public void testListServersWhenResponseIs2xx() throws Exception {
+      HttpRequest getExtensions = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/extensions"))
+            .headers(
+                  ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest listFloatingIps = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-floating-ips"))
+            .headers(
+                  ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
       HttpRequest listServers = HttpRequest
             .builder()
             .method("GET")
             .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/detail"))
             .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                  ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
+
+
+      HttpResponse getExtensionsResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/extension_list_normal.json")).build();
+      
+      HttpResponse listFloatingIpsResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/floatingip_list.json")).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list_details.json")).build();
 
-      ComputeService clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, listServers, listServersResponse);
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.of(
+            keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess,
+            listFloatingIps, listFloatingIpsResponse,
+            getExtensions, getExtensionsResponse,
+            listServers, listServersResponse);
+
+      ComputeService clientWhenServersExist = requestsSendResponses(requestResponseMap);
 
       assertNotNull(clientWhenServersExist.listAssignableLocations());
       assertEquals(clientWhenServersExist.listAssignableLocations().size(), 1);
@@ -71,7 +99,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
             .method("GET")
             .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/detail"))
             .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                  ImmutableMultimap.<String, String>builder().put("Accept", "application/json")
                         .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();

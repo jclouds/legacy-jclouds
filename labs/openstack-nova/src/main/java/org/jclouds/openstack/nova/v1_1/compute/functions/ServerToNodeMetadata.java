@@ -18,8 +18,10 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
+import com.google.common.cache.LoadingCache;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
+import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 
@@ -27,23 +29,36 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A function for transforming a nova-specific Server into a generic
  * NodeMetadata object.
- * 
+ *
  * @author Matt Stephenson
  */
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
+   private final LoadingCache<RegionAndName, Iterable<String>> floatingIpCache;
+
+   @Inject
+   public ServerToNodeMetadata(@Named("FLOATINGIP") LoadingCache<RegionAndName, Iterable<String>> floatingIpCache) {
+      this.floatingIpCache = checkNotNull(floatingIpCache, "cache");
+   }
 
    @Override
    public NodeMetadata apply(Server server) {
       return new NodeMetadataBuilder()
             // TODO: scope id to region, if there's a chance for conflict
+            // TODO: pass correct region into floatingIpCache request
             .id(server.getId())
             .providerId(server.getId())
             .name(server.getName())
             .publicAddresses(
-                  Iterables.transform(server.getPublicAddresses(), new AddressToStringTransformationFunction()))
+                  Iterables.concat(Iterables.transform(server.getPublicAddresses(), new AddressToStringTransformationFunction()),
+                        floatingIpCache.getUnchecked(new RegionAndName(null, server.getId()))))
             .privateAddresses(
                   Iterables.transform(server.getPrivateAddresses(), new AddressToStringTransformationFunction()))
             .state(server.getStatus().getNodeState()).userMetadata(ImmutableMap.copyOf(server.getMetadata())).build();
