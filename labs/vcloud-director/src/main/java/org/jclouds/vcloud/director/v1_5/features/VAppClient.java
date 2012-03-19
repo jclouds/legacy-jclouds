@@ -434,12 +434,6 @@ public interface VAppClient {
    Task insertMedia(URI vmURI, MediaInsertOrEjectParams mediaParams);
 
    /**
-    * @return synchronous access to {@link Metadata} features
-    */
-   @Delegate
-   MetadataClient.Writeable getMetadataClient();
-
-   /**
     * Retrieves the network config section of a vApp or vApp template.
     *
     * <pre>
@@ -791,4 +785,10 @@ public interface VAppClient {
     * @since 1.5
     */
    Task modifyVirtualHardwareSectionSerialPorts(URI vAppURI, RasdItemsList rasdItemsList);
+
+   /**
+    * @return synchronous access to {@link Metadata} features
+    */
+   @Delegate
+   MetadataClient.Writeable getMetadataClient();
 }
