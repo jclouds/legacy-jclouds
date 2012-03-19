@@ -56,6 +56,7 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
@@ -82,6 +83,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
+import org.jclouds.vcloud.director.v1_5.functions.ReturnPayloadBytes;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -538,8 +540,8 @@ public interface VAppAsyncClient {
    @GET
    @Path("/screen")
    @Consumes(ANY_IMAGE)
-   @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ResponseParser(ReturnPayloadBytes.class)
    ListenableFuture<byte[]> getScreenImage(@EndpointParam URI vAppURI);
 
    /**
