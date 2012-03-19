@@ -149,7 +149,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    @BeforeClass(inheritGroups = true)
-   public void setupEnvironment() {
+   public void setupEnvironment() throws Exception {
       vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
 
@@ -1160,7 +1160,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    // NOTE This method is also called by the BeforeClass method setupRequiredClients
    @AfterClass(alwaysRun = true, description = "Clean up the environment by deleting created VApps named 'test-vapp' or 'new-name'")
-   public void cleanUp() {
+   public void cleanUp() throws Exception {
       // Find references in the Vdc with the VApp type and named 'test-vapp' or 'new-name'
       Iterable<Reference> vApps = Iterables.filter(
             vdc.getResourceEntities().getResourceEntities(),
@@ -1176,25 +1176,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // If we found any references, delete the VApp they point to
       if (vApps != null && !Iterables.isEmpty(vApps)) {
          for (Reference each : vApps) {
-            VApp found = vAppClient.getVApp(each.getHref());
-            // debug(found);
-
-            // Shutdown and power off the VApp if necessary
-            if (found.getStatus().equals(Status.POWERED_ON.getValue())) {
-               Task shutdownTask = vAppClient.shutdown(found.getHref());
-               retryTaskSuccess.apply(shutdownTask);
-            }
-
-            // Undeploy the VApp if necessary
-            if (found.isDeployed()) {
-               UndeployVAppParams params = UndeployVAppParams.builder().build();
-               Task undeployTask = vAppClient.undeploy(found.getHref(), params);
-               retryTaskSuccess.apply(undeployTask);
-            }
-
-            // Delete the VApp
-            Task deleteTask = vAppClient.deleteVApp(found.getHref());
-            retryTaskSuccess.apply(deleteTask);
+            cleanUpVApp(each.getHref());
          }
       }
    }

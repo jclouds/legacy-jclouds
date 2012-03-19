@@ -69,7 +69,6 @@ import com.google.common.collect.Iterables;
 @Test(groups = {"live", "unit", "user"}, testName = "VAppTemplateClientLiveTest")
 public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
-   private final Random random = new Random();
    private VAppTemplateClient vappTemplateClient;
    private VdcClient vdcClient;
    private VAppClient vappClient;
@@ -88,35 +87,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    // TODO remove duplication from other tests
    @AfterClass(groups = { "live" })
    public void cleanUp() throws Exception {
-      if (vApp != null) {
-         vApp = vappClient.getVApp(vApp.getHref()); // update
-         
-         // Shutdown and power off the VApp if necessary
-         if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
-            try {
-               Task shutdownTask = vappClient.shutdown(vApp.getHref());
-               retryTaskSuccess.apply(shutdownTask);
-            } catch (Exception e) {
-               // keep going; cleanup as much as possible
-               logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp);
-            }
-         }
-
-         // Undeploy the VApp if necessary
-         if (vApp.isDeployed()) {
-            try {
-               UndeployVAppParams params = UndeployVAppParams.builder().build();
-               Task undeployTask = vappClient.undeploy(vApp.getHref(), params);
-               retryTaskSuccess.apply(undeployTask);
-            } catch (Exception e) {
-               // keep going; cleanup as much as possible
-               logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp);
-            }
-         }
-         
-         Task task = vappClient.deleteVApp(vApp.getHref());
-         assertTaskSucceeds(task);
-      }
+      if (vApp != null) cleanUpVApp(vApp);
    }
 
    // FIXME cloneVAppTemplate is giving back 500 error

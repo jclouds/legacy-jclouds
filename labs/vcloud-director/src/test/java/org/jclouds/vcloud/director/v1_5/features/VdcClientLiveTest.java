@@ -85,30 +85,24 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private VAppTemplate uploadedVAppTemplate;
    
    @AfterClass(groups = { "live" })
-   public void cleanUp() {
+   public void cleanUp() throws Exception {
       if (clonedVAppTemplate != null) {
-         Task task = vappTemplateClient.deleteVappTemplate(clonedVAppTemplate.getHref());
-         assertTaskSucceeds(task);
+         cleanUpVAppTemplate(clonedVAppTemplate);
       }
       if (capturedVAppTemplate != null) {
-         Task task = vappTemplateClient.deleteVappTemplate(capturedVAppTemplate.getHref());
-         assertTaskSucceeds(task);
+         cleanUpVAppTemplate(capturedVAppTemplate);
       }
       if (uploadedVAppTemplate != null) {
-         Task task = vappTemplateClient.deleteVappTemplate(uploadedVAppTemplate.getHref());
-         assertTaskSucceeds(task);
+         cleanUpVAppTemplate(uploadedVAppTemplate);
       }
       if (instantiatedVApp != null) {
-         Task task = vappClient.deleteVApp(instantiatedVApp.getHref());
-         assertTaskSucceeds(task);
+         cleanUpVApp(instantiatedVApp);
       }
       if (clonedVApp != null) {
-         Task task = vappClient.deleteVApp(clonedVApp.getHref());
-         assertTaskSucceeds(task);
+         cleanUpVApp(clonedVApp);
       }
       if (composedVApp != null) {
-         Task task = vappClient.deleteVApp(composedVApp.getHref());
-         assertTaskSucceeds(task);
+         cleanUpVApp(composedVApp);
       }
    }
 
