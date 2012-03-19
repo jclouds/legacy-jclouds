@@ -21,11 +21,13 @@ package org.jclouds.concurrent;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.any;
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Maps.newConcurrentMap;
 import static com.google.common.collect.Maps.newHashMap;
 import static org.jclouds.util.Throwables2.containsThrowable;
 import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -45,7 +47,6 @@ import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 
 /**
@@ -115,14 +116,14 @@ public class FutureIterables {
 
    public static <T> Map<T, Exception> awaitCompletion(Map<T, ? extends Future<?>> responses, ExecutorService exec,
             @Nullable Long maxTime, final Logger logger, final String logPrefix) {
+      final ConcurrentMap<T, Exception> errorMap = newConcurrentMap();
       if (responses.size() == 0)
-         return ImmutableMap.of();
+         return errorMap;
       final int total = responses.size();
       final CountDownLatch doneSignal = new CountDownLatch(total);
       final AtomicInteger complete = new AtomicInteger(0);
       final AtomicInteger errors = new AtomicInteger(0);
       final long start = System.currentTimeMillis();
-      final Map<T, Exception> errorMap = newHashMap();
       for (final java.util.Map.Entry<T, ? extends Future<?>> future : responses.entrySet()) {
          Futures.makeListenable(future.getValue(), exec).addListener(new Runnable() {
 
