@@ -33,16 +33,15 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(NodeMetadataImpl.class)
 public interface NodeMetadata extends ComputeMetadata {
    /**
-    * <h4>note</h4> hostname is something that is set in the operating system
-    * image, so this value, if present, cannot be guaranteed on images not
-    * directly controlled by the cloud provider.
+    * <h4>note</h4> hostname is something that is set in the operating system image, so this value,
+    * if present, cannot be guaranteed on images not directly controlled by the cloud provider.
     * 
     * @return hostname of the node, or null if unknown
     * 
     */
    @Nullable
    String getHostname();
-   
+
    /**
     * Tag used for all resources that belong to the same logical group. run, destroy commands are
     * scoped to group.
@@ -101,8 +100,11 @@ public interface NodeMetadata extends ComputeMetadata {
 
    /**
     * If possible, these are returned upon all detail requests. However, it is often the case that
-    * credentials are only available at "run" time.
+    * credentials are only available when a node is initially created.
+    * 
+    * @see ComputeServiceContext#credentialStore
     */
+   @Nullable
    LoginCredentials getCredentials();
 
    /**

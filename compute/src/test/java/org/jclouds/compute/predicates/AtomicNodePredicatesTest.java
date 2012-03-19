@@ -29,6 +29,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.domain.LoginCredentials;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -77,6 +78,30 @@ public class AtomicNodePredicatesTest {
       verify(computeService);
 
    }
+
+   @Test
+   public void testRefreshUpdatesAtomicReferenceOnRecheckPendingAcceptsNewCredentials() {
+      LoginCredentials creds = LoginCredentials.builder().user("user").password("password").build();
+      NodeMetadata newNode = new NodeMetadataBuilder().id("myid").state(NodeState.UNRECOGNIZED).credentials(creds).build();
+
+      LoginCredentials creds2 = LoginCredentials.builder().user("user").password("password2").build();
+
+      NodeMetadata pending = new NodeMetadataBuilder().id("myid").state(NodeState.PENDING).credentials(creds2).build();
+      
+      GetNodeMetadataStrategy computeService = createMock(GetNodeMetadataStrategy.class);
+
+      expect(computeService.getNode("myid")).andReturn(pending);
+
+      replay(computeService);
+
+      AtomicNodeRunning nodeRunning = new AtomicNodeRunning(computeService);
+      AtomicReference<NodeMetadata> reference = new AtomicReference<NodeMetadata>(newNode);
+      Assert.assertFalse(nodeRunning.apply(reference));
+      Assert.assertEquals(reference.get(), pending);
+
+      verify(computeService);
+   }
+   
    @Test
    public void testRefreshUpdatesAtomicReferenceOnRecheckRunning() {
       NodeMetadata running = new NodeMetadataBuilder().id("myid").state(NodeState.RUNNING).build();

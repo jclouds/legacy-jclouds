@@ -60,8 +60,8 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeWithGroupEncodedIntoName,
-      DestroyNodeStrategy, GetNodeMetadataStrategy, ListNodesStrategy, RebootNodeStrategy, ResumeNodeStrategy,
-      SuspendNodeStrategy {
+         DestroyNodeStrategy, GetNodeMetadataStrategy, ListNodesStrategy, RebootNodeStrategy, ResumeNodeStrategy,
+         SuspendNodeStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -73,14 +73,14 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
 
    @Inject
    public AdaptingComputeServiceStrategies(Map<String, Credentials> credentialStore,
-         PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate, ComputeServiceAdapter<N, H, I, L> client,
-         Function<N, NodeMetadata> nodeMetadataAdapter) {
+            PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate,
+            ComputeServiceAdapter<N, H, I, L> client, Function<N, NodeMetadata> nodeMetadataAdapter) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.prioritizeCredentialsFromTemplate = checkNotNull(prioritizeCredentialsFromTemplate,
-            "prioritizeCredentialsFromTemplate");
+               "prioritizeCredentialsFromTemplate");
       this.client = checkNotNull(client, "client");
-      this.nodeMetadataAdapter = Functions.compose(addLoginCredentials,
-            checkNotNull(nodeMetadataAdapter, "nodeMetadataAdapter"));
+      this.nodeMetadataAdapter = Functions.compose(addLoginCredentials, checkNotNull(nodeMetadataAdapter,
+               "nodeMetadataAdapter"));
    }
 
    private final Function<NodeMetadata, NodeMetadata> addLoginCredentials = new Function<NodeMetadata, NodeMetadata>() {
@@ -88,8 +88,8 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
       @Override
       public NodeMetadata apply(NodeMetadata arg0) {
          return credentialStore.containsKey("node#" + arg0.getId()) ? NodeMetadataBuilder.fromNodeMetadata(arg0)
-               .credentials(LoginCredentials.fromCredentials(credentialStore.get("node#" + arg0.getId()))).build()
-               : arg0;
+                  .credentials(LoginCredentials.fromCredentials(credentialStore.get("node#" + arg0.getId()))).build()
+                  : arg0;
       }
 
       @Override
@@ -116,7 +116,7 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
       return nodeMetadataAdapter.apply(node);
    }
 
-   //TODO: make reboot/resume/suspend return the node they affected
+   // TODO: make reboot/resume/suspend return the node they affected
    @Override
    public NodeMetadata rebootNode(String id) {
       NodeMetadata node = getNode(checkNotNull(id, "id"));
@@ -166,13 +166,28 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements CreateNodeW
       checkState(name != null && name.indexOf(group) != -1, "name should have %s encoded into it", group);
       checkState(template != null, "template was null");
       checkState(template.getOptions() != null, "template options was null");
-      
+
       NodeAndInitialCredentials<N> from = client.createNodeWithGroupEncodedIntoName(group, name, template);
       LoginCredentials fromNode = from.getCredentials();
       LoginCredentials creds = prioritizeCredentialsFromTemplate.apply(template, fromNode);
-      if (creds != null)
-         credentialStore.put("node#" + from.getNodeId(), creds);
+      String credsKey = "node#" + from.getNodeId();
+      if (creds != null) {
+         credentialStore.put(credsKey, creds);
+      } else {
+         logger.trace("node(%s) creation did not return login credentials", from.getNodeId());
+      }
       NodeMetadata node = nodeMetadataAdapter.apply(from.getNode());
+      //TODO: test case that proves this
+      checkState(node.getId().equals(from.getNodeId()),
+               "nodeAndInitialCredentials.getNodeId() returned %s, while parsed nodemetadata.getId() returned %s", from
+                        .getNodeId(), node.getId());
+      if (creds != null) {
+         Credentials credsFromCache = credentialStore.get(credsKey);
+         //TODO: test case that proves this
+         checkState(node.getCredentials().equals(credsFromCache),
+                  "credentialStore.get(%s): %s does not match node(%s).getCredentials(): %s", credsKey, credsFromCache,
+                  node.getId(), node.getCredentials());
+      }
       return node;
    }
 

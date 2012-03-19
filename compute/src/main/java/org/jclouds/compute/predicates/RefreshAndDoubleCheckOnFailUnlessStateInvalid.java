@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -35,7 +36,9 @@ import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a node is active.
+ * The point of RefreshAndDoubleCheckOnFailUnlessStateInvalid is to keep an atomic reference to a
+ * node, so as to eliminate a redundant {@link ComputeService#getNodeMetadata} call after the
+ * predicate passes.
  * 
  * @author Adrian Cole
  */
@@ -53,7 +56,8 @@ public class RefreshAndDoubleCheckOnFailUnlessStateInvalid implements Predicate<
       this(intended, ImmutableSet.of(NodeState.ERROR), client);
    }
 
-   public RefreshAndDoubleCheckOnFailUnlessStateInvalid(NodeState intended, Set<NodeState> invalids, GetNodeMetadataStrategy client) {
+   public RefreshAndDoubleCheckOnFailUnlessStateInvalid(NodeState intended, Set<NodeState> invalids,
+            GetNodeMetadataStrategy client) {
       this.intended = intended;
       this.client = client;
       this.invalids = invalids;
@@ -74,7 +78,7 @@ public class RefreshAndDoubleCheckOnFailUnlessStateInvalid implements Predicate<
       logger.trace("%s: looking for node state %s: currently: %s", node.getId(), intended, node.getState());
       if (invalids.contains(node.getState()))
          throw new IllegalStateException("node " + node.getId() + " in location " + node.getLocation()
-                  + " is in invalid state "+node.getState());
+                  + " is in invalid state " + node.getState());
       return node.getState() == intended;
    }
 
