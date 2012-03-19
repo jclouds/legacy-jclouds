@@ -118,12 +118,6 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
     */
    @Test(testName = "GET /vApp/{id}")
    public void testGetVApp() {
-      VApp vAppInstantiated = instantiateVApp();
-
-      // Wait for the task to complete
-      Task instantiateTask = Iterables.getOnlyElement(vAppInstantiated.getTasks());
-      assertTrue(retryTaskSuccessLong.apply(instantiateTask), String.format(TASK_COMPLETE_TIMELY, "instantiateTask"));
-
       // The method under test
       vApp = vAppClient.getVApp(vAppURI);
 
@@ -1159,18 +1153,27 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    /**
     * @see VAppClient#deleteVApp(URI)
     */
-   @Test(testName = "DELETE /vApp/{id}", dependsOnMethods = { "testPowerOffVApp" })
+   @Test(testName = "DELETE /vApp/{id}")
    public void testDeleteVApp() {
+      // Create a temporary VApp to delete
+      VApp temp = instantiateVApp();
+      DeployVAppParams params = DeployVAppParams.builder()
+            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
+            .notForceCustomization()
+            .notPowerOn()
+            .build();
+      Task deployVApp = vAppClient.deploy(temp.getHref(), params);
+      assertTrue(retryTaskSuccessLong.apply(deployVApp), String.format(TASK_COMPLETE_TIMELY, "deployVApp"));
+
       // The method under test
-      Task deleteVApp = vAppClient.deleteVApp(vApp.getHref());
+      Task deleteVApp = vAppClient.deleteVApp(temp.getHref());
       assertTrue(retryTaskSuccess.apply(deleteVApp), String.format(TASK_COMPLETE_TIMELY, "deleteVApp"));
 
       try {
-         vApp = vAppClient.getVApp(vApp.getHref());
+         vAppClient.getVApp(temp.getHref());
          fail("The VApp should have been deleted");
       } catch (VCloudDirectorException vcde) {
          assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The error code should have been 'Forbidden' (403)");
-         vApp = null;
       }
    }
 }
