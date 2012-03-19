@@ -42,12 +42,13 @@ import org.jclouds.Constants;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -61,12 +62,12 @@ import com.google.common.collect.Multimap;
 @Singleton
 public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNodesInGroupThenAddToSet {
 
-   private class AddNode implements Callable<AtomicReference<NodeMetadata>> {
+   protected class AddNode implements Callable<AtomicReference<NodeMetadata>> {
       private final String name;
       private final String group;
       private final Template template;
 
-      private AddNode(String name, String group, Template template) {
+      public AddNode(String name, String group, Template template) {
          this.name = checkNotNull(name, "name");
          this.group = checkNotNull(group, "group");
          this.template = checkNotNull(template, "template");
@@ -75,9 +76,8 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
       @Override
       public AtomicReference<NodeMetadata> call() throws Exception {
          NodeMetadata node = null;
-         logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)",
-                  template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
-                           .getProviderId());
+         logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)", template.getLocation().getId(),
+                  name, template.getImage().getProviderId(), template.getHardware().getProviderId());
          node = addNodeWithGroupStrategy.createNodeWithGroupEncodedIntoName(group, name, template);
          logger.debug("<< %s node(%s)", node.getState(), node.getId());
          return new AtomicReference<NodeMetadata>(node);
@@ -121,11 +121,52 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       Map<String, Future<Void>> responses = newLinkedHashMap();
       for (String name : getNextNames(group, template, count)) {
-         responses.put(name, compose(executor.submit(new AddNode(name, group, template)),
-                  customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory.create(template.getOptions(),
-                           goodNodes, badNodes, customizationResponses), executor));
+         responses.put(name, compose(createNodeInGroupWithNameAndTemplate(group, name, template),
+                  customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory.create(template.getOptions(), goodNodes,
+                           badNodes, customizationResponses), executor));
       }
       return responses;
+   }
+
+   /**
+    * This calls logic necessary to create a node and convert it from its provider-specific object
+    * to the jclouds {@link NodeMetadata} object. This call directly precedes customization, such as
+    * executing scripts.
+    * 
+    * </p> The outcome of this operation does not imply the node is {@link NodeState#RUNNING
+    * running}. If you want to insert logic after the node is created, yet before an attempt to
+    * customize the node, then append your behaviour to this method.
+    * 
+    * ex. to attach an ip address post-creation
+    * 
+    * <pre>
+    * &#064;Override
+    * protected Future&lt;AtomicReference&lt;NodeMetadata&gt;&gt; createNodeInGroupWithNameAndTemplate(String group, String name,
+    *          Template template) {
+    * 
+    *    Future&lt;AtomicReference&lt;NodeMetadata&gt;&gt; future = super.addNodeIntoGroupWithNameAndTemplate(group, name, template);
+    *    return Futures.compose(future, new Function&lt;AtomicReference&lt;NodeMetadata&gt;, AtomicReference&lt;NodeMetadata&gt;&gt;() {
+    * 
+    *       &#064;Override
+    *       public AtomicReference&lt;NodeMetadata&gt; apply(AtomicReference&lt;NodeMetadata&gt; input) {
+    *          NodeMetadata node = input.get();
+    *          // allocate and attach an ip
+    *          input.set(NodeMetadataBuilder.fromNodeMetadata(node).publicAddresses(ImmutableSet.of(ip.getIp())).build());
+    *          return input;
+    *       }
+    * 
+    *    }, executor);
+    * }
+    * </pre>
+    * 
+    * @param group group the node belongs to
+    * @param name generated name of the node
+    * @param template user-specified template
+    * @return node that is created, yet not necessarily in {@link NodeState#RUNNING}
+    */
+   protected Future<AtomicReference<NodeMetadata>> createNodeInGroupWithNameAndTemplate(String group, String name,
+            Template template) {
+      return executor.submit(new AddNode(name, group, template));
    }
 
    /**
