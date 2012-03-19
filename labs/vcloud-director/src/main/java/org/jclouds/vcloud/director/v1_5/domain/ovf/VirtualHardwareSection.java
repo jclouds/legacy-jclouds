@@ -20,15 +20,19 @@ package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
 
@@ -65,9 +69,12 @@ public class VirtualHardwareSection extends SectionType {
    
    public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
 
-      protected VirtualSystemSettingData virtualSystem;
-      protected String transport;
-      protected Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+      private VirtualSystemSettingData virtualSystem;
+      private String transport;
+      private Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+      private Set<Link> links = Sets.newLinkedHashSet();
+      private URI href;
+      private String type;
 
       /**
        * @see VirtualHardwareSection#getSystem
@@ -118,6 +125,38 @@ public class VirtualHardwareSection extends SectionType {
       }
 
       /**
+       * @see VirtualHardwareSection#getLinks()
+       */
+      public B links(Set<Link> links) {
+         this.links = checkNotNull(links, "links");
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getLinks()
+       */
+      public B link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getHref()
+       */
+      public B href(URI href) {
+         this.href = href;
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getType()
+       */
+      public B type(String type) {
+         this.type = type;
+         return self();
+      }
+
+      /**
        * {@inheritDoc}
        */
       @Override
@@ -129,7 +168,10 @@ public class VirtualHardwareSection extends SectionType {
          return fromSectionType(in)
                .items(in.getItems())
                .transport(in.getTransport())
-               .system(in.getSystem());
+               .system(in.getSystem())
+               .links(Sets.newLinkedHashSet(in.getLinks()))
+               .href(in.getHref())
+               .type(in.getType());
       }
    }
 
@@ -139,12 +181,22 @@ public class VirtualHardwareSection extends SectionType {
    private String transport;
    @XmlElement(name = "Item")
    private Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+   @XmlElement(name = "Link", namespace = VCLOUD_1_5_NS)
+   protected Set<Link> links = Sets.newLinkedHashSet();
+   @XmlAttribute(namespace = VCLOUD_1_5_NS)
+   @XmlSchemaType(name = "anyURI")
+   protected URI href;
+   @XmlAttribute(namespace = VCLOUD_1_5_NS)
+   protected String type;
 
    private VirtualHardwareSection(Builder<?> builder) {
       super(builder);
       this.virtualSystem = builder.virtualSystem;
       this.transport = builder.transport;
-      this.items = builder.items != null ? ImmutableSet.copyOf(builder.items) : Collections.<ResourceAllocationSettingData>emptySet();
+      this.items = builder.items != null ? ImmutableSet.copyOf(builder.items) : Sets.<ResourceAllocationSettingData>newLinkedHashSet();
+      this.links = builder.links != null ? ImmutableSet.copyOf(builder.links) : Sets.<Link>newLinkedHashSet();
+      this.href = builder.href;
+      this.type = builder.type;
    }
 
    private VirtualHardwareSection() {
@@ -178,13 +230,36 @@ public class VirtualHardwareSection extends SectionType {
       return virtualSystem;
    }
 
-   public Set<? extends ResourceAllocationSettingData> getItems() {
-      return items;
+   public Set<ResourceAllocationSettingData> getItems() {
+      return ImmutableSet.copyOf(items);
+   }
+
+   /**
+    * Gets the value of the link property.
+    */
+   public Set<Link> getLinks() {
+      return ImmutableSet.copyOf(links);
+   }
+
+   /**
+    * @return the value of the href property.
+    */
+   public URI getHref() {
+      return href;
+   }
+
+   /**
+    * Gets the value of the type property.
+    * 
+    * @return possible object is {@link String }
+    */
+   public String getType() {
+      return type;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), transport, virtualSystem, items);
+      return Objects.hashCode(super.hashCode(), transport, virtualSystem, items, links, href, type);
    }
 
    @Override
@@ -196,11 +271,14 @@ public class VirtualHardwareSection extends SectionType {
       return super.equals(that) &&
             equal(this.transport, that.transport) &&
             equal(this.virtualSystem, that.virtualSystem) &&
-            equal(this.items, that.items);
+            equal(this.items, that.items) &&
+            equal(this.links, that.links) &&
+            equal(this.href, that.href) &&
+            equal(this.type, that.type);
    }
 
    @Override
    protected Objects.ToStringHelper string() {
-      return super.string().add("transport", transport).add("virtualSystem", virtualSystem).add("items", items);
+      return super.string().add("transport", transport).add("virtualSystem", virtualSystem).add("items", items).add("links", links).add("href", href).add("type", type);
    }
 }

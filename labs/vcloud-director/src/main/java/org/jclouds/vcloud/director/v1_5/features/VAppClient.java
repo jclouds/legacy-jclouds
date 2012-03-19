@@ -42,9 +42,9 @@ import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
@@ -680,7 +680,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   RASD getVirtualHardwareSectionCpu(URI vAppURI);
+   ResourceAllocationSettingData getVirtualHardwareSectionCpu(URI vAppURI);
 
    /**
     * Modifies the CPU properties in virtual hardware section of a VM.
@@ -691,10 +691,10 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionCpu(URI vAppURI, RASD rasd);
+   Task modifyVirtualHardwareSectionCpu(URI vAppURI, ResourceAllocationSettingData rasd);
 
    /**
-    * Retrieves a list of RASD items for disks from virtual hardware section of a VM.
+    * Retrieves a list of ResourceAllocationSettingData items for disks from virtual hardware section of a VM.
     *
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/disks
@@ -716,7 +716,7 @@ public interface VAppClient {
    Task modifyVirtualHardwareSectionDisks(URI vAppURI, RasdItemsList rasdItemsList);
 
    /**
-    * Retrieves the list of RASD items that represents the floppies and CD/DVD drives in a VM.
+    * Retrieves the list of ResourceAllocationSettingData items that represents the floppies and CD/DVD drives in a VM.
     *
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/media
@@ -727,7 +727,7 @@ public interface VAppClient {
    RasdItemsList getVirtualHardwareSectionMedia(URI vAppURI);
 
    /**
-    * Retrieves the RASD item that contains memory information from virtual hardware section of a VM.
+    * Retrieves the ResourceAllocationSettingData item that contains memory information from virtual hardware section of a VM.
     *
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/memory
@@ -735,7 +735,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   RASD getVirtualHardwareSectionMemory(URI vAppURI);
+   ResourceAllocationSettingData getVirtualHardwareSectionMemory(URI vAppURI);
 
    /**
     * Modifies the memory properties in virtual hardware section of a VM.
@@ -746,10 +746,10 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionMemory(URI vAppURI, RASD rasd);
+   Task modifyVirtualHardwareSectionMemory(URI vAppURI, ResourceAllocationSettingData rasd);
 
    /**
-    * Retrieves a list of RASD items for network cards from virtual hardware section of a VM.
+    * Retrieves a list of ResourceAllocationSettingData items for network cards from virtual hardware section of a VM.
     *
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/networkCards
@@ -771,7 +771,7 @@ public interface VAppClient {
    Task modifyVirtualHardwareSectionNetworkCards(URI vAppURI, RasdItemsList rasdItemsList);
 
    /**
-    * Retrieves a list of RASD items for serial ports from virtual hardware section of a VM.
+    * Retrieves a list of ResourceAllocationSettingData items for serial ports from virtual hardware section of a VM.
     *
     * <pre>
     * GET /vApp/{id}/virtualHardwareSection/serialPorts

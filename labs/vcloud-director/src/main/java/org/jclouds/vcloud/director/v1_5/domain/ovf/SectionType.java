@@ -73,7 +73,6 @@ public abstract class SectionType {
    public static abstract class Builder<B extends Builder<B>> {
       private String info;
       private Boolean required;
-      private Set<Link> links = Sets.newLinkedHashSet();
 
       @SuppressWarnings("unchecked")
       protected B self() {
@@ -114,40 +113,19 @@ public abstract class SectionType {
          return self();
       }
 
-      /**
-       * @see ResourceType#getLinks()
-       */
-      public B links(Set<Link> links) {
-         this.links = Sets.newLinkedHashSet(checkNotNull(links, "links"));
-         return self();
-      }
-
-      /**
-       * @see ResourceType#getLinks()
-       */
-      public B link(Link link) {
-         if (links == null)
-            links = Sets.newLinkedHashSet();
-         this.links.add(checkNotNull(link, "link"));
-         return self();
-      }
-
       public B fromSectionType(SectionType in) {
-         return info(in.getInfo()).required(in.isRequired()).links(Sets.newLinkedHashSet(in.getLinks()));
+         return info(in.getInfo()).required(in.isRequired());
       }
    }
 
    @XmlElement(name = "Info", required = true)
    private String info;
-   @XmlAttribute(namespace = VCLOUD_OVF_NS)
+   @XmlAttribute
    private Boolean required;
-   @XmlElement(name = "Link", namespace = VCLOUD_1_5_NS)
-   private Set<Link> links = Sets.newLinkedHashSet();
 
    protected SectionType(Builder<?> builder) {
       this.info = builder.info;
       this.required = builder.required;
-      this.links = builder.links != null ? ImmutableSet.copyOf(builder.links) : Collections.<Link>emptySet();
    }
 
    protected SectionType() {
@@ -171,16 +149,9 @@ public abstract class SectionType {
       return required;
    }
 
-   /**
-    * Set of optional links to an entity or operation associated with this object.
-    */
-   public Set<Link> getLinks() {
-      return links != null ? ImmutableSet.copyOf(links) : Collections.<Link>emptySet();
-   }
-
    @Override
    public int hashCode() {
-      return Objects.hashCode(info, required, links);
+      return Objects.hashCode(info, required);
    }
 
    @Override
@@ -192,7 +163,7 @@ public abstract class SectionType {
       if (getClass() != obj.getClass())
          return false;
       SectionType other = (SectionType) obj;
-      return equal(this.info, other.info) && equal(this.required, other.required) && equal(this.links, other.links);
+      return equal(this.info, other.info) && equal(this.required, other.required);
    }
 
    @Override
@@ -201,7 +172,7 @@ public abstract class SectionType {
    }
 
    protected Objects.ToStringHelper string() {
-      return Objects.toStringHelper("").add("info", info).add("required", required).add("links", links);
+      return Objects.toStringHelper("").add("info", info).add("required", required);
    }
 
 }

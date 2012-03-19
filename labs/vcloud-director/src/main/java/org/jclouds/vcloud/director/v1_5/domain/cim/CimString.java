@@ -20,8 +20,13 @@ package org.jclouds.vcloud.director.v1_5.domain.cim;
 
 import static com.google.common.base.Objects.equal;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.namespace.QName;
 
 import com.google.common.base.Objects;
 
@@ -45,6 +50,8 @@ public class CimString {
 
    @XmlValue
    protected String value;
+   @XmlAnyAttribute
+   private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
    /**
     * Gets the value of the value property.
@@ -55,6 +62,13 @@ public class CimString {
 
    public void setValue(String value) {
       this.value = value;
+   }
+
+   /**
+    * Gets a map that contains attributes that aren't bound to any typed property on this class.
+    */
+   public Map<QName, String> getOtherAttributes() {
+       return otherAttributes;
    }
 
    @Override

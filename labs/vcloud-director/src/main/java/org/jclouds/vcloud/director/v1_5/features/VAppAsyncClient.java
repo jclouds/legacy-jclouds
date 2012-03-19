@@ -18,7 +18,27 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ANY_IMAGE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CONTROL_ACCESS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.DEPLOY_VAPP_PARAMS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.LEASE_SETTINGS_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA_PARAMS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONFIG_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.OPERATING_SYSTEM_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.OVF_RASD_ITEM;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.OWNER;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.PRODUCT_SECTION_LIST;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.RECOMPOSE_VAPP_PARAMS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.RELOCATE_VM_PARAMS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.STARTUP_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.UNDEPLOY_VAPP_PARAMS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VIRTUAL_HARDWARE_SECTION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VM_PENDING_ANSWER;
 
 import java.net.URI;
 
@@ -56,9 +76,9 @@ import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
@@ -590,10 +610,10 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<RASD> getVirtualHardwareSectionCpu(@EndpointParam URI vAppURI);
+   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionCpu(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppClient#modifyVirtualHardwareSectionCpu(URI, RASD)
+    * @see VAppClient#modifyVirtualHardwareSectionCpu(URI, ResourceAllocationSettingData)
     */
    @PUT
    @Path("/virtualHardwareSection/cpu")
@@ -602,7 +622,7 @@ public interface VAppAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> modifyVirtualHardwareSectionCpu(@EndpointParam URI vAppURI,
-                                                          @BinderParam(BindToXMLPayload.class) RASD rasd);
+                                                          @BinderParam(BindToXMLPayload.class) ResourceAllocationSettingData rasd);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionDisks(URI)
@@ -644,10 +664,10 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<RASD> getVirtualHardwareSectionMemory(@EndpointParam URI vAppURI);
+   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionMemory(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppClient#modifyVirtualHardwareSectionMemory(URI, RASD)
+    * @see VAppClient#modifyVirtualHardwareSectionMemory(URI, ResourceAllocationSettingData)
     */
    @PUT
    @Path("/virtualHardwareSection/memory")
@@ -656,7 +676,7 @@ public interface VAppAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> modifyVirtualHardwareSectionMemory(@EndpointParam URI vAppURI,
-                                                             @BinderParam(BindToXMLPayload.class) RASD rasd);
+                                                             @BinderParam(BindToXMLPayload.class) ResourceAllocationSettingData rasd);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionNetworkCards(URI)
