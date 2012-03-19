@@ -161,9 +161,6 @@ public class CustomizationSection extends SectionType {
 
    /**
     * Gets the value of the href property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public URI getHref() {
       return href;
@@ -171,9 +168,6 @@ public class CustomizationSection extends SectionType {
 
    /**
     * Gets the value of the type property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getType() {
       return type;

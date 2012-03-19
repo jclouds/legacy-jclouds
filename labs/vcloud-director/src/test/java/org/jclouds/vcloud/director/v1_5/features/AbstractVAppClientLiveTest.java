@@ -49,7 +49,7 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.CimBoolean;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedLong;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.jclouds.xml.internal.JAXBParser;
@@ -249,13 +249,13 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    }
 
    protected void checkHasMatchingItem(final String context, final RasdItemsList items, final String instanceId, final String elementName) {
-      Optional<RASD> found = Iterables.tryFind(items.getItems(), new Predicate<RASD>() {
+      Optional<ResourceAllocationSettingData> found = Iterables.tryFind(items.getItems(), new Predicate<ResourceAllocationSettingData>() {
          @Override
-         public boolean apply(RASD item) {
-            String itemInstanceId = item.getInstanceID().getValue();
+         public boolean apply(ResourceAllocationSettingData item) {
+            String itemInstanceId = item.getInstanceID();
             if (itemInstanceId.equals(instanceId)) {
-               Assert.assertEquals(item.getElementName().getValue(), elementName,
-                     String.format(OBJ_FIELD_EQ, VAPP, context + "/" + instanceId + "/elementName", elementName, item.getElementName().getValue()));
+               Assert.assertEquals(item.getElementName(), elementName,
+                     String.format(OBJ_FIELD_EQ, VAPP, context + "/" + instanceId + "/elementName", elementName, item.getElementName()));
 
                return true;
             }

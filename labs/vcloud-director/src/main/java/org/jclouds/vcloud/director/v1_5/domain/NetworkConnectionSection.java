@@ -100,6 +100,14 @@ public class NetworkConnectionSection extends SectionType {
       }
 
       /**
+       * @see NetworkConnectionSection#getLinks()
+       */
+      public B link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return self();
+      }
+
+      /**
        * @see NetworkConnectionSection#getHref()
        */
       public B href(URI href) {
@@ -133,8 +141,8 @@ public class NetworkConnectionSection extends SectionType {
    private NetworkConnectionSection(Builder<?> builder) {
       super(builder);
       this.primaryNetworkConnectionIndex = builder.primaryNetworkConnectionIndex;
-      this.networkConnections = ImmutableSet.copyOf(builder.networkConnections);
-      this.links = ImmutableSet.copyOf(builder.links);
+      this.networkConnections = builder.networkConnections != null ? ImmutableSet.copyOf(builder.networkConnections) : Sets.<NetworkConnection>newLinkedHashSet();
+      this.links = builder.links != null ? ImmutableSet.copyOf(builder.links) : Sets.<Link>newLinkedHashSet();
       this.href = builder.href;
       this.type = builder.type;
    }
@@ -166,20 +174,16 @@ public class NetworkConnectionSection extends SectionType {
 
    /**
     * Gets the value of the networkConnection property.
-    * <p/>
-    * Objects of the following type(s) are allowed in the list {@link NetworkConnection }
     */
    public Set<NetworkConnection> getNetworkConnections() {
-      return Collections.unmodifiableSet(this.networkConnections);
+      return ImmutableSet.copyOf(networkConnections);
    }
 
    /**
     * Gets the value of the link property.
-    * <p/>
-    * Objects of the following type(s) are allowed in the list {@link Link }
     */
    public Set<Link> getLinks() {
-      return Collections.unmodifiableSet(this.links);
+      return ImmutableSet.copyOf(links);
    }
 
    /**
@@ -207,8 +211,10 @@ public class NetworkConnectionSection extends SectionType {
       NetworkConnectionSection that = NetworkConnectionSection.class.cast(o);
       return super.equals(that) &&
             equal(primaryNetworkConnectionIndex, that.primaryNetworkConnectionIndex) &&
-            equal(networkConnections, that.networkConnections) && equal(links, that.links) &&
-            equal(href, that.href) && equal(type, that.type);
+            equal(networkConnections, that.networkConnections) &&
+            equal(links, that.links) &&
+            equal(href, that.href) &&
+            equal(type, that.type);
    }
 
    @Override

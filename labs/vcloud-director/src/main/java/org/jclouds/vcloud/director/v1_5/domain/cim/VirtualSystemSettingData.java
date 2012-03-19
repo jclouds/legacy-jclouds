@@ -21,7 +21,9 @@ package org.jclouds.vcloud.director.v1_5.domain.cim;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_VSSD_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Map;
 
@@ -58,7 +60,7 @@ import com.google.common.collect.Maps;
  * @author grkvlt@apache.org
  * @see http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_VirtualSystemSettingData.xsd
  */
-@XmlType(name = "CIM_VirtualSystemSettingData_Type", namespace = VCLOUD_CIM_VSSD_NS)
+@XmlType(name = "CIM_VirtualSystemSettingData_Type", namespace = VCLOUD_OVF_NS)
 public class VirtualSystemSettingData {
 
    public static Builder builder() {
@@ -71,44 +73,44 @@ public class VirtualSystemSettingData {
 
    public static class Builder {
 
-      protected CimString elementName;
-      protected CimString instanceID;
-      private CimString caption;
-      private CimString description;
+      private String elementName;
+      private String instanceID;
+      private String caption;
+      private String description;
       private AutomaticRecoveryAction automaticRecoveryAction;
       private AutomaticShutdownAction automaticShutdownAction;
       private AutomaticStartupAction automaticStartupAction;
-      private CimUnsignedLong automaticStartupActionDelay;
-      private CimUnsignedInt automaticStartupActionSequenceNumber;
-      private CimString configurationDataRoot;
-      private CimString configurationFile;
-      private CimString configurationID;
+      private BigInteger automaticStartupActionDelay;
+      private Long automaticStartupActionSequenceNumber;
+      private String configurationDataRoot;
+      private String configurationFile;
+      private String configurationID;
       private Date creationTime;
-      private CimString logDataRoot;
-      private CimString recoveryFile;
-      private CimString snapshotDataRoot;
-      private CimString suspendDataRoot;
-      private CimString swapFileDataRoot;
-      private CimString virtualSystemIdentifier;
-      private CimString virtualSystemType;
-      private CimString notes;
+      private String logDataRoot;
+      private String recoveryFile;
+      private String snapshotDataRoot;
+      private String suspendDataRoot;
+      private String swapFileDataRoot;
+      private String virtualSystemIdentifier;
+      private String virtualSystemType;
+      private String notes;
 
-      public Builder elementName(CimString elementName) {
+      public Builder elementName(String elementName) {
          this.elementName = elementName;
          return this;
       }
 
-      public Builder instanceID(CimString instanceID) {
+      public Builder instanceID(String instanceID) {
          this.instanceID = instanceID;
          return this;
       }
 
-      public Builder caption(CimString caption) {
+      public Builder caption(String caption) {
          this.caption = caption;
          return this;
       }
 
-      public Builder description(CimString description) {
+      public Builder description(String description) {
          this.description = description;
          return this;
       }
@@ -128,27 +130,27 @@ public class VirtualSystemSettingData {
          return this;
       }
 
-      public Builder automaticStartupActionDelay(CimUnsignedLong automaticStartupActionDelay) {
+      public Builder automaticStartupActionDelay(BigInteger automaticStartupActionDelay) {
          this.automaticStartupActionDelay = automaticStartupActionDelay;
          return this;
       }
 
-      public Builder automaticStartupActionSequenceNumber(CimUnsignedInt automaticStartupActionSequenceNumber) {
+      public Builder automaticStartupActionSequenceNumber(Long automaticStartupActionSequenceNumber) {
          this.automaticStartupActionSequenceNumber = automaticStartupActionSequenceNumber;
          return this;
       }
 
-      public Builder configurationDataRoot(CimString configurationDataRoot) {
+      public Builder configurationDataRoot(String configurationDataRoot) {
          this.configurationDataRoot = configurationDataRoot;
          return this;
       }
 
-      public Builder configurationFile(CimString configurationFile) {
+      public Builder configurationFile(String configurationFile) {
          this.configurationFile = configurationFile;
          return this;
       }
 
-      public Builder configurationID(CimString configurationID) {
+      public Builder configurationID(String configurationID) {
          this.configurationID = configurationID;
          return this;
       }
@@ -158,42 +160,42 @@ public class VirtualSystemSettingData {
          return this;
       }
 
-      public Builder logDataRoot(CimString logDataRoot) {
+      public Builder logDataRoot(String logDataRoot) {
          this.logDataRoot = logDataRoot;
          return this;
       }
 
-      public Builder recoveryFile(CimString recoveryFile) {
+      public Builder recoveryFile(String recoveryFile) {
          this.recoveryFile = recoveryFile;
          return this;
       }
 
-      public Builder snapshotDataRoot(CimString snapshotDataRoot) {
+      public Builder snapshotDataRoot(String snapshotDataRoot) {
          this.snapshotDataRoot = snapshotDataRoot;
          return this;
       }
 
-      public Builder suspendDataRoot(CimString suspendDataRoot) {
+      public Builder suspendDataRoot(String suspendDataRoot) {
          this.suspendDataRoot = suspendDataRoot;
          return this;
       }
 
-      public Builder swapFileDataRoot(CimString swapFileDataRoot) {
+      public Builder swapFileDataRoot(String swapFileDataRoot) {
          this.swapFileDataRoot = swapFileDataRoot;
          return this;
       }
 
-      public Builder virtualSystemIdentifier(CimString virtualSystemIdentifier) {
+      public Builder virtualSystemIdentifier(String virtualSystemIdentifier) {
          this.virtualSystemIdentifier = virtualSystemIdentifier;
          return this;
       }
 
-      public Builder virtualSystemType(CimString virtualSystemType) {
+      public Builder virtualSystemType(String virtualSystemType) {
          this.virtualSystemType = virtualSystemType;
          return this;
       }
 
-      public Builder notes(CimString notes) {
+      public Builder notes(String notes) {
          this.notes = notes;
          return this;
       }
@@ -338,17 +340,17 @@ public class VirtualSystemSettingData {
    }
 
    @XmlElement(name = "ElementName", namespace = VCLOUD_CIM_VSSD_NS)
-   protected CimString elementName;
+   private String elementName;
    @XmlElement(name = "InstanceID", namespace = VCLOUD_CIM_VSSD_NS)
-   protected CimString instanceID;
+   private String instanceID;
    @XmlElement(name = "Caption", namespace = VCLOUD_CIM_VSSD_NS)
-   protected CimString caption;
+   private String caption;
    @XmlElement(name = "Description", namespace = VCLOUD_CIM_VSSD_NS)
-   protected CimString description;
+   private String description;
    @XmlElement(name = "VirtualSystemIdentifier", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString virtualSystemIdentifier;
+   private String virtualSystemIdentifier;
    @XmlElement(name = "VirtualSystemType", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString virtualSystemType;
+   private String virtualSystemType;
    @XmlElement(name = "AutomaticRecoveryAction", namespace = VCLOUD_CIM_VSSD_NS)
    private AutomaticRecoveryAction automaticRecoveryAction;
    @XmlElement(name = "AutomaticShutdownAction", namespace = VCLOUD_CIM_VSSD_NS)
@@ -356,37 +358,37 @@ public class VirtualSystemSettingData {
    @XmlElement(name = "AutomaticStartupAction", namespace = VCLOUD_CIM_VSSD_NS)
    private AutomaticStartupAction automaticStartupAction;
    @XmlElement(name = "AutomaticStartupActionDelay", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimUnsignedLong automaticStartupActionDelay;
+   private BigInteger automaticStartupActionDelay;
    @XmlElement(name = "AutomaticStartupActionSequenceNumber", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimUnsignedInt automaticStartupActionSequenceNumber;
+   private Long automaticStartupActionSequenceNumber;
    @XmlElement(name = "ConfigurationDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString configurationDataRoot;
+   private String configurationDataRoot;
    @XmlElement(name = "ConfigurationFile", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString configurationFile;
+   private String configurationFile;
    @XmlElement(name = "ConfigurationID", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString configurationID;
+   private String configurationID;
    @XmlElement(name = "CreationTime", namespace = VCLOUD_CIM_VSSD_NS)
    private Date creationTime;
    @XmlElement(name = "LogDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString logDataRoot;
+   private String logDataRoot;
    @XmlElement(name = "RecoveryFile", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString recoveryFile;
+   private String recoveryFile;
    @XmlElement(name = "SnapshotDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString snapshotDataRoot;
+   private String snapshotDataRoot;
    @XmlElement(name = "SuspendDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString suspendDataRoot;
+   private String suspendDataRoot;
    @XmlElement(name = "SwapFileDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString swapFileDataRoot;
+   private String swapFileDataRoot;
    @XmlElement(name = "Notes", namespace = VCLOUD_CIM_VSSD_NS)
-   private CimString notes;
+   private String notes;
 
-   private VirtualSystemSettingData(CimString elementName, CimString instanceID, CimString caption, CimString description,
+   private VirtualSystemSettingData(String elementName, String instanceID, String caption, String description,
             AutomaticRecoveryAction automaticRecoveryAction, AutomaticShutdownAction automaticShutdownAction,
-            AutomaticStartupAction automaticStartupAction, CimUnsignedLong automaticStartupActionDelay,
-            CimUnsignedInt automaticStartupActionSequenceNumber, CimString configurationDataRoot, CimString configurationFile,
-            CimString configurationID, Date creationTime, CimString logDataRoot, CimString recoveryFile, CimString snapshotDataRoot,
-            CimString suspendDataRoot, CimString swapFileDataRoot, CimString virtualSystemIdentifier,
-            CimString virtualSystemType, CimString notes) {
+            AutomaticStartupAction automaticStartupAction, BigInteger automaticStartupActionDelay,
+            Long automaticStartupActionSequenceNumber, String configurationDataRoot, String configurationFile,
+            String configurationID, Date creationTime, String logDataRoot, String recoveryFile, String snapshotDataRoot,
+            String suspendDataRoot, String swapFileDataRoot, String virtualSystemIdentifier,
+            String virtualSystemType, String notes) {
       this.elementName = elementName;
       this.instanceID = instanceID;
       this.caption = caption;
@@ -419,7 +421,7 @@ public class VirtualSystemSettingData {
     * can be used as an index property for a search or query. (Note: The name does not have to be
     * unique within a namespace.)
     */
-   public CimString getElementName() {
+   public String getElementName() {
       return elementName;
    }
 
@@ -427,21 +429,21 @@ public class VirtualSystemSettingData {
     * Within the scope of the instantiating Namespace, InstanceID opaquely and uniquely identifies
     * an instance of this class.
     */
-   public CimString getInstanceID() {
+   public String getInstanceID() {
       return instanceID;
    }
 
    /**
     * The Caption property is a short textual description (one- line string) of the object.
     */
-   public CimString getCaption() {
+   public String getCaption() {
       return caption;
    }
 
    /**
     * The Description property provides a textual description of the object.
     */
-   public CimString getDescription() {
+   public String getDescription() {
       return description;
    }
 
@@ -472,7 +474,7 @@ public class VirtualSystemSettingData {
     * Delay applicable to startup action. The value shall be in the interval variant of the datetime
     * datatype.
     */
-   public CimUnsignedLong getAutomaticStartupActionDelay() {
+   public BigInteger getAutomaticStartupActionDelay() {
       return automaticStartupActionDelay;
    }
 
@@ -482,7 +484,7 @@ public class VirtualSystemSettingData {
     * same value, the sequence is implementation dependent. A value of 0 indicates that the sequence
     * is implementation dependent.
     */
-   public CimUnsignedInt getAutomaticStartupActionSequenceNumber() {
+   public Long getAutomaticStartupActionSequenceNumber() {
       return automaticStartupActionSequenceNumber;
    }
 
@@ -490,9 +492,9 @@ public class VirtualSystemSettingData {
     * Filepath of a directory where information about the virtual system configuration is
     * stored.
     *
-    * Format shall be CimString based on RFC-2079.
+    * Format shall be String based on RFC-2079.
     */
-   public CimString getConfigurationDataRoot() {
+   public String getConfigurationDataRoot() {
       return configurationDataRoot;
    }
 
@@ -501,9 +503,9 @@ public class VirtualSystemSettingData {
     *
     * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
     * <p>
-    * Format shall be CimString based on RFC-2079.
+    * Format shall be String based on RFC-2079.
     */
-   public CimString getConfigurationFile() {
+   public String getConfigurationFile() {
       return configurationFile;
    }
 
@@ -512,7 +514,7 @@ public class VirtualSystemSettingData {
     * the InstanceID as it is assigned by the implementation to a virtual system or a virtual system
     * configuration. It is not a key, and the same value may occur within more than one instance.
     */
-   public CimString getConfigurationID() {
+   public String getConfigurationID() {
       return configurationID;
    }
 
@@ -528,18 +530,18 @@ public class VirtualSystemSettingData {
     *
     * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
     * <p>
-    * Format shall be CimString based on RFC-2079.
+    * Format shall be String based on RFC-2079.
     */
-   public CimString getLogDataRoot() {
+   public String getLogDataRoot() {
       return logDataRoot;
    }
 
    /**
     * Filepath of a file where recovery relateded information of the virtual system is stored.
     *
-    * Format shall be CimString based on RFC-2079.
+    * Format shall be String based on RFC-2079.
     */
-   public CimString getRecoveryFile() {
+   public String getRecoveryFile() {
       return recoveryFile;
    }
 
@@ -548,9 +550,9 @@ public class VirtualSystemSettingData {
     *
     * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
     * <p>
-    * Format shall be CimString based on RFC-2079.
+    * Format shall be String based on RFC-2079.
     */
-   public CimString getSnapshotDataRoot() {
+   public String getSnapshotDataRoot() {
       return snapshotDataRoot;
    }
 
@@ -559,9 +561,9 @@ public class VirtualSystemSettingData {
     *
     * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
     * <p>
-    * Format shall be CimString based on RFC-2079.
+    * Format shall be String based on RFC-2079.
     */
-   public CimString getSuspendDataRoot() {
+   public String getSuspendDataRoot() {
       return suspendDataRoot;
    }
 
@@ -570,9 +572,9 @@ public class VirtualSystemSettingData {
     *
     * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
     * <p>
-    * Format shall be CimString based on RFC-2079.
+    * Format shall be String based on RFC-2079.
     */
-   public CimString getSwapFileDataRoot() {
+   public String getSwapFileDataRoot() {
       return swapFileDataRoot;
    }
 
@@ -586,21 +588,21 @@ public class VirtualSystemSettingData {
     * may contain implementation specific rules (like simple patterns or regular expresssion) that
     * may be interpreted by the implementation when assigning a VirtualSystemIdentifier.
     */
-   public CimString getVirtualSystemIdentifier() {
+   public String getVirtualSystemIdentifier() {
       return virtualSystemIdentifier;
    }
 
    /**
     * VirtualSystemType shall reflect a particular type of virtual system.
     */
-   public CimString getVirtualSystemType() {
+   public String getVirtualSystemType() {
       return virtualSystemType;
    }
 
    /**
     * End-user supplied notes that are related to the virtual system.
     */
-   public CimString getNotes() {
+   public String getNotes() {
       return notes;
    }
 

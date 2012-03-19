@@ -37,8 +37,8 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkSection
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOperatingSystemSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOwner;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkProductSectionList;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkRASD;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkRasdItemsList;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceAllocationSettingData;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkRuntimeInfoSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkScreenTicket;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkStartupSection;
@@ -55,7 +55,6 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
@@ -89,12 +88,10 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.MsgType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
@@ -102,11 +99,11 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of the {@link VAppClient}.
@@ -343,7 +340,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(discardSuspendedState), String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/enterMaintenanceMode", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/enterMaintenanceMode", dependsOnMethods = { "testPowerOnVApp" })
    public void testEnterMaintenanceMode() {
       // The method under test
       vAppClient.enterMaintenanceMode(vApp.getHref());
@@ -763,10 +760,13 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkRuntimeInfoSection(section);
    }
 
-   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testPowerOnVApp" })
    public void testGetScreenImage() {
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+
       // The method under test
-      byte[] image = vAppClient.getScreenImage(vApp.getHref());
+      byte[] image = vAppClient.getScreenImage(vmURI);
 
       // Check returned bytes against PNG header magic number
       byte[] pngHeaderBytes = new byte[] { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
@@ -779,8 +779,11 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testGetVApp" })
    public void testGetScreenTicket() {
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+
       // The method under test
-      ScreenTicket ticket = vAppClient.getScreenTicket(vApp.getHref());
+      ScreenTicket ticket = vAppClient.getScreenTicket(vmURI);
 
       // Check the retrieved object is well formed
       checkScreenTicket(ticket);
@@ -835,23 +838,22 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
       // Copy existing section and update fields
       VirtualHardwareSection oldSection = vAppClient.getVirtualHardwareSection(vmURI);
-      Optional<? extends ResourceAllocationSettingData> memory = Iterables.tryFind(oldSection.getItems(),
-            new Predicate<ResourceAllocationSettingData>() {
-		         @Override
-		         public boolean apply(ResourceAllocationSettingData item) {
-		            return item.getResourceType() == ResourceType.MEMORY;
-		         }
-	      });
-      if (memory.isPresent()) debug(memory);
+      Set<ResourceAllocationSettingData> oldItems = oldSection.getItems();
+      ResourceAllocationSettingData oldMemory = Iterables.find(oldItems, new Predicate<ResourceAllocationSettingData>() {
+         @Override
+         public boolean apply(ResourceAllocationSettingData rasd) {
+            return rasd.getResourceType() == ResourceAllocationSettingData.ResourceType.MEMORY;
+         }
+      });
+      ResourceAllocationSettingData newMemory = oldMemory.toBuilder()
+            .elementName("1024 MB of memory")
+            .virtualQuantity(BigInteger.valueOf(1024L))
+            .build();
+      Set<ResourceAllocationSettingData> newItems = Sets.newLinkedHashSet(oldItems);
+      newItems.remove(oldMemory);
+      newItems.add(newMemory);
       VirtualHardwareSection newSection = oldSection.toBuilder()
-            .item(ResourceAllocationSettingData.builder()
-                  .elementName(cimString("Memory"))
-                  .instanceID(cimString(UUID.randomUUID().toString()))
-                  .allocationUnits(cimString("byte * 2^20"))
-                  .reservation(cimUnsignedLong(BigInteger.valueOf(0L)))
-                  .virtualQuantity(cimUnsignedLong(BigInteger.valueOf(1024L)))
-                  .weight(cimUnsignedInt(0L))
-                  .build())
+            .items(newItems)
             .build();
 
       // The method under test
@@ -859,14 +861,22 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSection), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSection"));
 
       // Retrieve the modified section
-      VirtualHardwareSection modified = vAppClient.getVirtualHardwareSection(vmURI);
+      VirtualHardwareSection modifiedSection = vAppClient.getVirtualHardwareSection(vmURI);
 
       // Check the retrieved object is well formed
-      checkVirtualHardwareSection(modified);
+      checkVirtualHardwareSection(modifiedSection);
 
       // Check the modified section fields are set correctly
-      // assertEquals(modified.getX(), "");
-      assertEquals(modified, newSection);
+      Set<ResourceAllocationSettingData> modifiedItems = modifiedSection.getItems();
+      ResourceAllocationSettingData modifiedMemory = Iterables.find(modifiedItems, new Predicate<ResourceAllocationSettingData>() {
+         @Override
+         public boolean apply(ResourceAllocationSettingData rasd) {
+            return rasd.getResourceType() == ResourceAllocationSettingData.ResourceType.MEMORY;
+         }
+      });
+      assertEquals(modifiedMemory.getVirtualQuantity(), BigInteger.valueOf(1024L));
+      assertEquals(modifiedMemory, newMemory);
+      assertEquals(modifiedSection, newSection);
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
@@ -875,10 +885,10 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
       // Method under test
-      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
 
       // Check the retrieved object is well formed
-      checkRASD(rasd);
+      checkResourceAllocationSettingData(rasd);
    }
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
@@ -886,24 +896,26 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
-      RASD origSection = vAppClient.getVirtualHardwareSectionCpu(vmURI);
-      RASD newSection = origSection.toBuilder().build();
+      // Copy existing section and update fields
+      ResourceAllocationSettingData oldItem = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData newItem = oldItem.toBuilder()
+            .build();
       
       // Method under test
-      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vmURI, newSection);
+      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vmURI, newItem);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionCpu), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionCpu"));
 
       // Retrieve the modified section
-      RASD modified = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionCpu(vmURI);
       
       // Check the retrieved object
-      checkRASD(modified);
+      checkResourceAllocationSettingData(modified);
       
       // TODO What is modifiable? What can we change, so we can assert the change took effect? 
       // I tried changing "weight", but it continued to have the value zero when looked up post-modify.
       //
       // long weight = random.nextInt(Integer.MAX_VALUE);
-      // RASD newSection = origSection.toBuilder()
+      // ResourceAllocationSettingData newSection = origSection.toBuilder()
       //         .weight(newCimUnsignedInt(weight))
       //         .build();
       // ...
@@ -944,8 +956,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // TODO What is modifiable? What can we change, so we can assert the change took effect? 
       // I tried changing "elementName" of one of the items, but it continued to have the old value when looked up post-modify.
       //
-      // List<RASD> newItems = new ArrayList<RASD>(oldSection.getItems());
-      // RASD item0 = newItems.get(0);
+      // List<ResourceAllocationSettingData> newItems = new ArrayList<ResourceAllocationSettingData>(oldSection.getItems());
+      // ResourceAllocationSettingData item0 = newItems.get(0);
       // String item0InstanceId = item0.getInstanceID().getValue();
       // String item0ElementName = item0.getElementName().getValue()+"-"+random.nextInt(Integer.MAX_VALUE);
       // newItems.set(0, item0.toBuilder().elementName(newCimString(item0ElementName)).build());
@@ -954,7 +966,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       //       .build();
       // ...
       // long weight = random.nextInt(Integer.MAX_VALUE);
-      // RASD newSection = origSection.toBuilder()
+      // ResourceAllocationSettingData newSection = origSection.toBuilder()
       //         .weight(newCimUnsignedInt(weight))
       //         .build();
       // ...
@@ -979,10 +991,10 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
       // Method under test
-      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
 
       // Check the retrieved object is well formed
-      checkRASD(rasd);
+      checkResourceAllocationSettingData(rasd);
    }
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
@@ -990,18 +1002,18 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
-      RASD origSection = vAppClient.getVirtualHardwareSectionMemory(vmURI);
-      RASD newSection = origSection.toBuilder().build();
+      ResourceAllocationSettingData origSection = vAppClient.getVirtualHardwareSectionMemory(vmURI);
+      ResourceAllocationSettingData newSection = origSection.toBuilder().build();
       
       // Method under test
       Task modifyVirtualHardwareSectionMemory = vAppClient.modifyVirtualHardwareSectionMemory(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionMemory), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionMemory"));
 
       // Retrieve the modified section
-      RASD modified = vAppClient.getVirtualHardwareSectionMemory(vmURI);
+      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionMemory(vmURI);
       
       // Check the retrieved object
-      checkRASD(modified);
+      checkResourceAllocationSettingData(modified);
       
       // TODO What is modifiable? What can we change, so we can assert the change took effect? 
       // I tried changing "weight", but it continued to have the value zero when looked up post-modify.

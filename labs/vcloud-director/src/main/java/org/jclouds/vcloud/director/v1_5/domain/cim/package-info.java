@@ -19,18 +19,19 @@
 @XmlSchema(namespace = VCLOUD_CIM_NS, elementFormDefault = XmlNsForm.QUALIFIED,
 		xmlns = {
             @XmlNs(prefix = "cim", namespaceURI = VCLOUD_CIM_NS),
+            @XmlNs(prefix = "ovf", namespaceURI = VCLOUD_OVF_NS),
 		      @XmlNs(prefix = "vssd", namespaceURI = VCLOUD_CIM_VSSD_NS),
 		      @XmlNs(prefix = "rasd", namespaceURI = VCLOUD_CIM_RASD_NS),
 		      @XmlNs(prefix = "vcloud", namespaceURI = VCLOUD_1_5_NS)
 		}
 )
-// http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData
 @XmlAccessorType(XmlAccessType.FIELD)
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_VSSD_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_RASD_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

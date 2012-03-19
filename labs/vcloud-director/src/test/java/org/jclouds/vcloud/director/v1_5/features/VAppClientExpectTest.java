@@ -46,9 +46,9 @@ import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
@@ -898,7 +898,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .xmlFilePayload("/vApp/getVirtualHardwareSectionCpu.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
             .httpResponseBuilder().build());
 
-         RASD expected = getVirtualHardwareSectionCpu();
+      ResourceAllocationSettingData expected = getVirtualHardwareSectionCpu();
 
          assertEquals(client.getVAppClient().getVirtualHardwareSectionCpu(vAppURI), expected);
    }
@@ -915,7 +915,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionCpuTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
-         RASD cpu = getVirtualHardwareSectionCpu(); // .toBuilder();
+      ResourceAllocationSettingData cpu = getVirtualHardwareSectionCpu(); // .toBuilder();
 //               .build();
 
          Task expected = modifyVirtualHardwareSectionCpuTask();
@@ -986,7 +986,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .xmlFilePayload("/vApp/getVirtualHardwareSectionMemory.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
             .httpResponseBuilder().build());
 
-         RASD expected = getVirtualHardwareSectionMemory();
+      ResourceAllocationSettingData expected = getVirtualHardwareSectionMemory();
 
          assertEquals(client.getVAppClient().getVirtualHardwareSectionMemory(vAppURI), expected);
    }
@@ -1003,7 +1003,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionMemoryTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
-         RASD memory = getVirtualHardwareSectionCpu(); // .toBuilder();
+      ResourceAllocationSettingData memory = getVirtualHardwareSectionCpu(); // .toBuilder();
 //               .build();
 
          Task expected = modifyVirtualHardwareSectionMemoryTask();
@@ -1414,8 +1414,8 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
       return task;
    }
 
-   public static RASD getVirtualHardwareSectionCpu() {
-      RASD cpu = RASD.builder()
+   public static ResourceAllocationSettingData getVirtualHardwareSectionCpu() {
+      ResourceAllocationSettingData cpu = ResourceAllocationSettingData.builder()
             .build();
 
       return cpu;
@@ -1449,8 +1449,8 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
       return media;
    }
 
-   public static RASD getVirtualHardwareSectionMemory() {
-      RASD memory = RASD.builder()
+   public static ResourceAllocationSettingData getVirtualHardwareSectionMemory() {
+      ResourceAllocationSettingData memory = ResourceAllocationSettingData.builder()
             .build();
 
       return memory;
