@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
@@ -156,46 +157,6 @@ public interface VAppTemplateClient {
    Task editVappTemplateLeaseSettingsSection(URI templateUri, LeaseSettingsSection section);
 
    /**
-    * Retrieves the metadata associated with a vApp Template.
-    *
-    * @param templateUri the URI of the template
-    * @return the requested metadata
-    */
-   Metadata getVAppTemplateMetadata(URI templateUri);
-
-   /**
-    * Merges the metadata for a vApp Template with the information provided.
-    *
-    * @param templateUri the URI of the template
-    * @return the task performing the action
-    */
-   Task editVAppTemplateMetadata(URI templateUri, Metadata metadata);
-
-   /**
-    * Consolidates a VM
-    *
-    * @param templateUri the URI of the template
-    * @return the task performing the action
-    */
-   MetadataValue getVAppTemplateMetadataValue(URI templateUri, String key);
-
-   /**
-    * Consolidates a VM
-    *
-    * @param templateUri the URI of the template
-    * @return the task performing the action
-    */
-   Task editVAppTemplateMetadataValue(URI templateUri, String key, MetadataValue value);
-
-   /**
-    * Consolidates a VM
-    *
-    * @param templateUri the URI of the template
-    * @return the task performing the action
-    */
-   Task deleteVAppTemplateMetadataValue(URI templateUri, String key);
-
-   /**
     * Retrieves the network config section of a vApp or vApp template.
     *
     * @param templateUri the URI of the template
@@ -269,5 +230,11 @@ public interface VAppTemplateClient {
     */
    Task editProductSectionsForVAppTemplate(URI templateUri, ProductSectionList sections);
 
-   // TODO ShadowVms???
+   // TODO ShadowVms
+
+   /**
+    * @return synchronous access to {@link Metadata} features
+    */
+   @Delegate
+   MetadataClient.Writeable getMetadataClient();
 }

@@ -381,12 +381,6 @@ public interface VAppAsyncClient {
                                       @BinderParam(BindToXMLPayload.class) MediaInsertOrEjectParams mediaParams);
 
    /**
-    * @return asynchronous access to {@link Metadata} features
-    */
-   @Delegate
-   MetadataAsyncClient.Writable getMetadataClient();
-
-   /**
     * @see VAppClient#getNetworkConfigSection(URI)
     */
    @GET
@@ -721,5 +715,11 @@ public interface VAppAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> modifyVirtualHardwareSectionSerialPorts(@EndpointParam URI vAppURI,
                                                                   @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
+
+   /**
+    * @return asynchronous access to {@link Metadata} features
+    */
+   @Delegate
+   MetadataAsyncClient.Writable getMetadataClient();
 
 }

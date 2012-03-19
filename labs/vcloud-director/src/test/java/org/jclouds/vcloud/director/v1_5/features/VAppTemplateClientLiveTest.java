@@ -149,17 +149,17 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test
    public void testGetVAppTemplateMetadata() {
-      Metadata metadata = vAppTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
+      Metadata metadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       
       checkMetadata(metadata);
    }
 
    @Test // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
    public void testGetMetadataValue() {
-      Metadata metadata = vAppTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
+      Metadata metadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
       
-      MetadataValue val = vAppTemplateClient.getVAppTemplateMetadataValue(vAppTemplateURI, entry.getKey());
+      MetadataValue val = vAppTemplateClient.getMetadataClient().getMetadataValue(vAppTemplateURI, entry.getKey());
       
       checkMetadataValue(val);
       assertEquals(val.getValue(), entry.getValue());
@@ -218,7 +218,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    public void testEditMetadata() {
       // TODO Cleanup after ourselves..
       
-      Metadata oldMetadata = vAppTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
+      Metadata oldMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       Map<String,String> oldMetadataMap = metadataToMap(oldMetadata);
 
       String uid = ""+random.nextInt();
@@ -227,10 +227,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       MetadataEntry metadataEntry = MetadataEntry.builder().entry(key, val).build();
       Metadata metadata = Metadata.builder().fromMetadata(oldMetadata).entry(metadataEntry).build();
       
-      final Task task = vAppTemplateClient.editVAppTemplateMetadata(vAppTemplateURI, metadata);
+      final Task task = vAppTemplateClient.getMetadataClient().mergeMetadata(vAppTemplateURI, metadata);
       retryTaskSuccess.apply(task);
 
-      Metadata newMetadata = vAppTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
+      Metadata newMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       Map<String,String> expectedMetadataMap = ImmutableMap.<String,String>builder()
                .putAll(oldMetadataMap)
                .put(key, val)
@@ -247,10 +247,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       String val = "myval-"+uid;
       MetadataValue metadataValue = MetadataValue.builder().value(val).build();
       
-      final Task task = vAppTemplateClient.editVAppTemplateMetadataValue(vAppTemplateURI, key, metadataValue);
+      final Task task = vAppTemplateClient.getMetadataClient().setMetadata(vAppTemplateURI, key, metadataValue);
       retryTaskSuccess.apply(task);
 
-      MetadataValue newMetadataValue = vAppTemplateClient.getVAppTemplateMetadataValue(vAppTemplateURI, key);
+      MetadataValue newMetadataValue = vAppTemplateClient.getMetadataClient().getMetadataValue(vAppTemplateURI, key);
       assertEquals(newMetadataValue.getValue(), metadataValue.getValue());
    }
 
@@ -259,15 +259,15 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       // First store a value
       String key = "mykey-"+random.nextInt();
       MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
-      final Task task = vAppTemplateClient.editVAppTemplateMetadataValue(vAppTemplateURI, key, metadataValue);
+      final Task task = vAppTemplateClient.getMetadataClient().setMetadata(vAppTemplateURI, key, metadataValue);
       retryTaskSuccess.apply(task);
       
       // Then delete the entry
-      final Task deletionTask = vAppTemplateClient.deleteVAppTemplateMetadataValue(vAppTemplateURI, key);
+      final Task deletionTask = vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key);
       retryTaskSuccess.apply(deletionTask);
 
       // Then confirm the entry is not there
-      Metadata newMetadata = vAppTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
+      Metadata newMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       checkMetadataKeyAbsentFor("vAppTemplate", newMetadata, key);
    }
 
