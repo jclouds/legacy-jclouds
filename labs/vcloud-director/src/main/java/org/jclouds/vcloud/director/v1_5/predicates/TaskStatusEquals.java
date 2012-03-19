@@ -18,9 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
@@ -34,17 +35,25 @@ import com.google.common.base.Predicate;
  * 
  * @author grkvlt@apache.org
  */
-@Singleton
-public class TaskSuccess implements Predicate<Task> {
+public class TaskStatusEquals implements Predicate<Task> {
 
    private final TaskClient taskClient;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   @Inject
-   public TaskSuccess(TaskClient taskClient) {
+   private Collection<String> expectedStatuses;
+   private Collection<String> failingStatuses;
+
+   // TODO Use Task.Status, once it is turned into an enumeration
+   public TaskStatusEquals(TaskClient taskClient, String expectedStatus, Collection<String> failingStatuses) {
+      this(taskClient, Collections.singleton(expectedStatus), failingStatuses);
+   }
+
+   public TaskStatusEquals(TaskClient taskClient, Collection<String> expectedStatuses, Collection<String> failingStatuses) {
       this.taskClient = taskClient;
+      this.expectedStatuses = expectedStatuses;
+      this.failingStatuses = failingStatuses;
    }
 
    /** @see Predicate#apply(Object) */
@@ -57,14 +66,20 @@ public class TaskSuccess implements Predicate<Task> {
       
       // perhaps task isn't available, yet
       if (task == null) return false;
-      logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());
-      if (task.getStatus().equals(Task.Status.ERROR))
-         throw new VCloudDirectorException(task);
-      if (task.getStatus().equals(Task.Status.CANCELED))
-         throw new VCloudDirectorException(task);
-      if (task.getStatus().equals(Task.Status.ABORTED))
-         throw new VCloudDirectorException(task);
-      return task.getStatus().equals(Task.Status.SUCCESS);
+      logger.trace("%s: looking for status %s: currently: %s", task, expectedStatuses, task.getStatus());
+      
+      for (String failingStatus : failingStatuses) {
+         if (task.getStatus().equals(failingStatus)) {
+            throw new VCloudDirectorException(task);
+         }
+      }
+      
+      for (String expectedStatus : expectedStatuses) {
+         if (task.getStatus().equals(expectedStatus)) {
+            return true;
+         }
+      }
+      return false;
    }
 
    @Override

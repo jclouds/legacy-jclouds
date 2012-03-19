@@ -25,16 +25,16 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.date.DateService;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -45,6 +45,7 @@ import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
@@ -53,14 +54,20 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.features.TaskClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
+import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
@@ -90,7 +97,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    @Resource
    protected Logger logger = Logger.NULL;
 
-   protected static final long TASK_TIMEOUT_SECONDS = 10L;
+   protected static final long TASK_TIMEOUT_SECONDS = 100L;
    protected static final long LONG_TASK_TIMEOUT_SECONDS = 300L;
 
    public static final String VAPP = "vApp";
@@ -132,7 +139,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
 
    @Inject
    protected void initTaskSuccess(TaskSuccess taskSuccess) {
-      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 10000L);
+      retryTaskSuccess = new RetryablePredicate<Task>(taskSuccess, TASK_TIMEOUT_SECONDS * 1000L);
    }
 
    @Inject
@@ -219,9 +226,25 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    
    protected void assertTaskSucceedsLong(Task task) {
       assertTrue(retryTaskSuccessLong.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
+   }
 
+   protected void assertTaskStatusEventually(Task task, String expectedStatus, Collection<String> failingStatuses) {
+      TaskClient taskClient = context.getApi().getTaskClient();
+      TaskStatusEquals predicate = new TaskStatusEquals(taskClient, expectedStatus, failingStatuses);
+      RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, TASK_TIMEOUT_SECONDS * 1000L);
+      assertTrue(retryablePredicate.apply(task), "Task must enter status "+expectedStatus);
    }
    
+   protected void assertTaskDoneEventually(Task task) {
+      TaskClient taskClient = context.getApi().getTaskClient();
+      TaskStatusEquals predicate = new TaskStatusEquals(
+               taskClient, 
+               ImmutableSet.of(Task.Status.ABORTED, Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS), 
+               Collections.<String>emptySet());
+      RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, LONG_TASK_TIMEOUT_SECONDS * 1000L);
+      assertTrue(retryablePredicate.apply(task), "Task must be done");
+   }
+
    /**
     * Instantiate a {@link VApp} in a {@link Vdc} using the {@link VAppTemplate} we have configured for the tests.
     * 
@@ -299,5 +322,74 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
             .build();
 
       return networkConfiguration;
+   }
+   
+   protected void cleanUpVAppTemplate(VAppTemplate vAppTemplate) {
+      VAppTemplateClient vappTemplateClient = context.getApi().getVAppTemplateClient();
+      
+      Task task = vappTemplateClient.deleteVappTemplate(vAppTemplate.getHref());
+      assertTaskSucceeds(task);
+   }
+
+   protected void cleanUpVApp(VApp vApp) throws Exception {
+      cleanUpVApp(vApp.getHref());
+   }
+   
+   // TODO code tidy for cleanUpVApp? Seems extremely verbose!
+   protected void cleanUpVApp(URI vAppUri) throws Exception {
+      VAppClient vappClient = context.getApi().getVAppClient();
+
+      VApp vApp;
+      try {
+         vApp = vappClient.getVApp(vAppUri); // update
+      } catch (VCloudDirectorException e) {
+         // presumably vApp has already been deleted; ignore
+         return;
+      }
+      
+      // Wait for busy tasks to complete (don't care if it's failed or successful)
+      // Otherwise, get error on delete "entity is busy completing an operation.
+      if (vApp.getTasks() != null) {
+         for (Task task : vApp.getTasks()) {
+            assertTaskDoneEventually(task);
+         }
+      }
+      
+      // Shutdown and power off the VApp if necessary
+      if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
+         try {
+            Task shutdownTask = vappClient.shutdown(vAppUri);
+            retryTaskSuccess.apply(shutdownTask);
+         } catch (Exception e) {
+            // keep going; cleanup as much as possible
+            logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp);
+         }
+      }
+
+      // Undeploy the VApp if necessary
+      if (vApp.isDeployed()) {
+         try {
+            UndeployVAppParams params = UndeployVAppParams.builder().build();
+            Task undeployTask = vappClient.undeploy(vAppUri, params);
+            retryTaskSuccess.apply(undeployTask);
+         } catch (Exception e) {
+            // keep going; cleanup as much as possible
+            logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp);
+         }
+      }
+      
+      try {
+         Task task = vappClient.deleteVApp(vAppUri);
+         assertTaskSucceeds(task);
+      } catch (Exception e) {
+         try {
+            vApp = vappClient.getVApp(vAppUri); // refresh
+         } catch (Exception e2) {
+            // ignore
+         }
+
+         logger.warn(e, "Deleting vApp failed: vApp="+vApp);
+         throw e;
+      }
    }
 }
