@@ -58,7 +58,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
@@ -1252,17 +1251,12 @@ public class Checks {
       }
    }
 
-   public static void checkRASD(RASD rasd) {
-      // Check fields
-      // TODO
-   }
-
    public static void checkRasdItemsList(RasdItemsList items) {
       // Check fields
       // TODO
 
-      for (RASD item : items.getItems()) {
-         checkRASD(item);
+      for (ResourceAllocationSettingData item : items.getItems()) {
+         checkResourceAllocationSettingData(item);
       }
    }
 

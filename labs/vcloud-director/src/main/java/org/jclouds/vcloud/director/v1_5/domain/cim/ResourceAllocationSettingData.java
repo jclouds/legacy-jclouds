@@ -22,7 +22,9 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_RASD_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +35,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -60,7 +63,35 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  * @see http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_ResourceAllocationSettingData.xsd
  */
-@XmlType(name = "CIM_ResourceAllocationSettingData_Type", namespace = VCLOUD_CIM_RASD_NS)
+@XmlRootElement(name = "Item", namespace = VCLOUD_1_5_NS)
+@XmlType(name = "CIM_ResourceAllocationSettingData_Type", namespace = VCLOUD_OVF_NS,
+   propOrder = {
+      "address",
+      "addressOnParent",
+      "allocationUnits",
+      "automaticAllocation",
+      "automaticDeallocation",
+      "caption",
+      "connections",
+      "consumerVisibility",
+      "description",
+      "elementName",
+      "hostResources",
+      "instanceID",
+      "limit",
+      "mappingBehavior",
+      "otherResourceType",
+      "parent",
+      "poolID",
+      "reservation",
+      "resourceSubType",
+      "resourceType",
+      "virtualQuantity",
+      "virtualQuantityUnits",
+      "weight",
+      "links"
+   }
+)
 public class ResourceAllocationSettingData {
 
    public static Builder builder() {
@@ -73,37 +104,37 @@ public class ResourceAllocationSettingData {
 
    public static class Builder {
 
-      protected CimString elementName;
-      protected CimString instanceID;
-      protected CimString caption;
-      protected CimString description;
-      protected CimString address;
-      protected CimString addressOnParent;
-      protected CimString allocationUnits;
-      protected CimBoolean automaticAllocation;
-      protected CimBoolean automaticDeallocation;
-      protected ConsumerVisibility consumerVisibility;
-      protected CimUnsignedLong limit;
-      protected MappingBehavior mappingBehavior;
-      protected CimString otherResourceType;
-      protected CimString parent;
-      protected CimString poolID;
-      protected CimUnsignedLong reservation;
-      protected CimString resourceSubType;
-      protected ResourceType resourceType;
-      protected CimUnsignedLong virtualQuantity;
-      protected CimString virtualQuantityUnits;
-      protected CimUnsignedInt weight;
-      protected List<CimString> connections = Lists.newArrayList();
-      protected List<CimString> hostResources = Lists.newArrayList();
-      protected URI href;
-      protected String type;
+      private String elementName;
+      private String instanceID;
+      private String caption;
+      private String description;
+      private String address;
+      private String addressOnParent;
+      private String allocationUnits;
+      private Boolean automaticAllocation;
+      private Boolean automaticDeallocation;
+      private ConsumerVisibility consumerVisibility;
+      private BigInteger limit;
+      private MappingBehavior mappingBehavior;
+      private String otherResourceType;
+      private String parent;
+      private String poolID;
+      private BigInteger reservation;
+      private String resourceSubType;
+      private ResourceType resourceType;
+      private BigInteger virtualQuantity;
+      private String virtualQuantityUnits;
+      private Long weight;
+      private List<CimString> connections = Lists.newArrayList();
+      private List<CimString> hostResources = Lists.newArrayList();
+      private URI href;
+      private String type;
       private Set<Link> links = Sets.newLinkedHashSet();
 
       /**
        * @see ResourceAllocationSettingData#getElementName()
        */
-      public Builder elementName(CimString elementName) {
+      public Builder elementName(String elementName) {
          this.elementName = elementName;
          return this;
       }
@@ -111,7 +142,7 @@ public class ResourceAllocationSettingData {
       /**
        *@see ResourceAllocationSettingData#getInstanceId()
        */
-      public Builder instanceID(CimString instanceID) {
+      public Builder instanceID(String instanceID) {
          this.instanceID = instanceID;
          return this;
       }
@@ -119,7 +150,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getCaption()
        */
-      public Builder caption(CimString caption) {
+      public Builder caption(String caption) {
          this.caption = caption;
          return this;
       }
@@ -127,7 +158,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getDescription()
        */
-      public Builder description(CimString description) {
+      public Builder description(String description) {
          this.description = description;
          return this;
       }
@@ -135,7 +166,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getAddress
        */
-      public Builder address(CimString address) {
+      public Builder address(String address) {
          this.address = address;
          return this;
       }
@@ -143,7 +174,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getAddressOnParent
        */
-      public Builder addressOnParent(CimString addressOnParent) {
+      public Builder addressOnParent(String addressOnParent) {
          this.addressOnParent = addressOnParent;
          return this;
       }
@@ -151,7 +182,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getAllocationUnits
        */
-      public Builder allocationUnits(CimString allocationUnits) {
+      public Builder allocationUnits(String allocationUnits) {
          this.allocationUnits = allocationUnits;
          return this;
       }
@@ -159,7 +190,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#isAutomaticAllocation()
        */
-      public Builder automaticAllocation(CimBoolean automaticAllocation) {
+      public Builder automaticAllocation(Boolean automaticAllocation) {
          this.automaticAllocation = automaticAllocation;
          return this;
       }
@@ -167,7 +198,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#isAutomaticDeallocation()
        */
-      public Builder automaticDeallocation(CimBoolean automaticDeallocation) {
+      public Builder automaticDeallocation(Boolean automaticDeallocation) {
          this.automaticDeallocation = automaticDeallocation;
          return this;
       }
@@ -183,7 +214,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getLimit
        */
-      public Builder limit(CimUnsignedLong limit) {
+      public Builder limit(BigInteger limit) {
          this.limit = limit;
          return this;
       }
@@ -199,7 +230,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getOtherResourceType
        */
-      public Builder otherResourceType(CimString otherResourceType) {
+      public Builder otherResourceType(String otherResourceType) {
          this.otherResourceType = otherResourceType;
          return this;
       }
@@ -207,7 +238,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getParent
        */
-      public Builder parent(CimString parent) {
+      public Builder parent(String parent) {
          this.parent = parent;
          return this;
       }
@@ -215,7 +246,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getPoolID
        */
-      public Builder poolID(CimString poolID) {
+      public Builder poolID(String poolID) {
          this.poolID = poolID;
          return this;
       }
@@ -223,7 +254,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getReservation
        */
-      public Builder reservation(CimUnsignedLong reservation) {
+      public Builder reservation(BigInteger reservation) {
          this.reservation = reservation;
          return this;
       }
@@ -231,7 +262,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getResourceSubType
        */
-      public Builder resourceSubType(CimString resourceSubType) {
+      public Builder resourceSubType(String resourceSubType) {
          this.resourceSubType = resourceSubType;
          return this;
       }
@@ -247,7 +278,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getVirtualQuantity
        */
-      public Builder virtualQuantity(CimUnsignedLong virtualQuantity) {
+      public Builder virtualQuantity(BigInteger virtualQuantity) {
          this.virtualQuantity = virtualQuantity;
          return this;
       }
@@ -255,7 +286,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getVirtualQuantityUnits
        */
-      public Builder virtualQuantityUnits(CimString virtualQuantityUnits) {
+      public Builder virtualQuantityUnits(String virtualQuantityUnits) {
          this.virtualQuantityUnits = virtualQuantityUnits;
          return this;
       }
@@ -263,7 +294,7 @@ public class ResourceAllocationSettingData {
       /**
        * @see ResourceAllocationSettingData#getWeight
        */
-      public Builder weight(CimUnsignedInt weight) {
+      public Builder weight(Long weight) {
          this.weight = weight;
          return this;
       }
@@ -277,18 +308,18 @@ public class ResourceAllocationSettingData {
       }
 
       /**
-       * @see ResourceAllocationSettingData#getHostResources()
-       */
-      public Builder hostResource(CimString hostResource) {
-         this.hostResources.add(checkNotNull(hostResource, "hostResource"));
-         return this;
-      }
-
-      /**
        * @see ResourceAllocationSettingData#getConnections
        */
       public Builder connections(List<CimString> connections) {
          this.connections = Lists.newArrayList(checkNotNull(connections, "connections"));
+         return this;
+      }
+
+      /**
+       * @see ResourceAllocationSettingData#getHostResources()
+       */
+      public Builder hostResource(CimString hostResource) {
+         this.hostResources.add(checkNotNull(hostResource, "hostResource"));
          return this;
       }
 
@@ -528,66 +559,68 @@ public class ResourceAllocationSettingData {
          return MAPPING_BEHAVIOR_BY_ID.get(Integer.valueOf(checkNotNull(behavior, "behavior")));
       }
    }
+   
+   // <rasd:Elementname>foo</rasd:ElementName>
 
    @XmlElement(name = "ElementName", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString elementName;
+   private String elementName;
    @XmlElement(name = "InstanceID", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString instanceID;
+   private String instanceID;
    @XmlElement(name = "Caption", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString caption;
+   private String caption;
    @XmlElement(name = "Description", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString description;
+   private String description;
    @XmlElement(name = "Address", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString address;
+   private String address;
    @XmlElement(name = "AddressOnParent", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString addressOnParent;
+   private String addressOnParent;
    @XmlElement(name = "AllocationUnits", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString allocationUnits;
+   private String allocationUnits;
    @XmlElement(name = "AutomaticAllocation", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimBoolean automaticAllocation;
+   private Boolean automaticAllocation;
    @XmlElement(name = "AutomaticDeallocation", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimBoolean automaticDeallocation;
+   private Boolean automaticDeallocation;
    @XmlElement(name = "ConsumerVisibility", namespace = VCLOUD_CIM_RASD_NS)
-   protected ConsumerVisibility consumerVisibility;
+   private ConsumerVisibility consumerVisibility;
    @XmlElement(name = "Limit", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimUnsignedLong limit;
+   private BigInteger limit;
    @XmlElement(name = "MappingBehavior", namespace = VCLOUD_CIM_RASD_NS)
-   protected MappingBehavior mappingBehavior;
+   private MappingBehavior mappingBehavior;
    @XmlElement(name = "OtherResourceType", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString otherResourceType;
+   private String otherResourceType;
    @XmlElement(name = "Parent", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString parent;
+   private String parent;
    @XmlElement(name = "PoolID", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString poolID;
+   private String poolID;
    @XmlElement(name = "Reservation", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimUnsignedLong reservation;
+   private BigInteger reservation;
    @XmlElement(name = "ResourceSubType", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString resourceSubType;
+   private String resourceSubType;
    @XmlElement(name = "ResourceType", namespace = VCLOUD_CIM_RASD_NS)
-   protected ResourceType resourceType;
+   private ResourceType resourceType;
    @XmlElement(name = "VirtualQuantity", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimUnsignedLong virtualQuantity;
+   private BigInteger virtualQuantity;
    @XmlElement(name = "VirtualQuantityUnits", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimString virtualQuantityUnits;
+   private String virtualQuantityUnits;
    @XmlElement(name = "Weight", namespace = VCLOUD_CIM_RASD_NS)
-   protected CimUnsignedInt weight;
+   private Long weight;
    @XmlElement(name = "Connection", namespace = VCLOUD_CIM_RASD_NS)
-   protected List<CimString> connections;
+   private List<CimString> connections = Lists.newArrayList();
    @XmlElement(name = "HostResource", namespace = VCLOUD_CIM_RASD_NS)
-   protected List<CimString> hostResources;
+   private List<CimString> hostResources = Lists.newArrayList();
    @XmlAttribute(name = "type", namespace = VCLOUD_1_5_NS)
-   protected String type;
+   private String type;
    @XmlAttribute(name = "href", namespace = VCLOUD_1_5_NS)
-   protected URI href;
+   private URI href;
    @XmlElement(name = "Link", namespace = VCLOUD_1_5_NS)
    private Set<Link> links = Sets.newLinkedHashSet();
 
-   private ResourceAllocationSettingData(CimString elementName, CimString instanceID, CimString caption, CimString description,
-         CimString address, CimString addressOnParent, CimString allocationUnits, CimBoolean automaticAllocation,
-         CimBoolean automaticDeallocation, ConsumerVisibility consumerVisibility, CimUnsignedLong limit,
-         MappingBehavior mappingBehavior, CimString otherResourceType, CimString parent, CimString poolID, CimUnsignedLong reservation,
-         CimString resourceSubType, ResourceType resourceType, CimUnsignedLong virtualQuantity, CimString virtualQuantityUnits,
-         CimUnsignedInt weight, List<CimString> connections, List<CimString> hostResources, String type, URI href, Set<Link> links) {
+   private ResourceAllocationSettingData(String elementName, String instanceID, String caption, String description,
+         String address, String addressOnParent, String allocationUnits, Boolean automaticAllocation,
+         Boolean automaticDeallocation, ConsumerVisibility consumerVisibility, BigInteger limit,
+         MappingBehavior mappingBehavior, String otherResourceType, String parent, String poolID, BigInteger reservation,
+         String resourceSubType, ResourceType resourceType, BigInteger virtualQuantity, String virtualQuantityUnits,
+         Long weight, List<CimString> connections, List<CimString> hostResources, String type, URI href, Set<Link> links) {
       this.elementName = elementName;
       this.instanceID = instanceID;
       this.caption = caption;
@@ -625,7 +658,7 @@ public class ResourceAllocationSettingData {
     * can be used as an index property for a search or query. (Note: The name does not have to be
     * unique within a namespace.)
     */
-   public CimString getElementName() {
+   public String getElementName() {
       return elementName;
    }
 
@@ -633,21 +666,21 @@ public class ResourceAllocationSettingData {
     * Within the scope of the instantiating Namespace, InstanceID opaquely and uniquely identifies
     * an instance of this class.
     */
-   public CimString getInstanceID() {
+   public String getInstanceID() {
       return instanceID;
    }
 
    /**
     * The Caption property is a short textual description (one- line string) of the object.
     */
-   public CimString getCaption() {
+   public String getCaption() {
       return caption;
    }
 
    /**
     * The Description property provides a textual description of the object.
     */
-   public CimString getDescription() {
+   public String getDescription() {
       return description;
    }
    
@@ -655,7 +688,7 @@ public class ResourceAllocationSettingData {
     * The address of the resource. For example, the MAC address of a Ethernet
     * port.
     */
-   public CimString getAddress() {
+   public String getAddress() {
       return address;
    }
 
@@ -666,7 +699,7 @@ public class ResourceAllocationSettingData {
     * if the parent is a PCI Controller, this property would specify the PCI
     * slot of this child device.
     */
-   public CimString getAddressOnParent() {
+   public String getAddressOnParent() {
       return addressOnParent;
    }
 
@@ -680,7 +713,7 @@ public class ResourceAllocationSettingData {
     * value of the Programmatic Units qualifier as defined in Annex C.1 of
     * DSP0004 V2.5 or later.
     */
-   public CimString getAllocationUnits() {
+   public String getAllocationUnits() {
       return allocationUnits;
    }
 
@@ -693,7 +726,7 @@ public class ResourceAllocationSettingData {
     * on time, the media is not present. An explicit operation is required to
     * allocate the resource.
     */
-   public CimBoolean isAutomaticAllocation() {
+   public Boolean isAutomaticAllocation() {
       return automaticAllocation;
    }
 
@@ -704,7 +737,7 @@ public class ResourceAllocationSettingData {
     * set to false, the resource will remain allocated and must be explicitly
     * de-allocated.
     */
-   public CimBoolean isAutomaticDeallocation() {
+   public Boolean isAutomaticDeallocation() {
       return automaticDeallocation;
    }
 
@@ -723,7 +756,7 @@ public class ResourceAllocationSettingData {
     * for this allocation. The value of the Limit property is expressed in the
     * unit specified by the value of the AllocationUnits property.
     */
-   public CimUnsignedLong getLimit() {
+   public BigInteger getLimit() {
       return limit;
    }
 
@@ -740,7 +773,7 @@ public class ResourceAllocationSettingData {
     * A string that describes the resource type when a well defined value is not
     * available and ResourceType has the value "Other".
     */
-   public CimString getOtherResourceType() {
+   public String getOtherResourceType() {
       return otherResourceType;
    }
 
@@ -748,7 +781,7 @@ public class ResourceAllocationSettingData {
     * The Parent of the resource. For example, a controller for the current
     * allocation
     */
-   public CimString getParent() {
+   public String getParent() {
       return parent;
    }
 
@@ -757,7 +790,7 @@ public class ResourceAllocationSettingData {
     * allocated from, or which ResourcePool the resource will be allocated from
     * when the allocation occurs.
     */
-   public CimString getPoolID() {
+   public String getPoolID() {
       return poolID;
    }
 
@@ -769,7 +802,7 @@ public class ResourceAllocationSettingData {
     * the Reservation property is expressed in the unit specified by the value
     * of the AllocationUnits property.
     */
-   public CimUnsignedLong getReservation() {
+   public BigInteger getReservation() {
       return reservation;
    }
 
@@ -777,7 +810,7 @@ public class ResourceAllocationSettingData {
     * A string describing an implementation specific sub-type for this resource.
     * F
     */
-   public CimString getResourceSubType() {
+   public String getResourceSubType() {
       return resourceSubType;
    }
 
@@ -797,7 +830,7 @@ public class ResourceAllocationSettingData {
     * VirtualQuantity property should be expressed in units as defined by the
     * value of the VirtualQuantityUnits property.
     */
-   public CimUnsignedLong getVirtualQuantity() {
+   public BigInteger getVirtualQuantity() {
       return virtualQuantity;
    }
 
@@ -813,7 +846,7 @@ public class ResourceAllocationSettingData {
     * this property shall be a legal value of the Programmatic Units qualifier
     * as defined in Annex C.1 of DSP0004 V2.5 or later.
     */
-   public CimString getVirtualQuantityUnits() {
+   public String getVirtualQuantityUnits() {
       return virtualQuantityUnits;
    }
 
@@ -823,7 +856,7 @@ public class ResourceAllocationSettingData {
     * has no unit of measure, and is only relevant when compared to other
     * allocations vying for the same host resources.
     */
-   public CimUnsignedInt getWeight() {
+   public Long getWeight() {
       return weight;
    }
 
@@ -918,7 +951,7 @@ public class ResourceAllocationSettingData {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -949,7 +982,6 @@ public class ResourceAllocationSettingData {
             equal(this.type, that.type) &&
             equal(this.href, that.href) &&
             equal(this.links, that.links);
-            
    }
 
 }

@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -59,12 +59,12 @@ public class RasdItemsList extends ResourceType {
    
    public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
-      private List<RASD> items = Lists.newArrayList();
+      private List<ResourceAllocationSettingData> items = Lists.newArrayList();
 
       /**
        * @see RasdItemsList#getItems()
        */
-      public B items(List<RASD> items) {
+      public B items(List<ResourceAllocationSettingData> items) {
          this.items = checkNotNull(items, "items");
          return self();
       }
@@ -72,7 +72,7 @@ public class RasdItemsList extends ResourceType {
       /**
        * @see RasdItemsList#getItems()
        */
-      public B item(RASD item) {
+      public B item(ResourceAllocationSettingData item) {
          this.items.add(checkNotNull(item, "item"));
          return self();
       }
@@ -98,12 +98,12 @@ public class RasdItemsList extends ResourceType {
    }
 
    @XmlElement(name = "Item")
-   protected List<RASD> items = Lists.newArrayList();
+   protected List<ResourceAllocationSettingData> items = Lists.newArrayList();
 
    /**
     * A RASD item content.
     */
-   public List<RASD> getItems() {
+   public List<ResourceAllocationSettingData> getItems() {
       return items;
    }
 
