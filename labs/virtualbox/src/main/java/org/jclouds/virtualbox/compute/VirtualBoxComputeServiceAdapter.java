@@ -74,7 +74,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   
+
    private final Supplier<VirtualBoxManager> manager;
    private final Map<Image, YamlImage> images;
    private final LoadingCache<Image, Master> mastersLoader;
@@ -85,7 +85,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    @Inject
    public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
             Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
-            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator, MachineController machineController, 
+            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator, MachineController machineController,
             MachineUtils machineUtils) {
       this.manager = checkNotNull(manager, "manager");
       this.images = imagesMapper.get();
@@ -100,7 +100,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
             Template template) {
       try {
          Master master = mastersLoader.get(template.getImage());
-         checkState(master != null, "could not find a master for image: "+ template.getClass());
+         checkState(master != null, "could not find a master for image: " + template.getClass());
          NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
          return cloneCreator.apply(nodeSpec);
       } catch (Exception e) {
@@ -150,7 +150,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       try {
          return manager.get().getVBox().findMachine(vmName);
       } catch (VBoxException e) {
-         if (e.getMessage().contains("Could not find a registered machine named")){
+         if (e.getMessage().contains("Could not find a registered machine named")) {
             return null;
          }
          throw Throwables.propagate(e);
@@ -161,9 +161,8 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    public synchronized void destroyNode(String vmName) {
       IMachine machine = manager.get().getVBox().findMachine(vmName);
       machineController.ensureMachineHasPowerDown(vmName);
-      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(
-				vmName,
-				new UnregisterMachineIfExistsAndDeleteItsMedia(new IMachineToVmSpec().apply(machine)));      
+      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmName,
+               new UnregisterMachineIfExistsAndDeleteItsMedia(new IMachineToVmSpec().apply(machine)));
    }
 
    @Override
@@ -174,13 +173,12 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public void resumeNode(String vmName) {
-	   machineController.ensureMachineIsResumed(vmName);
+      machineController.ensureMachineIsResumed(vmName);
    }
 
    @Override
    public void suspendNode(String vmName) {
-	   machineController.ensureMachineIsPaused(vmName);
+      machineController.ensureMachineIsPaused(vmName);
    }
-
 
 }

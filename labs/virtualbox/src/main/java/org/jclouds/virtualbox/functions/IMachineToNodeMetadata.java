@@ -50,84 +50,76 @@ import com.google.inject.Singleton;
 @Singleton
 public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> {
 
-	@Resource
-	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
-	protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-	private final MachineUtils machineUtils;
+   private final MachineUtils machineUtils;
 
-	@Inject
-	public IMachineToNodeMetadata(MachineUtils machineUtils) {
-		this.machineUtils = machineUtils;
-	}
+   @Inject
+   public IMachineToNodeMetadata(MachineUtils machineUtils) {
+      this.machineUtils = machineUtils;
+   }
 
-	@Override
-	public NodeMetadata apply(@Nullable IMachine vm) {
+   @Override
+   public NodeMetadata apply(@Nullable IMachine vm) {
 
-		NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
-		nodeMetadataBuilder.name(vm.getName()).ids(vm.getName());
+      NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
+      nodeMetadataBuilder.name(vm.getName()).ids(vm.getName());
 
-		// TODO Set up location properly
-		LocationBuilder locationBuilder = new LocationBuilder();
-		locationBuilder.description("");
-		locationBuilder.id("");
-		locationBuilder.scope(LocationScope.HOST);
-		nodeMetadataBuilder.location(locationBuilder.build());
+      // TODO Set up location properly
+      LocationBuilder locationBuilder = new LocationBuilder();
+      locationBuilder.description("");
+      locationBuilder.id("");
+      locationBuilder.scope(LocationScope.HOST);
+      nodeMetadataBuilder.location(locationBuilder.build());
 
-		nodeMetadataBuilder.hostname(vm.getName());
+      nodeMetadataBuilder.hostname(vm.getName());
 
-		MachineState vmState = vm.getState();
-		NodeState nodeState = machineToNodeState.get(vmState);
-		if (nodeState == null)
-			nodeState = NodeState.UNRECOGNIZED;
-		nodeMetadataBuilder.state(nodeState);
+      MachineState vmState = vm.getState();
+      NodeState nodeState = machineToNodeState.get(vmState);
+      if (nodeState == null)
+         nodeState = NodeState.UNRECOGNIZED;
+      nodeMetadataBuilder.state(nodeState);
 
-		logger.debug("Setting virtualbox node to: " + nodeState
-				+ " from machine state: " + vmState);
+      logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
 
-		// hardcoded set-up that works only for nat+host-only
+      // hardcoded set-up that works only for nat+host-only
 
-		// nat adapter
-		INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);
-		checkNotNull(natAdapter, "slot 0 networkadapter");
+      // nat adapter
+      INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);
+      checkNotNull(natAdapter, "slot 0 networkadapter");
 
-		if (natAdapter.getAttachmentType() == NetworkAttachmentType.NAT) {
-			// checkState(natAdapter.getAttachmentType() ==
-			// NetworkAttachmentType.NAT,
-			// "expecting slot 0 to be a NAT attachment type (was: " +
-			// natAdapter.getAttachmentType() + ")");
-			int ipTermination = 0;
-			nodeMetadataBuilder.publicAddresses(ImmutableSet.of(natAdapter
-					.getNatDriver().getHostIP()));
-			for (String nameProtocolnumberAddressInboudportGuestTargetport : natAdapter
-					.getNatDriver().getRedirects()) {
-				Iterable<String> stuff = Splitter.on(',').split(
-						nameProtocolnumberAddressInboudportGuestTargetport);
-				String protocolNumber = Iterables.get(stuff, 1);
-				String hostAddress = Iterables.get(stuff, 2);
-				String inboundPort = Iterables.get(stuff, 3);
-				String targetPort = Iterables.get(stuff, 5);
-				if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-					int inPort = Integer.parseInt(inboundPort);
-					ipTermination = inPort % NodeCreator.NODE_PORT_INIT;
-					nodeMetadataBuilder.publicAddresses(
-							ImmutableSet.of(hostAddress)).loginPort(inPort);
-				}
-				nodeMetadataBuilder.privateAddresses(ImmutableSet
-						.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
+      if (natAdapter.getAttachmentType() == NetworkAttachmentType.NAT) {
+         // checkState(natAdapter.getAttachmentType() ==
+         // NetworkAttachmentType.NAT,
+         // "expecting slot 0 to be a NAT attachment type (was: " +
+         // natAdapter.getAttachmentType() + ")");
+         int ipTermination = 0;
+         nodeMetadataBuilder.publicAddresses(ImmutableSet.of(natAdapter.getNatDriver().getHostIP()));
+         for (String nameProtocolnumberAddressInboudportGuestTargetport : natAdapter.getNatDriver().getRedirects()) {
+            Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+            String protocolNumber = Iterables.get(stuff, 1);
+            String hostAddress = Iterables.get(stuff, 2);
+            String inboundPort = Iterables.get(stuff, 3);
+            String targetPort = Iterables.get(stuff, 5);
+            if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
+               int inPort = Integer.parseInt(inboundPort);
+               ipTermination = inPort % NodeCreator.NODE_PORT_INIT;
+               nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
+            }
+            nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
 
-			}
-		} else if (natAdapter.getAttachmentType() == NetworkAttachmentType.Bridged) {
-			String clientIpAddress = machineUtils.getIpAddressFromBridgedNICoption1(vm
-					.getName());
-			nodeMetadataBuilder.privateAddresses(ImmutableSet.of(clientIpAddress));
-		}
+         }
+      } else if (natAdapter.getAttachmentType() == NetworkAttachmentType.Bridged) {
+         String clientIpAddress = machineUtils.getIpAddressFromBridgedNICoption1(vm.getName());
+         nodeMetadataBuilder.privateAddresses(ImmutableSet.of(clientIpAddress));
+      }
 
-		LoginCredentials loginCredentials = new LoginCredentials("toor",
-				"password", null, true);
-		nodeMetadataBuilder.credentials(loginCredentials);
+      LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
+      nodeMetadataBuilder.credentials(loginCredentials);
 
-		return nodeMetadataBuilder.build();
-	}
+      return nodeMetadataBuilder.build();
+   }
 
 }

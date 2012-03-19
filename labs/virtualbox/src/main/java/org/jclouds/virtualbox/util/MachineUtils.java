@@ -69,10 +69,9 @@ public class MachineUtils {
    protected Logger logger = Logger.NULL;
 
    public final String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-			+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-			+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-			+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-   
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
    private final Supplier<VirtualBoxManager> manager;
    private final Factory scriptRunner;
    private final Supplier<NodeMetadata> host;
@@ -140,8 +139,8 @@ public class MachineUtils {
          try {
             return function.apply(session);
          } finally {
-				if (session.getState().equals(SessionState.Locked))
-					session.unlockMachine();
+            if (session.getState().equals(SessionState.Locked))
+               session.unlockMachine();
          }
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
@@ -155,7 +154,8 @@ public class MachineUtils {
 
    private void unlockMachine(final String machineId) {
       IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
-      while (immutableMachine.getSessionState().equals(SessionState.Locked) || immutableMachine.getSessionState().equals(SessionState.Unlocking)) {
+      while (immutableMachine.getSessionState().equals(SessionState.Locked)
+               || immutableMachine.getSessionState().equals(SessionState.Unlocking)) {
          Statement kill = newStatementList(call("default"), findPid(immutableMachine.getSessionPid().toString()),
                   kill());
          scriptRunner.create(host.get(), kill, runAsRoot(false).wrapInInitScript(false)).init().call();
@@ -236,38 +236,34 @@ public class MachineUtils {
                || e.getMessage().contains("Could not find a registered machine with UUID {");
    }
 
-	public String getIpAddressFromBridgedNICoption1(String machineName) {
-		String ip = "";
-		int attempt = 0;
-		while (!isIpv4(ip) && attempt < 10) {
-			ip = this.lockSessionOnMachineAndApply(machineName,
-					LockType.Shared, new Function<ISession, String>() {
-						@Override
-						public String apply(ISession session) {
-							String ip = session
-									.getMachine()
-									.getGuestPropertyValue(
-											"/VirtualBox/GuestInfo/Net/0/V4/IP");
-							return ip;
-						}
-					});
-			attempt++;
-			long sleepTime = 1000 * attempt;
-			logger.debug("Instance %s is still not ready. Attempt n:%d. Sleeping for %d millisec", machineName, attempt, sleepTime);
-			try {
-				Thread.sleep(sleepTime);
-			} catch (InterruptedException e) {
-				Throwables.propagate(e);
-			}
-		}
-		return ip;
-	}
-	
-	private boolean isIpv4(String s) {
-		Pattern pattern = Pattern
-				.compile(this.IP_V4_ADDRESS_PATTERN);
-		Matcher matcher = pattern.matcher(s);
-		return matcher.matches();
-	}
-   
+   public String getIpAddressFromBridgedNICoption1(String machineName) {
+      String ip = "";
+      int attempt = 0;
+      while (!isIpv4(ip) && attempt < 10) {
+         ip = this.lockSessionOnMachineAndApply(machineName, LockType.Shared, new Function<ISession, String>() {
+            @Override
+            public String apply(ISession session) {
+               String ip = session.getMachine().getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
+               return ip;
+            }
+         });
+         attempt++;
+         long sleepTime = 1000 * attempt;
+         logger.debug("Instance %s is still not ready. Attempt n:%d. Sleeping for %d millisec", machineName, attempt,
+                  sleepTime);
+         try {
+            Thread.sleep(sleepTime);
+         } catch (InterruptedException e) {
+            Throwables.propagate(e);
+         }
+      }
+      return ip;
+   }
+
+   private boolean isIpv4(String s) {
+      Pattern pattern = Pattern.compile(this.IP_V4_ADDRESS_PATTERN);
+      Matcher matcher = pattern.matcher(s);
+      return matcher.matches();
+   }
+
 }

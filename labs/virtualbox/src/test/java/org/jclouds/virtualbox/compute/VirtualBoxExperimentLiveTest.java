@@ -67,31 +67,26 @@ public class VirtualBoxExperimentLiveTest {
    }
 
    @Test
-	public void testLaunchCluster() throws RunNodesException {
-		int numNodes = 4;
-		final String clusterName = "test-launch-cluster";
-		Set<? extends NodeMetadata> nodes = context.getComputeService()
-					.createNodesInGroup(
-							clusterName,
-							numNodes,
-							TemplateOptions.Builder.runScript(AdminAccess
-									.standard()));
-			assertEquals(numNodes, nodes.size(), "wrong number of nodes");
-			for (NodeMetadata node : nodes) {
-				logger.debug("Created Node: %s", node);
-				SshClient client = context.utils().sshForNode().apply(node);
-				client.connect();
-				ExecResponse hello = client.exec("echo hello");
-				assertEquals(hello.getOutput().trim(), "hello");
-			}
+   public void testLaunchCluster() throws RunNodesException {
+      int numNodes = 2;
+      final String clusterName = "test-launch-cluster";
+      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
+               TemplateOptions.Builder.runScript(AdminAccess.standard()));
+      assertEquals(numNodes, nodes.size(), "wrong number of nodes");
+      for (NodeMetadata node : nodes) {
+         logger.debug("Created Node: %s", node);
+         SshClient client = context.utils().sshForNode().apply(node);
+         client.connect();
+         ExecResponse hello = client.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
+      }
 
-		context.getComputeService().destroyNodesMatching(
-			new Predicate<NodeMetadata>() {
-				@Override
-				public boolean apply(NodeMetadata input) {
-					return input.getId().contains(clusterName);
-				}
-			});
-	}
-	
+      context.getComputeService().destroyNodesMatching(new Predicate<NodeMetadata>() {
+         @Override
+         public boolean apply(NodeMetadata input) {
+            return input.getId().contains(clusterName);
+         }
+      });
+   }
+
 }

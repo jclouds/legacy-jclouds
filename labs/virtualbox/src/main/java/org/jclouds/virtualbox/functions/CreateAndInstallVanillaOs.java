@@ -55,93 +55,82 @@ import com.google.inject.Inject;
 @Singleton
 public class CreateAndInstallVanillaOs implements Function<MasterSpec, IMachine> {
 
-	@Resource
-	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
-	protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-	private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
-	private final GuestAdditionsInstaller guestAdditionsInstaller;
-	private final Predicate<SshClient> sshResponds;
-	private LoadingCache<IsoSpec, URI> preConfiguration;
-	private final Function<IMachine, SshClient> sshClientForIMachine;
-	private final MachineUtils machineUtils;
-	private final IMachineToNodeMetadata imachineToNodeMetadata;
-	private final MachineController machineController;
-	
+   private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
+   private final GuestAdditionsInstaller guestAdditionsInstaller;
+   private final Predicate<SshClient> sshResponds;
+   private LoadingCache<IsoSpec, URI> preConfiguration;
+   private final Function<IMachine, SshClient> sshClientForIMachine;
+   private final MachineUtils machineUtils;
+   private final IMachineToNodeMetadata imachineToNodeMetadata;
+   private final MachineController machineController;
 
-	@Inject
-	public CreateAndInstallVanillaOs(
-			CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-			GuestAdditionsInstaller guestAdditionsInstaller,
-			IMachineToNodeMetadata imachineToNodeMetadata,
-			Predicate<SshClient> sshResponds,
-			Function<IMachine, SshClient> sshClientForIMachine,
-			MachineUtils machineUtils,
-			@Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration, MachineController machineController) {
-		this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
-		this.sshResponds = sshResponds;
-		this.sshClientForIMachine = sshClientForIMachine;
-		this.machineUtils = machineUtils;
-		this.preConfiguration = preConfiguration;
-		this.guestAdditionsInstaller = guestAdditionsInstaller;
-		this.imachineToNodeMetadata = imachineToNodeMetadata;
-		this.machineController = machineController;
-	}
+   @Inject
+   public CreateAndInstallVanillaOs(
+            CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+            GuestAdditionsInstaller guestAdditionsInstaller, IMachineToNodeMetadata imachineToNodeMetadata,
+            Predicate<SshClient> sshResponds, Function<IMachine, SshClient> sshClientForIMachine,
+            MachineUtils machineUtils, @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration,
+            MachineController machineController) {
+      this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
+      this.sshResponds = sshResponds;
+      this.sshClientForIMachine = sshClientForIMachine;
+      this.machineUtils = machineUtils;
+      this.preConfiguration = preConfiguration;
+      this.guestAdditionsInstaller = guestAdditionsInstaller;
+      this.imachineToNodeMetadata = imachineToNodeMetadata;
+      this.machineController = machineController;
+   }
 
-	@Override
-	public IMachine apply(MasterSpec masterSpec) {
+   @Override
+   public IMachine apply(MasterSpec masterSpec) {
 
-		VmSpec vmSpec = masterSpec.getVmSpec();
-		IsoSpec isoSpec = masterSpec.getIsoSpec();
-		String vmName = vmSpec.getVmName();
+      VmSpec vmSpec = masterSpec.getVmSpec();
+      IsoSpec isoSpec = masterSpec.getIsoSpec();
+      String vmName = vmSpec.getVmName();
 
-		IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists
-				.apply(masterSpec);
+      IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
 
-		// Launch machine and wait for it to come online
-		machineController.ensureMachineIsLaunched(vmName);
+      // Launch machine and wait for it to come online
+      machineController.ensureMachineIsLaunched(vmName);
 
-		URI uri = preConfiguration.getUnchecked(isoSpec);
-		String installationKeySequence = isoSpec.getInstallationKeySequence()
-				.replace("PRECONFIGURATION_URL", uri.toASCIIString());
+      URI uri = preConfiguration.getUnchecked(isoSpec);
+      String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
+               uri.toASCIIString());
 
-		configureOsInstallationWithKeyboardSequence(vmName,
-				installationKeySequence);
-		
-		SshClient client = sshClientForIMachine.apply(vm);
+      configureOsInstallationWithKeyboardSequence(vmName, installationKeySequence);
 
-		logger.debug(">> awaiting installation to finish node(%s)", vmName);
+      SshClient client = sshClientForIMachine.apply(vm);
 
-		checkState(sshResponds.apply(client),
-				"timed out waiting for guest %s to be accessible via ssh",
-				vmName);
-		
-		logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
+      logger.debug(">> awaiting installation to finish node(%s)", vmName);
 
-		NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
+      checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-		ListenableFuture<ExecResponse> execFuture =
-		machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
+      logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
 
-		ExecResponse execResponse = Futures.getUnchecked(execFuture);
-		checkState(execResponse.getExitStatus() == 0);		
-		logger.debug(
-				"<< installation of image complete. Powering down node(%s)",
-				vmName);
+      NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
 
-		machineController.ensureMachineHasPowerDown(vmName);
-		return vm;
-	}
+      ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"),
+               RunScriptOptions.NONE);
 
-	private void configureOsInstallationWithKeyboardSequence(String vmName,
-			String installationKeySequence) {
-		Iterable<List<Integer>> scancodelist = transform(Splitter.on(" ")
-				.split(installationKeySequence), new StringToKeyCode());
+      ExecResponse execResponse = Futures.getUnchecked(execFuture);
+      checkState(execResponse.getExitStatus() == 0);
+      logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
 
-		for (List<Integer> scancodes : scancodelist) {
-			machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
-					new SendScancodes(scancodes));
-		}
-	}
+      machineController.ensureMachineHasPowerDown(vmName);
+      return vm;
+   }
+
+   private void configureOsInstallationWithKeyboardSequence(String vmName, String installationKeySequence) {
+      Iterable<List<Integer>> scancodelist = transform(Splitter.on(" ").split(installationKeySequence),
+               new StringToKeyCode());
+
+      for (List<Integer> scancodes : scancodelist) {
+         machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new SendScancodes(scancodes));
+      }
+   }
 
 }
