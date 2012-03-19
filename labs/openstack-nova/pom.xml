@@ -44,6 +44,7 @@
     <test.openstack-nova.image-id></test.openstack-nova.image-id>
     <test.openstack-nova.image.login-user></test.openstack-nova.image.login-user>
     <test.openstack-nova.image.authenticate-sudo></test.openstack-nova.image.authenticate-sudo>
+    <test.jclouds.openstack-nova.auto-allocate-floating-ips>false</test.jclouds.openstack-nova.auto-allocate-floating-ips>
   </properties>
 
   <dependencies>
@@ -77,6 +78,12 @@
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jclouds.driver</groupId>
+          <artifactId>jclouds-log4j</artifactId>
+        </exclusion>
+      </exclusions> 
     </dependency>
     <dependency>
       <groupId>org.jclouds.driver</groupId>
@@ -123,6 +130,7 @@
                     <test.openstack-nova.image-id>${test.openstack-nova.image-id}</test.openstack-nova.image-id>
                     <test.openstack-nova.image.login-user>${test.openstack-nova.image.login-user}</test.openstack-nova.image.login-user>
                     <test.openstack-nova.image.authenticate-sudo>${test.openstack-nova.image.authenticate-sudo}</test.openstack-nova.image.authenticate-sudo>
+                    <test.jclouds.openstack-nova.auto-allocate-floating-ips>${test.jclouds.openstack-nova.auto-allocate-floating-ips}</test.jclouds.openstack-nova.auto-allocate-floating-ips>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

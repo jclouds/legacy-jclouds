@@ -37,8 +37,8 @@
     <test.hpcloud-compute.endpoint>https://region-a.geo-1.identity.hpcloudsvc.com:35357</test.hpcloud-compute.endpoint>
     <test.hpcloud-compute.api-version>1.1</test.hpcloud-compute.api-version>
     <test.hpcloud-compute.build-version></test.hpcloud-compute.build-version>
-    <test.hpcloud-compute.identity>${test.hpcloud-us.identity}</test.hpcloud-compute.identity>
-    <test.hpcloud-compute.credential>${test.hpcloud-us.credential}</test.hpcloud-compute.credential>
+    <test.hpcloud-compute.identity>${test.hpcloud-compute.identity}</test.hpcloud-compute.identity>
+    <test.hpcloud-compute.credential>${test.hpcloud-compute.credential}</test.hpcloud-compute.credential>
     <test.hpcloud-compute.image-id></test.hpcloud-compute.image-id>
     <test.hpcloud-compute.image.login-user></test.hpcloud-compute.image.login-user>
     <test.hpcloud-compute.image.authenticate-sudo></test.hpcloud-compute.image.authenticate-sudo>
@@ -63,6 +63,12 @@
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jclouds.driver</groupId>
+          <artifactId>jclouds-log4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jclouds.labs</groupId>
@@ -81,6 +87,12 @@
       <groupId>org.jclouds.driver</groupId>
       <artifactId>jclouds-sshj</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
