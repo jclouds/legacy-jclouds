@@ -348,7 +348,7 @@ public class User extends EntityType {
       this.telephone = builder.telephone;
       isEnabled = builder.isEnabled;
       isLocked = builder.isLocked;
-      this.im = checkNotNull(builder.im, "im");
+      this.im = builder.im;
       this.nameInSource = builder.nameInSource;
       isAlertEnabled = builder.isAlertEnabled;
       this.alertEmailPrefix = builder.alertEmailPrefix;

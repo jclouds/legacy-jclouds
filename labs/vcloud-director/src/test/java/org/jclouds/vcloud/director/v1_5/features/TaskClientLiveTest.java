@@ -29,10 +29,13 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -49,14 +52,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    private OrgClient orgClient;
    private TaskClient taskClient;
-
-   @Override
-   @BeforeClass(inheritGroups = true)
-   public void setupRequiredClients() {
-      orgClient = context.getApi().getOrgClient();
-      taskClient = context.getApi().getTaskClient();
-   }
-
+   
    /*
     * Shared state between dependant tests.
     */
@@ -66,6 +62,20 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private TasksList taskList;
    private Task task;
    private URI taskURI;
+   
+   private VApp vApp;
+
+   @Override
+   @BeforeClass(inheritGroups = true)
+   public void setupRequiredClients() {
+      orgClient = context.getApi().getOrgClient();
+      taskClient = context.getApi().getTaskClient();
+   }
+
+   @AfterClass(groups = { "live" })
+   public void cleanUp() throws Exception {
+      if (vApp != null) cleanUpVApp(vApp);
+   }
 
    @Test(testName = "GET /tasksList/{id}")
    public void testGetTaskList() {
@@ -100,10 +110,19 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Check required elements and attributes
       checkTask(task);
    }
-   
+
+   // FIXME cancelTask complains "This task can not be canceled"
+   // However, when I do this through the UI, I can cancel the task for instantiating a vApp.
    @Test(testName = "GET /task/{id}/metadata/", dependsOnMethods = { "testGetTask" })
    public void testCancelTask() {
+      vApp = instantiateVApp();
+      
+      Task task = Iterables.getFirst(vApp.getTasks(), null);
+      assertNotNull(task, "instantiateVApp should contain one long-running task");
+      assertTaskStatusEventually(task, Task.Status.RUNNING, ImmutableSet.of(Task.Status.ERROR, Task.Status.ABORTED));
+
       // Call the method being tested
       taskClient.cancelTask(taskURI);
+      assertTaskStatusEventually(task, Task.Status.CANCELED, ImmutableSet.of(Task.Status.ERROR, Task.Status.ABORTED, Task.Status.SUCCESS));
    }
 }

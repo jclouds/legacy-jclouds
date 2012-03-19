@@ -19,12 +19,9 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -32,7 +29,6 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -78,8 +74,8 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkGroup(group);
    }
    
-   @Test(testName = "PUT /admin/group/{id}") // TODO: depends on?
-   public void updateGroup() {
+   @Test(testName = "PUT /admin/group/{id}", dependsOnMethods = { "testGetGroup" } )
+   public void testUpdateGroup() {
       String oldName = group.getName();
       String newName = "new "+oldName;
       String oldDescription = group.getDescription();
@@ -111,28 +107,23 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "DELETE /admin/group/{id}", enabled = false )
+   @Test(testName = "DELETE /admin/group/{id}", dependsOnMethods = { "testUpdateGroup" }, enabled = false )
    public void testDeleteCatalog() {
       groupClient.deleteGroup(groupRef.getHref());
       
-      Error expected = Error.builder()
-            .message("???")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
+      // TODO stronger assertion of error expected
+//      Error expected = Error.builder()
+//            .message("???")
+//            .majorErrorCode(403)
+//            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
+//            .build();
       
       try {
          group = groupClient.getGroup(groupRef.getHref());
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
+         // success
          group = null;
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
-      
-      if (group != null) { // guard against NPE on the .toStrings
-         assertNull(group, String.format(OBJ_DEL, GROUP, group.toString()));
       }
    }
 }
