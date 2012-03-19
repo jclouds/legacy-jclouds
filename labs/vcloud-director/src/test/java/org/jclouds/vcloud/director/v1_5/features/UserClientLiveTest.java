@@ -21,17 +21,24 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
+import static org.testng.AssertJUnit.assertFalse;
 
 import java.net.URI;
 
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.login.SessionClient;
+import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -39,7 +46,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests live behavior of {@link AdminGroupClient}.
+ * Tests live behavior of {@link UserClient}.
  * 
  * @author danikov
  */
@@ -165,28 +172,69 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             String.format(OBJ_FIELD_UPDATABLE, USER, "storedVmQuota"));
       assertTrue(equal(user.getDeployedVmQuota(), newUser.getDeployedVmQuota()), 
             String.format(OBJ_FIELD_UPDATABLE, USER, "deployedVmQuota"));
-      
-      // TODO: assert password is changed with session client?
+           
+      // session client isn't typically exposed to the user, as it is implicit
+      SessionClient sessionClient = context.utils().injector().getInstance(SessionClient.class);
+
+      // Check the user can really login with the changed password
+      // NOTE: the password is NOT returned in the User object returned from the server
+      SessionWithToken sessionWithToken = sessionClient.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "newPassword");
+      assertNotNull(sessionWithToken.getToken());
+      sessionClient.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
  
-   @Test(testName = "POST /admin/user/{id}/action/unlock",
-         dependsOnMethods = { "testUpdateUser" }, enabled=false )
+   @Test(testName = "POST /admin/user/{id}/action/unlock", dependsOnMethods = { "testUpdateUser" })
    public void testUnlockUser() {
-      // FIXME Need to simulate failed login, to lock the account?
-      //
-      // UserType.isLocked states:
-      //  This flag is set if the user account has been locked due to too many invalid login attempts. 
-      // A locked user account can be re-enabled by updating the user with this flag set to false. 
-      // (However, the account cannot be manually locked by setting it to true - setting this flag is 
-      // only done by the login process).
+      // Need to know how many times to fail login to lock account
+      AdminOrgClient adminOrgClient = context.getApi().getAdminOrgClient();
+      OrgPasswordPolicySettings settingsToRevertTo = null;
+
+      // session client isn't typically exposed to the user, as it is implicit
+      SessionClient sessionClient = context.utils().injector().getInstance(SessionClient.class);
       
-      //TODO: check previous tests a) enabled lockout, b) set password
-      //TODO: attempt too many times with the wrong password
-      //TODO: verify access is denied
-      //TODO: unlock user
-      //TODO: verify access is renewed
+      OrgPasswordPolicySettings settings = adminOrgClient.getSettings(orgRef.getHref()).getPasswordPolicy();
+      assertNotNull(settings);
+
+      // Adjust account settings so we can lock the account - be careful to not set invalidLoginsBeforeLockout too low!
+      if (!settings.isAccountLockoutEnabled()) {
+         settingsToRevertTo = settings;
+         settings = settings.toBuilder().accountLockoutEnabled(true).invalidLoginsBeforeLockout(5).build();
+         settings = adminOrgClient.updatePasswordPolicy(orgRef.getHref(), settings);
+      }
+
+      assertTrue(settings.isAccountLockoutEnabled());
       
-      throw new UnsupportedOperationException("Test not yet implemented; need to first cause account to be locked");
+      for (int i=0; i<settings.getInvalidLoginsBeforeLockout()+1; i++) {
+         try {
+            sessionClient.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "wrongpassword!");
+            fail("Managed to login using the wrong password!");
+         } catch(AuthorizationException ex) {            
+         }
+      }
+      
+      user = userClient.getUser(user.getHref());
+      assertTrue(user.isLocked());
+
+      try {
+         sessionClient.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "newPassword");
+         fail("Managed to login to locked account!");
+      } catch(AuthorizationException ex) {
+      }
+      
+      userClient.unlockUser(user.getHref());
+
+      user = userClient.getUser(user.getHref());
+      assertFalse(user.isLocked());
+
+      // Double-check the user can now login again
+      SessionWithToken sessionWithToken = sessionClient.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "newPassword");
+      assertNotNull(sessionWithToken.getToken());
+      sessionClient.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
+      
+      // Return account settings to the previous values, if necessary
+      if (settingsToRevertTo != null) {
+         adminOrgClient.updatePasswordPolicy(orgRef.getHref(), settingsToRevertTo);
+      }
    }
  
    @Test(testName = "DELETE /admin/user/{id}",

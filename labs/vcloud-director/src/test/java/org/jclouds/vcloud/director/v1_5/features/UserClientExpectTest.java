@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Collections;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -172,8 +173,6 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
          .build();
    }
  
-// POST /admin/user/{id}/action/unlock
- 
    @Test
    public void testDeleteUser() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
@@ -185,5 +184,33 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
                .httpResponseBuilder().statusCode(204).build());
       
       client.getUserClient().deleteUser(userRef.getHref());
+   }
+   
+   @Test
+   public void testUnlockUser() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            new VcloudHttpRequestPrimer()
+                  .apiCommand("POST", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6/action/unlock")
+                  .acceptAnyMedia()
+                  .httpRequestBuilder().build(),
+            new VcloudHttpResponsePrimer()
+                  .httpResponseBuilder().statusCode(204).build());
+
+      client.getUserClient().unlockUser(userRef.getHref());
+   }
+
+   @Test(expectedExceptions = VCloudDirectorException.class)
+   public void testUnlockUserFailNotFound() {
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+            new VcloudHttpRequestPrimer()
+                  .apiCommand("POST", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6/action/unlock")
+                  .acceptAnyMedia()
+                  .httpRequestBuilder().build(),
+            new VcloudHttpResponsePrimer()
+                  .httpResponseBuilder().statusCode(403)
+                  .payload(payloadFromResourceWithContentType("/org/error400.xml", VCloudDirectorMediaType.ERROR))
+                  .build());
+
+      client.getUserClient().unlockUser(userRef.getHref());
    }
 }
