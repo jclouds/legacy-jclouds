@@ -39,8 +39,8 @@ public class ImageClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testListImages() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         ImageClient client = context.getApi().getImageClientForRegion(regionId);
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         ImageClient client = context.getApi().getImageClientForZone(zoneId);
          Set<Resource> response = client.listImages();
          assertNotNull(response);
          assertTrue(response.size() >= 0);
@@ -56,8 +56,8 @@ public class ImageClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testListImagesInDetail() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         ImageClient client = context.getApi().getImageClientForRegion(regionId);
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         ImageClient client = context.getApi().getImageClientForZone(zoneId);
          Set<Image> response = client.listImagesInDetail();
          assertNotNull(response);
          assertTrue(response.size() >= 0);

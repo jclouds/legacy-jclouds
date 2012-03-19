@@ -38,16 +38,16 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
    public static final String SECURITY_GROUP_NAME = "testsg";
 
    public void listSecurityGroups() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForRegion(regionId).get();
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForZone(zoneId).get();
          Set<SecurityGroup> securityGroupsList = client.listSecurityGroups();
          assertNotNull(securityGroupsList);
       }
    }
 
    public void createGetAndDeleteSecurityGroup() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForRegion(regionId).get();
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForZone(zoneId).get();
          SecurityGroup securityGroup = null;
          String id;
          try {
@@ -65,8 +65,8 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
    }
 
    public void createAndDeleteSecurityGroupRule() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForRegion(regionId).get();
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         SecurityGroupClient client = context.getApi().getSecurityGroupExtensionForZone(zoneId).get();
          SecurityGroup securityGroup = null;
 
          try {

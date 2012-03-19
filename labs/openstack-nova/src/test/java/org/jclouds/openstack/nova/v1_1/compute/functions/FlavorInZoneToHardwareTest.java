@@ -22,32 +22,51 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.openstack.nova.v1_1.compute.domain.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests the function used to transform Flavor objects into Hardware objects
  * 
- * @author Matt Stephenson
+ * @author Matt Stephenson, Adrian Cole
  */
-public class FlavorToHardwareTest {
+@Test(testName = "FlavorInZoneToHardwareTest")
+public class FlavorInZoneToHardwareTest {
+   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("openstack-nova").description(
+            "openstack-nova").build();
+   Location zone = new LocationBuilder().id("az-1.region-a.geo-1").description("az-1.region-a.geo-1").scope(
+            LocationScope.ZONE).parent(provider).build();
+   Supplier<Map<String, Location>> locationIndex = Suppliers.<Map<String, Location>> ofInstance(ImmutableMap
+            .<String, Location> of("az-1.region-a.geo-1", zone));
+
    @Test
-   public void testConversion() {
+   public void testConversionWhereLocationFound() {
+
       UUID id = UUID.randomUUID();
-      Flavor flavorToConvert = Flavor.builder().id(id.toString()).name("Test Flavor " + id).ram(262144).disk(10000)
-            .vcpus(16).build();
 
-      Hardware converted = new FlavorToHardware(Suppliers.<Location> ofInstance(null)).apply(flavorToConvert);
+      FlavorInZone flavorInZoneToConvert = new FlavorInZone(Flavor.builder().id(id.toString())
+               .name("Test Flavor " + id).ram(262144).disk(10000).vcpus(16).build(), "az-1.region-a.geo-1");
 
+      Hardware converted = new FlavorInZoneToHardware(locationIndex).apply(flavorInZoneToConvert);
+
+      Flavor flavorToConvert = flavorInZoneToConvert.getFlavor();
       assertEquals(converted.getName(), flavorToConvert.getName());
-      assertEquals(converted.getId(), flavorToConvert.getId());
+      assertEquals(converted.getId(), flavorInZoneToConvert.slashEncode());
       assertEquals(converted.getProviderId(), flavorToConvert.getId());
+      assertEquals(converted.getLocation(), locationIndex.get().get("az-1.region-a.geo-1"));
+
       assertEquals(converted.getRam(), flavorToConvert.getRam());
 
       assertNotNull(converted.getProcessors());
@@ -59,4 +78,15 @@ public class FlavorToHardwareTest {
       assertEquals(converted.getVolumes().iterator().next().getSize(), Float.valueOf(flavorToConvert.getDisk()));
 
    }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testConversionWhereLocationNotFound() {
+
+      UUID id = UUID.randomUUID();
+
+      FlavorInZone flavorInZoneToConvert = new FlavorInZone(Flavor.builder().id(id.toString())
+               .name("Test Flavor " + id).ram(262144).disk(10000).vcpus(16).build(), "South");
+      new FlavorInZoneToHardware(locationIndex).apply(flavorInZoneToConvert);
+   }
+
 }

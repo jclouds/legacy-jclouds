@@ -18,48 +18,31 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.domain;
 
-import com.google.common.base.Objects;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.openstack.nova.v1_1.domain.Image;
 
 /**
- * @author Adam Lowe
+ * @author Adrian Cole
  */
-public class RegionAndName {
-   protected final String region;
-   protected final String name;
+public class ImageInZone extends ZoneAndId {
+   protected final Image server;
 
-   public RegionAndName(String region, String name) {
-      this.region = region;
-      this.name = name;
+   public ImageInZone(Image server, String zoneId) {
+      super(zoneId, checkNotNull(server, "server").getId());
+      this.server = server;
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(region, name);
+   public Image getImage() {
+      return server;
    }
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      RegionAndName other = (RegionAndName) obj;
-      return Objects.equal(region, other.region) && Objects.equal(name, other.name);
-   }
-
-   public String getRegion() {
-      return region;
-   }
-
-   public String getName() {
-      return name;
-   }
+   // superclass hashCode/equals are good enough, and help us use ZoneAndId and ImageInZone
+   // interchangeably as Map keys
 
    @Override
    public String toString() {
-      return "[region=" + region + ", name=" + name + "]";
+      return "[server=" + server + ", zoneId=" + zoneId + "]";
    }
 
 }

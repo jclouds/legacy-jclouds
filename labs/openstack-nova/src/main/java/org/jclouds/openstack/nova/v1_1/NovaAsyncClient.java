@@ -21,8 +21,8 @@ package org.jclouds.openstack.nova.v1_1;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.location.Zone;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
@@ -49,58 +49,58 @@ public interface NovaAsyncClient {
 
    /**
     * 
-    * @return the region codes configured
+    * @return the Zone codes configured
     */
    @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   @Zone
+   Set<String> getConfiguredZones();
 
    /**
     * Provides asynchronous access to Server features.
     */
    @Delegate
-   ServerAsyncClient getServerClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   ServerAsyncClient getServerClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Flavor features.
     */
    @Delegate
-   FlavorAsyncClient getFlavorClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   FlavorAsyncClient getFlavorClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Extension features.
     */
    @Delegate
-   ExtensionAsyncClient getExtensionClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   ExtensionAsyncClient getExtensionClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Image features.
     */
    @Delegate
-   ImageAsyncClient getImageClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   ImageAsyncClient getImageClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Floating IP features.
     */
    @Delegate
-   Optional<FloatingIPAsyncClient> getFloatingIPExtensionForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   Optional<FloatingIPAsyncClient> getFloatingIPExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Security Group features.
     */
    @Delegate
-   Optional<SecurityGroupAsyncClient> getSecurityGroupExtensionForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   Optional<SecurityGroupAsyncClient> getSecurityGroupExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides asynchronous access to Key Pair features.
     */
    @Delegate
-   Optional<KeyPairAsyncClient> getKeyPairExtensionForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   Optional<KeyPairAsyncClient> getKeyPairExtensionForZone(
+            @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 }

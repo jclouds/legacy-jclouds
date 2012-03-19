@@ -58,9 +58,9 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenFlavorsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
-      assertEquals(clientWhenFlavorsExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenFlavorsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenFlavorsExist.getFlavorClientForRegion("North").listFlavors().toString(),
+      assertEquals(clientWhenFlavorsExist.getFlavorClientForZone("az-1.region-a.geo-1").listFlavors().toString(),
             new ParseFlavorListTest().expected().toString());
    }
 
@@ -78,7 +78,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listFlavors, listFlavorsResponse);
 
-      assertTrue(clientWhenNoServersExist.getFlavorClientForRegion("North").listFlavors().isEmpty());
+      assertTrue(clientWhenNoServersExist.getFlavorClientForZone("az-1.region-a.geo-1").listFlavors().isEmpty());
    }
 
    // TODO: gson deserializer for Multimap
@@ -99,7 +99,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
       assertEquals(
-            clientWhenFlavorsExist.getFlavorClientForRegion("North").getFlavor("52415800-8b69-11e0-9b19-734f1195ff37")
+            clientWhenFlavorsExist.getFlavorClientForZone("az-1.region-a.geo-1").getFlavor("52415800-8b69-11e0-9b19-734f1195ff37")
                   .toString(), new ParseFlavorTest().expected().toString());
    }
 
@@ -118,7 +118,7 @@ public class FlavorClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoFlavorsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, getFlavor, getFlavorResponse);
 
-      assertNull(clientWhenNoFlavorsExist.getFlavorClientForRegion("North").getFlavor("123"));
+      assertNull(clientWhenNoFlavorsExist.getFlavorClientForZone("az-1.region-a.geo-1").getFlavor("123"));
 
    }
 

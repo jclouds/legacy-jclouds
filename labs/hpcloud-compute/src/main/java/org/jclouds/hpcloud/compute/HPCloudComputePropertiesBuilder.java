@@ -24,6 +24,7 @@ import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import java.util.Properties;
 
 import org.jclouds.openstack.nova.v1_1.NovaPropertiesBuilder;
+import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
 
 /**
  * 
@@ -36,6 +37,7 @@ public class HPCloudComputePropertiesBuilder extends NovaPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
       properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:35357");
+      properties.setProperty(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS, "true");
       return properties;
    }
 

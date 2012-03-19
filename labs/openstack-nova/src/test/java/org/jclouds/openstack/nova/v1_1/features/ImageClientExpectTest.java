@@ -57,9 +57,9 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenImagesExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listImages, listImagesResponse);
 
-      assertEquals(clientWhenImagesExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenImagesExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenImagesExist.getImageClientForRegion("North").listImages().toString(),
+      assertEquals(clientWhenImagesExist.getImageClientForZone("az-1.region-a.geo-1").listImages().toString(),
             new ParseImageListTest().expected().toString());
    }
 
@@ -77,7 +77,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listImages, listImagesResponse);
 
-      assertTrue(clientWhenNoServersExist.getImageClientForRegion("North").listImages().isEmpty());
+      assertTrue(clientWhenNoServersExist.getImageClientForZone("az-1.region-a.geo-1").listImages().isEmpty());
    }
 
    public void testGetImageWhenResponseIs2xx() throws Exception {
@@ -97,7 +97,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, getImage, getImageResponse);
 
       assertEquals(
-            clientWhenImagesExist.getImageClientForRegion("North").getImage("52415800-8b69-11e0-9b19-734f5736d2a2")
+            clientWhenImagesExist.getImageClientForZone("az-1.region-a.geo-1").getImage("52415800-8b69-11e0-9b19-734f5736d2a2")
                   .toString(), new ParseImageTest().expected().toString());
    }
 
@@ -115,7 +115,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoImagesExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, getImage, getImageResponse);
 
-      assertNull(clientWhenNoImagesExist.getImageClientForRegion("North").getImage(
+      assertNull(clientWhenNoImagesExist.getImageClientForZone("az-1.region-a.geo-1").getImage(
             "52415800-8b69-11e0-9b19-734f5736d2a2"));
 
    }

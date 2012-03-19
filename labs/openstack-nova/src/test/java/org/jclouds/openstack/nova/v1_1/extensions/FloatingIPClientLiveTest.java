@@ -51,8 +51,8 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testListFloatingIPs() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
@@ -73,8 +73,8 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testAllocateAndDeallocateFloatingIPs() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
@@ -104,33 +104,33 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testAddAndRemoveFloatingIp() throws Exception {
-      for (String regionId : context.getApi().getConfiguredRegions()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForRegion(regionId);
+      for (String zoneId : context.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
-         ServerClient serverClient = context.getApi().getServerClientForRegion(regionId);
-         Server server = serverClient.createServer("test", imageIdForRegion(regionId), flavorRefForRegion(regionId));
+         ServerClient serverClient = context.getApi().getServerClientForZone(zoneId);
+         Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
          blockUntilServerActive(server.getId(), serverClient);
          FloatingIP floatingIP = client.allocate();
          assertNotNull(floatingIP);
          try {
-            client.addFloatingIP(server.getId(), floatingIP.getIp());
+            client.addFloatingIPToServer(floatingIP.getIp(), server.getId());
             assertEventually(new ServerHasFloatingIP(serverClient, server.getId(), floatingIP.getIp()));
          } finally {
-            client.removeFloatingIP(server.getId(), floatingIP.getIp());
+            client.removeFloatingIPFromServer(floatingIP.getIp(), server.getId());
             serverClient.deleteServer(server.getId());
          }
       }
    }
 
-   private String imageIdForRegion(String regionId) {
-      ImageClient imageClient = context.getApi().getImageClientForRegion(regionId);
+   private String imageIdForZone(String zoneId) {
+      ImageClient imageClient = context.getApi().getImageClientForZone(zoneId);
       return Iterables.getLast(imageClient.listImages()).getId();
    }
 
-   private String flavorRefForRegion(String regionId) {
-      FlavorClient flavorClient = context.getApi().getFlavorClientForRegion(regionId);
+   private String flavorRefForZone(String zoneId) {
+      FlavorClient flavorClient = context.getApi().getFlavorClientForZone(zoneId);
       return Iterables.getLast(flavorClient.listFlavors()).getId();
    }
 

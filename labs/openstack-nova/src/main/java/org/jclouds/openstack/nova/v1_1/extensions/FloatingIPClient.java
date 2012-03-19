@@ -76,7 +76,7 @@ public interface FloatingIPClient {
     * 
     *           NOTE: Possibly move this to ServerClient?
     */
-   void addFloatingIP(String serverId, String address);
+   void addFloatingIPToServer(String address, String serverId);
 
    /**
     * Remove a Floating IP address from a Server
@@ -88,5 +88,5 @@ public interface FloatingIPClient {
     * 
     *           NOTE: Possibly move this to ServerClient?
     */
-   void removeFloatingIP(String serverId, String address);
+   void removeFloatingIPFromServer(String address, String serverId);
 }

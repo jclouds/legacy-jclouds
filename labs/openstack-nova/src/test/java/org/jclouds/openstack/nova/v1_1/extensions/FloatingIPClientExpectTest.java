@@ -48,9 +48,9 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse);
 
-      assertEquals(clientWhenExtensionNotInList.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertTrue(clientWhenExtensionNotInList.getFloatingIPExtensionForRegion("North").isPresent());
+      assertTrue(clientWhenExtensionNotInList.getFloatingIPExtensionForZone("az-1.region-a.geo-1").isPresent());
 
    }
 
@@ -59,9 +59,9 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenExtensionNotInList = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, unmatchedExtensionsOfNovaResponse);
 
-      assertEquals(clientWhenExtensionNotInList.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenExtensionNotInList.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertFalse(clientWhenExtensionNotInList.getFloatingIPExtensionForRegion("North").isPresent());
+      assertFalse(clientWhenExtensionNotInList.getFloatingIPExtensionForZone("az-1.region-a.geo-1").isPresent());
 
    }
 
@@ -80,9 +80,9 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listFloatingIPs, listFloatingIPsResponse);
 
-      assertEquals(clientWhenFloatingIPsExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenFloatingIPsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get().listFloatingIPs()
+      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().listFloatingIPs()
             .toString(), new ParseFloatingIPListTest().expected().toString());
    }
 
@@ -100,7 +100,7 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listFloatingIPs, listFloatingIPsResponse);
 
-      assertTrue(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get().listFloatingIPs().isEmpty());
+      assertTrue(clientWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().listFloatingIPs().isEmpty());
    }
 
    public void testGetFloatingIPWhenResponseIs2xx() throws Exception {
@@ -118,7 +118,7 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenFloatingIPsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getFloatingIP, getFloatingIPResponse);
 
-      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get().getFloatingIP("1")
+      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().getFloatingIP("1")
             .toString(), new ParseFloatingIPTest().expected().toString());
    }
 
@@ -136,7 +136,7 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getFloatingIP, getFloatingIPResponse);
 
-      assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get().getFloatingIP("1"));
+      assertNull(clientWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().getFloatingIP("1"));
    }
 
    public void testAllocateWhenResponseIs2xx() throws Exception {
@@ -156,7 +156,7 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
             allocateFloatingIPResponse);
 
-      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForRegion("North").get().allocate().toString(),
+      assertEquals(clientWhenFloatingIPsExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().allocate().toString(),
             new ParseFloatingIPTest().expected().toString());
 
    }
@@ -177,7 +177,7 @@ public class FloatingIPClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, allocateFloatingIP,
             allocateFloatingIPResponse);
 
-      assertNull(clientWhenNoServersExist.getFloatingIPExtensionForRegion("North").get().allocate());
+      assertNull(clientWhenNoServersExist.getFloatingIPExtensionForZone("az-1.region-a.geo-1").get().allocate());
    }
 
 }

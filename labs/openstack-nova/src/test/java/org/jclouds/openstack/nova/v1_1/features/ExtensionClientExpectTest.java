@@ -58,9 +58,9 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
-      assertEquals(clientWhenExtensionsExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenExtensionsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenExtensionsExist.getExtensionClientForRegion("North").listExtensions().toString(),
+      assertEquals(clientWhenExtensionsExist.getExtensionClientForZone("az-1.region-a.geo-1").listExtensions().toString(),
             new ParseExtensionListTest().expected().toString());
    }
 
@@ -78,7 +78,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
-      assertTrue(clientWhenNoServersExist.getExtensionClientForRegion("North").listExtensions().isEmpty());
+      assertTrue(clientWhenNoServersExist.getExtensionClientForZone("az-1.region-a.geo-1").listExtensions().isEmpty());
    }
 
    // TODO: gson deserializer for Multimap
@@ -98,7 +98,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
-      assertEquals(clientWhenExtensionsExist.getExtensionClientForRegion("North").getExtensionByAlias("RS-PIE")
+      assertEquals(clientWhenExtensionsExist.getExtensionClientForZone("az-1.region-a.geo-1").getExtensionByAlias("RS-PIE")
             .toString(), new ParseExtensionTest().expected().toString());
    }
 
@@ -117,7 +117,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
-      assertNull(clientWhenNoExtensionsExist.getExtensionClientForRegion("North").getExtensionByAlias("RS-PIE"));
+      assertNull(clientWhenNoExtensionsExist.getExtensionClientForZone("az-1.region-a.geo-1").getExtensionByAlias("RS-PIE"));
 
    }
 

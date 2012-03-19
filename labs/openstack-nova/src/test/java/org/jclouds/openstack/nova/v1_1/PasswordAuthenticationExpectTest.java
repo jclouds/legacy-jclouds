@@ -66,9 +66,9 @@ public class PasswordAuthenticationExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenServersExist.getServerClientForRegion("North").listServers().toString(),
+      assertEquals(clientWhenServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().toString(),
             new ParseServerListTest().expected().toString());
    }
 

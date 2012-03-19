@@ -18,131 +18,156 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.location.Zone;
+import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v1_1.compute.domain.FlavorInZone;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
+import org.jclouds.openstack.nova.v1_1.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
-import org.jclouds.openstack.nova.v1_1.features.ImageClient;
-import org.jclouds.openstack.nova.v1_1.features.ServerClient;
-import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
- * The adapter used by the NovaComputeServiceContextModule to interface the
- * nova-specific domain model to the computeService generic domain model.
- *
- * @author Matt Stephenson
+ * The adapter used by the NovaComputeServiceContextModule to interface the nova-specific domain
+ * model to the computeService generic domain model.
+ * 
+ * @author Matt Stephenson, Adrian Cole
  */
-public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, Flavor, Image, Location> {
+public class NovaComputeServiceAdapter implements
+         ComputeServiceAdapter<ServerInZone, FlavorInZone, ImageInZone, Location> {
 
-   private final NovaClient novaClient;
-   private final ServerClient defaultLocationServerClient;
-   private final FlavorClient defaultFlavorClient;
-   private final ImageClient defaultImageClient;
-   private final Set<String> regions;
-   private final String defaultRegion;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-   @Inject
-   @Named(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS)
-   @VisibleForTesting
-   boolean autoAllocateFloatingIps = false;
+   protected final NovaClient novaClient;
+   protected final Supplier<Set<String>> zoneIds;
+   protected final RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate;
 
    @Inject
-   public NovaComputeServiceAdapter(NovaClient novaClient) {
-      this.novaClient = novaClient;
-      regions = novaClient.getConfiguredRegions();
-      if (regions.isEmpty()) {
-         throw new IllegalStateException(
-               "No regions exist for this compute service.  The Nova compute service requires at least 1 region.");
+   public NovaComputeServiceAdapter(NovaClient novaClient, @Zone Supplier<Set<String>> zoneIds,
+            RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate) {
+      this.novaClient = checkNotNull(novaClient, "novaClient");
+      this.zoneIds = checkNotNull(zoneIds, "zoneIds");
+      this.removeFloatingIpFromNodeAndDeallocate = checkNotNull(removeFloatingIpFromNodeAndDeallocate,
+               "removeFloatingIpFromNodeAndDeallocate");
+   }
+
+   @Override
+   public NodeAndInitialCredentials<ServerInZone> createNodeWithGroupEncodedIntoName(String tag, String name,
+            Template template) {
+      String zoneId = template.getLocation().getId();
+      Server server = novaClient.getServerClientForZone(zoneId).createServer(name, template.getImage().getId(),
+               template.getHardware().getId());
+
+      return new NodeAndInitialCredentials<ServerInZone>(new ServerInZone(server, zoneId), server.getId() + "",
+               LoginCredentials.builder().password(server.getAdminPass()).build());
+   }
+
+   @Override
+   public Iterable<FlavorInZone> listHardwareProfiles() {
+      Builder<FlavorInZone> builder = ImmutableSet.<FlavorInZone> builder();
+      for (final String zoneId : zoneIds.get()) {
+         builder.addAll(Iterables.transform(novaClient.getFlavorClientForZone(zoneId).listFlavorsInDetail(),
+                  new Function<Flavor, FlavorInZone>() {
+
+                     @Override
+                     public FlavorInZone apply(Flavor arg0) {
+                        return new FlavorInZone(arg0, zoneId);
+                     }
+
+                  }));
       }
-      this.defaultRegion = regions.iterator().next();
-      this.defaultLocationServerClient = novaClient.getServerClientForRegion(defaultRegion);
-      this.defaultFlavorClient = novaClient.getFlavorClientForRegion(defaultRegion);
-      this.defaultImageClient = novaClient.getImageClientForRegion(defaultRegion);
+      return builder.build();
    }
 
    @Override
-   public NodeAndInitialCredentials<Server> createNodeWithGroupEncodedIntoName(String tag, String name,
-         Template template) {
-      String region = template.getLocation() == null ? defaultRegion : template.getLocation().getId();
-      ServerClient serverClient = template.getLocation() != null ? novaClient.getServerClientForRegion(template.getLocation().getId()) : defaultLocationServerClient;
-      // TODO: make NovaTemplateOptions with the following:
-      // security group, key pair, floating ip (attach post server-create?)
-      NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(template.getOptions());
-      
-      boolean autoAllocateFloatingIps = 
-            (this.autoAllocateFloatingIps || templateOptions.isAutoAssignFloatingIp());
-      
-      String floatingIp = null;
-      if (autoAllocateFloatingIps) {
-         checkArgument(novaClient.getFloatingIPExtensionForRegion(region).isPresent(), "Floating IP settings are required by configuration, but the extension is not available!");
-         floatingIp = novaClient.getFloatingIPExtensionForRegion(region).get().allocate().getId();
+   public Iterable<ImageInZone> listImages() {
+      Builder<ImageInZone> builder = ImmutableSet.<ImageInZone> builder();
+      for (final String zoneId : zoneIds.get()) {
+         builder.addAll(Iterables.transform(novaClient.getImageClientForZone(zoneId).listImagesInDetail(),
+                  new Function<Image, ImageInZone>() {
+
+                     @Override
+                     public ImageInZone apply(Image arg0) {
+                        return new ImageInZone(arg0, zoneId);
+                     }
+
+                  }));
       }
-
-      Server server = serverClient.createServer(name, template.getImage().getId(), template.getHardware().getId());
-
-      // Attaching floating ip(s) to server
-      if (floatingIp != null) 
-         novaClient.getFloatingIPExtensionForRegion(region).get().addFloatingIP(server.getId(), floatingIp);
-    
-      return new NodeAndInitialCredentials<Server>(server, server.getId() + "", LoginCredentials.builder()
-            .password(server.getAdminPass()).build());
+      return builder.build();
    }
 
    @Override
-   public Iterable<Flavor> listHardwareProfiles() {
-      return defaultFlavorClient.listFlavorsInDetail();
-   }
+   public Iterable<ServerInZone> listNodes() {
+      Builder<ServerInZone> builder = ImmutableSet.<ServerInZone> builder();
+      for (final String zoneId : zoneIds.get()) {
+         builder.addAll(Iterables.transform(novaClient.getServerClientForZone(zoneId).listServersInDetail(),
+                  new Function<Server, ServerInZone>() {
 
-   @Override
-   public Iterable<Image> listImages() {
-      return defaultImageClient.listImagesInDetail();
+                     @Override
+                     public ServerInZone apply(Server arg0) {
+                        return new ServerInZone(arg0, zoneId);
+                     }
+
+                  }));
+      }
+      return builder.build();
    }
 
    @Override
    public Iterable<Location> listLocations() {
-      return Iterables.transform(novaClient.getConfiguredRegions(), new Function<String, Location>() {
-
-         @Override
-         public Location apply(@Nullable String region) {
-            return new LocationBuilder().id(region).description(region).build();
-         }
-      });
+      // locations provided by keystone
+      return ImmutableSet.of();
    }
 
    @Override
-   public Server getNode(String id) {
-      return defaultLocationServerClient.getServer(id);
+   public ServerInZone getNode(String id) {
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      Server server = novaClient.getServerClientForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
+      return server == null ? null : new ServerInZone(server, zoneAndId.getZone());
    }
 
    @Override
    public void destroyNode(String id) {
-      defaultLocationServerClient.deleteServer(id);
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      if (novaClient.getFloatingIPExtensionForZone(zoneAndId.getZone()).isPresent()) {
+         try {
+            removeFloatingIpFromNodeAndDeallocate.apply(zoneAndId);
+         } catch (RuntimeException e) {
+            logger.warn(e, "<< error removing and deallocating ip from node(%s): %s", id, e.getMessage());
+         }
+      }
+      novaClient.getServerClientForZone(zoneAndId.getZone()).deleteServer(zoneAndId.getId());
    }
 
    @Override
    public void rebootNode(String id) {
-      defaultLocationServerClient.rebootServer(id, RebootType.SOFT);
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      novaClient.getServerClientForZone(zoneAndId.getZone()).rebootServer(zoneAndId.getId(), RebootType.HARD);
    }
 
    @Override
@@ -155,14 +180,4 @@ public class NovaComputeServiceAdapter implements ComputeServiceAdapter<Server, 
       throw new UnsupportedOperationException("suspend not supported");
    }
 
-   @Override
-   public Iterable<Server> listNodes() {
-      ImmutableSet.Builder<Server> servers = new ImmutableSet.Builder<Server>();
-
-      for (String region : regions) {
-         servers.addAll(novaClient.getServerClientForRegion(region).listServersInDetail());
-      }
-
-      return servers.build();
-   }
 }

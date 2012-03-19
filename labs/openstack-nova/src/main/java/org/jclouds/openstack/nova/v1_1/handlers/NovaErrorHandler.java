@@ -27,6 +27,7 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 /**
@@ -45,22 +46,25 @@ public class NovaErrorHandler implements HttpErrorHandler {
       String message = data != null ? new String(data) : null;
 
       Exception exception = message != null ? new HttpResponseException(command, response, message)
-            : new HttpResponseException(command, response);
+               : new HttpResponseException(command, response);
       message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-            response.getStatusLine());
+               response.getStatusLine());
       switch (response.getStatusCode()) {
-      case 401:
-      case 403:
-         exception = new AuthorizationException(message, exception);
-         break;
-      case 404:
-         if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-            exception = new ResourceNotFoundException(message, exception);
-         }
-         break;
-      default:
-         exception = new HttpResponseException(command, response, message);
-         break;
+         case 400:
+            if (message.indexOf("quota exceeded") != -1)
+               exception = new InsufficientResourcesException(message, exception);
+            else if (message.indexOf("has no fixed_ips") != -1)
+               exception = new IllegalStateException(message, exception);
+            break;
+         case 401:
+         case 403:
+            exception = new AuthorizationException(message, exception);
+            break;
+         case 404:
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+               exception = new ResourceNotFoundException(message, exception);
+            }
+            break;
       }
       command.setException(exception);
    }

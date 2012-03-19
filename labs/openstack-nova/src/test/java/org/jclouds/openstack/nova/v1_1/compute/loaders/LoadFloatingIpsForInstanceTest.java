@@ -26,7 +26,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.testng.annotations.Test;
@@ -45,8 +45,7 @@ public class LoadFloatingIpsForInstanceTest {
       NovaClient client = createMock(NovaClient.class);
       FloatingIPClient ipClient = createMock(FloatingIPClient.class);
 
-      expect(client.getConfiguredRegions()).andReturn(ImmutableSet.of("region")).atLeastOnce();
-      expect(client.getFloatingIPExtensionForRegion("region")).andReturn(Optional.of(ipClient)).atLeastOnce();
+      expect(client.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipClient)).atLeastOnce();
       expect(ipClient.listFloatingIPs()).andReturn(
             ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").fixedIp("10.1.1.1").instanceId("i-blah").build()))
             .atLeastOnce();
@@ -56,7 +55,7 @@ public class LoadFloatingIpsForInstanceTest {
 
       LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(client);
 
-      assertEquals(ImmutableSet.copyOf(parser.load(new RegionAndName("region", "i-blah"))), ImmutableSet.of("1.1.1.1"));
+      assertEquals(ImmutableSet.copyOf(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah"))), ImmutableSet.of("1.1.1.1"));
 
       verify(client);
       verify(ipClient);
@@ -67,8 +66,7 @@ public class LoadFloatingIpsForInstanceTest {
       NovaClient client = createMock(NovaClient.class);
       FloatingIPClient ipClient = createMock(FloatingIPClient.class);
 
-      expect(client.getConfiguredRegions()).andReturn(ImmutableSet.of("region")).atLeastOnce();
-      expect(client.getFloatingIPExtensionForRegion("region")).andReturn(Optional.of(ipClient)).atLeastOnce();
+      expect(client.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipClient)).atLeastOnce();
 
       expect(ipClient.listFloatingIPs()).andReturn(ImmutableSet.<FloatingIP>of()).atLeastOnce();
 
@@ -77,7 +75,7 @@ public class LoadFloatingIpsForInstanceTest {
 
       LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(client);
 
-      assertFalse(parser.load(new RegionAndName("region", "i-blah")).iterator().hasNext());
+      assertFalse(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah")).iterator().hasNext());
 
       verify(client);
       verify(ipClient);
@@ -89,8 +87,7 @@ public class LoadFloatingIpsForInstanceTest {
       NovaClient client = createMock(NovaClient.class);
       FloatingIPClient ipClient = createMock(FloatingIPClient.class);
 
-      expect(client.getConfiguredRegions()).andReturn(ImmutableSet.of("region")).atLeastOnce();
-      expect(client.getFloatingIPExtensionForRegion("region")).andReturn(Optional.of(ipClient)).atLeastOnce();
+      expect(client.getFloatingIPExtensionForZone("Zone")).andReturn(Optional.of(ipClient)).atLeastOnce();
 
       expect(ipClient.listFloatingIPs()).andReturn(
             ImmutableSet.<FloatingIP>of(FloatingIP.builder().id("1").ip("1.1.1.1").build()))
@@ -101,7 +98,7 @@ public class LoadFloatingIpsForInstanceTest {
 
       LoadFloatingIpsForInstance parser = new LoadFloatingIpsForInstance(client);
 
-      assertFalse(parser.load(new RegionAndName("region", "i-blah")).iterator().hasNext());
+      assertFalse(parser.load(ZoneAndId.fromZoneAndId("Zone", "i-blah")).iterator().hasNext());
 
       verify(client);
       verify(ipClient);

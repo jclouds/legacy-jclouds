@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.location.Region;
-import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.location.Zone;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
@@ -51,59 +51,59 @@ import com.google.inject.Provides;
 public interface NovaClient {
    /**
     * 
-    * @return the region codes configured
+    * @return the Zone codes configured
     */
    @Provides
-   @Region
-   Set<String> getConfiguredRegions();
+   @Zone
+   Set<String> getConfiguredZones();
 
    /**
     * Provides synchronous access to Server features.
     */
    @Delegate
-   ServerClient getServerClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   ServerClient getServerClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Flavor features.
     */
    @Delegate
-   FlavorClient getFlavorClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   FlavorClient getFlavorClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Extension features.
     */
    @Delegate
-   ExtensionClient getExtensionClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   ExtensionClient getExtensionClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Image features.
     */
    @Delegate
-   ImageClient getImageClientForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   ImageClient getImageClientForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Floating IP features.
     */
    @Delegate
-   Optional<FloatingIPClient> getFloatingIPExtensionForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   Optional<FloatingIPClient> getFloatingIPExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Security Group features.
     */
    @Delegate
-   Optional<SecurityGroupClient> getSecurityGroupExtensionForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   Optional<SecurityGroupClient> getSecurityGroupExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
    /**
     * Provides synchronous access to Key Pair features.
     */
    @Delegate
-   Optional<KeyPairClient> getKeyPairExtensionForRegion(
-         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
+   Optional<KeyPairClient> getKeyPairExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }

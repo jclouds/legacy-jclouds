@@ -61,9 +61,9 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
             listSecurityGroupsResponse);
 
-      assertEquals(clientWhenSecurityGroupsExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenSecurityGroupsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get().listSecurityGroups()
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get().listSecurityGroups()
             .toString(), new ParseSecurityGroupListTest().expected().toString());
    }
 
@@ -82,7 +82,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listListSecurityGroups,
             listListSecurityGroupsResponse);
 
-      assertTrue(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get().listSecurityGroups()
+      assertTrue(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get().listSecurityGroups()
             .isEmpty());
    }
 
@@ -103,7 +103,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
             getSecurityGroupResponse);
 
-      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
             .getSecurityGroup("0").toString(), new ParseSecurityGroupTest().expected().toString());
    }
 
@@ -122,7 +122,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
             getSecurityGroupResponse);
 
-      assertNull(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+      assertNull(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
             .getSecurityGroup("0"));
 
    }
@@ -148,7 +148,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             createSecurityGroupResponse);
 
       assertEquals(
-            clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+            clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
                   .createSecurityGroup("name", "description").toString(), createSecurityGroupExpected().toString());
    }
 
@@ -167,7 +167,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroup,
             deleteSecurityGroupResponse);
 
-      assertTrue(clientWhenServersExist.getSecurityGroupExtensionForRegion("North").get().deleteSecurityGroup("160"));
+      assertTrue(clientWhenServersExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get().deleteSecurityGroup("160"));
 
    }
 
@@ -191,7 +191,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroupRule,
             createSecurityGroupRuleResponse);
 
-      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
             .createSecurityGroupRule("tcp", "80", "8080", "0.0.0.0/0", "", "161").toString(),
             createSecurityGroupRuleExpected().toString());
    }
@@ -211,7 +211,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroupRule,
             deleteSecurityGroupRuleResponse);
 
-      assertTrue(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForRegion("North").get()
+      assertTrue(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
             .deleteSecurityGroupRule("161"));
 
    }

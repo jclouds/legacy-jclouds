@@ -30,6 +30,8 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
@@ -59,6 +61,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * Configures the Nova connection.
@@ -96,18 +99,19 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
       // property, so it will have to come from somewhere else, maybe we move
       // this to the the
       // ContextBuilder
-      install(new KeystoneAuthenticationModule());
+      install(KeystoneAuthenticationModule.forZones());
+      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
    }
 
    @Provides
    @Singleton
-   public LoadingCache<String, Set<Extension>> provideExtensionsByRegion(final Provider<NovaClient> novaClient) {
+   public LoadingCache<String, Set<Extension>> provideExtensionsByZone(final Provider<NovaClient> novaClient) {
       return CacheBuilder.newBuilder().expireAfterWrite(23, TimeUnit.HOURS)
             .build(new CacheLoader<String, Set<Extension>>() {
 
                @Override
                public Set<Extension> load(String key) throws Exception {
-                  return novaClient.get().getExtensionClientForRegion(key).listExtensions();
+                  return novaClient.get().getExtensionClientForZone(key).listExtensions();
                }
 
             });

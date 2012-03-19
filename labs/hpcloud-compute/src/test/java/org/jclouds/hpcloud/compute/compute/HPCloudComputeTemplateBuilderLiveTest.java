@@ -27,6 +27,7 @@ import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -37,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", singleThreaded = true, testName = "HPCloudComputeTemplateBuilderLiveTest")
 public class HPCloudComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public HPCloudComputeTemplateBuilderLiveTest() {
@@ -73,6 +74,7 @@ public class HPCloudComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLi
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "az-1.region-a.geo-1");
+      assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).isAutoAssignFloatingIp(), true);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

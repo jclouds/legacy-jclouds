@@ -52,14 +52,13 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see FloatingIPClient
  * @author Jeremy Daggett
  * @see ExtensionAsyncClient
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ * @see <a href= "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
  *      />
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://wiki.openstack.org/os_api_floating_ip"/>
  */
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
-@SkipEncoding({ '/', '=' })
+@SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface FloatingIPAsyncClient {
 
@@ -105,23 +104,25 @@ public interface FloatingIPAsyncClient {
    ListenableFuture<Void> deallocate(@PathParam("id") String id);
 
    /**
-    * @see FloatingIPClient#addFloatingIP
+    * @see FloatingIPClient#addFloatingIPToServer
     */
    @POST
    @Path("/servers/{server}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"addFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
-   ListenableFuture<Void> addFloatingIP(@PathParam("server") String serverId, @PayloadParam("address") String address);
+   ListenableFuture<Void> addFloatingIPToServer(@PayloadParam("address") String address,
+            @PathParam("server") String serverId);
 
    /**
-    * @see FloatingIPClient#removeFloatingIP
+    * @see FloatingIPClient#removeFloatingIPFromServer
     */
    @POST
    @Path("/servers/{server}/action")
    @Consumes
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"removeFloatingIp\":%7B\"address\":\"{address}\"%7D%7D")
-   ListenableFuture<Void> removeFloatingIP(@PathParam("server") String serverId, @PayloadParam("address") String address);
+   ListenableFuture<Void> removeFloatingIPFromServer(@PayloadParam("address") String address,
+            @PathParam("server") String serverId);
 
 }

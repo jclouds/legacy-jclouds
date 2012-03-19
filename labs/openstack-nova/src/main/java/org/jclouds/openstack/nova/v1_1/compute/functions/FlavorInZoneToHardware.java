@@ -18,6 +18,11 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Hardware;
@@ -25,33 +30,33 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.domain.Location;
+import org.jclouds.openstack.nova.v1_1.compute.domain.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 /**
- * A function for transforming the nova specific Flavor object to the generic
- * Hardware object.
+ * A function for transforming the nova specific FlavorInZone object to the generic Hardware object.
  * 
  * @author Matt Stephenson
  */
-public class FlavorToHardware implements Function<Flavor, Hardware> {
+public class FlavorInZoneToHardware implements Function<FlavorInZone, Hardware> {
 
-   private final Supplier<Location> defaultLocation;
+   private final Supplier<Map<String, Location>> locationIndex;
 
    @Inject
-   public FlavorToHardware(Supplier<Location> defaultLocation) {
-      this.defaultLocation = defaultLocation;
+   public FlavorInZoneToHardware(Supplier<Map<String, Location>> locationIndex) {
+      this.locationIndex = checkNotNull(locationIndex, "locationIndex");
    }
 
    @Override
-   public Hardware apply(Flavor flavor) {
-      return new HardwareBuilder()
-            // TODO: scope id to region, if there's a chance for conflict
-            .id(flavor.getId()).providerId(flavor.getId()).name(flavor.getName()).ram(flavor.getRam())
-            .processor(new Processor(flavor.getVcpus(), 1.0))
-            .volume(new VolumeImpl(Float.valueOf(flavor.getDisk()), true, true)).location(defaultLocation.get())
-            .build();
+   public Hardware apply(FlavorInZone flavorInZone) {
+      Location location = locationIndex.get().get(flavorInZone.getZone());
+      checkState(location != null, "location %s not in locationIndex: %s", flavorInZone.getZone(), locationIndex.get());
+      Flavor flavor = flavorInZone.getFlavor();
+      return new HardwareBuilder().id(flavorInZone.slashEncode()).providerId(flavor.getId()).name(flavor.getName())
+               .ram(flavor.getRam()).processor(new Processor(flavor.getVcpus(), 1.0)).volume(
+                        new VolumeImpl(Float.valueOf(flavor.getDisk()), true, true)).location(location).build();
    }
 }

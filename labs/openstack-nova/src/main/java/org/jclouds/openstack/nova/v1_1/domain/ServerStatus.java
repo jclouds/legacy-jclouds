@@ -49,7 +49,7 @@ public enum ServerStatus {
 
    public static ServerStatus fromValue(String v) {
       try {
-         return valueOf(v);
+         return valueOf(v.replaceAll("\\(.*",""));
       } catch (IllegalArgumentException e) {
          return UNRECOGNIZED;
       }

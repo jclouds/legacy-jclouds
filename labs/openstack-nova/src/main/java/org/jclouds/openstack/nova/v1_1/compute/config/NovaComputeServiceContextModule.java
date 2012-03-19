@@ -18,9 +18,13 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.config;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
@@ -28,25 +32,34 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
-import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
-import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorToHardware;
-import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToImage;
+import org.jclouds.openstack.nova.v1_1.compute.domain.FlavorInZone;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
+import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorInZoneToHardware;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ImageInZoneToImage;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
-import org.jclouds.openstack.nova.v1_1.compute.functions.ServerToNodeMetadata;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ServerInZoneToNodeMetadata;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.LoadFloatingIpsForInstance;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
-import org.jclouds.openstack.nova.v1_1.domain.Flavor;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
+import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Maps;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
@@ -57,8 +70,8 @@ import com.google.inject.name.Names;
  * @author Matt Stephenson
  */
 public class NovaComputeServiceContextModule
-      extends
-      ComputeServiceAdapterContextModule<NovaClient, NovaAsyncClient, Server, Flavor, org.jclouds.openstack.nova.v1_1.domain.Image, Location> {
+         extends
+         ComputeServiceAdapterContextModule<NovaClient, NovaAsyncClient, ServerInZone, FlavorInZone, ImageInZone, Location> {
    public NovaComputeServiceContextModule() {
       super(NovaClient.class, NovaAsyncClient.class);
    }
@@ -67,20 +80,19 @@ public class NovaComputeServiceContextModule
    @Override
    protected void configure() {
       super.configure();
-      bind(
-            new TypeLiteral<ComputeServiceAdapter<Server, Flavor, org.jclouds.openstack.nova.v1_1.domain.Image, Location>>() {
-            }).to(NovaComputeServiceAdapter.class);
+      bind(new TypeLiteral<ComputeServiceAdapter<ServerInZone, FlavorInZone, ImageInZone, Location>>() {
+      }).to(NovaComputeServiceAdapter.class);
 
-      bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
-      }).to(ServerToNodeMetadata.class);
+      bind(new TypeLiteral<Function<ServerInZone, NodeMetadata>>() {
+      }).to(ServerInZoneToNodeMetadata.class);
 
-      bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, Image>>() {
-      }).to(NovaImageToImage.class);
+      bind(new TypeLiteral<Function<ImageInZone, Image>>() {
+      }).to(ImageInZoneToImage.class);
       bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem>>() {
       }).to(NovaImageToOperatingSystem.class);
 
-      bind(new TypeLiteral<Function<Flavor, Hardware>>() {
-      }).to(FlavorToHardware.class);
+      bind(new TypeLiteral<Function<FlavorInZone, Hardware>>() {
+      }).to(FlavorInZoneToHardware.class);
 
       // we aren't converting location from a provider-specific type
       bind(new TypeLiteral<Function<Location, Location>>() {
@@ -88,16 +100,50 @@ public class NovaComputeServiceContextModule
 
       bind(TemplateOptions.class).to(NovaTemplateOptions.class);
 
-      bind(new TypeLiteral<CacheLoader<RegionAndName, Iterable<String>>>() {
+      bind(new TypeLiteral<CacheLoader<ZoneAndId, Iterable<String>>>() {
       }).annotatedWith(Names.named("FLOATINGIP")).to(LoadFloatingIpsForInstance.class);
 
+      bind(CreateNodesWithGroupEncodedIntoNameThenAddToSet.class).to(
+               ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet.class);
+
+   }
+
+   @Override
+   protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
+      return options.as(NovaTemplateOptions.class).autoAssignFloatingIp(
+               injector.getInstance(Key.get(boolean.class, Names
+                        .named(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS))));
    }
 
    @Provides
    @Singleton
    @Named("FLOATINGIP")
-   protected LoadingCache<RegionAndName, Iterable<String>> instanceToFloatingIps(
-         @Named("FLOATINGIP") CacheLoader<RegionAndName, Iterable<String>> in) {
+   protected LoadingCache<ZoneAndId, Iterable<String>> instanceToFloatingIps(
+            @Named("FLOATINGIP") CacheLoader<ZoneAndId, Iterable<String>> in) {
       return CacheBuilder.newBuilder().build(in);
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Map<String, Location>> createLocationIndexedById(
+            @Memoized Supplier<Set<? extends Location>> locations) {
+      return Suppliers.compose(new Function<Set<? extends Location>, Map<String, Location>>() {
+
+         @SuppressWarnings("unchecked")
+         @Override
+         public Map<String, Location> apply(Set<? extends Location> arg0) {
+            // TODO: find a nice way to get rid of this cast.
+            Iterable<Location> locations = (Iterable<Location>) arg0;
+            return Maps.uniqueIndex(locations, new Function<Location, String>() {
+
+               @Override
+               public String apply(Location arg0) {
+                  return arg0.getId();
+               }
+
+            });
+         }
+      }, locations);
+
    }
 }

@@ -60,7 +60,7 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
             .id("52415800-8b69-11e0-9b19-734f000004d2")
             .tenantId("1234")
             .userId("5678")
-            .name("sample-server")
+            .name("sample-f352")
             .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-10-10T12:00:00Z"))
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-08-10T12:00:00Z"))
             .hostId("e4d909c290d0fb1ca068ffaddf22cbd0")

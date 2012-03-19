@@ -57,9 +57,9 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
 
-      assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenServersExist.getKeyPairExtensionForRegion("North").get().listKeyPairs().toString(),
+      assertEquals(clientWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().listKeyPairs().toString(),
             new ParseKeyPairListTest().expected().toString());
    }
 
@@ -77,7 +77,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listKeyPairs, listKeyPairsResponse);
 
-      assertTrue(clientWhenNoServersExist.getKeyPairExtensionForRegion("North").get().listKeyPairs().isEmpty());
+      assertTrue(clientWhenNoServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().listKeyPairs().isEmpty());
 
    }
 
@@ -98,7 +98,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createKeyPair, createKeyPairResponse);
 
-      assertEquals(clientWhenServersExist.getKeyPairExtensionForRegion("North").get().createKeyPair("testkeypair")
+      assertEquals(clientWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().createKeyPair("testkeypair")
             .toString(), new ParseKeyPairTest().expected().toString());
 
    }
@@ -124,7 +124,7 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
 
       assertEquals(
             clientWhenServersExist
-                  .getKeyPairExtensionForRegion("North")
+                  .getKeyPairExtensionForZone("az-1.region-a.geo-1")
                   .get()
                   .createKeyPairWithPublicKey(
                         "testkeypair",
@@ -146,6 +146,6 @@ public class KeyPairClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteKeyPair, deleteKeyPairResponse);
 
-      assertTrue(clientWhenServersExist.getKeyPairExtensionForRegion("North").get().deleteKeyPair("testkeypair"));
+      assertTrue(clientWhenServersExist.getKeyPairExtensionForZone("az-1.region-a.geo-1").get().deleteKeyPair("testkeypair"));
    }
 }

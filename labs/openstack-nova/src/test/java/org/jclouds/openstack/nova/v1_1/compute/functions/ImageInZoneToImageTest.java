@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -27,33 +28,63 @@ import javax.annotation.Nullable;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests the function that transforms nova-specific images to generic images.
  * 
- * @author Matt Stephenson
+ * @author Matt Stephenson, Adrian Cole
  */
-public class NovaImageToImageTest {
+@Test(testName = "ImageInZoneToHardwareTest")
+public class ImageInZoneToImageTest {
+
+   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("openstack-nova").description(
+            "openstack-nova").build();
+   Location zone = new LocationBuilder().id("az-1.region-a.geo-1").description("az-1.region-a.geo-1").scope(
+            LocationScope.ZONE).parent(provider).build();
+   Supplier<Map<String, Location>> locationIndex = Suppliers.<Map<String, Location>> ofInstance(ImmutableMap
+            .<String, Location> of("az-1.region-a.geo-1", zone));
+   
    @Test
-   public void testConversion() {
+   public void testConversionWhereLocationFound() {
       UUID id = UUID.randomUUID();
       Image novaImageToConvert = Image.builder().id(id.toString()).name("Test Image " + id).build();
       OperatingSystem operatingSystem = new OperatingSystem(OsFamily.UBUNTU, "My Test OS", "My Test Version", "x86",
-            "My Test OS", true);
-      NovaImageToImage converter = new NovaImageToImage(new MockImageToOsConverter(operatingSystem),
-            Suppliers.<Location> ofInstance(null));
-      org.jclouds.compute.domain.Image convertedImage = converter.apply(novaImageToConvert);
+               "My Test OS", true);
+      ImageInZoneToImage converter = new ImageInZoneToImage(new MockImageToOsConverter(operatingSystem), locationIndex);
 
-      assertEquals(convertedImage.getId(), novaImageToConvert.getId());
+      ImageInZone novaImageInZoneToConvert = new ImageInZone(novaImageToConvert, "az-1.region-a.geo-1");
+
+      org.jclouds.compute.domain.Image convertedImage = converter.apply(novaImageInZoneToConvert);
+
+      assertEquals(convertedImage.getId(), novaImageInZoneToConvert.slashEncode());
       assertEquals(convertedImage.getProviderId(), novaImageToConvert.getId());
+      assertEquals(convertedImage.getLocation(), locationIndex.get().get("az-1.region-a.geo-1"));
 
       assertEquals(convertedImage.getName(), novaImageToConvert.getName());
       assertEquals(convertedImage.getOperatingSystem(), operatingSystem);
+   }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testConversionWhereLocationNotFound() {
+      UUID id = UUID.randomUUID();
+      Image novaImageToConvert = Image.builder().id(id.toString()).name("Test Image " + id).build();
+      OperatingSystem operatingSystem = new OperatingSystem(OsFamily.UBUNTU, "My Test OS", "My Test Version", "x86",
+               "My Test OS", true);
+      ImageInZoneToImage converter = new ImageInZoneToImage(new MockImageToOsConverter(operatingSystem), locationIndex);
+
+      ImageInZone novaImageInZoneToConvert = new ImageInZone(novaImageToConvert, "South");
+
+      converter.apply(novaImageInZoneToConvert);
    }
 
    private class MockImageToOsConverter implements Function<Image, OperatingSystem> {

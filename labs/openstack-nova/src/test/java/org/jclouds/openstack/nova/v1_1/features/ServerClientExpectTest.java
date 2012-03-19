@@ -56,9 +56,9 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertEquals(clientWhenServersExist.getConfiguredRegions(), ImmutableSet.of("North"));
+      assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenServersExist.getServerClientForRegion("North").listServers().toString(),
+      assertEquals(clientWhenServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().toString(),
             new ParseServerListTest().expected().toString());
    }
 
@@ -76,6 +76,6 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
-      assertTrue(clientWhenNoServersExist.getServerClientForRegion("North").listServers().isEmpty());
+      assertTrue(clientWhenNoServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().isEmpty());
    }
 }

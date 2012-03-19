@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.RegionAndName;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 
@@ -34,38 +34,38 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
+ * Each zone may or may not have the floating ip function present. In order to safely proceed, we
+ * must allow the user to determine if a zone has floating ip services before attempting to use
+ * them.
+ * 
  * @author Adam Lowe
  */
 @Singleton
-public class LoadFloatingIpsForInstance extends CacheLoader<RegionAndName, Iterable<String>> {
+public class LoadFloatingIpsForInstance extends CacheLoader<ZoneAndId, Iterable<String>> {
    private final NovaClient client;
-   // TODO this is unlikely to be required once region support is improved
-   private final Iterable<String> regions;
-   
+
    @Inject
    public LoadFloatingIpsForInstance(NovaClient client) {
       this.client = client;
-      this.regions = client.getConfiguredRegions();
    }
 
    @Override
-   public Iterable<String> load(final RegionAndName key) throws Exception {
-      String region = key.getRegion() == null ? regions.iterator().next() : key.getRegion();
-      Optional<FloatingIPClient> ipClientOptional = client.getFloatingIPExtensionForRegion(region);
+   public Iterable<String> load(final ZoneAndId key) throws Exception {
+      String zone = key.getZone();
+      Optional<FloatingIPClient> ipClientOptional = client.getFloatingIPExtensionForZone(zone);
       if (ipClientOptional.isPresent()) {
          return Iterables.transform(Iterables.filter(ipClientOptional.get().listFloatingIPs(),
-               new Predicate<FloatingIP>() {
-                  @Override
-                  public boolean apply(FloatingIP input) {
-                     return key.getName().equals(input.getInstanceId());
-                  }
-               }),
-               new Function<FloatingIP, String>() {
-                  @Override
-                  public String apply(FloatingIP input) {
-                     return input.getIp();
-                  }
-               });
+                  new Predicate<FloatingIP>() {
+                     @Override
+                     public boolean apply(FloatingIP input) {
+                        return key.getId().equals(input.getInstanceId());
+                     }
+                  }), new Function<FloatingIP, String>() {
+            @Override
+            public String apply(FloatingIP input) {
+               return input.getIp();
+            }
+         });
       }
       return ImmutableSet.of();
    }

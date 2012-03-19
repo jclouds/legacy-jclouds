@@ -33,6 +33,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.jclouds.openstack.nova.v1_1.handlers.NovaErrorHandler;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -49,29 +50,53 @@ public class NovaErrorHandlerTest {
    @Test
    public void test401MakesAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://api.openstack.nova.com/foo"), 401, "", "Unauthorized",
-            AuthorizationException.class);
+               AuthorizationException.class);
+   }
+
+   @Test
+   public void test400MakesIllegalStateExceptionOnQuotaExceededOnNoFixedIps() {
+      // should wait until ips are associated w/the server
+      assertCodeMakes(
+               "POST",
+               URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers/71554/action"),
+               400,
+               "HTTP/1.1 400 Bad Request",
+               "{\"badRequest\": {\"message\": \"instance |71554| has no fixed_ips. unable to associate floating ip\", \"code\": 400}}",
+               IllegalStateException.class);
+   }
+   
+   
+   @Test
+   public void test400MakesInsufficientResourcesExceptionOnQuotaExceeded() {
+      assertCodeMakes(
+               "POST",
+               URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/os-floating-ips"),
+               400,
+               "HTTP/1.1 400 Bad Request",
+               "{\"badRequest\": {\"message\": \"AddressLimitExceeded: Address quota exceeded. You cannot allocate any more addresses\", \"code\": 400}}",
+               InsufficientResourcesException.class);
    }
 
    @Test
    public void test404MakesResourceNotFoundException() {
       assertCodeMakes("GET", URI.create("https://api.openstack.nova.com/foo"), 404, "", "Not Found",
-            ResourceNotFoundException.class);
+               ResourceNotFoundException.class);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
-         Class<? extends Exception> expected) {
-      assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
+            Class<? extends Exception> expected) {
+      assertCodeMakes(method, uri, statusCode, message, "text/json", content, expected);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-         String content, Class<? extends Exception> expected) {
+            String content, Class<? extends Exception> expected) {
 
       NovaErrorHandler function = Guice.createInjector().getInstance(NovaErrorHandler.class);
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
-            .toInputStream(content)));
+               .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
