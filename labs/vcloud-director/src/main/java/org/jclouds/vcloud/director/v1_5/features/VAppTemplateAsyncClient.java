@@ -44,6 +44,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -362,5 +363,11 @@ public interface VAppTemplateAsyncClient {
    ListenableFuture<Task> editProductSectionsForVAppTemplate(@EndpointParam URI templateURI,
                                                              @BinderParam(BindToXMLPayload.class) ProductSectionList sections);
 
-   // TODO shadowVms ?
+   // TODO shadowVms
+
+   /**
+    * @return asynchronous access to {@link Metadata} features
+    */
+   @Delegate
+   MetadataAsyncClient.Writable getMetadataClient();
 }
