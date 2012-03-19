@@ -36,7 +36,10 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdsSupplier;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
+import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
+import org.jclouds.location.suppliers.derived.ZoneIdsFromZoneIdToURIKeySet;
 import org.jclouds.openstack.Authentication;
 import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.ServiceClient;
@@ -45,6 +48,7 @@ import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCre
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
 import org.jclouds.openstack.keystone.v2_0.handlers.RetryOnRenew;
 import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersionSupplier;
+import org.jclouds.openstack.keystone.v2_0.suppliers.ZoneIdToURIFromAccessForTypeAndVersionSupplier;
 import org.jclouds.rest.annotations.ApiVersion;
 
 import com.google.common.base.Function;
@@ -54,6 +58,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
+import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
@@ -63,6 +68,65 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  */
 @RequiresHttp
 public class KeystoneAuthenticationModule extends AbstractModule {
+   private final Module locationModule;
+
+   public KeystoneAuthenticationModule() {
+      this(new RegionModule());
+   }
+
+   protected KeystoneAuthenticationModule(Module locationModule) {
+      this.locationModule = locationModule;
+   }
+
+   public static Module forRegions() {
+      return new KeystoneAuthenticationModule(new RegionModule());
+   }
+
+   public static class RegionModule extends AbstractModule {
+      @Override
+      protected void configure() {
+         install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
+                  RegionIdToURIFromAccessForTypeAndVersionSupplier.class).build(RegionIdToURISupplier.Factory.class));
+         // dynamically build the region list as opposed to from properties
+         bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class);
+      }
+
+      // supply the region to id map from keystone, based on the servicetype and api version in
+      // config
+      @Provides
+      @Singleton
+      protected RegionIdToURISupplier provideRegionIdToURISupplierForApiVersion(
+               @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+               RegionIdToURISupplier.Factory factory) {
+         return factory.createForApiTypeAndVersion(serviceType, apiVersion);
+      }
+
+   }
+
+   public static class ZoneModule extends AbstractModule {
+      @Override
+      protected void configure() {
+         install(new FactoryModuleBuilder().implement(ZoneIdToURISupplier.class,
+                  ZoneIdToURIFromAccessForTypeAndVersionSupplier.class).build(ZoneIdToURISupplier.Factory.class));
+         // dynamically build the zone list as opposed to from properties
+         bind(ZoneIdsSupplier.class).to(ZoneIdsFromZoneIdToURIKeySet.class);
+      }
+
+      // supply the zone to id map from keystone, based on the servicetype and api version in
+      // config
+      @Provides
+      @Singleton
+      protected ZoneIdToURISupplier provideZoneIdToURISupplierForApiVersion(
+               @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
+               ZoneIdToURISupplier.Factory factory) {
+         return factory.createForApiTypeAndVersion(serviceType, apiVersion);
+      }
+
+   }
+
+   public static Module forZones() {
+      return new KeystoneAuthenticationModule(new ZoneModule());
+   }
 
    @Override
    protected void configure() {
@@ -71,19 +135,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       // ServiceClient is used directly for filters and retry handlers, so let's bind it
       // explicitly
       bindClientAndAsyncClient(binder(), ServiceClient.class, ServiceAsyncClient.class);
-      install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
-               RegionIdToURIFromAccessForTypeAndVersionSupplier.class).build(RegionIdToURISupplier.Factory.class));
-      // dynamically build the region list as opposed to from properties
-      bind(RegionIdsSupplier.class).to(RegionIdsFromRegionIdToURIKeySet.class);
-   }
-
-   // supply the region to id map from keystone, based on the servicetype and api version in config
-   @Provides
-   @Singleton
-   protected RegionIdToURISupplier provideRegionIdToURISupplierForApiVersion(
-            @Named(KeystoneProperties.SERVICE_TYPE) String serviceType, @ApiVersion String apiVersion,
-            RegionIdToURISupplier.Factory factory) {
-      return factory.createForApiTypeAndVersion(serviceType, apiVersion);
+      install(locationModule);
    }
 
    /**

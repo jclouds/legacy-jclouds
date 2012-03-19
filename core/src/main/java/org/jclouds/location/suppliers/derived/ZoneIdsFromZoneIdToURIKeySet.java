@@ -16,35 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers;
+package org.jclouds.location.suppliers.derived;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
-import org.jclouds.location.suppliers.fromconfig.ZoneIdToURIFromConfigurationOrDefaultToProvider;
+import javax.inject.Singleton;
+
+import org.jclouds.location.Zone;
+import org.jclouds.location.suppliers.ZoneIdsSupplier;
 
 import com.google.common.base.Supplier;
-import com.google.inject.ImplementedBy;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.Inject;
 
 /**
- * 
- * 
- * @author Adrian Cole
+ * as opposed to via properties, lets look up zones via api, as they are more likely to change
  */
-@ImplementedBy(ZoneIdToURIFromConfigurationOrDefaultToProvider.class)
-public interface ZoneIdToURISupplier extends Supplier<Map<String, Supplier<URI>>> {
-   static interface Factory {
-      /**
-       * 
-       * @param apiType
-       *           type of the api, according to the provider. ex. {@code compute} {@code
-       *           object-store}
-       * @param apiVersion
-       *           version of the api
-       * @return regions mapped to default uri
-       */
-      ZoneIdToURISupplier createForApiTypeAndVersion(@Assisted("apiType") String apiType,
-               @Assisted("apiVersion") String apiVersion);
+@Singleton
+public class ZoneIdsFromZoneIdToURIKeySet implements ZoneIdsSupplier {
+
+   private final Supplier<Map<String, Supplier<URI>>> zoneIdToURISupplier;
+
+   @Inject
+   protected ZoneIdsFromZoneIdToURIKeySet(@Zone Supplier<Map<String, Supplier<URI>>> zoneIdToURISupplier) {
+      this.zoneIdToURISupplier = zoneIdToURISupplier;
+   }
+
+   @Override
+   public Set<String> get() {
+      return zoneIdToURISupplier.get().keySet();
    }
 }

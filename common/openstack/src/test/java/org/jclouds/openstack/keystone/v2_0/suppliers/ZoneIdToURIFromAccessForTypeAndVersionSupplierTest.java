@@ -24,7 +24,7 @@ import java.net.URI;
 
 import javax.inject.Singleton;
 
-import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.parse.ParseAccessTest;
 import org.testng.annotations.Test;
@@ -41,14 +41,14 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "RegionIdToURIFromAccessForTypeAndVersionSupplierTest")
-public class RegionIdToURIFromAccessForTypeAndVersionSupplierTest {
-   private final RegionIdToURISupplier.Factory factory = Guice.createInjector(new AbstractModule() {
+@Test(groups = "unit", testName = "ZoneIdToURIFromAccessForTypeAndVersionSupplierTest")
+public class ZoneIdToURIFromAccessForTypeAndVersionSupplierTest {
+   private final ZoneIdToURISupplier.Factory factory = Guice.createInjector(new AbstractModule() {
 
       @Override
       protected void configure() {
-         install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
-                  RegionIdToURIFromAccessForTypeAndVersionSupplier.class).build(RegionIdToURISupplier.Factory.class));
+         install(new FactoryModuleBuilder().implement(ZoneIdToURISupplier.class,
+                  ZoneIdToURIFromAccessForTypeAndVersionSupplier.class).build(ZoneIdToURISupplier.Factory.class));
       }
 
       @SuppressWarnings("unused")
@@ -57,13 +57,15 @@ public class RegionIdToURIFromAccessForTypeAndVersionSupplierTest {
       public Supplier<Access> provide() {
          return Suppliers.ofInstance(new ParseAccessTest().expected());
       }
-   }).getInstance(RegionIdToURISupplier.Factory.class);
+   }).getInstance(ZoneIdToURISupplier.Factory.class);
 
-   public void testRegionMatches() {
+   public void testZoneMatches() {
       assertEquals(Maps.transformValues(factory.createForApiTypeAndVersion("compute", "1.0").get(), Suppliers
-               .<URI> supplierFunction()), ImmutableMap.of("az-1.region-a.geo-1", URI.create("https://compute.north.host/v1/1234")));
+               .<URI> supplierFunction()), ImmutableMap.of("az-1.region-a.geo-1", URI
+               .create("https://compute.north.host/v1/1234")));
       assertEquals(Maps.transformValues(factory.createForApiTypeAndVersion("compute", "1.1").get(), Suppliers
-               .<URI> supplierFunction()), ImmutableMap.of("az-1.region-a.geo-1", URI.create("https://compute.north.host/v1.1/3456")));
+               .<URI> supplierFunction()), ImmutableMap.of("az-1.region-a.geo-1", URI
+               .create("https://compute.north.host/v1.1/3456")));
    }
 
 }

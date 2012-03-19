@@ -82,7 +82,8 @@ public class ZoneToRegionToProviderOrJustProvider implements LocationsSupplier {
       Map<String, Supplier<Set<String>>> isoCodesById = isoCodesByIdSupplier.get();
 
       Builder<Location> locations = ImmutableSet.builder();
-      locations.addAll(regionsOrJustProvider);
+      if (!Iterables.all(regionsOrJustProvider, LocationPredicates.isProvider()))
+         locations.addAll(regionsOrJustProvider);
       for (String zoneId : zoneIdToParent.keySet()) {
          Location parent = zoneIdToParent.get(zoneId);
          LocationBuilder builder = new LocationBuilder().scope(LocationScope.ZONE).id(zoneId).description(zoneId)

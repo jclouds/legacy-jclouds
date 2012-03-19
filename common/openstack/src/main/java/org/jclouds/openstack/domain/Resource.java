@@ -25,6 +25,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 
@@ -62,8 +64,8 @@ public class Resource implements Comparable<Resource> {
       /**
        * @see Resource#getName()
        */
-      public Builder name(String name) {
-         this.name = checkNotNull(name, "name");
+      public Builder name(@Nullable String name) {
+         this.name = name;
          return this;
       }
 
@@ -95,9 +97,9 @@ public class Resource implements Comparable<Resource> {
    protected final String name;
    protected final Set<Link> links;
 
-   public Resource(String id, String name, Set<Link> links) {
+   public Resource(String id,@Nullable String name, Set<Link> links) {
       this.id = checkNotNull(id, "id");
-      this.name = checkNotNull(name, "name");
+      this.name =  name;
       this.links = ImmutableSet.copyOf(checkNotNull(links, "links"));
    }
 
@@ -114,6 +116,7 @@ public class Resource implements Comparable<Resource> {
    /**
     * @return the name of the resource
     */
+   @Nullable
    public String getName() {
       return name;
    }

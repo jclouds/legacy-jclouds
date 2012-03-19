@@ -82,7 +82,7 @@
                         "tenantId":"1",
                         "publicURL":"https://compute.north.host/v1/1234",
                         "internalURL":"https://compute.north.host/v1/1234",
-                        "region":"North",
+                        "region":"az-1.region-a.geo-1",
                         "versionId":"1.0",
                         "versionInfo":"https://compute.north.host/v1.0/",
                         "versionList":"https://compute.north.host/"
@@ -91,7 +91,7 @@
                         "tenantId":"2",
                         "publicURL":"https://compute.north.host/v1.1/3456",
                         "internalURL":"https://compute.north.host/v1.1/3456",
-                        "region":"North",
+                        "region":"az-1.region-a.geo-1",
                         "versionId":"1.1",
                         "versionInfo":"https://compute.north.host/v1.1/",
                         "versionList":"https://compute.north.host/"

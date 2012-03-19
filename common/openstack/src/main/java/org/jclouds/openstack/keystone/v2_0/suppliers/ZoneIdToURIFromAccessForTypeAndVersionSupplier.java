@@ -21,7 +21,7 @@ package org.jclouds.openstack.keystone.v2_0.suppliers;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.EndpointToRegion;
 import org.jclouds.openstack.keystone.v2_0.functions.EndpointToSupplierURI;
@@ -30,18 +30,21 @@ import com.google.common.base.Supplier;
 import com.google.inject.assistedinject.Assisted;
 
 @Singleton
-public class RegionIdToURIFromAccessForTypeAndVersionSupplier extends
-         LocationIdToURIFromAccessForTypeAndVersionSupplier implements RegionIdToURISupplier {
+public class ZoneIdToURIFromAccessForTypeAndVersionSupplier extends LocationIdToURIFromAccessForTypeAndVersionSupplier
+         implements ZoneIdToURISupplier {
 
    @Inject
-   public RegionIdToURIFromAccessForTypeAndVersionSupplier(Supplier<Access> access,
-            EndpointToSupplierURI endpointToSupplierURI, EndpointToRegion endpointToRegion,
+   public ZoneIdToURIFromAccessForTypeAndVersionSupplier(
+            Supplier<Access> access,
+            // NOTE that in some services, the region is in fact the zone. temporarily, we need
+            // to use the region field, in this case.
+            EndpointToSupplierURI endpointToSupplierURI, EndpointToRegion endpointToZone,
             @Assisted("apiType") String apiType, @Assisted("apiVersion") String apiVersion) {
-      super(access, endpointToSupplierURI, endpointToRegion, apiType, apiVersion);
+      super(access, endpointToSupplierURI, endpointToZone, apiType, apiVersion);
    }
 
    @Override
    public String toString() {
-      return "regionIdToURIFromAccessForTypeAndVersion(" + apiType + ", " + apiVersion + ")";
+      return "zoneIdToURIFromAccessForTypeAndVersion(" + apiType + ", " + apiVersion + ")";
    }
 }

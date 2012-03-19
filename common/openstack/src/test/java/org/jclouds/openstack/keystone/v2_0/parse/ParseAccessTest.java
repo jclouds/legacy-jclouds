@@ -80,10 +80,10 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
 
                Service.builder().name("Cloud Servers").type("compute").endpoints(
                         Endpoint.builder().tenantId("1").publicURL(URI.create("https://compute.north.host/v1/1234"))
-                                 .internalURL(URI.create("https://compute.north.host/v1/1234")).region("North")
+                                 .internalURL(URI.create("https://compute.north.host/v1/1234")).region("az-1.region-a.geo-1")
                                  .versionId("1.0").build(),
                         Endpoint.builder().tenantId("2").publicURL(URI.create("https://compute.north.host/v1.1/3456"))
-                                 .internalURL(URI.create("https://compute.north.host/v1.1/3456")).region("North")
+                                 .internalURL(URI.create("https://compute.north.host/v1.1/3456")).region("az-1.region-a.geo-1")
                                  .versionId("1.1").build()).build()).build();
 
    }
