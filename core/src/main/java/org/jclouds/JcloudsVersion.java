@@ -39,15 +39,22 @@ public class JcloudsVersion {
     static final String VERSION_RESOURCE_FILE = "META-INF/maven/org.jclouds/jclouds-core/pom.properties";
     private static final String VERSION_PROPERTY_NAME = "version";
 
-    // x.y.z or x.y.z-rc.n, optionally with -SNAPSHOT suffix - see http://semver.org
+    // x.y.z or x.y.z-alpha.n or x.y.z-rc.n or x.y.z-SNAPSHOT - see http://semver.org
     private static final Pattern SEMANTIC_VERSION_PATTERN =
-        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-rc\\.(\\d+))?(?:-SNAPSHOT)?");
+        Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)(?:-(alpha|rc)\\.(\\d+)|-SNAPSHOT)?");
+    private static final String ALPHA_VERSION_IDENTIFIER = "alpha";
 
     private static final JcloudsVersion INSTANCE = new JcloudsVersion();
 
     public final int majorVersion;
     public final int minorVersion;
     public final int patchVersion;
+    public final boolean alpha;
+
+    /**
+     * Non-null iff {@link #alpha} is {@code true}
+     */
+    public final @Nullable Integer alphaVersion;
     public final boolean releaseCandidate;
 
     /**
@@ -83,18 +90,32 @@ public class JcloudsVersion {
         checkArgument(versionMatcher.matches(), "Version '%s' did not match expected pattern '%s'", 
                 version, SEMANTIC_VERSION_PATTERN);
         this.version = version;
-        // a match will produce three or four matching groups (release candidate version optional)
+        // a match will produce three or five matching groups (alpha/release candidate identifier and version optional)
         majorVersion = Integer.valueOf(versionMatcher.group(1));
         minorVersion = Integer.valueOf(versionMatcher.group(2));
         patchVersion = Integer.valueOf(versionMatcher.group(3));
-        String releaseCandidateVersionIfPresent = versionMatcher.group(4);
-        if (releaseCandidateVersionIfPresent != null) {
-            releaseCandidate = true;
-            releaseCandidateVersion = Integer.valueOf(releaseCandidateVersionIfPresent);
+
+        String alphaOrReleaseCandidateVersionIfPresent = versionMatcher.group(4);
+        if (alphaOrReleaseCandidateVersionIfPresent != null) {
+            Integer alphaOrReleaseCandidateVersion = Integer.valueOf(versionMatcher.group(5));
+            if (alphaOrReleaseCandidateVersionIfPresent.equals(ALPHA_VERSION_IDENTIFIER)) {
+                alpha = true;
+                alphaVersion = alphaOrReleaseCandidateVersion;
+                releaseCandidate = false;
+                releaseCandidateVersion = null;
+            } else {
+                alpha = false;
+                alphaVersion = null;
+                releaseCandidate = true;
+                releaseCandidateVersion = alphaOrReleaseCandidateVersion;
+            }
         } else {
+            alpha = false;
+            alphaVersion = null;
             releaseCandidate = false;
             releaseCandidateVersion = null;
         }
+
         // endsWith("T") would be cheaper but we only do this once...
         snapshot = version.endsWith("-SNAPSHOT");
     }
