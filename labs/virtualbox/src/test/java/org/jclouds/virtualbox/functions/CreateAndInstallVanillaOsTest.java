@@ -103,7 +103,6 @@ public class CreateAndInstallVanillaOsTest extends BaseVirtualBoxClientLiveTest 
                                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
                                           vmSpecification.getVmName())).build()).network(networkSpec).build();
 
-      undoVm(vmSpecification);
    }
 
    @Test

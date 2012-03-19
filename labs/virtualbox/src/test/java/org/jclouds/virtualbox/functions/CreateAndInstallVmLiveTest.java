@@ -115,7 +115,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
                                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
                                           vmSpecification.getVmName())).build()).network(networkSpec).build();
 
-      undoVm(vmSpecification);
+      undoVm(vmSpecification.getVmName());
    }
 
    @Test
@@ -166,12 +166,4 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       }
    }
 
-   @Override
-   @AfterClass(groups = "live")
-   protected void tearDown() throws Exception {
-      for (VmSpec spec : ImmutableSet.of(vmSpecification)) {
-         undoVm(spec);
-      }
-      super.tearDown();
-   }
 }

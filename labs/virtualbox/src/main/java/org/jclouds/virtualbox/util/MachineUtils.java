@@ -24,6 +24,9 @@ import static org.jclouds.scriptbuilder.domain.Statements.findPid;
 import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -46,7 +49,9 @@ import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
@@ -63,6 +68,11 @@ public class MachineUtils {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   public final String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+			+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+			+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+			+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+   
    private final Supplier<VirtualBoxManager> manager;
    private final Factory scriptRunner;
    private final Supplier<NodeMetadata> host;
@@ -126,10 +136,12 @@ public class MachineUtils {
    public <T> T lockSessionOnMachineAndApply(String machineId, LockType type, Function<ISession, T> function) {
       try {
          ISession session = lockSessionOnMachine(type, machineId);
+         Preconditions.checkState(session.getState().equals(SessionState.Locked));
          try {
             return function.apply(session);
          } finally {
-            session.unlockMachine();
+				if (session.getState().equals(SessionState.Locked))
+					session.unlockMachine();
          }
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
@@ -143,7 +155,7 @@ public class MachineUtils {
 
    private void unlockMachine(final String machineId) {
       IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
-      if (immutableMachine.getSessionState().equals(SessionState.Locked)) {
+      while (immutableMachine.getSessionState().equals(SessionState.Locked) || immutableMachine.getSessionState().equals(SessionState.Unlocking)) {
          Statement kill = newStatementList(call("default"), findPid(immutableMachine.getSessionPid().toString()),
                   kill());
          scriptRunner.create(host.get(), kill, runAsRoot(false).wrapInInitScript(false)).init().call();
@@ -223,4 +235,39 @@ public class MachineUtils {
       return e.getMessage().contains("VirtualBox error: Could not find a registered machine named ")
                || e.getMessage().contains("Could not find a registered machine with UUID {");
    }
+
+	public String getIpAddressFromBridgedNICoption1(String machineName) {
+		String ip = "";
+		int attempt = 0;
+		while (!isIpv4(ip) && attempt < 10) {
+			ip = this.lockSessionOnMachineAndApply(machineName,
+					LockType.Shared, new Function<ISession, String>() {
+						@Override
+						public String apply(ISession session) {
+							String ip = session
+									.getMachine()
+									.getGuestPropertyValue(
+											"/VirtualBox/GuestInfo/Net/0/V4/IP");
+							return ip;
+						}
+					});
+			attempt++;
+			long sleepTime = 1000 * attempt;
+			logger.debug("Instance %s is still not ready. Attempt n:%d. Sleeping for %d millisec", machineName, attempt, sleepTime);
+			try {
+				Thread.sleep(sleepTime);
+			} catch (InterruptedException e) {
+				Throwables.propagate(e);
+			}
+		}
+		return ip;
+	}
+	
+	private boolean isIpv4(String s) {
+		Pattern pattern = Pattern
+				.compile(this.IP_V4_ADDRESS_PATTERN);
+		Matcher matcher = pattern.matcher(s);
+		return matcher.matches();
+	}
+   
 }

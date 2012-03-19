@@ -57,14 +57,14 @@ import com.google.inject.Injector;
 @Test(groups = "live", singleThreaded = true, testName = "IMachinePredicatesLiveTest")
 public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
 
-  private String            osTypeId          = "";
-  private String            ideControllerName = "IDE Controller";
-  private String            cloneName;
-  private String            vmName;
-  private StorageController masterStorageController;
-  private MasterSpec        masterMachineSpec;
-  private NetworkSpec       networkSpec;
-  private CloneSpec cloneSpec;
+	private String osTypeId = "";
+	private String ideControllerName = "IDE Controller";
+	private String cloneName;
+	private String vmName;
+	private StorageController masterStorageController;
+	private MasterSpec masterMachineSpec;
+	private NetworkSpec networkSpec;
+	private CloneSpec cloneSpec;
 
   @Override
   @BeforeClass(groups = "live")
@@ -118,6 +118,6 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
       Set<VmSpec> specs = cloneSpec != null ? ImmutableSet.of(cloneSpec.getVmSpec(), masterMachineSpec.getVmSpec())
                : ImmutableSet.of(masterMachineSpec.getVmSpec());
       for (VmSpec spec : specs)
-         this.undoVm(spec);
+         this.undoVm(spec.getVmName());
    }
 }

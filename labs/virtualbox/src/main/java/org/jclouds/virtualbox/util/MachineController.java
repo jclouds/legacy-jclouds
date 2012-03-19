@@ -30,7 +30,7 @@ import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
-import org.virtualbox_4_1.jaxws.MachineState;
+import org.virtualbox_4_1.MachineState;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -61,32 +61,99 @@ public class MachineController {
       this.executionType = executionType;
    }
 
-   public void ensureMachineIsLaunched(String vmName) {
-	      machineUtils.applyForMachine(vmName, new LaunchMachineIfNotAlreadyRunning(manager.get(), executionType, ""));
-	   }
-   
-   public void ensureMachineHasPowerDown(String vmName) {
-	      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
-	         try {
-	            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
-	               @Override
-	               public Void apply(ISession session) {
-	                  IProgress powerDownProgress = session.getConsole().powerDown();
-	                  powerDownProgress.waitForCompletion(-1);
-	                  return null;
-	               }
-	            });
-	         } catch (RuntimeException e) {
-	            // sometimes the machine might be powered of between the while test and the call to
-	            // lockSessionOnMachineAndApply
-	            if (e.getMessage().contains("Invalid machine state: PoweredOff")) {
-	               return;
-	            } else if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
-	               continue;
-	            } else {
-	               throw e;
-	            }
-	         }
-	      }
-	   }
+	public void ensureMachineIsLaunched(String vmName) {
+		machineUtils.applyForMachine(vmName,
+				new LaunchMachineIfNotAlreadyRunning(manager.get(),
+						executionType, ""));
+	}
+
+	public void ensureMachineHasPowerDown(String vmName) {
+		while (!manager.get().getVBox().findMachine(vmName).getState()
+				.equals(MachineState.PoweredOff)) {
+			try {
+				machineUtils.lockSessionOnMachineAndApply(vmName,
+						LockType.Shared, new Function<ISession, Void>() {
+							@Override
+							public Void apply(ISession session) {
+								IProgress powerDownProgress = session
+										.getConsole().powerDown();
+								powerDownProgress.waitForCompletion(-1);
+								return null;
+							}
+						});
+			} catch (RuntimeException e) {
+				// sometimes the machine might be powered of between the while
+				// test and the call to
+				// lockSessionOnMachineAndApply
+				if (e.getMessage()
+						.contains("Invalid machine state: PoweredOff")) {
+					return;
+				} else if (e.getMessage().contains(
+						"VirtualBox error: The object is not ready")) {
+					continue;
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+
+	public void ensureMachineIsPaused(String vmName) {
+		while (!manager.get().getVBox().findMachine(vmName).getState()
+				.equals(MachineState.Paused)) {
+			try {
+				machineUtils.lockSessionOnMachineAndApply(vmName,
+						LockType.Shared, new Function<ISession, Void>() {
+							@Override
+							public Void apply(ISession session) {
+								session.getConsole().pause();
+								return null;
+							}
+						});
+			} catch (RuntimeException e) {
+				// sometimes the machine might be powered of between the while
+				// test and the call to
+				// lockSessionOnMachineAndApply
+				if (e.getMessage()
+						.contains("Invalid machine state: Paused")) {
+					return;
+				} else if (e.getMessage().contains(
+						"VirtualBox error: The object is not ready")) {
+					continue;
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+	
+	public void ensureMachineIsResumed(String vmName) {
+		while (!manager.get().getVBox().findMachine(vmName).getState()
+				.equals(MachineState.Running)) {
+			try {
+				machineUtils.lockSessionOnMachineAndApply(vmName,
+						LockType.Shared, new Function<ISession, Void>() {
+							@Override
+							public Void apply(ISession session) {
+								session.getConsole().resume();
+								return null;
+							}
+						});
+			} catch (RuntimeException e) {
+				// sometimes the machine might be powered of between the while
+				// test and the call to
+				// lockSessionOnMachineAndApply
+				if (e.getMessage()
+						.contains("Invalid machine state: Resumed")) {
+					return;
+				} else if (e.getMessage().contains(
+						"VirtualBox error: The object is not ready")) {
+					continue;
+				} else {
+					throw e;
+				}
+			}
+		}
+	}	
+	
 }

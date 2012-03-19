@@ -77,7 +77,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    @Test
    public void testListHardwareProfiles() {
       Iterable<IMachine> profiles = adapter.listHardwareProfiles();
-      assertEquals(1, Iterables.size(profiles));
+      assertEquals(2, Iterables.size(profiles));
       //TODO: check state;
    }
 
