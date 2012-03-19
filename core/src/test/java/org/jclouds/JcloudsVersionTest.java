@@ -55,6 +55,16 @@ public class JcloudsVersionTest {
         new JcloudsVersion("1.2.3-rc-4");
     }
 
+    @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfAlphaSnapshot() {
+        new JcloudsVersion("1.2.3-alpha.5-SNAPSHOT");
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class })
+    public void testFailsIfReleaseCandidateSnapshot() {
+        new JcloudsVersion("1.2.3-rc.4-SNAPSHOT");
+    }
+
     @Test
     public void testExtractsVersionFromResourceFile() {
         JcloudsVersion version = new JcloudsVersion();
@@ -82,10 +92,24 @@ public class JcloudsVersionTest {
     }
 
     @Test
-    public void testSupportsNonReleaseCandidate() {
+    public void testSupportsReleaseVersion() {
         JcloudsVersion version = new JcloudsVersion("1.2.3");
+        assertFalse(version.alpha, "Expected non-alpha");
+        assertNull(version.alphaVersion);
         assertFalse(version.releaseCandidate, "Expected non-release candidate");
         assertNull(version.releaseCandidateVersion);
+    }
+
+    @Test
+    public void testRecognisesAlpha() {
+        JcloudsVersion version = new JcloudsVersion("1.2.3-alpha.5");
+        assertTrue(version.alpha, "Expected alpha");
+    }
+
+    @Test
+    public void testExtractsAlphaVersion() {
+        JcloudsVersion version = new JcloudsVersion("1.2.3-alpha.5");
+        assertEquals(Integer.valueOf(5), version.alphaVersion);
     }
 
     @Test
@@ -98,13 +122,6 @@ public class JcloudsVersionTest {
     public void testExtractsReleaseCandidateVersion() {
         JcloudsVersion version = new JcloudsVersion("1.2.3-rc.4");
         assertEquals(Integer.valueOf(4), version.releaseCandidateVersion);
-    }
-
-    @Test
-    public void testRecognisesReleaseCandidateSnapshot() {
-        JcloudsVersion version = new JcloudsVersion("1.2.3-rc.4-SNAPSHOT");
-        assertTrue(version.releaseCandidate, "Expected release candidate");
-        assertTrue(version.snapshot, "Expected snapshot");
     }
 
     private static class ResourceHidingClassLoader extends ClassLoader {
