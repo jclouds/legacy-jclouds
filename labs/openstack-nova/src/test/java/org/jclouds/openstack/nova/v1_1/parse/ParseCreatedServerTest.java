@@ -27,28 +27,26 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
-import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ParseServerTest")
-public class ParseServerTest extends BaseItemParserTest<Server> {
+@Test(groups = "unit", testName = "ParseCreatedServerTest")
+public class ParseCreatedServerTest extends BaseItemParserTest<Server> {
 
    @Override
    public String resource() {
-      return "/server_details.json";
+      return "/new_server.json";
    }
 
    @Override
@@ -57,48 +55,36 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
    public Server expected() {
       return Server
             .builder()
-            .id("52415800-8b69-11e0-9b19-734f000004d2")
-            .tenantId("1234")
-            .userId("5678")
-            .name("sample-f352")
-            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-10-10T12:00:00Z"))
-            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-08-10T12:00:00Z"))
-            .hostId("e4d909c290d0fb1ca068ffaddf22cbd0")
-            .accessIPv4("67.23.10.132")
-            .accessIPv6("::babe:67.23.10.132")
+            .id("71752")
+            .uuid("47491020-6a78-4f63-9475-23195ac4515c")
+            .tenantId("37936628937291")
+            .userId("54297837463082")
+            .name("test-e92")
+            .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-03-19T06:21:13Z"))
+            .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-03-19T06:21:13Z"))
             .status(ServerStatus.BUILD)
+            .adminPass("ZWuHcmTMQ7eXoHeM")
             .image(
                   Resource
                         .builder()
-                        .id("52415800-8b69-11e0-9b19-734f6f006e54")
-                        .name("null")
+                        .id("1241")
                         .links(
                               Link.create(
-                                    Relation.SELF,
-                                    URI.create("http://servers.api.openstack.org/v1.1/1234/images/52415800-8b69-11e0-9b19-734f6f006e54")),
-                              Link.create(
                                     Relation.BOOKMARK,
-                                    URI.create("http://servers.api.openstack.org/1234/images/52415800-8b69-11e0-9b19-734f6f006e54")))
+                                    URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/images/1241")))
                         .build())
             .flavor(
                   Resource
                         .builder()
-                        .id("52415800-8b69-11e0-9b19-734f216543fd")
-                        .name("null")
+                        .id("100")
                         .links(
                               Link.create(
-                                    Relation.SELF,
-                                    URI.create("http://servers.api.openstack.org/v1.1/1234/flavors/52415800-8b69-11e0-9b19-734f216543fd")),
-                              Link.create(
                                     Relation.BOOKMARK,
-                                    URI.create("http://servers.api.openstack.org/1234/flavors/52415800-8b69-11e0-9b19-734f216543fd")))
+                                    URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/flavors/100")))
                         .build())
-            .metadata(
-                  new ImmutableMap.Builder<String, String>().put("Server Label", "Web Head 1")
-                        .put("Image Version", "2.1").build())
-            .publicAddresses(Address.createV4("67.23.10.132"), Address.createV6("::babe:67.23.10.132"),
-                  Address.createV4("67.23.10.131"), Address.createV6("::babe:4317:0A83"))
-            .privateAddresses(Address.createV4("10.176.42.16"), Address.createV6("::babe:10.176.42.16")).build();
+            .links(
+                     Link.create(Relation.SELF, URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers/71752")),
+                     Link.create(Relation.BOOKMARK, URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/servers/71752"))).build();
 
    }
 

@@ -1,0 +1,41 @@
+{
+    "server": {
+        "status": "BUILD(scheduling)",
+        "updated": "2012-03-19T06:21:13Z",
+        "hostId": "",
+        "user_id": "54297837463082",
+        "name": "test-e92",
+        "links": [{
+            "href": "https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers/71752",
+            "rel": "self"
+        }, {
+            "href": "https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/servers/71752",
+            "rel": "bookmark"
+        }],
+        "addresses": {},
+        "tenant_id": "37936628937291",
+        "image": {
+            "id": "1241",
+            "links": [{
+                "href": "https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/images/1241",
+                "rel": "bookmark"
+            }]
+        },
+        "created": "2012-03-19T06:21:13Z",
+        "uuid": "47491020-6a78-4f63-9475-23195ac4515c",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "key_name": null,
+        "adminPass": "ZWuHcmTMQ7eXoHeM",
+        "flavor": {
+            "id": "100",
+            "links": [{
+                "href": "https://az-1.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/flavors/100",
+                "rel": "bookmark"
+            }]
+        },
+        "config_drive": "",
+        "id": 71752,
+        "metadata": {}
+    }
+}

@@ -27,7 +27,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -43,45 +46,45 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "NovaComputeServiceExpectTest")
 public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
+   HttpRequest listImagesDetail = HttpRequest.builder().method("GET").endpoint(
+            URI.create("https://compute.north.host/v1.1/3456/images/detail")).headers(
+            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                     authToken).build()).build();
+
+   HttpResponse listImagesDetailResponse = HttpResponse.builder().statusCode(200).payload(
+            payloadFromResource("/image_list_detail.json")).build();
+
+   HttpRequest listFlavorsDetail = HttpRequest.builder().method("GET").endpoint(
+            URI.create("https://compute.north.host/v1.1/3456/flavors/detail")).headers(
+            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                     authToken).build()).build();
+
+   HttpResponse listFlavorsDetailResponse = HttpResponse.builder().statusCode(200).payload(
+            payloadFromResource("/flavor_list_detail.json")).build();
+
+   HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
+            URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
+            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                     authToken).build()).build();
+
+   HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
+            payloadFromResource("/server_list_details.json")).build();
+
+   HttpRequest listFloatingIps = HttpRequest.builder().method("GET").endpoint(
+            URI.create("https://compute.north.host/v1.1/3456/os-floating-ips")).headers(
+            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                     authToken).build()).build();
+
+   HttpResponse listFloatingIpsResponse = HttpResponse.builder().statusCode(200).payload(
+            payloadFromResource("/floatingip_list.json")).build();
 
    public void testListServersWhenResponseIs2xx() throws Exception {
-      HttpRequest listImagesDetail = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/images/detail")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
-
-      HttpResponse listImagesDetailResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/image_list_detail.json")).build();
-
-      HttpRequest listFlavorsDetail = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/flavors/detail")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
-
-      HttpResponse listFlavorsDetailResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/flavor_list_detail.json")).build();
-
-      HttpRequest listFloatingIps = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/os-floating-ips")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
-
-      HttpResponse listFloatingIpsResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/floatingip_list.json")).build();
-
-      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
-
-      HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
-               payloadFromResource("/server_list_details.json")).build();
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
-               extensionsOfNovaResponse).put(listFloatingIps, listFloatingIpsResponse).put(listServers,
-               listServersResponse).put(listImagesDetail, listImagesDetailResponse).put(listFlavorsDetail,
-               listFlavorsDetailResponse).build();
+               extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
+               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).put(listFloatingIps,
+               listFloatingIpsResponse).build();
 
       ComputeService clientWhenServersExist = requestsSendResponses(requestResponseMap);
 
@@ -109,5 +112,20 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
                responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.listNodes().isEmpty());
+   }
+
+   @Test(enabled = false)
+   public void testCreateNodeSetsCredential() throws Exception {
+
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
+               keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
+               extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
+               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).put(listFloatingIps,
+               listFloatingIpsResponse).build();
+
+      ComputeService clientThatCreatesNode = requestsSendResponses(requestResponseMap);
+
+      NodeMetadata node = Iterables.getOnlyElement(clientThatCreatesNode.createNodesInGroup("test", 1));
+      assertEquals(node.getCredentials().getPassword(), "foo");
    }
 }

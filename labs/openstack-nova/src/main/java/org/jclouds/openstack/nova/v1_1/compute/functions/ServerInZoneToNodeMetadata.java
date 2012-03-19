@@ -80,8 +80,8 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
 
    @Override
    public NodeMetadata apply(ServerInZone serverInZone) {
-      Location location = locationIndex.get().get(serverInZone.getZone());
-      checkState(location != null, "location %s not in locationIndex: %s", serverInZone.getZone(), locationIndex.get());
+      Location zone = locationIndex.get().get(serverInZone.getZone());
+      checkState(zone != null, "location %s not in locationIndex: %s", serverInZone.getZone(), locationIndex.get());
       Server from = serverInZone.getServer();
 
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
@@ -89,8 +89,8 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.providerId(from.getId());
       builder.name(from.getName());
       builder.hostname(from.getName());
-      builder.location(new LocationBuilder().scope(LocationScope.HOST).id(from.getHostId()).description(
-               from.getHostId()).parent(location).build());
+      builder.location(from.getHostId() != null ? new LocationBuilder().scope(LocationScope.HOST).id(from.getHostId())
+               .description(from.getHostId()).parent(zone).build() : zone);
       builder.userMetadata(from.getMetadata());
       builder.group(parseGroupFromName(from.getName()));
       builder.imageId(ZoneAndId.fromZoneAndId(serverInZone.getZone(), from.getImage().getId()).slashEncode());

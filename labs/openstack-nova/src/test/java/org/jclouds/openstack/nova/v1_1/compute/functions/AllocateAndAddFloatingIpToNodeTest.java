@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaComputeServiceExpectTest;
@@ -54,7 +55,7 @@ public class AllocateAndAddFloatingIpToNodeTest extends BaseNovaComputeServiceEx
             .parent(zone).build();
    final NodeMetadata node = new NodeMetadataBuilder().id("az-1.region-a.geo-1/71592").providerId("71592").location(
             host).name("Server 71592").state(NodeState.RUNNING).privateAddresses(ImmutableSet.of("10.4.27.237"))
-            .build();
+            .credentials(LoginCredentials.builder().password("foo").build()).build();
 
    HttpRequest allocateFloatingIP = HttpRequest.builder().method("POST").endpoint(
             URI.create("https://compute.north.host/v1.1/3456/os-floating-ips")).headers(
@@ -63,7 +64,7 @@ public class AllocateAndAddFloatingIpToNodeTest extends BaseNovaComputeServiceEx
 
    HttpResponse addFloatingIPResponse = HttpResponse.builder().statusCode(200).build();
 
-   public void testAllocateWhenAllocationReturnsIpIsAddedToServerAndUpdatesNodeMetadata() throws Exception {
+   public void testAllocateWhenAllocationReturnsIpIsAddedToServerAndUpdatesNodeMetadataButSavesCredentials() throws Exception {
       HttpResponse allocateFloatingIPResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/floatingip_details.json")).build();
 
@@ -81,6 +82,7 @@ public class AllocateAndAddFloatingIpToNodeTest extends BaseNovaComputeServiceEx
       NodeMetadata node1 = nodeRef.get();
       assertNotNull(node1);
       assertEquals(node1.getPublicAddresses(), ImmutableSet.of("10.0.0.3"));
+      assertEquals(node1.getCredentials(), node.getCredentials());
 
    }
 

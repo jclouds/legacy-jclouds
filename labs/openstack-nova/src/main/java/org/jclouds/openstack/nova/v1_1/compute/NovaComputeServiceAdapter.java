@@ -80,10 +80,10 @@ public class NovaComputeServiceAdapter implements
    public NodeAndInitialCredentials<ServerInZone> createNodeWithGroupEncodedIntoName(String tag, String name,
             Template template) {
       String zoneId = template.getLocation().getId();
-      Server server = novaClient.getServerClientForZone(zoneId).createServer(name, template.getImage().getId(),
-               template.getHardware().getId());
-
-      return new NodeAndInitialCredentials<ServerInZone>(new ServerInZone(server, zoneId), server.getId() + "",
+      Server server = novaClient.getServerClientForZone(zoneId).createServer(name, template.getImage().getProviderId(),
+               template.getHardware().getProviderId());
+      ServerInZone serverInZone = new ServerInZone(server, zoneId);
+      return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(),
                LoginCredentials.builder().password(server.getAdminPass()).build());
    }
 

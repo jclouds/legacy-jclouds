@@ -38,6 +38,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.parse.ParseCreatedServerTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
 import org.testng.annotations.Test;
 
@@ -139,6 +140,34 @@ public class ServerInZoneToNodeMetadataTest {
       assertNotNull(convertedNodeMetadata.getUserMetadata());
       assertEquals(convertedNodeMetadata.getUserMetadata(), ImmutableMap.<String, String> of("Server Label",
                "Web Head 1", "Image Version", "2.1"));
+
+      EasyMock.verify(mockLoadingCache);
+   }
+
+   @Test
+   public void testNewServerWithoutHostIdSetsZoneAsLocation() {
+
+      Set<Image> images = ImmutableSet.<Image> of();
+      Set<Hardware> hardwares = ImmutableSet.<Hardware> of();
+
+      Server serverToConvert = new ParseCreatedServerTest().expected();
+
+      ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
+
+      LoadingCache<ZoneAndId, Iterable<String>> mockLoadingCache = EasyMock.createMock(LoadingCache.class);
+      EasyMock.expect(mockLoadingCache.getUnchecked(serverInZoneToConvert)).andReturn(ImmutableSet.<String> of());
+      EasyMock.replay(mockLoadingCache);
+
+      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
+               .<Set<? extends Image>> ofInstance(images), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares),
+               mockLoadingCache);
+
+      NodeMetadata convertedNodeMetadata = converter.apply(serverInZoneToConvert);
+
+      assertEquals(serverInZoneToConvert.slashEncode(), convertedNodeMetadata.getId());
+      assertEquals(serverToConvert.getId(), convertedNodeMetadata.getProviderId());
+
+      assertEquals(convertedNodeMetadata.getLocation(), zone);
 
       EasyMock.verify(mockLoadingCache);
    }
