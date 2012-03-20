@@ -46,7 +46,8 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlSeeAlso({
          VAppReference.class,
-         CatalogReference.class
+         CatalogReference.class,
+         RoleReference.class
 })
 @XmlRootElement(name = "Reference")
 @XmlType(name = "ReferenceType")
@@ -114,7 +115,7 @@ public class Reference {
          return new Reference(this);
       }
 
-      protected B fromReference(Reference in) {
+      public B fromReference(Reference in) {
          return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
       }
 
