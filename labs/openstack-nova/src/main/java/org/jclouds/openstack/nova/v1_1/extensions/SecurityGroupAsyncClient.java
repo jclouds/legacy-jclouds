@@ -30,11 +30,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.openstack.nova.v1_1.binders.BindSecurityGroupRuleToJsonPayload;
+import org.jclouds.openstack.nova.v1_1.domain.Ingress;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -52,14 +55,13 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @see SecurityGroupClient
  * @author Jeremy Daggett
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
+ * @see <a href= "http://docs.openstack.org/api/openstack-compute/2/content/Extensions-d1e1444.html"
  *      />
  * @see <a href="http://nova.openstack.org/api_ext" />
  * @see <a href="http://wiki.openstack.org/os-security-groups" />
  */
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.SECURITY_GROUPS)
-@SkipEncoding({ '/', '=' })
+@SkipEncoding( { '/', '=' })
 @RequestFilters(AuthenticateRequest.class)
 public interface SecurityGroupAsyncClient {
 
@@ -94,7 +96,7 @@ public interface SecurityGroupAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"security_group\":%7B\"name\":\"{name}\",\"description\":\"{description}\"%7D%7D")
    ListenableFuture<SecurityGroup> createSecurityGroupWithNameAndDescription(@PayloadParam("name") String name,
-         @PayloadParam("description") String description);
+            @PayloadParam("description") String description);
 
    /**
     * @see SecurityGroupClient#deleteSecurityGroup
@@ -106,7 +108,7 @@ public interface SecurityGroupAsyncClient {
    ListenableFuture<Boolean> deleteSecurityGroup(@PathParam("id") String id);
 
    /**
-    * @see SecurityGroupClient#createSecurityGroupRule
+    * @see SecurityGroupClient#createSecurityGroupRuleAllowingCidrBlock
     */
    @POST
    @Path("/os-security-group-rules")
@@ -114,13 +116,24 @@ public interface SecurityGroupAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
-   @Payload("%7B\"security_group_rule\":%7B\"ip_protocol\":\"{ip_protocol}\","
-         + "\"from_port\":\"{from_port}\",\"to_port\":\"{to_port}\","
-         + "\"cidr\":\"{cidr}\",\"group_id\":\"{group_id}\",\"parent_group_id\":\"{parent_group_id}\"%7D%7D")
-   ListenableFuture<SecurityGroupRule> createSecurityGroupRule(@PayloadParam("ip_protocol") String ip_protocol,
-         @PayloadParam("from_port") String from_port, @PayloadParam("to_port") String to_port,
-         @PayloadParam("cidr") String cidr, @PayloadParam("group_id") String group_id,
-         @PayloadParam("parent_group_id") String parent_group_id);
+   @MapBinder(BindSecurityGroupRuleToJsonPayload.class)
+   ListenableFuture<SecurityGroupRule> createSecurityGroupRuleAllowingCidrBlock(
+            @PayloadParam("parent_group_id") String parent_group_id, Ingress ip_protocol,
+            @PayloadParam("cidr") String cidr);
+
+   /**
+    * @see SecurityGroupClient#createRuleOnSecurityGroupToCidrBlock
+    */
+   @POST
+   @Path("/os-security-group-rules")
+   @SelectJson("security_group_rule")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @MapBinder(BindSecurityGroupRuleToJsonPayload.class)
+   ListenableFuture<SecurityGroupRule> createSecurityGroupRuleAllowingSecurityGroupId(
+            @PayloadParam("parent_group_id") String parent_group_id, Ingress ip_protocol,
+            @PayloadParam("group_id") String group_id);
 
    /**
     * @see SecurityGroupClient#deleteSecurityGroupRule

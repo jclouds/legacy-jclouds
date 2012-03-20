@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
+import org.jclouds.openstack.nova.v1_1.domain.IpProtocol;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.rest.annotations.SelectJson;
@@ -59,13 +60,13 @@ public class ParseSecurityGroupListTest extends BaseSetParserTest<SecurityGroup>
 
       Set<SecurityGroupRule> securityGroupRules = ImmutableSet.<SecurityGroupRule> of(
             SecurityGroupRule.builder().fromPort(22).group(new HashMap<String, String>())
-                  .ipProtocol(SecurityGroupRule.IpProtocol.TCP).toPort(22).parentGroupId("3").ipRange(anyCidr)
+                  .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("3").ipRange(anyCidr)
                   .id("107").build(),
             SecurityGroupRule.builder().fromPort(7600).group(new HashMap<String, String>())
-                  .ipProtocol(SecurityGroupRule.IpProtocol.TCP).toPort(7600).parentGroupId("3").ipRange(anyCidr)
+                  .ipProtocol(IpProtocol.TCP).toPort(7600).parentGroupId("3").ipRange(anyCidr)
                   .id("118").build(),
             SecurityGroupRule.builder().fromPort(8084).group(new HashMap<String, String>())
-                  .ipProtocol(SecurityGroupRule.IpProtocol.TCP).toPort(8084).parentGroupId("3").ipRange(anyCidr)
+                  .ipProtocol(IpProtocol.TCP).toPort(8084).parentGroupId("3").ipRange(anyCidr)
                   .id("119").build());
 
       return ImmutableSet.of(SecurityGroup.builder().description("description1").id("1").tenantId("tenant1")

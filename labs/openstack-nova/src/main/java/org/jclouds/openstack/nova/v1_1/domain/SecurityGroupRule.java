@@ -19,7 +19,6 @@
 package org.jclouds.openstack.nova.v1_1.domain;
 
 import static com.google.common.base.Objects.toStringHelper;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
@@ -30,26 +29,6 @@ import com.google.gson.annotations.SerializedName;
  * 
  */
 public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
-
-   public static enum IpProtocol {
-      TCP, UDP, ICMP, UNRECOGNIZED;
-      public String value() {
-         return name().toLowerCase();
-      }
-
-      @Override
-      public String toString() {
-         return value();
-      }
-
-      public static IpProtocol fromValue(String protocol) {
-         try {
-            return valueOf(checkNotNull(protocol, "protocol").toUpperCase());
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-   }
 
    public static Builder builder() {
       return new Builder();

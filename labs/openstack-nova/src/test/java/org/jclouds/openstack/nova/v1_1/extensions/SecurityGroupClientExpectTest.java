@@ -27,6 +27,8 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.domain.Ingress;
+import org.jclouds.openstack.nova.v1_1.domain.IpProtocol;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
@@ -46,185 +48,193 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "SecurityGroupClientExpectTest")
 public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
    public void testListSecurityGroupsWhenResponseIs2xx() throws Exception {
-      HttpRequest listSecurityGroups = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-groups"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest listSecurityGroups = HttpRequest.builder().method("GET").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
 
-      HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/securitygroup_list.json")).build();
+      HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
+               payloadFromResource("/securitygroup_list.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
-            listSecurityGroupsResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
+               listSecurityGroupsResponse);
 
       assertEquals(clientWhenSecurityGroupsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
 
-      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get().listSecurityGroups()
-            .toString(), new ParseSecurityGroupListTest().expected().toString());
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
+               .listSecurityGroups().toString(), new ParseSecurityGroupListTest().expected().toString());
    }
 
    public void testListSecurityGroupsWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest listListSecurityGroups = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-groups"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest listListSecurityGroups = HttpRequest.builder().method("GET").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
 
       HttpResponse listListSecurityGroupsResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listListSecurityGroups,
-            listListSecurityGroupsResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listListSecurityGroups,
+               listListSecurityGroupsResponse);
 
-      assertTrue(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get().listSecurityGroups()
-            .isEmpty());
+      assertTrue(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
+               .listSecurityGroups().isEmpty());
    }
 
    public void testGetSecurityGroupWhenResponseIs2xx() throws Exception {
 
-      HttpRequest getSecurityGroup = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-groups/0"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest getSecurityGroup = HttpRequest.builder().method("GET").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups/0")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
 
-      HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/securitygroup_details.json")).build();
+      HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(200).payload(
+               payloadFromResource("/securitygroup_details.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
-            getSecurityGroupResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
+               getSecurityGroupResponse);
 
       assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-            .getSecurityGroup("0").toString(), new ParseSecurityGroupTest().expected().toString());
+               .getSecurityGroup("0").toString(), new ParseSecurityGroupTest().expected().toString());
    }
 
    public void testGetSecurityGroupWhenResponseIs404() throws Exception {
-      HttpRequest getSecurityGroup = HttpRequest
-            .builder()
-            .method("GET")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-groups/0"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build()).build();
+      HttpRequest getSecurityGroup = HttpRequest.builder().method("GET").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups/0")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
 
       HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(404).build();
 
       NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
-            getSecurityGroupResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
+               getSecurityGroupResponse);
 
       assertNull(clientWhenNoSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-            .getSecurityGroup("0"));
+               .getSecurityGroup("0"));
 
    }
 
    public void testCreateSecurityGroupWhenResponseIs2xx() throws Exception {
-      HttpRequest createSecurityGroup = HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-groups"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
-            .payload(
-                  payloadFromStringWithContentType(
-                        "{\"security_group\":{\"name\":\"name\",\"description\":\"description\"}}", "application/json"))
-            .build();
+      HttpRequest createSecurityGroup = HttpRequest.builder().method("POST").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build())
+               .payload(
+                        payloadFromStringWithContentType(
+                                 "{\"security_group\":{\"name\":\"name\",\"description\":\"description\"}}",
+                                 "application/json")).build();
 
-      HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/securitygroup_created.json")).build();
+      HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200).payload(
+               payloadFromResource("/securitygroup_created.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroup,
-            createSecurityGroupResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroup,
+               createSecurityGroupResponse);
 
-      assertEquals(
-            clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-                  .createSecurityGroupWithNameAndDescription("name", "description").toString(), createSecurityGroupExpected().toString());
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
+               .createSecurityGroupWithNameAndDescription("name", "description").toString(),
+               createSecurityGroupExpected().toString());
    }
 
    public void testDeleteSecurityGroupWhenResponseIs2xx() throws Exception {
-      HttpRequest deleteSecurityGroup = HttpRequest
-            .builder()
-            .method("DELETE")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-groups/160"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "*/*").put("X-Auth-Token", authToken)
-                        .build()).build();
+      HttpRequest deleteSecurityGroup = HttpRequest.builder().method("DELETE").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups/160"))
+               .headers(
+                        ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
+                                 .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse deleteSecurityGroupResponse = HttpResponse.builder().statusCode(202).build();
 
       NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroup,
-            deleteSecurityGroupResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroup,
+               deleteSecurityGroupResponse);
 
-      assertTrue(clientWhenServersExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get().deleteSecurityGroup("160"));
+      assertTrue(clientWhenServersExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
+               .deleteSecurityGroup("160"));
 
    }
 
-   public void testCreateSecurityGroupRuleWhenResponseIs2xx() throws Exception {
+   public void testCreateSecurityGroupRuleForCidrBlockWhenResponseIs2xx() throws Exception {
       HttpRequest createSecurityGroupRule = HttpRequest
-            .builder()
-            .method("POST")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-group-rules"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
-                        .put("X-Auth-Token", authToken).build())
-            .payload(
-                  payloadFromStringWithContentType(
-                        "{\"security_group_rule\":{\"ip_protocol\":\"tcp\",\"from_port\":\"80\",\"to_port\":\"8080\",\"cidr\":\"0.0.0.0/0\",\"group_id\":\"\",\"parent_group_id\":\"161\"}}",
-                        "application/json")).build();
+               .builder()
+               .method("POST")
+               .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-group-rules"))
+               .headers(
+                        ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put(
+                                 "X-Auth-Token", authToken).build())
+               .payload(
+                        payloadFromStringWithContentType(
+                                 "{\"security_group_rule\":{\"parent_group_id\":\"161\",\"cidr\":\"0.0.0.0/0\",\"ip_protocol\":\"tcp\",\"from_port\":\"80\",\"to_port\":\"8080\"}}",
+                                 "application/json")).build();
 
-      HttpResponse createSecurityGroupRuleResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/securitygrouprule_created.json")).build();
+      HttpResponse createSecurityGroupRuleResponse = HttpResponse.builder().statusCode(200).payload(
+               payloadFromResource("/securitygrouprule_created.json")).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroupRule,
-            createSecurityGroupRuleResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroupRule,
+               createSecurityGroupRuleResponse);
 
       assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-            .createSecurityGroupRule("tcp", "80", "8080", "0.0.0.0/0", "", "161").toString(),
-            createSecurityGroupRuleExpected().toString());
+               .createSecurityGroupRuleAllowingCidrBlock("161",
+                        Ingress.builder().ipProtocol(IpProtocol.TCP).fromPort(80).toPort(8080).build(), "0.0.0.0/0")
+               .toString(), createSecurityGroupRuleExpected().toString());
+   }
+   
+   public void testCreateSecurityGroupRuleForSecurityGroupIdWhenResponseIs2xx() throws Exception {
+      HttpRequest createSecurityGroupRule = HttpRequest
+               .builder()
+               .method("POST")
+               .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-group-rules"))
+               .headers(
+                        ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put(
+                                 "X-Auth-Token", authToken).build())
+               .payload(
+                        payloadFromStringWithContentType(
+                                 "{\"security_group_rule\":{\"group_id\":\"999\",\"parent_group_id\":\"161\",\"ip_protocol\":\"tcp\",\"from_port\":\"80\",\"to_port\":\"8080\"}}",
+                                 "application/json")).build();
+
+      HttpResponse createSecurityGroupRuleResponse = HttpResponse.builder().statusCode(200).payload(
+               payloadFromResource("/securitygrouprule_created.json")).build();
+
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroupRule,
+               createSecurityGroupRuleResponse);
+
+      assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
+               .createSecurityGroupRuleAllowingSecurityGroupId("161",
+                        Ingress.builder().ipProtocol(IpProtocol.TCP).fromPort(80).toPort(8080).build(), "999")
+               .toString(), createSecurityGroupRuleExpected().toString());
    }
 
    public void testDeleteSecurityGroupRuleWhenResponseIs2xx() throws Exception {
-      HttpRequest deleteSecurityGroupRule = HttpRequest
-            .builder()
-            .method("DELETE")
-            .endpoint(URI.create("https://compute.north.host/v1.1/3456/os-security-group-rules/161"))
-            .headers(
-                  ImmutableMultimap.<String, String> builder().put("Accept", "*/*").put("X-Auth-Token", authToken)
-                        .build()).build();
+      HttpRequest deleteSecurityGroupRule = HttpRequest.builder().method("DELETE").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-group-rules/161"))
+               .headers(
+                        ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
+                                 .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse deleteSecurityGroupRuleResponse = HttpResponse.builder().statusCode(202).build();
 
       NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-            responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroupRule,
-            deleteSecurityGroupRuleResponse);
+               responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroupRule,
+               deleteSecurityGroupRuleResponse);
 
       assertTrue(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-            .deleteSecurityGroupRule("161"));
+               .deleteSecurityGroupRule("161"));
 
    }
 
    private SecurityGroup createSecurityGroupExpected() {
-      return SecurityGroup.builder().description("description").id("160").name("name")
-            .rules(ImmutableSet.<SecurityGroupRule> of()).tenantId("dev_16767499955063").build();
+      return SecurityGroup.builder().description("description").id("160").name("name").rules(
+               ImmutableSet.<SecurityGroupRule> of()).tenantId("dev_16767499955063").build();
    }
 
    private SecurityGroupRule createSecurityGroupRuleExpected() {
-      return SecurityGroupRule.builder().fromPort(80).group(ImmutableMap.<String, String> of()).id("218")
-            .ipProtocol(SecurityGroupRule.IpProtocol.TCP).ipRange(ImmutableMap.of("cidr", "0.0.0.0/0"))
-            .parentGroupId("161").toPort(8080).build();
+      return SecurityGroupRule.builder().fromPort(80).group(ImmutableMap.<String, String> of()).id("218").ipProtocol(
+               IpProtocol.TCP).ipRange(ImmutableMap.of("cidr", "0.0.0.0/0")).parentGroupId("161").toPort(8080).build();
    }
 
 }

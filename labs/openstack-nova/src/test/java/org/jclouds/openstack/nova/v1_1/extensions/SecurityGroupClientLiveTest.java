@@ -22,6 +22,8 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
+import org.jclouds.openstack.nova.v1_1.domain.Ingress;
+import org.jclouds.openstack.nova.v1_1.domain.IpProtocol;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
@@ -75,14 +77,16 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
                      .createSecurityGroupWithNameAndDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
 
-            SecurityGroupRule rule = client.createSecurityGroupRule("tcp", "443", "443", "0.0.0.0/0", "", securityGroup
-                     .getId());
+            SecurityGroupRule rule = client.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress
+                     .builder().ipProtocol(IpProtocol.TCP).fromPort(443).toPort(443).build(), "0.0.0.0/0");
             assertNotNull(rule);
 
-            SecurityGroupRule rule2 = client.createSecurityGroupRule("tcp", "443", "443", "", securityGroup.getId(),
-                     securityGroup.getId());
-            assertNotNull(rule2);
+            SecurityGroupRule rule2 = client.createSecurityGroupRuleAllowingSecurityGroupId(securityGroup.getId(),
+                     Ingress.builder().ipProtocol(IpProtocol.TCP).fromPort(443).toPort(443).build(), securityGroup
+                              .getId());
             
+            assertNotNull(rule2);
+
             securityGroup = client.getSecurityGroup(securityGroup.getId());
 
          } finally {

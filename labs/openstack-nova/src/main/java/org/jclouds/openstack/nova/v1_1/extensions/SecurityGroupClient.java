@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.openstack.nova.v1_1.domain.Ingress;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.openstack.services.Extension;
@@ -71,8 +72,15 @@ public interface SecurityGroupClient {
     * 
     * @return a new Security Group Rule
     */
-   SecurityGroupRule createSecurityGroupRule(String ip_protocol, String from_port, String to_port, String cidr,
-         String group_id, String parent_group_id);
+   SecurityGroupRule createSecurityGroupRuleAllowingCidrBlock(String parent_group_id, Ingress ip_protocol, String cidr);
+
+   /**
+    * Create a Security Group Rule.
+    * 
+    * @return a new Security Group Rule
+    */
+   SecurityGroupRule createSecurityGroupRuleAllowingSecurityGroupId(String group_id, Ingress ip_protocol,
+            String parent_group_id);
 
    /**
     * Delete a Security Group Rule.
