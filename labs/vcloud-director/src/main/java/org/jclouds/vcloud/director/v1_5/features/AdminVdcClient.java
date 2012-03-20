@@ -22,7 +22,11 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writable;
 
 /**
  * Provides synchronous access to Network.
@@ -46,4 +50,36 @@ public interface AdminVdcClient extends VdcClient {
     */
    @Override
    AdminVdc getVdc(URI vdcRef);
+
+   /**
+    * Modifies a Virtual Data Center. Virtual Data Center could be enabled or disabled. 
+    * Additionally it could have one of these states FAILED_CREATION(-1), NOT_READY(0), 
+    * READY(1), UNKNOWN(1) and UNRECOGNIZED(3).
+    */
+   Task editVdc(URI vdcRef, AdminVdc vdc);
+   
+   /**
+    * Deletes a Virtual Data Center. The Virtual Data Center should be disabled when delete is issued. 
+    * Otherwise error code 400 Bad Request is returned.
+    */
+   // TODO Saw what exception, instead of 400 
+   Task deleteVdc(URI vdcRef);
+   
+   /**
+    * Enables a Virtual Data Center. This operation enables disabled Virtual Data Center. 
+    * If it is already enabled this operation has no effect.
+    */
+   void enableVdc(@EndpointParam URI vdcRef);
+   
+   /**
+    * Disables a Virtual Data Center. If the Virtual Data Center is disabled this operation does not 
+    * have an effect.
+    */
+   void disableVdc(URI vdcRef);
+   
+   /**
+    * @return synchronous access to {@link Writable} features
+    */
+   @Delegate
+   MetadataClient.Writeable getMetadataClient();
 }
