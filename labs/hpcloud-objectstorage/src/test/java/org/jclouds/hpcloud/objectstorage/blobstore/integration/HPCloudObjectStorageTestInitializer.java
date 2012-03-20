@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
+package org.jclouds.hpcloud.objectstorage.blobstore.integration;
 
 import org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer;
 
 /**
  * @author Jeremy Daggett
  */
-public class HPCloudObjectStorageLasVegasTestInitializer extends SwiftTestInitializer {
+public class HPCloudObjectStorageTestInitializer extends SwiftTestInitializer {
 
-   public HPCloudObjectStorageLasVegasTestInitializer() {
+   public HPCloudObjectStorageTestInitializer() {
       provider = "hpcloud-objectstorage-lvs";
    }
 

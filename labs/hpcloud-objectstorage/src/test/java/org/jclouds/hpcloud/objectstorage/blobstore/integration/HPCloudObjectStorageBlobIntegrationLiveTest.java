@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
+package org.jclouds.hpcloud.objectstorage.blobstore.integration;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest;
@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * @author Jeremy Daggett
  */
 @Test(groups = "live")
-public class HPCloudObjectStorageLasVegasBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveTest {
+public class HPCloudObjectStorageBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveTest {
    @Override
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
       assert blob.getPayload().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob

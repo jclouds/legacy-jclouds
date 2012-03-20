@@ -39,12 +39,14 @@ public class HPCloudObjectStoragePropertiesBuilder extends SwiftPropertiesBuilde
 	
    @Override
    protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(KeystoneProperties.SERVICE_TYPE, ServiceType.OBJECT_STORE);
-      properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:35357");
-      properties.setProperty(PROPERTY_API_VERSION, "2.0");
-      
+       Properties properties = super.defaultProperties();
+       properties.setProperty(KeystoneProperties.SERVICE_TYPE, ServiceType.OBJECT_STORE);
+       // TODO: this doesn't actually do anything yet.
+       properties.setProperty(KeystoneProperties.VERSION, "2.0");
+       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
+       properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:35357");
+       properties.setProperty(PROPERTY_API_VERSION, "1.0");
+
       return properties;
    }
       

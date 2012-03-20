@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
+package org.jclouds.hpcloud.objectstorage.blobstore.integration;
 
 import java.util.Set;
 
@@ -29,7 +29,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Jeremy Daggett
  */
 @Test(groups = "live")
-public class HPCloudObjectStorageLasVegasServiceIntegrationLiveTest extends SwiftServiceIntegrationLiveTest {
+public class HPCloudObjectStorageServiceIntegrationLiveTest extends SwiftServiceIntegrationLiveTest {
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US-NV");

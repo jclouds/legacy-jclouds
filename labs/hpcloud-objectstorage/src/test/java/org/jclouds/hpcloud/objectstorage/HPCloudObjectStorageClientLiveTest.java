@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs;
+package org.jclouds.hpcloud.objectstorage;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -24,8 +24,8 @@ import static org.testng.Assert.assertTrue;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.hpcloud.objectstorage.lvs.domain.ContainerCDNMetadata;
-import org.jclouds.hpcloud.objectstorage.lvs.options.ListCDNContainerOptions;
+import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
+import org.jclouds.hpcloud.objectstorage.options.ListCDNContainerOptions;
 import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.testng.annotations.Test;
@@ -34,12 +34,12 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "HPCloudObjectStorageLasVegasClientLiveTest")
-public class HPCloudObjectStorageLasVegasClientLiveTest extends CommonSwiftClientLiveTest<HPCloudObjectStorageLasVegasClient> {
+@Test(groups = "live", testName = "HPCloudObjectStorageClientLiveTest")
+public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTest<HPCloudObjectStorageClient> {
 
    @Override
-   public HPCloudObjectStorageLasVegasClient getApi() {
-      return (HPCloudObjectStorageLasVegasClient) context.getProviderSpecificContext().getApi();
+   public HPCloudObjectStorageClient getApi() {
+      return (HPCloudObjectStorageClient) context.getProviderSpecificContext().getApi();
    }
 
    @Override

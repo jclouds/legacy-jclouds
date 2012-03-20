@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
+package org.jclouds.hpcloud.objectstorage.blobstore.integration;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * @author Jeremy Daggett
  */
 @Test(groups = { "live" })
-public class HPCloudObjectStorageLasVegasContainerLiveTest extends BaseContainerLiveTest {
+public class HPCloudObjectStorageContainerLiveTest extends BaseContainerLiveTest {
 
 	@Test(enabled = false)
    //@Test(expectedExceptions=UnsupportedOperationException.class)

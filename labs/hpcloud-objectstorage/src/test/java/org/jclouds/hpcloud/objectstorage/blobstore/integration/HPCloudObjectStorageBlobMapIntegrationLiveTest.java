@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.blobstore.integration;
+package org.jclouds.hpcloud.objectstorage.blobstore.integration;
 
 import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobMapIntegrationLiveTest;
 import org.testng.annotations.Test;
@@ -25,6 +25,6 @@ import org.testng.annotations.Test;
  * @author Jeremy Daggett
  */
 @Test(groups = "live")
-public class HPCloudObjectStorageLasVegasBlobMapIntegrationLiveTest extends SwiftBlobMapIntegrationLiveTest {
+public class HPCloudObjectStorageBlobMapIntegrationLiveTest extends SwiftBlobMapIntegrationLiveTest {
 
 }

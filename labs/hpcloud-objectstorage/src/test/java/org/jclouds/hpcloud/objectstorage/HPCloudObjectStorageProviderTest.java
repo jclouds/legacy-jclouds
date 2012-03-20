@@ -16,22 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs;
+package org.jclouds.hpcloud.objectstorage;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
- * The HPCloudObjectStorageLasVegasProviderTest tests the {@link org.jclouds.hpcloud.objectstorage.lvs.HPCloudObjectStorageLasVegasProviderMetadata} class.
+ * The HPCloudObjectStorageProviderTest tests the {@link org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageProviderMetadata} class.
  * 
  * @author Jeremy Daggett
  */
-@Test(groups = "unit", testName = "HPCloudObjectStorageLasVegasProviderTest")
-public class HPCloudObjectStorageLasVegasProviderTest extends BaseProviderMetadataTest {
+@Test(groups = "unit", testName = "HPCloudObjectStorageProviderTest")
+public class HPCloudObjectStorageProviderTest extends BaseProviderMetadataTest {
 
-   public HPCloudObjectStorageLasVegasProviderTest() {
-      super(new HPCloudObjectStorageLasVegasProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+   public HPCloudObjectStorageProviderTest() {
+      super(new HPCloudObjectStorageProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
    }
 
 }

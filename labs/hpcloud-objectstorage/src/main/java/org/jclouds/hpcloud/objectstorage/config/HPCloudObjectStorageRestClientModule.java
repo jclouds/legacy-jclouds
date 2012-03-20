@@ -24,6 +24,7 @@ import java.net.URI;
 
 import javax.inject.Singleton;
 
+import com.google.inject.Scopes;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncClient;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
@@ -35,8 +36,12 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstRegionOptionallyMatchingRegionId;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
+import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersionSupplier;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
@@ -59,24 +64,24 @@ import com.google.inject.Provides;
 public class HPCloudObjectStorageRestClientModule extends
          RestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
 
-   private final KeystoneAuthenticationModule authModule;
-
    public HPCloudObjectStorageRestClientModule() {
-      this(new KeystoneAuthenticationModule());
-   }
-
-   public HPCloudObjectStorageRestClientModule(KeystoneAuthenticationModule authModule) {
       super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
-      this.authModule = authModule;
    }
 
    protected void configure() {
-      install(authModule);
       install(new SwiftObjectModule());
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
    }
-   
+
+    @Override
+    protected void installLocations() {
+        super.installLocations();
+        // TODO: select this from KeystoneProperties.VERSION;
+        install(KeystoneAuthenticationModule.forRegions());
+        bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstRegionOptionallyMatchingRegionId.class).in(Scopes.SINGLETON);
+    }
+
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseSwiftErrorFromHttpResponse.class);

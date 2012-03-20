@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.objectstorage.lvs.functions;
+package org.jclouds.hpcloud.objectstorage.functions;
 
 import static org.testng.Assert.assertEquals;
 
@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.jclouds.hpcloud.objectstorage.lvs.domain.ContainerCDNMetadata;
+import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.io.Payloads;
