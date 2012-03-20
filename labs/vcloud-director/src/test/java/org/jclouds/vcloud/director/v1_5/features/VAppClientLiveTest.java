@@ -100,7 +100,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -146,6 +145,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .name("new-name-" + Integer.toString(random.nextInt(Integer.MAX_VALUE)))
             .description("New Description")
             .build();
+      vAppNames.add(newVApp.getName());
 
       // The method under test
       Task modifyVApp = vAppClient.modifyVApp(vApp.getHref(), newVApp);

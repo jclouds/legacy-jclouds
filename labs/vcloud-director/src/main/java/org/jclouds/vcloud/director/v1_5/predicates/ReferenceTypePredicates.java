@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Predicates for working with {@link Reference} collections.
@@ -74,6 +75,30 @@ public class ReferenceTypePredicates {
          @Override
          public String toString() {
             return "nameStartsWith(" + prefix + ")";
+         }
+      };
+   }
+
+   /**
+    * Matches {@link Reference}s with names in the given collection.
+    *
+    * @param T type of the reference, for example {@link Link}
+    * @param names collection of values for the name attribute of the referenced object
+    * @return predicate that will match references with names starting with the given prefix
+    */
+   public static <T extends Reference> Predicate<T> nameIn(final Iterable<String> names) {
+      checkNotNull(names, "names must be defined");
+
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(T reference) {
+            String name = reference.getName();
+            return Iterables.contains(names, name);
+         }
+
+         @Override
+         public String toString() {
+            return "nameIn(" + Iterables.toString(names) + ")";
          }
       };
    }
