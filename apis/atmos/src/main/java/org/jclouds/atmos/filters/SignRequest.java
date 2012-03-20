@@ -49,6 +49,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
@@ -167,7 +168,7 @@ public class SignRequest implements HttpRequestFilter {
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
       buffer.append(
-            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+            Strings.nullToEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
                   .getContentType())).append("\n");
    }
 
@@ -176,7 +177,7 @@ public class SignRequest implements HttpRequestFilter {
       // Only the value is used, not the header
       // name. If a request does not include the header, this is an empty string.
       for (String header : new String[] { "Range" })
-         toSign.append(utils.valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append("\n");
+         toSign.append(HttpUtils.nullToEmpty(request.getHeaders().get(header)).toLowerCase()).append("\n");
       // Standard HTTP header, in UTC format. Only the date value is used, not the header name.
       toSign.append(request.getFirstHeaderOrNull(HttpHeaders.DATE)).append("\n");
    }
