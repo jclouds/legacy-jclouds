@@ -42,7 +42,7 @@ public class HPCloudObjectStoragePropertiesBuilder extends SwiftPropertiesBuilde
       Properties properties = super.defaultProperties();
       properties.setProperty(KeystoneProperties.SERVICE_TYPE, ServiceType.OBJECT_STORE);
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:35357");
       properties.setProperty(PROPERTY_API_VERSION, "2.0");
       
       return properties;
