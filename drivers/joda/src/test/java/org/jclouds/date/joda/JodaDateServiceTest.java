@@ -54,13 +54,11 @@ public class JodaDateServiceTest extends DateServiceTest {
       assert dateService instanceof JodaDateService;
    }
 
-   /* FIXME Joda routines cannot parse or correctly format the 'z' format specifier, e.g. 'GMT' used in RFC822 pattern. */
-
    @Override
    @Test
    public void testRfc822DateFormat() throws ExecutionException, InterruptedException {
       String dsString = dateService.rfc822DateFormat(testData[0].date);
-      assertEquals(dsString, testData[0].rfc822DateString.replace("GMT", "+00:00"));
+      assertEquals(dsString, testData[0].rfc822DateString);
    }
 
    @Override
