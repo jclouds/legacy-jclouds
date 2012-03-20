@@ -18,13 +18,13 @@
  */
 package org.jclouds.hpcloud.compute;
 
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import org.jclouds.openstack.nova.v1_1.NovaPropertiesBuilder;
+import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
 
 import java.util.Properties;
 
-import org.jclouds.openstack.nova.v1_1.NovaPropertiesBuilder;
-import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 /**
  * 
