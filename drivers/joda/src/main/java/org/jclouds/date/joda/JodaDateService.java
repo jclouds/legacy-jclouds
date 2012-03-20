@@ -42,7 +42,7 @@ import org.joda.time.format.DateTimeFormatter;
 public class JodaDateService implements DateService {
 
    private static final DateTimeFormatter rfc822DateFormatter = DateTimeFormat.forPattern(
-            "EEE, dd MMM yyyy HH:mm:ss z").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
+            "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
    private static final DateTimeFormatter cDateFormatter = DateTimeFormat
             .forPattern("EEE MMM dd HH:mm:ss Z yyyy").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
