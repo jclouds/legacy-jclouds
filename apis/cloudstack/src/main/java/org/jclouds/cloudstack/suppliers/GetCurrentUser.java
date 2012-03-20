@@ -67,7 +67,7 @@ public class GetCurrentUser implements Supplier<User> {
       }
 
       if (currentUser.getAccountType() != Account.Type.USER) {
-         logger.warn("Expecting an user account: {}", currentUser);
+         logger.warn("Expecting an user account: %s", currentUser);
       }
       return currentUser;
    }
