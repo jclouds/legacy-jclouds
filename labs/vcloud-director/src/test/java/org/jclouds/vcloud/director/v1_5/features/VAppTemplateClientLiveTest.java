@@ -122,6 +122,20 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkProductSectionList(productSectionList);
    }
    
+   @Test
+   public void testEditProductSections() {
+      // TODO make a real modification
+      
+      ProductSectionList origSections = vAppTemplateClient.getProductSectionsForVAppTemplate(vApp.getHref());
+      ProductSectionList newSections = origSections.toBuilder().build();
+      
+      Task task = vAppTemplateClient.editProductSectionsForVAppTemplate(vApp.getHref(), newSections);
+      assertTaskSucceeds(task);
+
+      ProductSectionList modified = vAppTemplateClient.getProductSectionsForVAppTemplate(vApp.getHref());
+      checkProductSectionList(modified);
+   }
+   
    @Test(testName = "GET /vAppTemplate/{id}/guestCustomizationSection")
    public void testGetGuestCustomizationSection() {
       getGuestCustomizationSection(new Function<URI, GuestCustomizationSection>() {
@@ -298,17 +312,17 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(newCustomizationSection.isCustomizeOnInstantiate(), newVal);
    }
 
+   // FIXME deploymentLeaseInSeconds returned is null
    @Test
    public void testEditLeaseSettingsSection() throws Exception {
-      // FIXME deploymentLeaseInSeconds returned is null
-      //int deploymentLeaseInSeconds = random.nextInt(10000)+1;
+      int deploymentLeaseInSeconds = random.nextInt(10000)+1;
       
       // Note: use smallish number for storageLeaseInSeconds; it seems to be capped at 5184000?
       int storageLeaseInSeconds = random.nextInt(10000)+1;
       LeaseSettingsSection leaseSettingSection = LeaseSettingsSection.builder()
                .info("my info")
                .storageLeaseInSeconds(storageLeaseInSeconds)
-               //.deploymentLeaseInSeconds(deploymentLeaseInSeconds)
+               .deploymentLeaseInSeconds(deploymentLeaseInSeconds)
                .build();
       
       final Task task = vAppTemplateClient.editVappTemplateLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
@@ -316,7 +330,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       
       LeaseSettingsSection newLeaseSettingsSection = vAppTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
       assertEquals(newLeaseSettingsSection.getStorageLeaseInSeconds(), (Integer)storageLeaseInSeconds);
-      //assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer)deploymentLeaseInSeconds);
+      assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer)deploymentLeaseInSeconds);
    }
 
    @Test
