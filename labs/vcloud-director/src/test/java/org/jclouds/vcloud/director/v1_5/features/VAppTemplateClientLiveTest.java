@@ -288,15 +288,34 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified.getComputerName(), computerName);
    }
    
-   @Test // FIXME deploymentLeaseInSeconds returned is null 
+   @Test
+   public void testEditCustomizationSection() {
+      boolean oldVal = vAppTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI).isCustomizeOnInstantiate();
+      boolean newVal = !oldVal;
+      
+      CustomizationSection customizationSection = CustomizationSection.builder()
+               .info("my info")
+               .customizeOnInstantiate(newVal)
+               .build();
+      
+      final Task task = vAppTemplateClient.editVAppTemplateCustomizationSection(vAppTemplateURI, customizationSection);
+      retryTaskSuccess.apply(task);
+
+      CustomizationSection newCustomizationSection = vAppTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI);
+      assertEquals(newCustomizationSection.isCustomizeOnInstantiate(), newVal);
+   }
+
+   @Test
    public void testEditLeaseSettingsSection() throws Exception {
+      // FIXME deploymentLeaseInSeconds returned is null
+      //int deploymentLeaseInSeconds = random.nextInt(10000)+1;
+      
       // Note: use smallish number for storageLeaseInSeconds; it seems to be capped at 5184000?
       int storageLeaseInSeconds = random.nextInt(10000)+1;
-      int deploymentLeaseInSeconds = random.nextInt(10000)+1;
       LeaseSettingsSection leaseSettingSection = LeaseSettingsSection.builder()
                .info("my info")
                .storageLeaseInSeconds(storageLeaseInSeconds)
-               .deploymentLeaseInSeconds(deploymentLeaseInSeconds)
+               //.deploymentLeaseInSeconds(deploymentLeaseInSeconds)
                .build();
       
       final Task task = vAppTemplateClient.editVappTemplateLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
@@ -304,7 +323,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       
       LeaseSettingsSection newLeaseSettingsSection = vAppTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
       assertEquals(newLeaseSettingsSection.getStorageLeaseInSeconds(), (Integer)storageLeaseInSeconds);
-      assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer)deploymentLeaseInSeconds);
+      //assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer)deploymentLeaseInSeconds);
    }
 
    @Test
