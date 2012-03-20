@@ -61,10 +61,12 @@ public class LocationPredicate implements Predicate<ComputeMetadata> {
             input.getLocation().getParent() != null || input.getLocation().getScope() == LocationScope.PROVIDER,
             "only locations of scope PROVIDER can have a null parent; input: %s",
             input.getLocation());
-      
-      return location.equals(input.getLocation()) || location.getParent() != null
-               && location.getParent().equals(input.getLocation()) || location.getParent().getParent() != null
-               && location.getParent().getParent().equals(input.getLocation());
+
+      return location.equals(input.getLocation()) ||
+         (input.getLocation().getParent() != null && location.equals(input.getLocation().getParent())) ||
+         (location.getParent() != null && location.getParent().equals(input.getLocation())) ||
+         (location.getParent() != null && location.getParent().getParent() != null &&
+            location.getParent().getParent().equals(input.getLocation()));
    }
 
    @Override

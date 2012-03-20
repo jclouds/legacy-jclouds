@@ -614,7 +614,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          location = defaultLocation.get();
       
       Predicate<Image> imagePredicate = buildImagePredicate();
-      Iterable<? extends Image> supportedImages = filter(images, buildImagePredicate());
+      Iterable<? extends Image> supportedImages = filter(images, imagePredicate);
       if (size(supportedImages) == 0) {
          if (imagePredicate == idPredicate) {
             throw new NoSuchElementException(format("%s not found", idPredicate));
