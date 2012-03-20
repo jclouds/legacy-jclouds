@@ -21,6 +21,8 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
+import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultAdminUserRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultAdminVdcRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
@@ -91,6 +93,12 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);
          assertEquals(record.getClass(), QueryResultRoleRecord.class, "incorrect record type admin query");
+      }
+      
+      RoleReferences roleRefs = queryClient.roleReferencesQueryAll();
+      
+      for (Reference ref : roleRefs.getReferences()) {
+         Checks.checkReferenceType(ref);
       }
    }
    

@@ -28,7 +28,9 @@ import javax.ws.rs.QueryParam;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
+import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
@@ -100,6 +102,14 @@ public interface AdminQueryAsyncClient extends QueryAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<QueryResultRecords> rolesQuery(@QueryParam("filter") String filter);
+   
+   @GET
+   @Path("/admin/roles/query")
+   @Consumes
+   @QueryParams(keys = { "format" }, values = { "references" })
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<RoleReferences> roleReferencesQueryAll();
    
    @GET
    @Path("/admin/strandedUsers/query")
