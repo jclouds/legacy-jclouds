@@ -627,7 +627,7 @@ public class TemplateBuilderImplTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testDefaultLocationWithUnmatchedPredicateExceptionMessage() {
+   public void testDefaultLocationWithUnmatchedPredicateExceptionMessageAndLocationNotCalled() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
@@ -639,7 +639,6 @@ public class TemplateBuilderImplTest {
       TemplateOptions defaultOptions = createMock(TemplateOptions.class);
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
-      expect(defaultLocation.getId()).andReturn("us-east-1");
 
       replay(defaultOptions);
       replay(defaultLocation);
@@ -654,7 +653,7 @@ public class TemplateBuilderImplTest {
          assert false;
       } catch (NoSuchElementException e) {
          // make sure big data is not in the exception message
-         assertEquals(e.getMessage(), "no image matched predicate: And(locationEqualsParentOrGrandparentOf(us-east-1),imageDescription(description))");
+         assertEquals(e.getMessage(), "no image matched predicate: And(equalsParentOrGrandparentOfCurrentLocation(),imageDescription(description))");
       }
 
       verify(defaultOptions);
