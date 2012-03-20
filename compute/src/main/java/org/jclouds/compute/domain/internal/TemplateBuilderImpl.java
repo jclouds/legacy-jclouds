@@ -133,7 +133,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       this.defaultTemplateProvider = defaultTemplateProvider;
    }
 
-   final Predicate<ComputeMetadata> locationPredicate = new LocationPredicate(new Supplier<Location>(){
+   final Predicate<ComputeMetadata> locationPredicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(new Supplier<Location>(){
 
       @Override
       public Location get() {

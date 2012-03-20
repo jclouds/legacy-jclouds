@@ -38,10 +38,10 @@ import com.google.common.collect.ImmutableSet.Builder;
  * 
  * If the input location equals, is a parent or grandparent of the specified location, then we are ok.
  */
-public class LocationPredicate implements Predicate<ComputeMetadata> {
+public class NullEqualToIsParentOrIsGrandparentOfCurrentLocation implements Predicate<ComputeMetadata> {
    private final Supplier<Location> locationSupplier;
 
-   public LocationPredicate(Supplier<Location> locationSupplier) {
+   public NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Supplier<Location> locationSupplier) {
       this.locationSupplier = locationSupplier;
    }
 
@@ -83,6 +83,6 @@ public class LocationPredicate implements Predicate<ComputeMetadata> {
    @Override
    public String toString() {
       // not calling .get() here, as it could accidentally cause eager api fetch
-      return "equalsParentOrGrandparentOfCurrentLocation()";
+      return "nullEqualToIsParentOrIsGrandparentOfCurrentLocation()";
    }
 }
