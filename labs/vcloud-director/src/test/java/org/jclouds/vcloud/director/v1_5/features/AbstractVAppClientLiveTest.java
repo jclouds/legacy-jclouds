@@ -23,9 +23,9 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkGuestCustomizationSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConnectionSection;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -38,9 +38,7 @@ import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
@@ -125,7 +123,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
     * @see #cleanUp()
     */
    @BeforeClass(inheritGroups = true, description = "Cleans up the environment")
-   protected void setupEnvironment() {
+   protected void setupEnvironment() throws Exception {
       // Get the configured Vdc for the tests
       vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
@@ -187,7 +185,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
 
    // NOTE This method is also called by the BeforeClass method setupRequiredClients
    @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps named 'test-vapp-*' or 'new-name-*'")
-   protected void cleanUp() {
+   protected void cleanUp() throws Exception {
       // Find references in the Vdc with the VApp type and named 'test-vapp' or 'new-name'
       Iterable<Reference> vApps = Iterables.filter(
             vdc.getResourceEntities().getResourceEntities(),
@@ -203,25 +201,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       // If we found any references, delete the VApp they point to
       if (vApps != null && !Iterables.isEmpty(vApps)) {
          for (Reference ref : vApps) {
-            VApp found = vAppClient.getVApp(ref.getHref());
-            // debug(found);
-
-            // Shutdown and power off the VApp if necessary
-            if (found.getStatus().equals(Status.POWERED_ON.getValue())) {
-               Task shutdownTask = vAppClient.shutdown(found.getHref());
-               retryTaskSuccess.apply(shutdownTask);
-            }
-
-            // Undeploy the VApp if necessary
-            if (found.isDeployed()) {
-               UndeployVAppParams params = UndeployVAppParams.builder().build();
-               Task undeployTask = vAppClient.undeploy(found.getHref(), params);
-               retryTaskSuccess.apply(undeployTask);
-            }
-
-            // Delete the VApp
-            Task deleteTask = vAppClient.deleteVApp(found.getHref());
-            retryTaskSuccess.apply(deleteTask);
+            cleanUpVApp(ref.getHref());
          }
       }
    }

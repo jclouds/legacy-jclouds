@@ -35,6 +35,9 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
  * @author danikov
  */
 public interface MetadataClient {
+   
+   // FIXME Correct spelling of Writeable -> Writable
+   
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Readable extends MetadataClient {
       /**
