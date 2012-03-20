@@ -34,8 +34,8 @@ import com.google.common.base.Suppliers;
  * 
  * @author Adrian Cole
  */
-@Test(testName = "LocationPredicateTest")
-public class LocationPredicateTest {
+@Test(testName = "NullEqualToIsParentOrIsGrandparentOfCurrentLocationTest")
+public class NullEqualToIsParentOrIsGrandparentOfCurrentLocationTest {
    Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("aws-ec2").description("aws-ec2").build();
 
    Location region = new LocationBuilder().scope(LocationScope.REGION).id("us-east-1").description("us-east-1")
@@ -61,7 +61,7 @@ public class LocationPredicateTest {
     * If the current location id is null, then we don't care where to launch a
     */
    public void testReturnTrueWhenIDontSpecifyALocation() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.<Location> ofInstance(null));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.<Location> ofInstance(null));
       Hardware md = new HardwareBuilder().id("foo").location(region).build();
       assertTrue(predicate.apply(md));
    }
@@ -70,7 +70,7 @@ public class LocationPredicateTest {
     * If the input location is null, then the data isn't location sensitive
     */
    public void testReturnTrueWhenISpecifyALocationAndInputLocationIsNull() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(region));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(region));
       Hardware md = new HardwareBuilder().id("foo").location(null).build();
       assertTrue(predicate.apply(md));
    }
@@ -79,14 +79,14 @@ public class LocationPredicateTest {
     * If the input location is null, then the data isn't location sensitive
     */
    public void testReturnTrueWhenIDontSpecifyALocationAndInputLocationIsNull() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.<Location> ofInstance(null));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.<Location> ofInstance(null));
       Hardware md = new HardwareBuilder().id("foo").location(null).build();
       assertTrue(predicate.apply(md));
    }
 
    @Test
    public void testReturnTrueWhenISpecifyARegionAndInputLocationIsProvider() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(region));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(region));
       Hardware md = new HardwareBuilder().id("foo").location(provider).build();
       assertTrue(predicate.apply(md));
    }
@@ -96,7 +96,7 @@ public class LocationPredicateTest {
     */
    @Test
    public void testReturnFalseWhenISpecifyALocationWhichTheSameScopeByNotEqualToInputLocationAndParentsAreNull() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(region));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(region));
       Hardware md = new HardwareBuilder().id("foo").location(otherRegion).build();
       assertFalse(predicate.apply(md));
    }
@@ -105,7 +105,7 @@ public class LocationPredicateTest {
     * If the input location is null, then the data isn't location sensitive
     */
    public void testReturnFalseWhenISpecifyALocationWhichTheSameScopeByNotEqualToInputLocationAndParentsAreNotNull() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(zone));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(zone));
       Hardware md = new HardwareBuilder().id("foo").location(otherZone).build();
       assertFalse(predicate.apply(md));
    }
@@ -115,7 +115,7 @@ public class LocationPredicateTest {
     * ok.
     */
    public void testReturnTrueWhenISpecifyALocationWhichIsAChildOfInput() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(zone));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(zone));
       Hardware md = new HardwareBuilder().id("foo").location(region).build();
       assertTrue(predicate.apply(md));
    }
@@ -125,7 +125,7 @@ public class LocationPredicateTest {
     * ok.
     */
    public void testReturnFalseWhenISpecifyALocationWhichIsNotAChildOfInput() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(zone));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(zone));
       Hardware md = new HardwareBuilder().id("foo").location(otherRegion).build();
       assertFalse(predicate.apply(md));
    }
@@ -135,7 +135,7 @@ public class LocationPredicateTest {
     * are ok.
     */
    public void testReturnTrueWhenISpecifyALocationWhichIsAGrandChildOfInput() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(host));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(host));
 
       Hardware md = new HardwareBuilder().id("foo").location(host).build();
       assertTrue(predicate.apply(md));
@@ -146,7 +146,7 @@ public class LocationPredicateTest {
     * are ok.
     */
    public void testReturnFalseWhenISpecifyALocationWhichIsNotAGrandChildOfInput() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(host));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(host));
       Hardware md = new HardwareBuilder().id("foo").location(otherRegion).build();
       assertFalse(predicate.apply(md));
    }
@@ -157,7 +157,7 @@ public class LocationPredicateTest {
     */
    @Test(expectedExceptions = IllegalStateException.class)
    public void testThrowIllegalStateExceptionWhenInputIsAnOrphanedRegion() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(region));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(region));
       Hardware md = new HardwareBuilder().id("foo").location(orphanedRegion).build();
       predicate.apply(md);
    }
@@ -168,7 +168,7 @@ public class LocationPredicateTest {
     */
    @Test(expectedExceptions = IllegalStateException.class)
    public void testThrowIllegalStateExceptionWhenInputIsAnOrphanedZone() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(region));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(region));
       Hardware md = new HardwareBuilder().id("foo").location(orphanedZone).build();
       predicate.apply(md);
    }
@@ -179,7 +179,7 @@ public class LocationPredicateTest {
     */
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testThrowIllegalArgumentExceptionWhenWhenISpecifyAnOrphanedRegion() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(orphanedRegion));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(orphanedRegion));
       Hardware md = new HardwareBuilder().id("foo").location(region).build();
       predicate.apply(md);
    }
@@ -190,7 +190,7 @@ public class LocationPredicateTest {
     */
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testThrowIllegalArgumentExceptionWhenWhenISpecifyAnOrphanedZone() {
-      LocationPredicate predicate = new LocationPredicate(Suppliers.ofInstance(orphanedZone));
+      NullEqualToIsParentOrIsGrandparentOfCurrentLocation predicate = new NullEqualToIsParentOrIsGrandparentOfCurrentLocation(Suppliers.ofInstance(orphanedZone));
       Hardware md = new HardwareBuilder().id("foo").location(region).build();
       predicate.apply(md);
    }
