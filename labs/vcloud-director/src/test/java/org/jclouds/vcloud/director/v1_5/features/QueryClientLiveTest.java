@@ -113,7 +113,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /catalogs/query")
    public void testQueryAllCatalogs() {
-      QueryResultRecords<?> catalogRecords = queryClient.catalogsQueryAll();
+      QueryResultRecords catalogRecords = queryClient.catalogsQueryAll();
       assertFalse(catalogRecords.getRecords().isEmpty(), String.format(NOT_EMPTY_OBJECT_FMT, "CatalogRecord", "QueryResultRecords"));
    }
 
@@ -125,7 +125,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /vAppTemplates/query")
    public void testQueryAllVAppTemplates() {
-      QueryResultRecords<?> queryResult = queryClient.vAppTemplatesQueryAll();
+      QueryResultRecords queryResult = queryClient.vAppTemplatesQueryAll();
       Set<URI> hrefs = toHrefs(queryResult);
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP_TEMPLATE, null), QueryResultVAppTemplateRecord.class);
@@ -135,7 +135,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /vAppTemplates/query?filter)")
    public void testQueryVAppTemplatesWithFilter() {
       VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
-      QueryResultRecords<?> queryResult = queryClient.vAppTemplatesQuery(String.format("name==%s", vAppTemplate.getName()));
+      QueryResultRecords queryResult = queryClient.vAppTemplatesQuery(String.format("name==%s", vAppTemplate.getName()));
       Set<URI> hrefs = toHrefs(queryResult);
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP_TEMPLATE, null), QueryResultVAppTemplateRecord.class);
@@ -146,7 +146,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testQueryAllVApps() {
       vApp = instantiateVApp();
       
-      QueryResultRecords<?> queryResult = queryClient.vAppsQueryAll();
+      QueryResultRecords queryResult = queryClient.vAppsQueryAll();
       Set<URI> hrefs = toHrefs(queryResult);
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP, null), QueryResultVAppRecord.class);
@@ -155,7 +155,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /vApps/query?filter", dependsOnMethods = { "testQueryAllVApps" } )
    public void testQueryVAppsWithFilter() {
-      QueryResultRecords<?> queryResult = queryClient.vAppsQuery(String.format("name==%s", vApp.getName()));
+      QueryResultRecords queryResult = queryClient.vAppsQuery(String.format("name==%s", vApp.getName()));
       Set<URI> hrefs = toHrefs(queryResult);
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP, null), QueryResultVAppRecord.class);
@@ -179,7 +179,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Set<URI> vmHrefs = toHrefs(vms);
 
       // Method under test: do the query
-      QueryResultRecords<?> queryResult = queryClient.vmsQueryAll();
+      QueryResultRecords queryResult = queryClient.vmsQueryAll();
       Set<URI> hrefs = toHrefs(queryResult);
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VM, null), QueryResultVMRecord.class);
@@ -191,21 +191,21 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       List<Vm> vms = vApp.getChildren().getVms();
       Set<URI> vmHrefs = toHrefs(vms);
       
-      QueryResultRecords<?> queryResult = queryClient.vmsQuery(String.format("containerName==%s", vApp.getName()));
+      QueryResultRecords queryResult = queryClient.vmsQuery(String.format("containerName==%s", vApp.getName()));
       Set<URI> hrefs = toHrefs(queryResult);
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VM, null), QueryResultVMRecord.class);
       assertEquals(hrefs, vmHrefs, "VMs query result should equal vms of vApp "+vApp.getName()+" ("+vmHrefs+"); but only has "+hrefs);
    }
    
-   private static void assertRecordTypes(QueryResultRecords<?> queryResult, Collection<String> validTypes, Class<?> validClazz) {
+   private static void assertRecordTypes(QueryResultRecords queryResult, Collection<String> validTypes, Class validClazz) {
       for (QueryResultRecordType record : queryResult.getRecords()) {
          assertTrue(validTypes.contains(record.getType()), "invalid type for query result record, "+record.getType()+"; valid types are "+validTypes);
          assertEquals(record.getClass(), validClazz, "invalid type for query result record, "+record.getClass()+"; expected "+validClazz);
       }
    }
    
-   private Set<URI> toHrefs(QueryResultRecords<?> queryResult) {
+   private Set<URI> toHrefs(QueryResultRecords queryResult) {
       Set<URI> hrefs = new LinkedHashSet<URI>();
       for (QueryResultRecordType record : queryResult.getRecords()) {
          hrefs.add(record.getHref());

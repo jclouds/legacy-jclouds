@@ -19,18 +19,20 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 /**
- * Container for references to VappTemplate and Media objects.
- * <p/>
+ * Container for references to {@link VAppTemplate} and {@link Media} objects.
+ *
  * <pre>
  * &lt;complexType name="CatalogType" /&gt;
  * </pre>
  *
  * @author grkvlt@apache.org
  */
+@XmlSeeAlso({ AdminCatalog.class })
 @XmlRootElement(name = "Catalog")
 public class Catalog extends CatalogType {
 

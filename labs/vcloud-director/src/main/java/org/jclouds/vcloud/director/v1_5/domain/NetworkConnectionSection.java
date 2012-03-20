@@ -79,7 +79,15 @@ public class NetworkConnectionSection extends SectionType {
        * @see NetworkConnectionSection#getNetworkConnections()
        */
       public B networkConnections(Set<NetworkConnection> networkConnections) {
-         this.networkConnections = checkNotNull(networkConnections, "networkConnection");
+         this.networkConnections = checkNotNull(networkConnections, "networkConnections");
+         return self();
+      }
+
+      /**
+       * @see NetworkConnectionSection#getNetworkConnections()
+       */
+      public B networkConnection(NetworkConnection networkConnection) {
+         this.networkConnections.add(checkNotNull(networkConnection, "networkConnection"));
          return self();
       }
 
@@ -88,6 +96,14 @@ public class NetworkConnectionSection extends SectionType {
        */
       public B links(Set<Link> links) {
          this.links = checkNotNull(links, "links");
+         return self();
+      }
+
+      /**
+       * @see NetworkConnectionSection#getLinks()
+       */
+      public B link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
          return self();
       }
 
@@ -110,20 +126,23 @@ public class NetworkConnectionSection extends SectionType {
       @Override
       public NetworkConnectionSection build() {
          return new NetworkConnectionSection(this);
-
       }
 
       public B fromNetworkConnectionSection(NetworkConnectionSection in) {
-         return fromSectionType(in).primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex()).networkConnections(in.getNetworkConnections()).links(in.getLinks()).href(in.getHref()).type(
-               in.getType());
+         return fromSectionType(in)
+               .primaryNetworkConnectionIndex(in.getPrimaryNetworkConnectionIndex())
+               .networkConnections(Sets.newLinkedHashSet(in.getNetworkConnections()))
+               .links(Sets.newLinkedHashSet(in.getLinks()))
+               .href(in.getHref())
+               .type(in.getType());
       }
    }
 
    private NetworkConnectionSection(Builder<?> builder) {
       super(builder);
       this.primaryNetworkConnectionIndex = builder.primaryNetworkConnectionIndex;
-      this.networkConnections = ImmutableSet.copyOf(builder.networkConnections);
-      this.links = ImmutableSet.copyOf(builder.links);
+      this.networkConnections = builder.networkConnections != null ? ImmutableSet.copyOf(builder.networkConnections) : Sets.<NetworkConnection>newLinkedHashSet();
+      this.links = builder.links != null ? ImmutableSet.copyOf(builder.links) : Sets.<Link>newLinkedHashSet();
       this.href = builder.href;
       this.type = builder.type;
    }
@@ -155,20 +174,16 @@ public class NetworkConnectionSection extends SectionType {
 
    /**
     * Gets the value of the networkConnection property.
-    * <p/>
-    * Objects of the following type(s) are allowed in the list {@link NetworkConnection }
     */
    public Set<NetworkConnection> getNetworkConnections() {
-      return Collections.unmodifiableSet(this.networkConnections);
+      return ImmutableSet.copyOf(networkConnections);
    }
 
    /**
     * Gets the value of the link property.
-    * <p/>
-    * Objects of the following type(s) are allowed in the list {@link Link }
     */
    public Set<Link> getLinks() {
-      return Collections.unmodifiableSet(this.links);
+      return ImmutableSet.copyOf(links);
    }
 
    /**
@@ -196,8 +211,10 @@ public class NetworkConnectionSection extends SectionType {
       NetworkConnectionSection that = NetworkConnectionSection.class.cast(o);
       return super.equals(that) &&
             equal(primaryNetworkConnectionIndex, that.primaryNetworkConnectionIndex) &&
-            equal(networkConnections, that.networkConnections) && equal(links, that.links) &&
-            equal(href, that.href) && equal(type, that.type);
+            equal(networkConnections, that.networkConnections) &&
+            equal(links, that.links) &&
+            equal(href, that.href) &&
+            equal(type, that.type);
    }
 
    @Override

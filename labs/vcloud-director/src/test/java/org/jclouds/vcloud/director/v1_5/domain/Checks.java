@@ -58,7 +58,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
@@ -483,7 +482,7 @@ public class Checks {
    public static void checkMacAddress(String macAddress) {
       // Check the string is a valid MAC address
       assertNotNull(macAddress, String.format(NOT_EMPTY_STRING_FMT, "macAddress"));
-      assertTrue(macAddress.toUpperCase().matches(MAC_ADDRESS_PATTERN), String.format(MATCHES_STRING_FMT, "macAddress", MAC_ADDRESS_PATTERN, macAddress));
+      assertTrue(macAddress.matches(MAC_ADDRESS_PATTERN), String.format(MATCHES_STRING_FMT, "macAddress", MAC_ADDRESS_PATTERN, macAddress));
    }
 
    public static void checkComputeCapacity(ComputeCapacity computeCapacity) {
@@ -596,6 +595,25 @@ public class Checks {
          result.put(entry.getKey(), entry.getValue());
       }
       return result;
+   }
+
+   public static void checkVmPendingQuestion(VmPendingQuestion question) {
+      // Check required fields
+      assertNotNull(question.getQuestion(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "Question"));
+      assertNotNull(question.getQuestionId(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "QuestionId"));
+      for (VmQuestionAnswerChoice choice : question.getChoices()) {
+         checkVmQuestionAnswerChoice(choice);
+      }
+      
+      // Check parent type
+      checkResourceType(question);
+   }
+
+   public static void checkVmQuestionAnswerChoice(VmQuestionAnswerChoice choice) {
+      assertNotNull(choice, String.format(NOT_NULL_OBJ_FMT, "VmQuestionAnswerChoice"));
+      
+      // NOTE the Id field cannot be checked
+      // NOTE the Text field cannot be checked
    }
    
    public static void checkVApp(VApp vApp) {
@@ -727,11 +745,7 @@ public class Checks {
       // Check optional fields
       VirtualSystemSettingData virtualSystem = hardware.getSystem();
       if (virtualSystem != null) checkVirtualSystemSettingData(virtualSystem);
-      if (hardware.getTransports() != null) {
-	      for (String transport : hardware.getTransports()) {
-	         // NOTE transport cannot be checked
-	      }
-      }
+      // NOTE transport cannot be checked
       if (hardware.getItems() != null) {
 	      for (ResourceAllocationSettingData item : hardware.getItems()) {
 	         checkResourceAllocationSettingData(item);
@@ -1237,17 +1251,12 @@ public class Checks {
       }
    }
 
-   public static void checkRASD(RASD rasd) {
-      // Check fields
-      // TODO
-   }
-
    public static void checkRasdItemsList(RasdItemsList items) {
       // Check fields
       // TODO
 
-      for (RASD item : items.getItems()) {
-         checkRASD(item);
+      for (ResourceAllocationSettingData item : items.getItems()) {
+         checkResourceAllocationSettingData(item);
       }
    }
 

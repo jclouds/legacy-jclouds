@@ -43,6 +43,7 @@ public class ContainerType extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromContainerType(this);
    }

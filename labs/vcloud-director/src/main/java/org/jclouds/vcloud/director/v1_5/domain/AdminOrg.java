@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -30,18 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-
 /**
- * 
- *                 The AdminOrg represents an administrative view of an organization.
- *                 It includes all members of the Org element, and adds several
- *                 elements that can be viewed and modified only by system administrators.
- *             
- * 
- * <p>Java class for AdminOrg complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * The AdminOrg represents an administrative view of an organization.
+ * It includes all members of the Org element, and adds several
+ * elements that can be viewed and modified only by system administrators.
+ *            
  * <pre>
  * &lt;complexType name="AdminOrg">
  *   &lt;complexContent>
@@ -59,10 +51,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "AdminOrg")
 @XmlType(propOrder = {
     "settings",

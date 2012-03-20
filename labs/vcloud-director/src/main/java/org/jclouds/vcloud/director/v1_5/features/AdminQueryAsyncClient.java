@@ -50,96 +50,96 @@ public interface AdminQueryAsyncClient extends QueryAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> groupsQueryAll();
+   ListenableFuture<QueryResultRecords> groupsQueryAll();
 
    @GET
    @Path("/admin/groups/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> groupsQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> groupsQuery(@QueryParam("filter") String filter);
 
    @GET
    @Path("/admin/orgs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> orgsQueryAll();
+   ListenableFuture<QueryResultRecords> orgsQueryAll();
 
    @GET
    @Path("/admin/orgs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> orgsQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> orgsQuery(@QueryParam("filter") String filter);
    
    @GET
    @Path("/admin/rights/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> rightsQueryAll();
+   ListenableFuture<QueryResultRecords> rightsQueryAll();
 
    @GET
    @Path("/admin/rights/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> rightsQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> rightsQuery(@QueryParam("filter") String filter);
    
    @GET
    @Path("/admin/roles/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> rolesQueryAll();
+   ListenableFuture<QueryResultRecords> rolesQueryAll();
 
    @GET
    @Path("/admin/roles/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> rolesQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> rolesQuery(@QueryParam("filter") String filter);
    
    @GET
    @Path("/admin/strandedUsers/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> strandedUsersQueryAll();
+   ListenableFuture<QueryResultRecords> strandedUsersQueryAll();
 
    @GET
    @Path("/admin/strandedUsers/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> strandedUsersQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> strandedUsersQuery(@QueryParam("filter") String filter);
    
    @GET
    @Path("/admin/users/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> usersQueryAll();
+   ListenableFuture<QueryResultRecords> usersQueryAll();
 
    @GET
    @Path("/admin/users/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> usersQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> usersQuery(@QueryParam("filter") String filter);
    
    @GET
    @Path("/admin/vdcs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> vdcsQueryAll();
+   ListenableFuture<QueryResultRecords> vdcsQueryAll();
 
    @GET
    @Path("/admin/vdcs/query")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<QueryResultRecords<?>> vdcsQuery(@QueryParam("filter") String filter);
+   ListenableFuture<QueryResultRecords> vdcsQuery(@QueryParam("filter") String filter);
 }

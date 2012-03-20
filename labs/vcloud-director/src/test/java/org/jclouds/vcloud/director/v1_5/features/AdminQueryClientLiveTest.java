@@ -55,7 +55,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/groups/query")
    public void testQueryAllGroups() {
       // TODO Ensure there will be at least one record, for asserting result
-      QueryResultRecords<QueryResultRecordType> resultRecords = queryClient.groupsQueryAll();
+      QueryResultRecords resultRecords = queryClient.groupsQueryAll();
       
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);
@@ -65,7 +65,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/orgs/query")
    public void testQueryAllOrgs() {
       // TODO Ensure there will be at least one record, for asserting result
-      QueryResultRecords<QueryResultRecordType> resultRecords = queryClient.orgsQueryAll();
+      QueryResultRecords resultRecords = queryClient.orgsQueryAll();
       
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);
@@ -75,7 +75,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/rights/query")
    public void testQueryAllRights() {
       // TODO Ensure there will be at least one record, for asserting result
-      QueryResultRecords<QueryResultRecordType> resultRecords = queryClient.rightsQueryAll();
+      QueryResultRecords resultRecords = queryClient.rightsQueryAll();
       
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);
@@ -86,7 +86,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/roles/query")
    public void testQueryAllRoles() {
       // TODO Ensure there will be at least one record, for asserting result
-      QueryResultRecords<QueryResultRecordType> resultRecords = queryClient.rolesQueryAll();
+      QueryResultRecords resultRecords = queryClient.rolesQueryAll();
       
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);
@@ -97,7 +97,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/strandedUsers/query")
    public void testQueryAllStrandedUsers() {
       // TODO Ensure there will be at least one record, for asserting result
-      QueryResultRecords<QueryResultRecordType> resultRecords = queryClient.strandedUsersQueryAll();
+      QueryResultRecords resultRecords = queryClient.strandedUsersQueryAll();
       
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);
@@ -108,7 +108,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/users/query")
    public void testQueryAllUsers() {
       // TODO Ensure there will be at least one record, for asserting result
-      QueryResultRecords<QueryResultRecordType> resultRecords = queryClient.usersQueryAll();
+      QueryResultRecords resultRecords = queryClient.usersQueryAll();
       
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);
@@ -119,7 +119,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "GET /admin/vdcs/query")
    public void testQueryAllVdc() {
       // TODO Ensure there will be at least one record, for asserting result
-      QueryResultRecords<QueryResultRecordType> resultRecords = queryClient.vdcsQueryAll();
+      QueryResultRecords resultRecords = queryClient.vdcsQueryAll();
       
       for (QueryResultRecordType record : resultRecords.getRecords()) {
          Checks.checkQueryResultRecord(record);

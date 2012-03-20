@@ -18,15 +18,25 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 
+import java.net.URI;
+import java.util.Collections;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -40,8 +50,10 @@ import com.google.common.collect.Sets;
  *
  * @author Adrian Cole
  * @author Adam Lowe
+ * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "VirtualHardwareSection")
+@XmlType(name = "VirtualHardwareSection_Type")
 public class VirtualHardwareSection extends SectionType {
 
    public static Builder<?> builder() {
@@ -56,9 +68,13 @@ public class VirtualHardwareSection extends SectionType {
    }
    
    public static class Builder<B extends Builder<B>> extends SectionType.Builder<B> {
-      protected VirtualSystemSettingData virtualSystem;
-      protected Set<String> transports = Sets.newLinkedHashSet();
-      protected Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+
+      private VirtualSystemSettingData virtualSystem;
+      private String transport;
+      private Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+      private Set<Link> links = Sets.newLinkedHashSet();
+      private URI href;
+      private String type;
 
       /**
        * @see VirtualHardwareSection#getSystem
@@ -69,23 +85,31 @@ public class VirtualHardwareSection extends SectionType {
       }
 
       /**
-       * @see VirtualHardwareSection#getTransports
+       * @see VirtualHardwareSection#getTransport()
        */
       public B transport(String transport) {
-         this.transports.add(checkNotNull(transport, "transport"));
+         this.transport = transport;
          return self();
       }
 
       /**
-       * @see VirtualHardwareSection#getTransports
+       * @see VirtualHardwareSection#getTransport()
        */
-      public B transports(Iterable<String> transports) {
-         this.transports = ImmutableSet.<String>copyOf(checkNotNull(transports, "transports"));
+      public B transport(Iterable<String> transports) {
+         this.transport = Joiner.on(',').join(transports);
          return self();
       }
 
       /**
-       * @see VirtualHardwareSection#getItems
+       * @see VirtualHardwareSection#getTransport()
+       */
+      public B transport(String...transports) {
+         this.transport = Joiner.on(',').join(transports);
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getItems()
        */
       public B item(ResourceAllocationSettingData item) {
          this.items.add(checkNotNull(item, "item"));
@@ -93,11 +117,42 @@ public class VirtualHardwareSection extends SectionType {
       }
 
       /**
-       * @see VirtualHardwareSection#getItems
+       * @see VirtualHardwareSection#getItems()
        */
       public B items(Iterable<? extends ResourceAllocationSettingData> items) {
-         this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(
-               items, "items"));
+         this.items = Sets.newLinkedHashSet(checkNotNull(items, "items"));
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getLinks()
+       */
+      public B links(Set<Link> links) {
+         this.links = checkNotNull(links, "links");
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getLinks()
+       */
+      public B link(Link link) {
+         this.links.add(checkNotNull(link, "link"));
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getHref()
+       */
+      public B href(URI href) {
+         this.href = href;
+         return self();
+      }
+
+      /**
+       * @see VirtualHardwareSection#getType()
+       */
+      public B type(String type) {
+         this.type = type;
          return self();
       }
 
@@ -110,20 +165,38 @@ public class VirtualHardwareSection extends SectionType {
       }
 
       public B fromVirtualHardwareSection(VirtualHardwareSection in) {
-         return fromSectionType(in).items(in.getItems()).transports(in.getTransports()).system(
-               in.getSystem()).info(in.getInfo());
+         return fromSectionType(in)
+               .items(in.getItems())
+               .transport(in.getTransport())
+               .system(in.getSystem())
+               .links(Sets.newLinkedHashSet(in.getLinks()))
+               .href(in.getHref())
+               .type(in.getType());
       }
    }
 
+   @XmlElement(name = "System")
    private VirtualSystemSettingData virtualSystem;
-   private Set<String> transports;
-   private Set<ResourceAllocationSettingData> items;
+   @XmlAttribute(name = "transport")
+   private String transport;
+   @XmlElement(name = "Item")
+   private Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+   @XmlElement(name = "Link", namespace = VCLOUD_1_5_NS)
+   protected Set<Link> links = Sets.newLinkedHashSet();
+   @XmlAttribute(namespace = VCLOUD_1_5_NS)
+   @XmlSchemaType(name = "anyURI")
+   protected URI href;
+   @XmlAttribute(namespace = VCLOUD_1_5_NS)
+   protected String type;
 
    private VirtualHardwareSection(Builder<?> builder) {
       super(builder);
       this.virtualSystem = builder.virtualSystem;
-      this.transports = ImmutableSet.<String>copyOf(checkNotNull(builder.transports, "transports"));
-      this.items = ImmutableSet.<ResourceAllocationSettingData>copyOf(checkNotNull(builder.items, "items"));
+      this.transport = builder.transport;
+      this.items = builder.items != null ? ImmutableSet.copyOf(builder.items) : Sets.<ResourceAllocationSettingData>newLinkedHashSet();
+      this.links = builder.links != null ? ImmutableSet.copyOf(builder.links) : Sets.<Link>newLinkedHashSet();
+      this.href = builder.href;
+      this.type = builder.type;
    }
 
    private VirtualHardwareSection() {
@@ -131,9 +204,11 @@ public class VirtualHardwareSection extends SectionType {
    }
 
    /**
-    * transport types define methods by which the environment document is communicated from the
+    * Comma-separated list of supported transports types for the OVF descriptor.
+    *
+    * Transport types define methods by which the environment document is communicated from the
     * deployment platform to the guest software.
-    * <p/>
+    * <p>
     * To enable interoperability, this specification defines an "iso" transport type which all
     * implementations that support CD-ROM devices are required to support. The iso transport
     * communicates the environment 1346 document by making a dynamically generated ISO image
@@ -141,27 +216,50 @@ public class VirtualHardwareSection extends SectionType {
     * machine, an implementation shall make an ISO 9660 read-only disk image available as backing
     * for a disconnected CD-ROM. If the iso transport is selected for a VirtualHardwareSection, at
     * least one disconnected CD-ROM device shall be present in this section.
-    * <p/>
+    * <p>
     * Support for the "iso" transport type is not a requirement for virtual hardware architectures
     * or guest 1351 operating systems which do not have CD-ROM device support.
     *
     * @return
     */
-   public Set<String> getTransports() {
-      return transports;
+   public String getTransport() {
+      return transport;
    }
 
    public VirtualSystemSettingData getSystem() {
       return virtualSystem;
    }
 
-   public Set<? extends ResourceAllocationSettingData> getItems() {
-      return items;
+   public Set<ResourceAllocationSettingData> getItems() {
+      return ImmutableSet.copyOf(items);
+   }
+
+   /**
+    * Gets the value of the link property.
+    */
+   public Set<Link> getLinks() {
+      return ImmutableSet.copyOf(links);
+   }
+
+   /**
+    * @return the value of the href property.
+    */
+   public URI getHref() {
+      return href;
+   }
+
+   /**
+    * Gets the value of the type property.
+    * 
+    * @return possible object is {@link String }
+    */
+   public String getType() {
+      return type;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), transports, virtualSystem, items);
+      return Objects.hashCode(super.hashCode(), transport, virtualSystem, items, links, href, type);
    }
 
    @Override
@@ -169,15 +267,18 @@ public class VirtualHardwareSection extends SectionType {
       if (this == obj) return true;
       if (obj == null) return false;
       if (getClass() != obj.getClass()) return false;
-
-      VirtualHardwareSection other = (VirtualHardwareSection) obj;
-      return super.equals(other) && Objects.equal(transports, other.transports)
-            && Objects.equal(virtualSystem, other.virtualSystem)
-            && Objects.equal(items, other.items);
+      VirtualHardwareSection that = VirtualHardwareSection.class.cast(obj);
+      return super.equals(that) &&
+            equal(this.transport, that.transport) &&
+            equal(this.virtualSystem, that.virtualSystem) &&
+            equal(this.items, that.items) &&
+            equal(this.links, that.links) &&
+            equal(this.href, that.href) &&
+            equal(this.type, that.type);
    }
 
    @Override
    protected Objects.ToStringHelper string() {
-      return super.string().add("transports", transports).add("virtualSystem", virtualSystem).add("items", items);
+      return super.string().add("transport", transport).add("virtualSystem", virtualSystem).add("items", items).add("links", links).add("href", href).add("type", type);
    }
 }

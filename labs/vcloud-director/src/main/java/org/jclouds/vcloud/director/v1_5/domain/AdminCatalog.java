@@ -16,23 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * 
- *                 Admin representation of the container for meta data (key-value pair) associated to different
- *                 entities in the system.
+ * Admin representation of the container for meta data (key-value pair) associated to different
+ * entities in the system.
  *             
- * 
- * <p>Java class for AdminCatalog complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
  * <pre>
  * &lt;complexType name="AdminCatalog">
  *   &lt;complexContent>

@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MATCHES_STRING_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_USER;
@@ -37,27 +37,27 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkSection
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOperatingSystemSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOwner;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkProductSectionList;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkRASD;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkRasdItemsList;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkResourceAllocationSettingData;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkRuntimeInfoSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkScreenTicket;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkStartupSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVApp;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVirtualHardwareSection;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVmPendingQuestion;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.Map;
-import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
@@ -70,6 +70,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
@@ -83,102 +85,48 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
-import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
-import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
+import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
+import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.MsgType;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.RASD;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
-import org.jclouds.xml.internal.JAXBParser;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of {@code VAppClient}
- * 
+ * Tests behavior of the {@link VAppClient}.
+ *
  * @author grkvlt@apache.org
  */
 @Test(groups = { "live", "user", "vapp" }, singleThreaded = true, testName = "VAppClientLiveTest")
-public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
-
-   /*
-    * Convenience reference to API clients.
-    */
-
-   protected CatalogClient catalogClient;
-   protected OrgClient orgClient;
-   protected VAppClient vAppClient;
-   protected VAppTemplateClient vAppTemplateClient;
-   protected VdcClient vdcClient;
-   protected MetadataClient.Writeable metadataClient;
-
-   /*
-    * Objects shared between tests.
-    */
-
-   private Vdc vdc;
-   private VApp vApp;
-   private VAppTemplate vAppTemplate;
-
-   private final Random random = new Random();
-
-   @BeforeClass(inheritGroups = true)
-   @Override
-   public void setupRequiredClients() {
-      catalogClient = context.getApi().getCatalogClient();
-      orgClient = context.getApi().getOrgClient();
-      vAppClient = context.getApi().getVAppClient();
-      vAppTemplateClient = context.getApi().getVAppTemplateClient();
-      vdcClient = context.getApi().getVdcClient();
-      metadataClient = vAppClient.getMetadataClient();
-   }
-
-   @BeforeClass(inheritGroups = true)
-   public void setupEnvironment() throws Exception {
-      vdc = vdcClient.getVdc(vdcURI);
-      assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
-
-      vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
-      assertNotNull(vAppTemplate, String.format(ENTITY_NON_NULL, VAPP_TEMPLATE));
-
-      cleanUp();
-   }
+public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    /**
     * @see VAppClient#getVApp(URI)
     */
    @Test(testName = "GET /vApp/{id}")
    public void testGetVApp() {
-      VApp vAppInstantiated = instantiateVApp("test-vapp");
-
-      // Wait for the task to complete
-      Task instantiateTask = Iterables.getOnlyElement(vAppInstantiated.getTasks());
-      assertTrue(retryTaskSuccessLong.apply(instantiateTask), String.format(TASK_COMPLETE_TIMELY, "instantiateTask"));
-
       // The method under test
-      vApp = vAppClient.getVApp(vAppInstantiated.getHref());
+      vApp = vAppClient.getVApp(vAppURI);
 
       // Check the retrieved object is well formed
       checkVApp(vApp);
 
       // Check the required fields are set
       assertEquals(vApp.isDeployed(), Boolean.FALSE, String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
-      assertEquals(vApp.getName(), "test-vapp", String.format(OBJ_FIELD_EQ, VAPP, "name", "test-vapp", vApp.getName()));
+      assertTrue(vApp.getName().startsWith("test-vapp-"), String.format(MATCHES_STRING_FMT, "name", "test-vapp-*", vApp.getName()));
       assertEquals(vApp.getDescription(), "Test VApp", String.format(OBJ_FIELD_EQ, VAPP, "Description", "Test VApp", vApp.getDescription()));
 
       // TODO instantiationParams instantiationParams()
@@ -194,7 +142,10 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    @Test(testName = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
    public void testModifyVApp() {
-      VApp newVApp = VApp.builder().name("new-name").description("New Description").build();
+      VApp newVApp = VApp.builder()
+            .name("new-name-" + Integer.toString(random.nextInt(Integer.MAX_VALUE)))
+            .description("New Description")
+            .build();
 
       // The method under test
       Task modifyVApp = vAppClient.modifyVApp(vApp.getHref(), newVApp);
@@ -383,7 +334,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(retryTaskSuccess.apply(discardSuspendedState), String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/enterMaintenanceMode", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/enterMaintenanceMode", dependsOnMethods = { "testPowerOnVApp" })
    public void testEnterMaintenanceMode() {
       // The method under test
       vAppClient.enterMaintenanceMode(vApp.getHref());
@@ -401,7 +352,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertFalse(vApp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", vApp.isInMaintenanceMode()));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testPowerOnVApp" })
    public void testInstallVMwareTools() {
       // The method under test
       Task installVMwareTools = vAppClient.installVMwareTools(vApp.getHref());
@@ -424,7 +375,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
    public void testRelocate() {
       // Relocate to the last of the available datastores
-      QueryResultRecords<?> records = context.getApi().getQueryClient().queryAll("datastore");
+      QueryResultRecords records = context.getApi().getQueryClient().queryAll("datastore");
       QueryResultRecordType datastore = Iterables.getLast(records.getRecords());
       RelocateParams params = RelocateParams.builder().datastore(Reference.builder().href(datastore.getHref()).build()).build();
 
@@ -451,14 +402,12 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetVApp" })
    public void testGetGuestCustomizationSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
-      // The method under test
-      GuestCustomizationSection section = vAppClient.getGuestCustomizationSection(vmURI);
-
-      // Check the retrieved object is well formed
-      checkGuestCustomizationSection(section);
+      getGuestCustomizationSection(new Function<URI, GuestCustomizationSection>() {
+         @Override
+         public GuestCustomizationSection apply(URI uri) {
+            return vAppClient.getGuestCustomizationSection(uri);
+         }
+      });
    }
 
    @Test(testName = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
@@ -470,6 +419,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       GuestCustomizationSection oldSection = vAppClient.getGuestCustomizationSection(vmURI);
       GuestCustomizationSection newSection = oldSection.toBuilder()
             .computerName("newComputerName")
+            .enabled(Boolean.FALSE)
             .adminPassword(null) // Not allowed
             .build();
 
@@ -485,6 +435,10 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       // Check the modified section fields are set correctly
       assertEquals(modified.getComputerName(), newSection.getComputerName());
+      assertFalse(modified.isEnabled());
+
+      // Reset the admin password in the retrieved GuestCustomizationSection for equality check
+      modified = modified.toBuilder().adminPassword(null).build();
 
       // Check the section was modified correctly
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "GuestCustomizationSection"));
@@ -610,25 +564,31 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkConnectionSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
-      // The method under test
-      NetworkConnectionSection section = vAppClient.getNetworkConnectionSection(vmURI);
-
-      // Check the retrieved object is well formed
-      checkNetworkConnectionSection(section);
+      getNetworkConnectionSection(new Function<URI, NetworkConnectionSection>() {
+         @Override
+         public NetworkConnectionSection apply(URI uri) {
+            return vAppClient.getNetworkConnectionSection(uri);
+         }
+      });
    }
 
+   // FIXME "Task error: Unable to perform this action. Contact your cloud administrator."
    @Test(testName = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
    public void testModifyNetworkConnectionSection() {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
 
+      // Look up a network in the Vdc
+      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Reference network = Iterables.getLast(networks);
+
       // Copy existing section and update fields
       NetworkConnectionSection oldSection = vAppClient.getNetworkConnectionSection(vmURI);
       NetworkConnectionSection newSection = oldSection.toBuilder()
-            .info("Changed NetworkConnectionSection Info")
+            .networkConnection(NetworkConnection.builder()
+                  .ipAddressAllocationMode(IpAddressAllocationMode.DHCP.toString())
+                  .network(network.getName())
+                  .build())
             .build();
 
       // The method under test
@@ -641,8 +601,8 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Check the retrieved object is well formed
       checkNetworkConnectionSection(modified);
 
-      // Check the modified section fields are set correctly
-      assertEquals(modified.getInfo(), newSection.getInfo());
+      // Check the modified section has an extra network connection
+      assertEquals(modified.getNetworkConnections().size(), newSection.getNetworkConnections().size() + 1);
 
       // Check the section was modified correctly
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "NetworkConnectionSection"));
@@ -674,14 +634,12 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
 
-      // Copy existing section and update fields
-      OperatingSystemSection oldSection = vAppClient.getOperatingSystemSection(vmURI);
-      OperatingSystemSection newSection = oldSection.toBuilder()
-            .info("Changed OperatingSystemSection Description")
-            .description("Changed OperatingSystemSection Description")
+      // Create new OperatingSystemSection
+      OperatingSystemSection newSection = OperatingSystemSection.builder()
+            .info("") // NOTE Required OVF field, ignored
+            .id(OSType.RHEL_64.getCode())
+            .osType("rhel5_64Guest")
             .build();
-      debug(newSection);
-      assertNotNull(newSection.getId());
 
       // The method under test
       Task modifyOperatingSystemSection = vAppClient.modifyOperatingSystemSection(vmURI, newSection);
@@ -694,11 +652,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkOperatingSystemSection(modified);
 
       // Check the modified section fields are set correctly
-      assertEquals(modified.getInfo(), newSection.getInfo());
-      assertEquals(modified.getDescription(), newSection.getDescription());
-
-      // Check the section was modified correctly
-      assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "OperatingSystemSection"));
+      assertEquals(modified.getId(), newSection.getId());
    }
 
    @Test(testName = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
@@ -738,27 +692,43 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
    public void testModifyProductSections() {
-      ProductSectionList origSections = vAppClient.getProductSections(vApp.getHref());
-      ProductSectionList newSections = origSections.toBuilder().build();
-      
+      // Copy existing section and update fields
+      ProductSectionList oldSections = vAppClient.getProductSections(vApp.getHref());
+      ProductSectionList newSections = oldSections.toBuilder()
+            .productSection(ProductSection.builder()
+                  .info("Information about the installed software") // Default ovf:Info text
+                  .required()
+                  .product(MsgType.builder().value("jclouds").build())
+                  .vendor(MsgType.builder().value("jclouds Inc.").build())
+                  // NOTE other ProductSection elements not returned by vCloud
+                  .build())
+            .build();
+
       // The method under test
       Task modifyProductSections = vAppClient.modifyProductSections(vApp.getHref(), newSections);
       assertTrue(retryTaskSuccess.apply(modifyProductSections), String.format(TASK_COMPLETE_TIMELY, "modifyProductSections"));
 
-      ProductSectionList modifiedList = vAppClient.getProductSections(vApp.getHref());
-      Checks.checkProductSectionList(modifiedList);
-      
-      // TODO What to modify, to confirm that changes took effect?
+      // Retrieve the modified section
+      ProductSectionList modified = vAppClient.getProductSections(vApp.getHref());
+
+      // Check the retrieved object is well formed
+      checkProductSectionList(modified);
+
+      // Check the modified object has an extra ProductSection
+      assertEquals(modified.getProductSections().size(), oldSections.getProductSections().size() + 1);
+
+      // Check the section was modified correctly
+      assertEquals(modified, newSections, String.format(ENTITY_EQUAL, "ProductSectionList"));
    }
 
-   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testPowerOnVApp" })
    public void testGetPendingQuestion() {
       // TODO how to test?
       // The method under test
       VmPendingQuestion question = vAppClient.getPendingQuestion(vApp.getHref());
 
       // Check the retrieved object is well formed
-      // checkQuestion(question);
+      checkVmPendingQuestion(question);
    }
 
    @Test(testName = "PUT /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
@@ -784,10 +754,13 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkRuntimeInfoSection(section);
    }
 
-   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testPowerOnVApp" })
    public void testGetScreenImage() {
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+
       // The method under test
-      byte[] image = vAppClient.getScreenImage(vApp.getHref());
+      byte[] image = vAppClient.getScreenImage(vmURI);
 
       // Check returned bytes against PNG header magic number
       byte[] pngHeaderBytes = new byte[] { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
@@ -800,8 +773,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testGetVApp" })
    public void testGetScreenTicket() {
+      // Get URI for child VM
+      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+
       // The method under test
-      ScreenTicket ticket = vAppClient.getScreenTicket(vApp.getHref());
+      ScreenTicket ticket = vAppClient.getScreenTicket(vmURI);
 
       // Check the retrieved object is well formed
       checkScreenTicket(ticket);
@@ -856,21 +832,45 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       // Copy existing section and update fields
       VirtualHardwareSection oldSection = vAppClient.getVirtualHardwareSection(vmURI);
-      VirtualHardwareSection newSection = oldSection.toBuilder().build();
+      Set<ResourceAllocationSettingData> oldItems = oldSection.getItems();
+      ResourceAllocationSettingData oldMemory = Iterables.find(oldItems, new Predicate<ResourceAllocationSettingData>() {
+         @Override
+         public boolean apply(ResourceAllocationSettingData rasd) {
+            return rasd.getResourceType() == ResourceAllocationSettingData.ResourceType.MEMORY;
+         }
+      });
+      ResourceAllocationSettingData newMemory = oldMemory.toBuilder()
+            .elementName("1024 MB of memory")
+            .virtualQuantity(BigInteger.valueOf(1024L))
+            .build();
+      Set<ResourceAllocationSettingData> newItems = Sets.newLinkedHashSet(oldItems);
+      newItems.remove(oldMemory);
+      newItems.add(newMemory);
+      VirtualHardwareSection newSection = oldSection.toBuilder()
+            .items(newItems)
+            .build();
 
       // The method under test
       Task modifyVirtualHardwareSection = vAppClient.modifyVirtualHardwareSection(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSection), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSection"));
 
       // Retrieve the modified section
-      VirtualHardwareSection modified = vAppClient.getVirtualHardwareSection(vmURI);
+      VirtualHardwareSection modifiedSection = vAppClient.getVirtualHardwareSection(vmURI);
 
       // Check the retrieved object is well formed
-      checkVirtualHardwareSection(modified);
+      checkVirtualHardwareSection(modifiedSection);
 
       // Check the modified section fields are set correctly
-      // assertEquals(modified.getX(), "");
-      assertEquals(modified, newSection);
+      Set<ResourceAllocationSettingData> modifiedItems = modifiedSection.getItems();
+      ResourceAllocationSettingData modifiedMemory = Iterables.find(modifiedItems, new Predicate<ResourceAllocationSettingData>() {
+         @Override
+         public boolean apply(ResourceAllocationSettingData rasd) {
+            return rasd.getResourceType() == ResourceAllocationSettingData.ResourceType.MEMORY;
+         }
+      });
+      assertEquals(modifiedMemory.getVirtualQuantity(), BigInteger.valueOf(1024L));
+      assertEquals(modifiedMemory, newMemory);
+      assertEquals(modifiedSection, newSection);
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
@@ -878,8 +878,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
-      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
-      checkRASD(rasd);
+      // Method under test
+      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+
+      // Check the retrieved object is well formed
+      checkResourceAllocationSettingData(rasd);
    }
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
@@ -887,24 +890,26 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
-      RASD origSection = vAppClient.getVirtualHardwareSectionCpu(vmURI);
-      RASD newSection = origSection.toBuilder().build();
+      // Copy existing section and update fields
+      ResourceAllocationSettingData oldItem = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData newItem = oldItem.toBuilder()
+            .build();
       
       // Method under test
-      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vmURI, newSection);
+      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vmURI, newItem);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionCpu), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionCpu"));
 
       // Retrieve the modified section
-      RASD modified = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionCpu(vmURI);
       
       // Check the retrieved object
-      checkRASD(modified);
+      checkResourceAllocationSettingData(modified);
       
       // TODO What is modifiable? What can we change, so we can assert the change took effect? 
       // I tried changing "weight", but it continued to have the value zero when looked up post-modify.
       //
       // long weight = random.nextInt(Integer.MAX_VALUE);
-      // RASD newSection = origSection.toBuilder()
+      // ResourceAllocationSettingData newSection = origSection.toBuilder()
       //         .weight(newCimUnsignedInt(weight))
       //         .build();
       // ...
@@ -916,6 +921,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vmURI);
 
       // Check the retrieved object is well formed
@@ -944,8 +950,8 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // TODO What is modifiable? What can we change, so we can assert the change took effect? 
       // I tried changing "elementName" of one of the items, but it continued to have the old value when looked up post-modify.
       //
-      // List<RASD> newItems = new ArrayList<RASD>(oldSection.getItems());
-      // RASD item0 = newItems.get(0);
+      // List<ResourceAllocationSettingData> newItems = new ArrayList<ResourceAllocationSettingData>(oldSection.getItems());
+      // ResourceAllocationSettingData item0 = newItems.get(0);
       // String item0InstanceId = item0.getInstanceID().getValue();
       // String item0ElementName = item0.getElementName().getValue()+"-"+random.nextInt(Integer.MAX_VALUE);
       // newItems.set(0, item0.toBuilder().elementName(newCimString(item0ElementName)).build());
@@ -954,7 +960,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       //       .build();
       // ...
       // long weight = random.nextInt(Integer.MAX_VALUE);
-      // RASD newSection = origSection.toBuilder()
+      // ResourceAllocationSettingData newSection = origSection.toBuilder()
       //         .weight(newCimUnsignedInt(weight))
       //         .build();
       // ...
@@ -966,6 +972,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vmURI);
 
       // Check the retrieved object is well formed
@@ -977,10 +984,11 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
-      RASD rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      // Method under test
+      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
 
       // Check the retrieved object is well formed
-      checkRASD(rasd);
+      checkResourceAllocationSettingData(rasd);
    }
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
@@ -988,18 +996,18 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
-      RASD origSection = vAppClient.getVirtualHardwareSectionMemory(vmURI);
-      RASD newSection = origSection.toBuilder().build();
+      ResourceAllocationSettingData origSection = vAppClient.getVirtualHardwareSectionMemory(vmURI);
+      ResourceAllocationSettingData newSection = origSection.toBuilder().build();
       
       // Method under test
       Task modifyVirtualHardwareSectionMemory = vAppClient.modifyVirtualHardwareSectionMemory(vmURI, newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionMemory), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionMemory"));
 
       // Retrieve the modified section
-      RASD modified = vAppClient.getVirtualHardwareSectionMemory(vmURI);
+      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionMemory(vmURI);
       
       // Check the retrieved object
-      checkRASD(modified);
+      checkResourceAllocationSettingData(modified);
       
       // TODO What is modifiable? What can we change, so we can assert the change took effect? 
       // I tried changing "weight", but it continued to have the value zero when looked up post-modify.
@@ -1011,6 +1019,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
 
       // Check the retrieved object is well formed
@@ -1045,6 +1054,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       // Get URI for child VM
       URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
       
+      // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
 
       // Check the retrieved object is well formed
@@ -1076,7 +1086,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
    public void testGetMetadata() {
-      Metadata metadata = metadataClient.getMetadata(vApp.getHref());
+      Metadata metadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
 
       // Check the retrieved object is well formed
       checkMetadataFor(VAPP, metadata);
@@ -1085,13 +1095,13 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "PUT & GET /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testSetAndGetMetadataValue() {
       // Store a value
-      String key = Integer.toString(random.nextInt());
-      String value = Integer.toString(random.nextInt());
+      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+      String value = Integer.toString(random.nextInt(Integer.MAX_VALUE));
       MetadataValue metadataValue = MetadataValue.builder().value(value).build();
-      metadataClient.setMetadata(vApp.getHref(), key, metadataValue);
+      vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
 
       // Retrieve the value, and assert it was set correctly
-      MetadataValue newMetadataValue = metadataClient.getMetadataValue(vApp.getHref(), key);
+      MetadataValue newMetadataValue = vAppClient.getMetadataClient().getMetadataValue(vApp.getHref(), key);
 
       // Check the retrieved object is well formed
       checkMetadataValueFor(VAPP, newMetadataValue, value);
@@ -1100,16 +1110,16 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetAndGetMetadataValue" })
    public void testDeleteMetadataEntry() {
       // Store a value, to be deleted
-      String key = Integer.toString(random.nextInt());
+      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
       MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
-      metadataClient.setMetadata(vApp.getHref(), key, metadataValue);
+      vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
 
       // Delete the entry
-      Task task = metadataClient.deleteMetadataEntry(vApp.getHref(), key);
+      Task task = vAppClient.getMetadataClient().deleteMetadataEntry(vApp.getHref(), key);
       retryTaskSuccess.apply(task);
 
       // Confirm the entry has been deleted
-      Metadata newMetadata = metadataClient.getMetadata(vApp.getHref());
+      Metadata newMetadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
 
       // Check the retrieved object is well formed
       checkMetadataKeyAbsentFor(VAPP, newMetadata, key);
@@ -1117,20 +1127,20 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testMergeMetadata() {
-      Metadata oldMetadata = metadataClient.getMetadata(vApp.getHref());
+      Metadata oldMetadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
 
       // Store a value, to be deleted
-      String key = Integer.toString(random.nextInt());
-      String value = Integer.toString(random.nextInt());
+      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+      String value = Integer.toString(random.nextInt(Integer.MAX_VALUE));
       Metadata addedMetadata = Metadata.builder()
             .entry(MetadataEntry.builder().key(key).value(value).build())
             .build();
-      Task task = metadataClient.mergeMetadata(vApp.getHref(), addedMetadata);
+      Task task = vAppClient.getMetadataClient().mergeMetadata(vApp.getHref(), addedMetadata);
       retryTaskSuccess.apply(task);
 
       // Confirm the entry contains everything that was there, and everything that was being added
-      Metadata newMetadata = metadataClient.getMetadata(vApp.getHref());
+      Metadata newMetadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
       Map<String, String> expectedMetadataMap = ImmutableMap.<String, String>builder()
             .putAll(oldMetadataMap)
             .put(key, value)
@@ -1143,86 +1153,27 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    /**
     * @see VAppClient#deleteVApp(URI)
     */
-   @Test(testName = "DELETE /vApp/{id}", dependsOnMethods = { "testPowerOffVApp" })
+   @Test(testName = "DELETE /vApp/{id}")
    public void testDeleteVApp() {
+      // Create a temporary VApp to delete
+      VApp temp = instantiateVApp();
+      DeployVAppParams params = DeployVAppParams.builder()
+            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
+            .notForceCustomization()
+            .notPowerOn()
+            .build();
+      Task deployVApp = vAppClient.deploy(temp.getHref(), params);
+      assertTrue(retryTaskSuccessLong.apply(deployVApp), String.format(TASK_COMPLETE_TIMELY, "deployVApp"));
+
       // The method under test
-      Task deleteVApp = vAppClient.deleteVApp(vApp.getHref());
+      Task deleteVApp = vAppClient.deleteVApp(temp.getHref());
       assertTrue(retryTaskSuccess.apply(deleteVApp), String.format(TASK_COMPLETE_TIMELY, "deleteVApp"));
 
       try {
-         vApp = vAppClient.getVApp(vApp.getHref());
+         vAppClient.getVApp(temp.getHref());
          fail("The VApp should have been deleted");
       } catch (VCloudDirectorException vcde) {
          assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The error code should have been 'Forbidden' (403)");
-         vApp = null;
       }
-   }
-
-   // NOTE This method is also called by the BeforeClass method setupRequiredClients
-   @AfterClass(alwaysRun = true, description = "Clean up the environment by deleting created VApps named 'test-vapp' or 'new-name'")
-   public void cleanUp() throws Exception {
-      // Find references in the Vdc with the VApp type and named 'test-vapp' or 'new-name'
-      Iterable<Reference> vApps = Iterables.filter(
-            vdc.getResourceEntities().getResourceEntities(),
-            Predicates.and(
-                  ReferenceTypePredicates.<Reference> typeEquals(VCloudDirectorMediaType.VAPP),
-                  Predicates.or(
-                        ReferenceTypePredicates.<Reference> nameEquals("test-vapp"),
-                        ReferenceTypePredicates.<Reference> nameEquals("new-name")
-                        )
-                  )
-            );
-
-      // If we found any references, delete the VApp they point to
-      if (vApps != null && !Iterables.isEmpty(vApps)) {
-         for (Reference each : vApps) {
-            cleanUpVApp(each.getHref());
-         }
-      }
-   }
-
-   /**
-    * Marshals a JAXB annotated object into XML. The XML is output on {@link System#err}.
-    */
-   private void debug(Object object) {
-      JAXBParser parser = new JAXBParser();
-      try {
-         String xml = parser.toXML(object);
-
-         System.err.println(Strings.repeat("-", 80));
-         System.err.println(xml);
-         System.err.println(Strings.repeat("-", 80));
-      } catch (IOException ioe) {
-         Throwables.propagate(ioe);
-      }
-   }
-   
-   @SuppressWarnings("unused")
-   private CimUnsignedInt newCimUnsignedInt(long val) {
-      CimUnsignedInt result = new CimUnsignedInt();
-      result.setValue(val);
-      return result;
-   }
-   
-   @SuppressWarnings("unused")
-   private CimString newCimString(String val) {
-      CimString result = new CimString();
-      result.setValue(val);
-      return result;
-   }
-   
-   @SuppressWarnings("unused")
-   private void checkHasMatchingItem(String context, RasdItemsList items, String instanceId, String elementName) {
-      boolean found = false;
-      for (RASD item : items.getItems()) {
-         String itemInstanceId = item.getInstanceID().getValue();
-         if (itemInstanceId.equals(instanceId)) {
-            assertEquals(item.getElementName().getValue(), elementName, 
-                     String.format(OBJ_FIELD_EQ, VAPP, context+"/"+instanceId+"/elementName", elementName, ""+item.getElementName().getValue()));
-            found = true;
-            break;
-         }
-      }
-      assertTrue(found, "no "+context+" item found with id "+instanceId+"; only found "+items);
    }
 }
