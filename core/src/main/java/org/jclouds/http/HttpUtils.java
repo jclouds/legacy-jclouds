@@ -399,16 +399,12 @@ public class HttpUtils {
          from.getPayload().release();
    }
 
-   public String valueOrEmpty(String in) {
-      return in != null ? in : "";
-   }
-
-   public String valueOrEmpty(byte[] md5) {
+   public static String nullToEmpty(byte[] md5) {
       return md5 != null ? CryptoStreams.base64(md5) : "";
    }
 
-   public String valueOrEmpty(Collection<String> collection) {
-      return (collection != null && collection.size() >= 1) ? collection.iterator().next() : "";
+   public static String nullToEmpty(Collection<String> collection) {
+      return (collection == null || collection.isEmpty()) ? "" : collection.iterator().next();
    }
 
    public static Long attemptToParseSizeAndRangeFromHeaders(HttpMessage from) throws HttpException {

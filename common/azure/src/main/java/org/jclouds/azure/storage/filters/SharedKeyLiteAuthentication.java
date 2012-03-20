@@ -46,6 +46,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -122,10 +123,10 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
       buffer.append(
-            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+            HttpUtils.nullToEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
                   .getContentMD5())).append("\n");
       buffer.append(
-            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+            Strings.nullToEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
                   .getContentType())).append("\n");
    }
 
@@ -166,7 +167,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    private void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
       for (String header : FIRST_HEADERS_TO_SIGN)
-         toSign.append(utils.valueOrEmpty(request.getHeaders().get(header))).append("\n");
+         toSign.append(HttpUtils.nullToEmpty(request.getHeaders().get(header))).append("\n");
    }
 
    @VisibleForTesting
