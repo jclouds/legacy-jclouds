@@ -67,6 +67,9 @@ import com.google.common.collect.Lists;
     "vdcs"
 })
 public class Vdcs {
+   
+   // FIXME Delete Vdcs, and use Set<Vdc>
+   
    public static Builder builder() {
       return new Builder();
    }

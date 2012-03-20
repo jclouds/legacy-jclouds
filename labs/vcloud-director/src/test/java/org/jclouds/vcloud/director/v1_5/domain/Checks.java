@@ -36,7 +36,6 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.R
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -65,6 +64,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Splitter;
@@ -1456,5 +1456,17 @@ public class Checks {
       
       // parent type
       checkEntityType(vdc);
+   }
+
+   public static void checkQueryResultRecord(QueryResultRecordType record) {
+      checkHref(record.getHref());
+      if (record.getLinks() != null) {
+         for (Link link : record.getLinks()) {
+            checkLink(link);
+         }
+      }
+      if (record.getType() != null) {
+         checkType(record.getType());
+      }
    }
 }

@@ -45,30 +45,30 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "QueryResultRecords")
-public class QueryResultRecords extends ContainerType {
+public class QueryResultRecords<R extends QueryResultRecordType> extends ContainerType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.QUERY_RESULT_RECORDS;
 
-   public static Builder<?> builder() {
-      return new ConcreteBuilder();
+   public static <R extends QueryResultRecordType> Builder<R, ?> builder() {
+      return new ConcreteBuilder<R>();
    }
 
    @Override
-   public Builder<?> toBuilder() {
-      return builder().fromQueryResultRecords(this);
+   public Builder<R, ?> toBuilder() {
+      return QueryResultRecords.<R>builder().fromQueryResultRecords(this);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   private static class ConcreteBuilder<R extends QueryResultRecordType> extends Builder<R, ConcreteBuilder<R>> {
    }
    
-   public static class Builder<B extends Builder<B>> extends ContainerType.Builder<B> {
+   public static class Builder<R extends QueryResultRecordType, B extends Builder<R, B>> extends ContainerType.Builder<B> {
 
-      private Set<QueryResultRecordType> records = Sets.newLinkedHashSet();
+      private Set<R> records = Sets.newLinkedHashSet();
 
       /**
        * @see QueryResultRecords#getRecords()
        */
-      public B records(Set<? extends QueryResultRecordType> records) {
+      public B records(Set<? extends R> records) {
          this.records = Sets.newLinkedHashSet(checkNotNull(records, "records"));
          return self();
       }
@@ -76,22 +76,22 @@ public class QueryResultRecords extends ContainerType {
       /**
        * @see QueryResultRecords#getRecords()
        */
-      public B record(QueryResultRecordType record) {
+      public B record(R record) {
          this.records.add(record);
          return self();
       }
 
       @Override
-      public QueryResultRecords build() {
-         return new QueryResultRecords(this);
+      public QueryResultRecords<R> build() {
+         return new QueryResultRecords<R>(this);
       }
 
-      public B fromQueryResultRecords(QueryResultRecords in) {
+      public B fromQueryResultRecords(QueryResultRecords<R> in) {
          return fromContainerType(in).records(in.getRecords());
       }
    }
 
-   protected QueryResultRecords(Builder<?> builder) {
+   protected QueryResultRecords(Builder<R,?> builder) {
       super(builder);
       this.records = ImmutableSet.copyOf(builder.records);
    }
@@ -101,12 +101,12 @@ public class QueryResultRecords extends ContainerType {
    }
 
    @XmlElementRef
-   private Set<QueryResultRecordType> records = Sets.newLinkedHashSet();
+   private Set<R> records = Sets.newLinkedHashSet();
 
    /**
     * Set of records representing query results.
     */
-   public Set<QueryResultRecordType> getRecords() {
+   public Set<R> getRecords() {
       return Collections.unmodifiableSet(records);
    }
 
@@ -116,7 +116,7 @@ public class QueryResultRecords extends ContainerType {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      QueryResultRecords that = QueryResultRecords.class.cast(o);
+      QueryResultRecords<?> that = QueryResultRecords.class.cast(o);
       return super.equals(that) && equal(this.records, that.records);
    }
 

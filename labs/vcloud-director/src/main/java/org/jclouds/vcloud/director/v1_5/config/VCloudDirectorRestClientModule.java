@@ -48,6 +48,8 @@ import org.jclouds.vcloud.director.v1_5.features.AdminNetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminQueryAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminQueryClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminVdcAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
@@ -110,6 +112,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
             .put(NetworkClient.class, NetworkAsyncClient.class)
             .put(OrgClient.class, OrgAsyncClient.class)
             .put(QueryClient.class, QueryAsyncClient.class)
+            .put(AdminQueryClient.class, AdminQueryAsyncClient.class)
             .put(MediaClient.class, MediaAsyncClient.class)
             .put(TaskClient.class, TaskAsyncClient.class)
             .put(VdcClient.class, VdcAsyncClient.class)

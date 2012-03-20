@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QueryResultRecords xmlns="http://www.vmware.com/vcloud/v1.5" total="0" pageSize="25" page="1" name="group" type="application/vnd.vmware.vcloud.query.records+xml" href="https://vcloudbeta.bluelock.com/api/admin/groups/query?page=1&amp;pageSize=25&amp;format=records" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.vmware.com/vcloud/v1.5 http://vcloudbeta.bluelock.com/api/v1.5/schema/master.xsd">
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.query.references+xml" href="https://vcloudbeta.bluelock.com/api/admin/groups/query?page=1&amp;pageSize=25&amp;format=references"/>
+    <Link rel="alternate" type="application/vnd.vmware.vcloud.query.idrecords+xml" href="https://vcloudbeta.bluelock.com/api/admin/groups/query?page=1&amp;pageSize=25&amp;format=idrecords"/>
+</QueryResultRecords>

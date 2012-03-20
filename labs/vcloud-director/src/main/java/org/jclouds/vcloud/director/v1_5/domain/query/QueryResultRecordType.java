@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -50,7 +49,12 @@ import com.google.common.collect.Sets;
       QueryResultVMRecord.class,
       QueryResultDatastoreRecord.class,
       QueryResultCatalogRecord.class,
-      QueryResultNetworkRecord.class}
+      QueryResultNetworkRecord.class,
+      QueryResultRoleRecord.class,
+      QueryResultAdminGroupRecord.class,
+      QueryResultAdminVdcRecord.class,
+      QueryResultAdminUserRecord.class,
+      QueryResultStrandedUserRecord.class}
 )
 public class QueryResultRecordType {
 
