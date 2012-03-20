@@ -124,7 +124,14 @@ public class User extends EntityType {
       private Reference role;
       private String password;
       private List<Reference> groups = Lists.newArrayList();
-
+      
+      /**
+       * @see EntityType#getName()
+       */
+      public B name(String name) {
+         return super.name(name.toLowerCase());
+      }
+      
       /**
        * @see User#getFullName()
        */
