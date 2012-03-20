@@ -167,9 +167,9 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "PUT /admin/org/{id}/settings/generalSettings", 
-         dependsOnMethods = { "testGetGeneralSettings" }, enabled = false )
+         dependsOnMethods = { "testGetGeneralSettings" } )
    public void testUpdateGeneralSettings() {
-//      boolean canPublishCatalogs = generalSettings.canPublishCatalogs(); // FIXME: did not update
+      boolean canPublishCatalogs = generalSettings.canPublishCatalogs(); // FIXME: did not update
       Integer deployedVMQuota = generalSettings.getDeployedVMQuota();
       Integer storedVmQuota = generalSettings.getStoredVmQuota();
       boolean useServerBootSequence = generalSettings.useServerBootSequence();
@@ -177,7 +177,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       try {
          newGeneralSettings = generalSettings.toBuilder()
-//               .canPublishCatalogs(!canPublishCatalogs)
+               .canPublishCatalogs(!canPublishCatalogs)
                .deployedVMQuota(deployedVMQuota+1)
                .storedVmQuota(storedVmQuota+1)
                .useServerBootSequence(!useServerBootSequence)
@@ -187,9 +187,9 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          generalSettings = orgClient.updateGeneralSettings(
                orgRef.getHref(), newGeneralSettings);
          
-//         assertTrue(equal(generalSettings.canPublishCatalogs(), !canPublishCatalogs), 
-//               String.format(OBJ_FIELD_UPDATABLE, 
-//               "generalSettings", "canPublishCatalogs"));
+         assertTrue(equal(generalSettings.canPublishCatalogs(), !canPublishCatalogs), 
+               String.format(OBJ_FIELD_UPDATABLE, 
+               "generalSettings", "canPublishCatalogs"));
          assertTrue(equal(generalSettings.getDeployedVMQuota(), deployedVMQuota+1), 
                String.format(OBJ_FIELD_UPDATABLE, 
                "generalSettings", "deployedVMQuota"));
@@ -208,7 +208,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          Checks.checkGeneralSettings(generalSettings);
       } finally {
          generalSettings = generalSettings.toBuilder()
-//               .canPublishCatalogs(canPublishCatalogs)
+               .canPublishCatalogs(canPublishCatalogs)
                .deployedVMQuota(deployedVMQuota)
                .storedVmQuota(storedVmQuota)
                .useServerBootSequence(useServerBootSequence)
@@ -284,7 +284,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "PUT /admin/org/{id}/settings/vAppLeaseSettings", 
-         dependsOnMethods = { "testGetVAppLeaseSettings" }, enabled = false) // FIXME: fails with 403 forbidden
+         dependsOnMethods = { "testGetVAppLeaseSettings" } ) // FIXME: fails with 403 forbidden
    public void testUpdateVAppLeaseSettings() {
       boolean deleteOnStorageLeaseExpiration = vAppLeaseSettings.deleteOnStorageLeaseExpiration();
       Integer storageLeaseSeconds = vAppLeaseSettings.getStorageLeaseSeconds();
@@ -333,7 +333,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings", 
-         dependsOnMethods = { "testGetVAppTemplateLeaseSettings" }, enabled = false) // FIXME: fails with 403 forbidden
+         dependsOnMethods = { "testGetVAppTemplateLeaseSettings" }) // FIXME: fails with 403 forbidden
    public void testUpdateVAppTemplateLeaseSettings() {
       boolean deleteOnStorageLeaseExpiration = vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration();
       Integer storageLeaseSeconds = vAppTemplateLeaseSettings.getStorageLeaseSeconds();
@@ -386,8 +386,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          "testUpdateVAppLeaseSettings", 
          "testUpdateVAppTemplateLeaseSettings", 
          "testUpdateEmailSettings", 
-         "testUpdatePasswordPolicy"}, 
-          enabled = false )
+         "testUpdatePasswordPolicy"} )
    public void testUpdateSettings() {
       try {
          newSettings = settings.toBuilder()

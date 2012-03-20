@@ -106,7 +106,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    // NOTE for this test to work, we need to be able to upload a new vAppTemplate to a vDC first
    // NOTE we could do this with a test environment property -Dtest.vcloud-director.vappTemplateId=vapptemplate-abcd
-   @Test(testName = "POST /catalog/{id}/catalogItems", dependsOnMethods = { "testGetCatalog" }, enabled = false)
+   @Test(testName = "POST /catalog/{id}/catalogItems", dependsOnMethods = { "testGetCatalog" })
    public void testAddCatalogItem() {
       CatalogItem editedCatalogItem = CatalogItem.builder()
             .name("newitem")
@@ -121,7 +121,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(newCatalogItem.getName(), "newitem");
    }
 
-   @Test(testName = "PUT /catalogItem/{id}", dependsOnMethods = { "testAddCatalogItem" }, enabled = false)
+   @Test(testName = "PUT /catalogItem/{id}", dependsOnMethods = { "testAddCatalogItem" })
    public void testUpdateCatalogItem() {
       CatalogType catalog = catalogClient.getCatalog(catalogRef.getHref());
       newCatalogItemRef = Iterables.find(catalog.getCatalogItems().getCatalogItems(), new Predicate<Reference>() {
@@ -136,7 +136,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(newCatalogItem.getName(), "UPDATEDNAME");
    }
 
-   @Test(testName = "DELETE /catalogItem/{id}", dependsOnMethods = { "testAddCatalogItem" }, enabled = false)
+   @Test(testName = "DELETE /catalogItem/{id}", dependsOnMethods = { "testAddCatalogItem" })
    public void testDeleteCatalogItem() {
       catalogClient.deleteCatalogItem(newCatalogItemRef.getHref());
       try {
@@ -150,14 +150,14 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    // NOTE for this test to work, we need to be able to create metadata on a Catalog, specifically { "KEY", "VALUE" }
-   @Test(testName = "GET /catalog/{id}/metadata", dependsOnMethods = { "testGetCatalog" }, enabled = false)
+   @Test(testName = "GET /catalog/{id}/metadata", dependsOnMethods = { "testGetCatalog" })
    public void testGetCatalogMetadata() {
       catalogMetadata = catalogClient.getMetadataClient().getMetadata(catalogRef.getHref());
       checkMetadata(catalogMetadata);
    }
 
    // NOTE for this test to work, we need to be able to create metadata on a Catalog, specifically { "KEY", "VALUE" }
-   @Test(testName = "GET /catalog/{id}/metadata/{key}", dependsOnMethods = { "testGetCatalogMetadata" }, enabled = false)
+   @Test(testName = "GET /catalog/{id}/metadata/{key}", dependsOnMethods = { "testGetCatalogMetadata" })
    public void testGetCatalogMetadataValue() {
       MetadataEntry existingMetadataEntry = Iterables.find(catalogMetadata.getMetadataEntries(), new Predicate<MetadataEntry>() {
          @Override

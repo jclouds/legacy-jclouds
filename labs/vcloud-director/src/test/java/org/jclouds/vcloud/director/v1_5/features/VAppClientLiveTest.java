@@ -421,7 +421,7 @@ public class VAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    // NOTE This test is disabled, as it is not possible to look up datastores using the User API
-   @Test(enabled = false, testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
    public void testRelocate() {
       // Relocate to the last of the available datastores
       QueryResultRecords records = context.getApi().getQueryClient().queryAll("datastore");
