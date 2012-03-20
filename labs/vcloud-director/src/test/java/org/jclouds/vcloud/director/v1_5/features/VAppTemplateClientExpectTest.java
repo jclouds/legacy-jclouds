@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ANY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CUSTOMIZATION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ERROR;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION;
@@ -390,18 +391,18 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(METADATA).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(ANY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/metadata.xml", METADATA).httpResponseBuilder().build(),
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/task/task.xml", TASK).httpResponseBuilder().build()
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      Metadata metadata = client.getVAppTemplateMetadata(uri);
+      Metadata metadata = client.getMetadataClient().getMetadata(uri);
 
       assertEquals(metadata, exampleMetadata());
 
-      Task task = client.editVAppTemplateMetadata(uri, exampleMetadata());
+      Task task = client.getMetadataClient().mergeMetadata(uri, exampleMetadata());
       assertNotNull(task);
    }
 
@@ -411,10 +412,10 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       URI uri = URI.create(endpoint + templateId);
 
       VAppTemplateClient client = orderedRequestsSendResponses(loginRequest, sessionResponse,
-            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(METADATA).httpRequestBuilder().build(),
+            new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata").acceptMedia(ANY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.getVAppTemplateMetadata(uri);
+      client.getMetadataClient().getMetadata(uri);
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -426,7 +427,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata").xmlFilePayload("/vapptemplate/metadata.xml", METADATA).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.editVAppTemplateMetadata(uri, exampleMetadata());
+      client.getMetadataClient().mergeMetadata(uri, exampleMetadata());
    }
    
    public void testVappTemplateMetadataValue() {
@@ -443,14 +444,14 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       ).getVAppTemplateClient();
 
       assertNotNull(client);
-      MetadataValue metadata = client.getVAppTemplateMetadataValue(uri, "12345");
+      MetadataValue metadata = client.getMetadataClient().getMetadataValue(uri, "12345");
 
       assertEquals(metadata, exampleMetadataValue());
 
-      Task task = client.editVAppTemplateMetadataValue(uri, "12345", exampleMetadataValue());
+      Task task = client.getMetadataClient().setMetadata(uri, "12345", exampleMetadataValue());
       assertNotNull(task);
 
-      task = client.deleteVAppTemplateMetadataValue(uri, "12345");
+      task = client.getMetadataClient().deleteMetadataEntry(uri, "12345");
       assertNotNull(task);
    }
 
@@ -463,7 +464,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata/12345").acceptMedia(METADATA_ENTRY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.getVAppTemplateMetadataValue(uri, "12345");
+      client.getMetadataClient().getMetadataValue(uri, "12345");
    }
    
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -475,7 +476,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("PUT", templateId + "/metadata/12345").xmlFilePayload("/vapptemplate/metadataValue.xml", METADATA_ENTRY).acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error400.xml", ERROR).httpResponseBuilder().statusCode(400).build()).getVAppTemplateClient();
 
-      client.editVAppTemplateMetadataValue(uri, "12345", exampleMetadataValue());
+      client.getMetadataClient().setMetadata(uri, "12345", exampleMetadataValue());
    }
 
    @Test(expectedExceptions = VCloudDirectorException.class)
@@ -487,7 +488,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("DELETE", templateId + "/metadata/12345").acceptMedia(TASK).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.deleteVAppTemplateMetadataValue(uri, "12345");
+      client.getMetadataClient().deleteMetadataEntry(uri, "12345");
    }
    
    public void testNetworkConfigSection() throws ParseException {

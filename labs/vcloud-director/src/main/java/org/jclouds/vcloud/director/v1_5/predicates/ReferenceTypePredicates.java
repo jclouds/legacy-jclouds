@@ -32,7 +32,7 @@ import com.google.common.base.Predicate;
 public class ReferenceTypePredicates {
 
    /**
-    * Matches {@link Reference}s of the given name.
+    * Matches {@link Reference}s with the given name.
     * 
     * @param T type of the reference, for example {@link Link}
     * @param name value of the name attribute of the referenced object
@@ -50,6 +50,30 @@ public class ReferenceTypePredicates {
          @Override
          public String toString() {
             return "nameEquals(" + name + ")";
+         }
+      };
+   }
+
+   /**
+    * Matches {@link Reference}s with names starting with the given prefix.
+    * 
+    * @param T type of the reference, for example {@link Link}
+    * @param name prefix of the name attribute of the referenced object
+    * @return predicate that will match references with names starting with the given prefix
+    */
+   public static <T extends Reference> Predicate<T> nameStartsWith(final String prefix) {
+      checkNotNull(prefix, "prefix must be defined");
+
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(T reference) {
+            String name = reference.getName();
+            return name != null && name.startsWith(prefix);
+         }
+
+         @Override
+         public String toString() {
+            return "nameStartsWith(" + prefix + ")";
          }
       };
    }

@@ -18,89 +18,265 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  * @author Adam Lowe
+ * @author grkvlt@apache.org
  */
-@XmlType(name = "Property", namespace = VCLOUD_OVF_NS)
+@XmlType(name = "Property")
+@XmlSeeAlso({ ProductSectionProperty.class })
 public class Property {
-   public static Builder builder() {
-      return new Builder();
+
+   public static Builder<?> builder() {
+      return new ConcreteBuilder();
    }
 
-   public static class Builder {
+   public Builder<?> toBuilder() {
+      return builder().fromProperty(this);
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   }
+
+   public static abstract class Builder<B extends Builder<B>> {
+
       protected String key;
-      protected String value;
-      protected String label;
-      protected String description;
+      protected Set<PropertyConfigurationValueType> values = Sets.newLinkedHashSet();
+      protected MsgType label;
+      protected MsgType description;
+      protected String type;
+      protected String qualifiers;
+      protected Boolean userConfigurable;
+      protected String defaultValue = "";
+
+      @SuppressWarnings("unchecked")
+      protected B self() {
+         return (B) this;
+      }
 
       /**
-       * @see Property#getKey
+       * @see Property#getKey()
        */
-      public Builder key(String key) {
+      public B key(String key) {
          this.key = key;
-         return this;
+         return self();
       }
 
       /**
-       * @see Property#getValue
+       * @see Property#getValues()
        */
-      public Builder value(String value) {
-         this.value = value;
-         return this;
+      public B values(Set<PropertyConfigurationValueType> values) {
+         this.values = checkNotNull(values, "values");
+         return self();
       }
 
       /**
-       * @see Property#getLabel
+       * @see Property#getValues()
        */
-      public Builder label(String label) {
+      public B value(PropertyConfigurationValueType value) {
+         this.values.add(checkNotNull(value, "value"));
+         return self();
+      }
+
+      /**
+       * @see Property#getLabel()
+       */
+      public B label(MsgType label) {
          this.label = label;
-         return this;
+         return self();
       }
 
       /**
-       * @see Property#getDescription
+       * @see Property#getDescription()
        */
-      public Builder description(String description) {
+      public B description(MsgType description) {
          this.description = description;
-         return this;
+         return self();
+      }
+
+      /**
+       * @see Property#getType()
+       */
+      public B type(String type) {
+         this.type = type;
+         return self();
+      }
+
+      /**
+       * @see Property#getQualifiers()
+       */
+      public B qualifiers(String qualifiers) {
+         this.qualifiers = qualifiers;
+         return self();
+      }
+
+      /**
+       * @see Property#getQualifiers()
+       */
+      public B qualifiers(Iterable<String> qualifiers) {
+         this.qualifiers = Joiner.on(',').join(qualifiers);
+         return self();
+      }
+
+      /**
+       * @see Property#getQualifiers()
+       */
+      public B qualifiers(String...qualifiers) {
+         this.qualifiers = Joiner.on(',').join(qualifiers);
+         return self();
+      }
+
+      /**
+       * @see Property#isUserConfigurable()
+       */
+      public B isUserConfigurable(Boolean userConfigurable) {
+         this.userConfigurable = userConfigurable;
+         return self();
+      }
+
+      /**
+       * @see Property#isUserConfigurable()
+       */
+      public B userConfigurable() {
+         this.userConfigurable = Boolean.TRUE;
+         return self();
+      }
+
+      /**
+       * @see Property#isUserConfigurable()
+       */
+      public B notUserConfigurable() {
+         this.userConfigurable = Boolean.FALSE;
+         return self();
+      }
+
+      /**
+       * @see Property#getDefaultValue()
+       */
+      public B defaultValue(String defaultValue) {
+         this.defaultValue = defaultValue;
+         return self();
       }
 
       public Property build() {
-         return new Property(key, value, label, description);
+         return new Property(this);
       }
 
-      public Builder fromProperty(Property in) {
-         return key(in.getKey()).value(in.getValue()).description(in.getDescription()).label(in.getLabel());
+      public B fromProperty(Property in) {
+         return key(in.getKey()).values(in.getValues()).description(in.getDescription()).label(in.getLabel())
+               .type(in.getType()).qualifiers(in.getQualifiers()).isUserConfigurable(in.isUserConfigurable()).defaultValue(in.getDefaultValue());
       }
    }
 
+   @XmlAttribute
    private String key;
-   private String value;
-   private String label;
-   private String description;
+   @XmlElement(name = "Value")
+   private Set<PropertyConfigurationValueType> values;
+   @XmlElement(name = "Label")
+   private MsgType label;
+   @XmlElement(name = "Description")
+   private MsgType description;
+   @XmlAttribute(required = true)
+   private String type;
+   @XmlAttribute(required = true)
+   private String qualifiers;
+   @XmlAttribute
+   private Boolean userConfigurable;
+   @XmlAttribute(name = "value")
+   private String defaultValue;
 
-   private Property(String key, String value, String label, String description) {
-      this.key = key;
-      this.value = value;
-      this.label = label;
-      this.description = description;
+   protected Property(Builder<?> builder) {
+      this.key = builder.key;
+      this.values = builder.values;
+      this.label = builder.label;
+      this.description = builder.description;
+      this.type = builder.type;
+      this.qualifiers = builder.qualifiers;
+      this.userConfigurable = builder.userConfigurable;
+      this.defaultValue = builder.defaultValue;
    }
-   
-   private Property() {
+
+   protected Property() {
       // for JAXB
+   }
+
+   /**
+    * Property identifier.
+    */
+   public String getKey() {
+      return key;
+   }
+
+   /**
+    * Description of property.
+    */
+   public MsgType getDescription() {
+      return description;
+   }
+
+   /**
+    * Short description of property.
+    */
+   public MsgType getLabel() {
+      return label;
+   }
+
+   /**
+    * Alternative default property values for different configuration
+    */
+   public Set<PropertyConfigurationValueType> getValues() {
+      return values;
+   }
+
+   /**
+    * Property type.
+    */
+   public String getType() {
+      return type;
+   }
+
+   /**
+    * A comma-separated set of type qualifiers.
+    */
+   public String getQualifiers() {
+      return qualifiers;
+   }
+
+   /**
+    * Determines whether the property value is configurable during installation.
+    */
+   public Boolean isUserConfigurable() {
+      return userConfigurable;
+   }
+
+   /**
+    * A Default value for property.
+    */
+   public String getDefaultValue() {
+      if (defaultValue == null) {
+         return "";
+      } else {
+	      return defaultValue;
+      }
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((key == null) ? 0 : key.hashCode());
-      return result;
+      return Objects.hashCode(key, values, label, description, type, qualifiers, userConfigurable, defaultValue);
    }
 
    @Override
@@ -111,33 +287,22 @@ public class Property {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Property other = (Property) obj;
-      if (key == null) {
-         if (other.key != null)
-            return false;
-      } else if (!key.equals(other.key))
-         return false;
-      return true;
+      Property that = Property.class.cast(obj);
+      return equal(this.key, that.key) &&
+            equal(this.values, that.values) &&
+            equal(this.label, that.label) &&
+            equal(this.description, that.description) &&
+            equal(this.type, that.type) &&
+            equal(this.qualifiers, that.qualifiers) &&
+            equal(this.userConfigurable, that.userConfigurable) &&
+            equal(this.defaultValue, that.defaultValue);
    }
 
    @Override
    public String toString() {
-      return String.format("[key=%s, value=%s, label=%s, description=%s]", key, value, label, description);
-   }
-
-   public String getKey() {
-      return key;
-   }
-
-   public String getDescription() {
-      return description;
-   }
-
-   public String getLabel() {
-      return label;
-   }
-
-   public String getValue() {
-      return value;
+      return Objects.toStringHelper("")
+            .add("key", key).add("values", values).add("label", label).add("description", description)
+            .add("type", type).add("qualifiers", qualifiers).add("userConfigurable", userConfigurable).add("defaultValue", defaultValue)
+            .toString();
    }
 }

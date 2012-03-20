@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
@@ -44,8 +45,10 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlSeeAlso({
+         VAppReference.class,
          CatalogReference.class
 })
+@XmlRootElement(name = "Reference")
 @XmlType(name = "ReferenceType")
 public class Reference {
 

@@ -19,14 +19,18 @@
 @XmlSchema(namespace = VCLOUD_OVF_NS,
       elementFormDefault = XmlNsForm.QUALIFIED,
       xmlns = {
-            @XmlNs(prefix = "cim", namespaceURI = VCLOUD_CIM_NS)
+            @XmlNs(prefix = "cim", namespaceURI = VCLOUD_CIM_NS),
+		      @XmlNs(prefix = "vmv", namespaceURI = VCLOUD_VMW_NS),
+		      @XmlNs(prefix = "vcloud", namespaceURI = VCLOUD_1_5_NS)
       }
 )
 @XmlAccessorType(XmlAccessType.FIELD)
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_VMW_NS;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

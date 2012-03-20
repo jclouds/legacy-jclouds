@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,69 +18,102 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_VSSD_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
-import java.net.URI;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
- * 
- * CIM_VirtualSystemSettingData defines the virtual aspects of a virtual system through a set of
- * virtualization specific properties. CIM_VirtualSystemSettingData is also used as the top level
- * class of virtual system configurations. Virtual system configurations model configuration
- * information about virtual systems and their components. A virtual system configuration consists
- * of one top-level instance of class CIM_VirtualSystemSettingData that aggregates a number of
- * instances of class CIM_ResourceAllocationSettingData, using association CIM_ConcreteComponent.
- * Virtual system configurations may for example be used to reflect configurations of - virtual
- * systems that are defined at a virtualization platform, - virtual systems that are currently
- * active, - input requests to create new virtual systems, - input requests to modify existing
- * virtual systems, or - snapshots of virtual systems.
+ * VirtualSystemSettingData defines the virtual aspects of a virtual system through a set of
+ * virtualization specific properties.
+ *
+ * VirtualSystemSettingData is also used as the top level class of virtual system configurations.
+ * Virtual system configurations model configuration information about virtual systems and their
+ * components. A virtual system configuration consists of one top-level instance of class
+ * VirtualSystemSettingData that aggregates a number of instances of class
+ * {@link ResourceAllocationSettingData}, using association {@link ConcreteComponent).
+ * <p>
+ * Virtual system configurations may for example be used to reflect configurations of:
+ * <ul>
+ * <li>virtual systems that are defined at a virtualization platform
+ * <li>virtual systems that are currently active
+ * <li>input requests to create new virtual systems
+ * <li>input requests to modify existing virtual systems
+ * <li>snapshots of virtual systems
+ * </ul>
  * 
  * @author Adrian Cole
- * @see <a
- *      href="http://dmtf.org/sites/default/files/cim/cim_schema_v2280/cim_schema_2.28.0Final-Doc.zip"
- *      />
- * 
+ * @author grkvlt@apache.org
+ * @see http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_VirtualSystemSettingData.xsd
  */
-public class VirtualSystemSettingData extends ManagedElement {
+@XmlType(name = "CIM_VirtualSystemSettingData_Type", namespace = VCLOUD_OVF_NS)
+public class VirtualSystemSettingData {
 
    public static Builder builder() {
       return new Builder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public Builder toBuilder() {
       return builder().fromVirtualSystemSettingData(this);
    }
 
-   public static class Builder extends ManagedElement.Builder {
+   public static class Builder {
+
+      private String elementName;
+      private String instanceID;
+      private String caption;
+      private String description;
       private AutomaticRecoveryAction automaticRecoveryAction;
       private AutomaticShutdownAction automaticShutdownAction;
       private AutomaticStartupAction automaticStartupAction;
-      private Long automaticStartupActionDelay;
-      private Integer automaticStartupActionSequenceNumber;
-      private URI configurationDataRoot;
-      private URI configurationFile;
+      private BigInteger automaticStartupActionDelay;
+      private Long automaticStartupActionSequenceNumber;
+      private String configurationDataRoot;
+      private String configurationFile;
       private String configurationID;
       private Date creationTime;
-      private URI logDataRoot;
-      private URI recoveryFile;
-      private URI snapshotDataRoot;
-      private URI suspendDataRoot;
-      private URI swapFileDataRoot;
+      private String logDataRoot;
+      private String recoveryFile;
+      private String snapshotDataRoot;
+      private String suspendDataRoot;
+      private String swapFileDataRoot;
       private String virtualSystemIdentifier;
-      private Set<String> virtualSystemTypes = Sets.newLinkedHashSet();
+      private String virtualSystemType;
       private String notes;
+
+      public Builder elementName(String elementName) {
+         this.elementName = elementName;
+         return this;
+      }
+
+      public Builder instanceID(String instanceID) {
+         this.instanceID = instanceID;
+         return this;
+      }
+
+      public Builder caption(String caption) {
+         this.caption = caption;
+         return this;
+      }
+
+      public Builder description(String description) {
+         this.description = description;
+         return this;
+      }
 
       public Builder automaticRecoveryAction(AutomaticRecoveryAction automaticRecoveryAction) {
          this.automaticRecoveryAction = automaticRecoveryAction;
@@ -97,22 +130,22 @@ public class VirtualSystemSettingData extends ManagedElement {
          return this;
       }
 
-      public Builder automaticStartupActionDelay(Long automaticStartupActionDelay) {
+      public Builder automaticStartupActionDelay(BigInteger automaticStartupActionDelay) {
          this.automaticStartupActionDelay = automaticStartupActionDelay;
          return this;
       }
 
-      public Builder automaticStartupActionSequenceNumber(Integer automaticStartupActionSequenceNumber) {
+      public Builder automaticStartupActionSequenceNumber(Long automaticStartupActionSequenceNumber) {
          this.automaticStartupActionSequenceNumber = automaticStartupActionSequenceNumber;
          return this;
       }
 
-      public Builder configurationDataRoot(URI configurationDataRoot) {
+      public Builder configurationDataRoot(String configurationDataRoot) {
          this.configurationDataRoot = configurationDataRoot;
          return this;
       }
 
-      public Builder configurationFile(URI configurationFile) {
+      public Builder configurationFile(String configurationFile) {
          this.configurationFile = configurationFile;
          return this;
       }
@@ -127,27 +160,27 @@ public class VirtualSystemSettingData extends ManagedElement {
          return this;
       }
 
-      public Builder logDataRoot(URI logDataRoot) {
+      public Builder logDataRoot(String logDataRoot) {
          this.logDataRoot = logDataRoot;
          return this;
       }
 
-      public Builder recoveryFile(URI recoveryFile) {
+      public Builder recoveryFile(String recoveryFile) {
          this.recoveryFile = recoveryFile;
          return this;
       }
 
-      public Builder snapshotDataRoot(URI snapshotDataRoot) {
+      public Builder snapshotDataRoot(String snapshotDataRoot) {
          this.snapshotDataRoot = snapshotDataRoot;
          return this;
       }
 
-      public Builder suspendDataRoot(URI suspendDataRoot) {
+      public Builder suspendDataRoot(String suspendDataRoot) {
          this.suspendDataRoot = suspendDataRoot;
          return this;
       }
 
-      public Builder swapFileDataRoot(URI swapFileDataRoot) {
+      public Builder swapFileDataRoot(String swapFileDataRoot) {
          this.swapFileDataRoot = swapFileDataRoot;
          return this;
       }
@@ -157,13 +190,8 @@ public class VirtualSystemSettingData extends ManagedElement {
          return this;
       }
 
-      public Builder virtualSystemTypes(Iterable<String> virtualSystemTypes) {
-         this.virtualSystemTypes = ImmutableSet.copyOf(checkNotNull(virtualSystemTypes, "virtualSystemTypes"));
-         return this;
-      }
-
       public Builder virtualSystemType(String virtualSystemType) {
-         this.virtualSystemTypes.add(checkNotNull(virtualSystemType, "virtualSystemType"));
+         this.virtualSystemType = virtualSystemType;
          return this;
       }
 
@@ -177,77 +205,48 @@ public class VirtualSystemSettingData extends ManagedElement {
                   automaticShutdownAction, automaticStartupAction, automaticStartupActionDelay,
                   automaticStartupActionSequenceNumber, configurationDataRoot, configurationFile, configurationID,
                   creationTime, logDataRoot, recoveryFile, snapshotDataRoot, suspendDataRoot, swapFileDataRoot,
-                  virtualSystemIdentifier, virtualSystemTypes, notes);
+                  virtualSystemIdentifier, virtualSystemType, notes);
       }
 
       public Builder fromVirtualSystemSettingData(VirtualSystemSettingData in) {
-         return fromManagedElement(in).automaticRecoveryAction(in.getAutomaticRecoveryAction())
-                  .automaticShutdownAction(in.getAutomaticShutdownAction()).automaticStartupAction(
-                           in.getAutomaticStartupAction()).automaticStartupActionDelay(
-                           in.getAutomaticStartupActionDelay()).automaticStartupActionSequenceNumber(
-                           in.getAutomaticStartupActionSequenceNumber()).configurationDataRoot(
-                           in.getConfigurationDataRoot()).configurationFile(in.getConfigurationFile()).configurationID(
-                           in.getConfigurationID()).creationTime(in.getCreationTime()).logDataRoot(in.getLogDataRoot())
-                  .recoveryFile(in.getRecoveryFile()).snapshotDataRoot(in.getSnapshotDataRoot()).suspendDataRoot(
-                           in.getSuspendDataRoot()).swapFileDataRoot(in.getSwapFileDataRoot()).virtualSystemIdentifier(
-                           in.getVirtualSystemIdentifier()).virtualSystemTypes(in.getVirtualSystemTypes()).notes(
-                           in.getNotes());
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder fromManagedElement(ManagedElement in) {
-         return Builder.class.cast(super.fromManagedElement(in));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder caption(String caption) {
-         return Builder.class.cast(super.caption(caption));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder description(String description) {
-         return Builder.class.cast(super.description(description));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder elementName(String elementName) {
-         return Builder.class.cast(super.elementName(elementName));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder instanceID(String instanceID) {
-         return Builder.class.cast(super.instanceID(instanceID));
+         return elementName(in.getElementName())
+               .instanceID(in.getInstanceID())
+               .caption(in.getCaption())
+               .description(in.getDescription())
+               .automaticRecoveryAction(in.getAutomaticRecoveryAction())
+               .automaticShutdownAction(in.getAutomaticShutdownAction())
+               .automaticStartupAction(in.getAutomaticStartupAction())
+               .automaticStartupActionDelay(in.getAutomaticStartupActionDelay())
+               .automaticStartupActionSequenceNumber(in.getAutomaticStartupActionSequenceNumber())
+               .configurationDataRoot(in.getConfigurationDataRoot())
+               .configurationFile(in.getConfigurationFile())
+               .configurationID(in.getConfigurationID())
+               .creationTime(in.getCreationTime())
+               .logDataRoot(in.getLogDataRoot())
+               .recoveryFile(in.getRecoveryFile())
+               .snapshotDataRoot(in.getSnapshotDataRoot())
+               .suspendDataRoot(in.getSuspendDataRoot())
+               .swapFileDataRoot(in.getSwapFileDataRoot())
+               .virtualSystemIdentifier(in.getVirtualSystemIdentifier())
+               .virtualSystemType(in.getVirtualSystemType())
+               .notes(in.getNotes());
       }
 
    }
 
    /**
     * Action to take for the virtual system when the software executed by the virtual system fails.
+    *
     * Failures in this case means a failure that is detectable by the host platform, such as a
     * non-interuptable wait state condition.
     */
+   @XmlType
+   @XmlEnum(Integer.class)
    public static enum AutomaticRecoveryAction {
 
-      NONE(2),
-
-      RESTART(3),
-
-      REVERT_TO_SNAPSHOT(4);
+      @XmlEnumValue("2") NONE(2),
+      @XmlEnumValue("3") RESTART(3),
+      @XmlEnumValue("4") REVERT_TO_SNAPSHOT(4);
 
       protected final int code;
 
@@ -256,35 +255,32 @@ public class VirtualSystemSettingData extends ManagedElement {
       }
 
       public String value() {
-         return code + "";
+         return Integer.toString(code);
       }
 
       protected final static Map<Integer, AutomaticRecoveryAction> AUTOMATIC_RECOVERY_ACTION_BY_ID = Maps.uniqueIndex(
                ImmutableSet.copyOf(AutomaticRecoveryAction.values()), new Function<AutomaticRecoveryAction, Integer>() {
-
                   @Override
                   public Integer apply(AutomaticRecoveryAction input) {
                      return input.code;
                   }
-
                });
 
       public static AutomaticRecoveryAction fromValue(String automaticRecoveryAction) {
-         return AUTOMATIC_RECOVERY_ACTION_BY_ID.get(new Integer(checkNotNull(automaticRecoveryAction,
-                  "automaticRecoveryAction")));
+         return AUTOMATIC_RECOVERY_ACTION_BY_ID.get(Integer.valueOf(checkNotNull(automaticRecoveryAction, "automaticRecoveryAction")));
       }
    }
 
    /**
     * Action to take for the virtual system when the host is shut down.
     */
+   @XmlType
+   @XmlEnum(Integer.class)
    public static enum AutomaticShutdownAction {
 
-      TURN_OFF(2),
-
-      SAVE_STATE(3),
-
-      SHUTDOWN(4);
+      @XmlEnumValue("2") TURN_OFF(2),
+      @XmlEnumValue("3") SAVE_STATE(3),
+      @XmlEnumValue("4") SHUTDOWN(4);
 
       protected final int code;
 
@@ -293,35 +289,32 @@ public class VirtualSystemSettingData extends ManagedElement {
       }
 
       public String value() {
-         return code + "";
+         return Integer.toString(code);
       }
 
       protected final static Map<Integer, AutomaticShutdownAction> AUTOMATIC_SHUTDOWN_ACTION_BY_ID = Maps.uniqueIndex(
                ImmutableSet.copyOf(AutomaticShutdownAction.values()), new Function<AutomaticShutdownAction, Integer>() {
-
                   @Override
                   public Integer apply(AutomaticShutdownAction input) {
                      return input.code;
                   }
-
                });
 
       public static AutomaticShutdownAction fromValue(String automaticShutdownAction) {
-         return AUTOMATIC_SHUTDOWN_ACTION_BY_ID.get(new Integer(checkNotNull(automaticShutdownAction,
-                  "automaticShutdownAction")));
+         return AUTOMATIC_SHUTDOWN_ACTION_BY_ID.get(Integer.valueOf(checkNotNull(automaticShutdownAction, "automaticShutdownAction")));
       }
    }
 
    /**
     * Action to take for the virtual system when the host is started.
     */
+   @XmlType
+   @XmlEnum(Integer.class)
    public static enum AutomaticStartupAction {
 
-      NONE(2),
-
-      RESTART_IF_PREVIOUSLY_ACTIVE(3),
-
-      ALWAYS_STARTUP(4);
+      @XmlEnumValue("2") NONE(2),
+      @XmlEnumValue("3") RESTART_IF_PREVIOUSLY_ACTIVE(3),
+      @XmlEnumValue("4") ALWAYS_STARTUP(4);
 
       protected final int code;
 
@@ -330,51 +323,76 @@ public class VirtualSystemSettingData extends ManagedElement {
       }
 
       public String value() {
-         return code + "";
+         return Integer.toString(code);
       }
 
       protected final static Map<Integer, AutomaticStartupAction> AUTOMATIC_STARTUP_ACTION_BY_ID = Maps.uniqueIndex(
                ImmutableSet.copyOf(AutomaticStartupAction.values()), new Function<AutomaticStartupAction, Integer>() {
-
                   @Override
                   public Integer apply(AutomaticStartupAction input) {
                      return input.code;
                   }
-
                });
 
       public static AutomaticStartupAction fromValue(String automaticStartupAction) {
-         return AUTOMATIC_STARTUP_ACTION_BY_ID.get(new Integer(checkNotNull(automaticStartupAction,
-                  "automaticStartupAction")));
+         return AUTOMATIC_STARTUP_ACTION_BY_ID.get(Integer.valueOf(checkNotNull(automaticStartupAction, "automaticStartupAction")));
       }
    }
 
-   private AutomaticRecoveryAction automaticRecoveryAction;
-   private AutomaticShutdownAction automaticShutdownAction;
-   private AutomaticStartupAction automaticStartupAction;
-   private Long automaticStartupActionDelay;
-   private Integer automaticStartupActionSequenceNumber;
-   private URI configurationDataRoot;
-   private URI configurationFile;
-   private String configurationID;
-   private Date creationTime;
-   private URI logDataRoot;
-   private URI recoveryFile;
-   private URI snapshotDataRoot;
-   private URI suspendDataRoot;
-   private URI swapFileDataRoot;
+   @XmlElement(name = "ElementName", namespace = VCLOUD_CIM_VSSD_NS)
+   private String elementName;
+   @XmlElement(name = "InstanceID", namespace = VCLOUD_CIM_VSSD_NS)
+   private String instanceID;
+   @XmlElement(name = "Caption", namespace = VCLOUD_CIM_VSSD_NS)
+   private String caption;
+   @XmlElement(name = "Description", namespace = VCLOUD_CIM_VSSD_NS)
+   private String description;
+   @XmlElement(name = "VirtualSystemIdentifier", namespace = VCLOUD_CIM_VSSD_NS)
    private String virtualSystemIdentifier;
-   private Set<String> virtualSystemTypes;
+   @XmlElement(name = "VirtualSystemType", namespace = VCLOUD_CIM_VSSD_NS)
+   private String virtualSystemType;
+   @XmlElement(name = "AutomaticRecoveryAction", namespace = VCLOUD_CIM_VSSD_NS)
+   private AutomaticRecoveryAction automaticRecoveryAction;
+   @XmlElement(name = "AutomaticShutdownAction", namespace = VCLOUD_CIM_VSSD_NS)
+   private AutomaticShutdownAction automaticShutdownAction;
+   @XmlElement(name = "AutomaticStartupAction", namespace = VCLOUD_CIM_VSSD_NS)
+   private AutomaticStartupAction automaticStartupAction;
+   @XmlElement(name = "AutomaticStartupActionDelay", namespace = VCLOUD_CIM_VSSD_NS)
+   private BigInteger automaticStartupActionDelay;
+   @XmlElement(name = "AutomaticStartupActionSequenceNumber", namespace = VCLOUD_CIM_VSSD_NS)
+   private Long automaticStartupActionSequenceNumber;
+   @XmlElement(name = "ConfigurationDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
+   private String configurationDataRoot;
+   @XmlElement(name = "ConfigurationFile", namespace = VCLOUD_CIM_VSSD_NS)
+   private String configurationFile;
+   @XmlElement(name = "ConfigurationID", namespace = VCLOUD_CIM_VSSD_NS)
+   private String configurationID;
+   @XmlElement(name = "CreationTime", namespace = VCLOUD_CIM_VSSD_NS)
+   private Date creationTime;
+   @XmlElement(name = "LogDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
+   private String logDataRoot;
+   @XmlElement(name = "RecoveryFile", namespace = VCLOUD_CIM_VSSD_NS)
+   private String recoveryFile;
+   @XmlElement(name = "SnapshotDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
+   private String snapshotDataRoot;
+   @XmlElement(name = "SuspendDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
+   private String suspendDataRoot;
+   @XmlElement(name = "SwapFileDataRoot", namespace = VCLOUD_CIM_VSSD_NS)
+   private String swapFileDataRoot;
+   @XmlElement(name = "Notes", namespace = VCLOUD_CIM_VSSD_NS)
    private String notes;
 
    private VirtualSystemSettingData(String elementName, String instanceID, String caption, String description,
             AutomaticRecoveryAction automaticRecoveryAction, AutomaticShutdownAction automaticShutdownAction,
-            AutomaticStartupAction automaticStartupAction, Long automaticStartupActionDelay,
-            Integer automaticStartupActionSequenceNumber, URI configurationDataRoot, URI configurationFile,
-            String configurationID, Date creationTime, URI logDataRoot, URI recoveryFile, URI snapshotDataRoot,
-            URI suspendDataRoot, URI swapFileDataRoot, String virtualSystemIdentifier,
-            Iterable<String> virtualSystemTypes, String notes) {
-      super(elementName, instanceID, caption, description);
+            AutomaticStartupAction automaticStartupAction, BigInteger automaticStartupActionDelay,
+            Long automaticStartupActionSequenceNumber, String configurationDataRoot, String configurationFile,
+            String configurationID, Date creationTime, String logDataRoot, String recoveryFile, String snapshotDataRoot,
+            String suspendDataRoot, String swapFileDataRoot, String virtualSystemIdentifier,
+            String virtualSystemType, String notes) {
+      this.elementName = elementName;
+      this.instanceID = instanceID;
+      this.caption = caption;
+      this.description = description;
       this.automaticRecoveryAction = automaticRecoveryAction;
       this.automaticShutdownAction = automaticShutdownAction;
       this.automaticStartupAction = automaticStartupAction;
@@ -390,12 +408,43 @@ public class VirtualSystemSettingData extends ManagedElement {
       this.suspendDataRoot = suspendDataRoot;
       this.swapFileDataRoot = swapFileDataRoot;
       this.virtualSystemIdentifier = virtualSystemIdentifier;
-      this.virtualSystemTypes = ImmutableSet.copyOf(checkNotNull(virtualSystemTypes, "virtualSystemTypes"));
+      this.virtualSystemType = virtualSystemType;
       this.notes = notes;
    }
 
    private VirtualSystemSettingData() {
       // for JAXB
+   }
+
+   /**
+    * The user-friendly name for this instance of SettingData. In addition, the user-friendly name
+    * can be used as an index property for a search or query. (Note: The name does not have to be
+    * unique within a namespace.)
+    */
+   public String getElementName() {
+      return elementName;
+   }
+
+   /**
+    * Within the scope of the instantiating Namespace, InstanceID opaquely and uniquely identifies
+    * an instance of this class.
+    */
+   public String getInstanceID() {
+      return instanceID;
+   }
+
+   /**
+    * The Caption property is a short textual description (one- line string) of the object.
+    */
+   public String getCaption() {
+      return caption;
+   }
+
+   /**
+    * The Description property provides a textual description of the object.
+    */
+   public String getDescription() {
+      return description;
    }
 
    /**
@@ -425,7 +474,7 @@ public class VirtualSystemSettingData extends ManagedElement {
     * Delay applicable to startup action. The value shall be in the interval variant of the datetime
     * datatype.
     */
-   public Long getAutomaticStartupActionDelay() {
+   public BigInteger getAutomaticStartupActionDelay() {
       return automaticStartupActionDelay;
    }
 
@@ -435,24 +484,28 @@ public class VirtualSystemSettingData extends ManagedElement {
     * same value, the sequence is implementation dependent. A value of 0 indicates that the sequence
     * is implementation dependent.
     */
-   public Integer getAutomaticStartupActionSequenceNumber() {
+   public Long getAutomaticStartupActionSequenceNumber() {
       return automaticStartupActionSequenceNumber;
    }
 
    /**
     * Filepath of a directory where information about the virtual system configuration is
-    * stored.Format shall be URI based on RFC 2079.
+    * stored.
+    *
+    * Format shall be String based on RFC-2079.
     */
-   public URI getConfigurationDataRoot() {
+   public String getConfigurationDataRoot() {
       return configurationDataRoot;
    }
 
    /**
-    * Filepath of a file where information about the virtual system configuration is stored. A
-    * relative path appends to the value of the ConfigurationDataRoot property.Format shall be URI
-    * based on RFC 2079.
+    * Filepath of a file where information about the virtual system configuration is stored.
+    *
+    * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
+    * <p>
+    * Format shall be String based on RFC-2079.
     */
-   public URI getConfigurationFile() {
+   public String getConfigurationFile() {
       return configurationFile;
    }
 
@@ -473,52 +526,63 @@ public class VirtualSystemSettingData extends ManagedElement {
    }
 
    /**
-    * Filepath of a directory where log information about the virtual system is stored. A relative
-    * path appends to the value of the ConfigurationDataRoot property.Format shall be URI based on
-    * RFC 2079.
+    * Filepath of a directory where log information about the virtual system is stored.
+    *
+    * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
+    * <p>
+    * Format shall be String based on RFC-2079.
     */
-   public URI getLogDataRoot() {
+   public String getLogDataRoot() {
       return logDataRoot;
    }
 
    /**
-    * Filepath of a file where recovery relateded information of the virtual system is stored.Format
-    * shall be URI based on RFC 2079.
+    * Filepath of a file where recovery relateded information of the virtual system is stored.
+    *
+    * Format shall be String based on RFC-2079.
     */
-   public URI getRecoveryFile() {
+   public String getRecoveryFile() {
       return recoveryFile;
    }
 
    /**
-    * Filepath of a directory where information about virtual system snapshots is stored. A relative
-    * path appends to the value of the ConfigurationDataRoot property.Format shall be URI based on
-    * RFC 2079.
+    * Filepath of a directory where information about virtual system snapshots is stored.
+    *
+    * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
+    * <p>
+    * Format shall be String based on RFC-2079.
     */
-   public URI getSnapshotDataRoot() {
+   public String getSnapshotDataRoot() {
       return snapshotDataRoot;
    }
 
    /**
     * Filepath of a directory where suspend related information about the virtual system is stored.
-    * A relative path appends to the value of the ConfigurationDataRoot property.Format shall be URI
-    * based on RFC 2079.
+    *
+    * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
+    * <p>
+    * Format shall be String based on RFC-2079.
     */
-   public URI getSuspendDataRoot() {
+   public String getSuspendDataRoot() {
       return suspendDataRoot;
    }
 
    /**
-    * Filepath of a directory where swapfiles of the virtual system are stored. A relative path
-    * appends to the value of the ConfigurationDataRoot property.Format shall be URI based on RFC
-    * 2079.
+    * Filepath of a directory where swapfiles of the virtual system are stored.
+    *
+    * A relative path appends to the value of the {@link #getConfigurationDataRoot()} property.
+    * <p>
+    * Format shall be String based on RFC-2079.
     */
-   public URI getSwapFileDataRoot() {
+   public String getSwapFileDataRoot() {
       return swapFileDataRoot;
    }
 
    /**
     * VirtualSystemIdentifier shall reflect a unique name for the system as it is used within the
-    * virtualization platform. Note that the VirtualSystemIdentifier is not the hostname assigned to
+    * virtualization platform.
+    *
+    * Note that the VirtualSystemIdentifier is not the hostname assigned to
     * the operating system instance running within the virtual system, nor is it an IP address or
     * MAC address assigned to any of its network ports. On create requests VirtualSystemIdentifier
     * may contain implementation specific rules (like simple patterns or regular expresssion) that
@@ -531,8 +595,8 @@ public class VirtualSystemSettingData extends ManagedElement {
    /**
     * VirtualSystemType shall reflect a particular type of virtual system.
     */
-   public Set<String> getVirtualSystemTypes() {
-      return virtualSystemTypes;
+   public String getVirtualSystemType() {
+      return virtualSystemType;
    }
 
    /**
@@ -544,10 +608,7 @@ public class VirtualSystemSettingData extends ManagedElement {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((virtualSystemIdentifier == null) ? 0 : virtualSystemIdentifier.hashCode());
-      return result;
+      return Objects.hashCode(elementName, instanceID, caption, description, virtualSystemIdentifier, virtualSystemType);
    }
 
    @Override
@@ -558,25 +619,23 @@ public class VirtualSystemSettingData extends ManagedElement {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VirtualSystemSettingData other = (VirtualSystemSettingData) obj;
-      if (virtualSystemIdentifier == null) {
-         if (other.virtualSystemIdentifier != null)
-            return false;
-      } else if (!virtualSystemIdentifier.equals(other.virtualSystemIdentifier))
-         return false;
-      return true;
+      VirtualSystemSettingData that = VirtualSystemSettingData.class.cast(obj);
+      return equal(this.elementName, that.elementName) &&
+           equal(this.instanceID, that.instanceID) &&
+           equal(this.caption, that.caption) &&
+           equal(this.description, that.description) &&
+           equal(this.virtualSystemIdentifier, that.virtualSystemIdentifier) &&
+           equal(this.virtualSystemType, that.virtualSystemType);
    }
 
    @Override
    public String toString() {
-      return String
-               .format(
-                        "[elementName=%s, instanceID=%s, caption=%s, description=%s, automaticRecoveryAction=%s, automaticShutdownAction=%s, automaticStartupAction=%s, automaticStartupActionDelay=%s, automaticStartupActionSequenceNumber=%s, configurationDataRoot=%s, configurationFile=%s, configurationID=%s, creationTime=%s, logDataRoot=%s, notes=%s, recoveryFile=%s, snapshotDataRoot=%s, suspendDataRoot=%s, swapFileDataRoot=%s, virtualSystemIdentifier=%s, virtualSystemTypes=%s]",
-                        elementName, instanceID, caption, description, automaticRecoveryAction,
-                        automaticShutdownAction, automaticStartupAction, automaticStartupActionDelay,
-                        automaticStartupActionSequenceNumber, configurationDataRoot, configurationFile,
-                        configurationID, creationTime, logDataRoot, notes, recoveryFile, snapshotDataRoot,
-                        suspendDataRoot, swapFileDataRoot, virtualSystemIdentifier, virtualSystemTypes);
+      return Objects.toStringHelper("")
+            .add("caption", caption)
+            .add("description", description)
+            .add("virtualSystemIdentifier", virtualSystemIdentifier)
+            .add("virtualSystemType", virtualSystemType)
+            .toString();
    }
 
 }

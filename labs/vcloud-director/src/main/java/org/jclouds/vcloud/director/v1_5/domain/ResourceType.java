@@ -116,7 +116,7 @@ public class ResourceType {
       }
 
       protected B fromResourceType(ResourceType in) {
-         return href(in.getHref()).type(in.getType()).links(in.getLinks());
+         return href(in.getHref()).type(in.getType()).links(Sets.newLinkedHashSet(in.getLinks()));
       }
    }
 

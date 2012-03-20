@@ -67,13 +67,13 @@ public interface QueryClient {
     * @see #query(String, String)
     * @see #query(Integer, Integer, String, String, String)
     */
-   QueryResultRecords<QueryResultRecordType> queryAll(String type);
+   QueryResultRecords queryAll(String type);
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> query(String type, String filter);
+   QueryResultRecords query(String type, String filter);
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> query(Integer page, Integer pageSize, String format, String type, String filter);
+   QueryResultRecords query(Integer page, Integer pageSize, String format, String type, String filter);
 
    /**
     * Retrieves a list of {@link Catalog}s by using REST API general QueryHandler.
@@ -84,13 +84,13 @@ public interface QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> catalogsQueryAll();
+   QueryResultRecords catalogsQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> catalogsQuery(String filter);
+   QueryResultRecords catalogsQuery(String filter);
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> catalogsQuery(Integer page, Integer pageSize, String filter);
+   QueryResultRecords catalogsQuery(Integer page, Integer pageSize, String filter);
 
 
    /**
@@ -119,10 +119,10 @@ public interface QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> vAppTemplatesQueryAll();
+   QueryResultRecords vAppTemplatesQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> vAppTemplatesQuery(String filter);
+   QueryResultRecords vAppTemplatesQuery(String filter);
 
    /**
     * Retrieves a list of {@link VApp}s by using REST API general QueryHandler.
@@ -133,27 +133,13 @@ public interface QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> vAppsQueryAll();
+   QueryResultRecords vAppsQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> vAppsQuery(String filter);
+   QueryResultRecords vAppsQuery(String filter);
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> vAppsQuery(Integer page, Integer pageSize, String filter);
-
-   /**
-    * Retrieves a list of {@link Vm}s by using REST API general QueryHandler.
-    *
-    * <pre>
-    * GET /vms/query
-    * </pre>
-    *
-    * @see #queryAll(String)
-    */
-   QueryResultRecords<QueryResultRecordType> vmsQueryAll();
-
-   /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> vmsQuery(String filter);
+   QueryResultRecords vAppsQuery(Integer page, Integer pageSize, String filter);
 
    /**
     * Retrieves a list of {@link VAppReference}s by using REST API general QueryHandler.
@@ -172,5 +158,19 @@ public interface QueryClient {
 
    /** @see #queryAll() */
    VAppReferences vAppReferencesQuery(Integer page, Integer pageSize, String filter);
+
+   /**
+    * Retrieves a list of {@link Vm}s by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /vms/query
+    * </pre>
+    *
+    * @see #queryAll(String)
+    */
+   QueryResultRecords vmsQueryAll();
+
+   /** @see #queryAll() */
+   QueryResultRecords vmsQuery(String filter);
    
 }
