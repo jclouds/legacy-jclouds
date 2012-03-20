@@ -39,6 +39,8 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -125,11 +127,12 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       builder.statusCode(responseCode);
       builder.message(connection.getResponseMessage());
 
-      Builder<String, String> headerBuilder = ImmutableMultimap.<String, String> builder();
-      for (String header : connection.getHeaderFields().keySet()) {
+      Builder<String, String> headerBuilder = ImmutableMultimap.builder();
+      for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
+         String header = entry.getKey();
          // HTTP message comes back as a header without a key
          if (header != null)
-            headerBuilder.putAll(header, connection.getHeaderFields().get(header));
+            headerBuilder.putAll(header, entry.getValue());
       }
       ImmutableMultimap<String, String> headers = headerBuilder.build();
       Payload payload = in != null ? newInputStreamPayload(in) : null;
@@ -204,10 +207,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          }
       }
 
-      for (String header : request.getHeaders().keys()) {
-         for (String value : request.getHeaders().get(header)) {
-            connection.setRequestProperty(header, value);
-         }
+      for (Map.Entry<String, String> entry : request.getHeaders().entries()) {
+         connection.setRequestProperty(entry.getKey(), entry.getValue());
       }
       connection.setRequestProperty(HttpHeaders.HOST, request.getEndpoint().getHost());
       connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
