@@ -30,6 +30,7 @@ import org.jclouds.vcloud.director.v1_5.domain.CatalogReference;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultCatalogRecord;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
@@ -37,7 +38,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMultimap;
 
 /**
- * Test the {@link TaskClient} by observing its side effects.
+ * Test the {@link QueryClient} by observing its side effects.
  * 
  * @author grkvlt@apache.org
  */
@@ -62,7 +63,7 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
       
-      QueryResultRecords expected = QueryResultRecords.builder()
+      QueryResultRecords<?> expected = QueryResultRecords.<QueryResultRecordType>builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=records"))
             .type("application/vnd.vmware.vcloud.query.records+xml")
             .name("catalog")

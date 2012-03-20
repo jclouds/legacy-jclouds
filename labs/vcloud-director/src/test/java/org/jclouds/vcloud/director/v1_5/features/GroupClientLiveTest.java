@@ -66,7 +66,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          .build();
    }
    
-   @Test(testName = "GET /admin/group/{id}", enabled = false)
+   @Test(testName = "GET /admin/group/{id}")
    public void testGetGroup() {
       assertNotNull(groupRef, String.format(REF_REQ_LIVE, "Group"));
       group = groupClient.getGroup(groupRef.getHref());
