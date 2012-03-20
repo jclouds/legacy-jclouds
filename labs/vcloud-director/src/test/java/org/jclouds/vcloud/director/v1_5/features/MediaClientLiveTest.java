@@ -398,7 +398,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Error expected = Error.builder()
             .message(String.format(
                   "No access to entity \"(com.vmware.vcloud.entity.media:%s)\".",
-                  media.getId()))
+                  media.getId().substring("urn:vcloud:media:".length())))
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
