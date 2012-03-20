@@ -22,6 +22,7 @@ import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
@@ -40,6 +41,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author Adrian Cole
  */
 @XmlRootElement(name = "Org")
+@XmlSeeAlso({ AdminOrg.class })
 public class Org extends EntityType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.ORG;
