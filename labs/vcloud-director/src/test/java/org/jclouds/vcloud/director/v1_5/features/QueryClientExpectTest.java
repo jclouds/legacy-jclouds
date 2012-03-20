@@ -63,7 +63,7 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
       
-      QueryResultRecords<?> expected = QueryResultRecords.<QueryResultRecordType>builder()
+      QueryResultRecords expected = QueryResultRecords.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=records"))
             .type("application/vnd.vmware.vcloud.query.records+xml")
             .name("catalog")

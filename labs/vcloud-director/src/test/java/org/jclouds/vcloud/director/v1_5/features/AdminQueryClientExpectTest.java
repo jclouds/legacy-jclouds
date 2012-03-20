@@ -66,7 +66,7 @@ public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpe
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
 
-      QueryResultRecords<?> expected = QueryResultRecords.<QueryResultRecordType>builder()
+      QueryResultRecords expected = QueryResultRecords.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/groups/query?page=1&pageSize=25&format=records"))
             .type("application/vnd.vmware.vcloud.query.records+xml")
             .name("group")
@@ -114,7 +114,7 @@ public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpe
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
 
-      QueryResultRecords<?> expected = QueryResultRecords.<QueryResultRecordType>builder()
+      QueryResultRecords expected = QueryResultRecords.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/roles/query?page=1&pageSize=25&format=records"))
             .type("application/vnd.vmware.vcloud.query.records+xml")
             .name("role")

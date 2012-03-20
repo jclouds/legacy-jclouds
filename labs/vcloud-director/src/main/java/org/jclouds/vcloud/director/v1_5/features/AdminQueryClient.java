@@ -48,10 +48,10 @@ public interface AdminQueryClient extends QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> groupsQueryAll();
+   QueryResultRecords groupsQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> groupsQuery(String filter);
+   QueryResultRecords groupsQuery(String filter);
 
    /**
     * Retrieves a list of {@link Org}s by using REST API general QueryHandler.
@@ -62,10 +62,10 @@ public interface AdminQueryClient extends QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> orgsQueryAll();
+   QueryResultRecords orgsQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> orgsQuery(String filter);
+   QueryResultRecords orgsQuery(String filter);
    
    /**
     * Retrieves a list of {@link Right}s by using REST API general QueryHandler.
@@ -76,10 +76,10 @@ public interface AdminQueryClient extends QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> rightsQueryAll();
+   QueryResultRecords rightsQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> rightsQuery(String filter);
+   QueryResultRecords rightsQuery(String filter);
    
    /**
     * Retrieves a list of {@link Role}s by using REST API general QueryHandler.
@@ -90,10 +90,10 @@ public interface AdminQueryClient extends QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> rolesQueryAll();
+   QueryResultRecords rolesQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> rolesQuery(String filter);
+   QueryResultRecords rolesQuery(String filter);
    
    /**
     * Retrieves a list of {@link User}s by using REST API general QueryHandler.
@@ -104,10 +104,10 @@ public interface AdminQueryClient extends QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> strandedUsersQueryAll();
+   QueryResultRecords strandedUsersQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> strandedUsersQuery(String filter);
+   QueryResultRecords strandedUsersQuery(String filter);
    
    /**
     * Retrieves a list of {@link User}s by using REST API general QueryHandler.
@@ -118,10 +118,10 @@ public interface AdminQueryClient extends QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> usersQueryAll();
+   QueryResultRecords usersQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> usersQuery(String filter);
+   QueryResultRecords usersQuery(String filter);
    
    /**
     * Retrieves a list of {@link Vdc}s by using REST API general QueryHandler.
@@ -132,8 +132,8 @@ public interface AdminQueryClient extends QueryClient {
     *
     * @see #queryAll(String)
     */
-   QueryResultRecords<QueryResultRecordType> vdcsQueryAll();
+   QueryResultRecords vdcsQueryAll();
 
    /** @see #queryAll() */
-   QueryResultRecords<QueryResultRecordType> vdcsQuery(String filter);
+   QueryResultRecords vdcsQuery(String filter);
 }
