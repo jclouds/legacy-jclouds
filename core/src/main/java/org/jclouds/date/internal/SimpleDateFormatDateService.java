@@ -47,7 +47,7 @@ public class SimpleDateFormatDateService implements DateService {
    private static final SimpleDateFormat iso8601SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US);
 
    // @GuardedBy("this")
-   private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+   private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
 
    // @GuardedBy("this")
    private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", Locale.US);
