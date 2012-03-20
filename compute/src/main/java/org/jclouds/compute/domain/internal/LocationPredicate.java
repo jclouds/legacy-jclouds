@@ -78,7 +78,6 @@ public class LocationPredicate implements Predicate<ComputeMetadata> {
       }
       
       return or(predicates.build()).apply(input.getLocation());
-
    }
 
    @Override
