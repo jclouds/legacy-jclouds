@@ -62,6 +62,7 @@ import org.jclouds.s3.Bucket;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
@@ -85,9 +86,9 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       }
    };
 
-   private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
+   private static final Collection<String> FIRST_HEADERS_TO_SIGN = ImmutableList.of(HttpHeaders.DATE);
 
-   public static Set<String> SIGNED_PARAMETERS = ImmutableSet.of("acl", "torrent", "logging", "location", "policy",
+   private static final Set<String> SIGNED_PARAMETERS = ImmutableSet.of("acl", "torrent", "logging", "location", "policy",
             "requestPayment", "versioning", "versions", "versionId", "notification", "uploadId", "uploads",
             "partNumber", "website", "response-content-type", "response-content-language", "response-expires",
             "response-cache-control", "response-content-disposition", "response-content-encoding");
@@ -209,7 +210,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       buffer.append(
                utils.valueOrEmpty(request.getPayload() == null ? request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)
                         : request.getPayload().getContentMetadata().getContentType())).append("\n");
-      for (String header : firstHeadersToSign)
+      for (String header : FIRST_HEADERS_TO_SIGN)
          buffer.append(valueOrEmpty(request.getHeaders().get(header))).append("\n");
    }
 
