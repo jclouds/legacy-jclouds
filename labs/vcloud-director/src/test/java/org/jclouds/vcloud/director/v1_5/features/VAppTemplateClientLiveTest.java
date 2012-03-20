@@ -133,13 +133,6 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    }
    
    @Test
-   public void testGetProductSectionsForVAppTemplate() {
-      ProductSectionList productSectionList = vAppTemplateClient.getProductSectionsForVAppTemplate(vAppTemplateURI);
-      
-      checkProductSectionList(productSectionList);
-   }
-   
-   @Test
    public void testGetLeaseSettingsSection() {
       // FIXME Wrong case for Vapp
       LeaseSettingsSection leaseSettingsSection = vAppTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
