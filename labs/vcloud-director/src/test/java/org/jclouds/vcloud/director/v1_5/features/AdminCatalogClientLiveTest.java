@@ -41,6 +41,7 @@ import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -73,7 +74,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
 
    @Override
    @BeforeClass(inheritGroups = true)
-   public void setupRequiredClients() {
+   protected void setupRequiredClients() {
       catalogClient = context.getApi().getAdminCatalogClient();
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
    }
@@ -186,36 +187,47 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       
       assertTrue(catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
             CATALOG, "isPublished", true, catalog.isPublished()));
-      
    }
    
    @Test(testName = "DELETE /admin/catalog/{id}",
-         dependsOnMethods = { "testUpdateCatalog" } )
+         dependsOnMethods = { "testCreateCatalog" } )
    public void testDeleteCatalog() {
 //      assertEquals(catalog.getCatalogItems().getCatalogItems().size(), 0, 
 //            String.format(OBJ_FIELD_EMPTY_TO_DELETE, "Catalog", "CatalogItems", 
 //                  catalog.getCatalogItems().getCatalogItems().toString()));
-      catalogClient.deleteCatalog(catalog.getHref());
+      AdminCatalog deleteCatalog = AdminCatalog.builder()
+            .name("Test Catalog " + random.nextInt())
+            .description("created by testCreateCatalog()")
+            .build();
+      deleteCatalog = catalogClient.createCatalog(orgRef.getHref(), deleteCatalog);
+      catalogClient.deleteCatalog(deleteCatalog.getHref());
       
       Error expected = Error.builder()
             .message("No access to entity \"(com.vmware.vcloud.entity.catalog:"+
-                  catalog.getId().substring("urn:vcloud:catalog:".length())+")\".")
+                  deleteCatalog.getId().substring("urn:vcloud:catalog:".length())+")\".")
             .majorErrorCode(403)
             .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
             .build();
       
       try {
-         catalog = catalogClient.getCatalog(catalog.getHref());
+         deleteCatalog = catalogClient.getCatalog(deleteCatalog.getHref());
          fail("Should give HTTP 403 error");
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
-         catalog = null;
+         deleteCatalog = null;
       } catch (Exception e) {
          fail("Should have thrown a VCloudDirectorException");
       }
       
-      if (catalog != null) { // guard against NPE on the .toStrings
-         assertNull(catalog, String.format(OBJ_DEL, CATALOG, catalog.toString()));
+      if (deleteCatalog != null) { // guard against NPE on the .toStrings
+         assertNull(deleteCatalog, String.format(OBJ_DEL, CATALOG, deleteCatalog.toString()));
+      }
+   }
+   
+   @AfterClass
+   protected void tidyUp() {
+      if (catalog != null) {
+         catalogClient.deleteCatalog(catalog.getHref());
       }
    }
 }
