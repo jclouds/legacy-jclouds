@@ -38,7 +38,7 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writable;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -102,8 +102,14 @@ public interface CatalogAsyncClient {
    ListenableFuture<Void> deleteCatalogItem(@EndpointParam URI catalogItemUri);
 
    /**
-    * @return asynchronous access to {@link Writable} features
+    * @return asynchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataAsyncClient.Writable getMetadataClient();
+   MetadataAsyncClient.Readable getMetadataClient();
+
+   /**
+    * @return asynchronous access to {@link Metadata.Writeable} features for CatalogItems
+    */
+   @Delegate
+   MetadataAsyncClient.Writable getCatalogItemMetadataClient();
 }

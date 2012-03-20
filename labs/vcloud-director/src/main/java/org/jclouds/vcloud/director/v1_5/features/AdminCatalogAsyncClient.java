@@ -29,6 +29,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -36,6 +37,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
@@ -125,4 +127,12 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> publishCatalog(@EndpointParam URI catalogRef,
          @BinderParam(BindToXMLPayload.class) PublishCatalogParams params);
+
+   /**
+    * @return synchronous access to {@link Metadata.Writable} features
+    */
+   @Override
+   @Delegate
+   MetadataAsyncClient.Writable getMetadataClient();
+
 }

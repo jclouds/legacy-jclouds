@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
+import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
@@ -112,4 +114,11 @@ public interface AdminCatalogClient extends CatalogClient {
    
    //TODO: lot of work to pass in a single boolean, would like to polymorphically include something like:
    //void publishCatalog(URI catalogRef)
+
+   /**
+    * @return synchronous access to {@link Metadata.Writable} features
+    */
+   @Override
+   @Delegate
+   MetadataClient.Writeable getMetadataClient();
 }
