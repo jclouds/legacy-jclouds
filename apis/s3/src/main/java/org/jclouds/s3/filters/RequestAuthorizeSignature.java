@@ -62,6 +62,7 @@ import org.jclouds.s3.Bucket;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -204,14 +205,14 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       // note that we fall back to headers, and some requests such as ?uploads do not have a
       // payload, yet specify payload related parameters
       buffer.append(
-               request.getPayload() == null ? utils.valueOrEmpty(request.getFirstHeaderOrNull("Content-MD5")) : utils
-                        .valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+               request.getPayload() == null ? Strings.nullToEmpty(request.getFirstHeaderOrNull("Content-MD5")) :
+                        HttpUtils.nullToEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
                                  .getContentMD5())).append("\n");
       buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)
+               Strings.nullToEmpty(request.getPayload() == null ? request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)
                         : request.getPayload().getContentMetadata().getContentType())).append("\n");
       for (String header : FIRST_HEADERS_TO_SIGN)
-         buffer.append(valueOrEmpty(request.getHeaders().get(header))).append("\n");
+         buffer.append(HttpUtils.nullToEmpty(request.getHeaders().get(header))).append("\n");
    }
 
    @VisibleForTesting
@@ -269,9 +270,5 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
             separator = '&';
          }
       }
-   }
-
-   private String valueOrEmpty(Collection<String> collection) {
-      return (collection != null && collection.size() >= 1) ? collection.iterator().next() : "";
    }
 }
