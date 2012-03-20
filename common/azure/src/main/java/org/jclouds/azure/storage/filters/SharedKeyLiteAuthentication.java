@@ -20,6 +20,7 @@ package org.jclouds.azure.storage.filters;
 
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,6 +46,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
@@ -58,7 +60,7 @@ import com.google.common.collect.Multimaps;
  */
 @Singleton
 public class SharedKeyLiteAuthentication implements HttpRequestFilter {
-   private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
+   private static final Collection<String> FIRST_HEADERS_TO_SIGN = ImmutableList.of(HttpHeaders.DATE);
 
    private final SignatureWire signatureWire;
    private final String identity;
@@ -163,7 +165,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    private void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
-      for (String header : firstHeadersToSign)
+      for (String header : FIRST_HEADERS_TO_SIGN)
          toSign.append(utils.valueOrEmpty(request.getHeaders().get(header))).append("\n");
    }
 
