@@ -177,7 +177,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
       Checks.checkMetadata(metadata);
    }
 
-   @Test(enabled=false) // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
+   @Test // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
    public void testGetMetadataValue() {
       Metadata metadata = vappTemplateClient.getVAppTemplateMetadata(vAppTemplateURI);
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
@@ -476,7 +476,7 @@ public class VAppTemplateClientLiveTest extends BaseVCloudDirectorClientLiveTest
    
    // This failed previously, but is passing now. 
    // However, it's not part of the official API so not necessary to assert it.
-   @Test(enabled = false) 
+   @Test 
    public void testCompletedTaskNotIncludedInVAppTemplate() throws Exception {
       // Kick off a task, and wait for it to complete
       vappTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);

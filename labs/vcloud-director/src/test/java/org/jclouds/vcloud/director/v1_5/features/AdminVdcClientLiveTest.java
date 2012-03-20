@@ -49,7 +49,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       vdcClient = context.getApi().getAdminVdcClient();
    }
 
-   @Test(testName = "GET /admin/vdc/{id}", enabled = false)
+   @Test(testName = "GET /admin/vdc/{id}")
    public void testGetNetwork() {
       // required for testing
       assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
