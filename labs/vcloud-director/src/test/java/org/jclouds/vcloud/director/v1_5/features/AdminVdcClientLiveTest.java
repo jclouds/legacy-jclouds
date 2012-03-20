@@ -39,7 +39,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@link NetworkClient}
+ * Tests behavior of {@link VdcClient}
  * 
  * @author danikov
  */

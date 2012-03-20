@@ -172,5 +172,19 @@ public interface QueryClient {
 
    /** @see #queryAll() */
    QueryResultRecords vmsQuery(String filter);
+
+   /**
+    * Retrieves a list of {@link Medias by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /mediaList/query
+    * </pre>
+    *
+    * @see #queryAll(String)
+    */
+   QueryResultRecords mediaListQueryAll();
+
+   /** @see #queryAll() */
+   QueryResultRecords mediaListQuery(String filter);
    
 }

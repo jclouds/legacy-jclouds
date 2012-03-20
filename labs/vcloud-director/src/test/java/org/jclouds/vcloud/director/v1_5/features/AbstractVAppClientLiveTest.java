@@ -32,7 +32,9 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
@@ -62,6 +64,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Shared code to test the behaviour of {@link VAppClient} and {@link VAppTemplateClient}.
@@ -95,8 +98,6 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    protected VApp vApp;
    protected VAppTemplate vAppTemplate;
 
-   protected final Random random = new Random();
-
    /**
     * Retrieves the required clients from the REST API context
     *
@@ -115,15 +116,13 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    }
 
    /**
-    * Cleans up the environment.
+    * Sets up the environment.
     *
-    * Retrieves the test {@link Vdc} and {@link VAppTemplate} from their configured {@link URI}s. Cleans up
-    * existing {@link VApp}s and instantiates a new test VApp.
-    *
-    * @see #cleanUp()
+    * Retrieves the test {@link Vdc} and {@link VAppTemplate} from their configured {@link URI}s.
+    * Instantiates a new test VApp.
     */
-   @BeforeClass(inheritGroups = true, description = "Cleans up the environment")
-   protected void setupEnvironment() throws Exception {
+   @BeforeClass(alwaysRun = true, description = "Sets up the environment")
+   protected void setupEnvironment() {
       // Get the configured Vdc for the tests
       vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
@@ -131,9 +130,6 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       // Get the configured VAppTemplate for the tests
       vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       assertNotNull(vAppTemplate, String.format(ENTITY_NON_NULL, VAPP_TEMPLATE));
-
-      // Clean up after previous test runs
-      cleanUp();
 
       // Instantiate a new VApp
       VApp vAppInstantiated = instantiateVApp();
@@ -183,25 +179,22 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       }
    }
 
-   // NOTE This method is also called by the BeforeClass method setupRequiredClients
-   @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps named 'test-vapp-*' or 'new-name-*'")
-   protected void cleanUp() throws Exception {
+   @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps") 
+   protected void cleanUp() {
       // Find references in the Vdc with the VApp type and named 'test-vapp' or 'new-name'
       Iterable<Reference> vApps = Iterables.filter(
             vdc.getResourceEntities().getResourceEntities(),
             Predicates.and(
                   ReferenceTypePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
-                  Predicates.or(
-                        ReferenceTypePredicates.<Reference>nameStartsWith("test-vapp-"),
-                        ReferenceTypePredicates.<Reference>nameStartsWith("new-name-")
-                  )
+                  ReferenceTypePredicates.<Reference>nameIn(vAppNames)
             )
       );
+      vAppNames.clear();
 
       // If we found any references, delete the VApp they point to
       if (vApps != null && !Iterables.isEmpty(vApps)) {
          for (Reference ref : vApps) {
-            cleanUpVApp(ref.getHref());
+            cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
          }
       }
    }
