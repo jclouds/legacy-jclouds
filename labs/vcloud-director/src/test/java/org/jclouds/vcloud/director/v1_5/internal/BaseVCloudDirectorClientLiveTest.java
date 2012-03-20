@@ -120,7 +120,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected URI vdcURI;
    protected URI userURI;
 
-   protected Random random = new Random();
+   protected static Random random = new Random();
    
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
