@@ -120,7 +120,7 @@ public abstract class SectionType {
 
    @XmlElement(name = "Info", required = true)
    private String info;
-   @XmlAttribute
+   @XmlAttribute(namespace = VCLOUD_OVF_NS)
    private Boolean required;
 
    protected SectionType(Builder<?> builder) {
