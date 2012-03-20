@@ -27,18 +27,25 @@ import static org.testng.Assert.fail;
 import static org.testng.AssertJUnit.assertFalse;
 
 import java.net.URI;
+import java.util.Random;
 
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.RestContext;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.User;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRoleRecord;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.login.SessionClient;
-import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -65,6 +72,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private Reference orgRef;
    private User user;
+   private static Random random = new Random();
 
    @Override
    @BeforeClass(inheritGroups = true)
@@ -86,12 +94,38 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "POST /admin/org/{id}/users")
    public void testCreateUser() {
-      User newUser = randomTestUser("testCreateUser");
+      User newUser = randomTestUser("testCreateUser", context);
       user = userClient.createUser(orgRef.getHref(), newUser);
       Checks.checkUser(newUser);
    }
-
-   public static User randomTestUser(String prefix) {
+   
+   public static Reference vAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
+      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
+      for (Reference role : roles.getReferences()) {
+         if (equal(role.getName(), "vApp User")) {
+            return Reference.builder().fromReference(role).build();
+         }
+      }
+      
+      return null;
+   }
+   
+   public static Reference nonVAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
+      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
+      for (Reference role : roles.getReferences()) {
+         if (!equal(role.getName(), "vApp User")) {
+            return Reference.builder().fromReference(role).build();
+         }
+      }
+      
+      return null;
+   }
+   
+   public static User randomTestUser(String prefix, RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
+      return randomTestUser(prefix, vAppUserRole(context));
+   }
+   
+   public static User randomTestUser(String prefix, Reference role) {
       return User.builder()
          .name(prefix+random.nextInt())
          .fullName("testFullName")
@@ -104,10 +138,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          .alertEmail("testAlert@test.com")
          .isExternal(false)
          .isGroupRole(false)
-         .role(Reference.builder() // FIXME: auto-fetch a role? or inject
-            .name("vApp User")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/role/ff1e0c91-1288-3664-82b7-a6fa303af4d1"))
-            .build())
+         .role(role)
          .password("password")
          .build();
    }
@@ -123,9 +154,6 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "PUT /admin/user/{id}",
          dependsOnMethods = { "testGetUser" })
    public void testUpdateUser() {
-      // TODO It seems that role.href doesn't need to be valid! I can run on 
-      // greenhousedata with a bluelock uri!
-      
       User oldUser = user.toBuilder().build();
       User newUser = user.toBuilder()
          .fullName("new"+oldUser.getFullName())
@@ -141,10 +169,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          .password("newPassword")
          // TODO test setting other fields?
 //         .name("new"+oldUser.getName())
-//         .role(Reference.builder() // FIXME: auto-fetch a role? or inject
-//            .name("vApp Author")
-//            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/role/1bf4457f-a253-3cf1-b163-f319f1a31802"))
-//            .build())
+         .role(nonVAppUserRole(context))
          .build();
       
       userClient.updateUser(user.getHref(), newUser);

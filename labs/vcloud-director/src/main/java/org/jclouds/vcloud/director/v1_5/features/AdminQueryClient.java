@@ -25,6 +25,7 @@ import javax.management.relation.Role;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
+import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
@@ -94,6 +95,17 @@ public interface AdminQueryClient extends QueryClient {
 
    /** @see #queryAll() */
    QueryResultRecords rolesQuery(String filter);
+   
+   /**
+    * Retrieves a list of {@link RoleReference}s by using REST API general QueryHandler.
+    *
+    * <pre>
+    * GET /admin/roles/query?format=references
+    * </pre>
+    *
+    * @see #rolesQueryAll(String)
+    */
+   RoleReferences roleReferencesQueryAll();
    
    /**
     * Retrieves a list of {@link User}s by using REST API general QueryHandler.

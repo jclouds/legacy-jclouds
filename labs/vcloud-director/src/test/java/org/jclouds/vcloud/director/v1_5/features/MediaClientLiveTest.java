@@ -143,9 +143,10 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       media = mediaClient.getMedia(media.getHref());
       
-      Task task = Iterables.getOnlyElement(media.getTasks());
-
-      assertEquals(task.getStatus(), "running");
+      if (media.getTasks().size() == 1) {
+         Task task = Iterables.getOnlyElement(media.getTasks());
+         assertEquals(task.getStatus(), "running");
+      }
       
       File file = Iterables.getOnlyElement(media.getFiles());
       assertEquals(file.getSize(), new Long(iso.length));

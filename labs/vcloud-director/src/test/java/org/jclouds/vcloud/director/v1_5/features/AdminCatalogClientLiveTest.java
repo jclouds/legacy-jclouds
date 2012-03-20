@@ -110,7 +110,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Test(testName = "PUT /admin/catalog/{id}/owner",
          dependsOnMethods = { "testGetCatalog" })
    public void updateCatalogOwner() {
-      User newOwnerUser = UserClientLiveTest.randomTestUser("testUpdateCatalogOwner");
+      User newOwnerUser = UserClientLiveTest.randomTestUser("testUpdateCatalogOwner", context);
       newOwnerUser = context.getApi().getUserClient().createUser(orgRef.getHref(), newOwnerUser);
       assertNotNull(newOwnerUser, "failed to create temp user to test updateCatalogOwner");
       
