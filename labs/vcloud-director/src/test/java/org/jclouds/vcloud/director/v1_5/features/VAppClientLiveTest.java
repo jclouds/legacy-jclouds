@@ -85,6 +85,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
@@ -175,7 +176,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = vAppClient.getVApp(vApp.getHref());
 
       // Check the required fields are set
-      assertEquals(vApp.isDeployed(), Boolean.TRUE, String.format(OBJ_FIELD_EQ, VAPP, "deployed", "TRUE", vApp.isDeployed().toString()));
+      assertTrue(vApp.isDeployed(), String.format(OBJ_FIELD_EQ, VAPP, "deployed", "TRUE", vApp.isDeployed().toString()));
 
       // Check status
       Status deployedStatus = Status.POWERED_OFF;
@@ -186,7 +187,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    public void testPowerOnVApp() {
       // The method under test
       Task powerOnVApp = vAppClient.powerOn(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(powerOnVApp), String.format(TASK_COMPLETE_TIMELY, "powerOnVApp"));
+      assertTaskSucceedsLong(powerOnVApp);
 
       // Get the updated VApp
       vApp = vAppClient.getVApp(vApp.getHref());
@@ -200,7 +201,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    public void testReboot() {
       // The method under test
       Task reboot = vAppClient.reboot(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(reboot), String.format(TASK_COMPLETE_TIMELY, "reboot"));
+      assertTaskSucceedsLong(reboot);
 
       // Get the updated VApp
       vApp = vAppClient.getVApp(vApp.getHref());
@@ -210,39 +211,54 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(vApp.getStatus(), poweredOffStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testReboot" })
+   @Test(testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testPowerOnVApp" })
    public void testShutdown() {
+      // Power on VApp
+      powerOn();
+
       // The method under test
-      Task shutdown = vAppClient.shutdown(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(shutdown), String.format(TASK_COMPLETE_TIMELY, "shutdown"));
+      Task shutdown = vAppClient.shutdown(vAppURI);
+      assertTaskSucceedsLong(shutdown);
 
       // Get the updated VApp
-      vApp = vAppClient.getVApp(vApp.getHref());
+      vApp = vAppClient.getVApp(vAppURI);
 
       // Check status
-      Status poweredOnStatus = Status.POWERED_ON;
-      assertEquals(vApp.getStatus(), poweredOnStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      Status poweredOffStatus = Status.POWERED_OFF;
+      assertEquals(vApp.getStatus(), poweredOffStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+
+      // Power on the VApp again
+      powerOn();
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testShutdown" })
+   @Test(testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testPowerOnVApp" })
    public void testSuspend() {
+      // Power on VApp
+      powerOn();
+
       // The method under test
-      Task suspend = vAppClient.suspend(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(suspend), String.format(TASK_COMPLETE_TIMELY, "suspend"));
+      Task suspend = vAppClient.suspend(vAppURI);
+      assertTaskSucceedsLong(suspend);
 
       // Get the updated VApp
       vApp = vAppClient.getVApp(vApp.getHref());
 
       // Check status
-      Status poweredOnStatus = Status.POWERED_ON;
-      assertEquals(vApp.getStatus(), poweredOnStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      Status suspendedStatus = Status.SUSPENDED;
+      assertEquals(vApp.getStatus(), suspendedStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", suspendedStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+
+      // Power on the VApp again
+      powerOn();
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testSuspend" })
+   @Test(testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testPowerOnVApp" })
    public void testReset() {
+      // Power on VApp
+      powerOn();
+
       // The method under test
       Task reset = vAppClient.reset(vApp.getHref());
-      assertTrue(retryTaskSuccess.apply(reset), String.format(TASK_COMPLETE_TIMELY, "reset"));
+      assertTaskSucceedsLong(reset);
 
       // Get the updated VApp
       vApp = vAppClient.getVApp(vApp.getHref());
@@ -264,8 +280,10 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = vAppClient.getVApp(vApp.getHref());
 
       // Check status
-      Status poweredOnStatus = Status.POWERED_ON;
-      assertEquals(vApp.getStatus(), poweredOnStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertFalse(vApp.isDeployed(), String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
+
+      Status poweredOffStatus = Status.POWERED_OFF;
+      assertEquals(vApp.getStatus(), poweredOffStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
    }
 
    @Test(testName = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
@@ -1174,6 +1192,15 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
          fail("The VApp should have been deleted");
       } catch (VCloudDirectorException vcde) {
          assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The error code should have been 'Forbidden' (403)");
+      }
+   }
+
+   private void powerOn() {
+      vApp = vAppClient.getVApp(vAppURI); // Refresh
+      Status status = Status.fromValue(vApp.getStatus());
+      if (status != Status.POWERED_ON) {
+         Task powerOn = vAppClient.powerOn(vAppURI);
+         assertTaskSucceedsLong(powerOn);
       }
    }
 }
