@@ -18,17 +18,13 @@
  */
 package org.jclouds.cloudstack.config;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
@@ -133,18 +129,26 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.location.Provider;
+import org.jclouds.location.suppliers.ImplicitLocationSupplier;
+import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.config.BinderUtils;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Throwables.propagate;
-import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 
 /**
  * Configures the cloudstack connection.
@@ -239,6 +243,12 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       
       super.configure();
+   }
+
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
    }
 
    @Override
