@@ -135,8 +135,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             headerBuilder.putAll(header, entry.getValue());
       }
       ImmutableMultimap<String, String> headers = headerBuilder.build();
-      Payload payload = in != null ? newInputStreamPayload(in) : null;
-      if (payload != null) {
+      if (in != null) {
+         Payload payload = newInputStreamPayload(in);
          payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
          builder.payload(payload);
       }
