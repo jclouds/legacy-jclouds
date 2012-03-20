@@ -81,6 +81,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -120,7 +121,8 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected URI vdcURI;
    protected URI userURI;
 
-   protected static Random random = new Random();
+   protected final Set<String> vAppNames = Sets.newLinkedHashSet();
+   protected static final Random random = new Random();
    
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
@@ -268,6 +270,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       VApp vAppInstantiated = vdcClient.instantiateVApp(vdcURI, instantiate);
       assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
 
+      // Save VApp name for cleanUp
+      vAppNames.add(name);
+
       return vAppInstantiated;
    }
 
@@ -331,12 +336,12 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       assertTaskSucceeds(task);
    }
 
-   protected void cleanUpVApp(VApp vApp) throws Exception {
+   protected void cleanUpVApp(VApp vApp) {
       cleanUpVApp(vApp.getHref());
    }
    
    // TODO code tidy for cleanUpVApp? Seems extremely verbose!
-   protected void cleanUpVApp(URI vAppUri) throws Exception {
+   protected void cleanUpVApp(URI vAppUri) {
       VAppClient vappClient = context.getApi().getVAppClient();
 
       VApp vApp;
@@ -389,7 +394,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
          }
 
          logger.warn(e, "Deleting vApp failed: vApp="+vApp);
-         throw e;
       }
    }
 }

@@ -204,4 +204,18 @@ public interface QueryAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<QueryResultRecords> vmsQuery(@QueryParam("filter") String filter);
+   
+   @GET
+   @Path("/mediaList/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> mediaListQueryAll();
+
+   @GET
+   @Path("/mediaList/query")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<QueryResultRecords> mediaListQuery(@QueryParam("filter") String filter);
 }
