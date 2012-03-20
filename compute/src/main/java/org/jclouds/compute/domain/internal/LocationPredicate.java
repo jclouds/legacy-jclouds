@@ -17,7 +17,10 @@
  * under the License.
  */
 package org.jclouds.compute.domain.internal;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.or;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.domain.Location;
@@ -25,6 +28,8 @@ import org.jclouds.domain.LocationScope;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * If the current location id is null, then we don't care where to launch a node.
@@ -42,33 +47,43 @@ public class LocationPredicate implements Predicate<ComputeMetadata> {
 
    @Override
    public boolean apply(ComputeMetadata input) {
-      Location location = locationSupplier.get();
-      if (location == null)
+      Location current = locationSupplier.get();
+      if (current == null)
          return true;
-      
-      if (location.equals(input.getLocation()))
-         return true;
-      
-      checkArgument(
-            location.getParent() != null || location.getScope() == LocationScope.PROVIDER,
-            "only locations of scope PROVIDER can have a null parent; arg: %s",
-            location);
       
       if (input.getLocation() == null)
          return true;
+      
+      Location parent = current.getParent();
+      checkArgument(
+            parent != null || current.getScope() == LocationScope.PROVIDER,
+            "only locations of scope PROVIDER can have a null parent; arg: %s",
+            current);
       
       checkState(
             input.getLocation().getParent() != null || input.getLocation().getScope() == LocationScope.PROVIDER,
             "only locations of scope PROVIDER can have a null parent; input: %s",
             input.getLocation());
+
+      Builder<Predicate<Location>> predicates = ImmutableSet.<Predicate<Location>>builder();
+
+      predicates.add(equalTo(current));
       
-      return location.equals(input.getLocation()) || location.getParent() != null
-               && location.getParent().equals(input.getLocation()) || location.getParent().getParent() != null
-               && location.getParent().getParent().equals(input.getLocation());
+      if (parent != null) {
+         predicates.add(equalTo(parent));
+         
+         Location grandparent = parent.getParent();
+         if (grandparent != null)
+            predicates.add(equalTo(grandparent));
+      }
+      
+      return or(predicates.build()).apply(input.getLocation());
+
    }
 
    @Override
    public String toString() {
-      return locationSupplier.get() == null ? "anyLocation()" : "locationEqualsParentOrGrandparentOf(" + locationSupplier.get().getId() + ")";
+      // not calling .get() here, as it could accidentally cause eager api fetch
+      return "equalsParentOrGrandparentOfCurrentLocation()";
    }
 }
