@@ -166,7 +166,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    @Test(testName = "POST /admin/catalog/{id}/action/publish",
-         dependsOnMethods = { "testUpdateCatalog" }, enabled = false ) // FIXME: fails with a 403
+         dependsOnMethods = { "testUpdateCatalog" } ) // FIXME: fails with a 403
    public void testPublishCatalog() {
       assertTrue(!catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
             CATALOG, "isPublished", false, catalog.isPublished()));
