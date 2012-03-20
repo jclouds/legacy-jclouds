@@ -33,6 +33,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Random;
 
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
@@ -115,15 +116,13 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    }
 
    /**
-    * Cleans up the environment.
+    * Sets up the environment.
     *
-    * Retrieves the test {@link Vdc} and {@link VAppTemplate} from their configured {@link URI}s. Cleans up
-    * existing {@link VApp}s and instantiates a new test VApp.
-    *
-    * @see #cleanUp()
+    * Retrieves the test {@link Vdc} and {@link VAppTemplate} from their configured {@link URI}s.
+    * Instantiates a new test VApp.
     */
-   @BeforeClass(inheritGroups = true, description = "Cleans up the environment")
-   protected void setupEnvironment() throws Exception {
+   @BeforeClass(alwaysRun = true, description = "Cleans up the environment")
+   protected void setupEnvironment() {
       // Get the configured Vdc for the tests
       vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
@@ -131,9 +130,6 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       // Get the configured VAppTemplate for the tests
       vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       assertNotNull(vAppTemplate, String.format(ENTITY_NON_NULL, VAPP_TEMPLATE));
-
-      // Clean up after previous test runs
-      cleanUp();
 
       // Instantiate a new VApp
       VApp vAppInstantiated = instantiateVApp();
