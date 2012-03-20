@@ -111,6 +111,16 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       vappClient = context.getApi().getVAppClient();
    }
 
+   @Test(testName = "GET /query")
+   public void testQuery() {
+      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      QueryResultRecords queryResult = queryClient.query("vAppTemplate", String.format("name==%s", vAppTemplate.getName()));
+      Set<URI> hrefs = toHrefs(queryResult);
+      
+      assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP_TEMPLATE, null), QueryResultVAppTemplateRecord.class);
+      assertTrue(hrefs.contains(vAppTemplateURI), "VAppTemplates query result should include vAppTemplate "+vAppTemplateURI+"; but only has "+hrefs);
+   }
+
    @Test(testName = "GET /catalogs/query")
    public void testQueryAllCatalogs() {
       QueryResultRecords catalogRecords = queryClient.catalogsQueryAll();
