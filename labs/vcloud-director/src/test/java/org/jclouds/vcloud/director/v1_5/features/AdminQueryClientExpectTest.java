@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Aled Sage
  */
-@Test(groups = { "unit", "user", "query" }, singleThreaded = true, testName = "AdminQueryClientExpectTest")
+@Test(groups = { "unit", "admin", "query" }, singleThreaded = true, testName = "AdminQueryClientExpectTest")
 public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
 
    // TODO Write expect tests for all other admin-query operations

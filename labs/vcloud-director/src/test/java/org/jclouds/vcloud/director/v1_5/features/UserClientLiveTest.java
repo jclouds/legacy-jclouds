@@ -81,7 +81,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
    }
    
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (user != null) {
          try {

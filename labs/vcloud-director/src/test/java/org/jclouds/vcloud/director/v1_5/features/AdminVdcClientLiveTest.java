@@ -68,7 +68,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       adminVdcUri = toAdminUri(vdcURI);
    }
 
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (metadataKey != null) {
          try {

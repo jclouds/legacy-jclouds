@@ -172,7 +172,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(hrefs, vmHrefs, "VMs query result should equal vms of vApp "+vApp.getName()+" ("+vmHrefs+"); but only has "+hrefs);
    }
    
-   private static void assertRecordTypes(QueryResultRecords queryResult, Collection<String> validTypes, Class validClazz) {
+   private static void assertRecordTypes(QueryResultRecords queryResult, Collection<String> validTypes, Class<?> validClazz) {
       for (QueryResultRecordType record : queryResult.getRecords()) {
          assertTrue(validTypes.contains(record.getType()), "invalid type for query result record, "+record.getType()+"; valid types are "+validTypes);
          assertEquals(record.getClass(), validClazz, "invalid type for query result record, "+record.getClass()+"; expected "+validClazz);

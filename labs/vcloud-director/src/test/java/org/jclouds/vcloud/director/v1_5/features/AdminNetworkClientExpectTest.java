@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "admin", "adminNetwork"}, singleThreaded = true, testName = "AdminNetworkClientExpectTest")
+@Test(groups = { "unit", "admin", "network"}, singleThreaded = true, testName = "AdminNetworkClientExpectTest")
 public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    Reference networkRef = Reference.builder()

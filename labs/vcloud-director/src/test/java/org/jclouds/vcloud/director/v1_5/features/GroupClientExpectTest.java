@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "user", "group"}, singleThreaded = true, testName = "GroupClientExpectTest")
+@Test(groups = { "unit", "admin", "group"}, singleThreaded = true, testName = "GroupClientExpectTest")
 public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    private Reference groupRef = Reference.builder()

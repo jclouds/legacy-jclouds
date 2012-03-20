@@ -84,7 +84,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private VAppTemplate capturedVAppTemplate;
    private VAppTemplate uploadedVAppTemplate;
    
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (clonedVAppTemplate != null) {
          cleanUpVAppTemplate(clonedVAppTemplate);
