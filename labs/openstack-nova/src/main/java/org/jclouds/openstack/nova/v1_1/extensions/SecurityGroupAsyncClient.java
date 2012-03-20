@@ -84,7 +84,7 @@ public interface SecurityGroupAsyncClient {
    ListenableFuture<SecurityGroup> getSecurityGroup(@PathParam("id") String id);
 
    /**
-    * @see SecurityGroupClient#createSecurityGroup
+    * @see SecurityGroupClient#createSecurityGroupWithNameAndDescription
     */
    @POST
    @Path("/os-security-groups")
@@ -93,7 +93,7 @@ public interface SecurityGroupAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"security_group\":%7B\"name\":\"{name}\",\"description\":\"{description}\"%7D%7D")
-   ListenableFuture<SecurityGroup> createSecurityGroup(@PayloadParam("name") String name,
+   ListenableFuture<SecurityGroup> createSecurityGroupWithNameAndDescription(@PayloadParam("name") String name,
          @PayloadParam("description") String description);
 
    /**

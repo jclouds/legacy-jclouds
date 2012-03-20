@@ -51,7 +51,8 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
          SecurityGroup securityGroup = null;
          String id;
          try {
-            securityGroup = client.createSecurityGroup(SECURITY_GROUP_NAME, "test security group");
+            securityGroup = client
+                     .createSecurityGroupWithNameAndDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
             id = securityGroup.getId();
             SecurityGroup theGroup = client.getSecurityGroup(id);
@@ -70,12 +71,19 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
          SecurityGroup securityGroup = null;
 
          try {
-            securityGroup = client.createSecurityGroup(SECURITY_GROUP_NAME, "test security group");
+            securityGroup = client
+                     .createSecurityGroupWithNameAndDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
 
-            SecurityGroupRule rule = client.createSecurityGroupRule("tcp", "443", "443", "0.0.0.0/0", "",
-                  securityGroup.getId());
+            SecurityGroupRule rule = client.createSecurityGroupRule("tcp", "443", "443", "0.0.0.0/0", "", securityGroup
+                     .getId());
             assertNotNull(rule);
+
+            SecurityGroupRule rule2 = client.createSecurityGroupRule("tcp", "443", "443", "", securityGroup.getId(),
+                     securityGroup.getId());
+            assertNotNull(rule2);
+            
+            securityGroup = client.getSecurityGroup(securityGroup.getId());
 
          } finally {
             if (securityGroup != null) {
