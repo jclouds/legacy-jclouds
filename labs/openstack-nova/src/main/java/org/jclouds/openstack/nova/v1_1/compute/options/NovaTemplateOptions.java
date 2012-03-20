@@ -18,22 +18,28 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.options;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on
- * the "openstack-nova" provider.
- * <h2>Usage</h2> The recommended way to instantiate a NovaTemplateOptions object is
- * to statically import NovaTemplateOptions.* and invoke a static creation method
- * followed by an instance mutator (if needed):
+ * Contains options supported in the {@code ComputeService#runNode} operation on the
+ * "openstack-nova" provider. <h2>Usage</h2> The recommended way to instantiate a
+ * NovaTemplateOptions object is to statically import NovaTemplateOptions.* and invoke a static
+ * creation method followed by an instance mutator (if needed):
  * <p/>
  * <code>
  * import static org.jclouds.aws.ec2.compute.options.NovaTemplateOptions.Builder.*;
@@ -42,7 +48,7 @@ import com.google.common.base.Objects;
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
  * Set<? extends NodeMetadata> set = client.createNodesInGroup(tag, 2, templateBuilder.build());
  * <code>
- *
+ * 
  * @author Adam Lowe
  */
 public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
@@ -58,36 +64,84 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       super.copyTo(to);
       if (to instanceof NovaTemplateOptions) {
          NovaTemplateOptions eTo = NovaTemplateOptions.class.cast(to);
-         eTo.autoAssignFloatingIp(isAutoAssignFloatingIp());
+         eTo.autoAssignFloatingIp(shouldAutoAssignFloatingIp());
+         eTo.securityGroupNames(getSecurityGroupNames());
       }
    }
 
    private boolean autoAssignFloatingIp = false;
+   private Set<String> securityGroupNames = ImmutableSet.of();
 
    public static final NovaTemplateOptions NONE = new NovaTemplateOptions();
 
    /**
-    * @see #isAutoAssignFloatingIp()
+    * @see #shouldAutoAssignFloatingIp()
     */
    public NovaTemplateOptions autoAssignFloatingIp(boolean enable) {
       this.autoAssignFloatingIp = enable;
       return this;
    }
-   
+
    /**
+    * 
+    * @see CreateServerOptions#getSecurityGroupNames
+    */
+   public NovaTemplateOptions securityGroupNames(String... securityGroupNames) {
+      return securityGroupNames(ImmutableSet.copyOf(checkNotNull(securityGroupNames, "securityGroupNames")));
+   }
+
+   /**
+    * @see CreateServerOptions#getSecurityGroupNames
+    */
+   public NovaTemplateOptions securityGroupNames(Iterable<String> securityGroupNames) {
+      for (String groupName : checkNotNull(securityGroupNames, "securityGroupNames"))
+         Preconditions2.checkNotEmpty(groupName, "all security groups must be non-empty");
+      this.securityGroupNames = ImmutableSet.copyOf(securityGroupNames);
+      return this;
+   }
+
+   /**
+    * <h3>Note</h3>
+    * 
+    * This requires that {@link NovaClient#getFloatingIPExtensionForZone(String)} to return
+    * {@link Optional#isPresent present}
+    * 
     * @return true if auto assignment of a floating ip to each vm is enabled
     */
-   public boolean isAutoAssignFloatingIp() {
+   public boolean shouldAutoAssignFloatingIp() {
       return autoAssignFloatingIp;
+   }
+
+   /**
+    * @see CreateServerOptions#getSecurityGroupNames
+    */
+   public Set<String> getSecurityGroupNames() {
+      return securityGroupNames;
    }
 
    public static class Builder {
 
       /**
-       * @see NovaTemplateOptions#isAutoAssignFloatingIp()
+       * @see NovaTemplateOptions#shouldAutoAssignFloatingIp()
        */
       public static NovaTemplateOptions autoAssignFloatingIp(boolean enable) {
          return new NovaTemplateOptions().autoAssignFloatingIp(enable);
+      }
+
+      /**
+       * @see CreateServerOptions#getSecurityGroupNames
+       */
+      public static NovaTemplateOptions securityGroupNames(String... groupNames) {
+         NovaTemplateOptions options = new NovaTemplateOptions();
+         return NovaTemplateOptions.class.cast(options.securityGroupNames(groupNames));
+      }
+
+      /**
+       * @see CreateServerOptions#getSecurityGroupNames
+       */
+      public static NovaTemplateOptions securityGroupNames(Iterable<String> groupNames) {
+         NovaTemplateOptions options = new NovaTemplateOptions();
+         return NovaTemplateOptions.class.cast(options.securityGroupNames(groupNames));
       }
 
       // methods that only facilitate returning the correct object type
@@ -147,7 +201,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          NovaTemplateOptions options = new NovaTemplateOptions();
          return options.overrideLoginPassword(password);
       }
-      
+
       /**
        * @see TemplateOptions#overrideLoginPrivateKey
        */
@@ -155,7 +209,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          NovaTemplateOptions options = new NovaTemplateOptions();
          return options.overrideLoginPrivateKey(privateKey);
       }
-      
+
       /**
        * @see TemplateOptions#overrideAuthenticateSudo
        */

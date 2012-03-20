@@ -18,17 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import java.util.Properties;
-
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
-
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import org.jclouds.compute.ComputeServiceContext;
 
 /**
  * Base class for writing KeyStone Expect tests with the ComputeService
@@ -36,11 +27,11 @@ import com.google.inject.Module;
  * 
  * @author Matt Stephenson
  */
-public class BaseNovaComputeServiceExpectTest extends BaseNovaExpectTest<ComputeService> {
+public class BaseNovaComputeServiceExpectTest extends BaseNovaComputeServiceContextExpectTest<ComputeService> {
 
    @Override
-   public ComputeService createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-      return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).getComputeService();
+   public ComputeService apply(ComputeServiceContext input) {
+      return input.getComputeService();
    }
+
 }

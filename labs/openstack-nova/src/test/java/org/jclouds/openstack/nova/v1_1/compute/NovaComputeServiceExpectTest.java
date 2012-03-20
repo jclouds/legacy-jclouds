@@ -46,38 +46,7 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "NovaComputeServiceExpectTest")
 public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
-   HttpRequest listImagesDetail = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/images/detail")).headers(
-            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                     authToken).build()).build();
-
-   HttpResponse listImagesDetailResponse = HttpResponse.builder().statusCode(200).payload(
-            payloadFromResource("/image_list_detail.json")).build();
-
-   HttpRequest listFlavorsDetail = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/flavors/detail")).headers(
-            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                     authToken).build()).build();
-
-   HttpResponse listFlavorsDetailResponse = HttpResponse.builder().statusCode(200).payload(
-            payloadFromResource("/flavor_list_detail.json")).build();
-
-   HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
-            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                     authToken).build()).build();
-
-   HttpResponse listServersResponse = HttpResponse.builder().statusCode(200).payload(
-            payloadFromResource("/server_list_details.json")).build();
-
-   HttpRequest listFloatingIps = HttpRequest.builder().method("GET").endpoint(
-            URI.create("https://compute.north.host/v1.1/3456/os-floating-ips")).headers(
-            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                     authToken).build()).build();
-
-   HttpResponse listFloatingIpsResponse = HttpResponse.builder().statusCode(200).payload(
-            payloadFromResource("/floatingip_list.json")).build();
-
+  
    public void testListServersWhenResponseIs2xx() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(

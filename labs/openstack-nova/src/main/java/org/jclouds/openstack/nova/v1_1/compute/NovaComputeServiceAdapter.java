@@ -39,10 +39,13 @@ import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
+import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -76,15 +79,24 @@ public class NovaComputeServiceAdapter implements
                "removeFloatingIpFromNodeAndDeallocate");
    }
 
+   /**
+    * Note that we do not validate extensions here, on basis that
+    * {@link ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet} has already
+    * done so.
+    */
    @Override
-   public NodeAndInitialCredentials<ServerInZone> createNodeWithGroupEncodedIntoName(String tag, String name,
+   public NodeAndInitialCredentials<ServerInZone> createNodeWithGroupEncodedIntoName(String group, String name,
             Template template) {
+
+      CreateServerOptions options = new CreateServerOptions();
+      options.securityGroupNames(template.getOptions().as(NovaTemplateOptions.class).getSecurityGroupNames());
+
       String zoneId = template.getLocation().getId();
       Server server = novaClient.getServerClientForZone(zoneId).createServer(name, template.getImage().getProviderId(),
-               template.getHardware().getProviderId());
+               template.getHardware().getProviderId(), options);
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
-      return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(),
-               LoginCredentials.builder().password(server.getAdminPass()).build());
+      return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(), LoginCredentials
+               .builder().password(server.getAdminPass()).build());
    }
 
    @Override

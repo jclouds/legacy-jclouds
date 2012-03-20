@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -25,6 +26,7 @@ import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.annotations.SerializedName;
 
@@ -47,7 +49,7 @@ public class SecurityGroup {
       private String tenantId;
       private String name;
       private String description;
-      private Set<SecurityGroupRule> rules;
+      private Set<SecurityGroupRule> rules = ImmutableSet.<SecurityGroupRule> of();
 
       public Builder id(String id) {
          this.id = id;
@@ -69,6 +71,22 @@ public class SecurityGroup {
          return this;
       }
 
+      /**
+       * 
+       * @see #getSecurityGroupNames
+       */
+      public Builder rules(SecurityGroupRule... rules) {
+         return rules(ImmutableSet.copyOf(checkNotNull(rules, "rules")));
+      }
+
+      /**
+       * @see #getSecurityGroupNames
+       */
+      public Builder rules(Iterable<SecurityGroupRule> rules) {
+         this.rules = ImmutableSet.copyOf(checkNotNull(rules, "rules"));
+         return this;
+      }
+
       public Builder rules(Set<SecurityGroupRule> rules) {
          this.rules = rules;
          return this;
@@ -79,26 +97,27 @@ public class SecurityGroup {
       }
 
       public Builder fromSecurityGroup(SecurityGroup in) {
-         return id(in.getId()).tenantId(in.getTenantId()).name(in.getName()).description(in.getDescription())
-               .rules(in.getRules());
+         return id(in.getId()).tenantId(in.getTenantId()).name(in.getName()).description(in.getDescription()).rules(
+                  in.getRules());
       }
 
    }
 
-   protected String id;
+   protected final String id;
    @SerializedName("tenant_id")
-   protected String tenantId;
-   protected String name;
-   protected String description;
-   protected Set<SecurityGroupRule> rules;
+   protected final String tenantId;
+   protected final String name;
+   protected final String description;
+   protected final Set<SecurityGroupRule> rules;
 
    protected SecurityGroup(String id, String tenantId, @Nullable String name, @Nullable String description,
-         Set<SecurityGroupRule> rules) {
+            Set<SecurityGroupRule> rules) {
       this.id = id;
       this.tenantId = tenantId;
       this.name = name;
       this.description = description;
-      this.rules = ImmutableSet.copyOf(checkNotNull(rules, "rules"));
+      // if empty, leave null so this doesn't serialize to json
+      this.rules = checkNotNull(rules, "rules").size() == 0 ? null : ImmutableSet.copyOf(rules);
    }
 
    public String getId() {
@@ -118,62 +137,31 @@ public class SecurityGroup {
    }
 
    public Set<SecurityGroupRule> getRules() {
-      return this.rules;
+      return this.rules == null ? ImmutableSet.<SecurityGroupRule> of() : rules;
+   }
+
+   @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof SecurityGroup) {
+         final SecurityGroup other = SecurityGroup.class.cast(object);
+         return equal(tenantId, other.tenantId) && equal(id, other.id) && equal(name, other.name);
+      } else {
+         return false;
+      }
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((rules == null) ? 0 : rules.hashCode());
-      result = prime * result + ((tenantId == null) ? 0 : tenantId.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      SecurityGroup other = (SecurityGroup) obj;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (rules == null) {
-         if (other.rules != null)
-            return false;
-      } else if (!rules.equals(other.rules))
-         return false;
-      if (tenantId == null) {
-         if (other.tenantId != null)
-            return false;
-      } else if (!tenantId.equals(other.tenantId))
-         return false;
-      return true;
+      return Objects.hashCode(tenantId, id, name);
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("tenantId", tenantId)
-            .add("description", description).add("rules", rules).toString();
+      return toStringHelper("").add("tenantId", getTenantId()).add("id", getId()).add("name", getName()).add(
+               "description", description).add("rules", getRules()).toString();
    }
 
 }

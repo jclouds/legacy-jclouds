@@ -81,11 +81,16 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
       String zone = template.getLocation().getId();
 
-      if (templateOptions.isAutoAssignFloatingIp()) {
+      if (templateOptions.shouldAutoAssignFloatingIp()) {
          checkArgument(novaClient.getFloatingIPExtensionForZone(zone).isPresent(),
-                  "Floating IP settings are required by configuration, but the extension is not available!");
+                  "Floating IPs are required by options, but the extension is not available! options: %s", templateOptions);
       }
-
+      
+      if (templateOptions.getSecurityGroupNames().size() > 0) {
+         checkArgument(novaClient.getSecurityGroupExtensionForZone(zone).isPresent(),
+                  "Security groups are required by options, but the extension is not available! options: %s", templateOptions);
+      }
+      
       return super.execute(group, count, template, goodNodes, badNodes, customizationResponses);
    }
 
@@ -96,7 +101,7 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
       Future<AtomicReference<NodeMetadata>> future = super.createNodeInGroupWithNameAndTemplate(group, name, template);
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(template.getOptions());
 
-      if (templateOptions.isAutoAssignFloatingIp()) {
+      if (templateOptions.shouldAutoAssignFloatingIp()) {
          return Futures.compose(future, allocateAndAddFloatingIpToNode, executor);
       } else {
          return future;
