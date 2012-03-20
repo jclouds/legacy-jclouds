@@ -57,7 +57,7 @@ public interface SecurityGroupClient {
     * 
     * @return a new Security Group
     */
-   SecurityGroup createSecurityGroup(String name, String description);
+   SecurityGroup createSecurityGroupWithNameAndDescription(String name, String description);
 
    /**
     * Delete a Security Group.

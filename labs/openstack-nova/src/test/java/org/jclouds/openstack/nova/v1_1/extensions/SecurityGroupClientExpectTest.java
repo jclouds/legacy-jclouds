@@ -149,7 +149,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
 
       assertEquals(
             clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-                  .createSecurityGroup("name", "description").toString(), createSecurityGroupExpected().toString());
+                  .createSecurityGroupWithNameAndDescription("name", "description").toString(), createSecurityGroupExpected().toString());
    }
 
    public void testDeleteSecurityGroupWhenResponseIs2xx() throws Exception {
