@@ -99,8 +99,15 @@ public interface CatalogClient {
    void deleteCatalogItem(URI catalogItemRef);
 
    /**
-    * @return synchronous access to {@link Metadata.Writeable} features
+    * @return synchronous access to {@link Metadata.Readable} features
     */
    @Delegate
-   MetadataClient.Writeable getMetadataClient();
+   MetadataClient.Readable getMetadataClient();
+
+   /**
+    * @return synchronous access to {@link Metadata.Writeable} features for CatalogItems
+    */
+   @Delegate
+   MetadataClient.Writeable getCatalogItemMetadataClient();
+
 }
