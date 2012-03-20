@@ -191,9 +191,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test
    public void testEditVAppTemplate() {
-      String uid = ""+random.nextInt();
-      String name = "myname-"+uid;
-      String description = "mydescr-"+uid;
+      String name = name("myname-");
+      String description = name("Description ");
       VAppTemplate template = VAppTemplate.builder()
                .name(name)
                .description(description)
@@ -214,9 +213,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       Metadata oldMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       Map<String,String> oldMetadataMap = metadataToMap(oldMetadata);
 
-      String uid = ""+random.nextInt();
-      String key = "mykey-"+uid;
-      String val = "myval-"+uid;
+      String key = name("key-");
+      String val = name("value-");
       MetadataEntry metadataEntry = MetadataEntry.builder().entry(key, val).build();
       Metadata metadata = Metadata.builder().fromMetadata(oldMetadata).entry(metadataEntry).build();
       
@@ -235,9 +233,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    public void testEditMetadataValue() {
       // TODO Cleanup after ourselves..
       
-      String uid = ""+random.nextInt();
-      String key = "mykey-"+uid;
-      String val = "myval-"+uid;
+      String key = name("key-");
+      String val = name("value-");
       MetadataValue metadataValue = MetadataValue.builder().value(val).build();
       
       final Task task = vAppTemplateClient.getMetadataClient().setMetadata(vAppTemplateURI, key, metadataValue);
@@ -250,7 +247,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @Test
    public void testDeleteVAppTemplateMetadataValue() {
       // First store a value
-      String key = "mykey-"+random.nextInt();
+      String key = name("key-");
       MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
       final Task task = vAppTemplateClient.getMetadataClient().setMetadata(vAppTemplateURI, key, metadataValue);
       retryTaskSuccess.apply(task);
@@ -266,7 +263,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test
    public void testEditGuestCustomizationSection() {
-      String computerName = "a"+random.nextInt(Integer.MAX_VALUE);
+      String computerName = name("server-");
       GuestCustomizationSection newSection = GuestCustomizationSection.builder()
                .info("my info")
                .computerName(computerName)

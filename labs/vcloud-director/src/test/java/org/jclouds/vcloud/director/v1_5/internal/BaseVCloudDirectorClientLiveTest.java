@@ -253,7 +253,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
     * @return the VApp that is being instantiated
     */
    protected VApp instantiateVApp() {
-      return instantiateVApp("test-vapp-" + random.nextInt(Integer.MAX_VALUE));
+      return instantiateVApp(name("test-vapp-"));
    }
    
    protected VApp instantiateVApp(String name) {
@@ -395,5 +395,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
 
          logger.warn(e, "Deleting vApp failed: vApp="+vApp);
       }
+   }
+
+   public static String name(String prefix) {
+      return prefix + Integer.toString(random.nextInt(Integer.MAX_VALUE));
    }
 }

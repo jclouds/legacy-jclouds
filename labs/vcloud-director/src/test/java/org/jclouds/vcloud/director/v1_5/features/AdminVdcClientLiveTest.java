@@ -93,7 +93,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(testName = "PUT /admin/vdc/{id}", enabled=false)
    public void testEditVdc() throws Exception {
       String origName = vdcClient.getVdc(adminVdcUri).getName();
-      String newName = "a"+random.nextInt(Integer.MAX_VALUE);
+      String newName = name("a");
       Exception exception = null;
       
       AdminVdc vdc = AdminVdc.builder()
@@ -175,8 +175,8 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    // TODO insufficient permissions to test
    @Test(testName = "PUT /admin/vdc/{id}/metadata", enabled=false)
    public void testSetMetadata() throws Exception {
-      metadataKey = ""+random.nextInt(Integer.MAX_VALUE);
-      metadataValue = ""+random.nextInt(Integer.MAX_VALUE);
+      metadataKey = name("key-");
+      metadataValue = name("value-");
       Metadata metadata = Metadata.builder()
                .entry(MetadataEntry.builder().entry(metadataKey, metadataValue).build())
                .build();
@@ -200,7 +200,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    // TODO insufficient permissions to test
    @Test(testName = "PUT /admin/vdc/{id}/metadata", dependsOnMethods = { "testGetMetadataValue" }, enabled=false )
    public void testSetMetadataValue() throws Exception {
-      metadataValue = ""+random.nextInt(Integer.MAX_VALUE);
+      metadataValue = name("value-");
       MetadataValue newV = MetadataValue.builder().value(metadataValue).build();
       
       Task task = metadataClient.setMetadata(adminVdcUri, metadataKey, newV);

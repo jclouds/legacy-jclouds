@@ -29,7 +29,6 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.util.Collections;
-import java.util.Random;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
@@ -67,7 +66,6 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
     * Shared state between dependant tests.
     */
 
-   private final Random random = new Random();
    private Reference orgRef;
    private AdminCatalog catalog;
    private Owner owner;
@@ -82,7 +80,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Test(testName = "POST /admin/org/{id}/catalogs")
    public void testCreateCatalog() {
       AdminCatalog newCatalog = AdminCatalog.builder()
-         .name("Test Catalog " + random.nextInt())
+         .name(name("Test Catalog "))
          .description("created by testCreateCatalog()")
          .build();
       catalog = catalogClient.createCatalog(orgRef.getHref(), newCatalog);
@@ -196,7 +194,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
 //            String.format(OBJ_FIELD_EMPTY_TO_DELETE, "Catalog", "CatalogItems", 
 //                  catalog.getCatalogItems().getCatalogItems().toString()));
       AdminCatalog deleteCatalog = AdminCatalog.builder()
-            .name("Test Catalog " + random.nextInt())
+            .name(name("Test Catalog "))
             .description("created by testCreateCatalog()")
             .build();
       deleteCatalog = catalogClient.createCatalog(orgRef.getHref(), deleteCatalog);

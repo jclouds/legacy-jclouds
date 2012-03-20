@@ -142,7 +142,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(testName = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
    public void testModifyVApp() {
       VApp newVApp = VApp.builder()
-            .name("new-name-" + Integer.toString(random.nextInt(Integer.MAX_VALUE)))
+            .name(name("new-name-"))
             .description("New Description")
             .build();
       vAppNames.add(newVApp.getName());
@@ -1095,8 +1095,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(testName = "PUT & GET /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testSetAndGetMetadataValue() {
       // Store a value
-      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
-      String value = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+      String key = name("key-");
+      String value = name("value-");
       MetadataValue metadataValue = MetadataValue.builder().value(value).build();
       vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
 
@@ -1110,7 +1110,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetAndGetMetadataValue" })
    public void testDeleteMetadataEntry() {
       // Store a value, to be deleted
-      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+      String key = name("key-");
       MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
       vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
 
@@ -1131,8 +1131,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
 
       // Store a value, to be deleted
-      String key = Integer.toString(random.nextInt(Integer.MAX_VALUE));
-      String value = Integer.toString(random.nextInt(Integer.MAX_VALUE));
+      String key = name("key-");
+      String value = name("value-");
       Metadata addedMetadata = Metadata.builder()
             .entry(MetadataEntry.builder().key(key).value(value).build())
             .build();
