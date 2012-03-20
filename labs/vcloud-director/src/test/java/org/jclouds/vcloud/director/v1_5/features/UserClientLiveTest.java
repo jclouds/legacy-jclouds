@@ -86,10 +86,12 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "POST /admin/org/{id}/users")
    public void testCreateUser() {
-      String name = "a"+random.nextInt();
-      
+      Checks.checkUser(randomTestUser("testCreateUser"));
+   }
+
+   public static User randomTestUser(String prefix) {
       User newUser = User.builder()
-         .name(name)
+         .name(prefix+random.nextInt())
          .fullName("testFullName")
          .emailAddress("test@test.com")
          .telephone("555-1234")
@@ -106,9 +108,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .build())
          .password("password")
          .build();
-      user = userClient.createUser(orgRef.getHref(), newUser);
-      
-      Checks.checkUser(user);
+      return newUser;
    }
    
    @Test(testName = "GET /admin/user/{id}",

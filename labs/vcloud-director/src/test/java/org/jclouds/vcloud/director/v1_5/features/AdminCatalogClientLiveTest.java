@@ -23,20 +23,23 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-import java.net.URI;
+import java.util.Collections;
 import java.util.Random;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -106,24 +109,27 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Test(testName = "PUT /admin/catalog/{id}/owner",
          dependsOnMethods = { "testGetCatalog" })
    public void updateCatalogOwner() {
+      User newOwnerUser = UserClientLiveTest.randomTestUser("testUpdateCatalogOwner");
+      newOwnerUser = context.getApi().getUserClient().createUser(orgRef.getHref(), newOwnerUser);
+      assertNotNull(newOwnerUser, "failed to create temp user to test updateCatalogOwner");
+      
       Owner oldOwner = owner;
-      Owner newOwner = Owner.builder() // TODO auto-find a new owner?
+      Owner newOwner = Owner.builder() 
             .type("application/vnd.vmware.vcloud.owner+xml")
-            .user(Reference.builder()
-                  .type("application/vnd.vmware.admin.user+xml")
-                  .name("adk@cloudsoftcorp.com")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
-                  .build())
+            .user(Reference.builder().fromEntity(newOwnerUser).build())
             .build();
       
       try {
          catalogClient.setOwner(catalog.getHref(), newOwner);
          owner = catalogClient.getOwner(catalog.getHref());
          Checks.checkOwner(owner);
-         assertTrue(equal(owner, newOwner), String.format(OBJ_FIELD_UPDATABLE, CATALOG, "owner"));
+         assertTrue(equal(owner.toBuilder().links(Collections.<Link>emptySet()).build(), 
+               newOwner.toBuilder().user(newOwner.getUser().toBuilder().id(null).build()).build()), 
+            String.format(OBJ_FIELD_UPDATABLE, CATALOG, "owner"));
       } finally {
          catalogClient.setOwner(catalog.getHref(), oldOwner);
          owner = catalogClient.getOwner(catalog.getHref());
+         context.getApi().getUserClient().deleteUser(newOwnerUser.getHref());
       }
    }
    
