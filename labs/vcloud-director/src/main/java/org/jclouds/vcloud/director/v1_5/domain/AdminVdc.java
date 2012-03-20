@@ -16,31 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-
 /**
- * 
- *                 Provides an administrative view of a vDC. Includes all members
- *                 of the Vdc element, and adds several elements that can be
- *                 viewed and modified only by administrators.
- *             
- * 
- * <p>Java class for AdminVdc complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * Provides an administrative view of a vDC. Includes all members
+ * of the Vdc element, and adds several elements that can be
+ * viewed and modified only by administrators.
+ *
  * <pre>
  * &lt;complexType name="AdminVdc">
  *   &lt;complexContent>
@@ -59,11 +50,9 @@ import com.google.common.base.Objects.ToStringHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AdminVdc", propOrder = {
+@XmlRootElement(name = "AdminVdc")
+@XmlType(name = "AdminVdcType", propOrder = {
     "resourceGuaranteedMemory",
     "resourceGuaranteedCpu",
     "vCpuInMhz",
