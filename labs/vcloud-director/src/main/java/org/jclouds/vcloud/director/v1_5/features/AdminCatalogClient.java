@@ -22,9 +22,11 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
+import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 
 /**
  * Provides synchronous access to {@link AdminCatalog} objects.
@@ -32,6 +34,7 @@ import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
  * @see AdminCatalogAsyncClient
  * @author danikov
  */
+@RequestFilters(AddVCloudAuthorizationToRequest.class)
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface AdminCatalogClient extends CatalogClient {
    

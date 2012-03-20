@@ -31,12 +31,15 @@ import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.User;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
-import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
-import org.jclouds.vcloud.director.v1_5.features.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.AdminNetworkClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminQueryClient;
+import org.jclouds.vcloud.director.v1_5.features.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.GroupClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
@@ -72,6 +75,12 @@ public interface VCloudDirectorClient {
    @Delegate
    QueryClient getQueryClient();
 
+   /**
+    * @return asynchronous access to admin query features
+    */
+   @Delegate
+   AdminQueryClient getAdminQueryClient();
+   
    /**
     * @return synchronous access to {@link Org} features
     */
