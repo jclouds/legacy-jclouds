@@ -103,7 +103,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public Set<String> getLinkedServices() {
-      return ImmutableSet.of("hpcloud-compute", "hpcloud-objectstorage-lvs");
+      return ImmutableSet.of("hpcloud-compute", "hpcloud-objectstorage");
    }
 
    /**

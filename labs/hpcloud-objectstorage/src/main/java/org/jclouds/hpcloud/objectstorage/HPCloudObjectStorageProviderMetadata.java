@@ -38,7 +38,7 @@ public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getId() {
-      return "hpcloud-objectstorage-lvs";
+      return "hpcloud-objectstorage";
    }
 
    /**
