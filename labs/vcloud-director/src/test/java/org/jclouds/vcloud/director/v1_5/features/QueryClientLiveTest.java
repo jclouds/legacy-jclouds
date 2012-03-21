@@ -122,7 +122,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Set<URI> hrefs = toHrefs(queryResult);
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP_TEMPLATE, null), QueryResultVAppTemplateRecord.class);
-      assertEquals(hrefs, Collections.singleton(vAppTemplateURI), "VAppTemplates query result should have found vAppTemplate "+vAppTemplateURI);
+      assertTrue(hrefs.contains(vAppTemplateURI), "VAppTemplates query result should have found vAppTemplate "+vAppTemplateURI);
    }
 
    @Test(testName = "GET /vApps/query")
