@@ -53,6 +53,7 @@ import static org.testng.Assert.fail;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -85,7 +86,10 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
+import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
+import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswerChoice;
 import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.MsgType;
@@ -132,8 +136,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // TODO source.href vAppTemplateURI
 
       // Check status
-      Status poweredOffStatus = Status.POWERED_OFF;
-      assertEquals(vApp.getStatus(), poweredOffStatus.getValue(),String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
    /**
@@ -178,12 +181,14 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(vApp.isDeployed(), String.format(OBJ_FIELD_EQ, VAPP, "deployed", "TRUE", vApp.isDeployed().toString()));
 
       // Check status
-      Status deployedStatus = Status.POWERED_OFF;
-      assertEquals(vApp.getStatus(), deployedStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", deployedStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
    @Test(testName = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
    public void testPowerOnVApp() {
+      // Power off VApp
+      vApp = powerOff(vApp);
+
       // The method under test
       Task powerOnVApp = vAppClient.powerOn(vApp.getHref());
       assertTaskSucceedsLong(powerOnVApp);
@@ -192,12 +197,14 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = vAppClient.getVApp(vApp.getHref());
 
       // Check status
-      Status poweredOnStatus = Status.POWERED_ON;
-      assertEquals(vApp.getStatus(), poweredOnStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_ON);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testDeployVApp" })
    public void testReboot() {
+      // Power on VApp
+      vApp = powerOn(vApp);
+ 
       // The method under test
       Task reboot = vAppClient.reboot(vApp.getHref());
       assertTaskSucceedsLong(reboot);
@@ -206,14 +213,13 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = vAppClient.getVApp(vApp.getHref());
 
       // Check status
-      Status poweredOffStatus = Status.POWERED_OFF;
-      assertEquals(vApp.getStatus(), poweredOffStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVApp" })
    public void testShutdown() {
       // Power on VApp
-      powerOn();
+      vApp = powerOn(vApp);
 
       // The method under test
       Task shutdown = vAppClient.shutdown(vAppURI);
@@ -223,17 +229,16 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = vAppClient.getVApp(vAppURI);
 
       // Check status
-      Status poweredOffStatus = Status.POWERED_OFF;
-      assertEquals(vApp.getStatus(), poweredOffStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_OFF);
 
       // Power on the VApp again
-      powerOn();
+      vApp = powerOn(vApp);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVApp" })
    public void testSuspend() {
       // Power on VApp
-      powerOn();
+      vApp = powerOn(vApp);
 
       // The method under test
       Task suspend = vAppClient.suspend(vAppURI);
@@ -243,32 +248,33 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = vAppClient.getVApp(vApp.getHref());
 
       // Check status
-      Status suspendedStatus = Status.SUSPENDED;
-      assertEquals(vApp.getStatus(), suspendedStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", suspendedStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.SUSPENDED);
 
       // Power on the VApp again
-      powerOn();
+      vApp = powerOn(vApp);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testDeployVApp" })
    public void testReset() {
       // Power on VApp
-      powerOn();
+      vApp = powerOn(vApp);
 
       // The method under test
-      Task reset = vAppClient.reset(vApp.getHref());
+      Task reset = vAppClient.reset(vAppURI);
       assertTaskSucceedsLong(reset);
 
       // Get the updated VApp
-      vApp = vAppClient.getVApp(vApp.getHref());
+      vApp = vAppClient.getVApp(vAppURI);
 
       // Check status
-      Status poweredOnStatus = Status.POWERED_ON;
-      assertEquals(vApp.getStatus(), poweredOnStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOnStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_ON);
    }
 
-   @Test(testName = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testReset" })
+   @Test(testName = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
    public void testUndeployVApp() {
+      // Power on VApp
+      vApp = powerOn(vApp);
+
       UndeployVAppParams params = UndeployVAppParams.builder().build();
 
       // The method under test
@@ -276,31 +282,34 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(undeploy), String.format(TASK_COMPLETE_TIMELY, "undeploy"));
 
       // Get the updated VApp
-      vApp = vAppClient.getVApp(vApp.getHref());
+      vApp = vAppClient.getVApp(vAppURI);
 
       // Check status
       assertFalse(vApp.isDeployed(), String.format(OBJ_FIELD_EQ, VAPP, "deployed", "FALSE", vApp.isDeployed().toString()));
-
-      Status poweredOffStatus = Status.POWERED_OFF;
-      assertEquals(vApp.getStatus(), poweredOffStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
    @Test(testName = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
    public void testPowerOffVApp() {
+      // Power on VApp
+      vApp = powerOn(vApp);
+      
       // The method under test
       Task powerOffVApp = vAppClient.powerOff(vApp.getHref());
       assertTrue(retryTaskSuccess.apply(powerOffVApp), String.format(TASK_COMPLETE_TIMELY, "powerOffVApp"));
 
       // Get the updated VApp
-      vApp = vAppClient.getVApp(vApp.getHref());
+      vApp = vAppClient.getVApp(vAppURI);
 
       // Check status
-      Status poweredOffStatus = Status.POWERED_OFF;
-      assertEquals(vApp.getStatus(), poweredOffStatus.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", poweredOffStatus.toString(), Status.fromValue(vApp.getStatus()).toString()));
+      assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
-   @Test(testName = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testDeployVApp" })
    public void testConsolidateVApp() {
+      // Power on VApp
+      vApp = powerOn(vApp);
+
       // The method under test
       Task consolidateVApp = vAppClient.consolidateVApp(vApp.getHref());
       assertTrue(retryTaskSuccess.apply(consolidateVApp), String.format(TASK_COMPLETE_TIMELY, "consolidateVApp"));
@@ -344,35 +353,75 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testSuspend" })
+   @Test(testName = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
    public void testDiscardSuspendedState() {
+      // Suspend the VApp
+      vApp = suspend(vAppURI);
+      
       // The method under test
       Task discardSuspendedState = vAppClient.discardSuspendedState(vApp.getHref());
       assertTrue(retryTaskSuccess.apply(discardSuspendedState), String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/enterMaintenanceMode", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/action/enterMaintenanceMode")
    public void testEnterMaintenanceMode() {
-      // The method under test
-      vAppClient.enterMaintenanceMode(vApp.getHref());
+      // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
+      VApp temp = instantiateVApp();
+      DeployVAppParams params = DeployVAppParams.builder()
+            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
+            .notForceCustomization()
+            .notPowerOn()
+            .build();
+      Task deployVApp = vAppClient.deploy(temp.getHref(), params);
+      assertTaskSucceedsLong(deployVApp);
+      
+      try {
+         // Method under test
+         vAppClient.enterMaintenanceMode(temp.getHref());
+   
+         temp = vAppClient.getVApp(temp.getHref());
+         assertTrue(temp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "TRUE", temp.isInMaintenanceMode()));
 
-      vApp = vAppClient.getVApp(vApp.getHref());
-      assertTrue(vApp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "TRUE", vApp.isInMaintenanceMode()));
+         // Exit maintenance mode
+         vAppClient.exitMaintenanceMode(temp.getHref());
+      } finally {
+         cleanUpVApp(temp);
+      }
    }
 
    @Test(testName = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" })
    public void testExitMaintenanceMode() {
-      // The method under test
-      vAppClient.exitMaintenanceMode(vApp.getHref());
+      // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
+      VApp temp = instantiateVApp();
+      DeployVAppParams params = DeployVAppParams.builder()
+            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
+            .notForceCustomization()
+            .notPowerOn()
+            .build();
+      Task deployVApp = vAppClient.deploy(temp.getHref(), params);
+      assertTaskSucceedsLong(deployVApp);
+      
+      try {
+         // Enter maintenance mode
+         vAppClient.enterMaintenanceMode(temp.getHref());
+   
+         // Method under test
+         vAppClient.exitMaintenanceMode(temp.getHref());
 
-      vApp = vAppClient.getVApp(vApp.getHref());
-      assertFalse(vApp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", vApp.isInMaintenanceMode()));
+         temp = vAppClient.getVApp(temp.getHref());
+         assertFalse(temp.isInMaintenanceMode(), String.format(CONDITION_FMT, "InMaintenanceMode", "FALSE", temp.isInMaintenanceMode()));
+      } finally {
+         cleanUpVApp(temp);
+      }
    }
 
-   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testPowerOnVApp" })
+   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testDeployVApp" })
    public void testInstallVMwareTools() {
+      // First ensure the vApp is powered n
+      vApp = powerOn(vApp);
+
       // The method under test
-      Task installVMwareTools = vAppClient.installVMwareTools(vApp.getHref());
+      Task installVMwareTools = vAppClient.installVMwareTools(vm.getHref());
       assertTrue(retryTaskSuccess.apply(installVMwareTools), String.format(TASK_COMPLETE_TIMELY, "installVMwareTools"));
    }
 
@@ -403,8 +452,11 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "POST /vApp/{id}/action/upgradeHardwareVersion", dependsOnMethods = { "testGetVApp" })
    public void testUpgradeHardwareVersion() {
+      // Power off VApp
+      vApp = powerOff(vApp);
+
       // The method under test
-      Task upgradeHardwareVersion = vAppClient.upgradeHardwareVersion(vApp.getHref());
+      Task upgradeHardwareVersion = vAppClient.upgradeHardwareVersion(vm.getHref());
       assertTrue(retryTaskSuccess.apply(upgradeHardwareVersion), String.format(TASK_COMPLETE_TIMELY, "upgradeHardwareVersion"));
    }
 
@@ -429,11 +481,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
    public void testModifyGuestCustomizationSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // Copy existing section and update fields
-      GuestCustomizationSection oldSection = vAppClient.getGuestCustomizationSection(vmURI);
+      GuestCustomizationSection oldSection = vAppClient.getGuestCustomizationSection(vm.getHref());
       GuestCustomizationSection newSection = oldSection.toBuilder()
             .computerName("newComputerName")
             .enabled(Boolean.FALSE)
@@ -441,11 +490,11 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // The method under test
-      Task modifyGuestCustomizationSection = vAppClient.modifyGuestCustomizationSection(vmURI, newSection);
+      Task modifyGuestCustomizationSection = vAppClient.modifyGuestCustomizationSection(vm.getHref(), newSection);
       assertTrue(retryTaskSuccess.apply(modifyGuestCustomizationSection), String.format(TASK_COMPLETE_TIMELY, "modifyGuestCustomizationSection"));
 
       // Retrieve the modified section
-      GuestCustomizationSection modified = vAppClient.getGuestCustomizationSection(vmURI);
+      GuestCustomizationSection modified = vAppClient.getGuestCustomizationSection(vm.getHref());
 
       // Check the retrieved object is well formed
       checkGuestCustomizationSection(modified);
@@ -522,11 +571,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .media(Reference.builder().href(mediaURI).type(MEDIA).build())
             .build();
 
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // The method under test
-      Task insertMedia = vAppClient.insertMedia(vmURI, params);
+      Task insertMedia = vAppClient.insertMedia(vm.getHref(), params);
       assertTrue(retryTaskSuccess.apply(insertMedia), String.format(TASK_COMPLETE_TIMELY, "insertMedia"));
    }
 
@@ -537,11 +583,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .media(Reference.builder().href(mediaURI).type(MEDIA).build())
             .build();
 
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // The method under test
-      Task ejectMedia = vAppClient.ejectMedia(vmURI, params);
+      Task ejectMedia = vAppClient.ejectMedia(vm.getHref(), params);
       assertTrue(retryTaskSuccess.apply(ejectMedia), String.format(TASK_COMPLETE_TIMELY, "ejectMedia"));
    }
 
@@ -559,7 +602,6 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Copy existing section and update fields
       NetworkConfigSection oldSection = vAppClient.getNetworkConfigSection(vApp.getHref());
       NetworkConfigSection newSection = oldSection.toBuilder()
-//            .info("New NetworkConfigSection Info")
             .build();
 
       // The method under test
@@ -592,15 +634,12 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    // FIXME "Task error: Unable to perform this action. Contact your cloud administrator."
    @Test(testName = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
    public void testModifyNetworkConnectionSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // Look up a network in the Vdc
       Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
       Reference network = Iterables.getLast(networks);
 
       // Copy existing section and update fields
-      NetworkConnectionSection oldSection = vAppClient.getNetworkConnectionSection(vmURI);
+      NetworkConnectionSection oldSection = vAppClient.getNetworkConnectionSection(vm.getHref());
       NetworkConnectionSection newSection = oldSection.toBuilder()
             .networkConnection(NetworkConnection.builder()
                   .ipAddressAllocationMode(IpAddressAllocationMode.DHCP.toString())
@@ -609,11 +648,11 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // The method under test
-      Task modifyNetworkConnectionSection = vAppClient.modifyNetworkConnectionSection(vmURI, newSection);
+      Task modifyNetworkConnectionSection = vAppClient.modifyNetworkConnectionSection(vm.getHref(), newSection);
       assertTrue(retryTaskSuccess.apply(modifyNetworkConnectionSection), String.format(TASK_COMPLETE_TIMELY, "modifyNetworkConnectionSection"));
 
       // Retrieve the modified section
-      NetworkConnectionSection modified = vAppClient.getNetworkConnectionSection(vmURI);
+      NetworkConnectionSection modified = vAppClient.getNetworkConnectionSection(vm.getHref());
 
       // Check the retrieved object is well formed
       checkNetworkConnectionSection(modified);
@@ -636,21 +675,15 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetVApp" })
    public void testGetOperatingSystemSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // The method under test
-      OperatingSystemSection section = vAppClient.getOperatingSystemSection(vmURI);
+      OperatingSystemSection section = vAppClient.getOperatingSystemSection(vm.getHref());
 
       // Check the retrieved object is well formed
       checkOperatingSystemSection(section);
    }
 
-   @Test(testName = "PUT /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetOperatingSystemSection" })
+   @Test(testName = "PUT /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetOperatingSystemSection", "testModifyVirtualHardwareSection" })
    public void testModifyOperatingSystemSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // Create new OperatingSystemSection
       OperatingSystemSection newSection = OperatingSystemSection.builder()
             .info("") // NOTE Required OVF field, ignored
@@ -659,11 +692,11 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // The method under test
-      Task modifyOperatingSystemSection = vAppClient.modifyOperatingSystemSection(vmURI, newSection);
+      Task modifyOperatingSystemSection = vAppClient.modifyOperatingSystemSection(vm.getHref(), newSection);
       assertTrue(retryTaskSuccess.apply(modifyOperatingSystemSection), String.format(TASK_COMPLETE_TIMELY, "modifyOperatingSystemSection"));
 
       // Retrieve the modified section
-      OperatingSystemSection modified = vAppClient.getOperatingSystemSection(vmURI);
+      OperatingSystemSection modified = vAppClient.getOperatingSystemSection(vm.getHref());
 
       // Check the retrieved object is well formed
       checkOperatingSystemSection(modified);
@@ -738,11 +771,16 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, newSections, String.format(ENTITY_EQUAL, "ProductSectionList"));
    }
 
-   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testPowerOnVApp" })
+   // FIXME How do we force it to ask a question?
+   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testDeployVApp" })
    public void testGetPendingQuestion() {
+      // Power on VApp
+      vApp = powerOn(vAppURI);
+
       // TODO how to test?
+
       // The method under test
-      VmPendingQuestion question = vAppClient.getPendingQuestion(vApp.getHref());
+      VmPendingQuestion question = vAppClient.getPendingQuestion(vm.getHref());
 
       // Check the retrieved object is well formed
       checkVmPendingQuestion(question);
@@ -750,34 +788,39 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
    public void testAnswerQuestion() {
-      // TODO add builder
-      // VmQuestionAnswer answer = VmQuestionAnswer.builer()
-      // .build();
+      // TODO check that the question has been answered (e.g. asking for getPendingQuestion does not
+      // include our answered question).
 
-      // The method under test
-      // vAppClient.answerQuestion(vApp.getHref(), answer);
-      // TODO how to test?
+      VmPendingQuestion question = vAppClient.getPendingQuestion(vm.getHref());
+      List<VmQuestionAnswerChoice> answerChoices = question.getChoices();
+      VmQuestionAnswerChoice answerChoice = Iterables.getFirst(answerChoices, null);
+      assertNotNull(answerChoice, "Question "+question+" must have at least once answer-choice");
+      
+      VmQuestionAnswer answer = VmQuestionAnswer.builder()
+               .choiceId(answerChoice.getId())
+               .questionId(question.getQuestionId())
+               .build();
+      
+      vAppClient.answerQuestion(vm.getHref(), answer);
    }
 
    @Test(testName = "GET /vApp/{id}/runtimeInfoSection", dependsOnMethods = { "testGetVApp" })
    public void testGetRuntimeInfoSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // The method under test
-      RuntimeInfoSection section = vAppClient.getRuntimeInfoSection(vmURI);
+      RuntimeInfoSection section = vAppClient.getRuntimeInfoSection(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRuntimeInfoSection(section);
    }
 
-   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testPowerOnVApp" })
+      // FIXME If still failing, consider escalating?
+   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testDeployVApp" })
    public void testGetScreenImage() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
+      // Power on VApp
+      vApp = powerOn(vApp);
+      
       // The method under test
-      byte[] image = vAppClient.getScreenImage(vmURI);
+      byte[] image = vAppClient.getScreenImage(vm.getHref());
 
       // Check returned bytes against PNG header magic number
       byte[] pngHeaderBytes = new byte[] { (byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
@@ -788,13 +831,13 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       }
    }
 
-   @Test(testName = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testGetVApp" })
+   @Test(testName = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testDeployVApp" })
    public void testGetScreenTicket() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
+      // Power on VApp
+      vApp = powerOn(vApp);
+      
       // The method under test
-      ScreenTicket ticket = vAppClient.getScreenTicket(vmURI);
+      ScreenTicket ticket = vAppClient.getScreenTicket(vm.getHref());
 
       // Check the retrieved object is well formed
       checkScreenTicket(ticket);
@@ -832,11 +875,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVApp" })
    public void testGetVirtualHardwareSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-
       // Method under test
-      VirtualHardwareSection hardware = vAppClient.getVirtualHardwareSection(vmURI);
+      VirtualHardwareSection hardware = vAppClient.getVirtualHardwareSection(vm.getHref());
 
       // Check the retrieved object is well formed
       checkVirtualHardwareSection(hardware);
@@ -844,12 +884,13 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testModifyVirtualHardwareSection() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+      // Power off VApp
+      vApp = powerOff(vApp);
 
       // Copy existing section and update fields
-      VirtualHardwareSection oldSection = vAppClient.getVirtualHardwareSection(vmURI);
+      VirtualHardwareSection oldSection = vAppClient.getVirtualHardwareSection(vm.getHref());
       Set<ResourceAllocationSettingData> oldItems = oldSection.getItems();
+      Set<ResourceAllocationSettingData> newItems = Sets.newLinkedHashSet(oldItems);
       ResourceAllocationSettingData oldMemory = Iterables.find(oldItems, new Predicate<ResourceAllocationSettingData>() {
          @Override
          public boolean apply(ResourceAllocationSettingData rasd) {
@@ -858,9 +899,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       });
       ResourceAllocationSettingData newMemory = oldMemory.toBuilder()
             .elementName("1024 MB of memory")
-            .virtualQuantity(BigInteger.valueOf(1024L))
+            .virtualQuantity(new BigInteger("1024"))
             .build();
-      Set<ResourceAllocationSettingData> newItems = Sets.newLinkedHashSet(oldItems);
       newItems.remove(oldMemory);
       newItems.add(newMemory);
       VirtualHardwareSection newSection = oldSection.toBuilder()
@@ -868,34 +908,32 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // The method under test
-      Task modifyVirtualHardwareSection = vAppClient.modifyVirtualHardwareSection(vmURI, newSection);
+      Task modifyVirtualHardwareSection = vAppClient.modifyVirtualHardwareSection(vm.getHref(), newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSection), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSection"));
 
       // Retrieve the modified section
-      VirtualHardwareSection modifiedSection = vAppClient.getVirtualHardwareSection(vmURI);
+      VirtualHardwareSection modifiedSection = vAppClient.getVirtualHardwareSection(vm.getHref());
 
       // Check the retrieved object is well formed
       checkVirtualHardwareSection(modifiedSection);
 
       // Check the modified section fields are set correctly
-      ResourceAllocationSettingData modifiedMemory = Iterables.find(modifiedSection.getItems(), new Predicate<ResourceAllocationSettingData>() {
-         @Override
-         public boolean apply(ResourceAllocationSettingData rasd) {
-            return rasd.getResourceType() == ResourceAllocationSettingData.ResourceType.MEMORY;
-         }
-      });
-      assertEquals(modifiedMemory.getVirtualQuantity(), BigInteger.valueOf(1024L));
+      ResourceAllocationSettingData modifiedMemory = Iterables.find(modifiedSection.getItems(),
+            new Predicate<ResourceAllocationSettingData>() {
+		         @Override
+		         public boolean apply(ResourceAllocationSettingData rasd) {
+		            return rasd.getResourceType() == ResourceAllocationSettingData.ResourceType.MEMORY;
+		         }
+		      });
+      assertEquals(modifiedMemory.getVirtualQuantity(), new BigInteger("1024"));
       assertEquals(modifiedMemory, newMemory);
       assertEquals(modifiedSection, newSection);
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionCpu() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Method under test
-      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
 
       // Check the retrieved object is well formed
       checkResourceAllocationSettingData(rasd);
@@ -903,42 +941,33 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
    public void testModifyVirtualHardwareSectionCpu() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Copy existing section and update fields
-      ResourceAllocationSettingData oldItem = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData oldItem = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
       ResourceAllocationSettingData newItem = oldItem.toBuilder()
+            .elementName("2 virtual CPU(s)")
+            .virtualQuantity(new BigInteger("2"))
             .build();
       
       // Method under test
-      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vmURI, newItem);
+      Task modifyVirtualHardwareSectionCpu = vAppClient.modifyVirtualHardwareSectionCpu(vm.getHref(), newItem);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionCpu), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionCpu"));
 
       // Retrieve the modified section
-      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
       
       // Check the retrieved object
       checkResourceAllocationSettingData(modified);
       
-      // TODO What is modifiable? What can we change, so we can assert the change took effect? 
-      // I tried changing "weight", but it continued to have the value zero when looked up post-modify.
-      //
-      // long weight = random.nextInt(Integer.MAX_VALUE);
-      // ResourceAllocationSettingData newSection = origSection.toBuilder()
-      //         .weight(newCimUnsignedInt(weight))
-      //         .build();
-      // ...
-      // assertEquals(modified.getWeight().getValue(), weight, String.format(OBJ_FIELD_EQ, VAPP, "virtualHardwareSection/cpu/weight", weight, ""+modified.getWeight()));
+      // Check modified item
+      assertEquals(modified.getVirtualQuantity(), new BigInteger("2"),
+            String.format(OBJ_FIELD_EQ, "ResourceAllocationSettingData", "VirtualQuantity", "2", modified.getVirtualQuantity().toString()));
+      assertEquals(modified, newItem);
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionDisks() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Method under test
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vmURI);
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -946,19 +975,16 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSectionDisks" })
    public void testModifyVirtualHardwareSectionDisks() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Copy the existing items list and modify the name of an item
-      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionDisks(vmURI);
+      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionDisks(vm.getHref());
       RasdItemsList newSection = oldSection.toBuilder().build();
 
       // Method under test
-      Task modifyVirtualHardwareSectionDisks = vAppClient.modifyVirtualHardwareSectionDisks(vmURI, newSection);
+      Task modifyVirtualHardwareSectionDisks = vAppClient.modifyVirtualHardwareSectionDisks(vm.getHref(), newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionDisks), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionDisks"));
 
       // Retrieve the modified section
-      RasdItemsList modified = vAppClient.getVirtualHardwareSectionDisks(vmURI);
+      RasdItemsList modified = vAppClient.getVirtualHardwareSectionDisks(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRasdItemsList(modified);
@@ -985,11 +1011,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/media", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMedia() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Method under test
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vmURI);
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -997,11 +1020,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMemory() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Method under test
-      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vmURI);
+      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
 
       // Check the retrieved object is well formed
       checkResourceAllocationSettingData(rasd);
@@ -1009,34 +1029,32 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
    public void testModifyVirtualHardwareSectionMemory() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
-      ResourceAllocationSettingData origSection = vAppClient.getVirtualHardwareSectionMemory(vmURI);
-      ResourceAllocationSettingData newSection = origSection.toBuilder().build();
+      ResourceAllocationSettingData origItem = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
+      ResourceAllocationSettingData newItem = origItem.toBuilder()
+            .elementName("1024 MB of memory")
+            .virtualQuantity(new BigInteger("1024"))
+            .build();
       
       // Method under test
-      Task modifyVirtualHardwareSectionMemory = vAppClient.modifyVirtualHardwareSectionMemory(vmURI, newSection);
+      Task modifyVirtualHardwareSectionMemory = vAppClient.modifyVirtualHardwareSectionMemory(vm.getHref(), newItem);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionMemory), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionMemory"));
 
       // Retrieve the modified section
-      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionMemory(vmURI);
+      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
       
       // Check the retrieved object
       checkResourceAllocationSettingData(modified);
       
-      // TODO What is modifiable? What can we change, so we can assert the change took effect? 
-      // I tried changing "weight", but it continued to have the value zero when looked up post-modify.
-      // See description under testModifyVirtualHardwareSectionMemoryCpu
+      // Check modified item
+      assertEquals(modified.getVirtualQuantity(), new BigInteger("1024"),
+            String.format(OBJ_FIELD_EQ, "ResourceAllocationSettingData", "VirtualQuantity", "1024", modified.getVirtualQuantity().toString()));
+      assertEquals(modified, newItem);
    }
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionNetworkCards() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Method under test
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -1044,18 +1062,15 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSectionNetworkCards" })
    public void testModifyVirtualHardwareSectionNetworkCards() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
-      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
+      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionNetworkCards(vm.getHref());
       RasdItemsList newSection = oldSection.toBuilder().build();
 
       // Method under test
-      Task modifyVirtualHardwareSectionNetworkCards = vAppClient.modifyVirtualHardwareSectionNetworkCards(vmURI, newSection);
+      Task modifyVirtualHardwareSectionNetworkCards = vAppClient.modifyVirtualHardwareSectionNetworkCards(vm.getHref(), newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionNetworkCards), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionNetworkCards"));
 
       // Retrieve the modified section
-      RasdItemsList modified = vAppClient.getVirtualHardwareSectionNetworkCards(vmURI);
+      RasdItemsList modified = vAppClient.getVirtualHardwareSectionNetworkCards(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRasdItemsList(modified);
@@ -1067,11 +1082,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "GET /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionSerialPorts() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
       // Method under test
-      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
+      RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRasdItemsList(rasdItems);
@@ -1079,18 +1091,15 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSectionSerialPorts" })
    public void testModifyVirtualHardwareSectionSerialPorts() {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
-      
-      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
+      RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionSerialPorts(vm.getHref());
       RasdItemsList newSection = oldSection.toBuilder().build();
 
       // Method under test
-      Task modifyVirtualHardwareSectionSerialPorts = vAppClient.modifyVirtualHardwareSectionSerialPorts(vmURI, newSection);
+      Task modifyVirtualHardwareSectionSerialPorts = vAppClient.modifyVirtualHardwareSectionSerialPorts(vm.getHref(), newSection);
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionSerialPorts), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionSerialPorts"));
 
       // Retrieve the modified section
-      RasdItemsList modified = vAppClient.getVirtualHardwareSectionSerialPorts(vmURI);
+      RasdItemsList modified = vAppClient.getVirtualHardwareSectionSerialPorts(vm.getHref());
 
       // Check the retrieved object is well formed
       checkRasdItemsList(modified);
@@ -1108,8 +1117,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkMetadataFor(VAPP, metadata);
    }
 
-   @Test(testName = "PUT & GET /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
-   public void testSetAndGetMetadataValue() {
+   @Test(testName = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
+   public void testSetMetadataValue() {
       // Store a value
       String key = name("key-");
       String value = name("value-");
@@ -1123,7 +1132,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkMetadataValueFor(VAPP, newMetadataValue, value);
    }
 
-   @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetAndGetMetadataValue" })
+   @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testDeleteMetadataEntry() {
       // Store a value, to be deleted
       String key = name("key-");
@@ -1173,13 +1182,6 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    public void testDeleteVApp() {
       // Create a temporary VApp to delete
       VApp temp = instantiateVApp();
-      DeployVAppParams params = DeployVAppParams.builder()
-            .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
-            .notForceCustomization()
-            .notPowerOn()
-            .build();
-      Task deployVApp = vAppClient.deploy(temp.getHref(), params);
-      assertTrue(retryTaskSuccessLong.apply(deployVApp), String.format(TASK_COMPLETE_TIMELY, "deployVApp"));
 
       // The method under test
       Task deleteVApp = vAppClient.deleteVApp(temp.getHref());
@@ -1187,18 +1189,9 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
       try {
          vAppClient.getVApp(temp.getHref());
-         fail("The VApp should have been deleted");
+         fail("The VApp "+temp+" should have been deleted");
       } catch (VCloudDirectorException vcde) {
-         assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The error code should have been 'Forbidden' (403)");
-      }
-   }
-
-   private void powerOn() {
-      vApp = vAppClient.getVApp(vAppURI); // Refresh
-      Status status = Status.fromValue(vApp.getStatus());
-      if (status != Status.POWERED_ON) {
-         Task powerOn = vAppClient.powerOn(vAppURI);
-         assertTaskSucceedsLong(powerOn);
+         assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The error code for deleted vApp should have been 'Forbidden' (403)");
       }
    }
 }
