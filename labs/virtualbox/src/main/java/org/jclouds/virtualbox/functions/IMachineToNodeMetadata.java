@@ -88,17 +88,17 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       for (String nameProtocolnumberAddressInboudportGuestTargetport : natAdapter.getNatDriver().getRedirects()) {
          Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
          String protocolNumber = Iterables.get(stuff, 1);
-         String hostAddress = Iterables.get(stuff, 2);
          String inboundPort = Iterables.get(stuff, 3);
          String targetPort = Iterables.get(stuff, 5);
          if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
             int inPort = Integer.parseInt(inboundPort);
-            ipTermination = inPort % NodeCreator.NODE_PORT_INIT;
-            nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
+            ipTermination = inPort % NodeCreator.NODE_PORT_INIT + 2;
+//            nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
          }
       }
 
       nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
+      nodeMetadataBuilder.publicAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
 
       LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
       nodeMetadataBuilder.credentials(loginCredentials);

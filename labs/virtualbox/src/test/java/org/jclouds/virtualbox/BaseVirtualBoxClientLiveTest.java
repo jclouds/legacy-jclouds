@@ -119,10 +119,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    protected void ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults() {
-      Properties defaultVBoxProperties = new VirtualBoxPropertiesBuilder().build();
       if (!System.getProperties().containsKey("test." + provider + ".identity"))
-         System.setProperty("test." + provider + ".identity",
-                  defaultVBoxProperties.getProperty(Constants.PROPERTY_IDENTITY));
+         System.setProperty("test." + provider + ".identity", "administrator");
    }
 
    @BeforeClass(groups = "live")

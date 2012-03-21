@@ -248,7 +248,8 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @VisibleForTesting
    public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
-            .<MachineState, NodeState> builder().put(MachineState.Running, NodeState.RUNNING)
+            .<MachineState, NodeState> builder()
+            .put(MachineState.Running, NodeState.RUNNING)
             .put(MachineState.PoweredOff, NodeState.SUSPENDED)
             .put(MachineState.DeletingSnapshot, NodeState.PENDING)
             .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
@@ -260,12 +261,15 @@ public class VirtualBoxComputeServiceContextModule extends
             .put(MachineState.Stopping, NodeState.PENDING)
             .put(MachineState.Restoring, NodeState.PENDING)
             // TODO What to map these states to?
-            .put(MachineState.FirstOnline, NodeState.PENDING).put(MachineState.FirstTransient, NodeState.PENDING)
-            .put(MachineState.LastOnline, NodeState.PENDING).put(MachineState.LastTransient, NodeState.PENDING)
-            .put(MachineState.Teleported, NodeState.PENDING).put(MachineState.TeleportingIn, NodeState.PENDING)
-            .put(MachineState.TeleportingPausedVM, NodeState.PENDING).put(MachineState.Aborted, NodeState.ERROR)
+            .put(MachineState.FirstOnline, NodeState.PENDING)
+            .put(MachineState.FirstTransient, NodeState.PENDING)
+            .put(MachineState.LastOnline, NodeState.PENDING)
+            .put(MachineState.LastTransient, NodeState.PENDING)
+            .put(MachineState.Teleported, NodeState.PENDING)
+            .put(MachineState.TeleportingIn, NodeState.PENDING)
+            .put(MachineState.TeleportingPausedVM, NodeState.PENDING)
+            .put(MachineState.Aborted, NodeState.ERROR)
             .put(MachineState.Stuck, NodeState.ERROR)
-
             .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
 
 }
