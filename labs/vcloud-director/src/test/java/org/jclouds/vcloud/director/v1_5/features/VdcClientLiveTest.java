@@ -307,7 +307,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
    }
    
-   @Test(testName = "admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
+   @Test(testName = "vdcClient admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
    public void testSetupMetadata() {
       context.getApi().getAdminVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
