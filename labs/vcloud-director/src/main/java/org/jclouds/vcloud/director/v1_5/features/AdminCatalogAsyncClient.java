@@ -129,10 +129,10 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
          @BinderParam(BindToXMLPayload.class) PublishCatalogParams params);
 
    /**
-    * @return synchronous access to {@link Metadata.Writable} features
+    * @return synchronous access to {@link Metadata.Writeable} features
     */
    @Override
    @Delegate
-   MetadataAsyncClient.Writable getMetadataClient();
+   MetadataAsyncClient.Writeable getMetadataClient();
 
 }

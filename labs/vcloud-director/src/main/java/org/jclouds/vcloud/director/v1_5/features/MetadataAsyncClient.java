@@ -74,7 +74,7 @@ public interface MetadataAsyncClient {
    }
    
    @RequestFilters(AddVCloudAuthorizationToRequest.class)
-   public static interface Writable extends Readable {
+   public static interface Writeable extends Readable {
       /**
        * @see MetadataClient.Writable#mergeMetadata(URI, Metadata))
        */

@@ -119,5 +119,5 @@ public interface MediaAsyncClient {
    * @return asynchronous access to {@link Metadata.Writeable} features
    */
    @Delegate
-   MetadataAsyncClient.Writable getMetadataClient();
+   MetadataAsyncClient.Writeable getMetadataClient();
 }

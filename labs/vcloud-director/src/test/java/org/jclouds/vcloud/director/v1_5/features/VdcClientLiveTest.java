@@ -104,6 +104,9 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       if (composedVApp != null) {
          cleanUpVApp(composedVApp);
       }
+      
+      context.getApi().getAdminVdcClient().getMetadataClient()
+         .deleteMetadataEntry(toAdminUri(vdcURI), "key");
    }
 
    @Override
@@ -304,7 +307,13 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
    }
    
-   @Test(testName = "GET /network/{id}/metadata")
+   @Test(dependsOnMethods = { "testGetVdc" } )
+   public void testSetupMetadata() {
+      context.getApi().getAdminVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
+            "key", MetadataValue.builder().value("value").build());
+   }
+   
+   @Test(testName = "GET /network/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
    public void testGetMetadata() {
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
       
