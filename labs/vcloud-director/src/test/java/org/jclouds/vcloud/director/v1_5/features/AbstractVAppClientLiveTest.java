@@ -31,10 +31,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
@@ -64,7 +61,6 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * Shared code to test the behaviour of {@link VAppClient} and {@link VAppTemplateClient}.

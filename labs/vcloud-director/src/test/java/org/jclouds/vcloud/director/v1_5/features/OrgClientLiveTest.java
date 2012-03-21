@@ -110,7 +110,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkOrg(org);
    }
    
-   @Test(dependsOnMethods = { "testGetOrg" })
+   @Test(testName = "orgClient admin metadata setup", dependsOnMethods = { "testGetOrg" })
    public void testSetupMetadata() {
       context.getApi().getAdminOrgClient().getMetadataClient().setMetadata(toAdminUri(orgURI), 
             "KEY", MetadataValue.builder().value("VALUE").build()); 

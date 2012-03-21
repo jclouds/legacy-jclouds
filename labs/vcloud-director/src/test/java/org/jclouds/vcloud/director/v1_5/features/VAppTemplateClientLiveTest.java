@@ -92,7 +92,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       return clonedVappTemplate;
    }
 
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}")
    public void testGetVAppTemplate() {
       vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       
@@ -100,7 +100,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(vAppTemplate.getHref(), vAppTemplateURI);
    }
    
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/owner")
    public void testGetVAppTemplateOwner() {
       Owner owner = vAppTemplateClient.getOwnerOfVAppTemplate(vAppTemplateURI);
       
@@ -108,21 +108,21 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(owner.getUser(), vAppTemplateClient.getVAppTemplate(vAppTemplateURI).getOwner().getUser());
    }
    
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/customizationSection")
    public void testGetCustomizationSection() {
       CustomizationSection customizationSection = vAppTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI);
       
       checkCustomizationSection(customizationSection);
    }
    
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/productSections")
    public void testGetProductSections() {
       ProductSectionList productSectionList = vAppTemplateClient.getProductSectionsForVAppTemplate(vAppTemplateURI);
       
       checkProductSectionList(productSectionList);
    }
    
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}/productSections")
    public void testEditProductSections() {
       // TODO make a real modification
       
@@ -146,7 +146,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       });
    }
    
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/leaseSettingsSection")
    public void testGetLeaseSettingsSection() {
       // FIXME Wrong case for Vapp
       LeaseSettingsSection leaseSettingsSection = vAppTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
@@ -154,14 +154,15 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkLeaseSettingsSection(leaseSettingsSection);
    }
    
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/metadata")
    public void testGetVAppTemplateMetadata() {
       Metadata metadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       
       checkMetadata(metadata);
    }
 
-   @Test // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
+   // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
+   @Test(testName = "GET /vAppTemplate/{id}/metadata/{key}")
    public void testGetMetadataValue() {
       Metadata metadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
@@ -172,7 +173,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(val.getValue(), entry.getValue());
    }
    
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/networkConfigSection")
    public void testGetVAppTemplateNetworkConfigSection() {
       NetworkConfigSection networkConfigSection = vAppTemplateClient.getVAppTemplateNetworkConfigSection(vAppTemplateURI);
       
@@ -189,21 +190,21 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       });
    }
 
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/networkSection")
    public void testGetVAppTemplateNetworkSection() {
       NetworkSection networkSection = vAppTemplateClient.getVAppTemplateNetworkSection(vAppTemplateURI);
 
       checkOvfNetworkSection(networkSection);
    }
 
-   @Test
+   @Test(testName = "GET /vAppTemplate/{id}/ovf")
    public void testGetVAppTemplateOvf() {
       Envelope envelope = vAppTemplateClient.getVAppTemplateOvf(vAppTemplateURI);
       
       checkOvfEnvelope(envelope);
    }
 
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}")
    public void testEditVAppTemplate() {
       String name = name("myname-");
       String description = name("Description ");
@@ -220,7 +221,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(newTemplate.getDescription(), description);
    }
 
-   @Test
+   @Test(testName = "POST /vAppTemplate/{id}/metadata")
    public void testEditMetadata() {
       // TODO Cleanup after ourselves..
       
@@ -243,7 +244,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkMetadataFor("vAppTemplate", newMetadata, expectedMetadataMap);
    }
    
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}/metadata/{key}")
    public void testEditMetadataValue() {
       // TODO Cleanup after ourselves..
       
@@ -258,7 +259,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(newMetadataValue.getValue(), metadataValue.getValue());
    }
 
-   @Test
+   @Test(testName = "DELETE /vAppTemplate/{id}/metadata/{key}")
    public void testDeleteVAppTemplateMetadataValue() {
       // First store a value
       String key = name("key-");
@@ -275,7 +276,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkMetadataKeyAbsentFor("vAppTemplate", newMetadata, key);
    }
 
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}/guestCustomizationSection")
    public void testEditGuestCustomizationSection() {
       String computerName = name("server-");
       GuestCustomizationSection newSection = GuestCustomizationSection.builder()
@@ -292,7 +293,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified.getComputerName(), computerName);
    }
    
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}/customizationSection")
    public void testEditCustomizationSection() {
       boolean oldVal = vAppTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI).isCustomizeOnInstantiate();
       boolean newVal = !oldVal;
@@ -310,7 +311,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    }
 
    // FIXME deploymentLeaseInSeconds returned is null
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}/leaseSettingsSection")
    public void testEditLeaseSettingsSection() throws Exception {
       int deploymentLeaseInSeconds = random.nextInt(10000)+1;
       
@@ -330,7 +331,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer)deploymentLeaseInSeconds);
    }
 
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}/networkConfigSection")
    public void testEditNetworkConfigSection() {
       // TODO What to modify?
       
@@ -363,7 +364,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 //      assertEquals(newVAppNetworkConfig.getNetworkName(), networkName);
    }
 
-   @Test
+   @Test(testName = "PUT /vAppTemplate/{id}/networkConnectionSection")
    public void testEditNetworkConnectionSection() {
       // TODO Modify a field so can assert that the change really took effect
       
@@ -378,7 +379,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkNetworkConnectionSection(modified);
    }
    
-   @Test // FIXME cloneVAppTemplate is giving back 500 error
+   @Test(testName = "DELETE /vAppTemplate/{id}") // FIXME cloneVAppTemplate is giving back 500 error
    public void testDeleteVAppTemplate() throws Exception {
       VAppTemplate clonedVappTemplate = cloneVAppTemplate(true);
 
@@ -398,7 +399,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       }
    }
 
-   @Test
+   @Test(testName = "POST /vAppTemplate/{id}/action/disableDownload")
    public void testDisableVAppTemplateDownload() throws Exception {
       vAppTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
       
@@ -412,7 +413,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       //    assertFalse(hasLinkMatchingRel(links, "download.*"), "Should not offer download link after disabling download: "+vAppTemplate);
    }
    
-   @Test
+   @Test(testName = "POST /vAppTemplate/{id}/action/enableDownload")
    public void testEnableVAppTemplateDownload() throws Exception {
       // First disable so that enable really has some work to do...
       vAppTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
@@ -439,7 +440,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       return false;
    }
    
-   @Test
+   @Test(testName = "POST /vAppTemplate/{id}/action/consolidate")
    public void testConsolidateVAppTemplate() throws Exception {
       // TODO Need assertion that command had effect
       
@@ -448,7 +449,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertTaskSucceedsLong(task);
    }
    
-   @Test // FIXME Need a datastore reference
+   @Test(testName = "POST /vAppTemplate/{id}/action/relocate") // FIXME Need a datastore reference
    public void testRelocateVAppTemplate() throws Exception {
       // TODO Need assertion that command had effect
       Reference dataStore = null; // FIXME
@@ -462,7 +463,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    // This failed previously, but is passing now. 
    // However, it's not part of the official API so not necessary to assert it.
-   @Test 
+   @Test(testName = "test completed task not included in vAppTemplate") 
    public void testCompletedTaskNotIncludedInVAppTemplate() throws Exception {
       // Kick off a task, and wait for it to complete
       vAppTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);

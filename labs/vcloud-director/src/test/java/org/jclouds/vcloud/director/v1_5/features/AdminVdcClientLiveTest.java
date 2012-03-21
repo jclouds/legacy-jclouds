@@ -165,7 +165,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "PUT /admin/vdc/{id}/metadata")
+   @Test(testName = "GET /admin/vdc/{id}/metadata")
    public void testGetMetadata() throws Exception {
       Metadata metadata = metadataClient.getMetadata(adminVdcUri);
 
@@ -190,7 +190,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "PUT /admin/vdc/{id}/metadata", dependsOnMethods = { "testSetMetadata" }, enabled=false)
+   @Test(testName = "GET /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadata" }, enabled=false)
    public void testGetMetadataValue() throws Exception {
       MetadataValue retrievedMetadataValue = metadataClient.getMetadataValue(adminVdcUri, metadataKey);
          
@@ -198,7 +198,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "PUT /admin/vdc/{id}/metadata", dependsOnMethods = { "testGetMetadataValue" }, enabled=false )
+   @Test(testName = "PUT /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" }, enabled=false )
    public void testSetMetadataValue() throws Exception {
       metadataValue = name("value-");
       MetadataValue newV = MetadataValue.builder().value(metadataValue).build();
@@ -211,7 +211,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "PUT /admin/vdc/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" }, enabled=false )
+   @Test(testName = "DELETE /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" }, enabled=false )
    public void testDeleteMetadataValue() throws Exception {
       // TODO Remove dependency on other tests; make cleanUp delete a list of metadata entries?
       
