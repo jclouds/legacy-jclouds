@@ -106,6 +106,12 @@ public class NovaTemplateOptionsTest {
    }
 
    @Test
+   public void testGenerateKeyPairDefault() {
+      NovaTemplateOptions options = new NovaTemplateOptions();
+      assert !options.shouldGenerateKeyPair();
+   }
+
+   @Test
    public void testGenerateKeyPair() {
       NovaTemplateOptions options = new NovaTemplateOptions().generateKeyPair(true);
       assert options.shouldGenerateKeyPair();
