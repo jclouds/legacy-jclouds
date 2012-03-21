@@ -77,6 +77,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -112,6 +113,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected Session session;
 
    protected String catalogName;
+   protected String catalogId;
    protected String networkName;
    protected String userName;
 
@@ -166,6 +168,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    @SuppressWarnings("unchecked")
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
       catalogName = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-name"));
+      catalogId = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
       networkName = Strings.emptyToNull(System.getProperty("test." + provider + ".network-name"));
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
@@ -201,11 +204,20 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
             networkURI = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
 
-         if (catalogName == null)
+         if (Strings.isNullOrEmpty(networkName))
+            networkName = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getName();
+
+         if (Strings.isNullOrEmpty(catalogName))
             catalogName = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getName();
 
-         // TODO look for default networkName
+         // FIXME the URI should be opaque
+         if (Strings.isNullOrEmpty(catalogId)) {
+            String uri = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getHref().toASCIIString();
+            catalogId = Iterables.getLast(Splitter.on('/').split(uri));
+         }
       }
    }
 
