@@ -31,6 +31,7 @@ import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.EnableCDNAndCache;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
@@ -55,7 +56,7 @@ public class HPCloudObjectStorageBlobStore extends SwiftBlobStore {
    @Inject
    protected HPCloudObjectStorageBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             Supplier<Location> defaultLocation, @Memoized Supplier<Set<? extends Location>> locations,
-            CommonSwiftClient sync, ContainerToResourceMetadata container2ResourceMd,
+            HPCloudObjectStorageClient sync, ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
