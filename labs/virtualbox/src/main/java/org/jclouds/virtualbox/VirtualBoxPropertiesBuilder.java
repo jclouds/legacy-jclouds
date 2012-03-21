@@ -19,7 +19,7 @@
 
 package org.jclouds.virtualbox;
 
-import static org.jclouds.Constants.*;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_IMAGE_AUTHENTICATE_SUDO;

@@ -133,7 +133,6 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 
          machineUtils.applyForMachine(machine.getName(), new LaunchMachineIfNotAlreadyRunning(manager.get(),
                   ExecutionType.GUI, ""));
-            
          sshClientForIMachine = injector.getInstance(IMachineToSshClient.class);
          SshClient client = sshClientForIMachine.apply(machine);
 
