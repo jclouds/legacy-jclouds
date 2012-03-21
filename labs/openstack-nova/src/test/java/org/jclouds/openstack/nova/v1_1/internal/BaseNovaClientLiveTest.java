@@ -21,7 +21,6 @@ package org.jclouds.openstack.nova.v1_1.internal;
 import java.util.Properties;
 
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.rest.RestContext;
@@ -52,7 +51,7 @@ public class BaseNovaClientLiveTest extends BaseVersionedServiceLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new RestContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()), overrides);
+            ImmutableSet.<Module> of(getLoggingModule(), new SshjSshClientModule()), overrides);
    }
 
    @AfterGroups(groups = "live")

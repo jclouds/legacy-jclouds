@@ -63,12 +63,6 @@
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jclouds.driver</groupId>
-          <artifactId>jclouds-log4j</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jclouds.labs</groupId>
