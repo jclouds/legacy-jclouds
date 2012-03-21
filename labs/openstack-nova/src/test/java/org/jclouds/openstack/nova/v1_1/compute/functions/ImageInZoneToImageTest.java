@@ -30,8 +30,8 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;

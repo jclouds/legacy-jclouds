@@ -27,20 +27,47 @@ import java.util.Set;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * An image is a collection of files you use to create or rebuild a server.
- * Operators provide pre-built OS images by default. You may also create custom
- * images.
+ * An image is a collection of files you use to create or rebuild a server. Operators provide
+ * pre-built OS images by default. You may also create custom images.
  * 
  * @author Jeremy Daggett
- * @see <a href=
- *      "http://docs.openstack.org/api/openstack-compute/1.1/content/Images-d1e4427.html"
+ * @see <a href= "http://docs.openstack.org/api/openstack-compute/1.1/content/Images-d1e4427.html"
  *      />
  */
 public class Image extends Resource {
+   /**
+    * In-flight images will have the status attribute set to SAVING and the conditional progress
+    * element (0-100% completion) will also be returned. Other possible values for the status
+    * attribute include: UNKNOWN, ACTIVE, SAVING, ERROR, and DELETED. Images with an ACTIVE status
+    * are available for install. The optional minDisk and minRam attributes set the minimum disk and
+    * RAM requirements needed to create a server with the image.
+    * 
+    * @author Adrian Cole
+    */
+   public static enum Status {
+
+      UNRECOGNIZED, UNKNOWN, ACTIVE, SAVING, ERROR, DELETED;
+
+      public String value() {
+         return name();
+      }
+
+      public static Status fromValue(String v) {
+         try {
+            return valueOf(v);
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+
+   }
+
    public static Builder builder() {
       return new Builder();
    }
@@ -55,12 +82,12 @@ public class Image extends Resource {
       private Date created;
       private String tenantId;
       private String userId;
-      private ImageStatus status;
+      private Status status;
       private int progress;
       private int minDisk;
       private int minRam;
       private Resource server;
-      private Map<String, String> metadata = Maps.newHashMap();
+      private Map<String, String> metadata = Maps.newLinkedHashMap();
 
       public Builder updated(Date updated) {
          this.updated = updated;
@@ -82,7 +109,7 @@ public class Image extends Resource {
          return this;
       }
 
-      public Builder status(ImageStatus status) {
+      public Builder status(Status status) {
          this.status = status;
          return this;
       }
@@ -114,12 +141,12 @@ public class Image extends Resource {
 
       public Image build() {
          return new Image(id, name, links, updated, created, tenantId, userId, status, progress, minDisk, minRam,
-               server, metadata);
+                  server, metadata);
       }
 
       public Builder fromImage(Image in) {
-         return fromResource(in).status(in.getStatus()).updated(in.getUpdated()).created(in.getCreated())
-               .progress(in.getProgress()).server(in.getServer()).metadata(in.getMetadata());
+         return fromResource(in).status(in.getStatus()).updated(in.getUpdated()).created(in.getCreated()).progress(
+                  in.getProgress()).server(in.getServer()).metadata(in.getMetadata());
       }
 
       /**
@@ -155,21 +182,21 @@ public class Image extends Resource {
       }
    }
 
-   private Date updated;
-   private Date created;
+   private final Date updated;
+   private final Date created;
    @SerializedName("tenant_id")
-   private String tenantId;
+   private final String tenantId;
    @SerializedName("user_id")
-   private String userId;
-   private ImageStatus status;
-   private int progress;
-   private int minDisk;
-   private int minRam;
-   private Resource server;
-   private Map<String, String> metadata = Maps.newHashMap();
+   private final String userId;
+   private final Status status;
+   private final int progress;
+   private final int minDisk;
+   private final int minRam;
+   private final Resource server;
+   private final Map<String, String> metadata;
 
    protected Image(String id, String name, Set<Link> links, Date updated, Date created, String tenantId, String userId,
-         ImageStatus status, int progress, int minDisk, int minRam, Resource server, Map<String, String> metadata) {
+            Status status, int progress, int minDisk, int minRam, Resource server, Map<String, String> metadata) {
       super(id, name, links);
       this.updated = updated;
       this.created = created;
@@ -180,7 +207,7 @@ public class Image extends Resource {
       this.minDisk = minDisk;
       this.minRam = minRam;
       this.server = server;
-      this.metadata = metadata;
+      this.metadata = ImmutableMap.<String, String> copyOf(metadata);
    }
 
    public Date getUpdated() {
@@ -199,7 +226,7 @@ public class Image extends Resource {
       return this.userId;
    }
 
-   public ImageStatus getStatus() {
+   public Status getStatus() {
       return this.status;
    }
 
@@ -220,15 +247,16 @@ public class Image extends Resource {
    }
 
    public Map<String, String> getMetadata() {
-      return this.metadata;
+      // in case this was assigned in gson
+      return ImmutableMap.copyOf(Maps.filterValues(this.metadata, Predicates.notNull()));
    }
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("name", name).add("links", links).add("updated", updated)
-            .add("created", created).add("tenantId", tenantId).add("userId", userId).add("status", status)
-            .add("progress", progress).add("minDisk", minDisk).add("minRam", minRam).add("server", server)
-            .add("metadata", metadata).toString();
+      return toStringHelper("").add("id", id).add("name", name).add("links", links).add("updated", updated).add(
+               "created", created).add("tenantId", tenantId).add("userId", userId).add("status", status).add(
+               "progress", progress).add("minDisk", minDisk).add("minRam", minRam).add("server", server).add(
+               "metadata", metadata).toString();
    }
 
 }

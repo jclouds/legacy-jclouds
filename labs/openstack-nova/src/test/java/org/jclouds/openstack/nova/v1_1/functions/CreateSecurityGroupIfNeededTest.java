@@ -25,9 +25,9 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.SecurityGroupInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneSecurityGroupNameAndPorts;
-import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupInZone;
+import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.SecurityGroupInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseComputeServiceTypicalSecurityGroupTest;
 import org.testng.annotations.Test;
@@ -35,32 +35,32 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "CreateSecurityGroupInZoneExpectTest")
-public class CreateSecurityGroupInZoneExpectTest extends BaseNovaClientExpectTest {
+@Test(groups = "unit", testName = "CreateSecurityGroupIfNeededTest")
+public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
+   HttpRequest createSecurityGroup = HttpRequest.builder().method("POST").endpoint(
+            URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
+            ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                     authToken).build())
+            .payload(
+                     payloadFromStringWithContentType(
+                              "{\"security_group\":{\"name\":\"jclouds#mygroup\",\"description\":\"jclouds#mygroup\"}}",
+                              "application/json")).build();
 
-   public void testUpdateReferenceWhenSecurityGroupListContainsGroupName() throws Exception {
+   public void testCreateNewGroup() throws Exception {
 
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse>builder();
       
       builder.put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess);
       builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
-      
-      HttpRequest createSecurityGroup = HttpRequest.builder().method("POST").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build())
-               .payload(
-                        payloadFromStringWithContentType(
-                                 "{\"security_group\":{\"name\":\"jclouds#mygroup\",\"description\":\"jclouds#mygroup\"}}",
-                                 "application/json")).build();
       int groupId = 2769;
-      
+
       HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200)
                .payload(
                         payloadFromStringWithContentType(
@@ -68,7 +68,7 @@ public class CreateSecurityGroupInZoneExpectTest extends BaseNovaClientExpectTes
                                  "application/json; charset=UTF-8")).build();
 
       builder.put(createSecurityGroup, createSecurityGroupResponse);
-
+      
       int ruleId = 10331;
       
       for (int port : ImmutableList.of(22,8080)){
@@ -110,25 +110,61 @@ public class CreateSecurityGroupInZoneExpectTest extends BaseNovaClientExpectTes
       }
       
       HttpRequest getSecurityGroup = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/os-security-groups/"+groupId)).headers(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups/" + groupId)).headers(
                ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
                         authToken).build()).build();
 
       HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_details_computeservice_typical.json")).build();
-    
+      
       builder.put(getSecurityGroup, getSecurityGroupResponse);
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(builder.build());
+      NovaClient clientCanCreateSecurityGroup = requestsSendResponses(builder.build());
 
-      CreateSecurityGroupInZone fn = new CreateSecurityGroupInZone(clientWhenSecurityGroupsExist);
+      CreateSecurityGroupIfNeeded fn = new CreateSecurityGroupIfNeeded(clientCanCreateSecurityGroup);
 
       // we can find it
       assertEquals(fn.apply(
-               new ZoneSecurityGroupNameAndPorts("az-1.region-a.geo-1", "jclouds#mygroup", ImmutableList.of(22, 8080)))
+               new ZoneSecurityGroupNameAndPorts("az-1.region-a.geo-1", "jclouds#mygroup", ImmutableSet.of(22, 8080)))
                .toString(), new SecurityGroupInZone(new ParseComputeServiceTypicalSecurityGroupTest().expected(),
                "az-1.region-a.geo-1").toString());
 
    }
 
+   public void testReturnExistingGroupOnAlreadyExists() throws Exception {
+
+      Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse>builder();
+      
+      builder.put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess);
+      builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
+
+      HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(400)
+               .payload(
+                        payloadFromStringWithContentType(
+                                 "{\"badRequest\": {\"message\": \"Security group test already exists\", \"code\": 400}}",
+                                 "application/json; charset=UTF-8")).build();
+
+      builder.put(createSecurityGroup, createSecurityGroupResponse);
+          
+      HttpRequest listSecurityGroups = HttpRequest.builder().method("GET").endpoint(
+               URI.create("https://compute.north.host/v1.1/3456/os-security-groups")).headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
+                        authToken).build()).build();
+
+      HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
+               payloadFromResource("/securitygroup_list_details_computeservice_typical.json")).build();
+
+      builder.put(listSecurityGroups, listSecurityGroupsResponse);
+
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(builder.build());
+
+      CreateSecurityGroupIfNeeded fn = new CreateSecurityGroupIfNeeded(clientWhenSecurityGroupsExist);
+
+      // we can find it
+      assertEquals(fn.apply(
+               new ZoneSecurityGroupNameAndPorts("az-1.region-a.geo-1", "jclouds#mygroup", ImmutableSet.of(22, 8080)))
+               .toString(), new SecurityGroupInZone(new ParseComputeServiceTypicalSecurityGroupTest().expected(),
+               "az-1.region-a.geo-1").toString());
+
+   }
 }

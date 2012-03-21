@@ -34,8 +34,8 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 import org.jclouds.rest.InsufficientResourcesException;
 

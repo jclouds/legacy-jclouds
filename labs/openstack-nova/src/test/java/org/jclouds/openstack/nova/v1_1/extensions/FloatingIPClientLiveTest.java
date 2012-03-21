@@ -28,7 +28,7 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
@@ -136,7 +136,7 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    private void blockUntilServerActive(String serverId, ServerClient client) throws InterruptedException {
       Server currentDetails = null;
-      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != Status.ACTIVE; currentDetails = client
             .getServer(serverId)) {
          System.out.printf("blocking on status active%n%s%n", currentDetails);
          Thread.sleep(5 * 1000);

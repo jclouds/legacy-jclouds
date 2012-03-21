@@ -45,7 +45,6 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_API_VERSION, "1.1");
       properties.setProperty(PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS, "false");
       properties.setProperty(PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT, "500");
-
       return properties;
    }
 

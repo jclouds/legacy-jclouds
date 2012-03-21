@@ -22,8 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
 
 import com.google.common.base.Function;

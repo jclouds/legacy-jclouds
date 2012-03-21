@@ -16,33 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.domain;
+package org.jclouds.openstack.nova.v1_1.predicates;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.openstack.nova.v1_1.predicates.ImagePredicates.statusEquals;
 
-import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
+import org.jclouds.openstack.nova.v1_1.domain.Image.Status;
+import org.jclouds.openstack.nova.v1_1.parse.ParseImageTest;
+import org.testng.annotations.Test;
 
 /**
+ * 
  * @author Adrian Cole
  */
-public class SecurityGroupInZone extends ZoneAndName {
-   protected final SecurityGroup securityGroup;
+@Test(groups = "unit", testName = "ImagePredicatesTest")
+public class ImagePredicatesTest {
+   Image ref = new ParseImageTest().expected();
 
-   public SecurityGroupInZone(SecurityGroup securityGroup, String zoneId) {
-      super(zoneId, checkNotNull(securityGroup, "securityGroup").getName());
-      this.securityGroup = securityGroup;
+   @Test
+   public void teststatusEqualsWhenEqual() {
+      assert statusEquals(Status.SAVING).apply(ref);
    }
 
-   public SecurityGroup getServer() {
-      return securityGroup;
-   }
-
-   // superclass hashCode/equals are good enough, and help us use ZoneAndName and ServerInZone
-   // interchangeably as Map keys
-
-   @Override
-   public String toString() {
-      return "[securityGroup=" + securityGroup + ", zoneId=" + zoneId + "]";
+   @Test
+   public void teststatusEqualsWhenNotEqual() {
+      assert !statusEquals(Status.DELETED).apply(ref);
    }
 
 }

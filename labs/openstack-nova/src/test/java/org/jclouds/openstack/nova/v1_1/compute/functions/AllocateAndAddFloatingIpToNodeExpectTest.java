@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Matt Stephenson
  */
 @Test(groups = "unit", testName = "AllocateAndAddFloatingIpToNodeTest")
-public class AllocateAndAddFloatingIpToNodeTest extends BaseNovaComputeServiceExpectTest {
+public class AllocateAndAddFloatingIpToNodeExpectTest extends BaseNovaComputeServiceExpectTest {
    final Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("openstack-nova").description(
             "openstack-nova").build();
    final Location zone = new LocationBuilder().id("az-1.region-a.geo-1").description("az-1.region-a.geo-1").scope(

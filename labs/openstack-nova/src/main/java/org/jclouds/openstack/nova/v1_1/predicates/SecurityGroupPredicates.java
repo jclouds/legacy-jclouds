@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,33 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.domain;
+package org.jclouds.openstack.nova.v1_1.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.openstack.nova.v1_1.domain.Image;
+import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
+
+import com.google.common.base.Predicate;
 
 /**
+ * Predicates handy when working with SecurityGroups
+ * 
  * @author Adrian Cole
  */
-public class ImageInZone extends ZoneAndId {
-   protected final Image server;
 
-   public ImageInZone(Image server, String zoneId) {
-      super(zoneId, checkNotNull(server, "server").getId());
-      this.server = server;
+public class SecurityGroupPredicates {
+
+   /**
+    * matches name of the given extension
+    * 
+    * @param name
+    * @return predicate that matches name
+    */
+   public static Predicate<SecurityGroup> nameEquals(final String name) {
+      checkNotNull(name, "name must be defined");
+
+      return new Predicate<SecurityGroup>() {
+         @Override
+         public boolean apply(SecurityGroup ext) {
+            return name.equals(ext.getName());
+         }
+
+         @Override
+         public String toString() {
+            return "nameEquals(" + name + ")";
+         }
+      };
    }
-
-   public Image getImage() {
-      return server;
-   }
-
-   // superclass hashCode/equals are good enough, and help us use ZoneAndId and ImageInZone
-   // interchangeably as Map keys
-
-   @Override
-   public String toString() {
-      return "[server=" + server + ", zoneId=" + zoneId + "]";
-   }
-
 }

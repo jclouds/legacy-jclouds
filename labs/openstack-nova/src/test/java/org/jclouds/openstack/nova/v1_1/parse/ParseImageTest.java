@@ -27,11 +27,11 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
-import org.jclouds.openstack.nova.v1_1.domain.ImageStatus;
+import org.jclouds.openstack.nova.v1_1.domain.Image.Status;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
@@ -63,7 +63,7 @@ public class ParseImageTest extends BaseItemParserTest<Image> {
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2010-08-10T12:00:00Z"))
             .tenantId("12345")
             .userId("joe")
-            .status(ImageStatus.SAVING)
+            .status(Status.SAVING)
             .progress(80)
             .minDisk(5)
             .minRam(256)

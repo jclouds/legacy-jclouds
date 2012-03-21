@@ -34,10 +34,6 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.location.Zone;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.FlavorInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
@@ -45,12 +41,17 @@ import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
+import org.jclouds.openstack.nova.v1_1.predicates.ImagePredicates;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import static com.google.common.collect.Iterables.*;
 import com.google.common.collect.ImmutableSet.Builder;
 
 /**
@@ -103,7 +104,7 @@ public class NovaComputeServiceAdapter implements
    public Iterable<FlavorInZone> listHardwareProfiles() {
       Builder<FlavorInZone> builder = ImmutableSet.<FlavorInZone> builder();
       for (final String zoneId : zoneIds.get()) {
-         builder.addAll(Iterables.transform(novaClient.getFlavorClientForZone(zoneId).listFlavorsInDetail(),
+         builder.addAll(transform(novaClient.getFlavorClientForZone(zoneId).listFlavorsInDetail(),
                   new Function<Flavor, FlavorInZone>() {
 
                      @Override
@@ -120,15 +121,15 @@ public class NovaComputeServiceAdapter implements
    public Iterable<ImageInZone> listImages() {
       Builder<ImageInZone> builder = ImmutableSet.<ImageInZone> builder();
       for (final String zoneId : zoneIds.get()) {
-         builder.addAll(Iterables.transform(novaClient.getImageClientForZone(zoneId).listImagesInDetail(),
-                  new Function<Image, ImageInZone>() {
+         builder.addAll(transform(filter(novaClient.getImageClientForZone(zoneId).listImagesInDetail(), ImagePredicates
+                  .statusEquals(Image.Status.ACTIVE)), new Function<Image, ImageInZone>() {
 
-                     @Override
-                     public ImageInZone apply(Image arg0) {
-                        return new ImageInZone(arg0, zoneId);
-                     }
+            @Override
+            public ImageInZone apply(Image arg0) {
+               return new ImageInZone(arg0, zoneId);
+            }
 
-                  }));
+         }));
       }
       return builder.build();
    }
@@ -137,7 +138,7 @@ public class NovaComputeServiceAdapter implements
    public Iterable<ServerInZone> listNodes() {
       Builder<ServerInZone> builder = ImmutableSet.<ServerInZone> builder();
       for (final String zoneId : zoneIds.get()) {
-         builder.addAll(Iterables.transform(novaClient.getServerClientForZone(zoneId).listServersInDetail(),
+         builder.addAll(transform(novaClient.getServerClientForZone(zoneId).listServersInDetail(),
                   new Function<Server, ServerInZone>() {
 
                      @Override

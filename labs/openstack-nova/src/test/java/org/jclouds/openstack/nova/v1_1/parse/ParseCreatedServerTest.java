@@ -31,7 +31,7 @@ import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
@@ -62,7 +62,7 @@ public class ParseCreatedServerTest extends BaseItemParserTest<Server> {
             .name("test-e92")
             .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-03-19T06:21:13Z"))
             .created(new SimpleDateFormatDateService().iso8601SecondsDateParse("2012-03-19T06:21:13Z"))
-            .status(ServerStatus.BUILD)
+            .status(Status.BUILD)
             .adminPass("ZWuHcmTMQ7eXoHeM")
             .image(
                   Resource

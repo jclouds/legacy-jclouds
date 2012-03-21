@@ -20,8 +20,13 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
+import java.net.Inet4Address;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -42,16 +47,16 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
+import com.google.common.net.InetAddresses;
 
 /**
  * A function for transforming a nova-specific Server into a generic NodeMetadata object.
@@ -97,15 +102,29 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.operatingSystem(findOperatingSystemForServerOrNull(serverInZone));
       builder.hardware(findHardwareForServerOrNull(serverInZone));
       builder.state(from.getStatus().getNodeState());
-      builder.publicAddresses(getPublicAddresses(serverInZone));
-      builder.privateAddresses(Iterables.transform(from.getPrivateAddresses(),
-               AddressToStringTransformationFunction.INSTANCE));
+      builder.publicAddresses(filter(getPublicAddresses(serverInZone), isInet4Address));
+      builder.privateAddresses(filter(transform(from.getPrivateAddresses(),
+               AddressToStringTransformationFunction.INSTANCE), isInet4Address));
 
       return builder.build();
    }
 
+   public static final Predicate<String> isInet4Address = new Predicate<String>() {
+      @Override
+      public boolean apply(String input) {
+         try {
+            // Note we can do this, as InetAddress is now on the white list
+            return (InetAddresses.forString(input) instanceof Inet4Address);
+         } catch (IllegalArgumentException e) {
+            // could be a hostname
+            return true;
+         }
+      }
+
+   };
+
    protected Iterable<String> getPublicAddresses(ServerInZone serverInZone) {
-      return Iterables.concat(Iterables.transform(serverInZone.getServer().getPublicAddresses(),
+      return concat(transform(serverInZone.getServer().getPublicAddresses(),
                AddressToStringTransformationFunction.INSTANCE), floatingIpCache.getUnchecked(serverInZone));
    }
 
@@ -131,7 +150,7 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
    public <T extends ComputeMetadata> T findObjectOfTypeForServerOrNull(Set<? extends T> supply, String type,
             final String objectId, final ZoneAndId serverInZone) {
       try {
-         return Iterables.find(supply, new Predicate<T>() {
+         return find(supply, new Predicate<T>() {
             @Override
             public boolean apply(T input) {
                return input.getId().equals(ZoneAndId.fromZoneAndId(serverInZone.getZone(), objectId).slashEncode());

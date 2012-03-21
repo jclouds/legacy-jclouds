@@ -29,7 +29,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Location;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -55,8 +55,8 @@ public class ImageInZoneToImage implements Function<ImageInZone, Image> {
       Location location = locationIndex.get().get(imageInZone.getZone());
       checkState(location != null, "location %s not in locationIndex: %s", imageInZone.getZone(), locationIndex.get());
       org.jclouds.openstack.nova.v1_1.domain.Image image = imageInZone.getImage();
-      return new ImageBuilder()
-               .id(imageInZone.slashEncode()).providerId(image.getId()).name(image.getName()).operatingSystem(
-                        imageToOs.apply(image)).description(image.getName()).location(location).build();
+      return new ImageBuilder().id(imageInZone.slashEncode()).providerId(image.getId()).name(image.getName())
+               .userMetadata(image.getMetadata()).operatingSystem(imageToOs.apply(image)).description(image.getName())
+               .location(location).build();
    }
 }

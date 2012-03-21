@@ -30,8 +30,8 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.domain.Location;
-import org.jclouds.openstack.nova.v1_1.compute.domain.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;

@@ -29,8 +29,8 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaComputeServiceContextExpectTest;
 import org.testng.annotations.Test;
 

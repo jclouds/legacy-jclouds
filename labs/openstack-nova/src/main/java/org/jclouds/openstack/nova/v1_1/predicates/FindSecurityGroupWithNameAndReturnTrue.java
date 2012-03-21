@@ -29,9 +29,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.SecurityGroupInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.SecurityGroupInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
 import org.jclouds.rest.ResourceNotFoundException;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,33 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.domain;
+package org.jclouds.openstack.nova.v1_1.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.openstack.nova.v1_1.domain.Flavor;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
+import org.jclouds.openstack.nova.v1_1.domain.Image.Status;
+
+import com.google.common.base.Predicate;
 
 /**
+ * Predicates handy when working with Images
+ * 
  * @author Adrian Cole
  */
-public class FlavorInZone extends ZoneAndId {
-   protected final Flavor image;
 
-   public FlavorInZone(Flavor image, String zoneId) {
-      super(zoneId, checkNotNull(image, "image").getId());
-      this.image = image;
+public class ImagePredicates {
+
+   /**
+    * matches status of the given image
+    * 
+    * @param status
+    * @return predicate that matches status
+    */
+   public static Predicate<Image> statusEquals(final Status status) {
+      checkNotNull(status, "status must be defined");
+
+      return new Predicate<Image>() {
+         @Override
+         public boolean apply(Image image) {
+            return status.equals(image.getStatus());
+         }
+
+         @Override
+         public String toString() {
+            return "statusEquals(" + status + ")";
+         }
+      };
    }
-
-   public Flavor getFlavor() {
-      return image;
-   }
-
-   // superclass hashCode/equals are good enough, and help us use ZoneAndId and FlavorInZone
-   // interchangeably as Map keys
-
-   @Override
-   public String toString() {
-      return "[image=" + image + ", zoneId=" + zoneId + "]";
-   }
-
 }

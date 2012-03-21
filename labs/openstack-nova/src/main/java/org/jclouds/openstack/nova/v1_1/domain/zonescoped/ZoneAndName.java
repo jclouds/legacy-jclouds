@@ -16,12 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.domain;
+package org.jclouds.openstack.nova.v1_1.domain.zonescoped;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Objects.ToStringHelper;
@@ -33,6 +34,25 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class ZoneAndName {
+   
+   public final static Function<ZoneAndName, String> NAME_FUNCTION = new Function<ZoneAndName, String>(){
+
+      @Override
+      public String apply(ZoneAndName input) {
+         return input.getName();
+      }
+      
+   };
+   
+   public final static Function<ZoneAndName, String> ZONE_FUNCTION = new Function<ZoneAndName, String>(){
+
+      @Override
+      public String apply(ZoneAndName input) {
+         return input.getZone();
+      }
+      
+   };
+   
    public static ZoneAndName fromSlashEncoded(String name) {
       Iterable<String> parts = Splitter.on('/').split(checkNotNull(name, "name"));
       checkArgument(Iterables.size(parts) == 2, "name must be in format zoneId/name");

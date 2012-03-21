@@ -16,32 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.domain;
+package org.jclouds.openstack.nova.v1_1.domain.zonescoped;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.openstack.nova.v1_1.domain.Server;
 
 /**
- * In-flight images will have the status attribute set to SAVING and the
- * conditional progress element (0-100% completion) will also be returned. Other
- * possible values for the status attribute include: UNKNOWN, ACTIVE, SAVING,
- * ERROR, and DELETED. Images with an ACTIVE status are available for install.
- * The optional minDisk and minRam attributes set the minimum disk and RAM
- * requirements needed to create a server with the image.
- * 
  * @author Adrian Cole
  */
-public enum ImageStatus {
+public class ServerInZone extends ZoneAndId {
+   protected final Server server;
 
-   UNRECOGNIZED, UNKNOWN, ACTIVE, SAVING, ERROR, DELETED;
-
-   public String value() {
-      return name();
+   public ServerInZone(Server server, String zoneId) {
+      super(zoneId, checkNotNull(server, "server").getId());
+      this.server = server;
    }
 
-   public static ImageStatus fromValue(String v) {
-      try {
-         return valueOf(v);
-      } catch (IllegalArgumentException e) {
-         return UNRECOGNIZED;
-      }
+   public Server getServer() {
+      return server;
+   }
+
+   // superclass hashCode/equals are good enough, and help us use ZoneAndId and ServerInZone
+   // interchangeably as Map keys
+
+   @Override
+   public String toString() {
+      return "[server=" + server + ", zoneId=" + zoneId + "]";
    }
 
 }

@@ -27,12 +27,12 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.domain.Link;
-import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.domain.Link.Relation;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.ServerStatus;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
@@ -66,7 +66,7 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
             .hostId("e4d909c290d0fb1ca068ffaddf22cbd0")
             .accessIPv4("67.23.10.132")
             .accessIPv6("::babe:67.23.10.132")
-            .status(ServerStatus.BUILD)
+            .status(Status.BUILD)
             .image(
                   Resource
                         .builder()

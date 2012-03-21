@@ -16,29 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.domain;
+package org.jclouds.openstack.nova.v1_1.domain.zonescoped;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  */
 public class ZoneSecurityGroupNameAndPorts extends ZoneAndName {
-   protected final List<Integer> ports;
+   protected final Set<Integer> ports;
 
-   public ZoneSecurityGroupNameAndPorts(String zoneId, String name, List<Integer> ports) {
+   public ZoneSecurityGroupNameAndPorts(String zoneId, String name, Iterable<Integer> ports) {
       super(zoneId, name);
-      this.ports = ImmutableList.<Integer> copyOf(checkNotNull(ports, "ports"));
+      this.ports = ImmutableSet.<Integer> copyOf(checkNotNull(ports, "ports"));
    }
 
-   public List<Integer> getPorts() {
+   public Set<Integer> getPorts() {
       return ports;
    }
 

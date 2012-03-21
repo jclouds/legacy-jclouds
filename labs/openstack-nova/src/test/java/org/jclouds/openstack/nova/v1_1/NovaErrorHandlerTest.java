@@ -65,6 +65,17 @@ public class NovaErrorHandlerTest {
                IllegalStateException.class);
    }
    
+   @Test
+   public void test400MakesIllegalStateExceptionOnAlreadyExists() {
+      assertCodeMakes(
+               "POST",
+               URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers"),
+               400,
+               "HTTP/1.1 400 Bad Request",
+               "{\"badRequest\": {\"message\": \"Server with the name 'test' already exists\", \"code\": 400}}",
+               IllegalStateException.class);
+   }
+   
    
    @Test
    public void test400MakesInsufficientResourcesExceptionOnQuotaExceeded() {

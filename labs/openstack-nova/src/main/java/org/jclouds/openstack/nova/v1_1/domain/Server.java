@@ -26,22 +26,19 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Multimaps2;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -57,6 +54,47 @@ import com.google.gson.annotations.SerializedName;
  *      />
  */
 public class Server extends Resource {
+
+   /**
+    * Servers contain a status attribute that can be used as an indication of the current server
+    * state. Servers with an ACTIVE status are available for use.
+    * 
+    * Other possible values for the status attribute include: BUILD, REBUILD, SUSPENDED, RESIZE,
+    * VERIFY_RESIZE, REVERT_RESIZE, PASSWORD, REBOOT, HARD_REBOOT, DELETED, UNKNOWN, and ERROR.
+    * 
+    * @author Adrian Cole
+    */
+   public static enum Status {
+
+      ACTIVE(NodeState.RUNNING), BUILD(NodeState.PENDING), REBUILD(NodeState.PENDING), SUSPENDED(NodeState.SUSPENDED), RESIZE(
+               NodeState.PENDING), VERIFY_RESIZE(NodeState.PENDING), REVERT_RESIZE(NodeState.PENDING), PASSWORD(
+               NodeState.PENDING), REBOOT(NodeState.PENDING), HARD_REBOOT(NodeState.PENDING), DELETED(
+               NodeState.TERMINATED), UNKNOWN(NodeState.UNRECOGNIZED), ERROR(NodeState.ERROR), UNRECOGNIZED(
+               NodeState.UNRECOGNIZED);
+
+      private final NodeState nodeState;
+
+      Status(NodeState nodeState) {
+         this.nodeState = nodeState;
+      }
+
+      public String value() {
+         return name();
+      }
+
+      public static Status fromValue(String v) {
+         try {
+            return valueOf(v.replaceAll("\\(.*", ""));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
+
+      public NodeState getNodeState() {
+         return nodeState;
+      }
+   }
+
    public static Builder builder() {
       return new Builder();
    }
@@ -74,7 +112,7 @@ public class Server extends Resource {
       private String hostId;
       private String accessIPv4;
       private String accessIPv6;
-      private ServerStatus status;
+      private Status status;
       private String configDrive;
       private Resource image;
       private Resource flavor;
@@ -151,7 +189,7 @@ public class Server extends Resource {
       /**
        * @see Server#getStatus()
        */
-      public Builder status(ServerStatus status) {
+      public Builder status(Status status) {
          this.status = status;
          return this;
       }
@@ -309,7 +347,7 @@ public class Server extends Resource {
    protected final String hostId;
    protected final String accessIPv4;
    protected final String accessIPv6;
-   protected final ServerStatus status;
+   protected final Status status;
    protected final Resource image;
    protected final Resource flavor;
    protected final String adminPass;
@@ -323,8 +361,8 @@ public class Server extends Resource {
 
    protected Server(String id, String name, Set<Link> links, @Nullable String uuid, String tenantId, String userId,
             Date updated, Date created, @Nullable String hostId, @Nullable String accessIPv4,
-            @Nullable String accessIPv6, ServerStatus status, @Nullable String configDrive, Resource image,
-            Resource flavor, String adminPass, @Nullable String keyName, Multimap<Address.Type, Address> addresses,
+            @Nullable String accessIPv6, Status status, @Nullable String configDrive, Resource image, Resource flavor,
+            String adminPass, @Nullable String keyName, Multimap<Address.Type, Address> addresses,
             Map<String, String> metadata) {
       super(id, name, links);
       this.uuid = uuid; // TODO: see what version this came up in
@@ -390,7 +428,7 @@ public class Server extends Resource {
       return Strings.emptyToNull(this.accessIPv6);
    }
 
-   public ServerStatus getStatus() {
+   public Status getStatus() {
       return this.status;
    }
 
@@ -408,7 +446,8 @@ public class Server extends Resource {
    }
 
    public Map<String, String> getMetadata() {
-      return this.metadata;
+      // in case this was assigned in gson
+      return ImmutableMap.copyOf(Maps.filterValues(this.metadata, Predicates.notNull()));
    }
 
    /**
@@ -439,29 +478,7 @@ public class Server extends Resource {
     * @return the ip addresses assigned to the server
     */
    public Multimap<Type, Address> getAddresses() {
-      ImmutableSetMultimap.Builder<Type, Address> returnMapBuilder = new ImmutableSetMultimap.Builder<Type, Address>();
-
-      Set<Address> publicAddresses = addresses.get(Address.Type.PUBLIC);
-      Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
-      if (publicAddresses != null) {
-         returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(publicAddresses, Predicates
-                  .not(IsPrivateAddress.INSTANCE)));
-      }
-      if (privateAddresses != null) {
-         returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
-         returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates
-                  .not(IsPrivateAddress.INSTANCE)));
-      }
-      ImmutableSetMultimap<Type, Address> returnMap = returnMapBuilder.build();
-
-      return returnMap.size() > 0 ? returnMap : Multimaps2.fromOldSchool(addresses);
-   }
-
-   private static enum IsPrivateAddress implements Predicate<Address> {
-      INSTANCE;
-      public boolean apply(Address in) {
-         return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
-      }
+      return Multimaps2.fromOldSchool(addresses);
    }
 
    /**

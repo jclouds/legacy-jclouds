@@ -35,9 +35,9 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.parse.ParseCreatedServerTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
 import org.testng.annotations.Test;
@@ -134,8 +134,8 @@ public class ServerInZoneToNodeMetadataTest {
       assertEquals(convertedNodeMetadata.getPrivateAddresses(), ImmutableSet.of("10.176.42.16"));
 
       assertNotNull(convertedNodeMetadata.getPublicAddresses());
-      assertEquals(convertedNodeMetadata.getPublicAddresses(), ImmutableSet.of("67.23.10.132", "::babe:67.23.10.132",
-               "67.23.10.131", "::babe:4317:0A83", "::babe:10.176.42.16"));
+      // note jclouds doesn't yet support ipv6 b/c not tested yet
+      assertEquals(convertedNodeMetadata.getPublicAddresses(), ImmutableSet.of("67.23.10.132", "67.23.10.131"));
 
       assertNotNull(convertedNodeMetadata.getUserMetadata());
       assertEquals(convertedNodeMetadata.getUserMetadata(), ImmutableMap.<String, String> of("Server Label",

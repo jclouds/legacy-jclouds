@@ -204,7 +204,25 @@ public class NodePredicates {
          }
       };
    }
+   
+   /**
+    * Return nodes who have a value for {@link NodeMetadata#getGroup}
+    * 
+    */
+   public static Predicate<NodeMetadata> hasGroup() {
+      return new Predicate<NodeMetadata>() {
+         @Override
+         public boolean apply(NodeMetadata nodeMetadata) {
+            return nodeMetadata.getGroup() != null;
+         }
 
+         @Override
+         public String toString() {
+            return "hasGroup()";
+         }
+      };
+   }
+   
    /**
     * Return nodes with specified group that are in the NODE_RUNNING state.
     * 

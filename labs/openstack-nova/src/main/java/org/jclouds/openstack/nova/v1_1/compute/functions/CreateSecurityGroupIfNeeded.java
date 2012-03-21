@@ -20,6 +20,8 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.find;
+import static org.jclouds.openstack.nova.v1_1.predicates.SecurityGroupPredicates.nameEquals;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -29,11 +31,11 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.domain.SecurityGroupInZone;
-import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneSecurityGroupNameAndPorts;
 import org.jclouds.openstack.nova.v1_1.domain.Ingress;
 import org.jclouds.openstack.nova.v1_1.domain.IpProtocol;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.SecurityGroupInZone;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
 
 import com.google.common.base.Function;
@@ -44,14 +46,14 @@ import com.google.common.base.Optional;
  * @author Adrian Cole
  */
 @Singleton
-public class CreateSecurityGroupInZone implements Function<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone> {
+public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final NovaClient novaClient;
 
    @Inject
-   public CreateSecurityGroupInZone(NovaClient novaClient) {
+   public CreateSecurityGroupIfNeeded(NovaClient novaClient) {
       this.novaClient = checkNotNull(novaClient, "novaClient");
    }
 
@@ -62,16 +64,24 @@ public class CreateSecurityGroupInZone implements Function<ZoneSecurityGroupName
       String zoneId = zoneSecurityGroupNameAndPorts.getZone();
       Optional<SecurityGroupClient> client = novaClient.getSecurityGroupExtensionForZone(zoneId);
       checkArgument(client.isPresent(), "Security groups are required, but the extension is not available!");
-
       logger.debug(">> creating securityGroup %s", zoneSecurityGroupNameAndPorts);
-      SecurityGroup securityGroup = client.get().createSecurityGroupWithNameAndDescription(
-               zoneSecurityGroupNameAndPorts.getName(), zoneSecurityGroupNameAndPorts.getName());
+      try {
 
-      logger.debug("<< created securityGroup(%s)", securityGroup);
-      for (int port : zoneSecurityGroupNameAndPorts.getPorts()) {
-         authorizeGroupToItselfAndAllIPsToTCPPort(client.get(), securityGroup, port);
+         SecurityGroup securityGroup = client.get().createSecurityGroupWithNameAndDescription(
+                  zoneSecurityGroupNameAndPorts.getName(), zoneSecurityGroupNameAndPorts.getName());
+
+         logger.debug("<< created securityGroup(%s)", securityGroup);
+         for (int port : zoneSecurityGroupNameAndPorts.getPorts()) {
+            authorizeGroupToItselfAndAllIPsToTCPPort(client.get(), securityGroup, port);
+         }
+         return new SecurityGroupInZone(client.get().getSecurityGroup(securityGroup.getId()), zoneId);
+      } catch (IllegalStateException e) {
+         logger.trace("<< trying to find securityGroup(%s): %s", zoneSecurityGroupNameAndPorts, e.getMessage());
+         SecurityGroup group = find(client.get().listSecurityGroups(), nameEquals(zoneSecurityGroupNameAndPorts
+                  .getName()));
+         logger.debug("<< reused securityGroup(%s)", group.getId());
+         return new SecurityGroupInZone(group, zoneId);
       }
-      return new SecurityGroupInZone(client.get().getSecurityGroup(securityGroup.getId()), zoneId);
    }
 
    private void authorizeGroupToItselfAndAllIPsToTCPPort(SecurityGroupClient securityGroupClient,

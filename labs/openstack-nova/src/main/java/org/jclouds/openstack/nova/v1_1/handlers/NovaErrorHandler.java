@@ -55,6 +55,8 @@ public class NovaErrorHandler implements HttpErrorHandler {
                exception = new InsufficientResourcesException(message, exception);
             else if (message.indexOf("has no fixed_ips") != -1)
                exception = new IllegalStateException(message, exception);
+            else if (message.indexOf("already exists") != -1)
+               exception = new IllegalStateException(message, exception);
             break;
          case 401:
          case 403:
