@@ -51,6 +51,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
@@ -58,6 +59,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.testng.annotations.Test;
@@ -277,9 +279,9 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test
    public void testEditGuestCustomizationSection() {
-      String computerName = name("server-");
+      String computerName = name("n_");
       GuestCustomizationSection newSection = GuestCustomizationSection.builder()
-               .info("my info")
+               .info("")
                .computerName(computerName)
                .build();
       
@@ -298,7 +300,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       boolean newVal = !oldVal;
       
       CustomizationSection customizationSection = CustomizationSection.builder()
-               .info("my info")
+               .info("")
                .customizeOnInstantiate(newVal)
                .build();
       
@@ -365,13 +367,20 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test
    public void testEditNetworkConnectionSection() {
-      // TODO Modify a field so can assert that the change really took effect
-      
-      NetworkConnectionSection oldSection = vAppTemplateClient.getVAppTemplateNetworkConnectionSection(vm.getHref());
+      // Look up a network in the Vdc
+      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Reference network = Iterables.getLast(networks);
+
+      // Copy existing section and update fields
+      NetworkConnectionSection oldSection = vAppClient.getNetworkConnectionSection(vm.getHref());
       NetworkConnectionSection newSection = oldSection.toBuilder()
-               .build();
+            .networkConnection(NetworkConnection.builder()
+                  .ipAddressAllocationMode(IpAddressAllocationMode.DHCP.toString())
+                  .network(network.getName())
+                  .build())
+            .build();
       
-      final Task task = vAppTemplateClient.editVAppTemplateNetworkConnectionSection(vm.getHref(), newSection);
+      Task task = vAppTemplateClient.editVAppTemplateNetworkConnectionSection(vm.getHref(), newSection);
       assertTaskSucceeds(task);
 
       NetworkConnectionSection modified = vAppTemplateClient.getVAppTemplateNetworkConnectionSection(vm.getHref());
@@ -441,11 +450,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test
    public void testConsolidateVAppTemplate() throws Exception {
-      // TODO Need assertion that command had effect
-      
-      System.out.println("About to try to consolidate "+vm);
       final Task task = vAppTemplateClient.consolidateVappTemplate(vm.getHref());
       assertTaskSucceedsLong(task);
+      
+      // TODO Need assertion that command had effect
    }
    
    @Test // FIXME Need a datastore reference
@@ -460,25 +468,21 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertTaskSucceedsLong(task);
    }
    
-   // This failed previously, but is passing now. 
-   // However, it's not part of the official API so not necessary to assert it.
    @Test 
    public void testCompletedTaskNotIncludedInVAppTemplate() throws Exception {
       // Kick off a task, and wait for it to complete
       vAppTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
       final Task task = vAppTemplateClient.enableDownloadVappTemplate(vAppTemplateURI);
-      retryTaskSuccess.apply(task);
+      assertTaskDoneEventually(task);
 
       // Ask the VAppTemplate for its tasks, and the status of the matching task if it exists
       VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       Set<Task> tasks = vAppTemplate.getTasks();
-      if (tasks != null) {
-         for (Task contender : tasks) {
-            if (task.getId().equals(contender.getId())) {
-               String status = contender.getStatus();
-               if (status.equals(Task.Status.QUEUED) || status.equals(Task.Status.PRE_RUNNING) || status.equals(Task.Status.RUNNING)) {
-                  fail("Task "+contender+" reported complete, but is included in VAppTemplate in status "+status);
-               }
+      for (Task contender : tasks) {
+         if (task.getId().equals(contender.getId())) {
+            String status = contender.getStatus();
+            if (status.equals(Task.Status.QUEUED) || status.equals(Task.Status.PRE_RUNNING) || status.equals(Task.Status.RUNNING)) {
+               fail("Task "+contender+" reported complete, but is included in VAppTemplate in status "+status);
             }
          }
       }

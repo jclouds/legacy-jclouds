@@ -435,7 +435,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Copy existing section and update fields
       GuestCustomizationSection oldSection = vAppClient.getGuestCustomizationSection(vmURI);
       GuestCustomizationSection newSection = oldSection.toBuilder()
-            .computerName("newComputerName")
+            .computerName(name("n_"))
             .enabled(Boolean.FALSE)
             .adminPassword(null) // Not allowed
             .build();
