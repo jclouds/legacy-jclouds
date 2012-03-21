@@ -748,7 +748,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkVmPendingQuestion(question);
    }
 
-   @Test(testName = "PUT /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
+   @Test(testName = "POST /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
    public void testAnswerQuestion() {
       // TODO add builder
       // VmQuestionAnswer answer = VmQuestionAnswer.builer()
