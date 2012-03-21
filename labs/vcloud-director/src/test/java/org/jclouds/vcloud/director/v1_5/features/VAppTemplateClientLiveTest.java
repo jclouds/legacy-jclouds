@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
+import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
@@ -55,6 +56,7 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.References;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -154,7 +156,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkLeaseSettingsSection(leaseSettingsSection);
    }
    
-   @Test(testName = "GET /vAppTemplate/{id}/metadata")
+   @Test(testName = "GET /vAppTemplate/{id}/metadata", dependsOnMethods = { "testEditMetadataValue" })
    public void testGetVAppTemplateMetadata() {
       Metadata metadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       
@@ -162,7 +164,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    }
 
    // implicitly tested by testEditVAppTemplateMetadataValue, which first creates the metadata entry; otherwise no entry may exist
-   @Test(testName = "GET /vAppTemplate/{id}/metadata/{key}")
+   @Test(testName = "GET /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetVAppTemplateMetadata" })
    public void testGetMetadataValue() {
       Metadata metadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       MetadataEntry entry = Iterables.get(metadata.getMetadataEntries(), 0);
@@ -221,7 +223,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(newTemplate.getDescription(), description);
    }
 
-   @Test(testName = "POST /vAppTemplate/{id}/metadata")
+   @Test(testName = "POST /vAppTemplate/{id}/metadata", dependsOnMethods = { "testGetVAppTemplate" })
    public void testEditMetadata() {
       // TODO Cleanup after ourselves..
       
@@ -244,7 +246,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkMetadataFor("vAppTemplate", newMetadata, expectedMetadataMap);
    }
    
-   @Test(testName = "PUT /vAppTemplate/{id}/metadata/{key}")
+   @Test(testName = "PUT /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testEditMetadata" })
    public void testEditMetadataValue() {
       // TODO Cleanup after ourselves..
       
@@ -259,7 +261,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(newMetadataValue.getValue(), metadataValue.getValue());
    }
 
-   @Test(testName = "DELETE /vAppTemplate/{id}/metadata/{key}")
+   @Test(testName = "DELETE /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" })
    public void testDeleteVAppTemplateMetadataValue() {
       // First store a value
       String key = name("key-");
@@ -379,7 +381,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       checkNetworkConnectionSection(modified);
    }
    
-   @Test(testName = "DELETE /vAppTemplate/{id}") // FIXME cloneVAppTemplate is giving back 500 error
+   // FIXME cloneVAppTemplate is giving back 500 error
+   @Test(testName = "DELETE /vAppTemplate/{id}", dependsOnMethods = { "testGetVAppTemplate" }) 
    public void testDeleteVAppTemplate() throws Exception {
       VAppTemplate clonedVappTemplate = cloneVAppTemplate(true);
 
@@ -459,6 +462,13 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       
       final Task task = vAppTemplateClient.relocateVappTemplate(vAppTemplateURI, relocateParams);
       assertTaskSucceedsLong(task);
+   }
+   
+   @Test(testName = "GET /vAppTemplate/{id}/shadowVms")
+   public void testGetShadowVms() {
+      References references = vAppTemplateClient.getShadowVms(vAppTemplateURI);
+      
+      Checks.checkReferences(references);
    }
    
    // This failed previously, but is passing now. 
