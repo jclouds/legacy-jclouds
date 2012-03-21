@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
@@ -32,9 +31,10 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.virtualbox.domain.BridgedIf;
+import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.Master;
@@ -48,13 +48,17 @@ import org.jclouds.virtualbox.statements.SetIpAddress;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
@@ -70,7 +74,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    public static final int NODE_PORT_INIT = 3000;
 
    // TODO parameterize
-   public static final String VMS_NETWORK = "33.33.33.";
+   public static final String VMS_NETWORK = "192.168.86.";
 
    // TODO parameterize
    public static final String HOST_ONLY_IFACE_NAME = "vboxnet0";
@@ -97,8 +101,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             RunScriptOnNode.Factory scriptRunnerFactory, Supplier<NodeMetadata> hostSupplier) {
       this.manager = manager;
       this.cloner = cloner;
-      this.nodePorts = new AtomicInteger(NODE_PORT_INIT + 1);
-      this.nodeIps = new AtomicInteger(1);
+      this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
+      this.nodeIps = new AtomicInteger(2);
       this.machineUtils = machineUtils;
       this.imachineToNodeMetadata = imachineToNodeMetadata;
       this.scriptRunnerFactory = scriptRunnerFactory;
@@ -145,10 +149,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
                .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();
 
       NetworkSpec networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
-      // //
-
-      // CASE BRIDGED
-      // NetworkSpec networkSpec = createNetworkSpecForBridgedNIC();
 
       CloneSpec cloneSpec = CloneSpec.builder().linked(USE_LINKED).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
@@ -157,13 +157,15 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       new LaunchMachineIfNotAlreadyRunning(manager.get(), EXECUTION_TYPE, "").apply(cloned);
 
+      // IMachineToNodeMetadata produces the final ip's but these need to be set before so we build a
+      // NodeMetadata just for the sake of running the gshadow and setip scripts 
+      NodeMetadata partialNodeMetadata = buildPartialNodeMetadata(cloned);
+
       // see DeleteGShadowLock for a detailed explanation
-      machineUtils
-               .runScriptOnNode(imachineToNodeMetadata.apply(cloned), new DeleteGShadowLock(), RunScriptOptions.NONE);
+      machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
 
       // CASE NAT + HOST-ONLY
-      machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
-               RunScriptOptions.NONE);
+      machineUtils.runScriptOnNode(partialNodeMetadata, new SetIpAddress(hostOnlyIfaceCard), RunScriptOptions.NONE);
       // //
 
       // TODO get credentials from somewhere else (they are also HC in
@@ -173,23 +175,33 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       return nodeAndInitialCredentials;
    }
+   
+   private NodeMetadata buildPartialNodeMetadata(IMachine clone) {
+      INetworkAdapter realNatAdapter = clone.getNetworkAdapter(0l);
+      NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
+      nodeMetadataBuilder.id(clone.getName());
+      nodeMetadataBuilder.state(VirtualBoxComputeServiceContextModule.machineToNodeState.get(clone.getState()));
+      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(realNatAdapter.getNatDriver().getHostIP()));
+      for (String nameProtocolnumberAddressInboudportGuestTargetport : realNatAdapter.getNatDriver().getRedirects()) {
+         Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+         String protocolNumber = Iterables.get(stuff, 1);
+         String inboundPort = Iterables.get(stuff, 3);
+         String targetPort = Iterables.get(stuff, 5);
+         if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
+            int inPort = Integer.parseInt(inboundPort);
+            nodeMetadataBuilder.loginPort(inPort);
+         }
+      }
+      
+      LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
+      nodeMetadataBuilder.credentials(loginCredentials);
+      
+      return  nodeMetadataBuilder.build();
+   }
 
    private NetworkSpec createNetworkSpecForHostOnlyNATNICs(NetworkInterfaceCard natIfaceCard,
             NetworkInterfaceCard hostOnlyIfaceCard) {
       return NetworkSpec.builder().addNIC(natIfaceCard).addNIC(hostOnlyIfaceCard).build();
    }
 
-   private NetworkSpec createNetworkSpecForBridgedNIC() {
-      List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory)
-               .apply(hostSupplier.get());
-      BridgedIf bridgedActiveInterface = checkNotNull(activeBridgedInterfaces.get(0), "activeBridgedIf");
-
-      NetworkAdapter bridgedAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.Bridged)
-               .build();
-      NetworkInterfaceCard bridgedNIC = NetworkInterfaceCard.builder().addNetworkAdapter(bridgedAdapter)
-               .addHostInterfaceName(bridgedActiveInterface.getName()).slot(0L).build();
-
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(bridgedNIC).build();
-      return networkSpec;
-   }
 }
