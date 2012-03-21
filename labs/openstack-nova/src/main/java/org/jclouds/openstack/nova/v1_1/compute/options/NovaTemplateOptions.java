@@ -70,7 +70,9 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    }
 
    private boolean autoAssignFloatingIp = false;
+   private boolean generateKeyPair = false;
    private Set<String> securityGroupNames = ImmutableSet.of();
+   private String keyPairName;
 
    public static final NovaTemplateOptions NONE = new NovaTemplateOptions();
 
@@ -83,15 +85,31 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    }
 
    /**
-    * 
-    * @see CreateServerOptions#getSecurityGroupNames
+    * @see #shouldGenerateKeyPair()
+    */
+   public NovaTemplateOptions generateKeyPair(boolean enable) {
+      this.generateKeyPair = enable;
+      return this;
+   }
+
+   /**
+    * @see #shouldGenerateKeyPair()
+    */
+   public NovaTemplateOptions keyPairName(String keyPairName) {
+      this.keyPairName = keyPairName;
+      return this;
+   }
+
+   /**
+    *
+    * @see org.jclouds.openstack.nova.v1_1.options.CreateServerOptions#getSecurityGroupNames
     */
    public NovaTemplateOptions securityGroupNames(String... securityGroupNames) {
       return securityGroupNames(ImmutableSet.copyOf(checkNotNull(securityGroupNames, "securityGroupNames")));
    }
 
    /**
-    * @see CreateServerOptions#getSecurityGroupNames
+    * @see org.jclouds.openstack.nova.v1_1.options.CreateServerOptions#getSecurityGroupNames
     */
    public NovaTemplateOptions securityGroupNames(Iterable<String> securityGroupNames) {
       for (String groupName : checkNotNull(securityGroupNames, "securityGroupNames"))
@@ -113,7 +131,27 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    }
 
    /**
-    * @see CreateServerOptions#getSecurityGroupNames
+    * Specifies the keypair used to run instances with
+    * @return the keypair to be used
+    */
+   public String getKeyPairName() {
+      return keyPairName;
+   }
+   
+   /**
+    * <h3>Note</h3>
+    *
+    * This requires that {@link NovaClient#getKeyPairExtensionForZone(String)} to return
+    * {@link Optional#isPresent present}
+    *
+    * @return true if auto generation of keypairs is enabled
+    */
+   public boolean shouldGenerateKeyPair() {
+      return generateKeyPair;
+   }
+   
+   /**
+    * @see org.jclouds.openstack.nova.v1_1.options.CreateServerOptions#getSecurityGroupNames
     */
    public Set<String> getSecurityGroupNames() {
       return securityGroupNames;
@@ -129,7 +167,21 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       }
 
       /**
-       * @see CreateServerOptions#getSecurityGroupNames
+       * @see NovaTemplateOptions#shouldGenerateKeyPair() 
+       */
+      public static NovaTemplateOptions generateKeyPair(boolean enable) {
+         return new NovaTemplateOptions().generateKeyPair(enable);
+      }
+
+      /**
+       * @see NovaTemplateOptions#getKeyPairName() 
+       */
+      public static NovaTemplateOptions keyPairName(String keyPairName) {
+         return new NovaTemplateOptions().keyPairName(keyPairName);
+      }
+      
+      /**
+       * @see org.jclouds.openstack.nova.v1_1.options.CreateServerOptions#getSecurityGroupNames
        */
       public static NovaTemplateOptions securityGroupNames(String... groupNames) {
          NovaTemplateOptions options = new NovaTemplateOptions();
@@ -137,7 +189,7 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       }
 
       /**
-       * @see CreateServerOptions#getSecurityGroupNames
+       * @see org.jclouds.openstack.nova.v1_1.options.CreateServerOptions#getSecurityGroupNames
        */
       public static NovaTemplateOptions securityGroupNames(Iterable<String> groupNames) {
          NovaTemplateOptions options = new NovaTemplateOptions();

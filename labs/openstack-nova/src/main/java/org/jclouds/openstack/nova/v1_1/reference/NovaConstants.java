@@ -36,4 +36,10 @@ public class NovaConstants {
     */
    public static final String PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS = "jclouds.openstack-nova.auto-allocate-floating-ips";
 
+   /**
+    * Whenever a node is created, automatically generate keypairs for groups, as needed, also
+    * delete the keypair(s) when the last node in the group is destroyed.
+    */
+   public static final String PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS = "jclouds.openstack-nova.auto-generate-keypairs";
+
 }

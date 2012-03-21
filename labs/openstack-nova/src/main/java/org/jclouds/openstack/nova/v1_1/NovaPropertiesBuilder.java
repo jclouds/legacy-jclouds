@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v1_1;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS;
+import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS;
 import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT;
 
 import java.util.Properties;
@@ -44,6 +45,7 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
       properties.setProperty(PROPERTY_API_VERSION, "1.1");
       properties.setProperty(PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS, "false");
+      properties.setProperty(PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS, "false");
       properties.setProperty(PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT, "500");
       return properties;
    }

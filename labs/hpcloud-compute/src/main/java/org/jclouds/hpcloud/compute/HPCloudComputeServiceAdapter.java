@@ -4,15 +4,18 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import com.google.common.cache.LoadingCache;
 import org.jclouds.location.Zone;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.compute.functions.RemoveFloatingIpFromNodeAndDeallocate;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 
 /**
  * 
@@ -22,8 +25,8 @@ public class HPCloudComputeServiceAdapter extends NovaComputeServiceAdapter {
 
    @Inject
    public HPCloudComputeServiceAdapter(NovaClient novaClient, @Zone Supplier<Set<String>> zoneIds,
-            RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate) {
-      super(novaClient, zoneIds, removeFloatingIpFromNodeAndDeallocate);
+            RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate, LoadingCache<ZoneAndName, KeyPair> keyPairCache) {
+      super(novaClient, zoneIds, removeFloatingIpFromNodeAndDeallocate, keyPairCache);
    }
 
    @Override
