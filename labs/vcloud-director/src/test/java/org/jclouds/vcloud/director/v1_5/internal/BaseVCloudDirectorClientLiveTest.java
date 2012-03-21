@@ -270,6 +270,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       VApp vAppInstantiated = vdcClient.instantiateVApp(vdcURI, instantiate);
       assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
 
+      Task instantiationTask = Iterables.getFirst(vAppInstantiated.getTasks(), null);
+      if (instantiationTask != null) assertTaskSucceedsLong(instantiationTask);
+
       // Save VApp name for cleanUp
       vAppNames.add(name);
 
