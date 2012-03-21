@@ -30,7 +30,7 @@ import org.jclouds.openstack.services.ServiceType;
  * @see <a href="http://docs.openstack.org/api/openstack-typeentity-service/2.0/content/Identity-Service-Concepts-e1362.html"
  *      />
  */
-public interface HPExtentionServiceType extends ServiceType {
+public interface HPExtensionServiceType extends ServiceType {
    /**
     * CDN
     */

@@ -28,7 +28,7 @@ import com.google.inject.Scopes;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncClient;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
-import org.jclouds.hpcloud.services.HPExtentionServiceType;
+import org.jclouds.hpcloud.services.HPExtensionServiceType;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -39,9 +39,7 @@ import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstRegionOptionallyMatchingRegionId;
-import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.openstack.keystone.v2_0.suppliers.RegionIdToURIFromAccessForTypeAndVersionSupplier;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
@@ -105,7 +103,7 @@ public class HPCloudObjectStorageRestClientModule extends
    @Singleton
    @HPExtensionCDN
    protected Supplier<URI> provideCDNUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
-      return getLastValueInMap(factory.createForApiTypeAndVersion(HPExtentionServiceType.CDN, apiVersion));
+      return getLastValueInMap(factory.createForApiTypeAndVersion(HPExtensionServiceType.CDN, apiVersion));
    }
 
    @Provides
