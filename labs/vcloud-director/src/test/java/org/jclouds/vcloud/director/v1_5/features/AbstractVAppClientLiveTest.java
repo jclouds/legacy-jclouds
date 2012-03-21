@@ -179,18 +179,17 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
 
    @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps") 
    protected void cleanUp() {
-      // Find references in the Vdc with the VApp type and named 'test-vapp' or 'new-name'
+      // Find references in the Vdc with the VApp type and in the list of instantiated VApp names
       Iterable<Reference> vApps = Iterables.filter(
-            vdc.getResourceEntities().getResourceEntities(),
+            vdc.getResourceEntities(),
             Predicates.and(
                   ReferenceTypePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
                   ReferenceTypePredicates.<Reference>nameIn(vAppNames)
             )
       );
-      vAppNames.clear();
 
       // If we found any references, delete the VApp they point to
-      if (vApps != null && !Iterables.isEmpty(vApps)) {
+      if (!Iterables.isEmpty(vApps)) {
          for (Reference ref : vApps) {
             cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
          }

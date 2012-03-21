@@ -19,15 +19,21 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a virtual data center (vDC).
@@ -45,6 +51,7 @@ public class Vdc extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVdc(this);
    }
@@ -56,8 +63,8 @@ public class Vdc extends EntityType {
       private String allocationModel;
       private CapacityWithUsage storageCapacity;
       private ComputeCapacity computeCapacity;
-      private ResourceEntities resourceEntities;
-      private AvailableNetworks availableNetworks;
+      private Set<Reference> resourceEntities = Sets.newLinkedHashSet();
+      private Set<Reference> availableNetworks = Sets.newLinkedHashSet();
       private Capabilities capabilities;
       private Integer nicQuota;
       private Integer networkQuota;
@@ -92,16 +99,32 @@ public class Vdc extends EntityType {
       /**
        * @see Vdc#getResourceEntities()
        */
-      public B resourceEntities(ResourceEntities resourceEntities) {
-         this.resourceEntities = resourceEntities;
+      public B resourceEntities(Set<Reference> resourceEntities) {
+         this.resourceEntities = Sets.newLinkedHashSet(checkNotNull(resourceEntities, "resourceEntities"));
+         return self();
+      }
+
+      /**
+       * @see Vdc#getResourceEntities()
+       */
+      public B resourceEntity(Reference resourceEntity) {
+         this.resourceEntities.add(checkNotNull(resourceEntity, "resourceEntity"));
          return self();
       }
 
       /**
        * @see Vdc#getAvailableNetworks()
        */
-      public B availableNetworks(AvailableNetworks availableNetworks) {
-         this.availableNetworks = availableNetworks;
+      public B availableNetworks(Set<Reference> availableNetworks) {
+         this.availableNetworks = Sets.newLinkedHashSet(checkNotNull(availableNetworks, "availableNetworks"));
+         return self();
+      }
+
+      /**
+       * @see Vdc#getAvailableNetworks()
+       */
+      public B network(Reference availableNetwork) {
+         this.availableNetworks.add(checkNotNull(availableNetwork, "availableNetwork"));;
          return self();
       }
 
@@ -163,8 +186,8 @@ public class Vdc extends EntityType {
                .allocationModel(in.getAllocationModel())
                .storageCapacity(in.getStorageCapacity())
                .computeCapacity(in.getComputeCapacity())
-               .resourceEntities(in.getResourceEntities())
-               .availableNetworks(in.getAvailableNetworks())
+               .resourceEntities(Sets.newLinkedHashSet(in.getResourceEntities()))
+               .availableNetworks(Sets.newLinkedHashSet(in.getAvailableNetworks()))
                .capabilities(in.getCapabilities())
                .nicQuota(in.getNicQuota())
                .networkQuota(in.getNetworkQuota())
@@ -183,8 +206,8 @@ public class Vdc extends EntityType {
       this.allocationModel = builder.allocationModel;
       this.storageCapacity = builder.storageCapacity;
       this.computeCapacity = builder.computeCapacity;
-      this.resourceEntities = builder.resourceEntities;
-      this.availableNetworks = builder.availableNetworks;
+      this.resourceEntities = builder.resourceEntities == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.resourceEntities);
+      this.availableNetworks = builder.availableNetworks == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.availableNetworks);
       this.capabilities = builder.capabilities;
       this.nicQuota = builder.nicQuota;
       this.networkQuota = builder.networkQuota;
@@ -199,10 +222,12 @@ public class Vdc extends EntityType {
    private CapacityWithUsage storageCapacity;
    @XmlElement(name = "ComputeCapacity", required = true)
    private ComputeCapacity computeCapacity;
-   @XmlElement(name = "ResourceEntities")
-   private ResourceEntities resourceEntities;
-   @XmlElement(name = "AvailableNetworks")
-   private AvailableNetworks availableNetworks;
+   @XmlElementWrapper(name = "ResourceEntities")
+   @XmlElement(name = "ResourceEntity")
+   private Set<Reference> resourceEntities = Sets.newLinkedHashSet();
+   @XmlElementWrapper(name = "AvailableNetworks")
+   @XmlElement(name = "Network")
+   protected Set<Reference> availableNetworks = Sets.newLinkedHashSet();
    @XmlElement(name = "Capabilities")
    private Capabilities capabilities;
    @XmlElement(name = "NicQuota")
@@ -240,14 +265,14 @@ public class Vdc extends EntityType {
    /**
     * Gets the value of the resourceEntities property.
     */
-   public ResourceEntities getResourceEntities() {
+   public Set<Reference> getResourceEntities() {
       return resourceEntities;
    }
 
    /**
     * Gets the value of the availableNetworks property.
     */
-   public AvailableNetworks getAvailableNetworks() {
+   public Set<Reference> getAvailableNetworks() {
       return availableNetworks;
    }
 

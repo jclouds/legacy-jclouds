@@ -97,7 +97,7 @@ import com.google.inject.Module;
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
    
    @Resource
-   protected Logger logger = Logger.NULL;
+   protected Logger logger = Logger.CONSOLE;
 
    protected static final long TASK_TIMEOUT_SECONDS = 100L;
    protected static final long LONG_TASK_TIMEOUT_SECONDS = 300L;
@@ -320,7 +320,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       Vdc vdc = context.getApi().getVdcClient().getVdc(vdcURI);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
       
-      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Set<Reference> networks = vdc.getAvailableNetworks();
 
       // Look up the network in the Vdc with the id configured for the tests
       Optional<Reference> parentNetwork = Iterables.tryFind(networks, new Predicate<Reference>() {
@@ -401,6 +401,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       try {
          Task task = vappClient.deleteVApp(vAppUri);
          assertTaskSucceeds(task);
+         vAppNames.remove(vApp.getName());
       } catch (Exception e) {
          try {
             vApp = vappClient.getVApp(vAppUri); // refresh
