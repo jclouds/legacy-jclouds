@@ -63,6 +63,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
+import org.jclouds.vcloud.director.v1_5.domain.query.ContainerType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 
 import com.beust.jcommander.internal.Maps;
@@ -1496,5 +1497,32 @@ public class Checks {
       if (record.getType() != null) {
          checkType(record.getType());
       }
+   }
+
+   public static void checkReferences(References references) {
+      // optional
+      for (Reference reference : references.getReferences()) {
+         checkReferenceType(reference);
+      }
+      
+      // parent type
+      checkContainerType(references);
+   }
+
+   public static void checkContainerType(ContainerType container) {
+      // optional
+      // NOTE name can't be checked
+      if (container.getPage() != null) {
+         assertTrue(container.getPage() >= 1, "page must be >=1 ");
+      }
+      if (container.getPageSize() != null) {
+         assertTrue(container.getPageSize() >= 1, "pageSize must be >=1 ");
+      }
+      if (container.getTotal() != null) {
+         assertTrue(container.getTotal() >= 0, "total must be >=0 ");
+      }
+         
+      // parent type
+      checkResourceType(container);
    }
 }

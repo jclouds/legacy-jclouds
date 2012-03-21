@@ -81,7 +81,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private Org org;
    private boolean metadataSet = false;
 
-   @Test(testName = "GET /org/")
+   @Test(testName = "GET /org")
    public void testGetOrgList() {
       // Call the method being tested
       orgList = orgClient.getOrgList();
@@ -117,7 +117,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       metadataSet = true;
    }
    
-   @Test(testName = "GET /org/{id}/metadata/", dependsOnMethods = { "testSetupMetadata" })
+   @Test(testName = "GET /org/{id}/metadata", dependsOnMethods = { "testSetupMetadata" })
    public void testGetOrgMetadata() {
       // Call the method being tested
       Metadata metadata = orgClient.getMetadataClient().getMetadata(orgURI);
