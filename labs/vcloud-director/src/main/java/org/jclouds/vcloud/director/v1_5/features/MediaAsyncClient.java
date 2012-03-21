@@ -78,11 +78,12 @@ public interface MediaAsyncClient {
     * @see MediaClient#cloneMedia(URI, CloneMediaParams)
     */
    @POST
+   @Path("/action/cloneMedia")
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Media> cloneMedia(@EndpointParam URI cloneLink,
+   ListenableFuture<Media> cloneMedia(@EndpointParam URI vdcRef,
          @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
    
    /**
