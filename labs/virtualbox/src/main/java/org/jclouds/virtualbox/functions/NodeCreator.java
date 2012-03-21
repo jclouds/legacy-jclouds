@@ -138,19 +138,22 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
                .forceOverwrite(true).build();
 
       activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory).apply(hostSupplier.get());
-      boolean networkBridgeableAvailable = true;
+      boolean networkBridgeableAvailable = false;
       if (activeBridgedInterfaces.size() < 1) {
          networkBridgeableAvailable = false;
       }
 
       NetworkSpec networkSpec = null;
       NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22).build();
+               //.tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22)
+               .build();
       NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(0L).build();
 
+    /*
       NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
                .staticIp(VMS_NETWORK + this.nodeIps.getAndIncrement()).build();
-
+               */
+      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly).build();
       NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
                .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();
 
@@ -167,14 +170,16 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       IMachine cloned = cloner.apply(cloneSpec);
       machineController.ensureMachineIsLaunched(cloned.getName());
 
+      /*
       // see DeleteGShadowLock for a detailed explanation
       machineUtils
                .runScriptOnNode(imachineToNodeMetadata.apply(cloned), new DeleteGShadowLock(), RunScriptOptions.NONE);
-
+      
       if (!networkBridgeableAvailable) {
-         machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
+        machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
                   RunScriptOptions.NONE);
       }
+      */
 
       // TODO get credentials from somewhere else (they are also HC in
       // IMachineToSshClient)

@@ -134,13 +134,15 @@ public class MachineUtils {
     */
    public <T> T lockSessionOnMachineAndApply(String machineId, LockType type, Function<ISession, T> function) {
       try {
+         // TODO try to use AtomicReference to implement a retry mechanism
          ISession session = lockSessionOnMachine(type, machineId);
          Preconditions.checkState(session.getState().equals(SessionState.Locked));
          try {
             return function.apply(session);
          } finally {
-            if (session.getState().equals(SessionState.Locked))
+            if (session.getState().equals(SessionState.Locked) ) {
                session.unlockMachine();
+            }
          }
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
@@ -264,6 +266,45 @@ public class MachineUtils {
       Pattern pattern = Pattern.compile(this.IP_V4_ADDRESS_PATTERN);
       Matcher matcher = pattern.matcher(s);
       return matcher.matches();
+   }
+
+   public String getIpAddressFromHostOnlyNIC(String machineName) {
+      // TODO using a caching mechanism to avoid to call everytime this vboxmanage api call
+      /*
+      Cache<String, String> ipCache = CacheBuilder.newBuilder()
+               .concurrencyLevel(4)
+               .weakKeys()
+               .maximumSize(10000)
+               .expireAfterWrite(10, TimeUnit.MINUTES)
+               .build(
+                   new CacheLoader<String, String>() {
+                     public String load(String vmNameOrId) {
+                       return createExpensiveGraph(key);
+                     }
+                   });   
+      */
+      
+      String ip = "";
+      int attempt = 0;
+      while (!isIpv4(ip) && attempt < 20) {
+         ip = this.lockSessionOnMachineAndApply(machineName, LockType.Shared, new Function<ISession, String>() {
+            @Override
+            public String apply(ISession session) {
+               String ip = session.getMachine().getGuestPropertyValue("/VirtualBox/GuestInfo/Net/1/V4/IP");
+               return ip;
+            }
+         });
+         attempt++;
+         long sleepTime = 1000 * attempt;
+         logger.debug("Instance %s is still not ready. Attempt n:%d. Sleeping for %d millisec", machineName, attempt,
+                  sleepTime);
+         try {
+            Thread.sleep(sleepTime);
+         } catch (InterruptedException e) {
+            Throwables.propagate(e);
+         }
+      }
+      return ip;
    }
 
 }

@@ -28,11 +28,13 @@ import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.inject.Inject;
 
 @Singleton
@@ -55,7 +57,7 @@ public class MutableMachine implements Function<String, ISession> {
 
 	@Override
 	public ISession apply(String machineId) {
-	 return	lockSessionOnMachineAndReturn(manager.get(), lockType, machineId);
+	 return lockSessionOnMachineAndReturn(manager.get(), lockType, machineId);
 	}
 
    /**
@@ -70,10 +72,25 @@ public class MutableMachine implements Function<String, ISession> {
     * @return the ISession bounded to the machine locked.
     */
    public static ISession lockSessionOnMachineAndReturn(VirtualBoxManager manager, LockType type, String machineId) {
+      ISession session = null;
+      int attempts = 0;
+      boolean locked = false;
       try {
-         ISession session = manager.getSessionObject();
+         session = manager.getSessionObject();
          IMachine immutableMachine = manager.getVBox().findMachine(machineId);
-         immutableMachine.lockMachine(session, type);
+         while (!locked && attempts < 5) {
+         try {
+            immutableMachine.lockMachine(session, type);
+            locked = true;
+         } catch (RuntimeException e) {
+            attempts++;
+         }
+         try {
+            Thread.sleep(1000l);
+         } catch (InterruptedException e) {
+            Throwables.propagate(e);
+         }
+         }
          return session;
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId,

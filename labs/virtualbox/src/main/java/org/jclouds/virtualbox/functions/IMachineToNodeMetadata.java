@@ -84,20 +84,18 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
       logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
 
-      // hardcoded set-up that works only for nat+host-only
-
-      // nat adapter
-      INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);
-      checkNotNull(natAdapter, "slot 0 networkadapter");
-
-      if (natAdapter.getAttachmentType() == NetworkAttachmentType.NAT) {
+      // TODO loop over the adapters
+      // at the moment we are interested only in host-only NIC, which is the second attached
+      INetworkAdapter adapter = vm.getNetworkAdapter(1l);
+      checkNotNull(adapter, "slot 0 networkadapter");
+      if (adapter.getAttachmentType() == NetworkAttachmentType.NAT) {
          // checkState(natAdapter.getAttachmentType() ==
          // NetworkAttachmentType.NAT,
          // "expecting slot 0 to be a NAT attachment type (was: " +
          // natAdapter.getAttachmentType() + ")");
          int ipTermination = 0;
-         nodeMetadataBuilder.publicAddresses(ImmutableSet.of(natAdapter.getNatDriver().getHostIP()));
-         for (String nameProtocolnumberAddressInboudportGuestTargetport : natAdapter.getNatDriver().getRedirects()) {
+         nodeMetadataBuilder.publicAddresses(ImmutableSet.of(adapter.getNatDriver().getHostIP()));
+         for (String nameProtocolnumberAddressInboudportGuestTargetport : adapter.getNatDriver().getRedirects()) {
             Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
             String protocolNumber = Iterables.get(stuff, 1);
             String hostAddress = Iterables.get(stuff, 2);
@@ -111,8 +109,11 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
             nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
 
          }
-      } else if (natAdapter.getAttachmentType() == NetworkAttachmentType.Bridged) {
+      } else if (adapter.getAttachmentType() == NetworkAttachmentType.Bridged) {
          String clientIpAddress = machineUtils.getIpAddressFromBridgedNICoption1(vm.getName());
+         nodeMetadataBuilder.privateAddresses(ImmutableSet.of(clientIpAddress));
+      } else if (adapter.getAttachmentType() == NetworkAttachmentType.HostOnly) {
+         String clientIpAddress = machineUtils.getIpAddressFromHostOnlyNIC(vm.getName());
          nodeMetadataBuilder.privateAddresses(ImmutableSet.of(clientIpAddress));
       }
 
