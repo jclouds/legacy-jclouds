@@ -25,6 +25,7 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOrg;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkReferenceType;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -32,6 +33,7 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
@@ -141,5 +143,20 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       checkMetadataValue(value);
       assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
+   }
+
+   @Test(testName = "GET /org/{id}/catalog/{catalogId}/controlAccess")
+   public void testGetontrolAccess() {
+      String catalogId = "";
+      ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);
+      checkControlAccessParams(params);
+   }
+
+   @Test(testName = "GET /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetontrolAccess" })
+   public void testModifyControlAccess() {
+      String catalogId = "";
+      ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);
+      ControlAccessParams modified = orgClient.modifyControlAccess(orgURI, catalogId, params);
+      checkControlAccessParams(modified);
    }
 }

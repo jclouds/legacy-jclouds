@@ -54,7 +54,8 @@ import com.google.common.collect.Sets;
       QueryResultAdminGroupRecord.class,
       QueryResultAdminVdcRecord.class,
       QueryResultAdminUserRecord.class,
-      QueryResultStrandedUserRecord.class}
+      QueryResultStrandedUserRecord.class,
+      QueryResultMediaRecord.class}
 )
 public class QueryResultRecordType {
 
