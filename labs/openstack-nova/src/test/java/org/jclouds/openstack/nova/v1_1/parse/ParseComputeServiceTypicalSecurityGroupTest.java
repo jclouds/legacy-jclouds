@@ -23,12 +23,13 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.json.BaseSetParserTest;
+import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.IpProtocol;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
+import org.jclouds.openstack.nova.v1_1.domain.TenantIdAndName;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
@@ -38,36 +39,39 @@ import com.google.inject.Injector;
 
 /**
  * 
- * @author Michael Arnold
+ * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ParseSecurityGroupListTest")
-public class ParseSecurityGroupListTest extends BaseSetParserTest<SecurityGroup> {
+@Test(groups = "unit", testName = "ParseSecurityGroupTest")
+public class ParseComputeServiceTypicalSecurityGroupTest extends BaseItemParserTest<SecurityGroup> {
 
    @Override
    public String resource() {
-      return "/securitygroup_list.json";
+      return "/securitygroup_details_computeservice_typical.json";
    }
 
    @Override
-   @SelectJson("security_groups")
+   @SelectJson("security_group")
    @Consumes(MediaType.APPLICATION_JSON)
-   public Set<SecurityGroup> expected() {
+   public SecurityGroup expected() {
 
       Set<SecurityGroupRule> securityGroupRules = ImmutableSet.<SecurityGroupRule> of(
             SecurityGroupRule.builder().fromPort(22)
-                  .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("3").ipRange("0.0.0.0/0")
-                  .id("107").build(),
-            SecurityGroupRule.builder().fromPort(7600)
-                  .ipProtocol(IpProtocol.TCP).toPort(7600).parentGroupId("3").ipRange("0.0.0.0/0")
-                  .id("118").build(),
-            SecurityGroupRule.builder().fromPort(8084)
-                  .ipProtocol(IpProtocol.TCP).toPort(8084).parentGroupId("3").ipRange("0.0.0.0/0")
-                  .id("119").build());
+                  .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("2769")
+                  .ipRange("0.0.0.0/0").id("10331").build(),
+            SecurityGroupRule.builder().fromPort(22).group(new TenantIdAndName("37936628937291", "jclouds#mygroup"))
+                  .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("2769")
+                  .id("10332").build(),
+            SecurityGroupRule.builder().fromPort(8080)
+                  .ipProtocol(IpProtocol.TCP).toPort(8080).parentGroupId("2769")
+                  .ipRange("0.0.0.0/0").id("10333").build(),
+            SecurityGroupRule.builder().fromPort(8080).group(new TenantIdAndName("37936628937291", "jclouds#mygroup"))
+                  .ipProtocol(IpProtocol.TCP).toPort(8080).parentGroupId("2769")
+                  .id("10334").build()                  
+      );
 
-      return ImmutableSet.of(SecurityGroup.builder().description("description1").id("1").tenantId("tenant1")
-            .rules(securityGroupRules).name("name1").build());
+      return SecurityGroup.builder().description("jclouds#mygroup").id("2769").tenantId("37936628937291").rules(securityGroupRules)
+            .name("jclouds#mygroup").build();
    }
-
    protected Injector injector() {
       return Guice.createInjector(new NovaParserModule(), new GsonModule());
    }

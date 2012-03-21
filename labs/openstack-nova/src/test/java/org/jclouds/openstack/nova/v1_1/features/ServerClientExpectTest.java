@@ -27,6 +27,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
+import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.parse.ParseCreatedServerTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerListTest;
 import org.testng.annotations.Test;
@@ -100,6 +101,32 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
             responseWithKeystoneAccess, createServer, createServerResponse);
 
       assertEquals(clientWithNewServer.getServerClientForZone("az-1.region-a.geo-1").createServer("test-e92", "1241", "100").toString(),
+              new ParseCreatedServerTest().expected().toString());
+   }
+
+   public void testCreateServerWithSecurityGroupsWhenResponseIs202() throws Exception {
+
+      HttpRequest createServer = HttpRequest
+         .builder()
+         .method("POST")
+         .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                     .put("X-Auth-Token", authToken).build())
+         .payload(payloadFromStringWithContentType(
+                  "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"security_groups\":[{\"name\":\"group2\"},{\"name\":\"group1\"}]}}","application/json"))
+         .build();
+
+  
+      HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+         .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
+
+
+      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+            responseWithKeystoneAccess, createServer, createServerResponse);
+
+      assertEquals(clientWithNewServer.getServerClientForZone("az-1.region-a.geo-1").createServer("test-e92", "1241",
+               "100", new CreateServerOptions().securityGroupNames("group1", "group2")).toString(),
               new ParseCreatedServerTest().expected().toString());
    }
 

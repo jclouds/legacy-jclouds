@@ -16,22 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.internal;
+package org.jclouds.openstack.nova.v1_1.compute.domain;
 
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 
 /**
- * Base class for writing KeyStone Expect tests with the ComputeService
- * abstraction
- * 
- * @author Matt Stephenson
+ * @author Adrian Cole
  */
-public class BaseNovaComputeServiceExpectTest extends BaseNovaComputeServiceContextExpectTest<ComputeService> {
+public class SecurityGroupInZone extends ZoneAndName {
+   protected final SecurityGroup securityGroup;
+
+   public SecurityGroupInZone(SecurityGroup securityGroup, String zoneId) {
+      super(zoneId, checkNotNull(securityGroup, "securityGroup").getName());
+      this.securityGroup = securityGroup;
+   }
+
+   public SecurityGroup getServer() {
+      return securityGroup;
+   }
+
+   // superclass hashCode/equals are good enough, and help us use ZoneAndName and ServerInZone
+   // interchangeably as Map keys
 
    @Override
-   public ComputeService apply(ComputeServiceContext input) {
-      return input.getComputeService();
+   public String toString() {
+      return "[securityGroup=" + securityGroup + ", zoneId=" + zoneId + "]";
    }
 
 }

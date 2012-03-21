@@ -29,6 +29,8 @@ import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Tests behavior of {@code SecurityGroupClient}
  * 
@@ -73,20 +75,20 @@ public class SecurityGroupClientLiveTest extends BaseNovaClientLiveTest {
          SecurityGroup securityGroup = null;
 
          try {
-            securityGroup = client
-                     .createSecurityGroupWithNameAndDescription(SECURITY_GROUP_NAME, "test security group");
+            securityGroup = client.createSecurityGroupWithNameAndDescription(SECURITY_GROUP_NAME, "test security group");
             assertNotNull(securityGroup);
 
-            SecurityGroupRule rule = client.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress
-                     .builder().ipProtocol(IpProtocol.TCP).fromPort(443).toPort(443).build(), "0.0.0.0/0");
-            assertNotNull(rule);
+            for (int port : ImmutableSet.of(22, 8080)) {
+               SecurityGroupRule rule = client.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress
+                        .builder().ipProtocol(IpProtocol.TCP).fromPort(port).toPort(port).build(), "0.0.0.0/0");
+               assertNotNull(rule);
 
-            SecurityGroupRule rule2 = client.createSecurityGroupRuleAllowingSecurityGroupId(securityGroup.getId(),
-                     Ingress.builder().ipProtocol(IpProtocol.TCP).fromPort(443).toPort(443).build(), securityGroup
-                              .getId());
-            
-            assertNotNull(rule2);
+               SecurityGroupRule rule2 = client.createSecurityGroupRuleAllowingSecurityGroupId(securityGroup.getId(),
+                        Ingress.builder().ipProtocol(IpProtocol.TCP).fromPort(port).toPort(port).build(), securityGroup
+                                 .getId());
 
+               assertNotNull(rule2);
+            }
             securityGroup = client.getSecurityGroup(securityGroup.getId());
 
          } finally {

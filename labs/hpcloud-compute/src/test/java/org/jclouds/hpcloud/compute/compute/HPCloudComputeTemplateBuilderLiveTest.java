@@ -74,7 +74,7 @@ public class HPCloudComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLi
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "az-1.region-a.geo-1");
-      assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).isAutoAssignFloatingIp(), true);
+      assertEquals(defaultTemplate.getOptions().as(NovaTemplateOptions.class).shouldAutoAssignFloatingIp(), true);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

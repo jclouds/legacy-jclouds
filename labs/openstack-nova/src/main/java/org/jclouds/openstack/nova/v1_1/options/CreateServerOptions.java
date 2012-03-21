@@ -24,18 +24,22 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
+import org.jclouds.util.Preconditions2;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -85,7 +89,7 @@ public class CreateServerOptions implements MapBinder {
       List<File> personality;
       String key_name;
       @SerializedName(value = "security_groups")
-      Set<SecurityGroup> securityGroups;
+      Set<SecurityGroup> securityGroupNames;
 
       private ServerRequest(String name, String imageRef, String flavorRef) {
          this.name = name;
@@ -97,7 +101,7 @@ public class CreateServerOptions implements MapBinder {
 
    private Map<String, String> metadata = Maps.newHashMap();
    private List<File> files = Lists.newArrayList();
-   private Set<String> securityGroups = Sets.newHashSet();
+   private Set<String> securityGroupNames = Sets.newHashSet();
    private String keyName;
    private String adminPass;
 
@@ -112,11 +116,11 @@ public class CreateServerOptions implements MapBinder {
          server.personality = files;
       if (keyName != null)
          server.key_name = keyName;
-      if (securityGroups.size() > 0) {
-         server.securityGroups = Sets.newHashSet();
-         for (String groupName : securityGroups) {
+      if (securityGroupNames.size() > 0) {
+         server.securityGroupNames = Sets.newHashSet();
+         for (String groupName : securityGroupNames) {
             SecurityGroup group = SecurityGroup.builder().name(groupName).build();
-            server.securityGroups.add(group);
+            server.securityGroupNames.add(group);
          }
       }
       if (adminPass != null) {
@@ -192,19 +196,39 @@ public class CreateServerOptions implements MapBinder {
       this.keyName = keyName;
       return this;
    }
-
+   
    /**
-    * Defines the security group name to be used when creating a server.
     * 
-    * @param groupName
-    * @return
+    * <h3>Note</h3>
+    * 
+    * This requires that {@link NovaClient#getSecurityGroupExtensionForZone(String)} to return
+    * {@link Optional#isPresent present}
+    * 
+    * @return security groups the user specified to run servers with; zero length will create an
+    *         implicit group starting with {@code jclouds#}
     */
-   public CreateServerOptions withSecurityGroup(String groupName) {
-      checkNotNull(groupName, "groupName");
-      this.securityGroups.add(groupName);
-      return this;
+   public Set<String> getSecurityGroupNames() {
+      return securityGroupNames;
+   }
+   
+   /**
+    * 
+    * @see #getSecurityGroupNames
+    */
+   public CreateServerOptions securityGroupNames(String... securityGroupNames) {
+      return securityGroupNames(ImmutableSet.copyOf(checkNotNull(securityGroupNames, "securityGroupNames")));
    }
 
+   /**
+    * @see #getSecurityGroupNames
+    */
+   public CreateServerOptions securityGroupNames(Iterable<String> securityGroupNames) {
+      for (String groupName : checkNotNull(securityGroupNames, "securityGroupNames"))
+         Preconditions2.checkNotEmpty(groupName, "all security groups must be non-empty");
+      this.securityGroupNames = ImmutableSet.copyOf(securityGroupNames);
+      return this;
+   }
+   
    public static class Builder {
 
       /**
@@ -235,13 +259,21 @@ public class CreateServerOptions implements MapBinder {
          CreateServerOptions options = new CreateServerOptions();
          return options.withKeyName(keyName);
       }
+      
+      /**
+       * @see CreateServerOptions#getSecurityGroupNames
+       */
+      public static CreateServerOptions securityGroupNames(String... groupNames) {
+         CreateServerOptions options = new CreateServerOptions();
+         return CreateServerOptions.class.cast(options.securityGroupNames(groupNames));
+      }
 
       /**
-       * @see CreateServerOptions#withGroupName(String)
+       * @see CreateServerOptions#getSecurityGroupNames
        */
-      public static CreateServerOptions withSecurityGroup(String name) {
+      public static CreateServerOptions securityGroupNames(Iterable<String> groupNames) {
          CreateServerOptions options = new CreateServerOptions();
-         return options.withSecurityGroup(name);
+         return CreateServerOptions.class.cast(options.securityGroupNames(groupNames));
       }
    }
 

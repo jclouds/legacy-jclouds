@@ -36,7 +36,6 @@ import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupListTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 
@@ -233,8 +232,8 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
    }
 
    private SecurityGroupRule createSecurityGroupRuleExpected() {
-      return SecurityGroupRule.builder().fromPort(80).group(ImmutableMap.<String, String> of()).id("218").ipProtocol(
-               IpProtocol.TCP).ipRange(ImmutableMap.of("cidr", "0.0.0.0/0")).parentGroupId("161").toPort(8080).build();
+      return SecurityGroupRule.builder().fromPort(80).id("218").ipProtocol(
+               IpProtocol.TCP).ipRange("0.0.0.0/0").parentGroupId("161").toPort(8080).build();
    }
 
 }
