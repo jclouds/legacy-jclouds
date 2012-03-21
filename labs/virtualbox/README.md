@@ -17,8 +17,8 @@ That's it! Enjoy local cluster goodness by running:
 For java guidance look into src/test/java/org/jclouds/virtualbox/compute/VirtualBoxExperimentLiveTest.java.
 
 For now nat+host-only is the only available network configuration, nodes should be accessible from the host by:
-> ssh -i ~/.ssh/id_rsa -o "UserKnownHostsFile /dev/null" -o StrictHostKeyChecking=no dralves@127.0.0.1 -p 300X
-where X is the node index with regard to creation order (0,1,2,etc...)
+> ssh -i ~/.ssh/id_rsa -o "UserKnownHostsFile /dev/null" -o StrictHostKeyChecking=no me@192.168.86.X
+where X is the node index with regard to creation order starting at 2 (2,3,4, etc...)
 
 It *should* behave as anyother provider, if not please report.
 
@@ -27,3 +27,4 @@ It *should* behave as anyother provider, if not please report.
 - jclouds-vbox is still at alpha stage please report any issues you find.
 - jclouds-vbox has been mostly tested on Mac OSX, it might work on Linux, but it won't work on windows for the moment. 
 - cached isos, vm's and most configs are kept at ~/.jclouds-vbox/ by default.
+- jclouds-vbox assumes vbox has the default host-only network vboxnet0, that the network is in 192.168.86.0/255.255.255.0 and that the host as address 1 in this network.
