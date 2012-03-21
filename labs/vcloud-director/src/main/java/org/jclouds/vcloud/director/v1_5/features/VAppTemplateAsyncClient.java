@@ -369,5 +369,5 @@ public interface VAppTemplateAsyncClient {
     * @return asynchronous access to {@link Metadata} features
     */
    @Delegate
-   MetadataAsyncClient.Writable getMetadataClient();
+   MetadataAsyncClient.Writeable getMetadataClient();
 }

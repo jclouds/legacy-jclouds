@@ -36,7 +36,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writable;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -86,8 +86,8 @@ public interface AdminVdcAsyncClient extends VdcAsyncClient {
    ListenableFuture<Void> disableVdc(@EndpointParam URI vdcRef);
    
    /**
-    * @return asynchronous access to {@link Writable} features
+    * @return asynchronous access to {@link Writeable} features
     */
    @Delegate
-   MetadataAsyncClient.Writable getMetadataClient();
+   MetadataAsyncClient.Writeable getMetadataClient();
 }

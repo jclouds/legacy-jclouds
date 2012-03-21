@@ -38,6 +38,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -62,6 +63,14 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void setupRequiredClients() {
       orgClient = context.getApi().getOrgClient();
    }
+   
+   @AfterClass(groups = { "live" })
+   public void cleanUp() throws Exception {
+      if (metadataSet) {
+         context.getApi().getAdminOrgClient().getMetadataClient()
+            .deleteMetadataEntry(toAdminUri(orgURI), "key");
+      }
+   }
 
    /*
     * Shared state between dependant tests.
@@ -70,6 +79,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private OrgList orgList;
    private URI orgURI;
    private Org org;
+   private boolean metadataSet = false;
 
    @Test(testName = "GET /org/")
    public void testGetOrgList() {
@@ -100,7 +110,14 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkOrg(org);
    }
    
-   @Test(testName = "GET /org/{id}/metadata/", dependsOnMethods = { "testGetOrg" })
+   @Test(dependsOnMethods = { "testGetOrg" })
+   public void testSetupMetadata() {
+      context.getApi().getAdminOrgClient().getMetadataClient().setMetadata(toAdminUri(orgURI), 
+            "KEY", MetadataValue.builder().value("VALUE").build()); 
+      metadataSet = true;
+   }
+   
+   @Test(testName = "GET /org/{id}/metadata/", dependsOnMethods = { "testSetupMetadata" })
    public void testGetOrgMetadata() {
       // Call the method being tested
       Metadata metadata = orgClient.getMetadataClient().getMetadata(orgURI);

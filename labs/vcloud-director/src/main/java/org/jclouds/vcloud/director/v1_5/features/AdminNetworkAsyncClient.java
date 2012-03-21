@@ -28,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -79,4 +80,11 @@ public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> resetNetwork(@EndpointParam URI networkRef);
+   
+   /**
+    * @return asynchronous access to admin {@link MetadataAsyncClient.Writeable} features
+    */
+   @Override
+   @Delegate
+   MetadataAsyncClient.Writeable getMetadataClient();
 }

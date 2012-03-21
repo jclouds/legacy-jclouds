@@ -111,5 +111,5 @@ public interface CatalogAsyncClient {
     * @return asynchronous access to {@link Metadata.Writeable} features for CatalogItems
     */
    @Delegate
-   MetadataAsyncClient.Writable getCatalogItemMetadataClient();
+   MetadataAsyncClient.Writeable getCatalogItemMetadataClient();
 }

@@ -116,7 +116,7 @@ public interface AdminCatalogClient extends CatalogClient {
    //void publishCatalog(URI catalogRef)
 
    /**
-    * @return synchronous access to {@link Metadata.Writable} features
+    * @return synchronous access to {@link Metadata.Writeable} features
     */
    @Override
    @Delegate

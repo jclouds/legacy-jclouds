@@ -26,7 +26,7 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writable;
+import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writeable;
 
 /**
  * Provides synchronous access to Network.
@@ -78,7 +78,7 @@ public interface AdminVdcClient extends VdcClient {
    void disableVdc(URI vdcRef);
    
    /**
-    * @return synchronous access to {@link Writable} features
+    * @return synchronous access to {@link Writeable} features
     */
    @Delegate
    MetadataClient.Writeable getMetadataClient();
