@@ -157,6 +157,7 @@ public class NovaComputeService extends BaseComputeService {
                   logger.debug("<< deleted keypair(%s)", zoneAndName);
                }
             }
+            keyPairCache.invalidate(ZoneAndName.fromZoneAndName(zoneId, "jclouds#" + group));
          }
       }
    }
