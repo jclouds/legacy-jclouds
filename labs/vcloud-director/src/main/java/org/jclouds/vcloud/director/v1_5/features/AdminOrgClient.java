@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
@@ -216,5 +217,12 @@ public interface AdminOrgClient extends OrgClient {
     */
    OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings(URI orgRef, 
          OrgVAppTemplateLeaseSettings newSettings);
+   
+   /**
+    * @return synchronous access to admin {@link MetadataClient.Writeable} features
+    */
+    @Override
+    @Delegate
+    MetadataClient.Writeable getMetadataClient();
 
 }

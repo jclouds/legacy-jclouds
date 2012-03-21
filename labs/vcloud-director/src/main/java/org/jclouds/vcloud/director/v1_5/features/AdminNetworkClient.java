@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -81,5 +82,12 @@ public interface AdminNetworkClient extends NetworkClient {
     * returned task status in order to check when it is completed.
     */
    Task resetNetwork(URI networkRef);
+   
+   /**
+   * @return synchronous access to admin {@link MetadataClient.Writeable} features
+   */
+   @Override
+   @Delegate
+   MetadataClient.Writeable getMetadataClient();
 
 }

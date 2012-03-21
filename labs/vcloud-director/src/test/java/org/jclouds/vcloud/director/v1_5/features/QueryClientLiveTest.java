@@ -87,7 +87,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /query")
    public void testQuery() {
-      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       QueryResultRecords queryResult = queryClient.query("vAppTemplate", String.format("name==%s", vAppTemplate.getName()));
       Set<URI> hrefs = toHrefs(queryResult);
       
