@@ -32,10 +32,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
@@ -87,7 +85,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    @Test(testName = "GET /query")
    public void testQuery() {
-      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       QueryResultRecords queryResult = queryClient.query("vAppTemplate", String.format("name==%s", vAppTemplate.getName()));
       Set<URI> hrefs = toHrefs(queryResult);
       
