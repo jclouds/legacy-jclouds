@@ -19,6 +19,7 @@
 package org.jclouds.hpcloud.objectstorage.blobstore.config;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -72,6 +73,9 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
             // TODO: this is due to beta status
             logger.trace("couldn't get cdn metadata for %s: %s", container, e.getMessage());
             return null;
+         } catch (NoSuchElementException e) {
+             logger.trace("CDN may not be enabled. Couldn't get cdn metadata for %s: %s", container, e.getMessage());
+             return null;
          }
       }
 
