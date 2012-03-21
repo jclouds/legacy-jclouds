@@ -47,6 +47,7 @@ import org.jclouds.concurrent.Futures;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.functions.AllocateAndAddFloatingIpToNode;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
@@ -66,6 +67,7 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
    private final AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode;
    private final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache;
+   private final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
    private final NovaClient novaClient;
    private final Provider<TemplateBuilder> templateBuilderProvider;
 
@@ -78,11 +80,13 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             Provider<TemplateBuilder> templateBuilderProvider,
             AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode,
-            LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache, NovaClient novaClient) {
+            LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache,
+            LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaClient novaClient) {
       super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, executor,
                customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider, "templateBuilderProvider");
       this.securityGroupCache = checkNotNull(securityGroupCache, "securityGroupCache");
+      this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.allocateAndAddFloatingIpToNode = checkNotNull(allocateAndAddFloatingIpToNode,
                "allocateAndAddFloatingIpToNode");
       this.novaClient = checkNotNull(novaClient, "novaClient");
@@ -93,9 +97,6 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
             Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       // ensure we don't mutate the input template
       Template mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
-
-      // TODO: make NovaTemplateOptions with the following:
-      // security group, key pair
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(mutableTemplate.getOptions());
 
       String zone = mutableTemplate.getLocation().getId();
@@ -110,6 +111,11 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
          checkArgument(novaClient.getKeyPairExtensionForZone(zone).isPresent(),
                "Key Pairs are required by options, but the extension is not available! options: %s",
                templateOptions);
+         if (templateOptions.getKeyPairName() == null) {
+            KeyPair keyPair = keyPairCache.getUnchecked(ZoneAndName.fromZoneAndName(zone, "jclouds#" + group));
+            keyPairCache.asMap().put(ZoneAndName.fromZoneAndName(zone, keyPair.getName()), keyPair);
+            templateOptions.keyPairName(keyPair.getName());
+         }
       }
 
       boolean securityGroupExensionPresent = novaClient.getSecurityGroupExtensionForZone(zone).isPresent();

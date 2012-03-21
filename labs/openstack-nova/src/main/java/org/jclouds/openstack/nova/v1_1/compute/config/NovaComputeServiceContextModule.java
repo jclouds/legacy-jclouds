@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.config;
 
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -42,16 +43,13 @@ import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
-import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupIfNeeded;
-import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorInZoneToHardware;
-import org.jclouds.openstack.nova.v1_1.compute.functions.ImageInZoneToImage;
-import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
-import org.jclouds.openstack.nova.v1_1.compute.functions.OrphanedGroupsByZoneId;
-import org.jclouds.openstack.nova.v1_1.compute.functions.ServerInZoneToNodeMetadata;
+import org.jclouds.openstack.nova.v1_1.compute.functions.*;
+import org.jclouds.openstack.nova.v1_1.compute.loaders.FindKeyPairOrCreate;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.FindSecurityGroupOrCreate;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.LoadFloatingIpsForInstance;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.SecurityGroupInZone;
@@ -131,6 +129,11 @@ public class NovaComputeServiceContextModule
       bind(CreateNodesWithGroupEncodedIntoNameThenAddToSet.class).to(
                ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet.class);
 
+      bind(new TypeLiteral<Function<ZoneAndName, KeyPair>>() {
+      }).to(CreateUniqueKeyPair.class);
+
+      bind(new TypeLiteral<CacheLoader<ZoneAndName, KeyPair>>() {
+      }).to(FindKeyPairOrCreate.class);
    }
 
    @Override
@@ -164,6 +167,27 @@ public class NovaComputeServiceContextModule
             FindSecurityGroupWithNameAndReturnTrue in,
             @Named(NovaConstants.PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
       return new RetryablePredicate<AtomicReference<ZoneAndName>>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
+   }
+
+   @Provides
+   @Singleton
+   protected LoadingCache<ZoneAndName, KeyPair> keyPairMap(
+         CacheLoader<ZoneAndName, KeyPair> in) {
+      return CacheBuilder.newBuilder().build(in);
+   }
+
+   @Provides
+   @Singleton
+   Supplier<String> provideSuffix() {
+      return new Supplier<String>() {
+         final SecureRandom random = new SecureRandom();
+
+         @Override
+         public String get() {
+            return random.nextInt(100) + "";
+         }
+      };
+
    }
 
    @Provides
