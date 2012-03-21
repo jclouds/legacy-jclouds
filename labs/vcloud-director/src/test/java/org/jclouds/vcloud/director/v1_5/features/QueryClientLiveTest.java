@@ -65,41 +65,15 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
 
    private QueryClient queryClient;
-   private VAppTemplateClient vappTemplateClient;
-   private VAppClient vappClient;
+   private VAppTemplateClient vAppTemplateClient;
+   private VAppClient vAppClient;
 
    private VApp vApp;
    
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (vApp != null) {
-         vApp = vappClient.getVApp(vApp.getHref()); // update
-         
-         // Shutdown and power off the VApp if necessary
-         if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
-            try {
-               Task shutdownTask = vappClient.shutdown(vApp.getHref());
-               retryTaskSuccess.apply(shutdownTask);
-            } catch (Exception e) {
-               // keep going; cleanup as much as possible
-               logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp);
-            }
-         }
-
-         // Undeploy the VApp if necessary
-         if (vApp.isDeployed()) {
-            try {
-               UndeployVAppParams params = UndeployVAppParams.builder().build();
-               Task undeployTask = vappClient.undeploy(vApp.getHref(), params);
-               retryTaskSuccess.apply(undeployTask);
-            } catch (Exception e) {
-               // keep going; cleanup as much as possible
-               logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp);
-            }
-         }
-         
-         Task task = vappClient.deleteVApp(vApp.getHref());
-         assertTaskSucceeds(task);
+         cleanUpVApp(vApp);
       }
    }
 
@@ -107,8 +81,8 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       queryClient = context.getApi().getQueryClient();
-      vappTemplateClient = context.getApi().getVAppTemplateClient();
-      vappClient = context.getApi().getVAppClient();
+      vAppTemplateClient = context.getApi().getVAppTemplateClient();
+      vAppClient = context.getApi().getVAppClient();
    }
 
    @Test(testName = "GET /query")
@@ -144,7 +118,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "GET /vAppTemplates/query?filter)")
    public void testQueryVAppTemplatesWithFilter() {
-      VAppTemplate vAppTemplate = vappTemplateClient.getVAppTemplate(vAppTemplateURI);
+      VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       QueryResultRecords queryResult = queryClient.vAppTemplatesQuery(String.format("name==%s", vAppTemplate.getName()));
       Set<URI> hrefs = toHrefs(queryResult);
       
@@ -181,10 +155,10 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
 
       // Start the vApp so that it has VMs
-      Task task = vappClient.powerOn(vApp.getHref());
+      Task task = vAppClient.powerOn(vApp.getHref());
       assertTaskSucceedsLong(task);
       
-      vApp = vappClient.getVApp(vApp.getHref()); // reload, so it has the VMs
+      vApp = vAppClient.getVApp(vApp.getHref()); // reload, so it has the VMs
       List<Vm> vms = vApp.getChildren().getVms();
       Set<URI> vmHrefs = toHrefs(vms);
 
@@ -208,7 +182,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(hrefs, vmHrefs, "VMs query result should equal vms of vApp "+vApp.getName()+" ("+vmHrefs+"); but only has "+hrefs);
    }
    
-   private static void assertRecordTypes(QueryResultRecords queryResult, Collection<String> validTypes, Class validClazz) {
+   private static void assertRecordTypes(QueryResultRecords queryResult, Collection<String> validTypes, Class<?> validClazz) {
       for (QueryResultRecordType record : queryResult.getRecords()) {
          assertTrue(validTypes.contains(record.getType()), "invalid type for query result record, "+record.getType()+"; valid types are "+validTypes);
          assertEquals(record.getClass(), validClazz, "invalid type for query result record, "+record.getClass()+"; expected "+validClazz);
