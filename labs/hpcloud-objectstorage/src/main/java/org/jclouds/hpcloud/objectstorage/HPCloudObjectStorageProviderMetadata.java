@@ -4,7 +4,7 @@
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not computee this file except in compliance
+ * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.hpcloud.compute;
+package org.jclouds.hpcloud.objectstorage;
+
+import com.google.common.collect.ImmutableSet;
 
 import java.net.URI;
 import java.util.Set;
@@ -24,22 +26,19 @@ import java.util.Set;
 import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 
-import com.google.common.collect.ImmutableSet;
-
-
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for HP Cloud Compute Services.
+ * Implementation of {@link org.jclouds.providers.ProviderMetadata} for HP Cloud Services Object Storage
  * 
- * @author Adrian Cole
+ * @author Jeremy Daggett
  */
-public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
+public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
 
    /**
     * {@inheritDoc}
     */
    @Override
    public String getId() {
-      return "hpcloud-compute";
+      return "hpcloud-objectstorage";
    }
 
    /**
@@ -47,9 +46,17 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+      return ProviderMetadata.BLOBSTORE_TYPE;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getName() {
+      return "HP Cloud Services Object Storage";
+   }
+   
    /**
     * {@inheritDoc}
     */
@@ -70,14 +77,6 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
     * {@inheritDoc}
     */
    @Override
-   public String getName() {
-      return "HP Cloud Compute Services";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public URI getHomepage() {
       return URI.create("http://hpcloud.com");
    }
@@ -87,7 +86,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public URI getConsole() {
-      return URI.create("https://manage.hpcloud.com/compute");
+      return URI.create("https://manage.hpcloud.com/objects/us-west");
    }
 
    /**
