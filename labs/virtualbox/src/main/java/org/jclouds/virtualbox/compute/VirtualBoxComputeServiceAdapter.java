@@ -41,7 +41,10 @@ import org.jclouds.logging.Logger;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.YamlImage;
-import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndForceDeleteItsMedia;
+import org.jclouds.virtualbox.functions.IMachineToVmSpec;
+import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.jclouds.virtualbox.util.MachineController;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
@@ -71,20 +74,25 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   
+
    private final Supplier<VirtualBoxManager> manager;
    private final Map<Image, YamlImage> images;
    private final LoadingCache<Image, Master> mastersLoader;
    private final Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator;
+   private final MachineController machineController;
+   private final MachineUtils machineUtils;
 
    @Inject
    public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
             Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
-            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator) {
+            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator, MachineController machineController,
+            MachineUtils machineUtils) {
       this.manager = checkNotNull(manager, "manager");
       this.images = imagesMapper.get();
       this.mastersLoader = mastersLoader;
       this.cloneCreator = cloneCreator;
+      this.machineController = machineController;
+      this.machineUtils = machineUtils;
    }
 
    @Override
@@ -92,7 +100,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
             Template template) {
       try {
          Master master = mastersLoader.get(template.getImage());
-         checkState(master != null, "could not find a master for image: "+template.getClass());
+         checkState(master != null, "could not find a master for image: " + template.getClass());
          NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
          return cloneCreator.apply(nodeSpec);
       } catch (Exception e) {
@@ -142,7 +150,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       try {
          return manager.get().getVBox().findMachine(vmName);
       } catch (VBoxException e) {
-         if (e.getMessage().contains("Could not find a registered machine named")){
+         if (e.getMessage().contains("Could not find a registered machine named")) {
             return null;
          }
          throw Throwables.propagate(e);
@@ -152,72 +160,25 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    @Override
    public synchronized void destroyNode(String vmName) {
       IMachine machine = manager.get().getVBox().findMachine(vmName);
-      powerDownMachine(machine);
-      new UnregisterMachineIfExistsAndForceDeleteItsMedia().apply(machine);
+      machineController.ensureMachineHasPowerDown(vmName);
+      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmName,
+               new UnregisterMachineIfExistsAndDeleteItsMedia(new IMachineToVmSpec().apply(machine)));
    }
 
    @Override
    public void rebootNode(String vmName) {
-      IMachine machine = manager.get().getVBox().findMachine(vmName);
-      powerDownMachine(machine);
-      launchVMProcess(machine, manager.get().getSessionObject());
+      machineController.ensureMachineHasPowerDown(vmName);
+      machineController.ensureMachineIsLaunched(vmName);
    }
 
    @Override
    public void resumeNode(String vmName) {
-      IMachine machine = manager.get().getVBox().findMachine(vmName);
-      ISession machineSession;
-      try {
-         machineSession = manager.get().openMachineSession(machine);
-         machineSession.getConsole().resume();
-         machineSession.unlockMachine();
-      } catch (Exception e) {
-         throw Throwables.propagate(e);
-      }
+      machineController.ensureMachineIsResumed(vmName);
    }
 
    @Override
    public void suspendNode(String vmName) {
-      IMachine machine = manager.get().getVBox().findMachine(vmName);
-      ISession machineSession;
-      try {
-         machineSession = manager.get().openMachineSession(machine);
-         machineSession.getConsole().pause();
-         machineSession.unlockMachine();
-      } catch (Exception e) {
-         throw Throwables.propagate(e);
-      }
-   }
-
-   private void launchVMProcess(IMachine machine, ISession session) {
-      IProgress prog = machine.launchVMProcess(session, "gui", "");
-      prog.waitForCompletion(-1);
-      session.unlockMachine();
-   }
-
-   private void powerDownMachine(IMachine machine) {
-      try {
-         if (machine.getState() == MachineState.PoweredOff){
-            logger.debug("vm was already powered down: ", machine.getId());
-            return;
-         }
-         logger.debug("powering down vm: ", machine.getId());
-         ISession machineSession = manager.get().openMachineSession(machine);
-         IProgress progress = machineSession.getConsole().powerDown();
-         progress.waitForCompletion(-1);
-         machineSession.unlockMachine();
-
-         while (!machine.getSessionState().equals(SessionState.Unlocked)) {
-            try {
-               logger.info("waiting for unlocking session - session state: " + machine.getSessionState());
-               Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
-         }
-
-      } catch (Exception e) {
-         throw Throwables.propagate(e);
-      }
+      machineController.ensureMachineIsPaused(vmName);
    }
 
 }

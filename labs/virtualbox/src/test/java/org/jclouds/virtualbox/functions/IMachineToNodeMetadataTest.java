@@ -26,6 +26,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INATEngine;
@@ -56,10 +57,12 @@ public class IMachineToNodeMetadataTest {
       expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3001,,22"));
 
       INetworkAdapter hostOnly = createNiceMock(INetworkAdapter.class);
+      MachineUtils machineUtils = createNiceMock(MachineUtils.class);
 
-      replay(vm, nat, natEng, hostOnly);
+      replay(vm, nat, natEng, hostOnly, machineUtils);
 
-      NodeMetadata node = new IMachineToNodeMetadata().apply(vm);
+
+      NodeMetadata node = new IMachineToNodeMetadata(machineUtils).apply(vm);
 
       assertEquals("mocked-vm", node.getName());
       assertEquals(1, node.getPrivateAddresses().size());

@@ -87,7 +87,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 				.iso(IsoSpec.builder().sourcePath(operatingSystemIso)
 						.installationScript("").build()).vm(vmSpec)
 				.network(networkSpec).build();
-		undoVm(vmSpec);
+		undoVm(vmSpec.getVmName());
 		try {
 			IMachine debianNode = context.utils()
 					.injector()
@@ -97,7 +97,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 			IMachine machine = manager.get().getVBox().findMachine(vmName);
 			assertEquals(debianNode.getName(), machine.getName());
 		} finally {
-			undoVm(vmSpec);
+			undoVm(vmSpec.getVmName());
 		}
 	}
 
@@ -119,7 +119,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 		NetworkSpec networkSpec = NetworkSpec.builder().build();
 		MasterSpec machineSpec = MasterSpec.builder().iso(isoSpec).vm(vmSpec)
 				.network(networkSpec).build();
-		undoVm(vmSpec);
+		undoVm(vmSpec.getVmName());
 		try {
 			Injector injector = context.utils().injector();
 			injector.getInstance(
@@ -132,7 +132,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
 			// if osTypeId is not found.
 			assertEquals(errorCode, ErrorCode.VBOX_E_OBJECT_NOT_FOUND);
 		} finally {
-			undoVm(vmSpec);
+			undoVm(vmSpec.getVmName());
 		}
 
 	}

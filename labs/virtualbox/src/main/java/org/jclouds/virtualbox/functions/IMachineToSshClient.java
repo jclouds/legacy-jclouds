@@ -22,12 +22,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -39,13 +42,17 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.BridgedIf;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
+import org.virtualbox_4_1.ISession;
+import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.NetworkAttachmentType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
@@ -59,14 +66,16 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 	private final SshClient.Factory sshClientFactory;
 	private final RunScriptOnNode.Factory scriptRunnerFactory;
 	private final Supplier<NodeMetadata> hostSupplier;
+	private final MachineUtils machineUtils;
 
 	@Inject
 	public IMachineToSshClient(SshClient.Factory sshClientFactory,
 			RunScriptOnNode.Factory scriptRunnerFactory,
-			Supplier<NodeMetadata> hostSupplier) {
+			Supplier<NodeMetadata> hostSupplier, MachineUtils machineUtils) {
 		this.sshClientFactory = sshClientFactory;
 		this.scriptRunnerFactory = scriptRunnerFactory;
 		this.hostSupplier = hostSupplier;
+		this.machineUtils = machineUtils;
 	}
 
 	@Override
@@ -102,8 +111,9 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 			}
 		} else if (networkAdapter.getAttachmentType().equals(
 				NetworkAttachmentType.Bridged)) {
-			String network = "1.1.1.1";
-			clientIpAddress = getIpAddressFromBridgedNIC(networkAdapter, network);
+			clientIpAddress = machineUtils.getIpAddressFromBridgedNICoption1(vm.getName());
+			//String network = "1.1.1.1";
+			//clientIpAddress = getIpAddressFromBridgedNICoption2(networkAdapter, network);
 		}
 		
 		checkNotNull(clientIpAddress, "clientIpAddress");
@@ -113,8 +123,10 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 		checkNotNull(client);
 		return client;
 	}
+	
 
-	private String getIpAddressFromBridgedNIC(INetworkAdapter networkAdapter,
+
+	private String getIpAddressFromBridgedNICoption2(INetworkAdapter networkAdapter,
 			String network) {
 		// RetrieveActiveBridgedInterfaces
 		List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory).apply(hostSupplier.get());

@@ -19,7 +19,6 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkState;
 import static junit.framework.Assert.assertEquals;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
@@ -33,7 +32,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.HardDisk;
@@ -44,31 +42,23 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
-import org.jclouds.virtualbox.predicates.SshResponds;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * @author Andrea Turli, Mattias Holmqvist
+ * @author Andrea Turli
  */
-@Test(groups = "live", singleThreaded = true, testName = "CreateAndInstallVmLiveTest")
-public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
+@Test(groups = "live", singleThreaded = true, testName = "CreateAndInstallMasterTest")
+public class CreateAndInstallVanillaOsTest extends BaseVirtualBoxClientLiveTest {
 
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
@@ -77,8 +67,6 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    private VmSpec vmSpecification;
    private MasterSpec masterSpec;
    private Injector injector;
-   private Function<IMachine, SshClient> sshClientForIMachine;
-   private Predicate<SshClient> sshResponds;
    private String vmName;
 
    @Override
@@ -115,51 +103,20 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
                                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
                                           vmSpecification.getVmName())).build()).network(networkSpec).build();
 
-      undoVm(vmSpecification.getVmName());
    }
 
    @Test
-   public void testCreateImageMachineFromIso() throws Exception {
-      IMachine imageMachine = getVmWithGuestAdditionsInstalled();
+   public void testCreateVanillaOSMachineFromIso() throws Exception {
+      IMachine imageMachine = getMaster();
       IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
       Image newImage = iMachineToImage.apply(imageMachine);
       assertEquals(vmName, newImage.getName());
    }
 
-   @Test
-   public void testGuestAdditionsAreInstalled() throws Exception {
-      try {
-         IMachine machine = getVmWithGuestAdditionsInstalled();
-
-         machineUtils.applyForMachine(machine.getName(), new LaunchMachineIfNotAlreadyRunning(manager.get(),
-                  ExecutionType.GUI, ""));
-         sshClientForIMachine = injector.getInstance(IMachineToSshClient.class);
-         SshClient client = sshClientForIMachine.apply(machine);
-
-         sshResponds = injector.getInstance(SshResponds.class);
-         checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh",
-                  machine.getName());
-
-         String vboxVersion = Iterables.get(
-                  Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-         assertEquals(vboxVersion, machineUtils.lockSessionOnMachineAndApply(machine.getName(), LockType.Shared,
-                  new Function<ISession, String>() {
-                     @Override
-                     public String apply(ISession session) {
-                        return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestAdd/Version");
-                     }
-                  }));
-      } finally {
-         for (VmSpec spec : ImmutableSet.of(vmSpecification)) {
-            machineController.ensureMachineHasPowerDown(spec.getVmName());
-         }
-      }
-   }
-
-   private IMachine getVmWithGuestAdditionsInstalled() {
+   private IMachine getMaster() {
       try {
          Injector injector = context.utils().injector();
-         return injector.getInstance(CreateAndInstallVm.class).apply(masterSpec);
+         return injector.getInstance(CreateAndInstallVanillaOs.class).apply(masterSpec);
       } catch (IllegalStateException e) {
          // already created
          return manager.get().getVBox().findMachine(masterSpec.getVmSpec().getVmId());

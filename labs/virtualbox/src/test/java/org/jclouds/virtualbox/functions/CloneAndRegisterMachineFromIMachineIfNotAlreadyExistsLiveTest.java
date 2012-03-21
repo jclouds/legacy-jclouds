@@ -136,7 +136,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExistsLiveTest exten
          Set<VmSpec> specs = cloneSpec == null ? ImmutableSet.of(sourceMachineSpec.getVmSpec()) : ImmutableSet.of(
                   cloneSpec.getVmSpec(), sourceMachineSpec.getVmSpec());
          for (VmSpec spec : specs) {
-            undoVm(spec);
+            undoVm(spec.getVmName());
          }
 
       }

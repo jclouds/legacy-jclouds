@@ -1,4 +1,4 @@
-package org.jclouds.virtualbox.statements;
+package org.jclouds.virtualbox.functions;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -13,9 +13,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.ExecutionType;
-import org.jclouds.virtualbox.functions.CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
-import org.jclouds.virtualbox.functions.IMachineToNodeMetadata;
-import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
+import org.jclouds.virtualbox.statements.InstallGuestAdditions;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -59,7 +57,7 @@ public class GuestAdditionsInstaller implements Function<String, IMachine> {
       IMachine vm = manager.get().getVBox().findMachine(vmName);
       ensureMachineIsLaunched(vmName);
 
-      NodeMetadata vmMetadata = new IMachineToNodeMetadata().apply(vm);
+      NodeMetadata vmMetadata = new IMachineToNodeMetadata(machineUtils).apply(vm);
 
       ListenableFuture<ExecResponse> execFuture = context.getComputeService().submitScriptOnNode(vmMetadata.getId(),
             new InstallGuestAdditions(vboxVersion), RunScriptOptions.NONE);

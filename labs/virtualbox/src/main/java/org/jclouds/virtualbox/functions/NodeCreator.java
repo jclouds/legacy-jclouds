@@ -45,7 +45,9 @@ import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.DeleteGShadowLock;
 import org.jclouds.virtualbox.statements.SetIpAddress;
+import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
+import org.testng.collections.Lists;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
@@ -60,7 +62,7 @@ import com.google.common.base.Supplier;
  * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
  * synchronized mainly because of snapshot creation (must be synchronized on a per-master-basis).
  * 
- * @author dralves
+ * @author dralves, Andrea Turli
  * 
  */
 @Singleton
@@ -90,11 +92,14 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
    private final RunScriptOnNode.Factory scriptRunnerFactory;
    private final Supplier<NodeMetadata> hostSupplier;
+   private final MachineController machineController;
+   private List<BridgedIf> activeBridgedInterfaces;
 
    @Inject
    public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,
             MachineUtils machineUtils, Function<IMachine, NodeMetadata> imachineToNodeMetadata,
-            RunScriptOnNode.Factory scriptRunnerFactory, Supplier<NodeMetadata> hostSupplier) {
+            RunScriptOnNode.Factory scriptRunnerFactory, Supplier<NodeMetadata> hostSupplier,
+            MachineController machineController) {
       this.manager = manager;
       this.cloner = cloner;
       this.nodePorts = new AtomicInteger(NODE_PORT_INIT + 1);
@@ -103,17 +108,15 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       this.imachineToNodeMetadata = imachineToNodeMetadata;
       this.scriptRunnerFactory = scriptRunnerFactory;
       this.hostSupplier = hostSupplier;
-
+      this.machineController = machineController;
+      this.activeBridgedInterfaces = Lists.newArrayList();
    }
 
    @Override
    public synchronized NodeAndInitialCredentials<IMachine> apply(NodeSpec nodeSpec) {
-
       checkNotNull(nodeSpec, "NodeSpec");
-
       Master master = nodeSpec.getMaster();
       checkNotNull(master, "Master");
-
       if (master.getMachine().getCurrentSnapshot() != null) {
          ISession session;
          try {
@@ -125,6 +128,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          progress.waitForCompletion(-1);
          session.unlockMachine();
       }
+
       String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
 
       String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + "-" + nodeSpec.getTag() + "-"
@@ -133,38 +137,49 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
                .forceOverwrite(true).build();
 
-      // CASE NAT + HOST-ONLY
+      activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory).apply(hostSupplier.get());
+      boolean networkBridgeableAvailable = false;
+      if (activeBridgedInterfaces.size() < 1) {
+         networkBridgeableAvailable = false;
+      }
+
+      NetworkSpec networkSpec = null;
       NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22).build();
+               //.tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22)
+               .build();
       NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(0L).build();
 
+    /*
       NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
                .staticIp(VMS_NETWORK + this.nodeIps.getAndIncrement()).build();
-
+               */
+      NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly).build();
       NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
                .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();
 
-      NetworkSpec networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
-      // //
-
-      // CASE BRIDGED
-      // NetworkSpec networkSpec = createNetworkSpecForBridgedNIC();
+      if (!networkBridgeableAvailable) {
+         // No network available so configure NAT + HOST-ONLY
+         networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
+      } else {
+         // There is at least one network bridgeable
+         networkSpec = createNetworkSpecForBridgedNIC();
+      }
 
       CloneSpec cloneSpec = CloneSpec.builder().linked(USE_LINKED).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
-
       IMachine cloned = cloner.apply(cloneSpec);
+      machineController.ensureMachineIsLaunched(cloned.getName());
 
-      new LaunchMachineIfNotAlreadyRunning(manager.get(), EXECUTION_TYPE, "").apply(cloned);
-
+      /*
       // see DeleteGShadowLock for a detailed explanation
       machineUtils
                .runScriptOnNode(imachineToNodeMetadata.apply(cloned), new DeleteGShadowLock(), RunScriptOptions.NONE);
-
-      // CASE NAT + HOST-ONLY
-      machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
-               RunScriptOptions.NONE);
-      // //
+      
+      if (!networkBridgeableAvailable) {
+        machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(cloned), new SetIpAddress(hostOnlyIfaceCard),
+                  RunScriptOptions.NONE);
+      }
+      */
 
       // TODO get credentials from somewhere else (they are also HC in
       // IMachineToSshClient)
@@ -180,8 +195,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    }
 
    private NetworkSpec createNetworkSpecForBridgedNIC() {
-      List<BridgedIf> activeBridgedInterfaces = new RetrieveActiveBridgedInterfaces(scriptRunnerFactory)
-               .apply(hostSupplier.get());
       BridgedIf bridgedActiveInterface = checkNotNull(activeBridgedInterfaces.get(0), "activeBridgedIf");
 
       NetworkAdapter bridgedAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.Bridged)
@@ -192,4 +205,5 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(bridgedNIC).build();
       return networkSpec;
    }
+
 }

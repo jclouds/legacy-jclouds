@@ -37,16 +37,15 @@ public class InstallGuestAdditions extends StatementList {
 
    public InstallGuestAdditions(String vboxVersion, String mountPoint, String vboxGuestAdditionsIso) {
       this(URI.create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/" + vboxGuestAdditionsIso),
-            mountPoint, vboxGuestAdditionsIso);
+               mountPoint, vboxGuestAdditionsIso);
    }
 
    public InstallGuestAdditions(URI download, String mountPoint, String vboxGuestAdditionsIso) {
-      super(call("setupPublicCurl"), //
-            saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso),//
-            exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)),
-            call("installModuleAssistantIfNeeded"), //
-            exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run")), //
-            exec(String.format("umount %s", mountPoint)));
+      super(// call("setupPublicCurl"), //
+            // saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso),//
+               exec(String.format("mount -o loop /dev/scd1 %s", mountPoint)), call("installModuleAssistantIfNeeded"), //
+               exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run")), //
+               exec(String.format("umount %s", mountPoint)));
    }
 
    @Override

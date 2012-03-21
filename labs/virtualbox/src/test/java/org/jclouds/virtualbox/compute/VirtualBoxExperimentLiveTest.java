@@ -38,6 +38,8 @@ import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -78,6 +80,7 @@ public class VirtualBoxExperimentLiveTest {
          ExecResponse hello = client.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
       }
+
       context.getComputeService().destroyNodesMatching(new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata input) {

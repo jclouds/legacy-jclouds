@@ -45,12 +45,15 @@ import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Splitter;
@@ -67,6 +70,9 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
 public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
+	
+	protected static String vanillaOsImageName = "jclouds-image-create-and-install-vanilla-os-test";
+
    public BaseVirtualBoxClientLiveTest() {
       provider = "virtualbox";
    }
@@ -148,14 +154,21 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       Template template = context.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
    }
+   
+	protected void undoVm(String vmNameOrId) {
+		IMachine vm = null;
+		try {
+			vm = manager.get().getVBox().findMachine(vmNameOrId);
+		} catch (VBoxException e) {
+			if (e.getMessage().contains("Could not find a registered machine named"))
+				return;
+		}
 
-
-   protected void undoVm(VmSpec vmSpecification) {
-      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(),
-               new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
-   }
-
-
+		VmSpec vmSpec = new IMachineToVmSpec().apply(vm);
+		machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(
+				vmSpec.getVmId(),
+				new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpec));
+	}
 
    public String adminDisk(String vmName) {
       return workingDir + File.separator + vmName + ".vdi";
