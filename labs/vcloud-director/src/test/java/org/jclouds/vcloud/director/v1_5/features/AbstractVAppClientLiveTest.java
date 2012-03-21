@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
@@ -54,6 +55,7 @@ import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Function;
@@ -179,6 +181,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
 
    @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps") 
    protected void cleanUp() {
+      vdc = vdcClient.getVdc(vdcURI); // Refresh
       // Find references in the Vdc with the VApp type and in the list of instantiated VApp names
       Iterable<Reference> vApps = Iterables.filter(
             vdc.getResourceEntities(),
@@ -193,6 +196,8 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
          for (Reference ref : vApps) {
             cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
          }
+      } else {
+         logger.warn("No VApps in list found in Vdc %s (%s)", vdc.getName(), Iterables.toString(vAppNames));
       }
    }
 
@@ -317,16 +322,18 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    }
 
    /**
-    * Marshals a JAXB annotated object into XML. The XML is output on {@link System#err}.
+    * Marshals a JAXB annotated object into XML.
+    *
+    * The XML is output using {@link org.jclouds.logging.Logger#debug(String)}
     */
    protected void debug(Object object) {
       JAXBParser parser = new JAXBParser();
       try {
          String xml = parser.toXML(object);
 
-         System.err.println(Strings.padStart(Strings.padEnd(" " + object.getClass().toString() + " ", 70, '-'), 80, '-'));
-         System.err.println(xml);
-         System.err.println(Strings.repeat("-", 80));
+         logger.debug(Strings.padStart(Strings.padEnd(" " + object.getClass().toString() + " ", 70, '-'), 80, '-'));
+         logger.debug(xml);
+         logger.debug(Strings.repeat("-", 80));
       } catch (IOException ioe) {
          Throwables.propagate(ioe);
       }

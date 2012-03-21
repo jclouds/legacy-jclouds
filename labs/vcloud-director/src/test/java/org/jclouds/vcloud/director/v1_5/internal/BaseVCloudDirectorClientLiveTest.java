@@ -356,14 +356,16 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
    
    // TODO code tidy for cleanUpVApp? Seems extremely verbose!
-   protected void cleanUpVApp(URI vAppUri) {
-      VAppClient vappClient = context.getApi().getVAppClient();
+   protected void cleanUpVApp(URI vAppURI) {
+      VAppClient vAppClient = context.getApi().getVAppClient();
 
       VApp vApp;
       try {
-         vApp = vappClient.getVApp(vAppUri); // update
+         vApp = vAppClient.getVApp(vAppURI); // Refresh
+         logger.debug("Deleting VApp %s (%s)", vApp.getName(), vAppURI.getPath());
       } catch (VCloudDirectorException e) {
-         // presumably vApp has already been deleted; ignore
+         // Presumably vApp has already been deleted. Ignore.
+         logger.info("Cannot find VApp at %s", vAppURI.getPath());
          return;
       }
       
@@ -378,11 +380,11 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       // Shutdown and power off the VApp if necessary
       if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
          try {
-            Task shutdownTask = vappClient.shutdown(vAppUri);
+            Task shutdownTask = vAppClient.shutdown(vAppURI);
             retryTaskSuccess.apply(shutdownTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible
-            logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp);
+            logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp.getName());
          }
       }
 
@@ -390,26 +392,27 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       if (vApp.isDeployed()) {
          try {
             UndeployVAppParams params = UndeployVAppParams.builder().build();
-            Task undeployTask = vappClient.undeploy(vAppUri, params);
+            Task undeployTask = vAppClient.undeploy(vAppURI, params);
             retryTaskSuccess.apply(undeployTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible
-            logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp);
+            logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp.getName());
          }
       }
       
       try {
-         Task task = vappClient.deleteVApp(vAppUri);
+         Task task = vAppClient.deleteVApp(vAppURI);
          assertTaskSucceeds(task);
          vAppNames.remove(vApp.getName());
+         logger.info("Deleted VApp %s", vApp.getName());
       } catch (Exception e) {
          try {
-            vApp = vappClient.getVApp(vAppUri); // refresh
+            vApp = vAppClient.getVApp(vAppURI); // Refresh
          } catch (Exception e2) {
-            // ignore
+            // Ignore
          }
 
-         logger.warn(e, "Deleting vApp failed: vApp="+vApp);
+         logger.warn(e, "Deleting VApp %s failed (%s)", vApp.getName(), vAppURI.getPath());
       }
    }
 
