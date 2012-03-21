@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "CatalogClientExpectTest")
+@Test(groups = { "unit", "admin", "catalog" }, singleThreaded = true, testName = "CatalogClientExpectTest")
 public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    private Reference orgRef = Reference.builder()

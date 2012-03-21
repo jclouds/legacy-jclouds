@@ -81,7 +81,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
    }
    
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (user != null) {
          try {
@@ -127,7 +127,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static User randomTestUser(String prefix, Reference role) {
       return User.builder()
-         .name(prefix+random.nextInt())
+         .name(name(prefix))
          .fullName("testFullName")
          .emailAddress("test@test.com")
          .telephone("555-1234")
@@ -267,7 +267,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          dependsOnMethods = { "testCreateUser" } )
    public void testDeleteUser() {
       // Create a user to be deleted (so we remove dependencies on test ordering)
-      String name = "a"+random.nextInt();
+      String name = name("a");
       User newUser = User.builder()
          .name(name)
          .role(Reference.builder() // FIXME: auto-fetch a role? or inject

@@ -73,7 +73,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Reference orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
 
       AdminCatalog newCatalog = AdminCatalog.builder()
-            .name("Test Catalog " + random.nextInt())
+            .name(name("Test Catalog "))
             .description("created by CatalogClientLiveTest")
             .build();
       

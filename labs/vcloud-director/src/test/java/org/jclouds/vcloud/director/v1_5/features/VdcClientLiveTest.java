@@ -84,7 +84,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private VAppTemplate capturedVAppTemplate;
    private VAppTemplate uploadedVAppTemplate;
    
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (clonedVAppTemplate != null) {
          cleanUpVAppTemplate(clonedVAppTemplate);
@@ -127,7 +127,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "POST /vdc/{id}/action/captureVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
    public void testCaptureVApp() {
-      String name = "captured-"+random.nextInt(Integer.MAX_VALUE);
+      String name = name("captured-");
       
       CaptureVAppParams captureVappParams = CaptureVAppParams.builder()
                .name(name)
@@ -191,7 +191,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "POST /vdc/{id}/action/composeVApp")
    public void testComposeVApp() {
-      String name = "composed-"+random.nextInt(Integer.MAX_VALUE);
+      String name = name("composed-");
       
       composedVApp = vdcClient.composeVApp(vdcURI, ComposeVAppParams.builder()
             .name(name)
@@ -257,7 +257,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                               .build();
                      
       InstantiateVAppTemplateParams instantiate = InstantiateVAppTemplateParams.builder()
-            .name("test-vapp-"+random.nextInt(Integer.MAX_VALUE))
+            .name(name("test-vapp-"))
             .notDeploy()
             .notPowerOn()
             .description("Test VApp")
@@ -280,7 +280,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       //  3. uploading disks described from the OVF 
       //  4. finishing task for uploading
       
-      String name = "uploaded-"+random.nextInt(Integer.MAX_VALUE);
+      String name = name("uploaded-");
       
       UploadVAppTemplateParams uploadVAppTemplateParams = UploadVAppTemplateParams.builder()
                .name(name)

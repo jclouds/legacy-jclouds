@@ -72,7 +72,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       taskClient = context.getApi().getTaskClient();
    }
 
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (vApp != null) cleanUpVApp(vApp);
    }

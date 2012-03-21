@@ -60,7 +60,31 @@ import com.google.common.collect.Maps;
  * @author grkvlt@apache.org
  * @see http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2.22.0/CIM_VirtualSystemSettingData.xsd
  */
-@XmlType(name = "CIM_VirtualSystemSettingData_Type", namespace = VCLOUD_OVF_NS)
+@XmlType(name = "CIM_VirtualSystemSettingData_Type", namespace = VCLOUD_OVF_NS,
+   propOrder = {
+      "automaticRecoveryAction",
+      "automaticShutdownAction",
+      "automaticStartupAction",
+      "automaticStartupActionDelay",
+      "automaticStartupActionSequenceNumber",
+      "caption",
+      "configurationDataRoot",
+      "configurationFile",
+      "configurationID",
+      "creationTime",
+      "description",
+      "elementName",
+      "instanceID",
+      "logDataRoot",
+      "notes",
+      "recoveryFile",
+      "snapshotDataRoot",
+      "suspendDataRoot",
+      "swapFileDataRoot",
+      "virtualSystemIdentifier",
+      "virtualSystemType"
+   }
+)
 public class VirtualSystemSettingData {
 
    public static Builder builder() {
@@ -615,7 +639,7 @@ public class VirtualSystemSettingData {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -624,6 +648,20 @@ public class VirtualSystemSettingData {
            equal(this.instanceID, that.instanceID) &&
            equal(this.caption, that.caption) &&
            equal(this.description, that.description) &&
+           equal(this.automaticRecoveryAction, that.automaticRecoveryAction) &&
+           equal(this.automaticShutdownAction, that.automaticShutdownAction) &&
+           equal(this.automaticStartupAction, that.automaticStartupAction) &&
+           equal(this.automaticStartupActionDelay, that.automaticStartupActionDelay) &&
+           equal(this.automaticStartupActionSequenceNumber, that.automaticStartupActionSequenceNumber) &&
+           equal(this.configurationDataRoot, that.configurationDataRoot) &&
+           equal(this.configurationFile, that.configurationFile) &&
+           equal(this.configurationID, that.configurationID) &&
+           equal(this.creationTime, that.creationTime) &&
+           equal(this.logDataRoot, that.logDataRoot) &&
+           equal(this.recoveryFile, that.recoveryFile) &&
+           equal(this.snapshotDataRoot, that.snapshotDataRoot) &&
+           equal(this.suspendDataRoot, that.suspendDataRoot) &&
+           equal(this.swapFileDataRoot, that.swapFileDataRoot) &&
            equal(this.virtualSystemIdentifier, that.virtualSystemIdentifier) &&
            equal(this.virtualSystemType, that.virtualSystemType);
    }
@@ -631,8 +669,24 @@ public class VirtualSystemSettingData {
    @Override
    public String toString() {
       return Objects.toStringHelper("")
+            .add("elementName", elementName)
+            .add("instanceID", instanceID)
             .add("caption", caption)
             .add("description", description)
+            .add("automaticRecoveryAction", automaticRecoveryAction)
+            .add("automaticShutdownAction", automaticShutdownAction)
+            .add("automaticStartupAction", automaticStartupAction)
+            .add("automaticStartupActionDelay", automaticStartupActionDelay)
+            .add("automaticStartupActionSequenceNumber", automaticStartupActionSequenceNumber)
+            .add("configurationDataRoot", configurationDataRoot)
+            .add("configurationFile", configurationFile)
+            .add("configurationID", configurationID)
+            .add("creationTime", creationTime)
+            .add("logDataRoot", logDataRoot)
+            .add("recoveryFile", recoveryFile)
+            .add("snapshotDataRoot", snapshotDataRoot)
+            .add("suspendDataRoot", suspendDataRoot)
+            .add("swapFileDataRoot", swapFileDataRoot)
             .add("virtualSystemIdentifier", virtualSystemIdentifier)
             .add("virtualSystemType", virtualSystemType)
             .toString();
