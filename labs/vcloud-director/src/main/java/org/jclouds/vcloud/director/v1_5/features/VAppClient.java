@@ -574,7 +574,7 @@ public interface VAppClient {
     * The answer IDs of choice and question should match the ones returned from operation {@link #getPendingQuestion(URI)}.
     *
     * <pre>
-    * PUT /vApp/{id}/question/action/answer
+    * POST /vApp/{id}/question/action/answer
     * </pre>
     *
     * @since 0.9

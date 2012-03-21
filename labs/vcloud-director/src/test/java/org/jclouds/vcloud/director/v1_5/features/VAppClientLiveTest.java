@@ -786,7 +786,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkVmPendingQuestion(question);
    }
 
-   @Test(testName = "PUT /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
+   @Test(testName = "POST /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
    public void testAnswerQuestion() {
       // TODO check that the question has been answered (e.g. asking for getPendingQuestion does not
       // include our answered question).
