@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 
@@ -58,6 +58,28 @@ public interface OrgClient {
     * @return the org or null if not found
     */
    Org getOrg(URI orgRef);
+
+   /**
+    * Modifies a catalog control access.
+    *
+    * <pre>
+    * POST /org/{id}/catalog/{catalogId}/action/controlAccess
+    * </pre>
+    *
+    * @return the control access information
+    */
+   ControlAccessParams modifyControlAccess(URI orgRef, String catalogId, ControlAccessParams params);
+
+   /**
+    * Retrieves the catalog control access information.
+    *
+    * <pre>
+    * GET /org/{id}/catalog/{catalogId}/controlAccess
+    * </pre>
+    *
+    * @return the control access information
+    */
+   ControlAccessParams getControlAccess(URI orgRef, String catalogId);
    
    /**
     * @return synchronous access to {@link Metadata.Readable} features

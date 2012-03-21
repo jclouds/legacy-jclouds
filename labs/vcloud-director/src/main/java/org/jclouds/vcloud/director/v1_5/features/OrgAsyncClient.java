@@ -18,18 +18,25 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CONTROL_ACCESS;
+
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
+import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
@@ -61,6 +68,28 @@ public interface OrgAsyncClient {
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgUri);
+
+   /**
+    * @see OrgClient#modifyControlAccess(URI, URI, ControlAccessParams)
+    */
+   @POST
+   @Path("/catalog/{catalogId}/action/controlAccess")
+   @Produces(CONTROL_ACCESS)
+   @Consumes(CONTROL_ACCESS)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI orgURI, @PathParam("catalogId") String catalogId,
+                                                             @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
+
+   /**
+    * @see OrgClient#getControlAccess(URI, URI, ControlAccessParams)
+    */
+   @POST
+   @Path("/catalog/{catalogId}/controlAccess")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<ControlAccessParams> getControlAccess(@EndpointParam URI orgURI, @PathParam("catalogId") String catalogId);
    
    /**
     * @return asynchronous access to {@link Metadata.Readable} features
