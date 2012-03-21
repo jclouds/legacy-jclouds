@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.common.cache.LoadingCache;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -39,12 +40,14 @@ import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.openstack.nova.v1_1.domain.Flavor;
 import org.jclouds.openstack.nova.v1_1.domain.Image;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.predicates.ImagePredicates;
 
@@ -70,14 +73,17 @@ public class NovaComputeServiceAdapter implements
    protected final NovaClient novaClient;
    protected final Supplier<Set<String>> zoneIds;
    protected final RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate;
+   protected final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
 
    @Inject
    public NovaComputeServiceAdapter(NovaClient novaClient, @Zone Supplier<Set<String>> zoneIds,
-            RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate) {
+            RemoveFloatingIpFromNodeAndDeallocate removeFloatingIpFromNodeAndDeallocate,
+            LoadingCache<ZoneAndName, KeyPair> keyPairCache) {
       this.novaClient = checkNotNull(novaClient, "novaClient");
       this.zoneIds = checkNotNull(zoneIds, "zoneIds");
       this.removeFloatingIpFromNodeAndDeallocate = checkNotNull(removeFloatingIpFromNodeAndDeallocate,
                "removeFloatingIpFromNodeAndDeallocate");
+      this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache"); 
    }
 
    /**
@@ -89,15 +95,26 @@ public class NovaComputeServiceAdapter implements
    public NodeAndInitialCredentials<ServerInZone> createNodeWithGroupEncodedIntoName(String group, String name,
             Template template) {
 
+      LoginCredentials.Builder credentialsBuilder = LoginCredentials.builder();
+      NovaTemplateOptions templateOptions = template.getOptions().as(NovaTemplateOptions.class);
       CreateServerOptions options = new CreateServerOptions();
-      options.securityGroupNames(template.getOptions().as(NovaTemplateOptions.class).getSecurityGroupNames());
+      options.securityGroupNames(templateOptions.getSecurityGroupNames());
+
+      String keyName = templateOptions.getKeyPairName();
+      if (keyName != null) {
+         options.withKeyName(keyName);        
+         KeyPair keyPair = keyPairCache.getIfPresent(ZoneAndName.fromZoneAndName(template.getLocation().getId(), keyName));
+         if (keyPair != null) {
+            credentialsBuilder.privateKey(keyPair.getPrivateKey());
+         }
+      }
 
       String zoneId = template.getLocation().getId();
       Server server = novaClient.getServerClientForZone(zoneId).createServer(name, template.getImage().getProviderId(),
                template.getHardware().getProviderId(), options);
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
-      return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(), LoginCredentials
-               .builder().password(server.getAdminPass()).build());
+      return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(), credentialsBuilder
+            .password(server.getAdminPass()).build());
    }
 
    @Override

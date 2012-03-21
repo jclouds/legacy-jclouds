@@ -54,10 +54,13 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
+import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v1_1.predicates.KeyPairPredicates;
 import org.jclouds.openstack.nova.v1_1.predicates.SecurityGroupPredicates;
 import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 
@@ -77,6 +80,7 @@ import com.google.common.collect.Multimap;
 public class NovaComputeService extends BaseComputeService {
    private final NovaClient novaClient;
    private final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap;
+   private final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
    private final Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId;
 
    @Inject
@@ -96,6 +100,7 @@ public class NovaComputeService extends BaseComputeService {
             PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, NovaClient novaClient,
             LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap,
+            LoadingCache<ZoneAndName, KeyPair> keyPairCache,
             Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
@@ -104,6 +109,7 @@ public class NovaComputeService extends BaseComputeService {
                timeouts, executor);
       this.novaClient = checkNotNull(novaClient, "novaClient");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
+      this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.orphanedGroupsByZoneId = checkNotNull(orphanedGroupsByZoneId, "orphanedGroupsByZoneId");
    }
 
@@ -117,6 +123,7 @@ public class NovaComputeService extends BaseComputeService {
 
    protected void cleanOrphanedGroupsInZone(Set<String> groups, String zoneId) {
       cleanupOrphanedSecurityGroupsInZone(groups, zoneId);
+      cleanupOrphanedKeyPairsInZone(groups, zoneId);
    }
 
    private void cleanupOrphanedSecurityGroupsInZone(Set<String> groups, String zoneId) {
@@ -132,6 +139,25 @@ public class NovaComputeService extends BaseComputeService {
                securityGroupMap.invalidate(zoneAndName);
                logger.debug("<< deleted securityGroup(%s)", zoneAndName);
             }
+         }
+      }
+   }
+   
+   private void cleanupOrphanedKeyPairsInZone(Set<String> groups, String zoneId) {
+      Optional<KeyPairClient> keyPairClient = novaClient.getKeyPairExtensionForZone(zoneId);
+      if (keyPairClient.isPresent()) {
+         for (String group : groups) {
+            for (Map<String, KeyPair> wrapper : keyPairClient.get().listKeyPairs()) {
+               for (KeyPair pair : Iterables.filter(wrapper.values(), KeyPairPredicates.nameStartsWith("jclouds#" + group + "#"))) {
+                  ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());
+                  logger.debug(">> deleting keypair(%s)", zoneAndName);
+                  keyPairClient.get().deleteKeyPair(pair.getName());
+                  // TODO: test this clear happens
+                  keyPairCache.invalidate(zoneAndName);
+                  logger.debug("<< deleted keypair(%s)", zoneAndName);
+               }
+            }
+            keyPairCache.invalidate(ZoneAndName.fromZoneAndName(zoneId, "jclouds#" + group));
          }
       }
    }
