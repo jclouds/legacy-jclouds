@@ -3,33 +3,33 @@
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>target/test-data/jclouds.log</file>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <encoder>
             <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
-        </layout>
+        </encoder>
     </appender>
 
     <appender name="WIREFILE" class="ch.qos.logback.core.FileAppender">
         <file>target/test-data/jclouds-wire.log</file>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <encoder>
             <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
-        </layout>
+        </encoder>
     </appender>
 
     <appender name="COMPUTEFILE" class="ch.qos.logback.core.FileAppender">
         <file>target/test-data/jclouds-compute.log</file>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <encoder>
             <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
-        </layout>
+        </encoder>
     </appender>
     
     <appender name="SSHFILE" class="ch.qos.logback.core.FileAppender">
         <file>target/test-data/jclouds-ssh.log</file>
 
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <encoder>
             <Pattern>%d %-5p [%c] [%thread] %m%n</Pattern>
-        </layout>
+        </encoder>
     </appender>
 
     <root>
