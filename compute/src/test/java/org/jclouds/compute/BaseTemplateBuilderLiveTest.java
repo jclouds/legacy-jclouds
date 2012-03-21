@@ -42,7 +42,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.LoggingModules;
+import org.jclouds.logging.config.LoggingModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -99,7 +100,11 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       setupCredentials();
       context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), setupProperties());
+            ImmutableSet.<Module> of(getLoggingModule()), setupProperties());
+   }
+
+   protected LoggingModule getLoggingModule() {
+      return LoggingModules.firstOrJDKLoggingModule();
    }
 
    @DataProvider(name = "osSupported")
@@ -234,7 +239,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          overrides.setProperty("jclouds.image-id", defaultTemplate.getImage().getId());
 
          context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+               ImmutableSet.<Module> of(getLoggingModule()), overrides);
 
          assertEquals(context.getComputeService().templateBuilder().build().toString(), defaultTemplate.toString());
       } finally {
@@ -248,7 +253,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          overrides.setProperty(provider + ".image-id", defaultTemplate.getImage().getId());
 
          context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+               ImmutableSet.<Module> of(getLoggingModule()), overrides);
 
          assertEquals(context.getComputeService().templateBuilder().build().toString(), defaultTemplate.toString());
       } finally {
@@ -273,7 +278,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          overrides.setProperty(propertyKey + ".image.authenticate-sudo", auth + "");
 
          context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+               ImmutableSet.<Module> of(getLoggingModule()), overrides);
 
          Iterable<String> userPass = Splitter.on(':').split(login);
          String user = Iterables.get(userPass, 0);
