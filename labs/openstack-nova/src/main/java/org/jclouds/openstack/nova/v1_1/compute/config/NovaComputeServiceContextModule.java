@@ -135,9 +135,11 @@ public class NovaComputeServiceContextModule
 
    @Override
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
-      return options.as(NovaTemplateOptions.class).autoAssignFloatingIp(
-               injector.getInstance(Key.get(boolean.class, Names
-                        .named(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS))));
+      return options.as(NovaTemplateOptions.class)
+            .autoAssignFloatingIp(injector.getInstance(
+                  Key.get(boolean.class, Names.named(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS))))
+            .generateKeyPair(injector.getInstance(
+                  Key.get(boolean.class, Names.named(NovaConstants.PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS))));
    }
 
    @Provides

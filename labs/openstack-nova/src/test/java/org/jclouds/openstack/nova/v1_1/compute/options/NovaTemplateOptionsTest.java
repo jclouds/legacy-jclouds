@@ -18,12 +18,7 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.options;
 
-import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.authorizePublicKey;
-import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.autoAssignFloatingIp;
-import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.blockOnPort;
-import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.inboundPorts;
-import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.installPrivateKey;
-import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.securityGroupNames;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.*;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -108,6 +103,18 @@ public class NovaTemplateOptionsTest {
    public void testautoAssignFloatingIpStatic() {
       NovaTemplateOptions options = autoAssignFloatingIp(true);
       assert options.shouldAutoAssignFloatingIp();
+   }
+
+   @Test
+   public void testGenerateKeyPair() {
+      NovaTemplateOptions options = new NovaTemplateOptions().generateKeyPair(true);
+      assert options.shouldGenerateKeyPair();
+   }
+
+   @Test
+   public void testGenerateKeyPairStatic() {
+      NovaTemplateOptions options = generateKeyPair(true);
+      assert options.shouldGenerateKeyPair();
    }
 
    // superclass tests

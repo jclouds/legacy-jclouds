@@ -106,6 +106,12 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
                   templateOptions);
       }
 
+      if (templateOptions.shouldGenerateKeyPair()) {
+         checkArgument(novaClient.getKeyPairExtensionForZone(zone).isPresent(),
+               "Key Pairs are required by options, but the extension is not available! options: %s",
+               templateOptions);
+      }
+
       boolean securityGroupExensionPresent = novaClient.getSecurityGroupExtensionForZone(zone).isPresent();
       List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
       if (templateOptions.getSecurityGroupNames().size() > 0) {
