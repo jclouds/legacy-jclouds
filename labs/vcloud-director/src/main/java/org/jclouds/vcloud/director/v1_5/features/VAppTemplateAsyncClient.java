@@ -59,6 +59,7 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
+import org.jclouds.vcloud.director.v1_5.domain.References;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -362,8 +363,16 @@ public interface VAppTemplateAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editProductSectionsForVAppTemplate(@EndpointParam URI templateURI,
                                                              @BinderParam(BindToXMLPayload.class) ProductSectionList sections);
-
-   // TODO shadowVms
+   
+   /**
+    * @see VAppTemplateClient#getShadowVms(URI)
+    */
+   @GET
+   @Consumes
+   @Path("/shadowVms")
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<References> getShadowVms(@EndpointParam URI templateURI);
 
    /**
     * @return asynchronous access to {@link Metadata} features

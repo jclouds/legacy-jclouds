@@ -31,6 +31,7 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
+import org.jclouds.vcloud.director.v1_5.domain.References;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -348,8 +349,16 @@ public interface VAppTemplateClient {
     * should monitor the returned task status in order to check when it is completed.
     */
    Task editProductSectionsForVAppTemplate(URI templateUri, ProductSectionList sections);
-
-   // TODO ShadowVms
+   
+   /**
+    * <pre>
+    * GET /vAppTemplate/{id}/shadowVms
+    * </pre>
+    *
+    * @param templateUri the URI of the template
+    * @return shadowVM references
+    */
+   References getShadowVms(URI templateUri);
 
    /**
     * @return synchronous access to {@link Metadata} features
