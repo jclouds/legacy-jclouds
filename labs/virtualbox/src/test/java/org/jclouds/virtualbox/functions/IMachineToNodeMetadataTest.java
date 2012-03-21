@@ -44,7 +44,7 @@ public class IMachineToNodeMetadataTest {
       IMachine vm = createNiceMock(IMachine.class);
 
       expect(vm.getName()).andReturn("mocked-vm").anyTimes();
-      expect(vm.getState()).andReturn(MachineState.PoweredOff).once();
+      expect(vm.getState()).andReturn(MachineState.PoweredOff).anyTimes();
 
       INetworkAdapter nat = createNiceMock(INetworkAdapter.class);
       INATEngine natEng = createNiceMock(INATEngine.class);
@@ -53,7 +53,7 @@ public class IMachineToNodeMetadataTest {
       expect(nat.getAttachmentType()).andReturn(NetworkAttachmentType.NAT).once();
       expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
       expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
-      expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3001,,22"));
+      expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3000,,22"));
 
       INetworkAdapter hostOnly = createNiceMock(INetworkAdapter.class);
 
@@ -63,9 +63,9 @@ public class IMachineToNodeMetadataTest {
 
       assertEquals("mocked-vm", node.getName());
       assertEquals(1, node.getPrivateAddresses().size());
-      assertEquals((NodeCreator.VMS_NETWORK + 1), Iterables.get(node.getPrivateAddresses(), 0));
+      assertEquals((NodeCreator.VMS_NETWORK + 2), Iterables.get(node.getPrivateAddresses(), 0));
       assertEquals(1, node.getPublicAddresses().size());
-      assertEquals("127.0.0.1", Iterables.get(node.getPublicAddresses(), 0));
-      assertEquals(3001, node.getLoginPort());
+      assertEquals((NodeCreator.VMS_NETWORK + 2), Iterables.get(node.getPublicAddresses(), 0));
+      assertEquals(22, node.getLoginPort());
    }
 }
