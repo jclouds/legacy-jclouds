@@ -85,7 +85,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
@@ -879,8 +878,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkVirtualHardwareSection(modifiedSection);
 
       // Check the modified section fields are set correctly
-      Set<ResourceAllocationSettingData> modifiedItems = modifiedSection.getItems();
-      ResourceAllocationSettingData modifiedMemory = Iterables.find(modifiedItems, new Predicate<ResourceAllocationSettingData>() {
+      ResourceAllocationSettingData modifiedMemory = Iterables.find(modifiedSection.getItems(), new Predicate<ResourceAllocationSettingData>() {
          @Override
          public boolean apply(ResourceAllocationSettingData rasd) {
             return rasd.getResourceType() == ResourceAllocationSettingData.ResourceType.MEMORY;

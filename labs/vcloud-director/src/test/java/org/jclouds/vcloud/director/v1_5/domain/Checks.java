@@ -757,7 +757,26 @@ public class Checks {
    }
 
    public static void checkVirtualSystemSettingData(VirtualSystemSettingData virtualSystem) {
-      // TODO
+      assertNotNull(virtualSystem.getElementName(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "elementName"));
+      assertNotNull(virtualSystem.getInstanceID(),  String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "instanceID"));
+//      assertNotNull(virtualSystem.getCaption(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "caption"));
+//      assertNotNull(virtualSystem.getDescription(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "description"));
+//      assertNotNull(virtualSystem.getAutomaticRecoveryAction(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "automaticRecoveryAction"));
+//      assertNotNull(virtualSystem.getAutomaticShutdownAction(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "automaticShutdownAction"));
+//      assertNotNull(virtualSystem.getAutomaticStartupAction(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "automaticStartupAction"));
+//      assertNotNull(virtualSystem.getAutomaticStartupActionDelay(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "automaticStartupActionDelay"));
+//      assertNotNull(virtualSystem.getAutomaticStartupActionSequenceNumber(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "automaticStartupActionSequenceNumber"));
+//      assertNotNull(virtualSystem.getConfigurationDataRoot(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "configurationDataRoot"));
+//      assertNotNull(virtualSystem.getConfigurationFile(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "configurationFile"));
+//      assertNotNull(virtualSystem.getConfigurationID(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "configurationID"));
+//      assertNotNull(virtualSystem.getCreationTime(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "creationTime"));
+//      assertNotNull(virtualSystem.getLogDataRoot(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "logDataRoot"));
+//      assertNotNull(virtualSystem.getRecoveryFile(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "recoveryFile"));
+//      assertNotNull(virtualSystem.getSnapshotDataRoot(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "snapshotDataRoot"));
+//      assertNotNull(virtualSystem.getSuspendDataRoot(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "suspendDataRoot"));
+//      assertNotNull(virtualSystem.getSwapFileDataRoot(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "swapFileDataRoot"));
+//      assertNotNull(virtualSystem.getVirtualSystemIdentifier(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "virtualSystemIdentifier"));
+//      assertNotNull(virtualSystem.getVirtualSystemType(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "virtualSystemType"));
    }
 
    public static void checkResourceAllocationSettingData(ResourceAllocationSettingData item) {
