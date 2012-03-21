@@ -34,6 +34,18 @@ import org.jclouds.vcloud.director.v1_5.domain.Group;
 public interface GroupClient {
    
    /**
+    * Imports a group in an organization.
+    *
+    * <pre>
+    * POST /admin/org/{id}/groups
+    * </pre>
+    *
+    * @param orgUri the admin org to create the group in
+    * @return the created group
+    */
+   Group createGroup(URI adminOrgUri, Group group);
+   
+   /**
     * Retrieves a group.
     *
     * <pre>

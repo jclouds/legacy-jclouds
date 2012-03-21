@@ -41,9 +41,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.User;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRoleRecord;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.login.SessionClient;
 import org.testng.annotations.AfterClass;
@@ -97,50 +94,6 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       User newUser = randomTestUser("testCreateUser", context);
       user = userClient.createUser(orgRef.getHref(), newUser);
       Checks.checkUser(newUser);
-   }
-   
-   public static Reference vAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
-      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
-      for (Reference role : roles.getReferences()) {
-         if (equal(role.getName(), "vApp User")) {
-            return Reference.builder().fromReference(role).build();
-         }
-      }
-      
-      return null;
-   }
-   
-   public static Reference nonVAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
-      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
-      for (Reference role : roles.getReferences()) {
-         if (!equal(role.getName(), "vApp User")) {
-            return Reference.builder().fromReference(role).build();
-         }
-      }
-      
-      return null;
-   }
-   
-   public static User randomTestUser(String prefix, RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
-      return randomTestUser(prefix, vAppUserRole(context));
-   }
-   
-   public static User randomTestUser(String prefix, Reference role) {
-      return User.builder()
-         .name(name(prefix))
-         .fullName("testFullName")
-         .emailAddress("test@test.com")
-         .telephone("555-1234")
-         .isEnabled(false)
-         .im("testIM")
-         .isAlertEnabled(false)
-         .alertEmailPrefix("testPrefix")
-         .alertEmail("testAlert@test.com")
-         .isExternal(false)
-         .isGroupRole(false)
-         .role(role)
-         .password("password")
-         .build();
    }
    
    @Test(testName = "GET /admin/user/{id}",
@@ -295,5 +248,49 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
       }
+   }
+   
+   public static Reference vAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
+      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
+      for (Reference role : roles.getReferences()) {
+         if (equal(role.getName(), "vApp User")) {
+            return Reference.builder().fromReference(role).build();
+         }
+      }
+      
+      return null;
+   }
+   
+   public static Reference nonVAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
+      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
+      for (Reference role : roles.getReferences()) {
+         if (!equal(role.getName(), "vApp User")) {
+            return Reference.builder().fromReference(role).build();
+         }
+      }
+      
+      return null;
+   }
+   
+   public static User randomTestUser(String prefix, RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
+      return randomTestUser(prefix, vAppUserRole(context));
+   }
+   
+   public static User randomTestUser(String prefix, Reference role) {
+      return User.builder()
+         .name(name(prefix)+random.nextInt(999999))
+         .fullName("testFullName")
+         .emailAddress("test@test.com")
+         .telephone("555-1234")
+         .isEnabled(false)
+         .im("testIM")
+         .isAlertEnabled(false)
+         .alertEmailPrefix("testPrefix")
+         .alertEmail("testAlert@test.com")
+         .isExternal(false)
+         .isGroupRole(false)
+         .role(role)
+         .password("password")
+         .build();
    }
 }

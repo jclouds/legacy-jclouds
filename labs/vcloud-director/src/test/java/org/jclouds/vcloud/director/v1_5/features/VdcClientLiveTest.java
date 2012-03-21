@@ -307,13 +307,13 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
    }
    
-   @Test(dependsOnMethods = { "testGetVdc" } )
+   @Test(testName = "admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
    public void testSetupMetadata() {
       context.getApi().getAdminVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
    }
    
-   @Test(testName = "GET /network/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
+   @Test(testName = "GET /vdc/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
    public void testGetMetadata() {
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
       
@@ -324,7 +324,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(VDC, metadata);
    }
    
-   @Test(testName = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
+   @Test(testName = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
    public void testGetMetadataValue() {
       // First find a key
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);

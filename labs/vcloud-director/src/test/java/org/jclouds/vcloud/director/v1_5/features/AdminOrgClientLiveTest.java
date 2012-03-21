@@ -369,14 +369,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/org/{id}/settings/settings")
+   @Test(testName = "GET /admin/org/{id}/settings")
    public void testGetSettings() {
       settings = orgClient.getSettings(orgRef.getHref());
       
       Checks.checkOrgSettings(settings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/settings",
+   @Test(testName = "PUT /admin/org/{id}/settings",
          dependsOnMethods = { "testGetEmailSettings" } )
    public void testUpdateSettings() throws Exception {
       String newFromEmailAddress = "test"+random.nextInt(Integer.MAX_VALUE)+"@test.com";
