@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v1_1.parse;
 
-import java.util.HashMap;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
@@ -30,10 +29,10 @@ import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.IpProtocol;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
+import org.jclouds.openstack.nova.v1_1.domain.TenantIdAndName;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -44,7 +43,6 @@ import com.google.inject.Injector;
  */
 @Test(groups = "unit", testName = "ParseSecurityGroupTest")
 public class ParseSecurityGroupTest extends BaseItemParserTest<SecurityGroup> {
-
    @Override
    public String resource() {
       return "/securitygroup_details.json";
@@ -56,17 +54,17 @@ public class ParseSecurityGroupTest extends BaseItemParserTest<SecurityGroup> {
    public SecurityGroup expected() {
 
       Set<SecurityGroupRule> securityGroupRules = ImmutableSet.<SecurityGroupRule> of(
-            SecurityGroupRule.builder().fromPort(22).group(new HashMap<String, String>())
+            SecurityGroupRule.builder().fromPort(22)
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("28")
-                  .ipRange(ImmutableMap.of("cidr", "10.2.6.0/24")).id("108").build(),
-            SecurityGroupRule.builder().fromPort(22).group(ImmutableMap.of("tenant_id", "admin", "name", "11111"))
+                  .ipRange("10.2.6.0/24").id("108").build(),
+            SecurityGroupRule.builder().fromPort(22).group(new TenantIdAndName("admin", "11111"))
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("28")
-                  .ipRange(new HashMap<String, String>()).id("109").build());
+                  .id("109").build());
 
       return SecurityGroup.builder().description("description0").id("0").tenantId("tenant0").rules(securityGroupRules)
             .name("name0").build();
    }
-
+   
    protected Injector injector() {
       return Guice.createInjector(new NovaParserModule(), new GsonModule());
    }

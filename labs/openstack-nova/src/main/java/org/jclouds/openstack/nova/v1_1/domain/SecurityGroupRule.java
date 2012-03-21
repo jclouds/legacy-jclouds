@@ -19,16 +19,18 @@
 package org.jclouds.openstack.nova.v1_1.domain;
 
 import static com.google.common.base.Objects.toStringHelper;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Map;
+import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.collect.ForwardingObject;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Defines a security group rule
  * 
  */
-public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
+public class SecurityGroupRule extends Ingress {
 
    public static Builder builder() {
       return new Builder();
@@ -38,40 +40,19 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
       return builder().fromSecurityGroupRule(this);
    }
 
-   public static class Builder {
+   public static class Builder extends Ingress.Builder {
       private String id;
-      private int fromPort;
-      private Map<String, String> group;
-      // tcp/udp/icmp - move to enum
-      private IpProtocol ipProtocol;
-
-      private int toPort;
       private String parentGroupId;
-
-      private Map<String, String> ipRange;
+      private TenantIdAndName group;
+      private String ipRange;
 
       public Builder id(String id) {
          this.id = id;
          return this;
       }
 
-      public Builder fromPort(int fromPort) {
-         this.fromPort = fromPort;
-         return this;
-      }
-
-      public Builder group(Map<String, String> group) {
+      public Builder group(TenantIdAndName group) {
          this.group = group;
-         return this;
-      }
-
-      public Builder ipProtocol(IpProtocol ipProtocol) {
-         this.ipProtocol = ipProtocol;
-         return this;
-      }
-
-      public Builder toPort(int toPort) {
-         this.toPort = toPort;
          return this;
       }
 
@@ -80,83 +61,92 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
          return this;
       }
 
-      public Builder ipRange(Map<String, String> ipRange) {
+      public Builder ipRange(String ipRange) {
          this.ipRange = ipRange;
          return this;
       }
 
+      @Override
       public SecurityGroupRule build() {
-         return new SecurityGroupRule(id, fromPort, group, ipProtocol, toPort, parentGroupId, ipRange);
+         return new SecurityGroupRule(ipProtocol, fromPort, toPort, id, parentGroupId, group, ipRange);
       }
 
       public Builder fromSecurityGroupRule(SecurityGroupRule in) {
-         return id(in.getId()).fromPort(in.getFromPort()).group(in.getGroup()).ipProtocol(in.getIpProtocol())
-               .toPort(in.getToPort()).parentGroupId(in.getParentGroupId()).ipRange(in.getIpRange());
+         return id(in.getId()).fromPort(in.getFromPort()).group(in.getGroup()).ipProtocol(in.getIpProtocol()).toPort(
+                  in.getToPort()).parentGroupId(in.getParentGroupId()).ipRange(in.getIpRange());
+      }
+
+      @Override
+      public Builder ipProtocol(IpProtocol ipProtocol) {
+         super.ipProtocol(ipProtocol);
+         return this;
+      }
+
+      @Override
+      public Builder fromPort(int fromPort) {
+         super.fromPort(fromPort);
+         return this;
+      }
+
+      @Override
+      public Builder toPort(int toPort) {
+         super.toPort(toPort);
+         return this;
+      }
+
+   }
+
+   protected final String id;
+
+   protected final TenantIdAndName group;
+
+   @SerializedName(value = "parent_group_id")
+   protected final String parentGroupId;
+
+   // type to get around unnecessary structure
+   private static class Cidr extends ForwardingObject {
+      private String cidr;
+
+      private Cidr(String cidr) {
+         this.cidr = cidr;
+      }
+
+      @Override
+      protected Object delegate() {
+         return cidr;
       }
    }
 
-   protected String id;
-
-   @SerializedName(value = "from_port")
-   protected int fromPort;
-
-   protected Map<String, String> group;
-
-   @SerializedName(value = "ip_protocol")
-   // tcp/udp/icmp
-   protected IpProtocol ipProtocol;
-
-   @SerializedName(value = "to_port")
-   protected int toPort;
-
-   @SerializedName(value = "parent_group_id")
-   protected String parentGroupId;
-
    @SerializedName(value = "ip_range")
-   protected Map<String, String> ipRange;
+   protected final Cidr ipRange;
 
-   protected SecurityGroupRule(String id, int fromPort, Map<String, String> group, IpProtocol ipProtocol, int toPort,
-         String parentGroupId, Map<String, String> ipRange) {
-      this.id = id;
-      this.fromPort = fromPort;
+   protected SecurityGroupRule(IpProtocol ipProtocol, int fromPort, int toPort, String id, String parentGroupId,
+            @Nullable TenantIdAndName group, @Nullable String ipRange) {
+      super(ipProtocol, fromPort, toPort);
+      this.parentGroupId = checkNotNull(parentGroupId, "parentGroupId");
+      this.id = checkNotNull(id, "id");
       this.group = group;
-      this.ipProtocol = ipProtocol;
-      this.toPort = toPort;
-      this.parentGroupId = parentGroupId;
-      this.ipRange = ipRange;
-   }
-
-   public String getId() {
-      return this.id;
-   }
-
-   public int getFromPort() {
-      return this.fromPort;
-   }
-
-   public Map<String, String> getGroup() {
-      return this.group;
-   }
-
-   public IpProtocol getIpProtocol() {
-      return this.ipProtocol;
-   }
-
-   public int getToPort() {
-      return this.toPort;
+      this.ipRange = ipRange != null ? new Cidr(ipRange) : null;
    }
 
    public String getParentGroupId() {
       return this.parentGroupId;
    }
 
-   public Map<String, String> getIpRange() {
-      return this.ipRange;
+   public String getId() {
+      return this.id;
    }
 
-   @Override
-   public int compareTo(SecurityGroupRule o) {
-      return this.id.compareTo(o.getId());
+   @Nullable
+   public TenantIdAndName getGroup() {
+      if (this.group == null || this.group.getName() == null)
+         return null;
+      return this.group;
+   }
+
+   @Nullable
+   public String getIpRange() {
+      return this.ipRange == null ? null : ipRange.cidr;
    }
 
    @Override
@@ -213,9 +203,9 @@ public class SecurityGroupRule implements Comparable<SecurityGroupRule> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", id).add("fromPort", fromPort).add("group", group)
-            .add("ipProtocol", ipProtocol).add("toPort", toPort).add("parentGroupId", parentGroupId)
-            .add("ipRange", ipRange).toString();
+      return toStringHelper("").add("id", id).add("fromPort", fromPort).add("group", getGroup()).add("ipProtocol",
+               ipProtocol).add("toPort", toPort).add("parentGroupId", parentGroupId).add("ipRange", getIpRange())
+               .toString();
    }
 
 }

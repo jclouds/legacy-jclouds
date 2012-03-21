@@ -20,6 +20,8 @@ package org.jclouds.openstack.nova.v1_1.compute.config;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -40,18 +42,26 @@ import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.compute.domain.FlavorInZone;
 import org.jclouds.openstack.nova.v1_1.compute.domain.ImageInZone;
+import org.jclouds.openstack.nova.v1_1.compute.domain.SecurityGroupInZone;
 import org.jclouds.openstack.nova.v1_1.compute.domain.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndId;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneAndName;
+import org.jclouds.openstack.nova.v1_1.compute.domain.ZoneSecurityGroupNameAndPorts;
+import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupInZone;
 import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorInZoneToHardware;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ImageInZoneToImage;
 import org.jclouds.openstack.nova.v1_1.compute.functions.NovaImageToOperatingSystem;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ServerInZoneToNodeMetadata;
+import org.jclouds.openstack.nova.v1_1.compute.loaders.CreateOrUpdateSecurityGroupAsNeeded;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.LoadFloatingIpsForInstance;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v1_1.compute.strategy.ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet;
+import org.jclouds.openstack.nova.v1_1.predicates.FindSecurityGroupWithNameAndReturnTrue;
 import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
+import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
@@ -102,6 +112,12 @@ public class NovaComputeServiceContextModule
 
       bind(new TypeLiteral<CacheLoader<ZoneAndId, Iterable<String>>>() {
       }).annotatedWith(Names.named("FLOATINGIP")).to(LoadFloatingIpsForInstance.class);
+      
+      bind(new TypeLiteral<Function<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone>>() {
+      }).to(CreateSecurityGroupInZone.class);
+      
+      bind(new TypeLiteral<CacheLoader<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone>>() {
+      }).to(CreateOrUpdateSecurityGroupAsNeeded.class);
 
       bind(CreateNodesWithGroupEncodedIntoNameThenAddToSet.class).to(
                ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet.class);
@@ -121,6 +137,22 @@ public class NovaComputeServiceContextModule
    protected LoadingCache<ZoneAndId, Iterable<String>> instanceToFloatingIps(
             @Named("FLOATINGIP") CacheLoader<ZoneAndId, Iterable<String>> in) {
       return CacheBuilder.newBuilder().build(in);
+   }
+
+   @Provides
+   @Singleton
+   protected LoadingCache<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone> securityGroupMap(
+            CacheLoader<ZoneSecurityGroupNameAndPorts, SecurityGroupInZone> in) {
+      return CacheBuilder.newBuilder().build(in);
+   }
+
+   @Provides
+   @Singleton
+   @Named("SECURITY")
+   protected Predicate<AtomicReference<ZoneAndName>> securityGroupEventualConsistencyDelay(
+            FindSecurityGroupWithNameAndReturnTrue in,
+            @Named(NovaConstants.PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
+      return new RetryablePredicate<AtomicReference<ZoneAndName>>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
    }
 
    @Provides

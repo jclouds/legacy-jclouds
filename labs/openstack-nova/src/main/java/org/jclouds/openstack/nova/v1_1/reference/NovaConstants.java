@@ -24,6 +24,12 @@ package org.jclouds.openstack.nova.v1_1.reference;
  * @author Adam Lowe
  */
 public class NovaConstants {
+
+   /**
+    * Eventual consistency delay for retrieving a security group after it is created (in ms)
+    */
+   public static final String PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT = "jclouds.openstack-nova.timeout.securitygroup-present";
+
    /**
     * Whenever a node is created, automatically allocate and assign a floating ip address, also
     * deallocate when the node is destroyed.

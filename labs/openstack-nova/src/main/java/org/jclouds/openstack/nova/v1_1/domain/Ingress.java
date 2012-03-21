@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Ingress access to a destination protocol on particular ports
@@ -37,9 +38,9 @@ public class Ingress {
    }
 
    public static class Builder {
-      private IpProtocol ipProtocol;
-      private int fromPort;
-      private int toPort;
+      protected IpProtocol ipProtocol;
+      protected int fromPort;
+      protected int toPort;
 
       /**
        * 
@@ -73,9 +74,12 @@ public class Ingress {
       }
    }
 
-   private final IpProtocol ipProtocol;
-   private final int fromPort;
-   private final int toPort;
+   @SerializedName(value = "ip_protocol")
+   protected final IpProtocol ipProtocol;
+   @SerializedName(value = "from_port")
+   protected final int fromPort;
+   @SerializedName(value = "to_port")
+   protected final int toPort;
 
    protected Ingress(IpProtocol ipProtocol, int fromPort, int toPort) {
       this.fromPort = fromPort;

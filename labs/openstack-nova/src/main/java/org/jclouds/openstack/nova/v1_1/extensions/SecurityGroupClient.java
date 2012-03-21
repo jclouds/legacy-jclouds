@@ -72,15 +72,15 @@ public interface SecurityGroupClient {
     * 
     * @return a new Security Group Rule
     */
-   SecurityGroupRule createSecurityGroupRuleAllowingCidrBlock(String parent_group_id, Ingress ip_protocol, String cidr);
+   SecurityGroupRule createSecurityGroupRuleAllowingCidrBlock(String parentGroup, Ingress ingress, String sourceCidr);
 
    /**
     * Create a Security Group Rule.
     * 
     * @return a new Security Group Rule
     */
-   SecurityGroupRule createSecurityGroupRuleAllowingSecurityGroupId(String group_id, Ingress ip_protocol,
-            String parent_group_id);
+   SecurityGroupRule createSecurityGroupRuleAllowingSecurityGroupId(String parentGroup, Ingress ingress,
+            String sourceCidr);
 
    /**
     * Delete a Security Group Rule.
