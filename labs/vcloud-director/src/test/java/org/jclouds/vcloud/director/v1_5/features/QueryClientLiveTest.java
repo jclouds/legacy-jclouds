@@ -38,6 +38,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
+import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultMediaRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultVAppRecord;
@@ -178,6 +179,21 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VM, null), QueryResultVMRecord.class);
       assertEquals(hrefs, vmHrefs, "VMs query result should equal vms of vApp "+vApp.getName()+" ("+vmHrefs+"); but only has "+hrefs);
+   }
+   
+   @Test(testName = "GET /mediaList/query")
+   public void testQueryAllMedia() {
+      QueryResultRecords queryResult = queryClient.mediaListQueryAll();
+      
+      assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP, null), QueryResultMediaRecord.class);
+   }
+   
+   @Test(testName = "GET /mediaList/query?filter")
+   public void testQueryMediaWithFilter() {
+      String mediaName = "abc";
+      QueryResultRecords queryResult = queryClient.mediaListQuery(String.format("name==%s", mediaName));
+      
+      assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP, null), QueryResultMediaRecord.class);
    }
    
    private static void assertRecordTypes(QueryResultRecords queryResult, Collection<String> validTypes, Class<?> validClazz) {
