@@ -26,6 +26,7 @@ import static org.testng.Assert.fail;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -52,11 +53,20 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private Reference groupRef;
    private Group group;
-
+   private OrgLdapSettings oldLdapSettings, newLdapSettings;
+   
    @Override
    @BeforeClass(inheritGroups = true)
    public void setupRequiredClients() {
       groupClient = context.getApi().getGroupClient();
+      Reference orgRef = null;
+      
+      // TODO: requisite LDAP settings
+//      oldLdapSettings = context.getApi().getAdminOrgClient().getLdapSettings(orgRef.getHref());
+//      OrgLdapSettings newLdapSettings = oldLdapSettings.toBuilder()
+//         .ldapMode(OrgLdapSettings.LdapMode.SYSTEM)  
+//         .build();
+//      context.getApi().getAdminOrgClient().updateLdapSettings(newLdapSettings);
    }
    
    @Test(testName = "POST /admin/org/{id}/groups")
