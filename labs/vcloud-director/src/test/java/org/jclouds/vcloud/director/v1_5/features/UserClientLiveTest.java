@@ -72,7 +72,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private static Random random = new Random();
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       userClient = context.getApi().getUserClient();
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);

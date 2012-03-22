@@ -43,7 +43,7 @@ public class VCloudDirectorClientExperimentLiveTest extends BaseVCloudDirectorCl
     * @see BaseVCloudDirectorClientLiveTest#setupRequiredClients()
     */
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() { }
 
 }

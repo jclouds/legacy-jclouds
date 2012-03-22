@@ -132,7 +132,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
 
    protected static DateService dateService;
 
-   @BeforeGroups("live")
+   @BeforeGroups(alwaysRun = true)
    protected static void setupDateService() {
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
@@ -151,7 +151,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
 
-   @BeforeClass(groups = { "live" })
+   @BeforeClass(alwaysRun = true)
    protected void setupContext() throws Exception {
       setupCredentials();
       Properties overrides = setupProperties();

@@ -65,7 +65,7 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
    Network network;
    
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    protected void setupRequiredClients() {
       networkClient = context.getApi().getAdminNetworkClient();
       networkRef = Reference.builder().href(networkURI).build().toAdminReference(endpoint);

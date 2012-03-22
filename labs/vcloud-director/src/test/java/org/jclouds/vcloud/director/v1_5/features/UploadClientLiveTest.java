@@ -38,7 +38,7 @@ public class UploadClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    protected UploadClient uploadClient;
  
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       uploadClient = context.getApi().getUploadClient();
    }
