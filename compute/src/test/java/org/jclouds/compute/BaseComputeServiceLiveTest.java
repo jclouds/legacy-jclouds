@@ -487,8 +487,10 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          checkOsMatchesTemplate(metadata);
          assert (metadata.getState() == NodeState.RUNNING) : metadata;
          // due to DHCP the addresses can actually change in-between runs.
-         assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size());
-         assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size());
+         assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size(), String.format(
+                  "[%s] didn't match: [%s]", metadata.getPrivateAddresses(), node.getPrivateAddresses().size()));
+         assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size(), String.format(
+                  "[%s] didn't match: [%s]", metadata.getPublicAddresses(), node.getPublicAddresses().size()));
       }
       assertNodeZero(metadataMap.values());
    }
