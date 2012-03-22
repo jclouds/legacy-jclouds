@@ -40,6 +40,9 @@ public class HPCloudComputePropertiesBuilder extends NovaPropertiesBuilder {
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
       properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:35357");
       properties.setProperty(PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS, "true");
+      // auth fail can happen while cloud-init applies keypair updates
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
       properties.setProperty(PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS, "true");
       // deallocating ip addresses can take a while
       properties.setProperty(PROPERTY_TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");

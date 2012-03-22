@@ -18,20 +18,29 @@
  */
 package org.jclouds.hpcloud.compute.config;
 
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.hpcloud.compute.HPCloudComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.compute.config.NovaComputeServiceContextModule;
+
+import com.google.inject.Injector;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class HPCloudComputeServiceContextModule extends NovaComputeServiceContextModule {
-
+   
    @Override
    protected void configure() {
       super.configure();
       bind(NovaComputeServiceAdapter.class).to(HPCloudComputeServiceAdapter.class);
+   }
+   
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      // account on az-1.region-a.geo-1 hosed
+      return super.provideTemplate(injector, template).locationId("az-2.region-a.geo-1");
    }
 
 }
