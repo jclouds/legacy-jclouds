@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_NULL_OBJ_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
@@ -173,6 +174,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Test(testName = "POST /admin/catalog/{id}/action/publish",
          dependsOnMethods = { "testUpdateCatalog" } ) // FIXME: fails with a 403
    public void testPublishCatalog() {
+      assertNotNull(catalog, String.format(NOT_NULL_OBJ_FMT, "Catalog"));
       assertTrue(!catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
             CATALOG, "isPublished", false, catalog.isPublished()));
       
