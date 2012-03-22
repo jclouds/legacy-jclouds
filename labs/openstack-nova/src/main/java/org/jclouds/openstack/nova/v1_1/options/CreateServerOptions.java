@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.options;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -37,11 +39,12 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.util.Preconditions2;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
 
@@ -76,7 +79,66 @@ public class CreateServerOptions implements MapBinder {
       public String getPath() {
          return path;
       }
+      
+      @Override
+      public boolean equals(Object object) {
+         if (this == object) {
+            return true;
+         }
+         if (object instanceof File) {
+            final File other = File.class.cast(object);
+            return equal(path, other.path);
+         } else {
+            return false;
+         }
+      }
 
+      @Override
+      public int hashCode() {
+         return Objects.hashCode(path);
+      }
+
+      @Override
+      public String toString() {
+         return toStringHelper("file").add("path", path).toString();
+      }
+
+   }
+
+   private String keyName;
+   private String adminPass;
+   private Set<String> securityGroupNames = ImmutableSet.of();
+   private Map<String, String> metadata = ImmutableMap.of();
+   private List<File> personality = Lists.newArrayList();
+
+   @Override
+   public boolean equals(Object object) {
+      if (this == object) {
+         return true;
+      }
+      if (object instanceof CreateServerOptions) {
+         final CreateServerOptions other = CreateServerOptions.class.cast(object);
+         return equal(keyName, other.keyName) && equal(securityGroupNames, other.securityGroupNames)
+                  && equal(metadata, other.metadata) && equal(personality, other.personality)
+                  && equal(adminPass, other.adminPass);
+      } else {
+         return false;
+      }
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(keyName, securityGroupNames, metadata, personality, adminPass);
+   }
+
+   protected ToStringHelper string() {
+      return toStringHelper("").add("keyName", "keyName").add("securityGroupNames", securityGroupNames).add("metadata",
+               metadata).add("personality", personality).add("adminPassPresent", adminPass != null);
+   }
+
+   @Override
+   public String toString() {
+      return string().toString();
    }
 
    @SuppressWarnings("unused")
@@ -99,12 +161,6 @@ public class CreateServerOptions implements MapBinder {
 
    }
 
-   private Map<String, String> metadata = Maps.newHashMap();
-   private List<File> files = Lists.newArrayList();
-   private Set<String> securityGroupNames = Sets.newHashSet();
-   private String keyName;
-   private String adminPass;
-
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"), "name parameter not present"),
@@ -112,8 +168,8 @@ public class CreateServerOptions implements MapBinder {
                   postParams.get("flavorRef"), "flavorRef parameter not present"));
       if (metadata.size() > 0)
          server.metadata = metadata;
-      if (files.size() > 0)
-         server.personality = files;
+      if (personality.size() > 0)
+         server.personality = personality;
       if (keyName != null)
          server.key_name = keyName;
       if (securityGroupNames.size() > 0) {
@@ -148,13 +204,13 @@ public class CreateServerOptions implements MapBinder {
     * root group as owner and group owner, respectively and will allow user and
     * group read access only (-r--r-----).
     */
-   public CreateServerOptions withFile(String path, byte[] contents) {
-      checkState(files.size() < 5, "maximum number of files allowed is 5");
-      files.add(new File(path, contents));
+   public CreateServerOptions writeFileToPath(byte[] contents, String path) {
+      checkState(personality.size() < 5, "maximum number of files allowed is 5");
+      personality.add(new File(path, contents));
       return this;
    }
 
-   public CreateServerOptions withAdminPass(String adminPass) {
+   public CreateServerOptions adminPass(String adminPass) {
       checkNotNull(adminPass, "adminPass");
       this.adminPass = adminPass;
       return this;
@@ -167,7 +223,7 @@ public class CreateServerOptions implements MapBinder {
     * is each 255 bytes and the maximum number of key-value pairs that can be
     * supplied per server is 5.
     */
-   public CreateServerOptions withMetadata(Map<String, String> metadata) {
+   public CreateServerOptions metadata(Map<String, String> metadata) {
       checkNotNull(metadata, "metadata");
       checkArgument(metadata.size() <= 5,
             "you cannot have more then 5 metadata values.  You specified: " + metadata.size());
@@ -180,7 +236,7 @@ public class CreateServerOptions implements MapBinder {
                "maximum length of metadata value is 255 bytes.  Value specified for %s (%s) is %d bytes",
                entry.getKey(), entry.getValue(), entry.getValue().getBytes().length));
       }
-      this.metadata = metadata;
+      this.metadata = ImmutableMap.copyOf(metadata);
       return this;
    }
 
@@ -191,8 +247,14 @@ public class CreateServerOptions implements MapBinder {
     * @param keyName
     * @return
     */
-   public CreateServerOptions withKeyName(String keyName) {
-      checkNotNull(keyName, "keyName");
+   public String getKeyPairName() {
+      return keyName;
+   }
+   
+   /**
+    * @see #getKeyPairName()
+    */
+   public CreateServerOptions keyPairName(String keyName) {
       this.keyName = keyName;
       return this;
    }
@@ -232,32 +294,32 @@ public class CreateServerOptions implements MapBinder {
    public static class Builder {
 
       /**
-       * @see CreateServerOptions#withFile(String, byte[])
+       * @see CreateServerOptions#writeFileToPath
        */
-      public static CreateServerOptions withFile(String path, byte[] contents) {
+      public static CreateServerOptions writeFileToPath(byte[] contents,String path) {
          CreateServerOptions options = new CreateServerOptions();
-         return options.withFile(path, contents);
+         return options.writeFileToPath(contents, path);
       }
 
-      public static CreateServerOptions withAdminPass(String adminPass) {
+      public static CreateServerOptions adminPass(String adminPass) {
          CreateServerOptions options = new CreateServerOptions();
-         return options.withAdminPass(adminPass);
-      }
-
-      /**
-       * @see CreateServerOptions#withMetadata(Map<String, String>)
-       */
-      public static CreateServerOptions withMetadata(Map<String, String> metadata) {
-         CreateServerOptions options = new CreateServerOptions();
-         return options.withMetadata(metadata);
+         return options.adminPass(adminPass);
       }
 
       /**
-       * @see CreateServerOptions#withKeyName(String)
+       * @see CreateServerOptions#metadata(Map<String, String>)
        */
-      public static CreateServerOptions withKeyName(String keyName) {
+      public static CreateServerOptions metadata(Map<String, String> metadata) {
          CreateServerOptions options = new CreateServerOptions();
-         return options.withKeyName(keyName);
+         return options.metadata(metadata);
+      }
+
+      /**
+       * @see #getKeyPairName()
+       */
+      public static CreateServerOptions keyPairName(String keyName) {
+         CreateServerOptions options = new CreateServerOptions();
+         return options.keyPairName(keyName);
       }
       
       /**

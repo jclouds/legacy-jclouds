@@ -19,6 +19,8 @@
 package org.jclouds.openstack.nova.v1_1.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 
 import java.util.Set;
 
@@ -26,7 +28,6 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.common.cache.LoadingCache;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -52,9 +53,10 @@ import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.predicates.ImagePredicates;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import static com.google.common.collect.Iterables.*;
 import com.google.common.collect.ImmutableSet.Builder;
 
 /**
@@ -97,24 +99,34 @@ public class NovaComputeServiceAdapter implements
 
       LoginCredentials.Builder credentialsBuilder = LoginCredentials.builder();
       NovaTemplateOptions templateOptions = template.getOptions().as(NovaTemplateOptions.class);
+
       CreateServerOptions options = new CreateServerOptions();
+      options.metadata(templateOptions.getUserMetadata());
       options.securityGroupNames(templateOptions.getSecurityGroupNames());
 
-      String keyName = templateOptions.getKeyPairName();
-      if (keyName != null) {
-         options.withKeyName(keyName);        
-         KeyPair keyPair = keyPairCache.getIfPresent(ZoneAndName.fromZoneAndName(template.getLocation().getId(), keyName));
-         if (keyPair != null) {
-            credentialsBuilder.privateKey(keyPair.getPrivateKey());
+      Optional<String> privateKey = Optional.absent();
+      if (templateOptions.getKeyPairName() != null) {
+         options.keyPairName(templateOptions.getKeyPairName());        
+         KeyPair keyPair = keyPairCache.getIfPresent(ZoneAndName.fromZoneAndName(template.getLocation().getId(), templateOptions.getKeyPairName()));
+         if (keyPair != null && keyPair.getPrivateKey() != null) {
+            privateKey = Optional.of(keyPair.getPrivateKey());
+            credentialsBuilder.privateKey(privateKey.get());
          }
       }
 
       String zoneId = template.getLocation().getId();
-      Server server = novaClient.getServerClientForZone(zoneId).createServer(name, template.getImage().getProviderId(),
-               template.getHardware().getProviderId(), options);
+      String imageId = template.getImage().getProviderId();
+      String flavorId = template.getHardware().getProviderId();
+
+      logger.debug(">> creating new server zone(%s) name(%s) image(%s) flavor(%s) options(%s)", zoneId, name, imageId, flavorId, options);
+      Server server = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
+      logger.trace("<< server(%s)", server.getId());
+
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
+      if (!privateKey.isPresent())
+         credentialsBuilder.password(server.getAdminPass());
       return new NodeAndInitialCredentials<ServerInZone>(serverInZone, serverInZone.slashEncode(), credentialsBuilder
-            .password(server.getAdminPass()).build());
+               .build());
    }
 
    @Override
