@@ -60,7 +60,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private String metadataValue;
    
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       vdcClient = context.getApi().getAdminVdcClient();
       metadataClient = vdcClient.getMetadataClient();

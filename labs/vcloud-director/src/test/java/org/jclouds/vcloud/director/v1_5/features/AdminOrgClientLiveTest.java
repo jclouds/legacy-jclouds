@@ -70,7 +70,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       orgClient = context.getApi().getAdminOrgClient();
       orgRef = Iterables.getFirst(orgClient.getOrgList().getOrgs(), null).toAdminReference(endpoint);

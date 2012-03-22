@@ -110,7 +110,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       vdcClient = context.getApi().getVdcClient();
       vappTemplateClient = context.getApi().getVAppTemplateClient();
