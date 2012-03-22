@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Basic entity type in the vCloud object model.
@@ -104,7 +105,7 @@ public class EntityType extends ResourceType {
       
       public B fromEntityType(EntityType in) {
          return fromResourceType(in)
-               .description(in.getDescription()).tasks(in.getTasks())
+               .description(in.getDescription()).tasks(Sets.newLinkedHashSet(in.getTasks()))
                .id(in.getId()).name(in.getName());
       }
    }
@@ -123,7 +124,7 @@ public class EntityType extends ResourceType {
       super(builder);
       this.description = builder.description;
       // nullable so that jaxb wont persist empty collections
-      this.tasks = builder.tasks != null && builder.tasks.size() == 0 ? null : builder.tasks;
+      this.tasks = builder.tasks == null || builder.tasks.isEmpty() ? null : ImmutableSet.copyOf(builder.tasks);
       this.id = builder.id;
       this.name = builder.name;
    }
@@ -147,7 +148,7 @@ public class EntityType extends ResourceType {
     * A list of queued, running, or recently completed tasks associated with this entity.
     */
    public Set<Task> getTasks() {
-      return tasks == null ? ImmutableSet.<Task>of() : Collections.unmodifiableSet(tasks);
+      return tasks == null ? ImmutableSet.<Task>of() : ImmutableSet.copyOf(tasks);
    }
 
    /**

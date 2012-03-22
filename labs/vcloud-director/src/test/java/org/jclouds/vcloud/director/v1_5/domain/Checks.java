@@ -520,27 +520,10 @@ public class Checks {
          assertTrue(capacity.getAllocated() >= 0, "allocated must be greater than or equal to 0");
       }
    }
-
-   public static void checkResourceEntities(ResourceEntities resourceEntities) {
-      for (Reference resourceEntity : resourceEntities.getResourceEntities()) {
-         checkReferenceType(resourceEntity);
-      }
-   }
-
-   public static void checkAvailableNetworks(AvailableNetworks availableNetworks) {
-      for (Reference network : availableNetworks.getNetworks()) {
-         checkReferenceType(network);
-      }
-   }
    
    public static void checkCapabilities(Capabilities capabilities) {
       // Check optional fields
-      if (capabilities.getSupportedHardwareVersions() != null) {
-         checkSupportedHardwareVersions(capabilities.getSupportedHardwareVersions());
-      }
-   }
-   public static void checkSupportedHardwareVersions(SupportedHardwareVersions supportedHardwareVersions) {
-      for (String supportedHardwareVersion : supportedHardwareVersions.getSupportedHardwareVersions()) {
+      for (String supportedHardwareVersion : capabilities.getSupportedHardwareVersions()) {
          // NOTE supportedHardwareVersion cannot be checked?
       }
    }
@@ -1469,11 +1452,11 @@ public class Checks {
       
       // optional
       // NOTE isEnabled cannot be checked
-      if (vdc.getResourceEntities() != null) {
-         checkResourceEntities(vdc.getResourceEntities());
+      for (Reference resourceEntity : vdc.getResourceEntities()) {
+         checkReferenceType(resourceEntity);
       }
-      if (vdc.getAvailableNetworks() != null) {
-         checkAvailableNetworks(vdc.getAvailableNetworks());
+      for (Reference availableNetwork : vdc.getAvailableNetworks()) {
+         checkReferenceType(availableNetwork);
       }
       if (vdc.getCapabilities() != null) {
          checkCapabilities(vdc.getCapabilities());

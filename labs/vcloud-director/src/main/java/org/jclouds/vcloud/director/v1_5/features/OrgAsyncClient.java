@@ -78,18 +78,20 @@ public interface OrgAsyncClient {
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI orgURI, @PathParam("catalogId") String catalogId,
+   ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI orgRef,
+                                                             @PathParam("catalogId") String catalogId,
                                                              @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
 
    /**
     * @see OrgClient#getControlAccess(URI, URI, ControlAccessParams)
     */
-   @POST
+   @GET
    @Path("/catalog/{catalogId}/controlAccess")
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<ControlAccessParams> getControlAccess(@EndpointParam URI orgURI, @PathParam("catalogId") String catalogId);
+   ListenableFuture<ControlAccessParams> getControlAccess(@EndpointParam URI orgRef,
+                                                          @PathParam("catalogId") String catalogId);
    
    /**
     * @return asynchronous access to {@link Metadata.Readable} features

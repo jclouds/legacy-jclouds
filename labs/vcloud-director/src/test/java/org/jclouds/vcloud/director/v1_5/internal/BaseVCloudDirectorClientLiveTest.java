@@ -77,6 +77,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -96,7 +97,7 @@ import com.google.inject.Module;
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
    
    @Resource
-   protected Logger logger = Logger.NULL;
+   protected Logger logger = Logger.CONSOLE;
 
    protected static final long TASK_TIMEOUT_SECONDS = 100L;
    protected static final long LONG_TASK_TIMEOUT_SECONDS = 300L;
@@ -112,6 +113,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected Session session;
 
    protected String catalogName;
+   protected String catalogId;
    protected String networkName;
    protected String userName;
 
@@ -166,6 +168,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    @SuppressWarnings("unchecked")
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
       catalogName = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-name"));
+      catalogId = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
       networkName = Strings.emptyToNull(System.getProperty("test." + provider + ".network-name"));
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
@@ -201,11 +204,20 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
             networkURI = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
 
-         if (catalogName == null)
+         if (Strings.isNullOrEmpty(networkName))
+            networkName = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getName();
+
+         if (Strings.isNullOrEmpty(catalogName))
             catalogName = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getName();
 
-         // TODO look for default networkName
+         // FIXME the URI should be opaque
+         if (Strings.isNullOrEmpty(catalogId)) {
+            String uri = Iterables.find(thisOrg.getLinks(),
+                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getHref().toASCIIString();
+            catalogId = Iterables.getLast(Splitter.on('/').split(uri));
+         }
       }
    }
 
@@ -308,7 +320,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       Vdc vdc = context.getApi().getVdcClient().getVdc(vdcURI);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
       
-      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Set<Reference> networks = vdc.getAvailableNetworks();
 
       // Look up the network in the Vdc with the id configured for the tests
       Optional<Reference> parentNetwork = Iterables.tryFind(networks, new Predicate<Reference>() {
@@ -344,14 +356,16 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
    
    // TODO code tidy for cleanUpVApp? Seems extremely verbose!
-   protected void cleanUpVApp(URI vAppUri) {
-      VAppClient vappClient = context.getApi().getVAppClient();
+   protected void cleanUpVApp(URI vAppURI) {
+      VAppClient vAppClient = context.getApi().getVAppClient();
 
       VApp vApp;
       try {
-         vApp = vappClient.getVApp(vAppUri); // update
+         vApp = vAppClient.getVApp(vAppURI); // Refresh
+         logger.debug("Deleting VApp %s (%s)", vApp.getName(), vAppURI.getPath());
       } catch (VCloudDirectorException e) {
-         // presumably vApp has already been deleted; ignore
+         // Presumably vApp has already been deleted. Ignore.
+         logger.info("Cannot find VApp at %s", vAppURI.getPath());
          return;
       }
       
@@ -366,11 +380,11 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       // Shutdown and power off the VApp if necessary
       if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
          try {
-            Task shutdownTask = vappClient.shutdown(vAppUri);
+            Task shutdownTask = vAppClient.shutdown(vAppURI);
             retryTaskSuccess.apply(shutdownTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible
-            logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp);
+            logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp.getName());
          }
       }
 
@@ -378,25 +392,27 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       if (vApp.isDeployed()) {
          try {
             UndeployVAppParams params = UndeployVAppParams.builder().build();
-            Task undeployTask = vappClient.undeploy(vAppUri, params);
+            Task undeployTask = vAppClient.undeploy(vAppURI, params);
             retryTaskSuccess.apply(undeployTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible
-            logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp);
+            logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp.getName());
          }
       }
       
       try {
-         Task task = vappClient.deleteVApp(vAppUri);
+         Task task = vAppClient.deleteVApp(vAppURI);
          assertTaskSucceeds(task);
+         vAppNames.remove(vApp.getName());
+         logger.info("Deleted VApp %s", vApp.getName());
       } catch (Exception e) {
          try {
-            vApp = vappClient.getVApp(vAppUri); // refresh
+            vApp = vAppClient.getVApp(vAppURI); // Refresh
          } catch (Exception e2) {
-            // ignore
+            // Ignore
          }
 
-         logger.warn(e, "Deleting vApp failed: vApp="+vApp);
+         logger.warn(e, "Deleting VApp %s failed (%s)", vApp.getName(), vAppURI.getPath());
       }
    }
 

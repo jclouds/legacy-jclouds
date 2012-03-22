@@ -20,11 +20,17 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -62,13 +68,21 @@ public class Capabilities {
 
    public static class Builder {
 
-      private SupportedHardwareVersions supportedHardwareVersions;
+      private Set<String> supportedHardwareVersions = Sets.newLinkedHashSet();
 
       /**
        * @see Capabilities#getSupportedHardwareVersions()
        */
-      public Builder supportedHardwareVersions(SupportedHardwareVersions supportedHardwareVersions) {
-         this.supportedHardwareVersions = supportedHardwareVersions;
+      public Builder supportedHardwareVersions(Set<String> supportedHardwareVersions) {
+         this.supportedHardwareVersions = Sets.newLinkedHashSet(checkNotNull(supportedHardwareVersions, "supportedHardwareVersions"));
+         return this;
+      }
+
+      /**
+       * @see Capabilities#getSupportedHardwareVersions()
+       */
+      public Builder supportedHardwareVersion(String supportedHardwareVersion) {
+         this.supportedHardwareVersions.add(checkNotNull(supportedHardwareVersion, "supportedHardwareVersion"));
          return this;
       }
 
@@ -79,12 +93,12 @@ public class Capabilities {
 
 
       public Builder fromCapabilities(Capabilities in) {
-         return supportedHardwareVersions(in.getSupportedHardwareVersions());
+         return supportedHardwareVersions(Sets.newLinkedHashSet(in.getSupportedHardwareVersions()));
       }
    }
 
-   private Capabilities(SupportedHardwareVersions supportedHardwareVersions) {
-      this.supportedHardwareVersions = supportedHardwareVersions;
+   private Capabilities(Set<String> supportedHardwareVersions) {
+      this.supportedHardwareVersions = supportedHardwareVersions == null ? Sets.<String>newLinkedHashSet() : ImmutableSet.copyOf(supportedHardwareVersions);
    }
 
    private Capabilities() {
@@ -92,16 +106,14 @@ public class Capabilities {
    }
 
 
-   @XmlElement(name = "SupportedHardwareVersions")
-   protected SupportedHardwareVersions supportedHardwareVersions;
+   @XmlElementWrapper(name = "SupportedHardwareVersions")
+   @XmlElement(name = "SupportedHardwareVersion")
+   protected Set<String> supportedHardwareVersions = Sets.newLinkedHashSet();
 
    /**
     * Gets the value of the supportedHardwareVersions property.
-    *
-    * @return possible object is
-    *         {@link SupportedHardwareVersions }
     */
-   public SupportedHardwareVersions getSupportedHardwareVersions() {
+   public Set<String> getSupportedHardwareVersions() {
       return supportedHardwareVersions;
    }
 
