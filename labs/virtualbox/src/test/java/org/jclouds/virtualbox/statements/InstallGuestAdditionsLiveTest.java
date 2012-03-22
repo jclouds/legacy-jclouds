@@ -32,8 +32,8 @@ import org.virtualbox_4_1.StorageBus;
 /**
  * @author Andrea Turli, David Alves
  */
-@Test(testName = "InstallGuestAdditionsTest")
-public class InstallGuestAdditionsTest extends BaseVirtualBoxClientLiveTest {
+@Test(testName = "InstallGuestAdditionsLiveTest", groups = "live", singleThreaded = true)
+public class InstallGuestAdditionsLiveTest extends BaseVirtualBoxClientLiveTest {
 
    public void testIsoPresent() {
       StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
