@@ -78,7 +78,8 @@ public interface ServerClient {
     *           request
     * @return the newly created server
     */
-   @Timeout(duration = 5, timeUnit = TimeUnit.MINUTES)
+   // blocking call
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    Server createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
    /**

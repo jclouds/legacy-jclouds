@@ -39,5 +39,9 @@ public class HPCloudComputeComputeServiceLiveTest extends BaseComputeServiceLive
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
-
+   
+   @Override
+   public void testOptionToNotBlock() {
+      // start call is blocking anyway.
+   }
 }
