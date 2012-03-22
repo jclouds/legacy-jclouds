@@ -255,12 +255,9 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
    }
 
-   /**
-    * Only disconnect if there is no content, as disconnecting will throw away unconsumed content.
-    */
    @Override
    protected void cleanup(HttpURLConnection connection) {
-      if (connection != null && connection.getContentLength() == 0)
+      if (connection != null)
          connection.disconnect();
    }
 

@@ -201,7 +201,7 @@ public abstract class BaseRestClientExpectTest<S> {
 
       @Override
       public void cleanup(HttpRequest nativeResponse) {
-         if (nativeResponse.getPayload() != null)
+         if (nativeResponse != null && nativeResponse.getPayload() != null)
             nativeResponse.getPayload().release();
       }
 
