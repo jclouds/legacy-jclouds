@@ -84,14 +84,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkAdminOrg(adminOrg);
    }
    
-   @Test(testName = "GET /admin/org/{id}/settings/emailSettings")
+   @Test(testName = "GET /admin/org/{id}/settings/email")
    public void testGetEmailSettings() {
       emailSettings = orgClient.getEmailSettings(orgRef.getHref());
       
       Checks.checkEmailSettings(emailSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/emailSettings", 
+   @Test(testName = "PUT /admin/org/{id}/settings/email", 
          dependsOnMethods = { "testGetEmailSettings" })
    public void testUpdateEmailSettings() {
       boolean isDefaultSmtpServer = emailSettings.isDefaultSmtpServer();
@@ -159,14 +159,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-   @Test(testName = "GET /admin/org/{id}/settings/generalSettings")
+   @Test(testName = "GET /admin/org/{id}/settings/general")
    public void testGetGeneralSettings() {
       generalSettings = orgClient.getGeneralSettings(orgRef.getHref());
       
       Checks.checkGeneralSettings(generalSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/generalSettings", 
+   @Test(testName = "PUT /admin/org/{id}/settings/general", 
          dependsOnMethods = { "testGetGeneralSettings" } )
    public void testUpdateGeneralSettings() {
       // FIXME: canPublishCatalogs does not update
