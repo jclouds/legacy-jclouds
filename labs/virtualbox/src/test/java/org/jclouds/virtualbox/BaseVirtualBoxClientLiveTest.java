@@ -29,7 +29,6 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -63,7 +62,7 @@ import com.google.inject.Module;
 /**
  * Tests behavior of {@code VirtualBoxClient}
  * 
- * @author Adrian Cole
+ * @author Adrian Cole, David Alves
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
 public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
@@ -149,8 +148,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
 
    protected void undoVm(VmSpec vmSpecification) {
-      machineUtils.unlockMachineAndApplyOrReturnNullIfNotRegistered(vmSpecification.getVmId(),
-               new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpecification));
+      machineUtils.writeLockMachineAndApply(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(
+               vmSpecification));
    }
 
 
