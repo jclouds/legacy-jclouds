@@ -58,6 +58,8 @@ public class ExceptionParsingListenableFuture<T> implements ListenableFuture<T> 
    public T get() throws InterruptedException, ExecutionException {
       try {
          return future.get();
+      } catch (InterruptedException ie) {
+         throw ie;
       } catch (Exception e) {
          return attemptConvert(e);
       }
@@ -72,6 +74,10 @@ public class ExceptionParsingListenableFuture<T> implements ListenableFuture<T> 
    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
       try {
          return future.get(timeout, unit);
+      } catch (InterruptedException ie) {
+         throw ie;
+      } catch (TimeoutException te) {
+         throw te;
       } catch (Exception e) {
          return attemptConvert(e);
       }
