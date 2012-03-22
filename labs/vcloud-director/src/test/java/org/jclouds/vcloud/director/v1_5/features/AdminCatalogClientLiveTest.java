@@ -72,7 +72,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    private Owner owner;
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    protected void setupRequiredClients() {
       catalogClient = context.getApi().getAdminCatalogClient();
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);

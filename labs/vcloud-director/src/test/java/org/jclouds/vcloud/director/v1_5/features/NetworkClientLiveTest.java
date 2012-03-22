@@ -59,7 +59,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    protected NetworkClient networkClient;
     
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
       context.getApi().getAdminNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 

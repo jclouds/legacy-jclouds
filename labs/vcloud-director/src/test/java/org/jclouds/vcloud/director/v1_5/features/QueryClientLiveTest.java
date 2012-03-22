@@ -77,7 +77,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       queryClient = context.getApi().getQueryClient();
       vAppTemplateClient = context.getApi().getVAppTemplateClient();

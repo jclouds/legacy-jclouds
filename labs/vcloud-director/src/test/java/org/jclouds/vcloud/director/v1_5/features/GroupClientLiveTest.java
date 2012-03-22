@@ -56,7 +56,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private OrgLdapSettings oldLdapSettings, newLdapSettings;
    
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       groupClient = context.getApi().getGroupClient();
       Reference orgRef = null;
