@@ -45,7 +45,7 @@ import com.google.inject.Inject;
 /**
  * Utilities for executing functions on a VirtualBox machine.
  * 
- * @author Adrian Cole, Mattias Holmqvist, Andrea Turli
+ * @author Adrian Cole, Mattias Holmqvist, Andrea Turli, David Alves
  */
 
 @Singleton
@@ -101,10 +101,34 @@ public class MachineUtils {
       });
    }
    
+   /**
+    * Locks the machine and executes the given function using the machine matching the given id.
+    * The machine is write locked and modifications to the session that reflect on the machine can be done safely.
+    * <p/>
+    * Unlocks the machine before returning.
+    * 
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
+    * @return the result from applying the function to the machine.
+    */
    public <T> T writeLockMachineAndApplyToSession(final String machineId, final Function<ISession, T> function) {
       return lockSessionOnMachineAndApply(machineId, LockType.Write, function);
    }
    
+   /**
+    * Locks the machine and executes the given function using the machine matching the given id.
+    * The machine is read locked, which means that settings can be read safely (but not changed) by function.
+    * <p/>
+    * Unlocks the machine before returning.
+    * 
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
+    * @return the result from applying the function to the machine.
+    */
    public <T> T readLockMachineAndApply(final String machineId, final Function<IMachine, T> function) {
       return lockSessionOnMachineAndApply(machineId, LockType.Shared, new Function<ISession, T>() {
 
@@ -121,6 +145,18 @@ public class MachineUtils {
       });
    }
    
+   /**
+    * Locks the machine and executes the given function to the session using the machine matching the given id.
+    * The machine is read locked, which means that settings can be read safely (but not changed) by function.
+    * <p/>
+    * Unlocks the machine before returning.
+    * 
+    * @param machineId
+    *           the id of the machine
+    * @param function
+    *           the function to execute
+    * @return the result from applying the function to the machine.
+    */
    public <T> T readLockMachineAndApplyToSession(final String machineId, final Function<ISession, T> function) {
       return lockSessionOnMachineAndApply(machineId, LockType.Shared, function);
    }
@@ -132,6 +168,9 @@ public class MachineUtils {
     * <p/>
     * Unlocks the machine before returning.
     * 
+    * Tries to obtain a lock 5 times before giving up waiting 1 sec between tries. When no machine
+    * is found null is returned.
+    * 
     * @param type
     *           the kind of lock to use when initially locking the machine.
     * @param machineId
@@ -141,41 +180,39 @@ public class MachineUtils {
     * @return the result from applying the function to the session.
     */
    private <T> T lockSessionOnMachineAndApply(String machineId, LockType type, Function<ISession, T> function) {
-      try {
-         int retries = 5;
-         int count = 0;
-         ISession session;
-         while (true) {
+      int retries = 5;
+      int count = 0;
+      ISession session;
+      while (true) {
+         try {
+            session = manager.get().getSessionObject();
+            IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
+            immutableMachine.lockMachine(session, type);
+            break;
+         } catch (VBoxException e) {
+            VBoxException vbex = Throwables2.getFirstThrowableOfType(e, VBoxException.class);
+            if (vbex != null && machineNotFoundException(vbex)) {
+               return null;
+            }
+            count++;
+            logger.warn("Could not lock machine (try %i of %i). Error: %s", retries, count, e.getMessage());
+            if (count == retries) {
+               throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId, type,
+                        e.getMessage()), e);
+            }
             try {
-               session = manager.get().getSessionObject();
-               IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
-               immutableMachine.lockMachine(session, type);
-               break;
-            } catch (VBoxException e) {
-               VBoxException vbex = Throwables2.getFirstThrowableOfType(e, VBoxException.class);
-               if (vbex != null && machineNotFoundException(vbex)){
-                  return null;
-               }
-               count++;
-               logger.warn("Could not lock machine (try %i of %i). Error: %s", retries, count, e.getMessage());
-               if (count == retries){
-                  throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId,
-                           type, e.getMessage()), e);   
-               }
-               try {
-                  Thread.sleep(1000L);
-               } catch (InterruptedException e1) {
-               }
+               Thread.sleep(1000L);
+            } catch (InterruptedException e1) {
             }
          }
-         try {
-            return function.apply(session);
-         } finally {
-            session.unlockMachine();
-         }
+      }
+      try {
+         return function.apply(session);
       } catch (VBoxException e) {
          throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
                   type, e.getMessage()), e);
+      } finally {
+         session.unlockMachine();
       }
    }
 
