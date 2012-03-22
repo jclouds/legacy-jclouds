@@ -21,7 +21,6 @@ package org.jclouds.trmk.vcloud_0_8.compute.options;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
@@ -278,7 +277,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
    @Override
    public String toString() {
       return "TerremarkVCloudTemplateOptions [keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", inboundPorts="
-            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+            + inboundPorts + ", privateKey=" + (privateKey != null) + ", publicKey="
             + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
             + ", userMetadata: " + userMetadata + "]";
    }

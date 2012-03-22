@@ -18,6 +18,7 @@
  */
 package org.jclouds.compute.options;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,9 +35,12 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.util.Strings2;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Ints;
 
 /**
  * Contains options supported in the {@code ComputeService#createNodesInGroup}
@@ -334,7 +338,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    }
 
-   protected int[] inboundPorts = new int[] { 22 };
+   protected Set<Integer> inboundPorts = ImmutableSet.of(22);
 
    protected Statement script;
 
@@ -348,8 +352,34 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
 
    protected Map<String, String> userMetadata = Maps.newLinkedHashMap();
 
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      TemplateOptions that = TemplateOptions.class.cast(o);
+      return super.equals(that) && equal(this.inboundPorts, that.inboundPorts) && equal(this.script, that.script)
+            && equal(this.publicKey, that.publicKey) && equal(this.privateKey, that.privateKey)
+            && equal(this.blockUntilRunning, that.blockUntilRunning) && equal(this.tags, that.tags)
+            && equal(this.userMetadata, that.userMetadata);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), inboundPorts, script, publicKey, privateKey, blockUntilRunning, tags,
+            userMetadata);
+   }
+
+   @Override
+   public ToStringHelper string() {
+      return super.string().add("inboundPorts", inboundPorts).add("scriptPresent", script != null)
+            .add("publicKeyPresent", publicKey != null).add("privateKeyPresent", privateKey != null).add("tags", tags)
+            .add("blockUntilRunning", blockUntilRunning).add("tags", tags).add("userMetadata", userMetadata);
+   }
+   
    public int[] getInboundPorts() {
-      return inboundPorts;
+      return Ints.toArray(inboundPorts);
    }
 
    public Statement getRunScript() {
@@ -453,7 +483,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    public TemplateOptions inboundPorts(int... ports) {
       for (int port : ports)
          checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
-      this.inboundPorts = ports;
+      this.inboundPorts = ImmutableSet.copyOf(Ints.asList(ports));
       return this;
    }
 
@@ -615,15 +645,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
       }
 
    }
-
-   @Override
-   public String toString() {
-      return "[inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
-            + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning=" + blockUntilRunning
-            + ", blockOnComplete=" + blockOnComplete + ", port:seconds=" + port + ":" + seconds + ", userMetadata: "
-            + userMetadata + "]";
-   }
-
+   
    /**
     * <h4>Note</h4> As of version 1.1.0, this option is incompatible with
     * {@link TemplateOptions#runScript(Statement)} and
@@ -669,62 +691,7 @@ public class TemplateOptions extends RunScriptOptions implements Cloneable {
    public Map<String, String> getUserMetadata() {
       return userMetadata;
    }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (blockUntilRunning ? 1231 : 1237);
-      result = prime * result + Arrays.hashCode(inboundPorts);
-      result = prime * result + port;
-      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
-      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
-      result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
-      result = prime * result + ((script == null) ? 0 : script.hashCode());
-      result = prime * result + seconds;
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      TemplateOptions other = (TemplateOptions) obj;
-      if (blockUntilRunning != other.blockUntilRunning)
-         return false;
-      if (!Arrays.equals(inboundPorts, other.inboundPorts))
-         return false;
-      if (userMetadata == null) {
-         if (other.userMetadata != null)
-            return false;
-      } else if (!userMetadata.equals(other.userMetadata))
-         return false;
-      if (port != other.port)
-         return false;
-      if (privateKey == null) {
-         if (other.privateKey != null)
-            return false;
-      } else if (!privateKey.equals(other.privateKey))
-         return false;
-      if (publicKey == null) {
-         if (other.publicKey != null)
-            return false;
-      } else if (!publicKey.equals(other.publicKey))
-         return false;
-      if (script == null) {
-         if (other.script != null)
-            return false;
-      } else if (!script.equals(other.script))
-         return false;
-      if (seconds != other.seconds)
-         return false;
-      return true;
-   }
-
+   
    @Override
    public TemplateOptions blockOnPort(int port, int seconds) {
       return TemplateOptions.class.cast(super.blockOnPort(port, seconds));
