@@ -46,6 +46,7 @@ import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.DeleteGShadowLock;
 import org.jclouds.virtualbox.statements.SetIpAddress;
+import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -83,23 +84,22 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    // TODO parameterize
    public static final boolean USE_LINKED = true;
 
-   // TODO parameterize
-   public static final ExecutionType EXECUTION_TYPE = ExecutionType.HEADLESS;
-
    private final Supplier<VirtualBoxManager> manager;
    private final Function<CloneSpec, IMachine> cloner;
    private final AtomicInteger nodePorts;
    private final AtomicInteger nodeIps;
-   private MachineUtils machineUtils;
+   private final MachineUtils machineUtils;
+   private final MachineController machineController;
 
    @Inject
    public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,
-            MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory) {
+            MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory, MachineController machineController) {
       this.manager = manager;
       this.cloner = cloner;
       this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
       this.nodeIps = new AtomicInteger(2);
       this.machineUtils = machineUtils;
+      this.machineController = machineController;
    }
 
    @Override
@@ -147,7 +147,7 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       IMachine cloned = cloner.apply(cloneSpec);
 
-      new LaunchMachineIfNotAlreadyRunning(manager.get(), EXECUTION_TYPE, "").apply(cloned);
+      machineController.ensureMachineIsLaunched(cloneVmSpec.getVmName());
 
       // IMachineToNodeMetadata produces the final ip's but these need to be set before so we build a
       // NodeMetadata just for the sake of running the gshadow and setip scripts 

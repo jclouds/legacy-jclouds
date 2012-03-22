@@ -110,7 +110,7 @@ public class GuestAdditionsInstallerLiveTest extends
 			machineUtils.applyForMachine(machine.getName(),
 					new LaunchMachineIfNotAlreadyRunning(manager.get(),
 							ExecutionType.GUI, ""));
-			assertTrue(machineUtils.readLockMachineAndApplyToSession(
+			assertTrue(machineUtils.sharedLockMachineAndApplyToSession(
 					machine.getName(),
 					new Function<ISession, Boolean>() {
 						@Override

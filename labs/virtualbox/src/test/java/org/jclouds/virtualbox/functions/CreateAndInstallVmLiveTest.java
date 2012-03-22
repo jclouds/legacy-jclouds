@@ -142,7 +142,7 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 
          String vboxVersion = Iterables.get(
                   Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-         assertEquals(vboxVersion, machineUtils.readLockMachineAndApplyToSession(machine.getName(), 
+         assertEquals(vboxVersion, machineUtils.sharedLockMachineAndApplyToSession(machine.getName(), 
                   new Function<ISession, String>() {
                      @Override
                      public String apply(ISession session) {
