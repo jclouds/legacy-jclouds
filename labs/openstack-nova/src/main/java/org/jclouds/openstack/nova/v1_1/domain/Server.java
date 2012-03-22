@@ -32,13 +32,18 @@ import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
+import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Multimaps2;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -478,7 +483,34 @@ public class Server extends Resource {
     * @return the ip addresses assigned to the server
     */
    public Multimap<Type, Address> getAddresses() {
-      return Multimaps2.fromOldSchool(addresses);
+
+      Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
+
+      if (privateAddresses != null && privateAddresses.size() > 1) {
+         return hackNeededForFloatingIpsFixedInEssex(privateAddresses);
+      } else {
+         return Multimaps2.fromOldSchool(addresses);
+      }
+
+   }
+
+   private Multimap<Type, Address> hackNeededForFloatingIpsFixedInEssex(Set<Address> privateAddresses) {
+      Set<Address> publicAddresses = addresses.get(Address.Type.PUBLIC);
+      ImmutableSetMultimap.Builder<Type, Address> returnMapBuilder = new ImmutableSetMultimap.Builder<Type, Address>();
+      if (publicAddresses != null) {
+         returnMapBuilder.putAll(Address.Type.PUBLIC, publicAddresses);
+      }
+      returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
+      returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates
+               .not(IsPrivateAddress.INSTANCE)));
+      return returnMapBuilder.build();
+   }
+
+   private static enum IsPrivateAddress implements Predicate<Address> {
+      INSTANCE;
+      public boolean apply(Address in) {
+         return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
+      }
    }
 
    /**
@@ -502,10 +534,14 @@ public class Server extends Resource {
 
    @Override
    public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
       return toStringHelper("").add("id", id).add("uuid", uuid).add("name", name).add("tenantId", tenantId).add(
                "userId", userId).add("hostId", getHostId()).add("updated", updated).add("created", created).add(
                "accessIPv4", getAccessIPv4()).add("accessIPv6", getAccessIPv6()).add("status", status).add(
                "configDrive", getConfigDrive()).add("image", image).add("flavor", flavor).add("metadata", metadata)
-               .add("links", links).add("addresses", addresses).add("adminPass", adminPass).toString();
+               .add("links", links).add("addresses", getAddresses()).add("adminPass", adminPass);
    }
 }
