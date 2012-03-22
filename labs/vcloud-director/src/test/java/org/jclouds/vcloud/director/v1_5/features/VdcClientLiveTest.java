@@ -228,7 +228,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testInstantiateVAppTemplate() {
       Vdc vdc = vdcClient.getVdc(vdcURI);
 
-      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Set<Reference> networks = vdc.getAvailableNetworks();
       Optional<Reference> parentNetwork = Iterables.tryFind(
             networks, new Predicate<Reference>() {
                   @Override

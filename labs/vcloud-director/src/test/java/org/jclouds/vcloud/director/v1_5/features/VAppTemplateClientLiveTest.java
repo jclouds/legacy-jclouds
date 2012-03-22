@@ -371,7 +371,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(testName = "PUT /vAppTemplate/{id}/networkConnectionSection")
    public void testEditNetworkConnectionSection() {
       // Look up a network in the Vdc
-      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Set<Reference> networks = vdc.getAvailableNetworks();
       Reference network = Iterables.getLast(networks);
 
       // Copy existing section and update fields

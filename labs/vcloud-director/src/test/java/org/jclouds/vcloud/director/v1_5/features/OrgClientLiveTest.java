@@ -145,18 +145,24 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
    }
 
-   @Test(testName = "GET /org/{id}/catalog/{catalogId}/controlAccess")
-   public void testGetontrolAccess() {
-      String catalogId = "";
+   @Test(testName = "GET /org/{id}/catalog/{catalogId}/controlAccess", dependsOnMethods = { "testGetOrg" })
+   public void testGetControlAccess() {
+      // Call the method being tested
       ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);
+
+      // Check params are well formed
       checkControlAccessParams(params);
    }
 
-   @Test(testName = "GET /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetontrolAccess" })
+   @Test(testName = "GET /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
    public void testModifyControlAccess() {
-      String catalogId = "";
+      // Setup params
       ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);
+
+      // Call the method being tested
       ControlAccessParams modified = orgClient.modifyControlAccess(orgURI, catalogId, params);
+
+      // Check params are well formed
       checkControlAccessParams(modified);
    }
 }
