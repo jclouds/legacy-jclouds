@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
@@ -46,6 +47,8 @@ import org.jclouds.openstack.services.ObjectStore;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
+import org.jclouds.openstack.swift.functions.ReturnTrueOn404FalseOn409;
+import org.jclouds.openstack.swift.options.ListContainerOptions;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -91,8 +94,25 @@ public interface HPCloudObjectStorageAsyncClient extends CommonSwiftAsyncClient 
    ListenableFuture<Boolean> createContainer(@PathParam("container") String container,
                                              CreateContainerOptions... options);
 
+    /**
+     * @see org.jclouds.openstack.swift.CommonSwiftClient#listContainers
+     */
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @QueryParams(keys = "format", values = "json")
+    @Path("/")
+    ListenableFuture<? extends Set<ContainerMetadata>> listContainers(ListContainerOptions... options);
+
+  /**
+     * @see org.jclouds.openstack.swift.CommonSwiftClient#deleteContainerIfEmpty
+     */
+    @DELETE
+    @ExceptionParser(ReturnTrueOn404FalseOn409.class)
+    @Path("/{container}")
+    ListenableFuture<Boolean> deleteContainerIfEmpty(@PathParam("container") String container);
+
    /**
-    * @see HPCloudObjectStorageClient#listCDNContainers(ListCDNContainerOptions)
+    * @see HPCloudObjectStorageClient#listCDNContainers(ListCDNContainerOptions...)
     */
    @Beta
    @GET
