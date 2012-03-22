@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -64,7 +65,7 @@ import com.google.common.collect.Iterables;
  * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
  * synchronized mainly because of snapshot creation (must be synchronized on a per-master-basis).
  * 
- * @author dralves
+ * @author David Alves
  * 
  */
 @Singleton
@@ -90,24 +91,15 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    private final AtomicInteger nodePorts;
    private final AtomicInteger nodeIps;
    private MachineUtils machineUtils;
-   private Function<IMachine, NodeMetadata> imachineToNodeMetadata;
-
-   private final RunScriptOnNode.Factory scriptRunnerFactory;
-   private final Supplier<NodeMetadata> hostSupplier;
 
    @Inject
    public NodeCreator(Supplier<VirtualBoxManager> manager, Function<CloneSpec, IMachine> cloner,
-            MachineUtils machineUtils, Function<IMachine, NodeMetadata> imachineToNodeMetadata,
-            RunScriptOnNode.Factory scriptRunnerFactory, Supplier<NodeMetadata> hostSupplier) {
+            MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory) {
       this.manager = manager;
       this.cloner = cloner;
       this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
       this.nodeIps = new AtomicInteger(2);
       this.machineUtils = machineUtils;
-      this.imachineToNodeMetadata = imachineToNodeMetadata;
-      this.scriptRunnerFactory = scriptRunnerFactory;
-      this.hostSupplier = hostSupplier;
-
    }
 
    @Override
@@ -131,8 +123,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       }
       String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
 
-      String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + "-" + nodeSpec.getTag() + "-"
-               + nodeSpec.getName();
+      String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + VIRTUALBOX_NODE_NAME_SEPARATOR
+               + nodeSpec.getTag() + VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getName();
 
       VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
                .forceOverwrite(true).build();

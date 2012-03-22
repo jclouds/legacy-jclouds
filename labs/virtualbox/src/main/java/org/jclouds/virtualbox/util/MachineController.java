@@ -68,7 +68,7 @@ public class MachineController {
    public void ensureMachineHasPowerDown(String vmName) {
 	      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
 	         try {
-	            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared, new Function<ISession, Void>() {
+	            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Write, new Function<ISession, Void>() {
 	               @Override
 	               public Void apply(ISession session) {
 	                  IProgress powerDownProgress = session.getConsole().powerDown();

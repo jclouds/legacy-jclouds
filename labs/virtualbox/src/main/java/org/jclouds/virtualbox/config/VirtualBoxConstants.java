@@ -24,14 +24,16 @@ import java.io.File;
 /**
  * Configuration properties used for interacting with VirtualBox instances.
  * 
- * @author Mattias Holmqvist, Andrea Turli
+ * @author Mattias Holmqvist, Andrea Turli, David Alves
  * 
  */
 public interface VirtualBoxConstants {
 
-   public static final String VIRTUALBOX_IMAGE_PREFIX = "jclouds-image-";
+   public static final String VIRTUALBOX_NODE_NAME_SEPARATOR = "-0x0-";
+   
+   public static final String VIRTUALBOX_IMAGE_PREFIX = "jclouds-image" + VIRTUALBOX_NODE_NAME_SEPARATOR;
 
-   public static final String VIRTUALBOX_NODE_PREFIX = "jclouds-node-";
+   public static final String VIRTUALBOX_NODE_PREFIX = "jclouds-node" + VIRTUALBOX_NODE_NAME_SEPARATOR;
 
    public static final String VIRTUALBOX_PRECONFIGURATION_URL = "jclouds.virtualbox.preconfigurationurl";
 

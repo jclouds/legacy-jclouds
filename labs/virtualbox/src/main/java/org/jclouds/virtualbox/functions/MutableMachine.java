@@ -55,29 +55,39 @@ public class MutableMachine implements Function<String, ISession> {
 
 	@Override
 	public ISession apply(String machineId) {
-	 return	lockSessionOnMachineAndReturn(manager.get(), lockType, machineId);
+      return lockSessionOnMachineAndReturn(manager.get(), lockType, machineId);
 	}
 
    /**
     * Locks the machine and executes the given function using the current session.
     * Since the machine is locked it is possible to perform some modifications to the IMachine.
+    * If locking failes tries to lock some until retries are exhausted.
     * <p/>
     * Unlocks the machine before returning.
+    * 
     *
     * @param manager   the VirtualBoxManager
     * @param type      the kind of lock to use when initially locking the machine.
     * @param machineId the id of the machine
     * @return the ISession bounded to the machine locked.
     */
-   public static ISession lockSessionOnMachineAndReturn(VirtualBoxManager manager, LockType type, String machineId) {
-      try {
-         ISession session = manager.getSessionObject();
-         IMachine immutableMachine = manager.getVBox().findMachine(machineId);
-         immutableMachine.lockMachine(session, type);
-         return session;
-      } catch (VBoxException e) {
-         throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId,
-                 type, e.getMessage()), e);
+   public ISession lockSessionOnMachineAndReturn(VirtualBoxManager manager, LockType type, String machineId) {
+      int retries = 5;
+      int count = 0;
+      while (true) {
+         try {
+            ISession session = manager.getSessionObject();
+            IMachine immutableMachine = manager.getVBox().findMachine(machineId);
+            immutableMachine.lockMachine(session, type);
+            return session;
+         } catch (VBoxException e) {
+            count++;
+            logger.warn("Could not lock machine (try %i of %i). Error: %s", retries, count, e.getMessage());
+            if (count == retries){
+               throw new RuntimeException(String.format("error locking %s with %s lock: %s", machineId,
+                        type, e.getMessage()), e);   
+            }
+         }
       }
    }
 
