@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
 import org.jclouds.domain.Credentials;
@@ -45,8 +46,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials extends ReturnCredentialsBoundToImage {
    @Inject
    public ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(@Nullable @Named("image") LoginCredentials creds,
-            Map<String, Credentials> credentialStore) {
-      super(creds, credentialStore);
+            Map<String, Credentials> credentialStore, Map<OsFamily, LoginCredentials> osFamilyToCredentials) {
+      super(creds, credentialStore, osFamilyToCredentials);
    }
 
    @Resource

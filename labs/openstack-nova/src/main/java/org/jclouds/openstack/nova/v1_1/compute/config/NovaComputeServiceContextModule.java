@@ -35,9 +35,11 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThenAddToSet;
 import org.jclouds.domain.Location;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
@@ -68,6 +70,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
@@ -158,6 +161,12 @@ public class NovaComputeServiceContextModule
    protected LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap(
             CacheLoader<ZoneAndName, SecurityGroupInZone> in) {
       return CacheBuilder.newBuilder().build(in);
+   }
+   
+   @Override
+   protected Map<OsFamily, LoginCredentials> osFamilyToCredentials(Injector injector) {
+      return ImmutableMap.of(OsFamily.WINDOWS, LoginCredentials.builder().user("Administrator").build(),
+               OsFamily.UBUNTU, LoginCredentials.builder().user("ubuntu").build());
    }
 
    @Provides
