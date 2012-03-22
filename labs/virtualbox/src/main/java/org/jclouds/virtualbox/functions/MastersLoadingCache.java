@@ -160,7 +160,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
                .build();
 
       StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-               .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
+               .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).attachISO(1, 0, guestAdditionsIso).build();
 
       VmSpec vmSpecification = VmSpec.builder().id(yamlImage.id).name(vmName).memoryMB(512).osTypeId("")
                .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
