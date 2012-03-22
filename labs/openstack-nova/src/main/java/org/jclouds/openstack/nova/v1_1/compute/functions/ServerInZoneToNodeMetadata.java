@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.transform;
@@ -55,7 +54,6 @@ import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
 import com.google.common.net.InetAddresses;
 
 /**
@@ -69,16 +67,13 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
    protected Logger logger = Logger.NULL;
 
    protected final Supplier<Map<String, Location>> locationIndex;
-   protected final LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
 
    @Inject
    public ServerInZoneToNodeMetadata(Supplier<Map<String, Location>> locationIndex,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
-            @Named("FLOATINGIP") LoadingCache<ZoneAndId, Iterable<String>> floatingIpCache) {
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares) {
       this.locationIndex = checkNotNull(locationIndex, "locationIndex");
-      this.floatingIpCache = checkNotNull(floatingIpCache, "cache");
       this.images = checkNotNull(images, "images");
       this.hardwares = checkNotNull(hardwares, "hardwares");
    }
@@ -102,7 +97,8 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.operatingSystem(findOperatingSystemForServerOrNull(serverInZone));
       builder.hardware(findHardwareForServerOrNull(serverInZone));
       builder.state(from.getStatus().getNodeState());
-      builder.publicAddresses(filter(getPublicAddresses(serverInZone), isInet4Address));
+      builder.publicAddresses(filter(transform(from.getPublicAddresses(),
+               AddressToStringTransformationFunction.INSTANCE), isInet4Address));
       builder.privateAddresses(filter(transform(from.getPrivateAddresses(),
                AddressToStringTransformationFunction.INSTANCE), isInet4Address));
 
@@ -122,11 +118,6 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       }
 
    };
-
-   protected Iterable<String> getPublicAddresses(ServerInZone serverInZone) {
-      return concat(transform(serverInZone.getServer().getPublicAddresses(),
-               AddressToStringTransformationFunction.INSTANCE), floatingIpCache.getUnchecked(serverInZone));
-   }
 
    private enum AddressToStringTransformationFunction implements Function<Address, String> {
       INSTANCE;

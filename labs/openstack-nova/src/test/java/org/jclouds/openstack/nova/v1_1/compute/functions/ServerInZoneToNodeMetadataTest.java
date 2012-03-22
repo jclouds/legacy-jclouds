@@ -24,7 +24,6 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Map;
 import java.util.Set;
 
-import org.easymock.classextension.EasyMock;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
@@ -37,14 +36,12 @@ import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.parse.ParseCreatedServerTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -91,7 +88,6 @@ public class ServerInZoneToNodeMetadataTest {
    }
 
    // TODO: clean up this syntax
-   @SuppressWarnings("unchecked")
    private void checkHardwareAndImageStatus(Hardware expectedHardware, Hardware existingHardware,
             String expectedImageId, OperatingSystem expectedOs, Image existingImage) {
 
@@ -102,13 +98,8 @@ public class ServerInZoneToNodeMetadataTest {
 
       ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
 
-      LoadingCache<ZoneAndId, Iterable<String>> mockLoadingCache = EasyMock.createMock(LoadingCache.class);
-      EasyMock.expect(mockLoadingCache.getUnchecked(serverInZoneToConvert)).andReturn(ImmutableSet.<String> of());
-      EasyMock.replay(mockLoadingCache);
-
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
-               .<Set<? extends Image>> ofInstance(images), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares),
-               mockLoadingCache);
+               .<Set<? extends Image>> ofInstance(images), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata convertedNodeMetadata = converter.apply(serverInZoneToConvert);
 
@@ -140,8 +131,6 @@ public class ServerInZoneToNodeMetadataTest {
       assertNotNull(convertedNodeMetadata.getUserMetadata());
       assertEquals(convertedNodeMetadata.getUserMetadata(), ImmutableMap.<String, String> of("Server Label",
                "Web Head 1", "Image Version", "2.1"));
-
-      EasyMock.verify(mockLoadingCache);
    }
 
    @Test
@@ -154,13 +143,9 @@ public class ServerInZoneToNodeMetadataTest {
 
       ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
 
-      LoadingCache<ZoneAndId, Iterable<String>> mockLoadingCache = EasyMock.createMock(LoadingCache.class);
-      EasyMock.expect(mockLoadingCache.getUnchecked(serverInZoneToConvert)).andReturn(ImmutableSet.<String> of());
-      EasyMock.replay(mockLoadingCache);
 
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
-               .<Set<? extends Image>> ofInstance(images), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares),
-               mockLoadingCache);
+               .<Set<? extends Image>> ofInstance(images), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata convertedNodeMetadata = converter.apply(serverInZoneToConvert);
 
@@ -169,6 +154,5 @@ public class ServerInZoneToNodeMetadataTest {
 
       assertEquals(convertedNodeMetadata.getLocation(), zone);
 
-      EasyMock.verify(mockLoadingCache);
    }
 }

@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.util.Map;
 import java.util.Set;
 
-import org.easymock.classextension.EasyMock;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -31,7 +30,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.parse.ParseCreatedServerTest;
 import org.jclouds.openstack.nova.v1_1.parse.ParseServerTest;
@@ -40,7 +38,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -65,22 +62,15 @@ public class OrphanedGroupsByZoneIdTest {
 
       ServerInZone withoutHost = new ServerInZone(new ParseCreatedServerTest().expected(), "az-1.region-a.geo-1");
       ServerInZone withHost = new ServerInZone(new ParseServerTest().expected(), "az-1.region-a.geo-1");
-
-      LoadingCache<ZoneAndId, Iterable<String>> mockLoadingCache = EasyMock.createMock(LoadingCache.class);
-      EasyMock.expect(mockLoadingCache.getUnchecked(withoutHost)).andReturn(ImmutableSet.<String> of());
-      EasyMock.expect(mockLoadingCache.getUnchecked(withHost)).andReturn(ImmutableSet.<String> of());
-      EasyMock.replay(mockLoadingCache);
-
+      
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
                .<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of()), Suppliers
-               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()), mockLoadingCache);
+               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()));
 
       Set<? extends NodeMetadata> set = ImmutableSet.of(converter.apply(withHost), converter.apply(withoutHost));
 
       assertEquals(new OrphanedGroupsByZoneId(Predicates.<ZoneAndName> alwaysTrue()).apply(set), ImmutableMultimap
                .<String, String> builder().putAll("az-1.region-a.geo-1", "sample", "test").build());
-
-      EasyMock.verify(mockLoadingCache);
    }
 
    @Test
@@ -89,20 +79,14 @@ public class OrphanedGroupsByZoneIdTest {
       ServerInZone withoutHost = new ServerInZone(new ParseCreatedServerTest().expected(), "az-1.region-a.geo-1");
       ServerInZone withHost = new ServerInZone(new ParseServerTest().expected(), "az-1.region-a.geo-1");
 
-      LoadingCache<ZoneAndId, Iterable<String>> mockLoadingCache = EasyMock.createMock(LoadingCache.class);
-      EasyMock.expect(mockLoadingCache.getUnchecked(withoutHost)).andReturn(ImmutableSet.<String> of());
-      EasyMock.expect(mockLoadingCache.getUnchecked(withHost)).andReturn(ImmutableSet.<String> of());
-      EasyMock.replay(mockLoadingCache);
-
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
                .<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of()), Suppliers
-               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()), mockLoadingCache);
+               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()));
 
       Set<? extends NodeMetadata> set = ImmutableSet.of(converter.apply(withHost), converter.apply(withoutHost));
 
       assertEquals(new OrphanedGroupsByZoneId(Predicates.<ZoneAndName> alwaysFalse()).apply(set), ImmutableMultimap
                .<String, String> of());
 
-      EasyMock.verify(mockLoadingCache);
    }
 }
