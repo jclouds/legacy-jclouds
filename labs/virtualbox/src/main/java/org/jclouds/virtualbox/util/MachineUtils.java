@@ -188,8 +188,6 @@ public class MachineUtils {
             IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
             session = manager.get().getSessionObject();
             immutableMachine.lockMachine(session, type);
-            System.err.println("ACQUIRED LOCK ["+time+"]");
-            print();
             break;
          } catch (VBoxException e) {
             VBoxException vbex = Throwables2.getFirstThrowableOfType(e, VBoxException.class);
@@ -215,8 +213,6 @@ public class MachineUtils {
                   type, e.getMessage()), e);
       } finally {
          session.unlockMachine();
-         System.err.println("RELEASED LOCK ["+time+"]");
-         print();
       }
    }
    
