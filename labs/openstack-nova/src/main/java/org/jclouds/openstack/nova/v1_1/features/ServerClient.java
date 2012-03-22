@@ -38,7 +38,7 @@ import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
  *      />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface ServerClient {
 
    /**
@@ -78,6 +78,7 @@ public interface ServerClient {
     *           request
     * @return the newly created server
     */
+   @Timeout(duration = 5, timeUnit = TimeUnit.MINUTES)
    Server createServer(String name, String imageRef, String flavorRef, CreateServerOptions... options);
 
    /**

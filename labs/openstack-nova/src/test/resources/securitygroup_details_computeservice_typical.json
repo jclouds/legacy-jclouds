@@ -14,7 +14,7 @@
             "from_port": 22,
             "group": {
                 "tenant_id": "37936628937291",
-                "name": "jclouds#mygroup"
+                "name": "jclouds_mygroup"
             },
             "ip_protocol": "tcp",
             "to_port": 22,
@@ -35,7 +35,7 @@
             "from_port": 8080,
             "group": {
                 "tenant_id": "37936628937291",
-                "name": "jclouds#mygroup"
+                "name": "jclouds_mygroup"
             },
             "ip_protocol": "tcp",
             "to_port": 8080,
@@ -45,7 +45,7 @@
         }],
         "tenant_id": "37936628937291",
         "id": 2769,
-        "name": "jclouds#mygroup",
-        "description": "jclouds#mygroup"
+        "name": "jclouds_mygroup",
+        "description": "jclouds_mygroup"
     }
 }

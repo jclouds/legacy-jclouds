@@ -63,7 +63,7 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
 
       String zoneId = zoneSecurityGroupNameAndPorts.getZone();
       Optional<SecurityGroupClient> client = novaClient.getSecurityGroupExtensionForZone(zoneId);
-      checkArgument(client.isPresent(), "Security groups are required, but the extension is not available!");
+      checkArgument(client.isPresent(), "Security groups are required, but the extension is not availablein zone %s!", zoneId);
       logger.debug(">> creating securityGroup %s", zoneSecurityGroupNameAndPorts);
       try {
 

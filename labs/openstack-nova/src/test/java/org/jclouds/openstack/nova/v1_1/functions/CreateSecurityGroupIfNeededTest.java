@@ -50,7 +50,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
                      authToken).build())
             .payload(
                      payloadFromStringWithContentType(
-                              "{\"security_group\":{\"name\":\"jclouds#mygroup\",\"description\":\"jclouds#mygroup\"}}",
+                              "{\"security_group\":{\"name\":\"jclouds_mygroup\",\"description\":\"jclouds_mygroup\"}}",
                               "application/json")).build();
 
    public void testCreateNewGroup() throws Exception {
@@ -64,7 +64,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
       HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200)
                .payload(
                         payloadFromStringWithContentType(
-                                 String.format("{\"security_group\": {\"rules\": [], \"tenant_id\": \"37936628937291\", \"id\": %s, \"name\": \"jclouds#mygroup\", \"description\": \"jclouds#mygroup\"}}", groupId),
+                                 String.format("{\"security_group\": {\"rules\": [], \"tenant_id\": \"37936628937291\", \"id\": %s, \"name\": \"jclouds_mygroup\", \"description\": \"jclouds_mygroup\"}}", groupId),
                                  "application/json; charset=UTF-8")).build();
 
       builder.put(createSecurityGroup, createSecurityGroupResponse);
@@ -103,7 +103,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
          HttpResponse createSelfRuleResponse = HttpResponse.builder().statusCode(200)
                   .payload(
                            payloadFromStringWithContentType(
-                                    String.format("{\"security_group_rule\": {\"from_port\": %d, \"group\": {\"tenant_id\": \"37936628937291\", \"name\": \"jclouds#mygroup\"}, \"ip_protocol\": \"tcp\", \"to_port\": %d, \"parent_group_id\": %d, \"ip_range\": {}, \"id\": %d}}",
+                                    String.format("{\"security_group_rule\": {\"from_port\": %d, \"group\": {\"tenant_id\": \"37936628937291\", \"name\": \"jclouds_mygroup\"}, \"ip_protocol\": \"tcp\", \"to_port\": %d, \"parent_group_id\": %d, \"ip_range\": {}, \"id\": %d}}",
                                              port, port, groupId, ruleId++), "application/json; charset=UTF-8")).build();
          
          builder.put(createSelfRule, createSelfRuleResponse);
@@ -125,7 +125,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
 
       // we can find it
       assertEquals(fn.apply(
-               new ZoneSecurityGroupNameAndPorts("az-1.region-a.geo-1", "jclouds#mygroup", ImmutableSet.of(22, 8080)))
+               new ZoneSecurityGroupNameAndPorts("az-1.region-a.geo-1", "jclouds_mygroup", ImmutableSet.of(22, 8080)))
                .toString(), new SecurityGroupInZone(new ParseComputeServiceTypicalSecurityGroupTest().expected(),
                "az-1.region-a.geo-1").toString());
 
@@ -162,7 +162,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
 
       // we can find it
       assertEquals(fn.apply(
-               new ZoneSecurityGroupNameAndPorts("az-1.region-a.geo-1", "jclouds#mygroup", ImmutableSet.of(22, 8080)))
+               new ZoneSecurityGroupNameAndPorts("az-1.region-a.geo-1", "jclouds_mygroup", ImmutableSet.of(22, 8080)))
                .toString(), new SecurityGroupInZone(new ParseComputeServiceTypicalSecurityGroupTest().expected(),
                "az-1.region-a.geo-1").toString());
 

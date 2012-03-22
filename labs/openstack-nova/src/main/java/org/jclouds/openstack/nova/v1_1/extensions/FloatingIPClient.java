@@ -34,7 +34,7 @@ import org.jclouds.openstack.services.ServiceType;
  * @author Jeremy Daggett
  */
 @Extension(of = ServiceType.COMPUTE, namespace = ExtensionNamespaces.FLOATING_IPS)
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface FloatingIPClient {
 
    /**

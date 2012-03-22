@@ -20,18 +20,22 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
+import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
+import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -53,30 +57,31 @@ public class CreateUniqueKeyPair implements Function<ZoneAndName, KeyPair> {
 
    @Override
    public KeyPair apply(ZoneAndName zoneAndName) {
-      checkNotNull(zoneAndName, "zoneAndName");
-      return createNewKeyPairInZone(zoneAndName.getZone(), zoneAndName.getName());
-   }
+      String zoneId = checkNotNull(zoneAndName, "zoneAndName").getZone();
+      String prefix = zoneAndName.getName();
 
-   @VisibleForTesting
-   KeyPair createNewKeyPairInZone(String zone, String group) {
-      checkNotNull(zone, "zone");
-      checkNotNull(group, "group");
-      logger.debug(">> creating keyPair zone(%s) group(%s)", zone, group);
+      Optional<KeyPairClient> client = novaClient.getKeyPairExtensionForZone(zoneId);
+      checkArgument(client.isPresent(), "Key pairs are required, but the extension is not available in zone %s!", zoneId);
+
+      logger.debug(">> creating keyPair zone(%s) prefix(%s)", zoneId, prefix);
 
       KeyPair keyPair = null;
       while (keyPair == null) {
          try {
-            keyPair = novaClient.getKeyPairExtensionForZone(zone).get().createKeyPair(getNextName(group));
+            keyPair = client.get().createKeyPair(getNextName(prefix));
          } catch (IllegalStateException e) {
 
          }
       }
-      
-      logger.debug("<< created keyPair(%s)", keyPair);
+
+      logger.debug("<< created keyPair(%s)", keyPair.getName());
       return keyPair;
    }
 
-   private String getNextName(String group) {
-      return String.format("jclouds#%s#%s", group, randomSuffix.get());
+   // nova cannot use hashes, else a hang on the console like this:
+   // Caught exception reading instance data:
+   // http://169.254.169.254/2009-04-04/meta-data/mpi/jclouds#hpcloud-computeblock#11
+   private String getNextName(String prefix) {
+      return String.format("%s_%s", prefix, randomSuffix.get());
    }
 }

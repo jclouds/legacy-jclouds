@@ -52,4 +52,26 @@ public class KeyPairPredicates {
          }
       };
    }
+   
+   /**
+    * matches name of the given keypair starts with the specified prefix
+    *
+    * @param name the prefix you are looking for
+    * @return the predicate
+    */
+   public static Predicate<KeyPair> nameEquals(final String name) {
+      checkNotNull(name, "name must be defined");
+
+      return new Predicate<KeyPair>() {
+         @Override
+         public boolean apply(KeyPair ext) {
+            return ext.getName() != null && ext.getName().equals(name);
+         }
+
+         @Override
+         public String toString() {
+            return "nameEquals(" + name + ")";
+         }
+      };
+   }
 }

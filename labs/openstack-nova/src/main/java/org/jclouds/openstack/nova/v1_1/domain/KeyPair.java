@@ -164,7 +164,6 @@ public class KeyPair implements Comparable<KeyPair> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("publicKey", publicKey).add("privateKey", privateKey).add("userId", userId)
-            .add("name", name).add("fingerprint", fingerprint).toString();
+      return toStringHelper("").add("userId", userId).add("name", name).add("fingerprint", fingerprint).toString();
    }
 }

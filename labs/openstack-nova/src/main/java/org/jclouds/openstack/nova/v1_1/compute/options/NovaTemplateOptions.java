@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.options;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
@@ -69,10 +71,34 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       }
    }
 
-   private boolean autoAssignFloatingIp = false;
-   private boolean generateKeyPair = false;
-   private Set<String> securityGroupNames = ImmutableSet.of();
-   private String keyPairName;
+   protected boolean autoAssignFloatingIp = false;
+   protected Set<String> securityGroupNames = ImmutableSet.of();
+   protected boolean generateKeyPair = false;
+   protected String keyPairName;
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      NovaTemplateOptions that = NovaTemplateOptions.class.cast(o);
+      return super.equals(that) && equal(this.autoAssignFloatingIp, that.autoAssignFloatingIp)
+            && equal(this.securityGroupNames, that.securityGroupNames)
+            && equal(this.generateKeyPair, that.generateKeyPair) && equal(this.keyPairName, that.keyPairName);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), autoAssignFloatingIp, securityGroupNames, generateKeyPair, keyPairName);
+   }
+
+   @Override
+   public ToStringHelper string() {
+      return super.string().add("autoAssignFloatingIp", autoAssignFloatingIp)
+            .add("securityGroupNames", securityGroupNames).add("generateKeyPair", generateKeyPair)
+            .add("keyPairName", keyPairName);
+   }
 
    public static final NovaTemplateOptions NONE = new NovaTemplateOptions();
 
@@ -445,26 +471,4 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
       return NovaTemplateOptions.class.cast(super.userMetadata(key, value));
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hashCode(super.hashCode(), autoAssignFloatingIp);
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-
-      NovaTemplateOptions other = (NovaTemplateOptions) obj;
-      return Objects.equal(autoAssignFloatingIp, other.autoAssignFloatingIp);
-   }
-
-   @Override
-   public String toString() {
-      return String.format("[autoAssignFloatingIp=%s]", autoAssignFloatingIp);
-   }
 }

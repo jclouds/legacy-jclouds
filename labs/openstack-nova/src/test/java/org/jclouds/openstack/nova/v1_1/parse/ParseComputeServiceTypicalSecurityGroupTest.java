@@ -58,19 +58,19 @@ public class ParseComputeServiceTypicalSecurityGroupTest extends BaseItemParserT
             SecurityGroupRule.builder().fromPort(22)
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("2769")
                   .ipRange("0.0.0.0/0").id("10331").build(),
-            SecurityGroupRule.builder().fromPort(22).group(new TenantIdAndName("37936628937291", "jclouds#mygroup"))
+            SecurityGroupRule.builder().fromPort(22).group(new TenantIdAndName("37936628937291", "jclouds_mygroup"))
                   .ipProtocol(IpProtocol.TCP).toPort(22).parentGroupId("2769")
                   .id("10332").build(),
             SecurityGroupRule.builder().fromPort(8080)
                   .ipProtocol(IpProtocol.TCP).toPort(8080).parentGroupId("2769")
                   .ipRange("0.0.0.0/0").id("10333").build(),
-            SecurityGroupRule.builder().fromPort(8080).group(new TenantIdAndName("37936628937291", "jclouds#mygroup"))
+            SecurityGroupRule.builder().fromPort(8080).group(new TenantIdAndName("37936628937291", "jclouds_mygroup"))
                   .ipProtocol(IpProtocol.TCP).toPort(8080).parentGroupId("2769")
                   .id("10334").build()                  
       );
 
-      return SecurityGroup.builder().description("jclouds#mygroup").id("2769").tenantId("37936628937291").rules(securityGroupRules)
-            .name("jclouds#mygroup").build();
+      return SecurityGroup.builder().description("jclouds_mygroup").id("2769").tenantId("37936628937291").rules(securityGroupRules)
+            .name("jclouds_mygroup").build();
    }
    protected Injector injector() {
       return Guice.createInjector(new NovaParserModule(), new GsonModule());

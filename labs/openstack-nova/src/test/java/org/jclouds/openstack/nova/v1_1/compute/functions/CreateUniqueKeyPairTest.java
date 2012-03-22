@@ -18,18 +18,22 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.testng.annotations.Test;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.*;
-import static org.testng.Assert.assertEquals;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
+import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 
 /**
  * @author Adam Lowe
@@ -48,7 +52,7 @@ public class CreateUniqueKeyPairTest {
       expect(client.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyClient)).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPair("jclouds#group#1")).andReturn(pair);
+      expect(keyClient.createKeyPair("group_1")).andReturn(pair);
 
       replay(client);
       replay(keyClient);
@@ -56,7 +60,7 @@ public class CreateUniqueKeyPairTest {
 
       CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
 
-      assertEquals(parser.createNewKeyPairInZone("zone", "group"), pair);
+      assertEquals(parser.apply(ZoneAndName.fromZoneAndName("zone", "group")), pair);
 
       verify(client);
       verify(keyClient);
@@ -74,9 +78,9 @@ public class CreateUniqueKeyPairTest {
       expect(client.getKeyPairExtensionForZone("zone")).andReturn(Optional.of(keyClient)).atLeastOnce();
 
       expect(uniqueIdSupplier.get()).andReturn("1");
-      expect(keyClient.createKeyPair("jclouds#group#1")).andThrow(new IllegalStateException());
+      expect(keyClient.createKeyPair("group_1")).andThrow(new IllegalStateException());
       expect(uniqueIdSupplier.get()).andReturn("2");
-      expect(keyClient.createKeyPair("jclouds#group#2")).andReturn(pair);
+      expect(keyClient.createKeyPair("group_2")).andReturn(pair);
 
       replay(client);
       replay(keyClient);
@@ -84,7 +88,7 @@ public class CreateUniqueKeyPairTest {
 
       CreateUniqueKeyPair parser = new CreateUniqueKeyPair(client, uniqueIdSupplier);
 
-      assertEquals(parser.createNewKeyPairInZone("zone", "group"), pair);
+      assertEquals(parser.apply(ZoneAndName.fromZoneAndName("zone", "group")), pair);
 
       verify(client);
       verify(keyClient);

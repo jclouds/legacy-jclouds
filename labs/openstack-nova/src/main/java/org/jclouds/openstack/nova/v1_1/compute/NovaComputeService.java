@@ -67,6 +67,7 @@ import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
@@ -131,7 +132,7 @@ public class NovaComputeService extends BaseComputeService {
       if (securityGroupClient.isPresent()) {
          for (String group : groups) {
             for (SecurityGroup securityGroup : Iterables.filter(securityGroupClient.get().listSecurityGroups(),
-                     SecurityGroupPredicates.nameEquals("jclouds#" + group))) {
+                     SecurityGroupPredicates.nameEquals("jclouds_" + group))) {
                ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, securityGroup.getName());
                logger.debug(">> deleting securityGroup(%s)", zoneAndName);
                securityGroupClient.get().deleteSecurityGroup(securityGroup.getId());
@@ -148,7 +149,10 @@ public class NovaComputeService extends BaseComputeService {
       if (keyPairClient.isPresent()) {
          for (String group : groups) {
             for (Map<String, KeyPair> wrapper : keyPairClient.get().listKeyPairs()) {
-               for (KeyPair pair : Iterables.filter(wrapper.values(), KeyPairPredicates.nameStartsWith("jclouds#" + group + "#"))) {
+               for (KeyPair pair : Iterables.filter(
+                     wrapper.values(),
+                     Predicates.or(KeyPairPredicates.nameStartsWith("jclouds_" + group + "_"),
+                           KeyPairPredicates.nameEquals("jclouds_" + group)))) {
                   ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());
                   logger.debug(">> deleting keypair(%s)", zoneAndName);
                   keyPairClient.get().deleteKeyPair(pair.getName());
@@ -157,7 +161,7 @@ public class NovaComputeService extends BaseComputeService {
                   logger.debug("<< deleted keypair(%s)", zoneAndName);
                }
             }
-            keyPairCache.invalidate(ZoneAndName.fromZoneAndName(zoneId, "jclouds#" + group));
+            keyPairCache.invalidate(ZoneAndName.fromZoneAndName(zoneId, "jclouds_" + group));
          }
       }
    }

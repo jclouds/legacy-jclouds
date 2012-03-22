@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v1_1.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.crypto.SshKeys.fingerprintPrivateKey;
 
 import java.util.List;
 import java.util.Map;
@@ -107,14 +108,21 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
                   templateOptions);
       }
 
+      boolean keyPairExensionPresent = novaClient.getKeyPairExtensionForZone(zone).isPresent();
       if (templateOptions.shouldGenerateKeyPair()) {
-         checkArgument(novaClient.getKeyPairExtensionForZone(zone).isPresent(),
-               "Key Pairs are required by options, but the extension is not available! options: %s",
-               templateOptions);
-         if (templateOptions.getKeyPairName() == null) {
-            KeyPair keyPair = keyPairCache.getUnchecked(ZoneAndName.fromZoneAndName(zone, "jclouds#" + group));
+         checkArgument(keyPairExensionPresent,
+               "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
+         KeyPair keyPair = keyPairCache.getUnchecked(ZoneAndName.fromZoneAndName(zone, "jclouds_" + group));
+         keyPairCache.asMap().put(ZoneAndName.fromZoneAndName(zone, keyPair.getName()), keyPair);
+         templateOptions.keyPairName(keyPair.getName());
+      } else if (templateOptions.getKeyPairName() != null) {
+         checkArgument(keyPairExensionPresent,
+               "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
+         if (templateOptions.getLoginPrivateKey() != null) {
+            String pem = templateOptions.getLoginPrivateKey();
+            KeyPair keyPair = KeyPair.builder().name(templateOptions.getKeyPairName())
+                  .fingerprint(fingerprintPrivateKey(pem)).privateKey(pem).build();
             keyPairCache.asMap().put(ZoneAndName.fromZoneAndName(zone, keyPair.getName()), keyPair);
-            templateOptions.keyPairName(keyPair.getName());
          }
       }
 
@@ -125,7 +133,7 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
                   "Security groups are required by options, but the extension is not available! options: %s",
                   templateOptions);
       } else if (securityGroupExensionPresent && inboundPorts.size() > 0) {
-         String securityGroupName = "jclouds#" + group;
+         String securityGroupName = "jclouds_" + group;
          try {
             securityGroupCache.get(new ZoneSecurityGroupNameAndPorts(zone, securityGroupName, inboundPorts));
          } catch (ExecutionException e) {
