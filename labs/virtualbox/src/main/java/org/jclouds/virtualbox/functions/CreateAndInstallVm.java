@@ -43,7 +43,6 @@ import org.jclouds.virtualbox.predicates.GuestAdditionsInstaller;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.LockType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -144,8 +143,7 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 				.split(installationKeySequence), new StringToKeyCode());
 
 		for (List<Integer> scancodes : scancodelist) {
-			machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Shared,
-					new SendScancodes(scancodes));
+			machineUtils.readLockMachineAndApplyToSession(vmName,new SendScancodes(scancodes));
 		}
 	}
 

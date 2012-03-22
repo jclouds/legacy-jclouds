@@ -28,7 +28,6 @@ import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.VirtualBoxManager;
 import org.virtualbox_4_1.jaxws.MachineState;
 
@@ -68,7 +67,7 @@ public class MachineController {
    public void ensureMachineHasPowerDown(String vmName) {
 	      while (!manager.get().getVBox().findMachine(vmName).getState().equals(MachineState.POWERED_OFF)) {
 	         try {
-	            machineUtils.lockSessionOnMachineAndApply(vmName, LockType.Write, new Function<ISession, Void>() {
+	            machineUtils.writeLockMachineAndApplyToSession(vmName, new Function<ISession, Void>() {
 	               @Override
 	               public Void apply(ISession session) {
 	                  IProgress powerDownProgress = session.getConsole().powerDown();
