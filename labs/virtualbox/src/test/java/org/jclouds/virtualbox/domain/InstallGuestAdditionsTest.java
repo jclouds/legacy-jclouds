@@ -35,22 +35,22 @@ import com.google.common.io.Resources;
 
 @Test(groups = "unit")
 public class InstallGuestAdditionsTest {
-   @Test(enabled = false)
-   public void testUnixByItself() throws IOException {
-      InstallGuestAdditions statement = new InstallGuestAdditions("4.1.6");
-      assertEquals(statement.render(OsFamily.UNIX),
-            CharStreams.toString(Resources.newReaderSupplier(
-                  Resources.getResource("test_guest_additions_installer." + ShellToken.SH.to(OsFamily.UNIX)),
-                  Charsets.UTF_8)));
-   }
-
-   @Test(enabled = false)
-   public void testUnixInInitScript() throws IOException {
-      Statement statement = InitScript.builder().name("install_guest_additions")
-            .run(new InstallGuestAdditions("4.1.6")).build();
-
-      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(
-            Resources.getResource("test_guest_additions_installer_init." + ShellToken.SH.to(OsFamily.UNIX)),
-            Charsets.UTF_8)));
-   }
+//   @Test(enabled = false)
+//   public void testUnixByItself() throws IOException {
+//      InstallGuestAdditions statement = new InstallGuestAdditions("4.1.6");
+//      assertEquals(statement.render(OsFamily.UNIX),
+//            CharStreams.toString(Resources.newReaderSupplier(
+//                  Resources.getResource("test_guest_additions_installer." + ShellToken.SH.to(OsFamily.UNIX)),
+//                  Charsets.UTF_8)));
+//   }
+//
+//   @Test(enabled = false)
+//   public void testUnixInInitScript() throws IOException {
+//      Statement statement = InitScript.builder().name("install_guest_additions")
+//            .run(new InstallGuestAdditions("4.1.6")).build();
+//
+//      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(
+//            Resources.getResource("test_guest_additions_installer_init." + ShellToken.SH.to(OsFamily.UNIX)),
+//            Charsets.UTF_8)));
+//   }
 }

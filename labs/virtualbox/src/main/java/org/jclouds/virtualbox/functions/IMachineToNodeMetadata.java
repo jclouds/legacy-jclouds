@@ -22,6 +22,7 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -54,8 +55,18 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
    @Override
    public NodeMetadata apply(@Nullable IMachine vm) {
 
+      String group = "";
+      String name = "";
+      String[] encodedInVmName = vm.getName().split(VIRTUALBOX_NODE_NAME_SEPARATOR);
+      if (vm.getName().startsWith(VIRTUALBOX_NODE_PREFIX)){
+         group = encodedInVmName[2];
+         name = encodedInVmName[3];
+      } else {
+         name = encodedInVmName[1];
+      }
+      
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
-      nodeMetadataBuilder.name(vm.getName()).ids(vm.getName());
+      nodeMetadataBuilder.name(name).ids(vm.getName()).group(group);
 
       // TODO Set up location properly
       LocationBuilder locationBuilder = new LocationBuilder();
@@ -63,7 +74,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
       locationBuilder.id("");
       locationBuilder.scope(LocationScope.HOST);
       nodeMetadataBuilder.location(locationBuilder.build());
-
       nodeMetadataBuilder.hostname(vm.getName());
 
       MachineState vmState = vm.getState();
@@ -74,8 +84,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
       logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
 
-      // hardcoded set-up that works only for nat+host-only
-
       // nat adapter
       INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);
       checkNotNull(natAdapter, "slot 0 networkadapter");
@@ -83,23 +91,30 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
                "expecting slot 0 to be a NAT attachment type (was: " + natAdapter.getAttachmentType() + ")");
 
       int ipTermination = 0;
+      int inPort = 0;
+      String hostAddress = "";
 
       nodeMetadataBuilder.publicAddresses(ImmutableSet.of(natAdapter.getNatDriver().getHostIP()));
       for (String nameProtocolnumberAddressInboudportGuestTargetport : natAdapter.getNatDriver().getRedirects()) {
          Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
          String protocolNumber = Iterables.get(stuff, 1);
+         hostAddress = Iterables.get(stuff, 2);
          String inboundPort = Iterables.get(stuff, 3);
          String targetPort = Iterables.get(stuff, 5);
          if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-            int inPort = Integer.parseInt(inboundPort);
+            inPort = Integer.parseInt(inboundPort);
             ipTermination = inPort % NodeCreator.NODE_PORT_INIT + 2;
-//            nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
          }
       }
-
-      nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
-      nodeMetadataBuilder.publicAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
-
+      
+      // only masters use 2222 port
+      if (inPort == MastersLoadingCache.MASTER_PORT) {
+         nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
+      } else {
+         nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
+         nodeMetadataBuilder.publicAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
+      } 
+      
       LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
       nodeMetadataBuilder.credentials(loginCredentials);
 

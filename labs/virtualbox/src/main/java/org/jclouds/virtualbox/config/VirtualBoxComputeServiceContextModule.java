@@ -158,7 +158,7 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Function<IMachine, SshClient>>() {
       }).to(IMachineToSshClient.class);
 
-      bind(ExecutionType.class).toInstance(ExecutionType.GUI);
+      bind(ExecutionType.class).toInstance(ExecutionType.HEADLESS);
       bind(LockType.class).toInstance(LockType.Write);
    }
 

@@ -24,6 +24,9 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.testng.annotations.Test;
@@ -38,22 +41,25 @@ import com.google.common.collect.Iterables;
 
 public class IMachineToNodeMetadataTest {
 
+   private static final String MASTER_NAME = "mock-image-of-a-server";
+
    @Test
-   public void testCreate() throws Exception {
+   public void testCreateFromMaster() throws Exception {
 
       IMachine vm = createNiceMock(IMachine.class);
 
-      expect(vm.getName()).andReturn("mocked-vm").anyTimes();
+      expect(vm.getName()).andReturn(VIRTUALBOX_IMAGE_PREFIX + MASTER_NAME).anyTimes();
       expect(vm.getState()).andReturn(MachineState.PoweredOff).anyTimes();
 
       INetworkAdapter nat = createNiceMock(INetworkAdapter.class);
       INATEngine natEng = createNiceMock(INATEngine.class);
 
       expect(vm.getNetworkAdapter(eq(0l))).andReturn(nat).once();
+      expect(vm.getNetworkAdapter(eq(1l))).andReturn(null).once();
       expect(nat.getAttachmentType()).andReturn(NetworkAttachmentType.NAT).once();
       expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
       expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
-      expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3000,,22"));
+      expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,2222,,22"));
 
       INetworkAdapter hostOnly = createNiceMock(INetworkAdapter.class);
 
@@ -61,7 +67,45 @@ public class IMachineToNodeMetadataTest {
 
       NodeMetadata node = new IMachineToNodeMetadata().apply(vm);
 
-      assertEquals("mocked-vm", node.getName());
+      assertEquals(MASTER_NAME, node.getName());
+      assertEquals(0, node.getPrivateAddresses().size());
+      assertEquals(1, node.getPublicAddresses().size());
+      assertEquals("127.0.0.1", Iterables.get(node.getPublicAddresses(), 0));
+      assertEquals(MastersLoadingCache.MASTER_PORT, node.getLoginPort());
+      assertEquals("", node.getGroup());
+   }
+
+   @Test
+   public void testCreateFromNode() throws Exception {
+
+      IMachine vm = createNiceMock(IMachine.class);
+
+      String group = "my-cluster-group";
+      String name = "a-name-with-a-code-338";
+
+      expect(vm.getName()).andReturn(
+               VIRTUALBOX_NODE_PREFIX + MASTER_NAME + VIRTUALBOX_NODE_NAME_SEPARATOR + group
+                        + VIRTUALBOX_NODE_NAME_SEPARATOR + name).anyTimes();
+      expect(vm.getState()).andReturn(MachineState.PoweredOff).anyTimes();
+
+      INetworkAdapter nat = createNiceMock(INetworkAdapter.class);
+      INATEngine natEng = createNiceMock(INATEngine.class);
+      
+      INetworkAdapter hostOnly = createNiceMock(INetworkAdapter.class);
+
+      expect(vm.getNetworkAdapter(eq(0l))).andReturn(nat).once();
+      expect(vm.getNetworkAdapter(eq(1l))).andReturn(hostOnly).once();
+      expect(nat.getAttachmentType()).andReturn(NetworkAttachmentType.NAT).once();
+      expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
+      expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
+      expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3000,,22"));
+
+      replay(vm, nat, natEng, hostOnly);
+
+      NodeMetadata node = new IMachineToNodeMetadata().apply(vm);
+
+      assertEquals(name, node.getName());
+      assertEquals(group, node.getGroup());
       assertEquals(1, node.getPrivateAddresses().size());
       assertEquals((NodeCreator.VMS_NETWORK + 2), Iterables.get(node.getPrivateAddresses(), 0));
       assertEquals(1, node.getPublicAddresses().size());

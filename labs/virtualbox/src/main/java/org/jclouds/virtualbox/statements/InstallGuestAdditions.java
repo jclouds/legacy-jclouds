@@ -25,34 +25,82 @@ import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.saveHttpResponseTo;
 
 import java.net.URI;
+import java.util.List;
 
+import javax.annotation.Resource;
+import javax.inject.Named;
+
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.virtualbox.domain.IsoImage;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
+import org.testng.collections.Lists;
 
-public class InstallGuestAdditions extends StatementList {
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
-   public InstallGuestAdditions(String vboxVersion) {
-      this(vboxVersion, "/mnt", "VBoxGuestAdditions_" + vboxVersion + ".iso");
+/**
+ * Mounts the DVD with guest additions that was downloaded and attached as removeable storage. If no
+ * guest additions is attached to the vmspec then it is downloaded.
+ * 
+ * @author David Alves
+ * 
+ */
+public class InstallGuestAdditions implements Statement {
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+   private final StatementList statements;
+
+   public InstallGuestAdditions(VmSpec vmSpecification, String vboxVersion) {
+      this.statements = new StatementList(getStatements(vmSpecification, vboxVersion));
    }
 
-   public InstallGuestAdditions(String vboxVersion, String mountPoint, String vboxGuestAdditionsIso) {
-      this(URI.create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/" + vboxGuestAdditionsIso),
-            mountPoint, vboxGuestAdditionsIso);
-   }
-
-   public InstallGuestAdditions(URI download, String mountPoint, String vboxGuestAdditionsIso) {
-      super(call("setupPublicCurl"), //
-            saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso),//
-            exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)),
-            call("installModuleAssistantIfNeeded"), //
-            exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run")), //
-            exec(String.format("umount %s", mountPoint)));
+   private List<Statement> getStatements(VmSpec vmSpecification, String vboxVersion) {
+      List<Statement> statements = Lists.newArrayList();
+      statements.add(call("installModuleAssistantIfNeeded"));
+      String mountPoint = "/mnt";
+      if (Iterables.tryFind(vmSpecification.getControllers(), new Predicate<StorageController>() {
+         @Override
+         public boolean apply(StorageController input) {
+            if (!input.getIsoImages().isEmpty()) {
+               for (IsoImage iso : input.getIsoImages()) {
+                  if (iso.getSourcePath().contains("VBoxGuestAdditions_")) {
+                     return true;
+                  }
+               }
+            }
+            return false;
+         }
+      }).isPresent()) {
+         statements.add(exec("mount -t iso9660 /dev/sr1 " + mountPoint));
+      } else {
+         String vboxGuestAdditionsIso = "VBoxGuestAdditions_" + vboxVersion + ".iso";
+         URI download = URI.create("http://download.virtualbox.org/virtualbox/" + vboxVersion + "/"
+                  + vboxGuestAdditionsIso);
+         statements.add(call("setupPublicCurl"));
+         statements.add(saveHttpResponseTo(download, "{tmp}{fs}", vboxGuestAdditionsIso));//
+         statements.add(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)));
+      }
+      statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run"))); //
+      statements.add(exec(String.format("umount %s", mountPoint)));
+      return statements;
    }
 
    @Override
    public String render(OsFamily family) {
       if (checkNotNull(family, "family") == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      return super.render(family);
+      return statements.render(family);
+   }
+
+   @Override
+   public Iterable<String> functionDependencies(OsFamily family) {
+      return statements.functionDependencies(family);
    }
 }

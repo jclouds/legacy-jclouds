@@ -19,6 +19,7 @@
 
 package org.jclouds.virtualbox.compute;
 
+import static junit.framework.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
@@ -72,6 +73,7 @@ public class VirtualBoxExperimentLiveTest {
                TemplateOptions.Builder.runScript(AdminAccess.standard()));
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
+         assertTrue(node.getGroup().equals("test-launch-cluster"));
          logger.debug("Created Node: %s", node);
          SshClient client = context.utils().sshForNode().apply(node);
          client.connect();
