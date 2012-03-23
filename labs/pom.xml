@@ -32,7 +32,6 @@
     <packaging>pom</packaging>
     <name>jclouds labs project</name>
     <modules>
-       <module>openstack-nova</module>
        <module>virtualbox</module>
        <module>vcloud-director</module>
        <module>glesys</module>

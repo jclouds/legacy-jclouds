@@ -27,7 +27,7 @@
     <version>1.5.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.api</groupId>
   <artifactId>openstack-nova</artifactId>
   <name>jcloud openstack-nova api</name>
   <description>jclouds components to access an implementation of OpenStack Nova</description>

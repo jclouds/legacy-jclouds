@@ -7,8 +7,8 @@ two abstractions at the moment: compute and blobstore.  compute helps you
 bootstrap machines in the cloud.  blobstore helps you manage key-value
 data.
  
-our current version is 1.3.2
-our next maintenance version is 1.3.3-SNAPSHOT
+our current version is 1.4.0
+our next maintenance version is 1.4.1-SNAPSHOT
 our dev version is 1.5.0-SNAPSHOT
  
 check out our examples site! https://github.com/jclouds/jclouds-examples
@@ -22,7 +22,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers-us, stub (in-memory), de
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
                           greenhousedata-element-vcloud, softlayer, cloudsigma (generic),
-                          cloudstack (generic), ninefold-compute
+                          cloudstack (generic), ninefold-compute, openstack-nova
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
