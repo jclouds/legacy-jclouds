@@ -167,6 +167,11 @@ public class DateServiceTest extends PerformanceTest {
    void testTz() throws ExecutionException, InterruptedException {
       assertEquals(dateService.iso8601SecondsDateParse("2011-05-26T02:14:13-04:00").getTime(), 1306390453000l);
    }
+   
+   @Test
+   void testTzNoT() throws ExecutionException, InterruptedException {
+      assertEquals(dateService.iso8601DateParse("2011-05-25 16:12:21.656+0000").getTime(), 1306339941656l);
+   }
 
    @Test
    void testRfc822DateFormatResponseTime() throws ExecutionException, InterruptedException {
