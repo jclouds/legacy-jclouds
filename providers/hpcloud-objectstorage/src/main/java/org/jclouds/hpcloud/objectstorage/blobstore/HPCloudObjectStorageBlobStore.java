@@ -33,7 +33,6 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.EnableCDNAndCache;
-import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;

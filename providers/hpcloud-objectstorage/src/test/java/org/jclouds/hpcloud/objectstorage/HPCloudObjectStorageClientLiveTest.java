@@ -57,34 +57,34 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
       final String containerNameWithoutCDN = getContainerName();
       try {
          try {
-            getApi().disableCDN(containerNameWithCDN);
-            getApi().disableCDN(containerNameWithoutCDN);
+            getApi().getCDNExtension().get().disableCDN(containerNameWithCDN);
+            getApi().getCDNExtension().get().disableCDN(containerNameWithoutCDN);
          } catch (Exception e) {
             e.printStackTrace();
          }
          ContainerCDNMetadata cdnMetadata = null;
 
          // Enable CDN with PUT for one container
-         final URI cdnUri = getApi().enableCDN(containerNameWithCDN);
+         final URI cdnUri = getApi().getCDNExtension().get().enableCDN(containerNameWithCDN);
          assertTrue(cdnUri != null);
 
          // Confirm CDN is enabled via HEAD request and has default TTL
-         cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
+         cdnMetadata = getApi().getCDNExtension().get().getCDNMetadata(containerNameWithCDN);
 
          assertTrue(cdnMetadata.isCDNEnabled());
 
          assertEquals(cdnMetadata.getCDNUri(), cdnUri);
 
-         cdnMetadata = getApi().getCDNMetadata(containerNameWithoutCDN);
+         cdnMetadata = getApi().getCDNExtension().get().getCDNMetadata(containerNameWithoutCDN);
          assert cdnMetadata == null || !cdnMetadata.isCDNEnabled() : containerNameWithoutCDN
                   + " should not have metadata";
 
-         assert getApi().getCDNMetadata("DoesNotExist") == null;
+         assert getApi().getCDNExtension().get().getCDNMetadata("DoesNotExist") == null;
 
          // List CDN metadata for containers, and ensure all CDN info is
          // available for enabled
          // container
-         Set<ContainerCDNMetadata> cdnMetadataList = getApi().listCDNContainers();
+         Set<ContainerCDNMetadata> cdnMetadataList = getApi().getCDNExtension().get().listCDNContainers();
          assertTrue(cdnMetadataList.size() >= 1);
 
          final long initialTTL = cdnMetadata.getTTL();
@@ -98,7 +98,7 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
           * }));
           */
 
-         cdnMetadataList = getApi().listCDNContainers(
+         cdnMetadataList = getApi().getCDNExtension().get().listCDNContainers(
                   ListCDNContainerOptions.Builder.afterMarker(
                            containerNameWithCDN.substring(0, containerNameWithCDN.length() - 1)).maxResults(1));
          assertEquals(cdnMetadataList.size(), 1);
@@ -106,9 +106,9 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
          // Enable CDN with PUT for the same container, this time with a custom
          // TTL
          long ttl = 4000;
-         getApi().enableCDN(containerNameWithCDN, ttl);
+         getApi().getCDNExtension().get().enableCDN(containerNameWithCDN, ttl);
 
-         cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
+         cdnMetadata = getApi().getCDNExtension().get().getCDNMetadata(containerNameWithCDN);
 
          assertTrue(cdnMetadata.isCDNEnabled());
    
@@ -116,23 +116,23 @@ public class HPCloudObjectStorageClientLiveTest extends CommonSwiftClientLiveTes
 
          // Check POST by updating TTL settings
          ttl = minimumTTL;
-         getApi().updateCDN(containerNameWithCDN, minimumTTL);
+         getApi().getCDNExtension().get().updateCDN(containerNameWithCDN, minimumTTL);
 
-         cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
+         cdnMetadata = getApi().getCDNExtension().get().getCDNMetadata(containerNameWithCDN);
          assertTrue(cdnMetadata.isCDNEnabled());
 
          assertEquals(cdnMetadata.getTTL(), minimumTTL);
 
          // Confirm that minimum allowed value for TTL is 3600, lower values are
          // ignored.
-         getApi().updateCDN(containerNameWithCDN, 3599L);
-         cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
+         getApi().getCDNExtension().get().updateCDN(containerNameWithCDN, 3599L);
+         cdnMetadata = getApi().getCDNExtension().get().getCDNMetadata(containerNameWithCDN);
          assertEquals(cdnMetadata.getTTL(), 3599L);
 
          // Disable CDN with POST
-         assertTrue(getApi().disableCDN(containerNameWithCDN));
+         assertTrue(getApi().getCDNExtension().get().disableCDN(containerNameWithCDN));
 
-         cdnMetadata = getApi().getCDNMetadata(containerNameWithCDN);
+         cdnMetadata = getApi().getCDNExtension().get().getCDNMetadata(containerNameWithCDN);
          assertEquals(cdnMetadata.isCDNEnabled(), false);
       } catch (Exception e) {
          e.printStackTrace();

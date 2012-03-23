@@ -1,12 +1,13 @@
 package org.jclouds.hpcloud.objectstorage.internal;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpRequest;
@@ -15,13 +16,10 @@ import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 @Test(groups = "unit", testName = "HPCloudObjectStorageExpectTest")
 public class HPCloudObjectStorageExpectTest extends BaseRestClientExpectTest<BlobStore> {

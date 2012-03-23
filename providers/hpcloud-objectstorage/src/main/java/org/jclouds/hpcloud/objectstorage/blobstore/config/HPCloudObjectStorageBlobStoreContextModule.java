@@ -18,6 +18,8 @@
  */
 package org.jclouds.hpcloud.objectstorage.blobstore.config;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.net.URI;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +33,7 @@ import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageAsyncBlob
 import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.functions.HPCloudObjectStorageObjectToBlobMetadata;
 import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
+import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
@@ -38,6 +41,7 @@ import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -66,8 +70,10 @@ public class HPCloudObjectStorageBlobStoreContextModule extends SwiftBlobStoreCo
 
       @Override
       public URI load(String container) {
+         Optional<HPCloudCDNClient> cdnExension = client.getCDNExtension();
+         checkArgument(cdnExension.isPresent(), "CDN is required, but the extension is not available!");
          try {
-            ContainerCDNMetadata md = client.getCDNMetadata(container);
+            ContainerCDNMetadata md = cdnExension.get().getCDNMetadata(container);
             return md != null ? md.getCDNUri() : null;
          } catch (HttpResponseException e) {
             // TODO: this is due to beta status

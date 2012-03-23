@@ -18,14 +18,18 @@
  */
 package org.jclouds.hpcloud.objectstorage.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.net.URI;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
+import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.cache.LoadingCache;
 
 /**
@@ -45,7 +49,9 @@ public class EnableCDNAndCache implements Function<String, URI> {
 
    @Override
    public URI apply(String input) {
-      URI uri = sync.enableCDN(input);
+      Optional<HPCloudCDNClient> cdnExension = sync.getCDNExtension();
+      checkArgument(cdnExension.isPresent(), "CDN is required, but the extension is not available!");
+      URI uri = cdnExension.get().enableCDN(input);
       cdnContainer.put(input, uri);
       return uri;
    }

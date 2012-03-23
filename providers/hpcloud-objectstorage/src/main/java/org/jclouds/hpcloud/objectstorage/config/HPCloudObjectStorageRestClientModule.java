@@ -21,12 +21,14 @@ package org.jclouds.hpcloud.objectstorage.config;
 import static org.jclouds.util.Suppliers2.getLastValueInMap;
 
 import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Singleton;
 
-import com.google.inject.Scopes;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageAsyncClient;
 import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageClient;
+import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNAsyncClient;
+import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 import org.jclouds.hpcloud.services.HPExtensionCDN;
 import org.jclouds.hpcloud.services.HPExtensionServiceType;
 import org.jclouds.http.HttpErrorHandler;
@@ -40,10 +42,10 @@ import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
-import org.jclouds.openstack.services.ObjectStore;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.Storage;
 import org.jclouds.openstack.swift.config.SwiftObjectModule;
 import org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -51,7 +53,9 @@ import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 
 /**
  * 
@@ -61,9 +65,11 @@ import com.google.inject.Provides;
 @RequiresHttp
 public class HPCloudObjectStorageRestClientModule extends
          RestClientModule<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder().put(
+            HPCloudCDNClient.class, HPCloudCDNAsyncClient.class).build();
 
    public HPCloudObjectStorageRestClientModule() {
-      super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
+      super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class, DELEGATE_MAP);
    }
 
    protected void configure() {
@@ -72,13 +78,13 @@ public class HPCloudObjectStorageRestClientModule extends
       super.configure();
    }
 
-    @Override
-    protected void installLocations() {
-        super.installLocations();
-        // TODO: select this from KeystoneProperties.VERSION;
-        install(KeystoneAuthenticationModule.forRegions());
-        bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
-    }
+   @Override
+   protected void installLocations() {
+      super.installLocations();
+      // TODO: select this from KeystoneProperties.VERSION;
+      install(KeystoneAuthenticationModule.forRegions());
+      bind(ImplicitLocationSupplier.class).to(OnlyLocationOrFirstZone.class).in(Scopes.SINGLETON);
+   }
 
    @Override
    protected void bindErrorHandlers() {
@@ -98,7 +104,7 @@ public class HPCloudObjectStorageRestClientModule extends
    CommonSwiftAsyncClient provideCommonSwiftClient(HPCloudObjectStorageAsyncClient in) {
       return in;
    }
-   
+
    @Provides
    @Singleton
    @HPExtensionCDN
@@ -108,7 +114,7 @@ public class HPCloudObjectStorageRestClientModule extends
 
    @Provides
    @Singleton
-   @ObjectStore
+   @Storage
    protected Supplier<URI> provideStorageUrl(RegionIdToURISupplier.Factory factory, @ApiVersion String apiVersion) {
       return getLastValueInMap(factory.createForApiTypeAndVersion(ServiceType.OBJECT_STORE, apiVersion));
    }
