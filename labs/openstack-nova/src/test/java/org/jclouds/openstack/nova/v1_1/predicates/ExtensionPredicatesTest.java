@@ -33,10 +33,10 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "ExtensionPredicatesTest")
 public class ExtensionPredicatesTest {
-   Extension ref = Extension.builder().alias("os-keypairs").name("Keypairs")
-         .namespace(URI.create("http://docs.openstack.org/ext/keypairs/api/v1.1"))
-         .updated(new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-08-08T00:00:00+00:00"))
-         .description("Keypair Support").build();
+   Extension ref = Extension.builder().alias("os-keypairs").name("Keypairs").namespace(
+            URI.create("http://docs.openstack.org/ext/keypairs/api/v1.1")).updated(
+            new SimpleDateFormatDateService().iso8601SecondsDateParse("2011-08-08T00:00:00+00:00")).description(
+            "Keypair Support").build();
 
    @Test
    public void testAliasEqualsWhenEqual() {
@@ -51,6 +51,12 @@ public class ExtensionPredicatesTest {
    @Test
    public void testNamespaceEqualsWhenEqual() {
       assert namespaceEquals(URI.create("http://docs.openstack.org/ext/keypairs/api/v1.1")).apply(ref);
+   }
+
+   @Test
+   public void testNamespaceEqualsWhenEqualEvenOnInputHttps() {
+      assert namespaceEquals(URI.create("http://docs.openstack.org/ext/keypairs/api/v1.1")).apply(
+               ref.toBuilder().namespace(URI.create("https://docs.openstack.org/ext/keypairs/api/v1.1")).build());
    }
 
    @Test

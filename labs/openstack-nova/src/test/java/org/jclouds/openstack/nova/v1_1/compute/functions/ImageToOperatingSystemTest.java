@@ -44,14 +44,14 @@ import com.google.common.collect.Iterables;
  * 
  * @author Matt Stephenson
  */
-public class NovaImageToOperatingSystemTest {
+public class ImageToOperatingSystemTest {
 
    @Test(dataProvider = "getOsFamilyValues")
    public void testOsFamilyValues(OsFamily family) {
 
       Image imageToConvert = Image.builder().id("id-" + family.name()).name(family.name()).build();
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(
+      ImageToOperatingSystem converter = new ImageToOperatingSystem(
             new HashMap<OsFamily, Map<String, String>>());
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
@@ -84,7 +84,7 @@ public class NovaImageToOperatingSystemTest {
       Map<OsFamily, Map<String, String>> osFamilyMap = new HashMap<OsFamily, Map<String, String>>();
       osFamilyMap.put(OsFamily.WINDOWS, ImmutableMap.of("Server 2008 R2", "Server-2008-R2"));
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(osFamilyMap);
+      ImageToOperatingSystem converter = new ImageToOperatingSystem(osFamilyMap);
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
 
@@ -105,7 +105,7 @@ public class NovaImageToOperatingSystemTest {
       Map<OsFamily, Map<String, String>> osFamilyMap = new HashMap<OsFamily, Map<String, String>>();
       osFamilyMap.put(OsFamily.WINDOWS, ImmutableMap.of("98", "98"));
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(osFamilyMap);
+      ImageToOperatingSystem converter = new ImageToOperatingSystem(osFamilyMap);
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
 
@@ -123,7 +123,7 @@ public class NovaImageToOperatingSystemTest {
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(
+      ImageToOperatingSystem converter = new ImageToOperatingSystem(
             new HashMap<OsFamily, Map<String, String>>());
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
@@ -142,7 +142,7 @@ public class NovaImageToOperatingSystemTest {
 
       Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
 
-      NovaImageToOperatingSystem converter = new NovaImageToOperatingSystem(
+      ImageToOperatingSystem converter = new ImageToOperatingSystem(
             new HashMap<OsFamily, Map<String, String>>());
 
       OperatingSystem convertedOs = converter.apply(imageToConvert);
@@ -151,6 +151,44 @@ public class NovaImageToOperatingSystemTest {
       assertEquals(convertedOs.getFamily(), OsFamily.OEL);
       assertEquals(convertedOs.getDescription(), imageToConvert.getName());
       assertEquals(convertedOs.getVersion(), null);
+      assertEquals(convertedOs.getArch(), null);
+      assertTrue(convertedOs.is64Bit());
+   }
+   
+
+   ImageToOperatingSystem converterForUbuntu = new ImageToOperatingSystem(ImmutableMap.<OsFamily, Map<String, String>> of(
+            OsFamily.UBUNTU, ImmutableMap.of("lucid", "10.04", "maverick", "10.10", "natty", "11.04", "oneiric",
+                     "11.10")));
+   @Test
+   public void testTryStackOneric() {
+      
+      String name = "oneiric-server-cloudimg-amd64";
+
+      Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
+      
+      OperatingSystem convertedOs = converterForUbuntu.apply(imageToConvert);
+
+      assertEquals(convertedOs.getName(), imageToConvert.getName());
+      assertEquals(convertedOs.getFamily(), OsFamily.UBUNTU);
+      assertEquals(convertedOs.getDescription(), imageToConvert.getName());
+      assertEquals(convertedOs.getVersion(), "11.10");
+      assertEquals(convertedOs.getArch(), null);
+      assertTrue(convertedOs.is64Bit());
+   }
+   
+   @Test
+   public void testTryStackNatty() {
+      
+      String name = "natty-server-cloudimg-amd64";
+
+      Image imageToConvert = Image.builder().id("id-" + name).name(name).build();
+      
+      OperatingSystem convertedOs = converterForUbuntu.apply(imageToConvert);
+
+      assertEquals(convertedOs.getName(), imageToConvert.getName());
+      assertEquals(convertedOs.getFamily(), OsFamily.UBUNTU);
+      assertEquals(convertedOs.getDescription(), imageToConvert.getName());
+      assertEquals(convertedOs.getVersion(), "11.04");
       assertEquals(convertedOs.getArch(), null);
       assertTrue(convertedOs.is64Bit());
    }

@@ -25,8 +25,65 @@ package org.jclouds.openstack.nova.v1_1.extensions;
  * @see <a href= "http://nova.openstack.org/api_ext/" />
  */
 public interface ExtensionNamespaces {
+   /**
+    * Keypair Support
+    */
    public static final String KEYPAIRS = "http://docs.openstack.org/ext/keypairs/api/v1.1";
+   /**
+    * Volumes support
+    */
    public static final String VOLUMES = "http://docs.openstack.org/ext/volumes/api/v1.1";
+   /**
+    * Volume types support
+    */
+   public static final String VOLUME_TYPES = "http://docs.openstack.org/ext/volume_types/api/v1.1";
+   /**
+    * Security group support
+    */
    public static final String SECURITY_GROUPS = "http://docs.openstack.org/ext/securitygroups/api/v1.1";
+   /**
+    * Floating IPs support
+    */
    public static final String FLOATING_IPS = "http://docs.openstack.org/ext/floating_ips/api/v1.1";
+   /**
+    * Multiple network support
+    */
+   public static final String MULTINIC = "http://docs.openstack.org/ext/multinic/api/v1.1";
+   /**
+    * Host administration
+    */
+   public static final String HOSTS = "http://docs.openstack.org/ext/hosts/api/v1.1";
+   /**
+    * Quotas management support
+    */
+   public static final String QUOTAS = "http://docs.openstack.org/ext/quotas-sets/api/v1.1";
+   /**
+    * Instance type (flavor) extra specs
+    */
+   public static final String FLAVOR_EXTRA_SPECS = "http://docs.openstack.org/ext/flavor_extra_specs/api/v1.1";
+   /**
+    * Provide additional data for flavors
+    */
+   public static final String FLAVOR_EXTRA_DATA = "http://docs.openstack.org/ext/flavor_extra_data/api/v1.1";
+   /**
+    * Virtual interface support
+    */
+   public static final String VIRTUAL_INTERFACES = "http://docs.openstack.org/ext/virtual_interfaces/api/v1.1";
+   /**
+    * Extended support to the Create Server v1.1 API
+    */
+   public static final String CREATESERVEREXT = "http://docs.openstack.org/ext/createserverext/api/v1.1";
+   /**
+    * Virtual Storage Arrays support
+    */
+   public static final String VSA = "http://docs.openstack.org/ext/vsa/api/v1.1";
+   /**
+    * Simple tenant usage extension
+    */
+   public static final String SIMPLE_TENANT_USAGE = "http://docs.openstack.org/ext/os-simple-tenant-usage/api/v1.1";
+   /**
+    * Instance rescue mode
+    */
+   public static final String RESCUE = "http://docs.openstack.org/ext/rescue/api/v1.1";
+
 }

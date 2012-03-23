@@ -254,7 +254,23 @@ public class Server extends Resource {
                   "privateAddresses")));
          return this;
       }
+      
+      /**
+       * @see Server#getInternetAddresses()
+       */
+      public Builder internetAddresses(Address... internetAddresses) {
+         return internetAddresses(ImmutableSet.copyOf(checkNotNull(internetAddresses, "internetAddresses")));
+      }
 
+      /**
+       * @see Server#getInternetAddresses()
+       */
+      public Builder internetAddresses(Set<Address> internetAddresses) {
+         this.addresses.replaceValues(Address.Type.INTERNET, ImmutableSet.copyOf(checkNotNull(internetAddresses,
+                  "internetAddresses")));
+         return this;
+      }
+      
       /**
        * @see Server#getPublicAddresses()
        */
@@ -464,6 +480,19 @@ public class Server extends Resource {
          return ImmutableSet.<Address> of();
       } else {
          return ImmutableSet.copyOf(privateAddresses);
+      }
+   }
+   
+   /**
+    * @return the internet ip addresses assigned to the server
+    * @since essex
+    */
+   public Set<Address> getInternetAddresses() {
+      Collection<Address> internetAddrs = getAddresses().get(Address.Type.INTERNET);
+      if (internetAddrs == null) {
+         return ImmutableSet.<Address> of();
+      } else {
+         return ImmutableSet.copyOf(internetAddrs);
       }
    }
 

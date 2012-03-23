@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.transform;
@@ -97,7 +98,7 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.operatingSystem(findOperatingSystemForServerOrNull(serverInZone));
       builder.hardware(findHardwareForServerOrNull(serverInZone));
       builder.state(from.getStatus().getNodeState());
-      builder.publicAddresses(filter(transform(from.getPublicAddresses(),
+      builder.publicAddresses(filter(transform(concat(from.getPublicAddresses(), from.getInternetAddresses()),
                AddressToStringTransformationFunction.INSTANCE), isInet4Address));
       builder.privateAddresses(filter(transform(from.getPrivateAddresses(),
                AddressToStringTransformationFunction.INSTANCE), isInet4Address));

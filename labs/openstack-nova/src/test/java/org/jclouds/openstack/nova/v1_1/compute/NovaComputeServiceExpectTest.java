@@ -18,6 +18,7 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -26,18 +27,18 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaComputeServiceExpectTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests the compute service abstraction of the nova client.
@@ -46,14 +47,13 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "NovaComputeServiceExpectTest")
 public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTest {
-  
-   public void testListServersWhenResponseIs2xx() throws Exception {
+
+   public void testListLocationsWhenResponseIs2xx() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
                extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
-               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).put(listFloatingIps,
-               listFloatingIpsResponse).build();
+               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 
       ComputeService clientWhenServersExist = requestsSendResponses(requestResponseMap);
 
@@ -67,6 +67,46 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       assertEquals(clientWhenServersExist.listNodes().iterator().next().getId(),
                "az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f000004d2");
       assertEquals(clientWhenServersExist.listNodes().iterator().next().getName(), "sample-server");
+   }
+
+   public void testDefaultTemplateTryStack() throws Exception {
+
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
+               keystoneAuthWithAccessKeyAndSecretKey,
+               HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
+                        payloadFromResourceWithContentType("/keystoneAuthResponse_trystack.json", "application/json"))
+                        .build()).put(
+               extensionsOfNovaRequest.toBuilder().endpoint(
+                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/extensions")).build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/extension_list_trystack.json"))
+                        .build()).put(
+               listImagesDetail.toBuilder().endpoint(
+                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/images/detail")).build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/image_list_detail_trystack.json"))
+                        .build()).put(
+               listServers.toBuilder().endpoint(
+                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers/detail")).build(),
+               listServersResponse).put(
+               listFlavorsDetail.toBuilder().endpoint(
+                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/flavors/detail")).build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/flavor_list_detail_trystack.json"))
+                        .build()).build();
+
+      ComputeService clientForTryStack = requestsSendResponses(requestResponseMap);
+
+      Template defaultTemplate = clientForTryStack.templateBuilder().imageId("RegionOne/15").build();
+      checkTemplate(defaultTemplate);
+      checkTemplate(clientForTryStack.templateBuilder().fromTemplate(defaultTemplate).build());
+   
+   }
+
+   private void checkTemplate(Template defaultTemplate) {
+      assertEquals(defaultTemplate.getImage().getId(), "RegionOne/15");
+      assertEquals(defaultTemplate.getImage().getProviderId(), "15");
+      assertEquals(defaultTemplate.getHardware().getId(), "RegionOne/1");
+      assertEquals(defaultTemplate.getHardware().getProviderId(), "1");
+      assertEquals(defaultTemplate.getLocation().getId(), "RegionOne");
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    public void testListServersWhenReponseIs404IsEmpty() throws Exception {
@@ -89,8 +129,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
                keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
                extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
-               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).put(listFloatingIps,
-               listFloatingIpsResponse).build();
+               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 
       ComputeService clientThatCreatesNode = requestsSendResponses(requestResponseMap);
 

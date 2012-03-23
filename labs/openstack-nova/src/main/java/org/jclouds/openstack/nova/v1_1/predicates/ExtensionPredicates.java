@@ -47,7 +47,7 @@ public class ExtensionPredicates {
       return new Predicate<Extension>() {
          @Override
          public boolean apply(Extension ext) {
-            return namespace.equals(ext.getNamespace());
+            return namespace.toASCIIString().equals(ext.getNamespace().toASCIIString().replace("https", "http"));
          }
 
          @Override

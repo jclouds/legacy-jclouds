@@ -86,14 +86,11 @@ public class CreateSecurityGroupIfNeeded implements Function<ZoneSecurityGroupNa
 
    private void authorizeGroupToItselfAndAllIPsToTCPPort(SecurityGroupClient securityGroupClient,
             SecurityGroup securityGroup, int port) {
-      logger.debug(">> authorizing securityGroup(%s) permission to port %d", securityGroup, port);
-      logger.trace(">> authorizing securityGroup(%s) permission to itself on port %d", securityGroup, port);
-      securityGroupClient.createSecurityGroupRuleAllowingSecurityGroupId(securityGroup.getId(), Ingress.builder()
-               .ipProtocol(IpProtocol.TCP).fromPort(port).toPort(port).build(), securityGroup.getId());
-      logger.trace(">> authorizing securityGroup(%s) permission to 0.0.0.0/0 on port %d", securityGroup, port);
+      // NOTE that permission to itself isn't supported on trystack!
+      logger.debug(">> authorizing securityGroup(%s) permission to 0.0.0.0/0 on port %d", securityGroup, port);
       securityGroupClient.createSecurityGroupRuleAllowingCidrBlock(securityGroup.getId(), Ingress.builder().ipProtocol(
                IpProtocol.TCP).fromPort(port).toPort(port).build(), "0.0.0.0/0");
-      logger.debug("<< authorized securityGroup(%s) permission to port %d", securityGroup, port);
+      logger.debug("<< authorized securityGroup(%s) permission to 0.0.0.0/0 on port %d", securityGroup, port);
 
    }
 }

@@ -109,7 +109,7 @@ public class NovaComputeServiceContextModule
       bind(new TypeLiteral<Function<ImageInZone, Image>>() {
       }).to(ImageInZoneToImage.class);
       bind(new TypeLiteral<Function<org.jclouds.openstack.nova.v1_1.domain.Image, OperatingSystem>>() {
-      }).to(NovaImageToOperatingSystem.class);
+      }).to(ImageToOperatingSystem.class);
 
       bind(new TypeLiteral<Function<FlavorInZone, Hardware>>() {
       }).to(FlavorInZoneToHardware.class);

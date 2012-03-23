@@ -18,8 +18,16 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.functions;
 
+import static com.google.common.base.Predicates.containsPattern;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+
 import java.util.Arrays;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,17 +46,14 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 /**
- * A function for transforming a nova specific Image into a generic
- * OperatingSystem object.
+ * A function for transforming a nova specific Image into a generic OperatingSystem object.
  * 
  * @author Matt Stephenson
  */
-public class NovaImageToOperatingSystem implements Function<Image, OperatingSystem> {
+public class ImageToOperatingSystem implements Function<Image, OperatingSystem> {
    public static final Pattern DEFAULT_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
    // Windows Server 2008 R2 x64
    public static final Pattern WINDOWS_PATTERN = Pattern.compile("Windows (.*) (x[86][64])");
@@ -60,7 +65,7 @@ public class NovaImageToOperatingSystem implements Function<Image, OperatingSyst
    private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   public NovaImageToOperatingSystem(Map<OsFamily, Map<String, String>> osVersionMap) {
+   public ImageToOperatingSystem(Map<OsFamily, Map<String, String>> osVersionMap) {
       this.osVersionMap = osVersionMap;
    }
 
@@ -85,15 +90,26 @@ public class NovaImageToOperatingSystem implements Function<Image, OperatingSyst
          } else if (imageName.contains("Oracle EL")) {
             osFamily = OsFamily.OEL;
          } else {
-            final Iterable<String> imageNameParts = Splitter.on(CharMatcher.WHITESPACE).trimResults()
-                  .split(imageName.toLowerCase());
+            final Iterable<String> imageNameParts = Splitter.on(CharMatcher.WHITESPACE).trimResults().split(
+                     imageName.toLowerCase());
 
-            osFamily = Iterables.find(Arrays.asList(OsFamily.values()), new Predicate<OsFamily>() {
-               @Override
-               public boolean apply(@Nullable OsFamily osFamily) {
-                  return Iterables.any(imageNameParts, Predicates.equalTo(osFamily.name().toLowerCase()));
+            try {
+               osFamily = find(Arrays.asList(OsFamily.values()), new Predicate<OsFamily>() {
+                  @Override
+                  public boolean apply(@Nullable OsFamily osFamily) {
+                     return any(imageNameParts, equalTo(osFamily.name().toLowerCase()));
+                  }
+               });
+            } catch (NoSuchElementException e) {
+               String ubuntuVersion = startsWithUbuntuVersion(imageNameParts);
+               if (ubuntuVersion != null) {
+                  osFamily = OsFamily.UBUNTU;
+                  osVersion = ubuntuVersion;
+               } else {
+                  logger.trace("could not parse operating system family for image(%s): %s", imageNameParts);
+                  osFamily = OsFamily.UNRECOGNIZED;
                }
-            });
+            }
          }
          Matcher matcher = DEFAULT_PATTERN.matcher(imageName);
          if (matcher.find() && matcher.groupCount() >= 3) {
@@ -101,5 +117,15 @@ public class NovaImageToOperatingSystem implements Function<Image, OperatingSyst
          }
       }
       return new OperatingSystem(osFamily, imageName, osVersion, null, imageName, is64Bit);
+   }
+
+   String startsWithUbuntuVersion(final Iterable<String> imageNameParts) {
+      Map<String, String> ubuntuVersions = osVersionMap.get(OsFamily.UBUNTU);
+      for (String ubuntuKey : filter(ubuntuVersions.keySet(), not(equalTo("")))) {
+         if (any(imageNameParts, containsPattern("^" + ubuntuKey + ".*"))) {
+            return ubuntuVersions.get(ubuntuKey);
+         }
+      }
+      return null;
    }
 }

@@ -1,0 +1,46 @@
+{
+    "server": {
+        "status": "ACTIVE",
+        "updated": "2012-03-23T01:30:26Z",
+        "hostId": "881706597197955ac7cc4b353bc7ec884e13fa280de9cc82057796cb",
+        "user_id": "508151008",
+        "name": "mygroup-72c",
+        "links": [{
+            "href": "https://nova-api.trystack.org:9774/v1.1/37/servers/1459",
+            "rel": "self"
+        }, {
+            "href": "https://nova-api.trystack.org:9774/37/servers/1459",
+            "rel": "bookmark"
+        }],
+        "addresses": {
+            "internet": [{
+                "version": 4,
+                "addr": "8.21.28.47"
+            }]
+        },
+        "tenant_id": "37",
+        "image": {
+            "id": "14",
+            "links": [{
+                "href": "https://nova-api.trystack.org:9774/37/images/14",
+                "rel": "bookmark"
+            }]
+        },
+        "created": "2012-03-23T01:30:26Z",
+        "uuid": "2443c9c7-9791-412e-ac09-a6d55ec25335",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "key_name": null,
+        "progress": 100,
+        "flavor": {
+            "id": "1",
+            "links": [{
+                "href": "https://nova-api.trystack.org:9774/37/flavors/1",
+                "rel": "bookmark"
+            }]
+        },
+        "config_drive": "",
+        "id": 1459,
+        "metadata": {}
+    }
+}

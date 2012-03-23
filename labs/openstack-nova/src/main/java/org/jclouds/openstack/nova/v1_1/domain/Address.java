@@ -36,6 +36,10 @@ public class Address {
     */
    public static enum Type {
       /**
+       * internet routable address
+       */
+      INTERNET,
+      /**
        * publically routable address
        */
       PUBLIC,
