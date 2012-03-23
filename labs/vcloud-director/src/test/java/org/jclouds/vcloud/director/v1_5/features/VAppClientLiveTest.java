@@ -529,7 +529,10 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    public void testModifyLeaseSettingsSection() {
       // Copy existing section
       LeaseSettingsSection oldSection = vAppClient.getLeaseSettingsSection(vApp.getHref());
-      LeaseSettingsSection newSection = oldSection.toBuilder().build();
+      Integer twoHours = (int) TimeUnit.SECONDS.convert(2L, TimeUnit.HOURS);
+      LeaseSettingsSection newSection = oldSection.toBuilder()
+            .deploymentLeaseInSeconds(twoHours)
+            .build();
 
       // The method under test
       Task modifyLeaseSettingsSection = vAppClient.modifyLeaseSettingsSection(vApp.getHref(), newSection);
@@ -542,13 +545,13 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkLeaseSettingsSection(modified);
 
       // Check the date fields
-      if (modified.getDeploymentLeaseExpiration() != null) {
+      if (modified.getDeploymentLeaseExpiration() != null && newSection.getDeploymentLeaseExpiration() != null) {
          assertTrue(modified.getDeploymentLeaseExpiration().after(newSection.getDeploymentLeaseExpiration()),
                String.format("The new deploymentLeaseExpiration timestamp must be later than the original: %s > %s",
                      dateService.iso8601DateFormat(modified.getDeploymentLeaseExpiration()),
                      dateService.iso8601DateFormat(newSection.getDeploymentLeaseExpiration())));
       }
-      if (modified.getStorageLeaseExpiration() != null) {
+      if (modified.getStorageLeaseExpiration() != null && newSection.getStorageLeaseExpiration() != null) {
          assertTrue(modified.getStorageLeaseExpiration().after(newSection.getStorageLeaseExpiration()),
                String.format("The new storageLeaseExpiration timestamp must be later than the original: %s > %s",
                      dateService.iso8601DateFormat(modified.getStorageLeaseExpiration()),
@@ -566,6 +569,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // Check the section was modified correctly
+      assertEquals(modified.getDeploymentLeaseInSeconds(), twoHours,
+            String.format(OBJ_FIELD_EQ, "LeaseSettingsSection", "DeploymentLeaseInSeconds", Integer.toString(twoHours), modified.getDeploymentLeaseInSeconds().toString()));
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "LeaseSettingsSection"));
    }
 
@@ -819,7 +824,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkRuntimeInfoSection(section);
    }
 
-      // FIXME If still failing, consider escalating?
+   // FIXME If still failing, consider escalating?
    @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testDeployVApp" })
    public void testGetScreenImage() {
       // Power on VApp

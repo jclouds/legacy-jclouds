@@ -126,10 +126,10 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       provider = "vcloud-director";
    }
 
-   protected static DateService dateService;
+   protected DateService dateService;
 
-   @BeforeGroups(alwaysRun = true)
-   protected static void setupDateService() {
+   @BeforeClass(alwaysRun = true)
+   protected void setupDateService() {
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
    }
