@@ -59,13 +59,13 @@ public class LinkPredicates {
     * @see ReferenceTypePredicates#nameEquals
     */
    public static Predicate<Link> nameEquals(String name) {
-      return ReferenceTypePredicates.nameEquals(name);
+      return ReferencePredicates.nameEquals(name);
    }
 
    /**
     * @see ReferenceTypePredicates#typeEquals
     */
    public static Predicate<Link> typeEquals(String type) {
-      return ReferenceTypePredicates.typeEquals(type);
+      return ReferencePredicates.typeEquals(type);
    }
 }
