@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.provider</groupId>
@@ -36,12 +36,12 @@
   <properties>
     <test.trystack-nova.endpoint>https://nova-api.trystack.org:5443</test.trystack-nova.endpoint>
     <test.trystack-nova.api-version>1.1</test.trystack-nova.api-version>
-    <test.trystack-nova.build-version></test.trystack-nova.build-version>
+    <test.trystack-nova.build-version />
     <test.trystack-nova.identity>FIXME_IDENTITY</test.trystack-nova.identity>
     <test.trystack-nova.credential>FIXME_CREDENTIAL</test.trystack-nova.credential>
-    <test.trystack-nova.image-id></test.trystack-nova.image-id>
-    <test.trystack-nova.image.login-user></test.trystack-nova.image.login-user>
-    <test.trystack-nova.image.authenticate-sudo></test.trystack-nova.image.authenticate-sudo>
+    <test.trystack-nova.image-id />
+    <test.trystack-nova.image.login-user />
+    <test.trystack-nova.image.authenticate-sudo />
   </properties>
 
   <dependencies>

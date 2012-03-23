@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5.0-alpha.1</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
@@ -36,9 +36,9 @@
     <properties>
         <test.slicehost.endpoint>https://api.slicehost.com</test.slicehost.endpoint>
         <test.slicehost.api-version>1.4.1.1</test.slicehost.api-version>
-        <test.slicehost.build-version></test.slicehost.build-version>
+        <test.slicehost.build-version />
         <test.slicehost.identity>FIXME</test.slicehost.identity>
-        <test.slicehost.image-id></test.slicehost.image-id>
+        <test.slicehost.image-id />
     </properties>
     <dependencies>
         <dependency>

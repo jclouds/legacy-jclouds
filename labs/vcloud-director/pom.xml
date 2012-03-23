@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-alpha.1</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
   <groupId>org.jclouds.labs</groupId>
@@ -39,16 +39,16 @@
     <test.vcloud-director.build-version>1.5.0.464915</test.vcloud-director.build-version>
     <test.vcloud-director.identity>FIXME_USERNAME_WHICH_MIGHT_BE_EMAIL@JClouds</test.vcloud-director.identity>
     <test.vcloud-director.credential>FIXME_PASSWORD</test.vcloud-director.credential>
-    <test.vcloud-director.image-id></test.vcloud-director.image-id>
-    <test.vcloud-director.image.login-user></test.vcloud-director.image.login-user>
-    <test.vcloud-director.image.authenticate-sudo></test.vcloud-director.image.authenticate-sudo>
+    <test.vcloud-director.image-id />
+    <test.vcloud-director.image.login-user />
+    <test.vcloud-director.image.authenticate-sudo />
     <test.vcloud-director.catalog-name>Public</test.vcloud-director.catalog-name>
-    <test.vcloud-director.catalog-id></test.vcloud-director.catalog-id>
-    <test.vcloud-director.media-id></test.vcloud-director.media-id>
-    <test.vcloud-director.vapptemplate-id></test.vcloud-director.vapptemplate-id>
-    <test.vcloud-director.network-name></test.vcloud-director.network-name>
-    <test.vcloud-director.network-id></test.vcloud-director.network-id>
-    <test.vcloud-director.vdc-id></test.vcloud-director.vdc-id>
+    <test.vcloud-director.catalog-id />
+    <test.vcloud-director.media-id />
+    <test.vcloud-director.vapptemplate-id />
+    <test.vcloud-director.network-name />
+    <test.vcloud-director.network-id />
+    <test.vcloud-director.vdc-id />
   </properties>
 
   <dependencies>
