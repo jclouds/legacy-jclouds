@@ -51,7 +51,7 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedLong;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -186,8 +186,8 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       Iterable<Reference> vApps = Iterables.filter(
             vdc.getResourceEntities(),
             Predicates.and(
-                  ReferenceTypePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
-                  ReferenceTypePredicates.<Reference>nameIn(vAppNames)
+                  ReferencePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
+                  ReferencePredicates.<Reference>nameIn(vAppNames)
             )
       );
 

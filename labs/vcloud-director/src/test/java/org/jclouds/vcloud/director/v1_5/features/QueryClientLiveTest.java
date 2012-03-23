@@ -18,7 +18,9 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkEntityType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -32,6 +34,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceType;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -45,6 +49,7 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultVAppRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultVAppTemplateRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultVMRecord;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -82,6 +87,24 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       queryClient = context.getApi().getQueryClient();
       vAppTemplateClient = context.getApi().getVAppTemplateClient();
       vAppClient = context.getApi().getVAppClient();
+   }
+
+   @Test(testName = "GET /entity/{id}")
+   public void testEntity() {
+      // Get a VAppTemplate to look up as an entity
+      VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
+      
+      // Method under test
+      Entity entity = queryClient.entity(vAppTemplate.getId());
+      
+      // Check returned entity
+      checkEntityType(entity);
+      
+      // Retrieve and check template using entity link
+      Link link = Iterables.find(entity.getLinks(), ReferencePredicates.<Link>typeEquals(VCloudDirectorMediaType.VAPP_TEMPLATE));
+      VAppTemplate retrieved = vAppTemplateClient.getVAppTemplate(link.getHref());
+      assertEquals(retrieved, vAppTemplate, String.format(ENTITY_EQUAL, "VAppTemplate"));
+      
    }
 
    @Test(testName = "GET /query")

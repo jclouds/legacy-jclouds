@@ -318,9 +318,9 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(testName = "PUT /vAppTemplate/{id}/leaseSettingsSection")
    public void testEditLeaseSettingsSection() throws Exception {
       int deploymentLeaseInSeconds = random.nextInt(10000)+1;
-      
-      // Note: use smallish number for storageLeaseInSeconds; it seems to be capped at 5184000?
+      // NOTE use smallish number for storageLeaseInSeconds; it seems to be capped at 5184000?
       int storageLeaseInSeconds = random.nextInt(10000)+1;
+
       LeaseSettingsSection leaseSettingSection = LeaseSettingsSection.builder()
                .info("my info")
                .storageLeaseInSeconds(storageLeaseInSeconds)
@@ -331,8 +331,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       retryTaskSuccess.apply(task);
       
       LeaseSettingsSection newLeaseSettingsSection = vAppTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
-      assertEquals(newLeaseSettingsSection.getStorageLeaseInSeconds(), (Integer)storageLeaseInSeconds);
-      assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer)deploymentLeaseInSeconds);
+      assertEquals(newLeaseSettingsSection.getStorageLeaseInSeconds(), (Integer) storageLeaseInSeconds);
+      assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer) deploymentLeaseInSeconds);
    }
 
    @Test(testName = "PUT /vAppTemplate/{id}/networkConfigSection")
