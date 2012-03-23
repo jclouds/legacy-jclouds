@@ -18,14 +18,18 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
- * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ReferencePredicatesTest")
@@ -35,21 +39,41 @@ public class ReferencePredicatesTest {
 
    @Test
    public void testNameEqualsWhenEqual() {
-      assert ReferencePredicates.<Reference> nameEquals("image").apply(ref);
+      assertTrue(ReferencePredicates.<Reference> nameEquals("image").apply(ref));
    }
 
    @Test
    public void testNameEqualsWhenNotEqual() {
-      assert !ReferencePredicates.<Reference> nameEquals("foo").apply(ref);
+      assertFalse(ReferencePredicates.<Reference> nameEquals("foo").apply(ref));
+   }
+
+   @Test
+   public void testNameStartsWithWhenStartsWith() {
+      assertTrue(ReferencePredicates.<Reference> nameStartsWith("i").apply(ref));
+   }
+
+   @Test
+   public void testNameStartsWithWhenNotStartsWith() {
+      assertFalse(ReferencePredicates.<Reference> nameStartsWith("f").apply(ref));
+   }
+
+   @Test
+   public void testNameInWhenIn() {
+      assertTrue(ReferencePredicates.<Reference> nameIn(ImmutableSet.of("one", "two", "image")).apply(ref));
+   }
+
+   @Test
+   public void testNameInWhenNotIn() {
+      assertFalse(ReferencePredicates.<Reference> nameIn(ImmutableSet.of("one", "two", "foo")).apply(ref));
    }
 
    @Test
    public void testTypeEqualsWhenEqual() {
-      assert ReferencePredicates.<Reference> typeEquals(VCloudDirectorMediaType.CATALOG_ITEM).apply(ref);
+      assertTrue(ReferencePredicates.<Reference> typeEquals(VCloudDirectorMediaType.CATALOG_ITEM).apply(ref));
    }
 
    @Test
    public void testTypeEqualsWhenNotEqual() {
-      assert !ReferencePredicates.<Reference> typeEquals("foo").apply(ref);
+      assertFalse(ReferencePredicates.<Reference> typeEquals("foo").apply(ref));
    }
 }
