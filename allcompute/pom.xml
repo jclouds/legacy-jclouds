@@ -57,6 +57,11 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
+            <artifactId>openstack-nova</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
             <artifactId>nova</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -188,6 +193,16 @@
         <dependency>
             <groupId>org.jclouds.provider</groupId>
             <artifactId>ninefold-compute</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>hpcloud-compute</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>trystack-nova</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

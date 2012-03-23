@@ -70,7 +70,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings;
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       orgClient = context.getApi().getAdminOrgClient();
       orgRef = Iterables.getFirst(orgClient.getOrgList().getOrgs(), null).toAdminReference(endpoint);
@@ -84,14 +84,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkAdminOrg(adminOrg);
    }
    
-   @Test(testName = "GET /admin/org/{id}/settings/emailSettings")
+   @Test(testName = "GET /admin/org/{id}/settings/email")
    public void testGetEmailSettings() {
       emailSettings = orgClient.getEmailSettings(orgRef.getHref());
       
       Checks.checkEmailSettings(emailSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/emailSettings", 
+   @Test(testName = "PUT /admin/org/{id}/settings/email", 
          dependsOnMethods = { "testGetEmailSettings" })
    public void testUpdateEmailSettings() {
       boolean isDefaultSmtpServer = emailSettings.isDefaultSmtpServer();
@@ -159,14 +159,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-   @Test(testName = "GET /admin/org/{id}/settings/generalSettings")
+   @Test(testName = "GET /admin/org/{id}/settings/general")
    public void testGetGeneralSettings() {
       generalSettings = orgClient.getGeneralSettings(orgRef.getHref());
       
       Checks.checkGeneralSettings(generalSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/generalSettings", 
+   @Test(testName = "PUT /admin/org/{id}/settings/general", 
          dependsOnMethods = { "testGetGeneralSettings" } )
    public void testUpdateGeneralSettings() {
       // FIXME: canPublishCatalogs does not update
@@ -369,14 +369,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/org/{id}/settings/settings")
+   @Test(testName = "GET /admin/org/{id}/settings")
    public void testGetSettings() {
       settings = orgClient.getSettings(orgRef.getHref());
       
       Checks.checkOrgSettings(settings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/settings",
+   @Test(testName = "PUT /admin/org/{id}/settings",
          dependsOnMethods = { "testGetEmailSettings" } )
    public void testUpdateSettings() throws Exception {
       String newFromEmailAddress = "test"+random.nextInt(Integer.MAX_VALUE)+"@test.com";

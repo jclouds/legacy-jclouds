@@ -47,6 +47,7 @@
        <module>elasticstack</module>
        <module>atmos</module>
        <module>nova</module>
+       <module>openstack-nova</module>
        <module>cloudwatch</module>
        <module>cloudsigma</module>
        <module>cloudstack</module>

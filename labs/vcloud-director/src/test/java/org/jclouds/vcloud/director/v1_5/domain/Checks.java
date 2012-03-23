@@ -63,6 +63,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
+import org.jclouds.vcloud.director.v1_5.domain.query.ContainerType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 
 import com.beust.jcommander.internal.Maps;
@@ -519,27 +520,10 @@ public class Checks {
          assertTrue(capacity.getAllocated() >= 0, "allocated must be greater than or equal to 0");
       }
    }
-
-   public static void checkResourceEntities(ResourceEntities resourceEntities) {
-      for (Reference resourceEntity : resourceEntities.getResourceEntities()) {
-         checkReferenceType(resourceEntity);
-      }
-   }
-
-   public static void checkAvailableNetworks(AvailableNetworks availableNetworks) {
-      for (Reference network : availableNetworks.getNetworks()) {
-         checkReferenceType(network);
-      }
-   }
    
    public static void checkCapabilities(Capabilities capabilities) {
       // Check optional fields
-      if (capabilities.getSupportedHardwareVersions() != null) {
-         checkSupportedHardwareVersions(capabilities.getSupportedHardwareVersions());
-      }
-   }
-   public static void checkSupportedHardwareVersions(SupportedHardwareVersions supportedHardwareVersions) {
-      for (String supportedHardwareVersion : supportedHardwareVersions.getSupportedHardwareVersions()) {
+      for (String supportedHardwareVersion : capabilities.getSupportedHardwareVersions()) {
          // NOTE supportedHardwareVersion cannot be checked?
       }
    }
@@ -1468,11 +1452,11 @@ public class Checks {
       
       // optional
       // NOTE isEnabled cannot be checked
-      if (vdc.getResourceEntities() != null) {
-         checkResourceEntities(vdc.getResourceEntities());
+      for (Reference resourceEntity : vdc.getResourceEntities()) {
+         checkReferenceType(resourceEntity);
       }
-      if (vdc.getAvailableNetworks() != null) {
-         checkAvailableNetworks(vdc.getAvailableNetworks());
+      for (Reference availableNetwork : vdc.getAvailableNetworks()) {
+         checkReferenceType(availableNetwork);
       }
       if (vdc.getCapabilities() != null) {
          checkCapabilities(vdc.getCapabilities());
@@ -1496,5 +1480,32 @@ public class Checks {
       if (record.getType() != null) {
          checkType(record.getType());
       }
+   }
+
+   public static void checkReferences(References references) {
+      // optional
+      for (Reference reference : references.getReferences()) {
+         checkReferenceType(reference);
+      }
+      
+      // parent type
+      checkContainerType(references);
+   }
+
+   public static void checkContainerType(ContainerType container) {
+      // optional
+      // NOTE name can't be checked
+      if (container.getPage() != null) {
+         assertTrue(container.getPage() >= 1, "page must be >=1 ");
+      }
+      if (container.getPageSize() != null) {
+         assertTrue(container.getPageSize() >= 1, "pageSize must be >=1 ");
+      }
+      if (container.getTotal() != null) {
+         assertTrue(container.getTotal() >= 0, "total must be >=0 ");
+      }
+         
+      // parent type
+      checkResourceType(container);
    }
 }

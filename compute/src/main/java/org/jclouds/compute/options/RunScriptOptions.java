@@ -18,15 +18,19 @@
  */
 package org.jclouds.compute.options;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Optional;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.CredentialUtils;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Optional;
 
 /**
  * Enables additional options for running a script.
@@ -509,75 +513,36 @@ public class RunScriptOptions {
    }
 
    @Override
-   public String toString() {
-      return "[loginUser=" + loginUser + ", loginPasswordPresent=" + (loginPassword != null)
-            + ", loginPrivateKeyPresent=" + (loginPrivateKey != null) + ", shouldAuthenticateSudo=" + authenticateSudo
-            + ", port:seconds=" + port + ":" + seconds + ", runAsRoot=" + runAsRoot + ", blockOnComplete="
-            + blockOnComplete + ", wrapInInitScript=" + wrapInInitScript + "]";
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      RunScriptOptions that = RunScriptOptions.class.cast(o);
+      return equal(this.loginUser, that.loginUser) && equal(this.loginPassword, that.loginPassword)
+            && equal(this.loginPrivateKey, that.loginPrivateKey) && equal(this.authenticateSudo, that.authenticateSudo)
+            && equal(this.port, that.port) && equal(this.seconds, that.seconds) && equal(this.taskName, that.taskName)
+            && equal(this.runAsRoot, that.runAsRoot) && equal(this.blockOnComplete, that.blockOnComplete)
+            && equal(this.wrapInInitScript, that.wrapInInitScript);
    }
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((authenticateSudo == null) ? 0 : authenticateSudo.hashCode());
-      result = prime * result + (blockOnComplete ? 1231 : 1237);
-      result = prime * result + ((loginPassword == null) ? 0 : loginPassword.hashCode());
-      result = prime * result + ((loginPrivateKey == null) ? 0 : loginPrivateKey.hashCode());
-      result = prime * result + ((loginUser == null) ? 0 : loginUser.hashCode());
-      result = prime * result + port;
-      result = prime * result + (runAsRoot ? 1231 : 1237);
-      result = prime * result + seconds;
-      result = prime * result + ((taskName == null) ? 0 : taskName.hashCode());
-      result = prime * result + (wrapInInitScript ? 1231 : 1237);
-      return result;
+      return Objects.hashCode(loginUser, loginPassword, loginPrivateKey, authenticateSudo, port, seconds, taskName,
+            taskName, blockOnComplete, wrapInInitScript);
    }
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      RunScriptOptions other = (RunScriptOptions) obj;
-      if (authenticateSudo == null) {
-         if (other.authenticateSudo != null)
-            return false;
-      } else if (!authenticateSudo.equals(other.authenticateSudo))
-         return false;
-      if (blockOnComplete != other.blockOnComplete)
-         return false;
-      if (loginPassword == null) {
-         if (other.loginPassword != null)
-            return false;
-      } else if (!loginPassword.equals(other.loginPassword))
-         return false;
-      if (loginPrivateKey == null) {
-         if (other.loginPrivateKey != null)
-            return false;
-      } else if (!loginPrivateKey.equals(other.loginPrivateKey))
-         return false;
-      if (loginUser == null) {
-         if (other.loginUser != null)
-            return false;
-      } else if (!loginUser.equals(other.loginUser))
-         return false;
-      if (port != other.port)
-         return false;
-      if (runAsRoot != other.runAsRoot)
-         return false;
-      if (seconds != other.seconds)
-         return false;
-      if (taskName == null) {
-         if (other.taskName != null)
-            return false;
-      } else if (!taskName.equals(other.taskName))
-         return false;
-      if (wrapInInitScript != other.wrapInInitScript)
-         return false;
-      return true;
+   public String toString() {
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return Objects.toStringHelper("").add("loginUser", loginUser)
+            .add("loginPasswordPresent", (loginPassword != null))
+            .add("loginPrivateKeyPresent", (loginPrivateKey != null)).add("authenticateSudo", authenticateSudo)
+            .add("port:seconds", port + ":" + seconds).add("taskName", taskName).add("runAsRoot", runAsRoot)
+            .add("blockOnComplete", blockOnComplete).add("wrapInInitScript", wrapInInitScript);
    }
 
 }

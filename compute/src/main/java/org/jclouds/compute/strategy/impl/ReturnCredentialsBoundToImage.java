@@ -40,13 +40,15 @@ import org.jclouds.javax.annotation.Nullable;
 public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCredentialsForImageStrategy {
 
    protected final LoginCredentials creds;
-   protected Map<String, Credentials> credentialStore;
+   protected final Map<String, Credentials> credentialStore;
+   protected final Map<OsFamily, LoginCredentials> osFamilyToCredentials;
 
    @Inject
    public ReturnCredentialsBoundToImage(@Nullable @Named("image") LoginCredentials creds,
-            Map<String, Credentials> credentialStore) {
+            Map<String, Credentials> credentialStore, Map<OsFamily, LoginCredentials> osFamilyToCredentials) {
       this.creds = creds;
       this.credentialStore = credentialStore;
+      this.osFamilyToCredentials = osFamilyToCredentials;
    }
 
    @Override
@@ -58,8 +60,9 @@ public class ReturnCredentialsBoundToImage implements PopulateDefaultLoginCreden
       Image image = Image.class.cast(resourceToAuthenticate);
       if (credentialStore.containsKey("image#" + image.getId()))
          return LoginCredentials.fromCredentials(credentialStore.get("image#" + image.getId()));
-      if (image.getOperatingSystem() != null && OsFamily.WINDOWS.equals(image.getOperatingSystem().getFamily())) {
-         return LoginCredentials.builder().user("Administrator").build();
+      if (image.getOperatingSystem() != null && image.getOperatingSystem().getFamily() != null
+               && osFamilyToCredentials.containsKey(image.getOperatingSystem().getFamily())) {
+         return osFamilyToCredentials.get(image.getOperatingSystem().getFamily());
       } else {
          return LoginCredentials.builder().user("root").build();
       }

@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
@@ -132,6 +133,14 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
          return masters.get(key.getId());
       }
 
+      // the yaml image
+      YamlImage yamlImage = imageMapping.get(key.getId());
+
+      checkNotNull(yamlImage, "could not find yaml image for image: " + key);
+      
+      checkState(!yamlImage.id.contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "master image names cannot contain \""
+               + VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
+
       String guestAdditionsFileName = String.format("VBoxGuestAdditions_%s.iso", version);
       String guestAdditionsIso = String.format("%s/%s", isosDir, guestAdditionsFileName);
       String guestAdditionsUri = "http://download.virtualbox.org/virtualbox/" + version + "/" + guestAdditionsFileName;
@@ -139,11 +148,6 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
          getFilePathOrDownload(guestAdditionsUri);
       }
       checkState(new File(guestAdditionsIso).exists(), "guest additions iso does not exist at: " + guestAdditionsIso);
-
-      // the yaml image
-      YamlImage yamlImage = imageMapping.get(key.getId());
-
-      checkNotNull(yamlImage, "could not find yaml image for image: " + key);
 
       // check if the iso is here, download if not
       String localIsoUrl = getFilePathOrDownload(yamlImage.iso);
@@ -156,13 +160,13 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
                .build();
 
       StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
-               .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).attachISO(1, 1, guestAdditionsIso).build();
+               .attachISO(0, 0, localIsoUrl).attachHardDisk(hardDisk).attachISO(1, 0, guestAdditionsIso).build();
 
       VmSpec vmSpecification = VmSpec.builder().id(yamlImage.id).name(vmName).memoryMB(512).osTypeId("")
                .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", MASTER_PORT, "", 22).build();
+               .tcpRedirectRule("127.0.0.1", MASTER_PORT , "", 22).build();
 
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
                .slot(0L).build();

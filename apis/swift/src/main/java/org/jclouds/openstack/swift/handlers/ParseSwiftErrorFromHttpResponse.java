@@ -18,9 +18,8 @@
  */
 package org.jclouds.openstack.swift.handlers;
 
-import static org.jclouds.http.HttpUtils.releasePayload;
+import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +33,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -50,11 +48,15 @@ public class ParseSwiftErrorFromHttpResponse implements HttpErrorHandler {
    public static final Pattern CONTAINER_KEY_PATH = Pattern.compile(PREFIX + "([^/]+)/(.*)");
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      Exception exception = new HttpResponseException(command, response);
-      try {
-         String content = parseErrorFromContentOrNull(command, response);
-         exception = content != null ? new HttpResponseException(command, response, content) : exception;
-         switch (response.getStatusCode()) {
+      // it is important to always read fully and close streams
+      byte[] data = closeClientButKeepContentStream(response);
+      String message = data != null ? new String(data) : null;
+
+      Exception exception = message != null ? new HttpResponseException(command, response, message)
+               : new HttpResponseException(command, response);
+      message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
+               response.getStatusLine());
+      switch (response.getStatusCode()) {
          case 401:
             exception = new AuthorizationException(exception.getMessage(), exception);
             break;
@@ -62,31 +64,20 @@ public class ParseSwiftErrorFromHttpResponse implements HttpErrorHandler {
             if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
                String path = command.getCurrentRequest().getEndpoint().getPath();
                Matcher matcher = CONTAINER_PATH.matcher(path);
+               Exception oldException = exception;
                if (matcher.find()) {
-                  exception = new ContainerNotFoundException(matcher.group(1), content);
+                  exception = new ContainerNotFoundException(matcher.group(1), message);
+                  exception.initCause(oldException);
                } else {
                   matcher = CONTAINER_KEY_PATH.matcher(path);
                   if (matcher.find()) {
-                     exception = new KeyNotFoundException(matcher.group(1), matcher.group(2), content);
+                     exception = new KeyNotFoundException(matcher.group(1), matcher.group(2), message);
+                     exception.initCause(oldException);
                   }
                }
             }
             break;
-         }
-      } finally {
-         releasePayload(response);
-         command.setException(exception);
       }
-   }
-
-   String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
-      if (response.getPayload() != null) {
-         try {
-            return Strings2.toStringAndClose(response.getPayload().getInput());
-         } catch (IOException e) {
-            logger.warn(e, "exception reading error from response", response);
-         }
-      }
-      return null;
+      command.setException(exception);
    }
 }

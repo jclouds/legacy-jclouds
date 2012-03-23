@@ -23,7 +23,9 @@ import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
@@ -45,6 +47,15 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface GroupAsyncClient {
+   
+   @POST
+   @Path("/groups")
+   @Consumes(VCloudDirectorMediaType.GROUP)
+   @Produces(VCloudDirectorMediaType.GROUP)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Group> createGroup(@EndpointParam URI adminOrgUri, 
+         @BinderParam(BindToXMLPayload.class) Group group);
 
    /**
     * @see GroupClient#getGroup(URI)

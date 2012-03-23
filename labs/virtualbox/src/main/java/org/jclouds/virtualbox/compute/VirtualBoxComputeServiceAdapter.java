@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import java.util.Map;
@@ -63,7 +64,7 @@ import com.google.inject.Singleton;
  * Defines the connection between the {@link org.virtualbox_4_1.VirtualBoxManager} implementation
  * and the jclouds {@link org.jclouds.compute.ComputeService}
  * 
- * @author Mattias Holmqvist, Andrea Turli
+ * @author Mattias Holmqvist, Andrea Turli, David Alves
  */
 @Singleton
 public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, Image, Location> {
@@ -91,6 +92,10 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    public NodeAndInitialCredentials<IMachine> createNodeWithGroupEncodedIntoName(String tag, String name,
             Template template) {
       try {
+         checkState(!tag.contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "tag names cannot contain \""
+                  + VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
+         checkState(!name.contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "node names cannot contain \""
+                  + VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
          Master master = mastersLoader.get(template.getImage());
          checkState(master != null, "could not find a master for image: "+template.getClass());
          NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();

@@ -18,14 +18,14 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.AvailableNetworks;
 import org.jclouds.vcloud.director.v1_5.domain.Capabilities;
 import org.jclouds.vcloud.director.v1_5.domain.CapacityWithUsage;
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
@@ -41,8 +41,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntities;
-import org.jclouds.vcloud.director.v1_5.domain.SupportedHardwareVersions;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -467,47 +465,41 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                .overhead(0l)
                .build())
             .build())
-         .resourceEntities(ResourceEntities.builder()
-            .resourceEntity(Reference.builder()
+        .resourceEntity(Reference.builder()
                .type("application/vnd.vmware.vcloud.vApp+xml")
                .name("vcdcap-db9")
                .href(URI.create("https://mycloud.greenhousedata.com/api/vApp/vapp-e2a4ab74-ea62-4afa-8bb7-0c11259044fb"))
                .build())
-            .resourceEntity(Reference.builder()
+        .resourceEntity(Reference.builder()
                .type("application/vnd.vmware.vcloud.vAppTemplate+xml")
                .name("adriancolecap")
                .href(URI.create("https://mycloud.greenhousedata.com/api/vAppTemplate/vappTemplate-5571eb21-f532-4506-9737-01a4635a04cb"))
                .build())
-            .resourceEntity(Reference.builder()
+        .resourceEntity(Reference.builder()
                .type("application/vnd.vmware.vcloud.media+xml")
                .name("DansTestMedia")
                .href(URI.create("https://mycloud.greenhousedata.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1"))
                .build())
-            .build())
-         .availableNetworks(AvailableNetworks.builder()
-            .network(Reference.builder()
+        .network(Reference.builder()
                .type("application/vnd.vmware.vcloud.network+xml")
                .name("orgNet-cloudsoft-Isolated")
                .href(URI.create("https://mycloud.greenhousedata.com/api/network/a604f3c2-0343-453e-ae1f-cddac5b7bd94"))
                .build())
-            .network(Reference.builder()
+        .network(Reference.builder()
                .type("application/vnd.vmware.vcloud.network+xml")
                .name("orgNet-cloudsoft-External")
                .href(URI.create("https://mycloud.greenhousedata.com/api/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1"))
                .build())
-            .network(Reference.builder()
+        .network(Reference.builder()
                .type("application/vnd.vmware.vcloud.network+xml")
                .name("orgNet-cloudsoft-Internal-Routed")
                .href(URI.create("https://mycloud.greenhousedata.com/api/network/6d7392e2-c816-43fb-99be-f9ebcd70abf6"))
                .build())
-            .build())
          .capabilities(Capabilities.builder()
-            .supportedHardwareVersions(SupportedHardwareVersions.builder()
                .supportedHardwareVersion("vmx-04")
                .supportedHardwareVersion("vmx-07")
                .supportedHardwareVersion("vmx-08")
                .build())
-            .build())
          .nicQuota(0)
          .networkQuota(10)
          .vmQuota(10)

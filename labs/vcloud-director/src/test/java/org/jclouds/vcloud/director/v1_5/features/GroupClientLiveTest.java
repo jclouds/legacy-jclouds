@@ -20,16 +20,13 @@ package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
-
-import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -56,19 +53,33 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private Reference groupRef;
    private Group group;
-
+   private OrgLdapSettings oldLdapSettings, newLdapSettings;
+   
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       groupClient = context.getApi().getGroupClient();
-      groupRef = Reference.builder()
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/group/???"))
-         .build();
+      Reference orgRef = null;
+      
+      // TODO: requisite LDAP settings
+//      oldLdapSettings = context.getApi().getAdminOrgClient().getLdapSettings(orgRef.getHref());
+//      OrgLdapSettings newLdapSettings = oldLdapSettings.toBuilder()
+//         .ldapMode(OrgLdapSettings.LdapMode.SYSTEM)  
+//         .build();
+//      context.getApi().getAdminOrgClient().updateLdapSettings(newLdapSettings);
    }
    
-   @Test(testName = "GET /admin/group/{id}")
+   @Test(testName = "POST /admin/org/{id}/groups")
+   public void testCreateGroup() {
+      fail("LDAP not configured, group client isn't currently testable.");
+//      group = groupClient.createGroup(orgUri, Group.builder()
+//         .build();
+      
+      Checks.checkGroup(group);
+   }
+   
+   @Test(testName = "GET /admin/group/{id}", dependsOnMethods = { "testCreateGroup" })
    public void testGetGroup() {
-      assertNotNull(groupRef, String.format(REF_REQ_LIVE, "Group"));
       group = groupClient.getGroup(groupRef.getHref());
       
       Checks.checkGroup(group);
@@ -108,7 +119,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @Test(testName = "DELETE /admin/group/{id}", dependsOnMethods = { "testUpdateGroup" } )
-   public void testDeleteCatalog() {
+   public void testDeleteGroup() {
       groupClient.deleteGroup(groupRef.getHref());
       
       // TODO stronger assertion of error expected

@@ -110,7 +110,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       vdcClient = context.getApi().getVdcClient();
       vappTemplateClient = context.getApi().getVAppTemplateClient();
@@ -228,7 +228,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testInstantiateVAppTemplate() {
       Vdc vdc = vdcClient.getVdc(vdcURI);
 
-      Set<Reference> networks = vdc.getAvailableNetworks().getNetworks();
+      Set<Reference> networks = vdc.getAvailableNetworks();
       Optional<Reference> parentNetwork = Iterables.tryFind(
             networks, new Predicate<Reference>() {
                   @Override
@@ -307,13 +307,13 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
    }
    
-   @Test(dependsOnMethods = { "testGetVdc" } )
+   @Test(testName = "vdcClient admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
    public void testSetupMetadata() {
       context.getApi().getAdminVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
    }
    
-   @Test(testName = "GET /network/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
+   @Test(testName = "GET /vdc/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
    public void testGetMetadata() {
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
       
@@ -324,7 +324,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(VDC, metadata);
    }
    
-   @Test(testName = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
+   @Test(testName = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
    public void testGetMetadataValue() {
       // First find a key
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);

@@ -515,7 +515,7 @@ public interface VAppAsyncClient {
    /**
     * @see VAppClient#answerQuestion(URI, VmQuestionAnswer)
     */
-   @PUT
+   @POST
    @Path("/question/action/answer")
    @Produces(VM_PENDING_ANSWER)
    @Consumes

@@ -41,7 +41,6 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
 
@@ -74,7 +73,7 @@ public class GuestAdditionsInstallerLiveTest extends
                .attachISO(0, 0, operatingSystemIso)
                .attachHardDisk(
                         HardDisk.builder().diskpath(adminDisk(sourceName)).controllerPort(0).deviceSlot(1)
-                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
+                                 .autoDelete(true).build()).attachISO(1, 0, guestAdditionsIso).build();
 
 		VmSpec sourceVmSpec = VmSpec.builder().id(sourceName).name(sourceName)
 				.osTypeId("").memoryMB(512).cleanUpMode(CleanupMode.Full)
@@ -111,8 +110,8 @@ public class GuestAdditionsInstallerLiveTest extends
 			machineUtils.applyForMachine(machine.getName(),
 					new LaunchMachineIfNotAlreadyRunning(manager.get(),
 							ExecutionType.GUI, ""));
-			assertTrue(machineUtils.lockSessionOnMachineAndApply(
-					machine.getName(), LockType.Shared,
+			assertTrue(machineUtils.sharedLockMachineAndApplyToSession(
+					machine.getName(),
 					new Function<ISession, Boolean>() {
 						@Override
 						public Boolean apply(ISession session) {

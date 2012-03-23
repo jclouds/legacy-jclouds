@@ -18,17 +18,18 @@
  */
 package org.jclouds.trmk.vcloud_0_8.compute.strategy;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
-import org.jclouds.trmk.vcloud_0_8.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.trmk.vcloud_0_8.domain.VAppTemplate;
 import org.testng.annotations.Test;
 
@@ -49,7 +50,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
-               null, ImmutableMap.<String, Credentials> of());
+               null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "vcloud");
       assertEquals(creds.credential, "$Ep455l0ud!2");
@@ -64,7 +65,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
-               null, ImmutableMap.<String, Credentials> of());
+               null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "ecloud");
       assertEquals(creds.credential, "$Ep455l0ud!2");
@@ -79,7 +80,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
-               null, ImmutableMap.<String, Credentials> of());
+               null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "vpncubed");
       assertEquals(creds.credential, "vpncubed");
@@ -94,7 +95,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
-               null, ImmutableMap.<String, Credentials> of());
+               null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "ecloud");
       assertEquals(creds.credential, "TmrkCl0ud1s#1!");
@@ -109,7 +110,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(
-               null, ImmutableMap.<String, Credentials> of());
+               null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials> of());
       Credentials creds = converter.execute(template);
       assertEquals(creds.identity, "Administrator");
       assertEquals(creds.credential, null);

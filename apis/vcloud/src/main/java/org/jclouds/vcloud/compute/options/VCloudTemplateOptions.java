@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.compute.options;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
@@ -290,7 +289,7 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    public String toString() {
       return "[customizationScript=" + (customizationScript != null) + ", description=" + description
             + ", ipAddressAllocationMode=" + ipAddressAllocationMode + ", inboundPorts="
-            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+            + inboundPorts + ", privateKey=" + (privateKey != null) + ", publicKey="
             + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
             + ", userMetadata: " + userMetadata + "]";
    }

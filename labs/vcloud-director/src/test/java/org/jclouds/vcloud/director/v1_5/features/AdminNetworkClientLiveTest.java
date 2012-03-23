@@ -65,7 +65,7 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
    Network network;
    
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    protected void setupRequiredClients() {
       networkClient = context.getApi().getAdminNetworkClient();
       networkRef = Reference.builder().href(networkURI).build().toAdminReference(endpoint);
@@ -147,7 +147,7 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Test(testName = "POST /admin/network/{id}/action/reset")
    public void testResetNetwork() { 
       // TODO assert that network is deployed somehow
-      Task resetNetworkTask = networkClient.resetNetwork(network.getHref());
+      Task resetNetworkTask = networkClient.resetNetwork(networkRef.getHref());
       Checks.checkTask(resetNetworkTask);
       assertTrue(retryTaskSuccess.apply(resetNetworkTask), String.format(TASK_COMPLETE_TIMELY, "resetNetworkTask"));
       network = networkClient.getNetwork(network.getHref());

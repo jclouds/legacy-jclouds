@@ -18,8 +18,6 @@
  */
 package org.jclouds.openstack.keystone.v2_0.functions;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -27,6 +25,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.openstack.keystone.v2_0.ServiceClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
+import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.base.Function;
 
@@ -41,7 +40,10 @@ public class AuthenticateApiAccessKeyCredentials implements Function<Credentials
 
    @Override
    public Access apply(Credentials input) {
-      checkArgument(input.identity.indexOf(':') != -1, "format is tenantId:accesskey");
+      if (input.identity.indexOf(':') == -1) {
+         throw new AuthorizationException(String.format("Identity %s does not match format tenantId:accesskey",
+                  input.identity), null);
+      }
 
       String tenantId = input.identity.substring(0, input.identity.indexOf(':'));
       String usernameOrAccessKey = input.identity.substring(input.identity.indexOf(':') + 1);

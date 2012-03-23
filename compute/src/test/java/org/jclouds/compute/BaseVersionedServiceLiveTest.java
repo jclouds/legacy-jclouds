@@ -22,6 +22,8 @@ import java.util.Properties;
 
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
+import org.jclouds.logging.LoggingModules;
+import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.rest.BaseRestClientLiveTest;
 import org.testng.annotations.BeforeClass;
 
@@ -69,6 +71,10 @@ public abstract class BaseVersionedServiceLiveTest extends BaseRestClientLiveTes
             loginCredentialsBuilder.authenticateSudo(Boolean.valueOf(authenticateSudo));
          loginCredentials = loginCredentialsBuilder.build();
       }
+   }
+
+   protected LoggingModule getLoggingModule() {
+      return LoggingModules.firstOrJDKLoggingModule();
    }
 
 }

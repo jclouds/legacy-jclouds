@@ -63,6 +63,7 @@ import org.jclouds.ssh.SshClient;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -183,7 +184,13 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(UBUNTU).osVersionMatches("1[012].[01][04]").os64Bit(true);
    }
-
+   
+   @Provides
+   @Singleton
+   protected Map<OsFamily, LoginCredentials> osFamilyToCredentials(Injector injector) {
+      return ImmutableMap.of(OsFamily.WINDOWS, LoginCredentials.builder().user("Administrator").build());
+   }
+   
    /**
     * The default options if none are provided.
     */

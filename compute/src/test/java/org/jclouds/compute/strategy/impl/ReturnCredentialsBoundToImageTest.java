@@ -45,8 +45,8 @@ public class ReturnCredentialsBoundToImageTest {
       replay(image);
 
       LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
-      assertEquals(new ReturnCredentialsBoundToImage(creds, ImmutableMap.<String, Credentials> of()).execute(image),
-               creds);
+      assertEquals(new ReturnCredentialsBoundToImage(creds, ImmutableMap.<String, Credentials> of(), ImmutableMap
+               .<OsFamily, LoginCredentials> of()).execute(image), creds);
 
       verify(image);
 
@@ -58,14 +58,14 @@ public class ReturnCredentialsBoundToImageTest {
       replay(image);
 
       LoginCredentials creds = new LoginCredentials("ubuntu", "foo", null, false);
-      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of("image#1",creds)).execute(image),
-               creds);
+      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of("image#1", creds),
+               ImmutableMap.<OsFamily, LoginCredentials> of()).execute(image), creds);
 
       verify(image);
 
    }
 
-   public void testReturnAdministratorOnWindows() {
+   public void testReturnLoginCredentialAssociatedToOsFamily() {
       Image image = createMock(Image.class);
       expect(image.getId()).andReturn("1");
       expect(image.getOperatingSystem()).andReturn(
@@ -73,7 +73,8 @@ public class ReturnCredentialsBoundToImageTest {
       replay(image);
 
       Credentials creds = new Credentials("Administrator", null);
-      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of()).execute(image), creds);
+      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of(), ImmutableMap.of(
+               OsFamily.WINDOWS, LoginCredentials.builder().user("Administrator").build())).execute(image), creds);
 
       verify(image);
 
@@ -87,7 +88,8 @@ public class ReturnCredentialsBoundToImageTest {
       replay(image);
 
       Credentials creds = new Credentials("root", null);
-      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of()).execute(image), creds);
+      assertEquals(new ReturnCredentialsBoundToImage(null, ImmutableMap.<String, Credentials> of(), ImmutableMap
+               .<OsFamily, LoginCredentials> of()).execute(image), creds);
 
       verify(image);
 

@@ -36,7 +36,6 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -60,7 +59,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    protected NetworkClient networkClient;
     
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
       context.getApi().getAdminNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 

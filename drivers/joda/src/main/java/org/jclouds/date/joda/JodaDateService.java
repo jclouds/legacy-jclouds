@@ -18,9 +18,9 @@
  */
 package org.jclouds.date.joda;
 
-import static org.jclouds.date.internal.DateUtils.*;
-import static org.jclouds.date.internal.DateUtils.trimToMillis;
+import static org.jclouds.date.internal.DateUtils.findTZ;
 import static org.jclouds.date.internal.DateUtils.trimTZ;
+import static org.jclouds.date.internal.DateUtils.trimToMillis;
 
 import java.util.Date;
 import java.util.Locale;
@@ -40,7 +40,7 @@ import org.joda.time.format.DateTimeFormatter;
  */
 @Singleton
 public class JodaDateService implements DateService {
-
+   
    private static final DateTimeFormatter rfc822DateFormatter = DateTimeFormat.forPattern(
             "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));
 
@@ -112,6 +112,8 @@ public class JodaDateService implements DateService {
       toParse = trimToMillis(toParse);
       toParse = trimTZ(toParse);
       toParse += tz;
+      if (toParse.charAt(10) == ' ')
+         toParse = new StringBuilder(toParse).replace(10, 11, "T").toString();
       return iso8601DateFormatter.parseDateTime(toParse).toDate();
    }
 

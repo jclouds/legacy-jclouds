@@ -68,6 +68,8 @@
         <module>go2cloud-jhb1</module>
         <module>softlayer</module>
         <module>ninefold-compute</module>
-        <module>hpcloud-objectstorage-lvs</module>
+        <module>hpcloud-compute</module>
+        <module>hpcloud-objectstorage</module>
+        <module>trystack-nova</module>
     </modules>
 </project>

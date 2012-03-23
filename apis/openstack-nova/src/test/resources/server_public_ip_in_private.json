@@ -1,0 +1,51 @@
+{
+    "server": {
+        "status": "ACTIVE",
+        "updated": "2012-03-22T22:11:55Z",
+        "hostId": "cb0d9e5004bef8c21270a0b09f7624f4c387f3a523f3aaa4c5694a61",
+        "user_id": "54297837463082",
+        "name": "hpcloud-computes-38d",
+        "links": [{
+            "href": "https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers/59662",
+            "rel": "self"
+        }, {
+            "href": "https://az-2.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/servers/59662",
+            "rel": "bookmark"
+        }],
+        "addresses": {
+            "private": [{
+                "version": 4,
+                "addr": "10.6.39.189"
+            }, {
+                "version": 4,
+                "addr": "15.185.181.94"
+            }]
+        },
+        "tenant_id": "37936628937291",
+        "image": {
+            "id": "229",
+            "links": [{
+                "href": "https://az-2.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/images/229",
+                "rel": "bookmark"
+            }]
+        },
+        "created": "2012-03-22T22:11:19Z",
+        "uuid": "7aed8e05-1daf-476a-87b2-640e8f7dcafd",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "key_name": "jclouds_hpcloud-computes_77",
+        "progress": 100,
+        "flavor": {
+            "id": "100",
+            "links": [{
+                "href": "https://az-2.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/flavors/100",
+                "rel": "bookmark"
+            }]
+        },
+        "config_drive": "",
+        "id": 59662,
+        "metadata": {
+            "Name": "hpcloud-computes"
+        }
+    }
+}

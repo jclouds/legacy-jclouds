@@ -1,0 +1,115 @@
+{
+    "extensions": [{
+        "updated": "2011-06-09T00:00:00+00:00",
+        "name": "Multinic",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/multinic/api/v1.1",
+        "alias": "NMN",
+        "description": "Multiple network support"
+    }, {
+        "updated": "2011-06-29T00:00:00+00:00",
+        "name": "Hosts",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/hosts/api/v1.1",
+        "alias": "os-hosts",
+        "description": "Host administration"
+    }, {
+        "updated": "2011-03-25T00:00:00+00:00",
+        "name": "Volumes",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/volumes/api/v1.1",
+        "alias": "os-volumes",
+        "description": "Volumes support"
+    }, {
+        "updated": "2011-05-25 16:12:21.656723",
+        "name": "Admin Controller",
+        "links": [],
+        "namespace": "https:TODO/",
+        "alias": "ADMIN",
+        "description": "The Admin API Extension"
+    }, {
+        "updated": "2011-08-08T00:00:00+00:00",
+        "name": "Quotas",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/quotas-sets/api/v1.1",
+        "alias": "os-quota-sets",
+        "description": "Quotas management support"
+    }, {
+        "updated": "2011-08-24T00:00:00+00:00",
+        "name": "VolumeTypes",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/volume_types/api/v1.1",
+        "alias": "os-volume-types",
+        "description": "Volume types support"
+    }, {
+        "updated": "2011-06-23T00:00:00+00:00",
+        "name": "FlavorExtraSpecs",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/flavor_extra_specs/api/v1.1",
+        "alias": "os-flavor-extra-specs",
+        "description": "Instance type (flavor) extra specs"
+    }, {
+        "updated": "2011-09-14T00:00:00+00:00",
+        "name": "FlavorExtraData",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/flavor_extra_data/api/v1.1",
+        "alias": "os-flavor-extra-data",
+        "description": "Provide additional data for flavors"
+    }, {
+        "updated": "2011-08-17T00:00:00+00:00",
+        "name": "VirtualInterfaces",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/virtual_interfaces/api/v1.1",
+        "alias": "virtual_interfaces",
+        "description": "Virtual interface support"
+    }, {
+        "updated": "2011-07-19T00:00:00+00:00",
+        "name": "Createserverext",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/createserverext/api/v1.1",
+        "alias": "os-create-server-ext",
+        "description": "Extended support to the Create Server v1.1 API"
+    }, {
+        "updated": "2011-08-08T00:00:00+00:00",
+        "name": "Keypairs",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/keypairs/api/v1.1",
+        "alias": "os-keypairs",
+        "description": "Keypair Support"
+    }, {
+        "updated": "2011-08-25T00:00:00+00:00",
+        "name": "VSAs",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/vsa/api/v1.1",
+        "alias": "zadr-vsa",
+        "description": "Virtual Storage Arrays support"
+    }, {
+        "updated": "2011-08-19T00:00:00+00:00",
+        "name": "SimpleTenantUsage",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/os-simple-tenant-usage/api/v1.1",
+        "alias": "os-simple-tenant-usage",
+        "description": "Simple tenant usage extension"
+    }, {
+        "updated": "2011-08-18T00:00:00+00:00",
+        "name": "Rescue",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/rescue/api/v1.1",
+        "alias": "os-rescue",
+        "description": "Instance rescue mode"
+    }, {
+        "updated": "2011-07-21T00:00:00+00:00",
+        "name": "SecurityGroups",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/securitygroups/api/v1.1",
+        "alias": "security_groups",
+        "description": "Security group support"
+    }, {
+        "updated": "2011-06-16T00:00:00+00:00",
+        "name": "Floating_ips",
+        "links": [],
+        "namespace": "https://docs.openstack.org/ext/floating_ips/api/v1.1",
+        "alias": "os-floating-ips",
+        "description": "Floating IPs support"
+    }]
+}

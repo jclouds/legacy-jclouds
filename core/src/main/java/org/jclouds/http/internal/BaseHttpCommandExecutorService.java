@@ -156,6 +156,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                utils.logResponse(headerLog, response, "<<");
                if (response.getPayload() != null && wire.enabled())
                   wire.input(response);
+               nativeRequest = null;  // response took ownership of streams
                int statusCode = response.getStatusCode();
                if (statusCode >= 300) {
                   if (shouldContinue(response))

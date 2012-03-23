@@ -499,13 +499,13 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       if (image.getName() != null)
          this.imageName = image.getName();
       if (image.getDescription() != null)
-         this.imageDescription = image.getDescription();
+         this.imageDescription = String.format("^%s$", image.getDescription());
       if (image.getOperatingSystem().getName() != null)
          this.osName = image.getOperatingSystem().getName();
       if (image.getOperatingSystem().getDescription() != null)
          this.osDescription = image.getOperatingSystem().getDescription();
       if (image.getVersion() != null)
-         this.imageVersion = image.getVersion();
+         this.imageVersion = String.format("^%s$", image.getVersion());
       if (image.getOperatingSystem().getVersion() != null)
          this.osVersion = image.getOperatingSystem().getVersion();
       this.os64Bit = image.getOperatingSystem().is64Bit();

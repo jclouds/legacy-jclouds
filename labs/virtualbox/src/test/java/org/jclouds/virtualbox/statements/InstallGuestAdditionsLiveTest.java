@@ -19,37 +19,49 @@
 
 package org.jclouds.virtualbox.statements;
 
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
+import static junit.framework.Assert.assertEquals;
 
+import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.testng.annotations.BeforeClass;
+import org.jclouds.virtualbox.domain.StorageController;
+import org.jclouds.virtualbox.domain.VmSpec;
 import org.testng.annotations.Test;
-
-import com.google.common.base.CaseFormat;
-import com.google.inject.Injector;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.StorageBus;
 
 /**
- * @author Andrea Turli
+ * @author Andrea Turli, David Alves
  */
-@Test(groups = "live", singleThreaded = true, testName = "InstallGuestAdditionsLiveTest")
+@Test(testName = "InstallGuestAdditionsLiveTest", groups = "live", singleThreaded = true)
 public class InstallGuestAdditionsLiveTest extends BaseVirtualBoxClientLiveTest {
 
-   private String vmName;
-   
-   @Override
-   @BeforeClass(groups = "live")
-   public void setupClient() {
-      super.setupClient();
-      vmName = VIRTUALBOX_IMAGE_PREFIX
-            + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass()
-                  .getSimpleName());
-      
-      vmName = "jclouds-image-create-and-install-vm-live-test";
+   public void testIsoPresent() {
+      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE)
+               .attachISO(1, 0, "VBoxGuestAdditions_").build();
+
+      VmSpec vmSpecification = VmSpec.builder().id("").name("").memoryMB(512).osTypeId("").controller(ideController)
+               .forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
+
+      InstallGuestAdditions installer = new InstallGuestAdditions(vmSpecification, "4.1.8");
+      String scripts = installer.render(OsFamily.UNIX);
+      assertEquals("installModuleAssistantIfNeeded || return 1\n" + "mount -t iso9660 /dev/sr1 /mnt\n"
+               + "/mnt/VBoxLinuxAdditions.run\n" + "umount /mnt\n", scripts);
    }
 
-   public void testInstallGuestAdditionsOnTheMachine() throws Exception {
-      Injector injector = context.utils().injector();      
-      injector.getInstance(GuestAdditionsInstaller.class).apply(vmName);
+   public void testIsoNotPresent() {
+      StorageController ideController = StorageController.builder().name("IDE Controller").bus(StorageBus.IDE).build();
+
+      VmSpec vmSpecification = VmSpec.builder().id("").name("").memoryMB(512).osTypeId("").controller(ideController)
+               .forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
+
+      InstallGuestAdditions installer = new InstallGuestAdditions(vmSpecification, "4.1.8");
+      String scripts = installer.render(OsFamily.UNIX);
+      assertEquals(
+               "installModuleAssistantIfNeeded || return 1\n"
+                        + "setupPublicCurl || return 1\n"
+                        + "(mkdir -p /tmp/ && cd /tmp/ && [ ! -f VBoxGuestAdditions_4.1.8.iso ] && curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -C - -X GET  http://download.virtualbox.org/virtualbox/4.1.8/VBoxGuestAdditions_4.1.8.iso >VBoxGuestAdditions_4.1.8.iso)\n"
+                        + "mount -o loop /tmp/VBoxGuestAdditions_4.1.8.iso /mnt\n"
+                        + "/mnt/VBoxLinuxAdditions.run\n" + "umount /mnt\n", scripts);
    }
-   
+
 }

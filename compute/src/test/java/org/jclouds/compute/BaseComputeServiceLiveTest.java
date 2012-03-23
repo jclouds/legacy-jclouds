@@ -83,7 +83,8 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.logging.LoggingModules;
+import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
@@ -158,8 +159,12 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          context.close();
       Properties props = setupProperties();
       context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
+            ImmutableSet.of(getLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
+   }
+
+   protected LoggingModule getLoggingModule() {
+      return LoggingModules.firstOrJDKLoggingModule();
    }
 
    protected void buildSocketTester() {
@@ -184,7 +189,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          overrides.setProperty(provider + ".identity", "MOMMA");
          overrides.setProperty(provider + ".credential", "MIA");
          context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+               ImmutableSet.<Module> of(getLoggingModule()), overrides);
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
@@ -482,8 +487,10 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          checkOsMatchesTemplate(metadata);
          assert (metadata.getState() == NodeState.RUNNING) : metadata;
          // due to DHCP the addresses can actually change in-between runs.
-         assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size());
-         assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size());
+         assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size(), String.format(
+                  "[%s] didn't match: [%s]", metadata.getPrivateAddresses(), node.getPrivateAddresses().size()));
+         assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size(), String.format(
+                  "[%s] didn't match: [%s]", metadata.getPublicAddresses(), node.getPublicAddresses().size()));
       }
       assertNodeZero(metadataMap.values());
    }

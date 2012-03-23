@@ -48,7 +48,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Listeners(FormatApiResultsListener.class)
-@Test(groups = { "live", "user" }, testName = "SessionClientLiveTest")
+@Test(groups = { "live", "user", "login" }, testName = "SessionClientLiveTest")
 public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
    public SessionClientLiveTest() {
       provider = "vcloud-director";

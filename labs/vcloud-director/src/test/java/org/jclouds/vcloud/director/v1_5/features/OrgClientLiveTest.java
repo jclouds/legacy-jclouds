@@ -25,6 +25,7 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOrg;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkReferenceType;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -32,6 +33,7 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
@@ -59,7 +61,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private OrgClient orgClient;
 
    @Override
-   @BeforeClass(inheritGroups = true)
+   @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       orgClient = context.getApi().getOrgClient();
    }
@@ -81,7 +83,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private Org org;
    private boolean metadataSet = false;
 
-   @Test(testName = "GET /org/")
+   @Test(testName = "GET /org")
    public void testGetOrgList() {
       // Call the method being tested
       orgList = orgClient.getOrgList();
@@ -110,14 +112,14 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkOrg(org);
    }
    
-   @Test(dependsOnMethods = { "testGetOrg" })
+   @Test(testName = "orgClient admin metadata setup", dependsOnMethods = { "testGetOrg" })
    public void testSetupMetadata() {
       context.getApi().getAdminOrgClient().getMetadataClient().setMetadata(toAdminUri(orgURI), 
             "KEY", MetadataValue.builder().value("VALUE").build()); 
       metadataSet = true;
    }
    
-   @Test(testName = "GET /org/{id}/metadata/", dependsOnMethods = { "testSetupMetadata" })
+   @Test(testName = "GET /org/{id}/metadata", dependsOnMethods = { "testSetupMetadata" })
    public void testGetOrgMetadata() {
       // Call the method being tested
       Metadata metadata = orgClient.getMetadataClient().getMetadata(orgURI);
@@ -141,5 +143,26 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       checkMetadataValue(value);
       assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
+   }
+
+   @Test(testName = "GET /org/{id}/catalog/{catalogId}/controlAccess", dependsOnMethods = { "testGetOrg" })
+   public void testGetControlAccess() {
+      // Call the method being tested
+      ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);
+
+      // Check params are well formed
+      checkControlAccessParams(params);
+   }
+
+   @Test(testName = "GET /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
+   public void testModifyControlAccess() {
+      // Setup params
+      ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);
+
+      // Call the method being tested
+      ControlAccessParams modified = orgClient.modifyControlAccess(orgURI, catalogId, params);
+
+      // Check params are well formed
+      checkControlAccessParams(modified);
    }
 }

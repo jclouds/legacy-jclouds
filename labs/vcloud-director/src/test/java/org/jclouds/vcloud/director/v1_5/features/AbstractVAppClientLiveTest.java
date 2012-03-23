@@ -23,6 +23,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkGuestCustomizationSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConnectionSection;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -31,10 +32,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.Map;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
@@ -45,6 +44,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimBoolean;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
@@ -55,6 +55,7 @@ import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Function;
@@ -64,7 +65,6 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * Shared code to test the behaviour of {@link VAppClient} and {@link VAppTemplateClient}.
@@ -103,7 +103,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
     *
     * @see BaseVCloudDirectorClientLiveTest#setupRequiredClients()
     */
-   @BeforeClass(inheritGroups = true, description = "Retrieves the required clients from the REST API context")
+   @BeforeClass(alwaysRun = true, description = "Retrieves the required clients from the REST API context")
    @Override
    protected void setupRequiredClients() {
       assertNotNull(context.getApi());
@@ -121,7 +121,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
     * Retrieves the test {@link Vdc} and {@link VAppTemplate} from their configured {@link URI}s.
     * Instantiates a new test VApp.
     */
-   @BeforeClass(alwaysRun = true, description = "Sets up the environment")
+   @BeforeClass(alwaysRun = true, description = "Sets up the environment", dependsOnMethods = { "setupRequiredClients" })
    protected void setupEnvironment() {
       // Get the configured Vdc for the tests
       vdc = vdcClient.getVdc(vdcURI);
@@ -146,7 +146,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       // Get the Vm
       List<Vm> vms = vApp.getChildren().getVms();
       vm = Iterables.getOnlyElement(vms);
-      assertFalse(vms.isEmpty(), "The VApp must have at least one Vm");
+      assertFalse(vms.isEmpty(), "The VApp must have a Vm");
    }
 
    protected void getGuestCustomizationSection(Function<URI, GuestCustomizationSection> getGuestCustomizationSection) {
@@ -181,21 +181,23 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
 
    @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps") 
    protected void cleanUp() {
-      // Find references in the Vdc with the VApp type and named 'test-vapp' or 'new-name'
+      vdc = vdcClient.getVdc(vdcURI); // Refresh
+      // Find references in the Vdc with the VApp type and in the list of instantiated VApp names
       Iterable<Reference> vApps = Iterables.filter(
-            vdc.getResourceEntities().getResourceEntities(),
+            vdc.getResourceEntities(),
             Predicates.and(
                   ReferenceTypePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
                   ReferenceTypePredicates.<Reference>nameIn(vAppNames)
             )
       );
-      vAppNames.clear();
 
       // If we found any references, delete the VApp they point to
-      if (vApps != null && !Iterables.isEmpty(vApps)) {
+      if (!Iterables.isEmpty(vApps)) {
          for (Reference ref : vApps) {
             cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
          }
+      } else {
+         logger.warn("No VApps in list found in Vdc %s (%s)", vdc.getName(), Iterables.toString(vAppNames));
       }
    }
 
@@ -239,16 +241,99 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    }
 
    /**
-    * Marshals a JAXB annotated object into XML. The XML is output on {@link System#err}.
+    * Power on a {@link VApp}s {@link Vm}s.
+    *
+    * @see #powerOn(URI)
+    */
+   protected VApp powerOn(VApp testVApp) {
+      return powerOn(testVApp.getHref());
+   }
+
+   /**
+    * Power on a VApp.
+    */
+   protected VApp powerOn(URI testVAppURI) {
+      VApp testVApp = vAppClient.getVApp(testVAppURI);
+      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+      Status status = Status.fromValue(vm.getStatus());
+      if (status != Status.POWERED_ON) {
+         Task powerOn = vAppClient.powerOn(vm.getHref());
+         assertTaskSucceedsLong(powerOn);
+      }
+      assertVAppStatus(testVAppURI, Status.POWERED_ON);
+      return testVApp;
+   }
+
+   /**
+    * Power off a  {@link VApp}s {@link Vm}s.
+    *
+    * @see #powerOff(URI)
+    */
+   protected VApp powerOff(VApp testVApp) {
+      return powerOff(testVApp.getHref());
+   }
+
+   /**
+    * Power off a {@link VApp}s {@link Vm}s.
+    */
+   protected VApp powerOff(URI testVAppURI) {
+      VApp testVApp = vAppClient.getVApp(testVAppURI);
+      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+      Status status = Status.fromValue(vm.getStatus());
+      if (status != Status.POWERED_OFF) {
+         Task powerOff = vAppClient.powerOff(vm.getHref());
+         assertTaskSucceedsLong(powerOff);
+      }
+      assertVAppStatus(testVAppURI, Status.POWERED_OFF);
+      return testVApp;
+   }
+
+   /**
+    * Suspend a {@link VApp}s {@link Vm}s.
+    *
+    * @see #suspend(URI)
+    */
+   protected VApp suspend(VApp testVApp) {
+      return powerOff(testVApp.getHref());
+   }
+
+   /**
+    * Suspend a {@link VApp}s {@link Vm}s.
+    */
+   protected VApp suspend(URI testVAppURI) {
+      VApp testVApp = vAppClient.getVApp(testVAppURI);
+      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+      Status status = Status.fromValue(vm.getStatus());
+      if (status != Status.SUSPENDED) {
+         Task suspend = vAppClient.suspend(vm.getHref());
+         assertTaskSucceedsLong(suspend);
+      }
+      assertVAppStatus(testVAppURI, Status.SUSPENDED);
+      return testVApp;
+   }
+
+   /**
+    * Check the {@link VApp}s {@link Vm}s current status.
+    */
+   protected void assertVAppStatus(URI testVAppURI, Status status) {
+      VApp testVApp = vAppClient.getVApp(testVAppURI);
+      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+      assertEquals(vm.getStatus(), status.getValue(),String.format(OBJ_FIELD_EQ, VAPP, "status", status.toString(), Status.fromValue(vm.getStatus()).toString()));
+   }
+
+   /**
+    * Marshals a JAXB annotated object into XML.
+    *
+    * The XML is output using {@link org.jclouds.logging.Logger#debug(String)}
     */
    protected void debug(Object object) {
       JAXBParser parser = new JAXBParser();
       try {
          String xml = parser.toXML(object);
 
-         System.err.println(Strings.padStart(Strings.padEnd(" " + object.getClass().toString() + " ", 70, '-'), 80, '-'));
-         System.err.println(xml);
-         System.err.println(Strings.repeat("-", 80));
+         logger.debug(Strings.padStart(Strings.padEnd(" " + object.getClass().toString() + " ", 70, '-'), 80, '-'));
+         logger.debug(xml);
+         logger.debug(Strings.repeat("-", 80));
       } catch (IOException ioe) {
          Throwables.propagate(ioe);
       }

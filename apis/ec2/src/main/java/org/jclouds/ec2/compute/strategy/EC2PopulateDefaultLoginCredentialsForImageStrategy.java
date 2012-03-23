@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.impl.ReturnCredentialsBoundToImage;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
@@ -41,13 +42,13 @@ import com.google.common.collect.ImmutableMap;
 @Singleton
 public class EC2PopulateDefaultLoginCredentialsForImageStrategy extends ReturnCredentialsBoundToImage {
    public EC2PopulateDefaultLoginCredentialsForImageStrategy() {
-      this(null, ImmutableMap.<String, Credentials> of());
+      this(null, ImmutableMap.<String, Credentials> of(), ImmutableMap.<OsFamily, LoginCredentials>of());
    }
 
    @Inject
    public EC2PopulateDefaultLoginCredentialsForImageStrategy(@Nullable @Named("image") LoginCredentials creds,
-            Map<String, Credentials> credentialStore) {
-      super(creds, credentialStore);
+            Map<String, Credentials> credentialStore, Map<OsFamily, LoginCredentials> osFamilyToCredentials) {
+      super(creds, credentialStore, osFamilyToCredentials);
    }
 
    @Override
