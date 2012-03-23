@@ -195,5 +195,10 @@
             <artifactId>ninefold-compute</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>hpcloud-compute</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

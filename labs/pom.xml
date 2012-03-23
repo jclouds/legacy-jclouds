@@ -39,7 +39,6 @@
        <module>elb</module>
        <module>aws-elb</module>
        <module>savvis-symphonyvpdc</module>
-       <module>hpcloud-compute</module>
        <module>trystack-nova</module>
     </modules>
 </project>

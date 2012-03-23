@@ -27,7 +27,7 @@
     <version>1.5.0-SNAPSHOT</version>
     <relativePath>../../project/pom.xml</relativePath>
   </parent>
-  <groupId>org.jclouds.labs</groupId>
+  <groupId>org.jclouds.provider</groupId>
   <artifactId>hpcloud-compute</artifactId>
   <name>jclouds HP Cloud Compute provider</name>
   <description>OpenStack Nova implementation targeted to HP Cloud Compute</description>
