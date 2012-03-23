@@ -39,6 +39,5 @@
        <module>elb</module>
        <module>aws-elb</module>
        <module>savvis-symphonyvpdc</module>
-       <module>trystack-nova</module>
     </modules>
 </project>

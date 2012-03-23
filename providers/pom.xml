@@ -70,5 +70,6 @@
         <module>ninefold-compute</module>
         <module>hpcloud-compute</module>
         <module>hpcloud-objectstorage</module>
+        <module>trystack-nova</module>
     </modules>
 </project>
