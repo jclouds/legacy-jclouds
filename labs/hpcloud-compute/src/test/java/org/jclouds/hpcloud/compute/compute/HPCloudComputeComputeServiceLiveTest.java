@@ -18,30 +18,17 @@
  */
 package org.jclouds.hpcloud.compute.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceLiveTest;
 import org.testng.annotations.Test;
-
-import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "HPCloudComputeComputeServiceLiveTest")
-public class HPCloudComputeComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class HPCloudComputeComputeServiceLiveTest extends NovaComputeServiceLiveTest {
 
    public HPCloudComputeComputeServiceLiveTest() {
       provider = "hpcloud-compute";
-   }
-
-   @Override
-   protected Module getSshModule() {
-      return new SshjSshClientModule();
-   }
-   
-   @Override
-   public void testOptionToNotBlock() {
-      // start call is blocking anyway.
    }
 }
