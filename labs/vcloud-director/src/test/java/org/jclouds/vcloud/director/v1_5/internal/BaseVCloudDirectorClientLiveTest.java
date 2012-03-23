@@ -66,7 +66,7 @@ import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
-import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
@@ -187,28 +187,20 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       if (Iterables.any(Lists.newArrayList(vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
          Org thisOrg = context.getApi().getOrgClient().getOrg(
                   Iterables.find(context.getApi().getOrgClient().getOrgList().getOrgs(),
-                           ReferenceTypePredicates.<Reference> nameEquals(session.getOrg())).getHref());
-         
-         //TODO: can we create new objects via (admin) operations instead of looking things up?
-         //TODO: lookup mediaURI, userURI
-         
-         // FIXME: lookup vAppTemplate
-//       if (vAppTemplateURI == null)
-//            vAppTemplateURI = Iterables.find(context.getApi().getQueryClient().vAppTemplatesReferenceQueryAll(),
-//                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.VDC)).getHref();
+                           ReferencePredicates.<Reference> nameEquals(session.getOrg())).getHref());
 
          if (vdcURI == null)
             vdcURI = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.VDC)).getHref();
+                     ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.VDC)).getHref();
 
          if (networkURI == null)
             networkURI = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
+                     ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
 
          // FIXME the URI should be opaque
          if (Strings.isNullOrEmpty(catalogId)) {
             String uri = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getHref().toASCIIString();
+                     ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getHref().toASCIIString();
             catalogId = Iterables.getLast(Splitter.on('/').split(uri));
          }
       }

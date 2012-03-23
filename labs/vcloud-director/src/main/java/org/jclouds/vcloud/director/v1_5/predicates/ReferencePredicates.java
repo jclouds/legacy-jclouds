@@ -20,27 +20,23 @@ package org.jclouds.vcloud.director.v1_5.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
- * Predicates handy when working with Reference Types
+ * Predicates for working with {@link Reference} collections.
  * 
  * @author Adrian Cole
  */
-
 public class ReferencePredicates {
 
    /**
-    * matches references of the given name
+    * Matches {@link Reference}s with the given name.
     * 
-    * @param <T>
-    *           type of the Reference, ex. {@link Link}
-    * @param name
-    *           ex. {@code context.getApi().getCurrentSession().getOrg()}
+    * @param T type of the reference, for example {@link Link}
+    * @param name value of the name attribute of the referenced object
     * @return predicate that will match references of the given name
     */
    public static <T extends Reference> Predicate<T> nameEquals(final String name) {
@@ -60,12 +56,58 @@ public class ReferencePredicates {
    }
 
    /**
-    * matches references of the given type
+    * Matches {@link Reference}s with names starting with the given prefix.
     * 
-    * @param <T>
-    *           type of the Reference, ex. {@link Link}
-    * @param type
-    *           ex. {@link VCloudDirectorMediaType#CATALOG}
+    * @param T type of the reference, for example {@link Link}
+    * @param name prefix of the name attribute of the referenced object
+    * @return predicate that will match references with names starting with the given prefix
+    */
+   public static <T extends Reference> Predicate<T> nameStartsWith(final String prefix) {
+      checkNotNull(prefix, "prefix must be defined");
+
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(T reference) {
+            String name = reference.getName();
+            return name != null && name.startsWith(prefix);
+         }
+
+         @Override
+         public String toString() {
+            return "nameStartsWith(" + prefix + ")";
+         }
+      };
+   }
+
+   /**
+    * Matches {@link Reference}s with names in the given collection.
+    *
+    * @param T type of the reference, for example {@link Link}
+    * @param names collection of values for the name attribute of the referenced object
+    * @return predicate that will match references with names starting with the given prefix
+    */
+   public static <T extends Reference> Predicate<T> nameIn(final Iterable<String> names) {
+      checkNotNull(names, "names must be defined");
+
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(T reference) {
+            String name = reference.getName();
+            return Iterables.contains(names, name);
+         }
+
+         @Override
+         public String toString() {
+            return "nameIn(" + Iterables.toString(names) + ")";
+         }
+      };
+   }
+
+   /**
+    * Matches {@link Reference}s of the given type.
+    * 
+    * @param T type of the reference, for example {@link Link}
+    * @param type the media type string of the referenced object, for example {@link VCloudDirectorMediaType#CATALOG}
     * @return predicate that will match references of the given type
     * @see VCloudDirectorMediaType
     */
