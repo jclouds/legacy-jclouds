@@ -26,7 +26,7 @@ import org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer;
 public class HPCloudObjectStorageTestInitializer extends SwiftTestInitializer {
 
    public HPCloudObjectStorageTestInitializer() {
-      provider = "hpcloud-objectstorage-lvs";
+      provider = "hpcloud-objectstorage";
    }
 
 }
