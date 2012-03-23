@@ -50,6 +50,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
@@ -70,7 +71,6 @@ import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -323,7 +323,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       // Build the configuration object
       NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
             .parentNetwork(parentNetwork.get())
-            .fenceMode("bridged")
+            .fenceMode(Network.FenceMode.ISOLATED)
             .build();
 
       return networkConfiguration;
