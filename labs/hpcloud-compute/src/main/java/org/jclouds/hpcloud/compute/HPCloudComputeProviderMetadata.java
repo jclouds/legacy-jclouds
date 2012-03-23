@@ -55,7 +55,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getIdentityName() {
-      return "email:tenantId";
+      return "tenantId:accessKey";
    }
 
    /**
@@ -63,7 +63,7 @@ public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
     */
    @Override
    public String getCredentialName() {
-      return "API Key";
+      return "Secret Key";
    }
 
    /**
