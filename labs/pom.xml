@@ -42,5 +42,6 @@
        <module>savvis-symphonyvpdc</module>
        <module>hpcloud-objectstorage</module>
        <module>hpcloud-compute</module>
+       <module>trystack-nova</module>
     </modules>
 </project>
