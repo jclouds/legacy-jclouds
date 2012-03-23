@@ -112,11 +112,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
    protected Session session;
 
-   protected String catalogName;
    protected String catalogId;
-   protected String networkName;
-   protected String userName;
-
    protected URI vAppTemplateURI;
    protected URI mediaURI;
    protected URI networkURI;
@@ -165,11 +161,8 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    // TODO change properties to URI, not id
-   @SuppressWarnings("unchecked")
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
-      catalogName = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-name"));
       catalogId = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
-      networkName = Strings.emptyToNull(System.getProperty("test." + provider + ".network-name"));
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
       if (vAppTemplateId != null)
@@ -191,10 +184,18 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       if (userId != null)
          userURI = URI.create(endpoint + "/admin/user/" + userId);
 
-      if (Iterables.any(Lists.newArrayList(catalogName, vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
+      if (Iterables.any(Lists.newArrayList(vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
          Org thisOrg = context.getApi().getOrgClient().getOrg(
                   Iterables.find(context.getApi().getOrgClient().getOrgList().getOrgs(),
                            ReferenceTypePredicates.<Reference> nameEquals(session.getOrg())).getHref());
+         
+         //TODO: can we create new objects via (admin) operations instead of looking things up?
+         //TODO: lookup mediaURI, userURI
+         
+         // FIXME: lookup vAppTemplate
+//       if (vAppTemplateURI == null)
+//            vAppTemplateURI = Iterables.find(context.getApi().getQueryClient().vAppTemplatesReferenceQueryAll(),
+//                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.VDC)).getHref();
 
          if (vdcURI == null)
             vdcURI = Iterables.find(thisOrg.getLinks(),
@@ -203,14 +204,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
          if (networkURI == null)
             networkURI = Iterables.find(thisOrg.getLinks(),
                      ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
-
-         if (Strings.isNullOrEmpty(networkName))
-            networkName = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getName();
-
-         if (Strings.isNullOrEmpty(catalogName))
-            catalogName = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getName();
 
          // FIXME the URI should be opaque
          if (Strings.isNullOrEmpty(catalogId)) {

@@ -19,8 +19,10 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.MATCHES_STRING_FMT;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.ADMIN_USER;
@@ -28,8 +30,10 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.MEDIA;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkControlAccessParams;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkGuestCustomizationSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkLeaseSettingsSection;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataKeyAbsentFor;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValueFor;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConfigSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkNetworkConnectionSection;
@@ -86,7 +90,6 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswerChoice;
@@ -115,6 +118,9 @@ import com.google.common.collect.Sets;
  */
 @Test(groups = { "live", "user", "vapp" }, singleThreaded = true, testName = "VAppClientLiveTest")
 public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
+
+   private MetadataValue metadataValue;
+   private String key;
 
    /**
     * @see VAppClient#getVApp(URI)
@@ -1109,20 +1115,11 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // See the description in testModifyVirtualHardwareSectionDisks
    }
 
-   @Test(testName = "GET /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
-   public void testGetMetadata() {
-      Metadata metadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
-
-      // Check the retrieved object is well formed
-      checkMetadataFor(VAPP, metadata);
-   }
-
-   @Test(testName = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
+   @Test(testName = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
    public void testSetMetadataValue() {
-      // Store a value
-      String key = name("key-");
+      key = name("key-");
       String value = name("value-");
-      MetadataValue metadataValue = MetadataValue.builder().value(value).build();
+      metadataValue = MetadataValue.builder().value(value).build();
       vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
 
       // Retrieve the value, and assert it was set correctly
@@ -1131,14 +1128,31 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // Check the retrieved object is well formed
       checkMetadataValueFor(VAPP, newMetadataValue, value);
    }
+   
+   @Test(testName = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
+   public void testGetMetadata() {
+      // Call the method being tested
+      Metadata metadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
+      
+      checkMetadata(metadata);
+      
+      // Check requirements for this test
+      assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vApp"));
+   }
+   
+   @Test(testName = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
+   public void testGetOrgMetadataValue() {
+      // Call the method being tested
+      MetadataValue value = vAppClient.getMetadataClient().getMetadataValue(vApp.getHref(), key);
+      
+      String expected = metadataValue.getValue();
+
+      checkMetadataValue(value);
+      assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
+   }
 
    @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testDeleteMetadataEntry() {
-      // Store a value, to be deleted
-      String key = name("key-");
-      MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
-      vAppClient.getMetadataClient().setMetadata(vApp.getHref(), key, metadataValue);
-
       // Delete the entry
       Task task = vAppClient.getMetadataClient().deleteMetadataEntry(vApp.getHref(), key);
       retryTaskSuccess.apply(task);
