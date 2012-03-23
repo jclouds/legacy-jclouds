@@ -186,7 +186,7 @@ public class BaseVCloudDirectorRestClientExpectTest extends BaseRestClientExpect
     *
     * @author danikov
     */
-   protected class VcloudHttpRequestPrimer {
+   public class VcloudHttpRequestPrimer {
       private Multimap<String, String> headers = LinkedListMultimap.create();
       private HttpRequest.Builder builder = HttpRequest.builder();
       
