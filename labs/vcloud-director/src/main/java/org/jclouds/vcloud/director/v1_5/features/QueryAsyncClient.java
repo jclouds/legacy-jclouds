@@ -21,6 +21,7 @@ package org.jclouds.vcloud.director.v1_5.features;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -28,6 +29,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.domain.query.CatalogReferences;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryList;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
@@ -44,6 +46,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 @SkipEncoding({ '=' })
 public interface QueryAsyncClient {
+
+   /**
+    * @see QueryClient#entity(String)
+    */
+   @GET
+   @Path("/entity/{id}")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Entity> entity(@PathParam("id") String id);
 
    /**
     * REST API General queries handler.
