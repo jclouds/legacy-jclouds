@@ -88,6 +88,8 @@ public class InstallGuestAdditions implements Statement {
          statements.add(exec(String.format("mount -o loop {tmp}{fs}%s %s", vboxGuestAdditionsIso, mountPoint)));
       }
       statements.add(exec(String.format("%s%s", mountPoint, "/VBoxLinuxAdditions.run"))); //
+      statements.add(exec(String.format("echo VBoxService > /etc/rc.local"))); //
+      statements.add(exec(String.format("echo exit 0 >> /etc/rc.local"))); //
       statements.add(exec(String.format("umount %s", mountPoint)));
       return statements;
    }

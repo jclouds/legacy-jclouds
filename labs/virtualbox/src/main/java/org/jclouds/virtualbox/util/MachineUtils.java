@@ -18,6 +18,9 @@
  */
 package org.jclouds.virtualbox.util;
 
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -34,6 +37,7 @@ import org.jclouds.util.Throwables2;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.LockType;
+import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
@@ -50,7 +54,11 @@ import com.google.inject.Inject;
 
 @Singleton
 public class MachineUtils {
-
+   
+   public final String IP_V4_ADDRESS_PATTERN = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+   
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -178,14 +186,30 @@ public class MachineUtils {
     *           the function to execute
     * @return the result from applying the function to the session.
     */
-   private <T> T lockSessionOnMachineAndApply(String machineId, LockType type, Function<ISession, T> function) {
+   protected <T> T lockSessionOnMachineAndApply(String machineId, LockType type, Function<ISession, T> function) {
       int retries = 5;
+      ISession session = lockSession(machineId, type, retries);
+      try {
+         return function.apply(session);
+      } catch (VBoxException e) {
+         throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
+                  type, e.getMessage()), e);
+      } finally {
+         if (session != null && session.getState().equals(SessionState.Locked))
+         session.unlockMachine();
+      }
+   }
+
+   private ISession lockSession(String machineId, LockType type, int retries) {
       int count = 0;
       ISession session;
-      long time = System.currentTimeMillis();
       while (true) {
          try {
             IMachine immutableMachine = manager.get().getVBox().findMachine(machineId);
+            try {
+               Thread.sleep(300L);
+            } catch (InterruptedException e1) {
+            }
             session = manager.get().getSessionObject();
             immutableMachine.lockMachine(session, type);
             break;
@@ -206,14 +230,8 @@ public class MachineUtils {
             }
          }
       }
-      try {
-         return function.apply(session);
-      } catch (VBoxException e) {
-         throw new RuntimeException(String.format("error applying %s to %s with %s lock: %s", function, machineId,
-                  type, e.getMessage()), e);
-      } finally {
-         session.unlockMachine();
-      }
+      checkState(session.getState().equals(SessionState.Locked));
+      return checkNotNull(session, "session");
    }
    
    void print() {
