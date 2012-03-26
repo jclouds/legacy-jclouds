@@ -26,6 +26,7 @@ import javax.xml.bind.JAXB;
 
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.InputSuppliers;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 
@@ -49,6 +50,9 @@ public class ThrowVCloudErrorOn4xx implements Function<Exception, Object> {
       if (exception != null && exception.getResponse() != null && exception.getResponse().getStatusCode() >= 400 && exception.getResponse().getStatusCode() < 500) {
          try {
             Error error = JAXB.unmarshal(InputSuppliers.of(exception.getContent()).getInput(), Error.class);
+            if (exception.getResponse().getStatusCode() == 403 && error.getMinorErrorCode().equals("ACCESS_TO_RESOURCE_IS_FORBIDDEN")) {
+               throw new ResourceNotFoundException(error.getMessage());
+            }
             throw new VCloudDirectorException(error);
          } catch (IOException e) {
             Throwables.propagate(e);

@@ -203,7 +203,7 @@ public class Error {
 
    /**
     * Specific API error code.
-    * <p/>
+    *
     * For example - can indicate that vApp power on failed by some reason.
     */
    public String getMinorErrorCode() {
