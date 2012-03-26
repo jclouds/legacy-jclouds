@@ -89,7 +89,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       vAppClient = context.getApi().getVAppClient();
    }
 
-   @Test(testName = "GET /entity/{id}")
+   @Test(description = "GET /entity/{id}")
    public void testEntity() {
       // Get a VAppTemplate to look up as an entity
       VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
@@ -107,7 +107,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
    }
 
-   @Test(testName = "GET /query")
+   @Test(description = "GET /query")
    public void testQuery() {
       VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       QueryResultRecords queryResult = queryClient.query("vAppTemplate", String.format("name==%s", vAppTemplate.getName()));
@@ -117,19 +117,19 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(hrefs.contains(vAppTemplateURI), "VAppTemplates query result should include vAppTemplate "+vAppTemplateURI+"; but only has "+hrefs);
    }
 
-   @Test(testName = "GET /catalogs/query")
+   @Test(description = "GET /catalogs/query")
    public void testQueryAllCatalogs() {
       QueryResultRecords catalogRecords = queryClient.catalogsQueryAll();
       assertFalse(catalogRecords.getRecords().isEmpty(), String.format(NOT_EMPTY_OBJECT_FMT, "CatalogRecord", "QueryResultRecords"));
    }
 
-   @Test(testName = "GET /catalogs/query?format=references", dependsOnMethods = { "testQueryAllCatalogs" })
+   @Test(description = "GET /catalogs/query?format=references", dependsOnMethods = { "testQueryAllCatalogs" })
    public void testQueryAllCatalogReferences() {
       CatalogReferences catalogReferences = queryClient.catalogReferencesQueryAll();
       assertFalse(catalogReferences.getReferences().isEmpty(), String.format(NOT_EMPTY_OBJECT_FMT, "CatalogReference", "CatalogReferences"));
    }
    
-   @Test(testName = "GET /vAppTemplates/query")
+   @Test(description = "GET /vAppTemplates/query")
    public void testQueryAllVAppTemplates() {
       QueryResultRecords queryResult = queryClient.vAppTemplatesQueryAll();
       Set<URI> hrefs = toHrefs(queryResult);
@@ -138,7 +138,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(hrefs.contains(vAppTemplateURI), "VAppTemplates query result should include vAppTemplate "+vAppTemplateURI+"; but only has "+hrefs);
    }
    
-   @Test(testName = "GET /vAppTemplates/query?filter)")
+   @Test(description = "GET /vAppTemplates/query?filter")
    public void testQueryVAppTemplatesWithFilter() {
       VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
       QueryResultRecords queryResult = queryClient.vAppTemplatesQuery(String.format("name==%s", vAppTemplate.getName()));
@@ -148,7 +148,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(hrefs.contains(vAppTemplateURI), "VAppTemplates query result should have found vAppTemplate "+vAppTemplateURI);
    }
 
-   @Test(testName = "GET /vApps/query")
+   @Test(description = "GET /vApps/query")
    public void testQueryAllVApps() {
       vApp = instantiateVApp();
       
@@ -159,7 +159,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(hrefs.contains(vApp.getHref()), "VApp query result should include vapp "+vApp.getHref()+"; but only has "+hrefs);
    }
    
-   @Test(testName = "GET /vApps/query?filter", dependsOnMethods = { "testQueryAllVApps" } )
+   @Test(description = "GET /vApps/query?filter", dependsOnMethods = { "testQueryAllVApps" } )
    public void testQueryVAppsWithFilter() {
       QueryResultRecords queryResult = queryClient.vAppsQuery(String.format("name==%s", vApp.getName()));
       Set<URI> hrefs = toHrefs(queryResult);
@@ -168,7 +168,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(hrefs, Collections.singleton(vApp.getHref()), "VApps query result should have found vApp "+vApp.getHref());
    }
    
-   @Test(testName = "GET /vms/query", dependsOnMethods = { "testQueryAllVApps" } )
+   @Test(description = "GET /vms/query", dependsOnMethods = { "testQueryAllVApps" } )
    public void testQueryAllVms() {
       // Wait for vApp to have been entirely instantiated
       Task instantiateTask = Iterables.getFirst(vApp.getTasks(), null);
@@ -192,7 +192,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertTrue(hrefs.containsAll(vmHrefs), "VMs query result should include vms "+vmHrefs+"; but only has "+hrefs);
    }
    
-   @Test(testName = "GET /vms/query?filter", dependsOnMethods = { "testQueryAllVms" } )
+   @Test(description = "GET /vms/query?filter", dependsOnMethods = { "testQueryAllVms" } )
    public void testQueryAllVmsWithFilter() {
       List<Vm> vms = vApp.getChildren().getVms();
       Set<URI> vmHrefs = toHrefs(vms);
@@ -204,14 +204,14 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(hrefs, vmHrefs, "VMs query result should equal vms of vApp "+vApp.getName()+" ("+vmHrefs+"); but only has "+hrefs);
    }
    
-   @Test(testName = "GET /mediaList/query")
+   @Test(description = "GET /mediaList/query")
    public void testQueryAllMedia() {
       QueryResultRecords queryResult = queryClient.mediaListQueryAll();
       
       assertRecordTypes(queryResult, Arrays.asList(VCloudDirectorMediaType.VAPP, null), QueryResultMediaRecord.class);
    }
    
-   @Test(testName = "GET /mediaList/query?filter")
+   @Test(description = "GET /mediaList/query?filter")
    public void testQueryMediaWithFilter() {
       String mediaName = "abc";
       QueryResultRecords queryResult = queryClient.mediaListQuery(String.format("name==%s", mediaName));

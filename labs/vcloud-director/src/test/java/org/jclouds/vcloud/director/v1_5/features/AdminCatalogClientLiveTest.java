@@ -78,7 +78,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
    }
    
-   @Test(testName = "POST /admin/org/{id}/catalogs")
+   @Test(description = "POST /admin/org/{id}/catalogs")
    public void testCreateCatalog() {
       AdminCatalog newCatalog = AdminCatalog.builder()
          .name(name("Test Catalog "))
@@ -91,7 +91,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       // FIXME: documentation suggests we should wait for a task here
    }
 
-   @Test(testName = "GET /admin/catalog/{id}",
+   @Test(description = "GET /admin/catalog/{id}",
          dependsOnMethods = { "testCreateCatalog" })
    public void testGetCatalog() {
       catalog = catalogClient.getCatalog(catalog.getHref());
@@ -99,14 +99,14 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       Checks.checkAdminCatalog(catalog);
    }
    
-   @Test(testName = "GET /admin/catalog/{id}/owner",
+   @Test(description = "GET /admin/catalog/{id}/owner",
          dependsOnMethods = { "testGetCatalog" })
    public void testGetCatalogOwner() {
       owner = catalogClient.getOwner(catalog.getHref());
       Checks.checkOwner(owner);
    }
    
-   @Test(testName = "PUT /admin/catalog/{id}/owner",
+   @Test(description = "PUT /admin/catalog/{id}/owner",
          dependsOnMethods = { "testGetCatalog" })
    public void updateCatalogOwner() {
       User newOwnerUser = UserClientLiveTest.randomTestUser("testUpdateCatalogOwner", context);
@@ -133,7 +133,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       }
    }
    
-   @Test(testName = "PUT /admin/catalog/{id}", dependsOnMethods = { "testGetCatalogOwner" })
+   @Test(description = "PUT /admin/catalog/{id}", dependsOnMethods = { "testGetCatalogOwner" })
    public void testUpdateCatalog() {
       String oldName = catalog.getName();
       String newName = "new "+oldName;
@@ -171,7 +171,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       }
    }
    
-   @Test(testName = "POST /admin/catalog/{id}/action/publish",
+   @Test(description = "POST /admin/catalog/{id}/action/publish",
          dependsOnMethods = { "testUpdateCatalog" } ) // FIXME: fails with a 403
    public void testPublishCatalog() {
       assertNotNull(catalog, String.format(NOT_NULL_OBJ_FMT, "Catalog"));
@@ -189,7 +189,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
             CATALOG, "isPublished", true, catalog.isPublished()));
    }
    
-   @Test(testName = "DELETE /admin/catalog/{id}",
+   @Test(description = "DELETE /admin/catalog/{id}",
          dependsOnMethods = { "testCreateCatalog" } )
    public void testDeleteCatalog() {
 //      assertEquals(catalog.getCatalogItems().getCatalogItems().size(), 0, 

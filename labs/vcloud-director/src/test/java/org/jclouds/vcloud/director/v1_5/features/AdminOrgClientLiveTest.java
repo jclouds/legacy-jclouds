@@ -77,21 +77,21 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
    }
    
-   @Test(testName = "GET /admin/org/{id}")
+   @Test(description = "GET /admin/org/{id}")
    public void testGetAdminOrg() {
       AdminOrg adminOrg = orgClient.getOrg(orgRef.getHref());
       
       Checks.checkAdminOrg(adminOrg);
    }
    
-   @Test(testName = "GET /admin/org/{id}/settings/email")
+   @Test(description = "GET /admin/org/{id}/settings/email")
    public void testGetEmailSettings() {
       emailSettings = orgClient.getEmailSettings(orgRef.getHref());
       
       Checks.checkEmailSettings(emailSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/email", 
+   @Test(description = "PUT /admin/org/{id}/settings/email", 
          dependsOnMethods = { "testGetEmailSettings" })
    public void testUpdateEmailSettings() {
       boolean isDefaultSmtpServer = emailSettings.isDefaultSmtpServer();
@@ -159,14 +159,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-   @Test(testName = "GET /admin/org/{id}/settings/general")
+   @Test(description = "GET /admin/org/{id}/settings/general")
    public void testGetGeneralSettings() {
       generalSettings = orgClient.getGeneralSettings(orgRef.getHref());
       
       Checks.checkGeneralSettings(generalSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/general", 
+   @Test(description = "PUT /admin/org/{id}/settings/general", 
          dependsOnMethods = { "testGetGeneralSettings" } )
    public void testUpdateGeneralSettings() {
       // FIXME: canPublishCatalogs does not update
@@ -221,21 +221,21 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-   @Test(testName = "GET /admin/org/{id}/settings/ldap")
+   @Test(description = "GET /admin/org/{id}/settings/ldap")
    public void testGetLdapSettings() {
       ldapSettings = orgClient.getLdapSettings(orgRef.getHref());
       
       Checks.checkLdapSettings(ldapSettings);
    }
  
-   @Test(testName = "GET /admin/org/{id}/settings/passwordPolicy")
+   @Test(description = "GET /admin/org/{id}/settings/passwordPolicy")
    public void testGetPasswordPolicy() {
       passwordPolicy = orgClient.getPasswordPolicy(orgRef.getHref());
       
       Checks.checkPasswordPolicySettings(passwordPolicy);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/passwordPolicy", 
+   @Test(description = "PUT /admin/org/{id}/settings/passwordPolicy", 
          dependsOnMethods = { "testGetPasswordPolicy" })
    public void testUpdatePasswordPolicy() {
       boolean accountLockoutEnabled = passwordPolicy.isAccountLockoutEnabled();
@@ -277,14 +277,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/org/{id}/settings/vAppLeaseSettings")
+   @Test(description = "GET /admin/org/{id}/settings/vAppLeaseSettings")
    public void testGetVAppLeaseSettings() {
       vAppLeaseSettings = orgClient.getVAppLeaseSettings(orgRef.getHref());
       
       Checks.checkVAppLeaseSettings(vAppLeaseSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/vAppLeaseSettings", 
+   @Test(description = "PUT /admin/org/{id}/settings/vAppLeaseSettings", 
          dependsOnMethods = { "testGetVAppLeaseSettings" } ) // FIXME: fails with 403 forbidden
    public void testUpdateVAppLeaseSettings() {
       boolean deleteOnStorageLeaseExpiration = vAppLeaseSettings.deleteOnStorageLeaseExpiration();
@@ -326,14 +326,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-   @Test(testName = "GET /admin/org/{id}/settings/vAppTemplateLeaseSettings")
+   @Test(description = "GET /admin/org/{id}/settings/vAppTemplateLeaseSettings")
    public void testGetVAppTemplateLeaseSettings() {
       vAppTemplateLeaseSettings = orgClient.getVAppTemplateLeaseSettings(orgRef.getHref());
       
       Checks.checkVAppTemplateLeaseSettings(vAppTemplateLeaseSettings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings", 
+   @Test(description = "PUT /admin/org/{id}/settings/vAppTemplateLeaseSettings", 
          dependsOnMethods = { "testGetVAppTemplateLeaseSettings" }) // FIXME: fails with 403 forbidden
    public void testUpdateVAppTemplateLeaseSettings() {
       boolean deleteOnStorageLeaseExpiration = vAppTemplateLeaseSettings.deleteOnStorageLeaseExpiration();
@@ -369,14 +369,14 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/org/{id}/settings")
+   @Test(description = "GET /admin/org/{id}/settings")
    public void testGetSettings() {
       settings = orgClient.getSettings(orgRef.getHref());
       
       Checks.checkOrgSettings(settings);
    }
    
-   @Test(testName = "PUT /admin/org/{id}/settings",
+   @Test(description = "PUT /admin/org/{id}/settings",
          dependsOnMethods = { "testGetEmailSettings" } )
    public void testUpdateSettings() throws Exception {
       String newFromEmailAddress = "test"+random.nextInt(Integer.MAX_VALUE)+"@test.com";

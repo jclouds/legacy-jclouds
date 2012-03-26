@@ -71,7 +71,7 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
       networkRef = Reference.builder().href(networkURI).build().toAdminReference(endpoint);
    }
    
-   @Test(testName = "GET /admin/network/{id}")
+   @Test(description = "GET /admin/network/{id}")
    public void testGetNetwork() {
       //TODO: test both org and external networks
       assertNotNull(networkRef, String.format(OBJ_REQ_LIVE, NETWORK));
@@ -88,7 +88,7 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
    }
    
    // TODO: this test is far from exhaustive
-   @Test(testName = "PUT /admin/network/{id}" )
+   @Test(description = "PUT /admin/network/{id}" )
    public void testUpdateNetwork() {
       //TODO: ensure network instanceof OrgNetwork, may require queries
       assertTrue(network instanceof OrgNetwork, String.format(REF_REQ_LIVE, "OrgNetwork"));
@@ -144,7 +144,7 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
       }
    }
    
-   @Test(testName = "POST /admin/network/{id}/action/reset")
+   @Test(description = "POST /admin/network/{id}/action/reset")
    public void testResetNetwork() { 
       // TODO assert that network is deployed somehow
       Task resetNetworkTask = networkClient.resetNetwork(networkRef.getHref());

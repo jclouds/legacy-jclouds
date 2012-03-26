@@ -66,7 +66,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       orgClient = context.getApi().getOrgClient();
    }
    
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (metadataSet) {
          context.getApi().getAdminOrgClient().getMetadataClient()
@@ -83,7 +83,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private Org org;
    private boolean metadataSet = false;
 
-   @Test(testName = "GET /org")
+   @Test(description = "GET /org")
    public void testGetOrgList() {
       // Call the method being tested
       orgList = orgClient.getOrgList();
@@ -99,7 +99,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
 
-   @Test(testName = "GET /org/{id}", dependsOnMethods = { "testGetOrgList" })
+   @Test(description = "GET /org/{id}", dependsOnMethods = { "testGetOrgList" })
    public void testGetOrg() {
       Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
       assertNotNull(orgRef);
@@ -112,14 +112,14 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkOrg(org);
    }
    
-   @Test(testName = "orgClient admin metadata setup", dependsOnMethods = { "testGetOrg" })
+   @Test(description = "orgClient admin metadata setup", dependsOnMethods = { "testGetOrg" })
    public void testSetupMetadata() {
       context.getApi().getAdminOrgClient().getMetadataClient().setMetadata(toAdminUri(orgURI), 
             "KEY", MetadataValue.builder().value("VALUE").build()); 
       metadataSet = true;
    }
    
-   @Test(testName = "GET /org/{id}/metadata", dependsOnMethods = { "testSetupMetadata" })
+   @Test(description = "GET /org/{id}/metadata", dependsOnMethods = { "testSetupMetadata" })
    public void testGetOrgMetadata() {
       // Call the method being tested
       Metadata metadata = orgClient.getMetadataClient().getMetadata(orgURI);
@@ -132,7 +132,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "Org"));
    }
    
-   @Test(testName = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
+   @Test(description = "GET /org/{id}/metadata/{key}", dependsOnMethods = { "testGetOrgMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
       MetadataValue value = orgClient.getMetadataClient().getMetadataValue(orgURI, "KEY");
@@ -145,7 +145,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
    }
 
-   @Test(testName = "GET /org/{id}/catalog/{catalogId}/controlAccess", dependsOnMethods = { "testGetOrg" })
+   @Test(description = "GET /org/{id}/catalog/{catalogId}/controlAccess", dependsOnMethods = { "testGetOrg" })
    public void testGetControlAccess() {
       // Call the method being tested
       ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);
@@ -154,7 +154,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkControlAccessParams(params);
    }
 
-   @Test(testName = "GET /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
+   @Test(description = "GET /org/{id}/catalog/{catalogId}/action/controlAccess", dependsOnMethods = { "testGetControlAccess" })
    public void testModifyControlAccess() {
       // Setup params
       ControlAccessParams params = orgClient.getControlAccess(orgURI, catalogId);

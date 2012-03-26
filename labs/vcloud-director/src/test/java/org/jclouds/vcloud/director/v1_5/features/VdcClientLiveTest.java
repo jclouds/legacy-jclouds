@@ -119,7 +119,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
    }
    
-   @Test(testName = "GET /vdc/{id}")
+   @Test(description = "GET /vdc/{id}")
    public void testGetVdc() {
       Vdc vdc = vdcClient.getVdc(vdcURI);
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
@@ -128,7 +128,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVdc(vdc);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/captureVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
+   @Test(description = "POST /vdc/{id}/action/captureVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
    public void testCaptureVApp() {
       String name = name("captured-");
       
@@ -151,7 +151,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "name", name, capturedVAppTemplate.getName()));
    }
    
-   @Test(testName = "POST /vdc/{id}/action/cloneVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
+   @Test(description = "POST /vdc/{id}/action/cloneVApp", dependsOnMethods = { "testInstantiateVAppTemplate" } )
    public void testCloneVApp() {
       CloneVAppParams cloneVappParams = CloneVAppParams.builder()
                .source(instantiatedVApp.getHref())
@@ -179,7 +179,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVApp(clonedVApp);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/cloneVAppTemplate")
+   @Test(description = "POST /vdc/{id}/action/cloneVAppTemplate")
    public void testCloneVAppTemplate() {
       clonedVAppTemplate = vdcClient.cloneVAppTemplate(vdcURI, CloneVAppTemplateParams.builder()
                .source(vAppTemplateURI)
@@ -192,7 +192,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVAppTemplate(clonedVAppTemplate);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/composeVApp")
+   @Test(description = "POST /vdc/{id}/action/composeVApp")
    public void testComposeVApp() {
       String name = name("composed-");
       
@@ -224,7 +224,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO Duplicates code in VAppClientLiveTest
-   @Test(testName = "POST /vdc/{id}/action/instantiateVAppTemplate")
+   @Test(description = "POST /vdc/{id}/action/instantiateVAppTemplate")
    public void testInstantiateVAppTemplate() {
       Vdc vdc = vdcClient.getVdc(vdcURI);
 
@@ -275,7 +275,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkVApp(instantiatedVApp);
    }
    
-   @Test(testName = "POST /vdc/{id}/action/uploadVAppTemplate")
+   @Test(description = "POST /vdc/{id}/action/uploadVAppTemplate")
    public void testUploadVAppTemplate() {
       // TODO Should test all 4 stages of upload; currently doing only stage 1 here.
       //  1. creating empty vApp template entity 
@@ -307,13 +307,13 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
    }
    
-   @Test(testName = "vdcClient admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
+   @Test(description = "vdcClient admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
    public void testSetupMetadata() {
       context.getApi().getAdminVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
    }
    
-   @Test(testName = "GET /vdc/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
+   @Test(description = "GET /vdc/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
    public void testGetMetadata() {
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
       
@@ -324,7 +324,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(VDC, metadata);
    }
    
-   @Test(testName = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
+   @Test(description = "GET /vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" } )
    public void testGetMetadataValue() {
       // First find a key
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);

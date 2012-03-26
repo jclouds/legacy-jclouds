@@ -89,14 +89,14 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "POST /admin/org/{id}/users")
+   @Test(description = "POST /admin/org/{id}/users")
    public void testCreateUser() {
       User newUser = randomTestUser("testCreateUser", context);
       user = userClient.createUser(orgRef.getHref(), newUser);
       Checks.checkUser(newUser);
    }
    
-   @Test(testName = "GET /admin/user/{id}",
+   @Test(description = "GET /admin/user/{id}",
          dependsOnMethods = { "testCreateUser" })
    public void testGetUser() {
       user = userClient.getUser(user.getHref());
@@ -104,7 +104,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkUser(user);
    }
  
-   @Test(testName = "PUT /admin/user/{id}",
+   @Test(description = "PUT /admin/user/{id}",
          dependsOnMethods = { "testGetUser" })
    public void testUpdateUser() {
       User oldUser = user.toBuilder().build();
@@ -162,7 +162,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       sessionClient.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
  
-   @Test(testName = "POST /admin/user/{id}/action/unlock", dependsOnMethods = { "testUpdateUser" })
+   @Test(description = "POST /admin/user/{id}/action/unlock", dependsOnMethods = { "testUpdateUser" })
    public void testUnlockUser() {
       // Need to know how many times to fail login to lock account
       AdminOrgClient adminOrgClient = context.getApi().getAdminOrgClient();
@@ -216,7 +216,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-   @Test(testName = "DELETE /admin/user/{id}",
+   @Test(description = "DELETE /admin/user/{id}",
          dependsOnMethods = { "testCreateUser" } )
    public void testDeleteUser() {
       // Create a user to be deleted (so we remove dependencies on test ordering)
