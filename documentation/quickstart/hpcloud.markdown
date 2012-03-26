@@ -18,7 +18,7 @@ This page helps you get started with jclouds API with
 
 {% highlight java %}
 // Get a context with hpcloud that offers the portable BlobStore api
-BlobStoreContext context = new BlobStoreContextFactory().createContext("hpcloud-objectstorage-lvs", user, password);
+BlobStoreContext context = new BlobStoreContextFactory().createContext("hpcloud-objectstorage", user, password);
 
 // Create a container in the default location
 context.getBlobStore().createContainerInLocation(null, container);
