@@ -110,7 +110,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
 
-   @Test(testName = "GET /catalog/{id}")
+   @Test(description = "GET /catalog/{id}")
    public void testGetCatalog() {
       CatalogType catalog = catalogClient.getCatalog(catalogRef.getHref());
       assertNotNull(catalog);
@@ -118,14 +118,14 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(catalog.getHref(), catalogRef.getHref());
    }
 
-   @Test(testName = "GET /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "GET /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
    public void testGetCatalogItem() {
       CatalogItem catalogItem = catalogClient.getCatalogItem(this.catalogItem.getHref());
       checkCatalogItem(catalogItem);
       assertEquals(catalogItem.getEntity().getHref(), this.catalogItem.getEntity().getHref());
    }
 
-   @Test(testName = "POST /catalog/{id}/catalogItems")
+   @Test(description = "POST /catalog/{id}/catalogItems")
    public void testAddCatalogItem() {
       assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
       
@@ -157,7 +157,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(catalogItem.getDescription(), "New Item");
    }
 
-   @Test(testName = "PUT /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "PUT /catalogItem/{id}", dependsOnMethods = "testAddCatalogItem")
    public void testUpdateCatalogItem() {     
       CatalogItem updatedCatalogItem = CatalogItem.builder().fromCatalogItem(catalogItem).name("UPDATEDNAME").build();
       catalogItem = catalogClient.updateCatalogItem(catalogItem.getHref(), updatedCatalogItem);
@@ -166,7 +166,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
 
    // Note this runs after all the metadata tests
-   @Test(testName = "DELETE /catalogItem/{id}", dependsOnMethods = "testDeleteCatalogItemMetadataValue")
+   @Test(description = "DELETE /catalogItem/{id}", dependsOnMethods = "testDeleteCatalogItemMetadataValue")
    public void testDeleteCatalogItem() {
       catalogClient.deleteCatalogItem(catalogItem.getHref());
       try {
@@ -181,13 +181,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
 
-   @Test(testName = "GET /catalog/{id}/metadata")
+   @Test(description = "GET /catalog/{id}/metadata")
    public void testGetCatalogMetadata() {
       Metadata catalogMetadata = catalogClient.getMetadataClient().getMetadata(catalogRef.getHref());
       checkMetadata(catalogMetadata);
    }
 
-   @Test(testName = "GET /catalog/{id}/metadata/{key}")
+   @Test(description = "GET /catalog/{id}/metadata/{key}")
    public void testGetCatalogMetadataValue() {
       Metadata catalogMetadata = catalogClient.getMetadataClient().getMetadata(catalogRef.getHref());
       MetadataEntry existingMetadataEntry = Iterables.find(catalogMetadata.getMetadataEntries(), new Predicate<MetadataEntry>() {
@@ -202,13 +202,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkMetadataValue(metadataValue);
    }
 
-   @Test(testName = "GET /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "GET /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
    public void testGetCatalogItemMetadata() {
       Metadata catalogItemMetadata = catalogClient.getCatalogItemMetadataClient().getMetadata(catalogItem.getHref());
       checkMetadata(catalogItemMetadata);
    }
 
-   @Test(testName = "POST /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
+   @Test(description = "POST /catalogItem/{id}/metadata", dependsOnMethods = "testAddCatalogItem")
    public void testMergeCatalogItemMetadata() {
       Metadata newMetadata = Metadata.builder()
             .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
@@ -236,13 +236,13 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkMetadataValue(newKeyMetadataValue);
    }
 
-   @Test(testName = "GET /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testSetCatalogItemMetadataValue")
+   @Test(description = "GET /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testSetCatalogItemMetadataValue")
    public void testGetCatalogItemMetadataValue() {      
       MetadataValue metadataValue = catalogClient.getCatalogItemMetadataClient().getMetadataValue(catalogItem.getHref(), "KEY");
       checkMetadataValue(metadataValue);
    }
 
-   @Test(testName = "PUT /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testMergeCatalogItemMetadata")
+   @Test(description = "PUT /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testMergeCatalogItemMetadata")
    public void testSetCatalogItemMetadataValue() {
       MetadataValue newMetadataValue = MetadataValue.builder().value("NEW").build();
 
@@ -257,7 +257,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkMetadataValue(updatedMetadataValue);
    }
 
-   @Test(testName = "DELETE /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testGetCatalogItemMetadataValue")
+   @Test(description = "DELETE /catalogItem/{id}/metadata/{key}", dependsOnMethods = "testGetCatalogItemMetadataValue")
    public void testDeleteCatalogItemMetadataValue() {
       Task deleteCatalogItemMetadataValue = catalogClient.getCatalogItemMetadataClient().deleteMetadataEntry(catalogItem.getHref(), "KEY");
       checkTask(deleteCatalogItemMetadataValue);
