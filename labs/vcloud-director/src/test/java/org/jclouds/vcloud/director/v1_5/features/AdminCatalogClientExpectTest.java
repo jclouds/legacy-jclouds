@@ -25,7 +25,6 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
-import org.jclouds.vcloud.director.v1_5.domain.CatalogItems;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
@@ -37,7 +36,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Test the {@link CatalogClient} by observing its side effects.
+ * Test the {@link AdminCatalogClient} by observing its side effects.
  * 
  * @author grkvlt@apache.org
  */
@@ -289,8 +288,6 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                   .build())
                .build())
             .build())
-            .catalogItems(CatalogItems.builder()
-               .build())
             .isPublished(false)
          .build();
    }
@@ -337,27 +334,25 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                .build())
          .description("Testing")
          .owner(owner())
-         .catalogItems(CatalogItems.builder()
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("image")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/67a469a1-aafe-4b5b-bb31-a6202ad8961f"))
-                     .build())
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("ubuntu10")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-                     .build())
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("imageTesting")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
-                     .build())
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("TestCase")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/f7598606-aea4-41d7-8f67-2090e28e7876"))
-                     .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("image")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/67a469a1-aafe-4b5b-bb31-a6202ad8961f"))
+               .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("ubuntu10")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+               .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("imageTesting")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
+               .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("TestCase")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/f7598606-aea4-41d7-8f67-2090e28e7876"))
                .build())
          .isPublished(false)
          .build();

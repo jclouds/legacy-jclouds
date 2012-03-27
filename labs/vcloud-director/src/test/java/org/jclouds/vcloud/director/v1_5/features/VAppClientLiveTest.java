@@ -64,7 +64,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
-import org.jclouds.vcloud.director.v1_5.domain.AccessSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
@@ -325,11 +324,9 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    public void testControlAccessUser() {
       ControlAccessParams params = ControlAccessParams.builder()
             .notSharedToEveryone()
-            .accessSettings(AccessSettings.builder()
-                  .accessSetting(AccessSetting.builder()
-                        .subject(Reference.builder().href(userURI).type(ADMIN_USER).build())
-                        .accessLevel("ReadOnly")
-                        .build())
+            .accessSetting(AccessSetting.builder()
+                  .subject(Reference.builder().href(userURI).type(ADMIN_USER).build())
+                  .accessLevel("ReadOnly")
                   .build())
             .build();
 

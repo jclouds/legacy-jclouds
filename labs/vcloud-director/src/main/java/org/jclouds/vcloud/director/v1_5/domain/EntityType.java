@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
 import java.util.Set;
@@ -52,6 +53,7 @@ public class EntityType extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromEntityType(this);
    }
@@ -62,7 +64,7 @@ public class EntityType extends ResourceType {
    public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private String description;
-      private Set<Task> tasks;
+      private Set<Task> tasks = Sets.newLinkedHashSet();
       private String name;
       private String id;
 
@@ -93,8 +95,16 @@ public class EntityType extends ResourceType {
       /**
        * @see EntityType#getTasks()
        */
-      public B tasks(Set<Task> tasks) {
-         this.tasks = tasks;
+      public B tasks(Iterable<Task> tasks) {
+         this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
+         return self();
+      }
+
+      /**
+       * @see EntityType#getTasks()
+       */
+      public B task(Task task) {
+         this.tasks.add(checkNotNull(task, "task"));
          return self();
       }
 
@@ -105,7 +115,7 @@ public class EntityType extends ResourceType {
       
       public B fromEntityType(EntityType in) {
          return fromResourceType(in)
-               .description(in.getDescription()).tasks(Sets.newLinkedHashSet(in.getTasks()))
+               .description(in.getDescription()).tasks(in.getTasks())
                .id(in.getId()).name(in.getName());
       }
    }
@@ -123,7 +133,6 @@ public class EntityType extends ResourceType {
    protected EntityType(Builder<?> builder) {
       super(builder);
       this.description = builder.description;
-      // nullable so that jaxb wont persist empty collections
       this.tasks = builder.tasks == null || builder.tasks.isEmpty() ? null : ImmutableSet.copyOf(builder.tasks);
       this.id = builder.id;
       this.name = builder.name;

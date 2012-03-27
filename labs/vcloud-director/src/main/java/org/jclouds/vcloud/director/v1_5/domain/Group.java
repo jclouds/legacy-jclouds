@@ -20,14 +20,20 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 
 /**
@@ -69,6 +75,7 @@ public class Group extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromGroup(this);
    }
@@ -79,7 +86,7 @@ public class Group extends EntityType {
    public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
       
       private String nameInSource;
-      private UsersList usersList;
+      private Set<Reference> users = Sets.newLinkedHashSet();
       private Reference role;
 
       /**
@@ -91,10 +98,18 @@ public class Group extends EntityType {
       }
 
       /**
-       * @see Group#getUsersList()
+       * @see Group#getUsers()
        */
-      public B usersList(UsersList usersList) {
-         this.usersList = usersList;
+      public B users(Iterable<Reference> users) {
+         this.users = Sets.newLinkedHashSet(checkNotNull(users, "users"));
+         return self();
+      }
+      
+      /**
+       * @see Group#getUsers()
+       */
+      public B user(Reference user) {
+         users.add(checkNotNull(user, "user"));
          return self();
       }
 
@@ -106,6 +121,7 @@ public class Group extends EntityType {
          return self();
       }
 
+      @Override
       public Group build() {
          return new Group(this);
       }
@@ -113,7 +129,7 @@ public class Group extends EntityType {
       public B fromGroup(Group in) {
          return fromEntityType(in)
             .nameInSource(in.getNameInSource())
-            .usersList(in.getUsersList())
+            .users(in.getUsersList())
             .role(in.getRole());
       }
    }
@@ -126,48 +142,34 @@ public class Group extends EntityType {
    protected Group(Builder<?> builder) {
       super(builder);
       this.nameInSource = builder.nameInSource;
-      this.usersList = builder.usersList;
+      this.usersList = builder.users == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.users);
       this.role = builder.role;
    }
 
     @XmlElement(name = "NameInSource")
     protected String nameInSource;
-    @XmlElement(name = "UsersList")
-    protected UsersList usersList;
+    @XmlElementWrapper(name = "UsersList")
+    @XmlElement(name = "UserReference")
+    protected Set<Reference> usersList = Sets.newLinkedHashSet();
     @XmlElement(name = "Role")
     protected Reference role;
 
     /**
      * Gets the value of the nameInSource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
     public String getNameInSource() {
         return nameInSource;
     }
 
     /**
-     * Gets the value of the usersList property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UsersList }
-     *     
+     * Gets the value of the users property.
      */
-    public UsersList getUsersList() {
+    public Set<Reference> getUsersList() {
         return usersList;
     }
 
     /**
      * Gets the value of the role property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Reference }
-     *     
      */
     public Reference getRole() {
         return role;
