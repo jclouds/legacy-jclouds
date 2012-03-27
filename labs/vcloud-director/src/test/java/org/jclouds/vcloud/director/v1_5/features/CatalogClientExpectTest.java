@@ -27,7 +27,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
-import org.jclouds.vcloud.director.v1_5.domain.CatalogItems;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
@@ -376,7 +375,6 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       assertEquals(client.getCatalogClient().getCatalogItemMetadataClient().deleteMetadataEntry(catalogItemURI, "KEY"), expected);
    }
 
-   @SuppressWarnings("unchecked")
    public static final CatalogType catalog() {
       return CatalogType.builder()
       		      .name("QunyingTestCatalog")
@@ -398,18 +396,16 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
       		            .type("application/vnd.vmware.vcloud.metadata+xml")
       		            .href(URI.create("https://vcloudbeta.bluelock.com/api/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/metadata"))
       		            .build())
-      		      .catalogItems(CatalogItems.builder()
-      		            .item(Reference.builder()
-      		                  .type("application/vnd.vmware.vcloud.catalogItem+xml")
-      		                  .name("ubuntu10")
-      		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-      		                  .build())
-      		            .item(Reference.builder()
-      		                  .type("application/vnd.vmware.vcloud.catalogItem+xml")
-      		                  .name("imageTesting")
-      		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
-      		                  .build())
-      		            .build())
+  		            .item(Reference.builder()
+  		                  .type("application/vnd.vmware.vcloud.catalogItem+xml")
+  		                  .name("ubuntu10")
+  		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+  		                  .build())
+  		            .item(Reference.builder()
+  		                  .type("application/vnd.vmware.vcloud.catalogItem+xml")
+  		                  .name("imageTesting")
+  		                  .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
+  		                  .build())
       		      .description("Testing")
       		      .isPublished(false)
       		      .build();

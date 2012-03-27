@@ -26,14 +26,11 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writeable;
 
 /**
- * Provides synchronous access to Network.
- * <p/>
+ * Provides synchronous access to {@link AdminVdc}.
  * 
- * @see NetworkAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
+ * @see AdminVdcAsyncClient
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)

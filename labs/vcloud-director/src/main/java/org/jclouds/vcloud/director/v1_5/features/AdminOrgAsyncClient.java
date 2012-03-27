@@ -48,7 +48,7 @@ import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * @see GroupClient
+ * @see AdminOrgClient
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
@@ -57,6 +57,7 @@ public interface AdminOrgAsyncClient extends OrgAsyncClient {
    /**
     * @see AdminOrgClient#getOrg(URI)
     */
+   @Override
    @GET
    @Consumes
    @JAXBResponseParser

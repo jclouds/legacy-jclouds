@@ -18,15 +18,19 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
-import static com.google.common.base.Objects.*;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Used to control access to resources.
@@ -53,7 +57,7 @@ public class ControlAccessParams {
 
       private Boolean sharedToEveryone = Boolean.FALSE;
       private String everyoneAccessLevel;
-      private AccessSettings accessSettings;
+      private Set<AccessSetting> accessSettings = Sets.newLinkedHashSet();
 
       /**
        * @see ControlAccessParams#getIsSharedToEveryone()
@@ -90,8 +94,16 @@ public class ControlAccessParams {
       /**
        * @see ControlAccessParams#getAccessSettings()
        */
-      public Builder accessSettings(AccessSettings accessSettings) {
-         this.accessSettings = accessSettings;
+      public Builder accessSettings(Iterable<AccessSetting> accessSettings) {
+         this.accessSettings = Sets.newLinkedHashSet(checkNotNull(accessSettings, "accessSettings"));
+         return this;
+      }
+
+      /**
+       * @see ControlAccessParams#getAccessSettings()
+       */
+      public Builder accessSetting(AccessSetting accessSetting) {
+         this.accessSettings.add(checkNotNull(accessSetting, "accessSetting"));
          return this;
       }
 
@@ -109,18 +121,19 @@ public class ControlAccessParams {
       // For JAXB and builder use
    }
 
-   public ControlAccessParams(Boolean sharedToEveryone, String everyoneAccessLevel, AccessSettings accessSettings) {
+   public ControlAccessParams(Boolean sharedToEveryone, String everyoneAccessLevel, Iterable<AccessSetting> accessSettings) {
       this.sharedToEveryone = sharedToEveryone;
       this.everyoneAccessLevel = everyoneAccessLevel;
-      this.accessSettings = accessSettings;
+      this.accessSettings = accessSettings == null ? Sets.<AccessSetting>newLinkedHashSet() : ImmutableSet.copyOf(accessSettings);
    }
 
    @XmlElement(name = "IsSharedToEveryone", required = true)
    protected Boolean sharedToEveryone;
    @XmlElement(name = "EveryoneAccessLevel")
    protected String everyoneAccessLevel;
-   @XmlElement(name = "AccessSettings")
-   protected AccessSettings accessSettings;
+   @XmlElementWrapper(name = "AccessSettings")
+   @XmlElement(name = "AccessSetting")
+   protected Set<AccessSetting> accessSettings = Sets.newLinkedHashSet();
 
    /**
     * If true, this means that the resource is shared with everyone in the organization.
@@ -143,7 +156,7 @@ public class ControlAccessParams {
     *
     * Required on create and modify if {@link #isSharedToEveryone()} is false.
     */
-   public AccessSettings getAccessSettings() {
+   public Set<AccessSetting> getAccessSettings() {
       return accessSettings;
    }
 

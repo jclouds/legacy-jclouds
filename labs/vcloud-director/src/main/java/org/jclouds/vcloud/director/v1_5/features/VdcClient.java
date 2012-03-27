@@ -54,8 +54,11 @@ public interface VdcClient {
    Vdc getVdc(URI vdcUri);
    
    /**
-    * Captures a vApp into vApp template. 
-    * The status of vApp template will be in UNRESOLVED(0) until the capture task is finished.
+    * Captures a vApp into vApp template.
+    *
+    * The status of vApp template will be in
+    * {@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)}
+    * until the capture task is finished.
     * 
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
@@ -64,7 +67,9 @@ public interface VdcClient {
    
    /**
     * Clones a media into new one. 
-    * The status of the returned media is UNRESOLVED(0) until the task for cloning finish.
+    * The status of the returned media is
+    * {@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)}
+    * until the task for cloning finish.
     * 
     * @return a Media resource which will contain a task. 
     * The user should monitor the contained task status in order to check when it is completed.
@@ -80,8 +85,11 @@ public interface VdcClient {
    VApp cloneVApp(URI vdcUri, CloneVAppParams params);
    
    /**
-    * Clones a vApp template into new one. 
-    * The status of vApp template will be in UNRESOLVED(0) until the clone task is finished.
+    * Clones a vApp template into new one.
+    *
+    * The status of vApp template will be in
+    * {@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)}
+    * until the clone task is finished.
     * 
     * @return a VAppTemplate resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the VAppTemplate.
@@ -89,23 +97,32 @@ public interface VdcClient {
    VAppTemplate cloneVAppTemplate(URI vdcUri, CloneVAppTemplateParams params);
    
    /**
-    * Composes a new vApp using VMs from other vApps or vApp templates. The vCloud API supports 
-    * composing a vApp from any combination of vApp templates, vApps, or virtual machines. 
-    * When you compose a vApp, all children of each composition source become peers in the 
-    * Children collection of the composed vApp. To compose a vApp, a client makes a compose 
-    * vApp request whose body is a ComposeVAppParams element, includes the following information: 
-    * - An InstantiationParams element that applies to the composed vApp itself and any vApp 
-    * templates referenced in Item elements. - A SourcedItem element for each virtual machine, 
-    * vApp, or vAppTemplate to include in the composition. Each SourcedItem can contain the 
-    * following elements: - A required Source element whose href attribute value is a reference 
-    * to a vApp template, vApp, or VM to include in the composition. If the Source element 
-    * references a VM, the Item must also include an InstantiationParams element specific to 
-    * that VM. - An optional NetworkAssignment element that specifies how the network connections 
-    * of child VM elements are mapped to vApp networks in the parent. - If any of the composition 
-    * items is subject to a EULA, the ComposeVAppParams element must include an AllEULAsAccepted 
-    * element that has a value of true, indicating that you accept the EULA. Otherwise, composition 
-    * fails. The composed vApp must be deployed and powered on before it can be used. The status 
-    * of vApp will be UNRESOLVED(0) until the compose task is finished.
+    * Composes a new vApp using VMs from other vApps or vApp templates.
+    *
+    * The vCloud API supports composing a vApp from any combination of vApp templates, vApps,
+    * or virtual machines. When you compose a vApp, all children of each composition source
+    * become peers in the Children collection of the composed vApp. To compose a vApp, a client
+    * makes a compose vApp request whose body is a ComposeVAppParams element, includes the
+    * following information: 
+    * <ul>
+    * <li>An InstantiationParams element that applies to the composed vApp itself and any vApp 
+    * templates referenced in Item elements.
+    * <li>A SourcedItem element for each virtual machine, vApp, or vAppTemplate to include in
+    * the composition. Each SourcedItem can contain the following elements:
+    *    <ul>
+    *    <li>A required Source element whose href attribute value is a reference 
+    *    to a vApp template, vApp, or VM to include in the composition. If the Source element 
+    *    references a VM, the Item must also include an InstantiationParams element specific to 
+    *    that VM.
+    *    <li>An optional NetworkAssignment element that specifies how the network connections 
+    *    of child VM elements are mapped to vApp networks in the parent.
+    *    </ul>
+    * <li>If any of the composition items is subject to a EULA, the ComposeVAppParams element
+    * must include an AllEULAsAccepted element that has a value of true, indicating that you
+    * accept the EULA. Otherwise, composition fails. The composed vApp must be deployed and
+    * powered on before it can be used. The status of vApp will be
+    * {@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)}
+    * until the compose task is finished.
     * 
     * @return a VApp resource which will contain a task. 
     * The user should should wait for this task to finish to be able to use the vApp.
@@ -114,7 +131,10 @@ public interface VdcClient {
    
    /**
     * Instantiate a vApp template into a new vApp. 
-    * The status of vApp will be in UNRESOLVED(0) until the instantiate task is finished.
+    * 
+    * The status of vApp will be in 
+    * {@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)}
+    * until the instantiate task is finished.
     *
     * <pre>
     * POST /vdc/{id}/action/instantiateVAppTemplate
@@ -126,13 +146,17 @@ public interface VdcClient {
    VApp instantiateVApp(URI vdcUri, InstantiateVAppParamsType params);
    
    /**
-    * Uploading vApp template to a vDC. The operation is separate on several steps: 
-    * 1. creating empty vApp template entity 
-    * 2. uploading an OVF of vApp template 
-    * 3. uploading disks described from the OVF 
-    * 4. finishing task for uploading 
-    * The status of vApp template will be NOT_READY(0) until the ovf and all disks are uploaded 
-    * to the transfer site. After this a task will run on the vApp template uploading.
+    * Uploading vApp template to a vDC.
+    *
+    * The operation is separate on several steps:
+    * <ol>
+    * <li>creating empty vApp template entity 
+    * <li>uploading an OVF of vApp template 
+    * <li>uploading disks described from the OVF 
+    * <li>finishing task for uploading
+    * </ol>
+    * The status of vApp template will be {@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#NOT_READY NOT_READY(0)}
+    * until the ovf and all disks are uploaded to the transfer site. After this a task will run on the vApp template uploading.
     * 
     * Note that the empty vApp template's getFiles() returns a file of size -1 after step one above, 
     * because the descriptor.ovf does not yet exist.

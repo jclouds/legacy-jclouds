@@ -28,8 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 
 /**
- * Provides synchronous access to Org.
- * <p/>
+ * Provides synchronous access to {@link Org}.
  * 
  * @see OrgAsyncClient
  * @author Adrian Cole

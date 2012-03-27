@@ -27,19 +27,16 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
 /**
- * Provides synchronous access to Upload.
- * <p/>
+ * Provides synchronous access to {@linkl Metadata}.
  * 
  * @see MetadataAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author danikov
  */
 public interface MetadataClient {
    
-   // FIXME Correct spelling of Writeable -> Writable
-   
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Readable extends MetadataClient {
+   
       /**
        * Retrieves an list of metadata
        * 
@@ -57,6 +54,7 @@ public interface MetadataClient {
    
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    public static interface Writeable extends Readable {
+   
       /**
        * Merges the metadata for a media with the information provided.
        * 

@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CUSTOMIZATION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.LEASE_SETTINGS_SECTION;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_ENTRY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONFIG_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_SECTION;
@@ -40,7 +38,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
@@ -53,8 +50,6 @@ import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
@@ -213,60 +208,6 @@ public interface VAppTemplateAsyncClient {
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVappTemplateLeaseSettingsSection(@EndpointParam URI templateURI,
                                                                @BinderParam(BindToXMLPayload.class) LeaseSettingsSection settingsSection);
-
-   /**
-    * @see VAppTemplateClient#getVAppTemplateMetadata(URI)
-    */
-   @GET
-   @Consumes(METADATA)
-   @Path("/metadata")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getVAppTemplateMetadata(@EndpointParam URI templateURI);
-
-   @POST
-   @Produces(METADATA)
-   @Consumes(TASK)
-   @Path("/metadata")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> editVAppTemplateMetadata(@EndpointParam URI templateURI,
-                                                   @BinderParam(BindToXMLPayload.class) Metadata metadata);
-
-   /**
-    * @see VAppTemplateClient#getVAppTemplateMetadataValue(URI, String)
-    */
-   @GET
-   @Consumes(METADATA_ENTRY)
-   @Path("/metadata/{key}")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataValue> getVAppTemplateMetadataValue(@EndpointParam URI templateURI,
-                                                                @PathParam("key") String key);
-
-   /**
-    * @see VAppTemplateClient#editVAppTemplateMetadataValue(URI, String, org.jclouds.vcloud.director.v1_5.domain.MetadataValue)
-    */
-   @PUT
-   @Produces(METADATA_ENTRY)
-   @Consumes(TASK)
-   @Path("/metadata/{key}")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> editVAppTemplateMetadataValue(@EndpointParam URI templateURI,
-                                                        @PathParam("key") String key,
-                                                        @BinderParam(BindToXMLPayload.class) MetadataValue value);
-
-   /**
-    * @see VAppTemplateClient#deleteVAppTemplateMetadataValue(URI, String)
-    */
-   @DELETE
-   @Consumes(TASK)
-   @Path("/metadata/{key}")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> deleteVAppTemplateMetadataValue(@EndpointParam URI templateURI,
-                                                          @PathParam("key") String key);
 
    /**
     * @see VAppTemplateClient#getVAppTemplateNetworkConfigSection(URI)
