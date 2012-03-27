@@ -23,10 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Catalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 
 /**
  * Provides synchronous access to {@link Catalog} objects.

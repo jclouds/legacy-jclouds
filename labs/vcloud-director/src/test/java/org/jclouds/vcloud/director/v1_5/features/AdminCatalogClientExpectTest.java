@@ -46,7 +46,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
    private Reference orgRef = Reference.builder()
          .type("application/vnd.vmware.vcloud.catalog+xml")
          .name("QunyingTestCatalog")
-         .href(URI.create(endpoint + "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+         .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
          .build();
    
    private Reference catalogRef = Reference.builder()
@@ -59,7 +59,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
    public void testCreateCatalog() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("POST", "/admin/org/???/catalogs")
+            .apiCommand("POST", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalogs")
             .xmlFilePayload("/catalog/admin/createCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
             .acceptMedia(VCloudDirectorMediaType.ADMIN_CATALOG)
             .httpRequestBuilder().build(), 
@@ -70,16 +70,10 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
       AdminCatalog source = createCatalogSource();
       AdminCatalog expected = createCatalog();
 
-      assertEquals(client.getAdminCatalogClient().createCatalog(catalogRef.getHref(), source), expected);
+      assertEquals(client.getAdminCatalogClient().createCatalog(orgRef.getHref(), source), expected);
    }
 
-   // FIXME temporarily disabling this test due to JAXB error:
-   //    javax.xml.bind.UnmarshalException: unexpected element (uri:"http://www.vmware.com/vcloud/v1.5", local:"AdminCatalog").
-   //    Expected elements are <{http://www.vmware.com/vcloud/v1.5}Catalog>,<{http://www.vmware.com/vcloud/v1.5}CatalogItems>,
-   //    <{http://www.vmware.com/vcloud/v1.5}CatalogReference>,<{http://www.vmware.com/vcloud/v1.5}Error>,
-   //    <{http://www.vmware.com/vcloud/v1.5}Link>,<{http://www.vmware.com/vcloud/v1.5}Owner>,
-   //    <{http://www.vmware.com/vcloud/v1.5}Task>
-   @Test(enabled = false)
+   @Test
    public void testGetCatalog() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()

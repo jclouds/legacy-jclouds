@@ -36,7 +36,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -48,8 +47,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface AdminVdcAsyncClient extends VdcAsyncClient {
-
-   // TODO Should we use MetadataClient?
    
    @GET
    @Consumes
@@ -88,6 +85,7 @@ public interface AdminVdcAsyncClient extends VdcAsyncClient {
    /**
     * @return asynchronous access to {@link Writeable} features
     */
+   @Override
    @Delegate
    MetadataAsyncClient.Writeable getMetadataClient();
 }

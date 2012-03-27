@@ -45,13 +45,14 @@ import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
-
- * @see NetworkClient
+ * @see MetadataClient
  * @author danikov
  */
 public interface MetadataAsyncClient {
+
    @RequestFilters(AddVCloudAuthorizationToRequest.class)
    public static interface Readable extends MetadataAsyncClient {
+
       /**
        * @see MetadataClient.Readable#getMetadata(URISupplier)
        */
@@ -75,6 +76,7 @@ public interface MetadataAsyncClient {
    
    @RequestFilters(AddVCloudAuthorizationToRequest.class)
    public static interface Writeable extends Readable {
+
       /**
        * @see MetadataClient.Writable#mergeMetadata(URI, Metadata))
        */

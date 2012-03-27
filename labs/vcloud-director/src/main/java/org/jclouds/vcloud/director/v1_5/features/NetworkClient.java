@@ -23,15 +23,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Network;
 
 /**
- * Provides synchronous access to Network.
- * <p/>
+ * Provides synchronous access to {@link Network}.
  * 
  * @see NetworkAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
