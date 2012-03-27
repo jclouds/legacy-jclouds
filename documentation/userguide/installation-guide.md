@@ -6,7 +6,7 @@ title: Installation
 
 ### Getting latest jclouds binaries
 
-  * download [lein](https://github.com/technomancy/leiningen/raw/stable/bin/lein leins) and make it executable
+  * download [lein](https://github.com/technomancy/leiningen/raw/stable/bin/lein) and make it executable
   * create a __project.clj__ file with the below contents
 {% highlight clojure %}
 (defproject deps "1" :dependencies [[org.jclouds/jclouds-all "1.5.0-alpha.1"] [org.jclouds.driver/jclouds-sshj "1.5.0-alpha.1"]])
