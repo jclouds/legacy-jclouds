@@ -72,7 +72,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
 
          
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-               .put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess)
+               .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
                .put(extensionsOfNovaRequest, extensionsOfNovaResponse)
                .put(listImagesDetail, listImagesDetailResponse)
                .put(listFlavorsDetail, listFlavorsDetailResponse)
@@ -115,7 +115,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
 
          
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-               .put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess)
+               .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
                .put(extensionsOfNovaRequest, extensionsOfNovaResponse)
                .put(listImagesDetail, listImagesDetailResponse)
                .put(listFlavorsDetail, listFlavorsDetailResponse)

@@ -51,7 +51,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    public void testListLocationsWhenResponseIs2xx() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
-               keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
+               keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
                extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
                listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 
@@ -72,7 +72,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    public void testDefaultTemplateTryStack() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
-               keystoneAuthWithAccessKeyAndSecretKey,
+               keystoneAuthWithUsernameAndPassword,
                HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
                         payloadFromResourceWithContentType("/keystoneAuthResponse_trystack.json", "application/json"))
                         .build()).put(
@@ -117,7 +117,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.listNodes().isEmpty());
@@ -127,7 +127,7 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    public void testCreateNodeSetsCredential() throws Exception {
 
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
-               keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
+               keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
                extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
                listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 

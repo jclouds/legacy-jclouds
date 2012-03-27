@@ -54,7 +54,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listImagesResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/image_list.json")).build();
 
-      NovaClient clientWhenImagesExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenImagesExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listImages, listImagesResponse);
 
       assertEquals(clientWhenImagesExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -74,7 +74,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse listImagesResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listImages, listImagesResponse);
 
       assertTrue(clientWhenNoServersExist.getImageClientForZone("az-1.region-a.geo-1").listImages().isEmpty());
@@ -93,7 +93,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse getImageResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/image_details.json")).build();
 
-      NovaClient clientWhenImagesExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenImagesExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, getImage, getImageResponse);
 
       assertEquals(
@@ -112,7 +112,7 @@ public class ImageClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse getImageResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoImagesExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenNoImagesExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, getImage, getImageResponse);
 
       assertNull(clientWhenNoImagesExist.getImageClientForZone("az-1.region-a.geo-1").getImage(

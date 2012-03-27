@@ -161,7 +161,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
        */
       @Inject(optional = true)
       @Named(KeystoneProperties.CREDENTIAL_TYPE)
-      String credentialType = CredentialType.API_ACCESS_KEY_CREDENTIALS.toString();
+      String credentialType = CredentialType.PASSWORD_CREDENTIALS.toString();
 
       @Override
       public CredentialType get() {
