@@ -25,16 +25,13 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
 /**
- * Provides synchronous access to Media.
- * <p/>
+ * Provides synchronous access to {@link Media}.
  * 
  * @see MediaAsyncClient
- * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=984&Lang=1&SID=" />
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)

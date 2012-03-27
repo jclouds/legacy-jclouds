@@ -28,7 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.VAppReferences;
 
 /**
- * Provides synchronous access to The REST API query interface.
+ * Provides synchronous access to the REST API query interface.
  * 
  * @see QueryAsyncClient
  * @author grkvlt@apache.org

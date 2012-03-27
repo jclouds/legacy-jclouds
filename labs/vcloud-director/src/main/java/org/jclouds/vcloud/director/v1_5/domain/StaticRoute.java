@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,25 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
-
 /**
- * <p>Java class for StaticRoute complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ * Java class for StaticRoute complex type.
+ *
  * <pre>
  * &lt;complexType name="StaticRoute">
  *   &lt;complexContent>
@@ -51,7 +45,6 @@ import com.google.common.base.Objects;
  * &lt;/complexType>
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StaticRoute", propOrder = {
       "name",
       "network",

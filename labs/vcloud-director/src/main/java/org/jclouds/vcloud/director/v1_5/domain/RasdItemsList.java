@@ -21,7 +21,9 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a list of RASD items.
@@ -44,12 +46,13 @@ import com.google.common.collect.Lists;
  */
 @XmlRootElement(name = "RasdItemsList")
 @XmlType(name = "RasdItemsList")
-public class RasdItemsList extends ResourceType {
+public class RasdItemsList extends ResourceType implements Set<ResourceAllocationSettingData> {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromRasdItemsList(this);
    }
@@ -59,12 +62,12 @@ public class RasdItemsList extends ResourceType {
    
    public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
 
-      private List<ResourceAllocationSettingData> items = Lists.newArrayList();
+      private Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
 
       /**
        * @see RasdItemsList#getItems()
        */
-      public B items(List<ResourceAllocationSettingData> items) {
+      public B items(Set<ResourceAllocationSettingData> items) {
          this.items = checkNotNull(items, "items");
          return self();
       }
@@ -98,12 +101,12 @@ public class RasdItemsList extends ResourceType {
    }
 
    @XmlElement(name = "Item")
-   protected List<ResourceAllocationSettingData> items = Lists.newArrayList();
+   protected Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
 
    /**
     * A RASD item content.
     */
-   public List<ResourceAllocationSettingData> getItems() {
+   public Set<ResourceAllocationSettingData> getItems() {
       return items;
    }
 
@@ -127,4 +130,79 @@ public class RasdItemsList extends ResourceType {
       return super.string().add("items", items);
    }
 
+   /**
+    * The delegate always returns a {@link Set} even if {@link #items} is {@literal null}.
+    * 
+    * The delegated {@link Set} is used by the methods implementing its interface.
+    * <p>
+    * NOTE Annoying lack of multiple inheritance for using ForwardingList!
+    */
+   private Set<ResourceAllocationSettingData> delegate() {
+      return getItems();
+   }
+
+   @Override
+   public boolean add(ResourceAllocationSettingData arg0) {
+      return delegate().add(arg0);
+   }
+
+   @Override
+   public boolean addAll(Collection<? extends ResourceAllocationSettingData> arg0) {
+      return delegate().addAll(arg0);
+   }
+
+   @Override
+   public void clear() {
+      delegate().clear();
+   }
+
+   @Override
+   public boolean contains(Object arg0) {
+      return delegate().contains(arg0);
+   }
+
+   @Override
+   public boolean containsAll(Collection<?> arg0) {
+      return delegate().containsAll(arg0);
+   }
+
+   @Override
+   public boolean isEmpty() {
+      return delegate().isEmpty();
+   }
+
+   @Override
+   public Iterator<ResourceAllocationSettingData> iterator() {
+      return delegate().iterator();
+   }
+
+   @Override
+   public boolean remove(Object arg0) {
+      return delegate().remove(arg0);
+   }
+
+   @Override
+   public boolean removeAll(Collection<?> arg0) {
+      return delegate().removeAll(arg0);
+   }
+
+   @Override
+   public boolean retainAll(Collection<?> arg0) {
+      return delegate().retainAll(arg0);
+   }
+
+   @Override
+   public int size() {
+      return delegate().size();
+   }
+
+   @Override
+   public Object[] toArray() {
+      return delegate().toArray();
+   }
+
+   @Override
+   public <T> T[] toArray(T[] arg0) {
+      return delegate().toArray(arg0);
+   }
 }

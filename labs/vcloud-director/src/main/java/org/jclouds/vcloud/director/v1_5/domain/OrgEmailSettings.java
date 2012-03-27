@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -24,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -34,16 +31,9 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 
-
 /**
- * 
- *                 Defines the email settings for an organization.
- *             
- * 
- * <p>Java class for OrgEmailSettings complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * Defines the email settings for an organization.
+ *
  * <pre>
  * &lt;complexType name="OrgEmailSettings">
  *   &lt;complexContent>
@@ -62,10 +52,7 @@ import com.google.common.collect.ImmutableList;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "OrgEmailSettings")
 @XmlType(propOrder = {
     "isDefaultSmtpServer",
@@ -82,6 +69,7 @@ public class OrgEmailSettings extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromOrgEmailSettings(this);
    }
@@ -163,6 +151,7 @@ public class OrgEmailSettings extends ResourceType {
          return self();
       }
 
+      @Override
       public OrgEmailSettings build() {
          return new OrgEmailSettings(this);
       }

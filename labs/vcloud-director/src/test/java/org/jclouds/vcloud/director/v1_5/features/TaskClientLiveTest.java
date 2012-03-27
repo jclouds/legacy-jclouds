@@ -77,7 +77,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       if (vApp != null) cleanUpVApp(vApp);
    }
 
-   @Test(testName = "GET /tasksList/{id}")
+   @Test(description = "GET /tasksList/{id}")
    public void testGetTaskList() {
       orgList = orgClient.getOrgList();
       Reference orgRef = Iterables.getFirst(orgList.getOrgs(), null);
@@ -97,7 +97,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
 
-   @Test(testName = "GET /task/{id}", dependsOnMethods = { "testGetTaskList" })
+   @Test(description = "GET /task/{id}", dependsOnMethods = { "testGetTaskList" })
    public void testGetTask() {
       //TODO: upload media or something so you can get a fresh cancellable task?
       
@@ -113,7 +113,7 @@ public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    // FIXME cancelTask complains "This task can not be canceled"
    // However, when I do this through the UI, I can cancel the task for instantiating a vApp.
-   @Test(testName = "POST /task/{id}/action/cancel", dependsOnMethods = { "testGetTask" })
+   @Test(description = "POST /task/{id}/action/cancel", dependsOnMethods = { "testGetTask" })
    public void testCancelTask() {
       vApp = instantiateVApp();
       

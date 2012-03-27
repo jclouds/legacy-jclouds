@@ -43,7 +43,7 @@ public class UploadClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       uploadClient = context.getApi().getUploadClient();
    }
 
-   @Test(testName = "PUT ???", enabled = false)
+   @Test(description = "PUT ???", enabled = false)
    public void testUpload() {
    }
 }

@@ -42,11 +42,12 @@ import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 import com.google.common.util.concurrent.ListenableFuture;
    
 /**
- * @see GroupClient
+ * @see UserClient
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface UserAsyncClient {
+
    /**
     * @see UserClient#createUser(URI, User)
     */

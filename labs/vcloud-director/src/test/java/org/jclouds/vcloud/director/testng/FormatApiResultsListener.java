@@ -18,17 +18,14 @@
  */
 package org.jclouds.vcloud.director.testng;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.ITestContext;
-import org.testng.ITestListener;
 import org.testng.ITestResult;
-import org.testng.annotations.Test;
+import org.testng.TestListenerAdapter;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
@@ -42,20 +39,12 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-public class FormatApiResultsListener implements ITestListener {
+public class FormatApiResultsListener extends TestListenerAdapter {
 
    public static final Logger logger = LoggerFactory.getLogger("jclouds.vcloud.api");
 
-   public static final Set<String> apis = ImmutableSet.of("admin", "user");
-
-   private ThreadLocal<Long> threadTestStart = new ThreadLocal<Long>();
-
-   @Override
-   public void onTestStart(ITestResult res) {
-      if (methodInApiGroup(res)) {
-         threadTestStart.set(System.currentTimeMillis());
-      }
-   }
+   private static final SimpleDateFormat timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+   private static final Set<String> apis = ImmutableSet.of("admin", "user");
 
    @Override
    synchronized public void onTestSuccess(ITestResult res) {
@@ -81,24 +70,12 @@ public class FormatApiResultsListener implements ITestListener {
       }
    }
 
-   @Override
-   public void onTestFailedButWithinSuccessPercentage(ITestResult arg0) {
-   }
-
-   @Override
-   public void onStart(ITestContext arg0) {
-   }
-
-   @Override
-   public void onFinish(ITestContext arg0) {
-   }
-
    private boolean methodInApiGroup(ITestResult res) {
       return Iterables.any(Arrays.asList(res.getMethod().getGroups()), Predicates.in(apis));
    }
 
    private String resultForState(ITestResult res, String state) {
-      return Joiner.on(',').join(getApi(res), getOperation(res), getDuration(), state);
+      return Joiner.on(',').join(getApi(res), getOperation(res), getStart(res), getTest(res), getDuration(res), state);
    }
 
    private String getApi(ITestResult res) {
@@ -106,13 +83,18 @@ public class FormatApiResultsListener implements ITestListener {
    }
 
    private String getOperation(ITestResult res) {
-      Method method = res.getMethod().getConstructorOrMethod().getMethod();
-      Test test = method.getAnnotation(Test.class);
-      return test != null ? test.testName() : method.getName();
+      return res.getMethod().getDescription();
    }
 
-   private String getDuration() {
-      Long start = threadTestStart.get();
-      return (start == null) ? "" : Long.toString(System.currentTimeMillis() - start);
+   private String getTest(ITestResult res) {
+      return res.getName();
+   }
+
+   private String getStart(ITestResult res) {
+      return timestamp.format(res.getStartMillis());
+   }
+
+   private String getDuration(ITestResult res) {
+      return Long.toString(res.getEndMillis() - res.getStartMillis());
    }
 }

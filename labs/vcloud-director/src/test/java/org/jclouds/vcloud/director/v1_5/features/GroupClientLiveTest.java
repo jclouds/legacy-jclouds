@@ -69,7 +69,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 //      context.getApi().getAdminOrgClient().updateLdapSettings(newLdapSettings);
    }
    
-   @Test(testName = "POST /admin/org/{id}/groups")
+   @Test(description = "POST /admin/org/{id}/groups")
    public void testCreateGroup() {
       fail("LDAP not configured, group client isn't currently testable.");
 //      group = groupClient.createGroup(orgUri, Group.builder()
@@ -78,14 +78,14 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkGroup(group);
    }
    
-   @Test(testName = "GET /admin/group/{id}", dependsOnMethods = { "testCreateGroup" })
+   @Test(description = "GET /admin/group/{id}", dependsOnMethods = { "testCreateGroup" })
    public void testGetGroup() {
       group = groupClient.getGroup(groupRef.getHref());
       
       Checks.checkGroup(group);
    }
    
-   @Test(testName = "PUT /admin/group/{id}", dependsOnMethods = { "testGetGroup" } )
+   @Test(description = "PUT /admin/group/{id}", dependsOnMethods = { "testGetGroup" } )
    public void testUpdateGroup() {
       String oldName = group.getName();
       String newName = "new "+oldName;
@@ -118,7 +118,7 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "DELETE /admin/group/{id}", dependsOnMethods = { "testUpdateGroup" } )
+   @Test(description = "DELETE /admin/group/{id}", dependsOnMethods = { "testUpdateGroup" } )
    public void testDeleteGroup() {
       groupClient.deleteGroup(groupRef.getHref());
       

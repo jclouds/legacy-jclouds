@@ -30,12 +30,12 @@ import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * 
  * @see UploadClient
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface UploadAsyncClient {
+
    /**
     * @see UploadClient#put
     */

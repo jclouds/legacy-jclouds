@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -24,25 +23,16 @@ import static com.google.common.base.Objects.equal;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-
 /**
- * 
- *                 Used when OrgLdapMode=CUSTOM to define connection details for
- *                 the organization's LDAP service.
+ * Used when OrgLdapMode=CUSTOM to define connection details for
+ * the organization's LDAP service.
  *             
- * 
- * <p>Java class for CustomOrgLdapSettings complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
  * <pre>
  * &lt;complexType name="CustomOrgLdapSettings">
  *   &lt;complexContent>
@@ -68,10 +58,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CustomOrgLdapSettings", propOrder = {
     "hostName",
     "port",

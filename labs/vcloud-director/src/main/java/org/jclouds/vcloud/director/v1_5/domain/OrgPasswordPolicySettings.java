@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,20 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-
 
 /**
  * Java class for OrgPasswordPolicySettings complex type.
@@ -38,7 +34,6 @@ import com.google.common.base.Objects.ToStringHelper;
  * &lt;complexType name="OrgPasswordPolicySettings" /&gt;
  * </pre>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "OrgPasswordPolicySettings")
 @XmlType(propOrder = {
     "accountLockoutEnabled",
@@ -50,6 +45,7 @@ public class OrgPasswordPolicySettings extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromOrgPasswordPolicySettings(this);
    }
@@ -87,6 +83,7 @@ public class OrgPasswordPolicySettings extends ResourceType {
          return self();
       }
 
+      @Override
       public OrgPasswordPolicySettings build() {
          return new OrgPasswordPolicySettings(this);
       }

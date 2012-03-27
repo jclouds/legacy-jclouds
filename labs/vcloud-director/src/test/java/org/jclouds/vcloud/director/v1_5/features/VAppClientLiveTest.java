@@ -64,7 +64,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
-import org.jclouds.vcloud.director.v1_5.domain.AccessSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
@@ -125,7 +124,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    /**
     * @see VAppClient#getVApp(URI)
     */
-   @Test(testName = "GET /vApp/{id}")
+   @Test(description = "GET /vApp/{id}")
    public void testGetVApp() {
       // The method under test
       vApp = vAppClient.getVApp(vAppURI);
@@ -148,7 +147,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    /**
     * @see VAppClient#modifyVApp(URI, VApp)
     */
-   @Test(testName = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "PUT /vApp/{id}", dependsOnMethods = { "testGetVApp" })
    public void testModifyVApp() {
       VApp newVApp = VApp.builder()
             .name(name("new-name-"))
@@ -168,7 +167,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(vApp.getDescription(), newVApp.getDescription(), String.format(OBJ_FIELD_EQ, VAPP, "Description", newVApp.getDescription(), vApp.getDescription()));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "POST /vApp/{id}/action/deploy", dependsOnMethods = { "testGetVApp" })
    public void testDeployVApp() {
       DeployVAppParams params = DeployVAppParams.builder()
             .deploymentLeaseSeconds((int) TimeUnit.SECONDS.convert(1L, TimeUnit.HOURS))
@@ -190,7 +189,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/power/action/powerOn", dependsOnMethods = { "testDeployVApp" })
    public void testPowerOnVApp() {
       // Power off VApp
       vApp = powerOff(vApp);
@@ -206,7 +205,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertVAppStatus(vAppURI, Status.POWERED_ON);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/power/action/reboot", dependsOnMethods = { "testDeployVApp" })
    public void testReboot() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -222,7 +221,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/power/action/shutdown", dependsOnMethods = { "testDeployVApp" })
    public void testShutdown() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -241,7 +240,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = powerOn(vApp);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/power/action/suspend", dependsOnMethods = { "testDeployVApp" })
    public void testSuspend() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -260,7 +259,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = powerOn(vApp);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/power/action/reset", dependsOnMethods = { "testDeployVApp" })
    public void testReset() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -276,7 +275,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertVAppStatus(vAppURI, Status.POWERED_ON);
    }
 
-   @Test(testName = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/action/undeploy", dependsOnMethods = { "testDeployVApp" })
    public void testUndeployVApp() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -295,7 +294,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
-   @Test(testName = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
+   @Test(description = "POST /vApp/{id}/power/action/powerOff", dependsOnMethods = { "testUndeployVApp" })
    public void testPowerOffVApp() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -311,7 +310,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertVAppStatus(vAppURI, Status.POWERED_OFF);
    }
 
-   @Test(testName = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/action/consolidate", dependsOnMethods = { "testDeployVApp" })
    public void testConsolidateVApp() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -321,15 +320,13 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(consolidateVApp), String.format(TASK_COMPLETE_TIMELY, "consolidateVApp"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testControlAccessUser() {
       ControlAccessParams params = ControlAccessParams.builder()
             .notSharedToEveryone()
-            .accessSettings(AccessSettings.builder()
-                  .accessSetting(AccessSetting.builder()
-                        .subject(Reference.builder().href(userURI).type(ADMIN_USER).build())
-                        .accessLevel("ReadOnly")
-                        .build())
+            .accessSetting(AccessSetting.builder()
+                  .subject(Reference.builder().href(userURI).type(ADMIN_USER).build())
+                  .accessLevel("ReadOnly")
                   .build())
             .build();
 
@@ -342,7 +339,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
+   @Test(description = "POST /vApp/{id}/action/controlAccess", dependsOnMethods = { "testControlAccessUser" })
    public void testControlAccessEveryone() {
       ControlAccessParams params = ControlAccessParams.builder()
             .sharedToEveryone()
@@ -359,7 +356,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, params, String.format(ENTITY_EQUAL, "ControlAccessParams"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/action/discardSuspendedState", dependsOnMethods = { "testDeployVApp" })
    public void testDiscardSuspendedState() {
       // Suspend the VApp
       vApp = suspend(vAppURI);
@@ -369,7 +366,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(discardSuspendedState), String.format(TASK_COMPLETE_TIMELY, "discardSuspendedState"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/enterMaintenanceMode")
+   @Test(description = "POST /vApp/{id}/action/enterMaintenanceMode")
    public void testEnterMaintenanceMode() {
       // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
       VApp temp = instantiateVApp();
@@ -395,7 +392,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       }
    }
 
-   @Test(testName = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" })
+   @Test(description = "POST /vApp/{id}/action/exitMaintenanceMode", dependsOnMethods = { "testEnterMaintenanceMode" })
    public void testExitMaintenanceMode() {
       // Do this to a new vApp, so don't mess up subsequent tests by making the vApp read-only
       VApp temp = instantiateVApp();
@@ -421,7 +418,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       }
    }
 
-   @Test(testName = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "POST /vApp/{id}/action/installVMwareTools", dependsOnMethods = { "testDeployVApp" })
    public void testInstallVMwareTools() {
       // First ensure the vApp is powered n
       vApp = powerOn(vApp);
@@ -434,7 +431,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    // FIXME "Could not bind object to request[method=POST, endpoint=https://mycloud.greenhousedata.com/api/vApp/vapp-e124f3f0-adb9-4268-ad49-e54fb27e40af/action/recomposeVApp,
    //    headers={Accept=[application/vnd.vmware.vcloud.task+xml]}, payload=[content=true, contentMetadata=[contentDisposition=null, contentEncoding=null, contentLanguage=null,
    //    contentLength=0, contentMD5=null, contentType=application/vnd.vmware.vcloud.recomposeVAppParams+xml], written=false]]: Could not marshall object"
-   @Test(testName = "POST /vApp/{id}/action/recomposeVApp", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "POST /vApp/{id}/action/recomposeVApp", dependsOnMethods = { "testGetVApp" })
    public void testRecomposeVApp() {
       RecomposeVAppParams params = RecomposeVAppParams.builder().build();
 
@@ -444,7 +441,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    }
 
    // NOTE This test is disabled, as it is not possible to look up datastores using the User API
-   @Test(testName = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "POST /vApp/{id}/action/relocate", dependsOnMethods = { "testGetVApp" })
    public void testRelocate() {
       // Relocate to the last of the available datastores
       QueryResultRecords records = context.getApi().getQueryClient().queryAll("datastore");
@@ -456,7 +453,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(relocate), String.format(TASK_COMPLETE_TIMELY, "relocate"));
    }
 
-   @Test(testName = "POST /vApp/{id}/action/upgradeHardwareVersion", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "POST /vApp/{id}/action/upgradeHardwareVersion", dependsOnMethods = { "testGetVApp" })
    public void testUpgradeHardwareVersion() {
       // Power off VApp
       vApp = powerOff(vApp);
@@ -466,7 +463,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(upgradeHardwareVersion), String.format(TASK_COMPLETE_TIMELY, "upgradeHardwareVersion"));
    }
 
-   @Test(testName = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/controlAccess", dependsOnMethods = { "testGetVApp" })
    public void testGetControlAccess() {
       // The method under test
       ControlAccessParams controlAccess = vAppClient.getControlAccess(vApp.getHref());
@@ -475,7 +472,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkControlAccessParams(controlAccess);
    }
 
-   @Test(testName = "GET /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetVApp" })
    public void testGetGuestCustomizationSection() {
       getGuestCustomizationSection(new Function<URI, GuestCustomizationSection>() {
          @Override
@@ -485,7 +482,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       });
    }
 
-   @Test(testName = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
+   @Test(description = "PUT /vApp/{id}/guestCustomizationSection", dependsOnMethods = { "testGetGuestCustomizationSection" })
    public void testModifyGuestCustomizationSection() {
       // Copy existing section and update fields
       GuestCustomizationSection oldSection = vAppClient.getGuestCustomizationSection(vm.getHref());
@@ -516,7 +513,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "GuestCustomizationSection"));
    }
 
-   @Test(testName = "GET /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetVApp" })
    public void testGetLeaseSettingsSection() {
       // The method under test
       LeaseSettingsSection section = vAppClient.getLeaseSettingsSection(vApp.getHref());
@@ -525,7 +522,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkLeaseSettingsSection(section);
    }
 
-   @Test(testName = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
+   @Test(description = "PUT /vApp/{id}/leaseSettingsSection", dependsOnMethods = { "testGetLeaseSettingsSection" })
    public void testModifyLeaseSettingsSection() {
       // Copy existing section
       LeaseSettingsSection oldSection = vAppClient.getLeaseSettingsSection(vApp.getHref());
@@ -575,7 +572,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    }
 
    // FIXME "Error: The requested operation on media "com.vmware.vcloud.entity.media:abfcb4b7-809f-4b50-a0aa-8c97bf09a5b0" is not supported in the current state."
-   @Test(testName = "PUT /vApp/{id}/media/action/insertMedia", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "PUT /vApp/{id}/media/action/insertMedia", dependsOnMethods = { "testGetVApp" })
    public void testInsertMedia() {
       // Setup media params from configured media id
       MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
@@ -587,7 +584,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(insertMedia), String.format(TASK_COMPLETE_TIMELY, "insertMedia"));
    }
 
-   @Test(testName = "PUT /vApp/{id}/media/action/ejectMedia", dependsOnMethods = { "testInsertMedia" })
+   @Test(description = "PUT /vApp/{id}/media/action/ejectMedia", dependsOnMethods = { "testInsertMedia" })
    public void testEjectMedia() {
       // Setup media params from configured media id
       MediaInsertOrEjectParams params = MediaInsertOrEjectParams.builder()
@@ -599,7 +596,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(ejectMedia), String.format(TASK_COMPLETE_TIMELY, "ejectMedia"));
    }
 
-   @Test(testName = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkConfigSection() {
       // The method under test
       NetworkConfigSection section = vAppClient.getNetworkConfigSection(vApp.getHref());
@@ -608,7 +605,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkNetworkConfigSection(section);
    }
 
-   @Test(testName = "PUT /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetNetworkConfigSection" })
+   @Test(description = "PUT /vApp/{id}/networkConfigSection", dependsOnMethods = { "testGetNetworkConfigSection" })
    public void testModifyNetworkConfigSection() {
       // Copy existing section and update fields
       NetworkConfigSection oldSection = vAppClient.getNetworkConfigSection(vApp.getHref());
@@ -632,7 +629,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "NetworkConfigSection"));
    }
 
-   @Test(testName = "GET /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkConnectionSection() {
       getNetworkConnectionSection(new Function<URI, NetworkConnectionSection>() {
          @Override
@@ -643,7 +640,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    }
 
    // FIXME "Task error: Unable to perform this action. Contact your cloud administrator."
-   @Test(testName = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
+   @Test(description = "PUT /vApp/{id}/networkConnectionSection", dependsOnMethods = { "testGetNetworkConnectionSection" })
    public void testModifyNetworkConnectionSection() {
       // Look up a network in the Vdc
       Set<Reference> networks = vdc.getAvailableNetworks();
@@ -675,7 +672,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, newSection, String.format(ENTITY_EQUAL, "NetworkConnectionSection"));
    }
 
-   @Test(testName = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/networkSection", dependsOnMethods = { "testGetVApp" })
    public void testGetNetworkSection() {
       // The method under test
       NetworkSection section = vAppClient.getNetworkSection(vApp.getHref());
@@ -684,7 +681,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkNetworkSection(section);
    }
 
-   @Test(testName = "GET /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetVApp" })
    public void testGetOperatingSystemSection() {
       // The method under test
       OperatingSystemSection section = vAppClient.getOperatingSystemSection(vm.getHref());
@@ -693,7 +690,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkOperatingSystemSection(section);
    }
 
-   @Test(testName = "PUT /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetOperatingSystemSection", "testModifyVirtualHardwareSection" })
+   @Test(description = "PUT /vApp/{id}/operatingSystemSection", dependsOnMethods = { "testGetOperatingSystemSection", "testModifyVirtualHardwareSection" })
    public void testModifyOperatingSystemSection() {
       // Create new OperatingSystemSection
       OperatingSystemSection newSection = OperatingSystemSection.builder()
@@ -716,7 +713,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified.getId(), newSection.getId());
    }
 
-   @Test(testName = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/owner", dependsOnMethods = { "testGetVApp" })
    public void testGetOwner() {
       // The method under test
       Owner owner = vAppClient.getOwner(vApp.getHref());
@@ -725,7 +722,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkOwner(owner);
    }
 
-   @Test(testName = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
+   @Test(description = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
    public void testModifyOwner() {
       Owner newOwner = Owner.builder().user(Reference.builder().href(userURI).type(ADMIN_USER).build()).build();
 
@@ -742,7 +739,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified.getUser().getHref(), newOwner.getUser().getHref());
    }
 
-   @Test(testName = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/productSections", dependsOnMethods = { "testGetVApp" })
    public void testGetProductSections() {
       // The method under test
       ProductSectionList sectionList = vAppClient.getProductSections(vApp.getHref());
@@ -751,7 +748,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkProductSectionList(sectionList);
    }
 
-   @Test(testName = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
+   @Test(description = "PUT /vApp/{id}/productSections", dependsOnMethods = { "testGetProductSections" })
    public void testModifyProductSections() {
       // Copy existing section and update fields
       ProductSectionList oldSections = vAppClient.getProductSections(vApp.getHref());
@@ -783,7 +780,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    }
 
    // FIXME How do we force it to ask a question?
-   @Test(testName = "GET /vApp/{id}/question", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "GET /vApp/{id}/question", dependsOnMethods = { "testDeployVApp" })
    public void testGetPendingQuestion() {
       // Power on VApp
       vApp = powerOn(vAppURI);
@@ -797,7 +794,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkVmPendingQuestion(question);
    }
 
-   @Test(testName = "POST /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
+   @Test(description = "POST /vApp/{id}/question/action/answer", dependsOnMethods = { "testGetPendingQuestion" })
    public void testAnswerQuestion() {
       // TODO check that the question has been answered (e.g. asking for getPendingQuestion does not
       // include our answered question).
@@ -815,7 +812,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vAppClient.answerQuestion(vm.getHref(), answer);
    }
 
-   @Test(testName = "GET /vApp/{id}/runtimeInfoSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/runtimeInfoSection", dependsOnMethods = { "testGetVApp" })
    public void testGetRuntimeInfoSection() {
       // The method under test
       RuntimeInfoSection section = vAppClient.getRuntimeInfoSection(vm.getHref());
@@ -825,7 +822,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    }
 
    // FIXME If still failing, consider escalating?
-   @Test(testName = "GET /vApp/{id}/screen", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "GET /vApp/{id}/screen", dependsOnMethods = { "testDeployVApp" })
    public void testGetScreenImage() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -842,7 +839,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       }
    }
 
-   @Test(testName = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testDeployVApp" })
+   @Test(description = "GET /vApp/{id}/screen/action/acquireTicket", dependsOnMethods = { "testDeployVApp" })
    public void testGetScreenTicket() {
       // Power on VApp
       vApp = powerOn(vApp);
@@ -854,7 +851,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkScreenTicket(ticket);
    }
 
-   @Test(testName = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/startupSection", dependsOnMethods = { "testGetVApp" })
    public void testGetStartupSection() {
       // The method under test
       StartupSection section = vAppClient.getStartupSection(vApp.getHref());
@@ -863,7 +860,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkStartupSection(section);
    }
 
-   @Test(testName = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
+   @Test(description = "PUT /vApp/{id}/startupSection", dependsOnMethods = { "testGetStartupSection" })
    public void testModifyStartupSection() {
       // Copy existing section and update fields
       StartupSection oldSection = vAppClient.getStartupSection(vApp.getHref());
@@ -884,7 +881,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, newSection);
    }
 
-   @Test(testName = "GET /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "GET /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVApp" })
    public void testGetVirtualHardwareSection() {
       // Method under test
       VirtualHardwareSection hardware = vAppClient.getVirtualHardwareSection(vm.getHref());
@@ -893,7 +890,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkVirtualHardwareSection(hardware);
    }
 
-   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(description = "PUT /vApp/{id}/virtualHardwareSection", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testModifyVirtualHardwareSection() {
       // Power off VApp
       vApp = powerOff(vApp);
@@ -941,7 +938,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modifiedSection, newSection);
    }
 
-   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(description = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionCpu() {
       // Method under test
       ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
@@ -950,7 +947,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkResourceAllocationSettingData(rasd);
    }
 
-   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
+   @Test(description = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
    public void testModifyVirtualHardwareSectionCpu() {
       // Copy existing section and update fields
       ResourceAllocationSettingData oldItem = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
@@ -975,7 +972,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, newItem);
    }
 
-   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(description = "GET /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionDisks() {
       // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionDisks(vm.getHref());
@@ -984,7 +981,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkRasdItemsList(rasdItems);
    }
 
-   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSectionDisks" })
+   @Test(description = "PUT /vApp/{id}/virtualHardwareSection/disks", dependsOnMethods = { "testGetVirtualHardwareSectionDisks" })
    public void testModifyVirtualHardwareSectionDisks() {
       // Copy the existing items list and modify the name of an item
       RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionDisks(vm.getHref());
@@ -1020,7 +1017,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // checkHasMatchingItem("virtualHardwareSection/disk", modified, item0InstanceId, item0ElementName);
    }
 
-   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/media", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(description = "GET /vApp/{id}/virtualHardwareSection/media", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMedia() {
       // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionMedia(vm.getHref());
@@ -1029,7 +1026,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkRasdItemsList(rasdItems);
    }
 
-   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(description = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMemory() {
       // Method under test
       ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
@@ -1038,7 +1035,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkResourceAllocationSettingData(rasd);
    }
 
-   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
+   @Test(description = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
    public void testModifyVirtualHardwareSectionMemory() {
       ResourceAllocationSettingData origItem = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
       ResourceAllocationSettingData newItem = origItem.toBuilder()
@@ -1062,7 +1059,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(modified, newItem);
    }
 
-   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(description = "GET /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionNetworkCards() {
       // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionNetworkCards(vm.getHref());
@@ -1071,7 +1068,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkRasdItemsList(rasdItems);
    }
 
-   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSectionNetworkCards" })
+   @Test(description = "PUT /vApp/{id}/virtualHardwareSection/networkCards", dependsOnMethods = { "testGetVirtualHardwareSectionNetworkCards" })
    public void testModifyVirtualHardwareSectionNetworkCards() {
       RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionNetworkCards(vm.getHref());
       RasdItemsList newSection = oldSection.toBuilder().build();
@@ -1091,7 +1088,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // See the description in testModifyVirtualHardwareSectionDisks
    }
 
-   @Test(testName = "GET /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSection" })
+   @Test(description = "GET /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionSerialPorts() {
       // Method under test
       RasdItemsList rasdItems = vAppClient.getVirtualHardwareSectionSerialPorts(vm.getHref());
@@ -1100,7 +1097,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkRasdItemsList(rasdItems);
    }
 
-   @Test(testName = "PUT /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSectionSerialPorts" })
+   @Test(description = "PUT /vApp/{id}/virtualHardwareSection/serialPorts", dependsOnMethods = { "testGetVirtualHardwareSectionSerialPorts" })
    public void testModifyVirtualHardwareSectionSerialPorts() {
       RasdItemsList oldSection = vAppClient.getVirtualHardwareSectionSerialPorts(vm.getHref());
       RasdItemsList newSection = oldSection.toBuilder().build();
@@ -1120,7 +1117,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       // See the description in testModifyVirtualHardwareSectionDisks
    }
 
-   @Test(testName = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
+   @Test(description = "PUT /vApp/{id}/metadata", dependsOnMethods = { "testGetVApp" })
    public void testSetMetadataValue() {
       key = name("key-");
       String value = name("value-");
@@ -1134,7 +1131,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkMetadataValueFor(VAPP, newMetadataValue, value);
    }
    
-   @Test(testName = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
+   @Test(description = "GET /vApp/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
    public void testGetMetadata() {
       // Call the method being tested
       Metadata metadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
@@ -1145,7 +1142,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), String.format(NOT_EMPTY_OBJECT_FMT, "MetadataEntry", "vApp"));
    }
    
-   @Test(testName = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
+   @Test(description = "GET /vApp/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetOrgMetadataValue() {
       // Call the method being tested
       MetadataValue value = vAppClient.getMetadataClient().getMetadataValue(vApp.getHref(), key);
@@ -1156,7 +1153,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertEquals(value.getValue(), expected, String.format(CORRECT_VALUE_OBJECT_FMT, "Value", "MetadataValue", expected, value.getValue()));
    }
 
-   @Test(testName = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
+   @Test(description = "DELETE /vApp/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testDeleteMetadataEntry() {
       // Delete the entry
       Task task = vAppClient.getMetadataClient().deleteMetadataEntry(vApp.getHref(), key);
@@ -1169,7 +1166,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       checkMetadataKeyAbsentFor(VAPP, newMetadata, key);
    }
 
-   @Test(testName = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
+   @Test(description = "POST /vApp/{id}/metadata", dependsOnMethods = { "testGetMetadata" })
    public void testMergeMetadata() {
       Metadata oldMetadata = vAppClient.getMetadataClient().getMetadata(vApp.getHref());
       Map<String, String> oldMetadataMap = Checks.metadataToMap(oldMetadata);
@@ -1197,7 +1194,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    /**
     * @see VAppClient#deleteVApp(URI)
     */
-   @Test(testName = "DELETE /vApp/{id}")
+   @Test(description = "DELETE /vApp/{id}")
    public void testDeleteVApp() {
       // Create a temporary VApp to delete
       VApp temp = instantiateVApp();

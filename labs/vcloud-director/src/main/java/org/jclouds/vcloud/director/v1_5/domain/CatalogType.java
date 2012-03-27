@@ -19,16 +19,22 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Container for references to VappTemplate and Media objects.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="CatalogType" /&gt;
  * </pre>
@@ -42,6 +48,7 @@ public class CatalogType extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromCatalogType(this);
    }
@@ -52,7 +59,7 @@ public class CatalogType extends EntityType {
    public static class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
 
       private Owner owner;
-      private CatalogItems catalogItems;
+      private Set<Reference> catalogItems = Sets.newLinkedHashSet();
       private Boolean isPublished;
 
       /**
@@ -64,10 +71,18 @@ public class CatalogType extends EntityType {
       }
 
       /**
-       * @see CatalogType#getCatalogItems()
+       * @see CatalogItems#getCatalogItems()
        */
-      public B catalogItems(CatalogItems catalogItems) {
-         this.catalogItems = catalogItems;
+      public B items(Iterable<Reference> catalogItems) {
+         this.catalogItems = Sets.newLinkedHashSet(checkNotNull(catalogItems, "catalogItems"));
+         return self();
+      }
+
+      /**
+       * @see CatalogItems#getCatalogItems()
+       */
+      public B item(Reference catalogItem) {
+         this.catalogItems.add(checkNotNull(catalogItem, "catalogItem"));
          return self();
       }
 
@@ -93,14 +108,14 @@ public class CatalogType extends EntityType {
       }
 
       public B fromCatalogType(CatalogType in) {
-         return fromEntityType(in).owner(in.getOwner()).catalogItems(in.getCatalogItems()).isPublished(in.isPublished());
+         return fromEntityType(in).owner(in.getOwner()).items(in.getCatalogItems()).isPublished(in.isPublished());
       }
    }
 
    protected CatalogType(Builder<?> builder) {
       super(builder);
       this.owner = builder.owner;
-      this.catalogItems = builder.catalogItems;
+      this.catalogItems = builder.catalogItems == null || builder.catalogItems.isEmpty() ? null : ImmutableSet.copyOf(builder.catalogItems);
       this.isPublished = builder.isPublished;
    }
 
@@ -110,8 +125,9 @@ public class CatalogType extends EntityType {
 
    @XmlElement(name = "Owner")
    private Owner owner;
-   @XmlElement(name = "CatalogItems")
-   private CatalogItems catalogItems;
+   @XmlElementWrapper(name = "CatalogItems")
+   @XmlElement(name = "CatalogItem")
+   private Set<Reference> catalogItems;
    @XmlElement(name = "IsPublished")
    private Boolean isPublished;
 
@@ -125,8 +141,8 @@ public class CatalogType extends EntityType {
    /**
     * Gets the value of the catalogItems property.
     */
-   public CatalogItems getCatalogItems() {
-      return catalogItems;
+   public Set<Reference> getCatalogItems() {
+      return catalogItems == null ? ImmutableSet.<Reference>of() : ImmutableSet.copyOf(catalogItems);
    }
 
    /**
@@ -145,19 +161,19 @@ public class CatalogType extends EntityType {
       CatalogType that = CatalogType.class.cast(o);
       return super.equals(that) &&
             equal(this.owner, that.owner) && 
-            equal(this.catalogItems, that.catalogItems) &&
+            equal(this.getCatalogItems(), that.getCatalogItems()) &&
             equal(this.isPublished, that.isPublished);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(super.hashCode(), owner, catalogItems, catalogItems);
+      return Objects.hashCode(super.hashCode(), owner, getCatalogItems(), catalogItems);
    }
 
    @Override
    public ToStringHelper string() {
       return super.string().add("owner", owner)
-            .add("catalogItems", catalogItems)
+            .add("catalogItems", getCatalogItems())
             .add("isPublished", isPublished);
    }
 

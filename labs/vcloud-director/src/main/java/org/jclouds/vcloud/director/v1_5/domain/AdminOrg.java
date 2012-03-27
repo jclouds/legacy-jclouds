@@ -19,15 +19,19 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * The AdminOrg represents an administrative view of an organization.
@@ -67,6 +71,7 @@ public class AdminOrg extends Org {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromAdminOrg(this);
    }
@@ -77,11 +82,11 @@ public class AdminOrg extends Org {
    public static abstract class Builder<B extends Builder<B>> extends Org.Builder<B> {
       
       private OrgSettings settings;
-      private UsersList users;
-      private GroupsList groups;
-      private CatalogsList catalogs;
-      private Vdcs vdcs;
-      private Networks networks;
+      private Set<Reference> users = Sets.newLinkedHashSet();
+      private Set<Reference> groups = Sets.newLinkedHashSet();
+      private Set<Reference> catalogs = Sets.newLinkedHashSet();
+      private Set<Reference> vdcs = Sets.newLinkedHashSet();
+      private Set<Reference> networks = Sets.newLinkedHashSet();
       
       /**
        * @see AdminOrg#getSettings()
@@ -94,43 +99,82 @@ public class AdminOrg extends Org {
       /**
        * @see AdminOrg#getUsers()
        */
-      public B users(UsersList users) {
-         this.users = users;
+      public B users(Iterable<Reference> users) {
+         this.users = Sets.newLinkedHashSet(checkNotNull(users, "users"));
+         return self();
+      }
+      
+      /**
+       * @see AdminOrg#getUsers()
+       */
+      public B user(Reference user) {
+         users.add(checkNotNull(user, "user"));
          return self();
       }
 
       /**
        * @see AdminOrg#getGroups()
        */
-      public B groups(GroupsList groups) {
-         this.groups = groups;
+      public B groups(Iterable<Reference> groups) {
+         this.groups = Sets.newLinkedHashSet(checkNotNull(groups, "groups"));
          return self();
       }
-
+      
+      /**
+       * @see AdminOrg#getGroups()
+       */
+      public B group(Reference group) {
+         groups.add(checkNotNull(group, "group"));
+         return self();
+      }
       /**
        * @see AdminOrg#getCatalogs()
        */
-      public B catalogs(CatalogsList catalogs) {
-         this.catalogs = catalogs;
+      public B catalogs(Iterable<Reference> catalogReferences) {
+         this.catalogs = Sets.newLinkedHashSet(checkNotNull(catalogs, "catalogs"));
          return self();
       }
-
+      
+      /**
+       * @see AdminOrg#getCatalogs()
+       */
+      public B catalog(Reference catalog) {
+         this.catalogs.add(checkNotNull(catalog, "catalog"));
+         return self();
+      }
       /**
        * @see AdminOrg#getVdcs()
        */
-      public B vdcs(Vdcs vdcs) {
-         this.vdcs = vdcs;
+      public B vdcs(Iterable<Reference> vdcs) {
+         this.vdcs = Sets.newLinkedHashSet(checkNotNull(vdcs, "vdcs"));
          return self();
       }
-
+      
+      /**
+       * @see AdminOrg#getVdcs()
+       */
+      public B vdc(Reference vdc) {
+         this.vdcs.add(checkNotNull(vdc, "vdc"));
+         return self();
+      }
+      
       /**
        * @see AdminOrg#getNetworks()
        */
-      public B networks(Networks networks) {
-         this.networks = networks;
+      public B networks(Iterable<Reference> networks) {
+         this.networks = Sets.newLinkedHashSet(checkNotNull(networks, "networks"));
+         return self();
+      }
+      
+      /**
+       * @see AdminOrg#getNetworks()
+       */
+      public B network(Reference network) {
+         this.networks.add(checkNotNull(network, "network"));
          return self();
       }
 
+      @Override
       public AdminOrg build() {
          return new AdminOrg(this);
       }
@@ -153,33 +197,33 @@ public class AdminOrg extends Org {
    protected AdminOrg(Builder<?> builder) {
       super(builder);
       this.settings = builder.settings;
-      this.users = builder.users;
-      this.groups = builder.groups;
-      this.catalogs = builder.catalogs;
-      this.vdcs = builder.vdcs;
-      this.networks = builder.networks;
+      this.users = builder.users == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.users);
+      this.groups = builder.groups == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.groups);
+      this.catalogs = builder.catalogs == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.catalogs);
+      this.vdcs = builder.vdcs == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.vdcs);
+      this.networks = builder.networks == null ? Sets.<Reference>newLinkedHashSet() : ImmutableSet.copyOf(builder.networks);
    }
 
     @XmlElement(name = "Settings", required = true)
     private OrgSettings settings;
-    @XmlElement(name = "Users")
-    private UsersList users;
-    @XmlElement(name = "Groups")
-    private GroupsList groups;
-    @XmlElement(name = "Catalogs")
-    private CatalogsList catalogs;
-    @XmlElement(name = "Vdcs")
-    private Vdcs vdcs;
-    @XmlElement(name = "Networks")
-    private Networks networks;
+    @XmlElementWrapper(name = "Users")
+    @XmlElement(name = "UserReference")
+    protected Set<Reference> users = Sets.newLinkedHashSet();
+    @XmlElementWrapper(name = "Groups")
+    @XmlElement(name = "GroupReference")
+    protected Set<Reference> groups = Sets.newLinkedHashSet();
+    @XmlElementWrapper(name = "Catalogs")
+    @XmlElement(name = "CatalogReference")
+    private Set<Reference> catalogs = Sets.newLinkedHashSet();
+    @XmlElementWrapper(name = "Vdcs")
+    @XmlElement(name = "Vdc")
+    protected Set<Reference> vdcs = Sets.newLinkedHashSet();
+    @XmlElementWrapper(name = "Networks")
+    @XmlElement(name = "Network")
+    protected Set<Reference> networks = Sets.newLinkedHashSet();
 
     /**
      * Gets the value of the settings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link OrgSettings }
-     *     
      */
     public OrgSettings getSettings() {
         return settings;
@@ -187,61 +231,36 @@ public class AdminOrg extends Org {
 
     /**
      * Gets the value of the users property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link UsersList }
-     *     
      */
-    public UsersList getUsers() {
+    public Set<Reference> getUsers() {
         return users;
     }
 
     /**
      * Gets the value of the groups property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GroupsList }
-     *     
      */
-    public GroupsList getGroups() {
+    public Set<Reference> getGroups() {
         return groups;
     }
 
     /**
      * Gets the value of the catalogs property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CatalogsList }
-     *     
      */
-    public CatalogsList getCatalogs() {
+    public Set<Reference> getCatalogs() {
         return catalogs;
     }
 
     /**
      * Gets the value of the vdcs property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Vdcs }
-     *     
      */
-    public Vdcs getVdcs() {
+    public Set<Reference> getVdcs() {
         return vdcs;
     }
 
     /**
      * Gets the value of the networks property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Networks }
-     *     
      */
-    public Networks getNetworks() {
+    public Set<Reference> getNetworks() {
         return networks;
     }
 
