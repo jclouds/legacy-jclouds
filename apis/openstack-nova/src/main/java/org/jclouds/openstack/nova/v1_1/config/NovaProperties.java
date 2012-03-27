@@ -16,30 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.reference;
+package org.jclouds.openstack.nova.v1_1.config;
 
 /**
  * Configuration properties and constants used in openstack Nova connections.
  *
  * @author Adam Lowe
  */
-public class NovaConstants {
+public class NovaProperties {
 
    /**
     * Eventual consistency delay for retrieving a security group after it is created (in ms)
     */
-   public static final String PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT = "jclouds.openstack-nova.timeout.securitygroup-present";
+   public static final String TIMEOUT_SECURITYGROUP_PRESENT = "jclouds.openstack-nova.timeout.securitygroup-present";
 
    /**
     * Whenever a node is created, automatically allocate and assign a floating ip address, also
     * deallocate when the node is destroyed.
     */
-   public static final String PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS = "jclouds.openstack-nova.auto-allocate-floating-ips";
+   public static final String AUTO_ALLOCATE_FLOATING_IPS = "jclouds.openstack-nova.auto-allocate-floating-ips";
 
    /**
     * Whenever a node is created, automatically generate keypairs for groups, as needed, also
     * delete the keypair(s) when the last node in the group is destroyed.
     */
-   public static final String PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS = "jclouds.openstack-nova.auto-generate-keypairs";
+   public static final String AUTO_GENERATE_KEYPAIRS = "jclouds.openstack-nova.auto-generate-keypairs";
 
 }

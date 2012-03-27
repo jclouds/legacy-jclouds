@@ -20,9 +20,10 @@ package org.jclouds.openstack.nova.v1_1;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS;
-import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS;
-import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERVICE_TYPE;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.TIMEOUT_SECURITYGROUP_PRESENT;
 
 import java.util.Properties;
 
@@ -40,13 +41,18 @@ public class NovaPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "http://localhost:5000");
-      properties.setProperty(KeystoneProperties.SERVICE_TYPE, ServiceType.COMPUTE);
+      properties.setProperty(PROPERTY_API_VERSION, "1.1");
+      // auth fail can happen while cloud-init applies keypair updates
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
+      
+      properties.setProperty(SERVICE_TYPE, ServiceType.COMPUTE);
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
-      properties.setProperty(PROPERTY_API_VERSION, "1.1");
-      properties.setProperty(PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS, "false");
-      properties.setProperty(PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS, "false");
-      properties.setProperty(PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT, "500");
+      
+      properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "false");
+      properties.setProperty(AUTO_GENERATE_KEYPAIRS, "false");
+      properties.setProperty(TIMEOUT_SECURITYGROUP_PRESENT, "500");
       return properties;
    }
 

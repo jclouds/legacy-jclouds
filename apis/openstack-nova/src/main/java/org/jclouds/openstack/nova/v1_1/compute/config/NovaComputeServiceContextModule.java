@@ -18,6 +18,10 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.config;
 
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.TIMEOUT_SECURITYGROUP_PRESENT;
+
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +49,13 @@ import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
-import org.jclouds.openstack.nova.v1_1.compute.functions.*;
+import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.openstack.nova.v1_1.compute.functions.CreateUniqueKeyPair;
+import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorInZoneToHardware;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ImageInZoneToImage;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ImageToOperatingSystem;
+import org.jclouds.openstack.nova.v1_1.compute.functions.OrphanedGroupsByZoneId;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ServerInZoneToNodeMetadata;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.FindKeyPairOrCreate;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.FindSecurityGroupOrCreate;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.LoadFloatingIpsForInstance;
@@ -60,7 +70,6 @@ import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
 import org.jclouds.openstack.nova.v1_1.predicates.FindSecurityGroupWithNameAndReturnTrue;
-import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
@@ -143,9 +152,9 @@ public class NovaComputeServiceContextModule
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
       return options.as(NovaTemplateOptions.class)
             .autoAssignFloatingIp(injector.getInstance(
-                  Key.get(boolean.class, Names.named(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS))))
+                  Key.get(boolean.class, Names.named(AUTO_ALLOCATE_FLOATING_IPS))))
             .generateKeyPair(injector.getInstance(
-                  Key.get(boolean.class, Names.named(NovaConstants.PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS))));
+                  Key.get(boolean.class, Names.named(AUTO_GENERATE_KEYPAIRS))));
    }
 
    @Provides
@@ -174,7 +183,7 @@ public class NovaComputeServiceContextModule
    @Named("SECURITY")
    protected Predicate<AtomicReference<ZoneAndName>> securityGroupEventualConsistencyDelay(
             FindSecurityGroupWithNameAndReturnTrue in,
-            @Named(NovaConstants.PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
+            @Named(TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
       return new RetryablePredicate<AtomicReference<ZoneAndName>>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
    }
 

@@ -20,12 +20,12 @@ package org.jclouds.trystack.nova;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS;
+import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 
 import java.util.Properties;
 
-import org.jclouds.Constants;
-import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.NovaPropertiesBuilder;
 
 /**
@@ -39,12 +39,10 @@ public class TryStackNovaPropertiesBuilder extends NovaPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
       properties.setProperty(PROPERTY_ENDPOINT, "https://nova-api.trystack.org:5443");
-      properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      properties.setProperty(KeystoneProperties.CREDENTIAL_TYPE, "passwordCredentials");
-      // auth fail can happen while cloud-init applies keypair updates
-      properties.setProperty("jclouds.ssh.max-retries", "7");
-      properties.setProperty("jclouds.ssh.retry-auth", "true");
-      properties.setProperty(PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS, "true");
+      properties.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
+      
+      properties.setProperty(CREDENTIAL_TYPE, "passwordCredentials");
+      properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
       return properties;
    }
 
