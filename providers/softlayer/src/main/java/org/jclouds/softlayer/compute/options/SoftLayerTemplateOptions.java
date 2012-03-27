@@ -171,15 +171,6 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
    }
 
    /**
-    * @see TemplateOptions#runScript(Payload)
-    */
-   @Deprecated
-   @Override
-   public SoftLayerTemplateOptions runScript(Payload script) {
-      return SoftLayerTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
     * {@inheritDoc}
     */
    @Override

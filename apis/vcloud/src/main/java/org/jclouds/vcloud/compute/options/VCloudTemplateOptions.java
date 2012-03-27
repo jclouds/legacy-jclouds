@@ -21,7 +21,6 @@ package org.jclouds.vcloud.compute.options;
 import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.io.Payload;
 import org.jclouds.util.Preconditions2;
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 
@@ -140,14 +139,6 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#runScript
-       */
-      public static VCloudTemplateOptions runScript(Payload script) {
-         VCloudTemplateOptions options = new VCloudTemplateOptions();
-         return VCloudTemplateOptions.class.cast(options.runScript(script));
-      }
-
-      /**
        * @see TemplateOptions#userMetadata(Map)
        */
       public static VCloudTemplateOptions userMetadata(Map<String, String> userMetadata) {
@@ -224,15 +215,6 @@ public class VCloudTemplateOptions extends TemplateOptions implements Cloneable 
    @Override
    public VCloudTemplateOptions installPrivateKey(String privateKey) {
       return VCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(Payload)
-    */
-   @Deprecated
-   @Override
-   public VCloudTemplateOptions runScript(Payload script) {
-      return VCloudTemplateOptions.class.cast(super.runScript(script));
    }
 
    /**

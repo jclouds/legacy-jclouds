@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Map;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.io.Payload;
 import org.jclouds.util.Preconditions2;
 
 /**
@@ -204,16 +203,6 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions implements C
    @Override
    public TerremarkVCloudTemplateOptions installPrivateKey(String privateKey) {
       return TerremarkVCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-
-   /**
-    * @see TemplateOptions#runScript(Payload)
-    */
-   @Deprecated
-   @Override
-   public TerremarkVCloudTemplateOptions runScript(Payload script) {
-      return TerremarkVCloudTemplateOptions.class.cast(super.runScript(script));
    }
 
    /**

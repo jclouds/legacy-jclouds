@@ -25,7 +25,6 @@ import java.util.Map;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.glesys.features.ServerClient;
-import org.jclouds.io.Payload;
 
 import com.google.common.net.InetAddresses;
 
@@ -114,15 +113,7 @@ public class GleSYSTemplateOptions extends TemplateOptions implements Cloneable 
          GleSYSTemplateOptions options = new GleSYSTemplateOptions();
          return GleSYSTemplateOptions.class.cast(options.blockOnPort(port, seconds));
       }
-
-      /**
-       * @see TemplateOptions#runScript(Payload)
-       */
-      public static GleSYSTemplateOptions runScript(Payload script) {
-         GleSYSTemplateOptions options = new GleSYSTemplateOptions();
-         return GleSYSTemplateOptions.class.cast(options.runScript(script));
-      }
-
+      
       /**
        * @see TemplateOptions#userMetadata(Map)
        */
@@ -172,15 +163,6 @@ public class GleSYSTemplateOptions extends TemplateOptions implements Cloneable 
    @Override
    public GleSYSTemplateOptions installPrivateKey(String privateKey) {
       return GleSYSTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(Payload)
-    */
-   @Deprecated
-   @Override
-   public GleSYSTemplateOptions runScript(Payload script) {
-      return GleSYSTemplateOptions.class.cast(super.runScript(script));
    }
 
    /**

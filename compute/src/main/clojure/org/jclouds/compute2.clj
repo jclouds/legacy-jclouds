@@ -345,14 +345,8 @@ Here's an example of creating and running a small linux node in the group webser
     (make-option-map
       kw-memfn-1arg
       [;; RunScriptOptions
-         ;; deprecated
-         :override-credentials-with
          :override-login-credentials
-         ;; deprecated
-         :override-login-user-with
          :override-login-user
-         ;; deprecated
-         :override-login-credential-with
          :override-login-password :override-login-privateKey
          :override-authenticate-sudo
          

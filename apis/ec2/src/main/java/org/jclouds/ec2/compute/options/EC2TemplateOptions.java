@@ -27,14 +27,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.UnmapDeviceNamed;
-import org.jclouds.io.Payload;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
@@ -291,13 +289,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.userMetadata(userMetadata));
       }
-
-      @Deprecated
-      public static EC2TemplateOptions overrideLoginUserWith(String user) {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return options.overrideLoginUserWith(user);
-      }
-
+      
       public static EC2TemplateOptions overrideLoginUser(String user) {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return options.overrideLoginUser(user);
@@ -316,18 +308,6 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       public static EC2TemplateOptions overrideAuthenticateSudo(boolean authenticateSudo) {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return options.overrideAuthenticateSudo(authenticateSudo);
-      }
-
-      @Deprecated
-      public static EC2TemplateOptions overrideLoginCredentialWith(String credential) {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return options.overrideLoginCredentialWith(credential);
-      }
-
-      @Deprecated
-      public static EC2TemplateOptions overrideCredentialsWith(Credentials credentials) {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return options.overrideCredentialsWith(credentials);
       }
 
       public static EC2TemplateOptions overrideLoginCredentials(LoginCredentials credentials) {
@@ -370,15 +350,6 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    public EC2TemplateOptions installPrivateKey(String privateKey) {
       return EC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public EC2TemplateOptions runScript(Payload script) {
-      return EC2TemplateOptions.class.cast(super.runScript(script));
-   }
    
    /**
     * {@inheritDoc}
@@ -418,33 +389,6 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    @Override
    public EC2TemplateOptions runScript(Statement script) {
       return EC2TemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public EC2TemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return EC2TemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public EC2TemplateOptions overrideLoginUserWith(String loginUser) {
-      return EC2TemplateOptions.class.cast(super.overrideLoginUserWith(loginUser));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public EC2TemplateOptions overrideLoginCredentialWith(String loginCredential) {
-      return EC2TemplateOptions.class.cast(super.overrideLoginCredentialWith(loginCredential));
    }
 
    /**

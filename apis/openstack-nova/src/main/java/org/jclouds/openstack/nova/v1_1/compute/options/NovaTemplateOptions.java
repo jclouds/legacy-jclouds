@@ -25,9 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.io.Payload;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
@@ -342,15 +340,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    /**
     * {@inheritDoc}
     */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions runScript(Payload script) {
-      return NovaTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    @Override
    public NovaTemplateOptions blockUntilRunning(boolean blockUntilRunning) {
       return NovaTemplateOptions.class.cast(super.blockUntilRunning(blockUntilRunning));
@@ -386,33 +375,6 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
    @Override
    public NovaTemplateOptions runScript(Statement script) {
       return NovaTemplateOptions.class.cast(super.runScript(script));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions overrideCredentialsWith(Credentials overridingCredentials) {
-      return NovaTemplateOptions.class.cast(super.overrideCredentialsWith(overridingCredentials));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions overrideLoginUserWith(String loginUser) {
-      return NovaTemplateOptions.class.cast(super.overrideLoginUserWith(loginUser));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public NovaTemplateOptions overrideLoginCredentialWith(String loginCredential) {
-      return NovaTemplateOptions.class.cast(super.overrideLoginCredentialWith(loginCredential));
    }
 
    /**
