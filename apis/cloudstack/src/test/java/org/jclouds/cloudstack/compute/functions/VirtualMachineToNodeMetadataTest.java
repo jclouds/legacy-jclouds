@@ -18,12 +18,11 @@
  */
 package org.jclouds.cloudstack.compute.functions;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import static org.testng.Assert.assertEquals;
+
+import java.net.UnknownHostException;
+import java.util.Set;
+
 import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata.FindImageForVirtualMachine;
 import org.jclouds.cloudstack.compute.functions.VirtualMachineToNodeMetadata.FindLocationForVirtualMachine;
 import org.jclouds.cloudstack.domain.GuestIPType;
@@ -43,10 +42,12 @@ import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import java.net.UnknownHostException;
-import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole, Andrei Savu

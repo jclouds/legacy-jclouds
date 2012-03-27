@@ -23,10 +23,9 @@ import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.net.URI;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.annotations.VisibleForTesting;

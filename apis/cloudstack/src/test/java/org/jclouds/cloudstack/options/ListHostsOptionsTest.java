@@ -18,11 +18,6 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
-import org.jclouds.cloudstack.domain.AllocationState;
-import org.jclouds.cloudstack.domain.Host;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.ListHostsOptions.Builder.allocationState;
 import static org.jclouds.cloudstack.options.ListHostsOptions.Builder.clusterId;
 import static org.jclouds.cloudstack.options.ListHostsOptions.Builder.id;
@@ -36,6 +31,12 @@ import static org.jclouds.cloudstack.options.ListHostsOptions.Builder.type;
 import static org.jclouds.cloudstack.options.ListHostsOptions.Builder.virtualMachineId;
 import static org.jclouds.cloudstack.options.ListHostsOptions.Builder.zoneId;
 import static org.testng.Assert.assertEquals;
+
+import org.jclouds.cloudstack.domain.AllocationState;
+import org.jclouds.cloudstack.domain.Host;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListHostsOptions}

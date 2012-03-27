@@ -18,11 +18,11 @@
  */
 package org.jclouds.cloudstack.compute.strategy;
 
+import java.util.Map;
+
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
-
-import java.util.Map;
 
 /**
  * Convert template options into DeployVirtualMachineOptions, when the target zone has basic networking.

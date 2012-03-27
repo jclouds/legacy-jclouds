@@ -18,13 +18,14 @@
  */
 package org.jclouds.cloudwatch.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudwatch.domain.Unit;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudwatch.options.GetMetricStatisticsOptions.Builder.instanceId;
 import static org.jclouds.cloudwatch.options.GetMetricStatisticsOptions.Builder.unit;
 import static org.testng.Assert.assertEquals;
+
+import org.jclouds.cloudwatch.domain.Unit;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code GetMetricStatisticsOptions}

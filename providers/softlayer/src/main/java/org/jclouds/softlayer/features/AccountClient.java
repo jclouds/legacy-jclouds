@@ -18,11 +18,11 @@
  */
 package org.jclouds.softlayer.features;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.softlayer.domain.ProductPackage;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.softlayer.domain.ProductPackage;
 
 /**
  * Provides synchronous access to Account.

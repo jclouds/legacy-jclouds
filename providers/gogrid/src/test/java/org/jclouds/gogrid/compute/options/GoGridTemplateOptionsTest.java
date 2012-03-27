@@ -18,7 +18,7 @@
  */
 package org.jclouds.gogrid.compute.options;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.testng.annotations.Test;

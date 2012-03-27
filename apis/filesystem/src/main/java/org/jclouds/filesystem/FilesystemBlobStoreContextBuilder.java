@@ -18,14 +18,16 @@
  */
 package org.jclouds.filesystem;
 
-import com.google.inject.Module;
 import java.util.List;
 import java.util.Properties;
+
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;
 import org.jclouds.filesystem.config.FilesystemBlobStoreModule;
+
+import com.google.inject.Module;
 
 /**
  *

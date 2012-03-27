@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
@@ -32,6 +30,7 @@ import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.options.RunInstancesOptions;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides access to EC2 via their REST API.

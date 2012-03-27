@@ -21,11 +21,11 @@ package org.jclouds.providers;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-import com.google.common.collect.Iterables;
-
 import java.util.NoSuchElementException;
 
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * The ProvidersTest tests the org.jclouds.providers.Providers class.

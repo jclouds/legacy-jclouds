@@ -22,9 +22,8 @@ import java.net.URI;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.options.CatalogItemOptions;

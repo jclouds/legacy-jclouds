@@ -22,11 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.Grant;
 import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.domain.BucketLogging;
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

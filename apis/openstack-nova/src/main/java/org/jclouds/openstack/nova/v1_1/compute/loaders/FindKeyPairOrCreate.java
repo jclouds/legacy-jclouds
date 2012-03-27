@@ -18,14 +18,15 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.loaders;
 
-import com.google.common.base.Function;
-import com.google.common.cache.CacheLoader;
-import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
-import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
+import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
+
+import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
 
 /**
  * @author Adam Lowe

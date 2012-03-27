@@ -18,11 +18,19 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.clusterId;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.id;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.ipAddress;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.keyword;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.name;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.path;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.podId;
+import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.ListStoragePoolsOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Test for the ListStoragePoolsOptions class.

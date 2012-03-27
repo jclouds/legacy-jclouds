@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudstack.functions;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.cloudstack.options.AssociateIPAddressOptions.Builder.networkId;
 import static org.jclouds.cloudstack.options.ListPublicIPAddressesOptions.Builder.allocatedOnly;
 import static org.testng.Assert.assertEquals;

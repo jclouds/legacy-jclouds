@@ -19,18 +19,18 @@
 
 package org.jclouds.cloudstack.predicates;
 
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.domain.VirtualMachine;
-import org.jclouds.cloudstack.features.VirtualMachineClient;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+
+import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.features.VirtualMachineClient;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * @author Andrei Savu

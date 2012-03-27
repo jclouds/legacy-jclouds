@@ -25,7 +25,6 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.trmk.vcloud_0_8.domain.CustomizationParameters;
-import org.jclouds.trmk.vcloud_0_8.xml.CustomizationParametersHandler;
 import org.testng.annotations.Test;
 
 /**

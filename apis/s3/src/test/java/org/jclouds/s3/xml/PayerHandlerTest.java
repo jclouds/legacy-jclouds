@@ -20,10 +20,10 @@ package org.jclouds.s3.xml;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.s3.domain.Payer;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.s3.domain.Payer;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 

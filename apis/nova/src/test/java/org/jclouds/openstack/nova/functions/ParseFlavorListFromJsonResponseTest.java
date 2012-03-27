@@ -18,11 +18,12 @@
  */
 package org.jclouds.openstack.nova.functions;
 
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
+import static org.testng.Assert.assertEquals;
+
+import java.io.InputStream;
+import java.net.UnknownHostException;
+import java.util.List;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
@@ -30,11 +31,11 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.domain.Flavor;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
-import java.net.UnknownHostException;
-import java.util.List;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseFlavorListFromJsonResponse}

@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;

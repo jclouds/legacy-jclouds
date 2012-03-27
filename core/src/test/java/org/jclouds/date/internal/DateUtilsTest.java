@@ -18,9 +18,9 @@
  */
 package org.jclouds.date.internal;
 
-import org.testng.annotations.Test;
-
 import static org.testng.AssertJUnit.assertEquals;
+
+import org.testng.annotations.Test;
 
 @Test(groups = "unit", testName = "DateUtilsTest")
 public class DateUtilsTest {

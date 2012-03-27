@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;

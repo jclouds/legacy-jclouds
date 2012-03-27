@@ -22,7 +22,6 @@ import org.jclouds.cloudstack.features.GlobalAccountAsyncClient;
 import org.jclouds.cloudstack.features.GlobalAlertAsyncClient;
 import org.jclouds.cloudstack.features.GlobalCapacityAsyncClient;
 import org.jclouds.cloudstack.features.GlobalConfigurationAsyncClient;
-import org.jclouds.cloudstack.features.GlobalConfigurationClient;
 import org.jclouds.cloudstack.features.GlobalDomainAsyncClient;
 import org.jclouds.cloudstack.features.GlobalHostAsyncClient;
 import org.jclouds.cloudstack.features.GlobalOfferingAsyncClient;

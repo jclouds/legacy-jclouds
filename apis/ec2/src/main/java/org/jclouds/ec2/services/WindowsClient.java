@@ -18,14 +18,14 @@
  */
 package org.jclouds.ec2.services;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.BundleTask;
 import org.jclouds.ec2.domain.PasswordData;
 import org.jclouds.ec2.options.BundleInstanceS3StorageOptions;
 import org.jclouds.javax.annotation.Nullable;
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides windows services for EC2. For more information, refer to the Amazon

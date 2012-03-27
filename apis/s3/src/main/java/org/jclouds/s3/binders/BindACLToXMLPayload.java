@@ -25,14 +25,14 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.Binder;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.Grant;
 import org.jclouds.s3.domain.AccessControlList.GroupGrantee;
 import org.jclouds.s3.reference.S3Constants;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
 
 import com.google.common.base.Throwables;
 import com.jamesmurty.utils.XMLBuilder;

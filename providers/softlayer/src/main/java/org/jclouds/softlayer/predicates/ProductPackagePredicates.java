@@ -18,10 +18,11 @@
  */
 package org.jclouds.softlayer.predicates;
 
-import com.google.common.base.Predicate;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.softlayer.domain.ProductPackage;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Predicate;
 
 public class ProductPackagePredicates {
 

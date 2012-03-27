@@ -30,13 +30,13 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Map;
+
 import org.jclouds.compute.options.TemplateOptions;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
 import org.testng.collections.Maps;
 
-import java.util.Map;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests possible uses of {@code CloudStackTemplateOptions} and

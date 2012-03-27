@@ -34,8 +34,8 @@ import org.jclouds.ec2.domain.RunningInstance;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * 

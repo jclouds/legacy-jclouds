@@ -20,7 +20,6 @@ package org.jclouds.functions;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.functions.JoinOnComma;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

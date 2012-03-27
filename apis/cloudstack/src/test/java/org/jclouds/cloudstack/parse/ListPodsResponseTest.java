@@ -18,17 +18,15 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.AllocationState;
-import org.jclouds.cloudstack.domain.Host;
-import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Pod;
-import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 

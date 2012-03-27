@@ -26,13 +26,13 @@ import java.util.Date;
 
 import javax.inject.Singleton;
 
-import com.google.inject.Inject;
 import org.jclouds.date.DateService;
 import org.jclouds.json.config.GsonModule;
 
 import com.google.common.base.Throwables;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.google.inject.Inject;
 
 /**
  * Parser for Glesys Date formats

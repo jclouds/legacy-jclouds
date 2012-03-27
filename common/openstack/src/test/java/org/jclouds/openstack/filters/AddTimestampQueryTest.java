@@ -27,7 +27,6 @@ import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

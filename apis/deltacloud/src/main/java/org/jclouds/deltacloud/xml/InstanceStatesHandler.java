@@ -22,11 +22,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.jclouds.deltacloud.domain.Instance.Action;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionAutomatically;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
-import org.jclouds.deltacloud.domain.Instance.Action;
-import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.SaxUtils;

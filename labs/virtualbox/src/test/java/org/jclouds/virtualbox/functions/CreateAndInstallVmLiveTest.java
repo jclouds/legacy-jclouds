@@ -51,7 +51,6 @@ import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.ISession;
-import org.virtualbox_4_1.LockType;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.StorageBus;
 

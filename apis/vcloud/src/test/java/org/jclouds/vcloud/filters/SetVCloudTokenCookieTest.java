@@ -25,7 +25,6 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

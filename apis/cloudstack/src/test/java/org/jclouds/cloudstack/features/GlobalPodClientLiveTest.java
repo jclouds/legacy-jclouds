@@ -18,9 +18,14 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Pod;
@@ -31,10 +36,8 @@ import org.jclouds.cloudstack.options.UpdatePodOptions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
-import java.util.Set;
-
-import static org.jclouds.cloudstack.options.UpdateZoneOptions.Builder.name;
-import static org.testng.Assert.*;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code GlobalPodClient}

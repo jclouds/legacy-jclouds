@@ -20,9 +20,10 @@ package org.jclouds.rimuhosting.miro.domain;
 
 import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
 import org.jclouds.rimuhosting.miro.data.NewServerData;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Instance Object.

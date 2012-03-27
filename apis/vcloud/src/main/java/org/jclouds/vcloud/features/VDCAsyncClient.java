@@ -22,10 +22,10 @@ import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
 import java.net.URI;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;

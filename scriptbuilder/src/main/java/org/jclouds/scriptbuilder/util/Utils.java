@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.util.ClassLoadingUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
@@ -36,7 +37,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
-import org.jclouds.util.ClassLoadingUtils;
 
 /**
  * Utilities used to build init scripts.

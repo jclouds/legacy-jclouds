@@ -18,17 +18,24 @@
  */
 package org.jclouds.elasticstack.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
-import org.jclouds.elasticstack.domain.*;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.elasticstack.domain.Device;
+import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.elasticstack.domain.ServerInfo;
+import org.jclouds.elasticstack.domain.ServerMetrics;
+import org.jclouds.elasticstack.domain.ServerStatus;
+import org.jclouds.elasticstack.domain.VNC;
+
+import com.google.common.base.Function;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole

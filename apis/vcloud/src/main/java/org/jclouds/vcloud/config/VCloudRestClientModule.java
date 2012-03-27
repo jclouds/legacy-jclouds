@@ -36,8 +36,8 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEO
 
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;

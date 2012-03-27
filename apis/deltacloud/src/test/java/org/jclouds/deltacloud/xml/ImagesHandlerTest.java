@@ -25,7 +25,6 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.deltacloud.domain.Image;
-import org.jclouds.deltacloud.xml.ImagesHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 

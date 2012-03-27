@@ -21,11 +21,11 @@ package org.jclouds.cloudservers;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceContextModule;
+import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceContextModule;
-import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;

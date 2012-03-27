@@ -21,8 +21,7 @@ package org.jclouds.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Permission;
 import org.jclouds.ec2.domain.Snapshot;
@@ -30,7 +29,7 @@ import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.options.CreateSnapshotOptions;
 import org.jclouds.ec2.options.DescribeSnapshotsOptions;
 import org.jclouds.ec2.options.DetachVolumeOptions;
-import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides access to EC2 Elastic Block Store services.

@@ -18,7 +18,7 @@
  */
 package org.jclouds.rest.binders;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 

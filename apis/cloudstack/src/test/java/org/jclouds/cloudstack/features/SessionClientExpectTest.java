@@ -18,7 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableMultimap;
+import static org.jclouds.crypto.CryptoStreams.md5Hex;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.LoginResponse;
@@ -26,12 +32,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URLEncoder;
-
-import static org.jclouds.crypto.CryptoStreams.md5Hex;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests behavior of {@code SessionClient}

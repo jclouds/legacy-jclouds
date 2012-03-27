@@ -21,10 +21,9 @@ package org.jclouds.aws.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides Placement Group services for EC2. For more information, refer to the Amazon EC2

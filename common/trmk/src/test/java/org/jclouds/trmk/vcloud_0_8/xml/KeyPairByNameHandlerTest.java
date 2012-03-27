@@ -18,9 +18,9 @@
  */
 package org.jclouds.trmk.vcloud_0_8.xml;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -30,7 +30,6 @@ import java.net.UnknownHostException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.domain.KeyPair;
-import org.jclouds.trmk.vcloud_0_8.xml.KeyPairByNameHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

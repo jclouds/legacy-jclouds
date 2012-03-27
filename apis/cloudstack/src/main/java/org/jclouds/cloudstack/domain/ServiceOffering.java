@@ -18,10 +18,11 @@
  */
 package org.jclouds.cloudstack.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;

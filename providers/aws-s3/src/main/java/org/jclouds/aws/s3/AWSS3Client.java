@@ -21,12 +21,10 @@ package org.jclouds.aws.s3;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.options.PutObjectOptions;
 
 /**

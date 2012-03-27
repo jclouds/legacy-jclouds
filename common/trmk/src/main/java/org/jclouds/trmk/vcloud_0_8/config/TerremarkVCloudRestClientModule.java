@@ -33,8 +33,8 @@ import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCL
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -88,8 +88,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;

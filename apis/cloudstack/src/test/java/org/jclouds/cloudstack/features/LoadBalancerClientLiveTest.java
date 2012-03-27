@@ -30,6 +30,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
@@ -39,7 +41,6 @@ import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.predicates.LoadBalancerRuleActive;
-import org.jclouds.cloudstack.predicates.NetworkPredicates;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshException;
@@ -49,8 +50,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-
-import javax.annotation.Nullable;
 
 /**
  * Tests behavior of {@code LoadBalancerClientLiveTest}

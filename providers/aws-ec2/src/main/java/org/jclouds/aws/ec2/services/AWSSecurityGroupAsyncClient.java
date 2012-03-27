@@ -23,7 +23,6 @@ import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,6 +38,7 @@ import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.ec2.xml.DescribeSecurityGroupsResponseHandler;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;

@@ -18,7 +18,6 @@
  */
 package org.jclouds.ec2.services;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.ec2.options.DescribeSnapshotsOptions.Builder.snapshotIds;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -28,7 +27,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -42,7 +40,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 

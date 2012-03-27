@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
 
 import java.util.ArrayList;
 import java.util.HashMap;

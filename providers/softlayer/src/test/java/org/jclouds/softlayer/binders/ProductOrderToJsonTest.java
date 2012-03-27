@@ -18,8 +18,10 @@
  */
 package org.jclouds.softlayer.binders;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
 import org.jclouds.json.internal.GsonWrapper;
@@ -30,9 +32,8 @@ import org.jclouds.softlayer.domain.VirtualGuest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
 
 /**
  * Tests behavior of {@code ProductOrderToJsonTest}

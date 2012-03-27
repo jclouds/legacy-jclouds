@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.config.ComputeServiceProperties;
 import org.jclouds.compute.reference.ComputeServiceConstants.InitStatusProperties;
 import org.testng.annotations.Test;
 

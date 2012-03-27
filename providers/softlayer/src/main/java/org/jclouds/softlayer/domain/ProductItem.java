@@ -18,13 +18,14 @@
  */
 package org.jclouds.softlayer.domain;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import org.jclouds.javax.annotation.Nullable;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * The SoftLayer_Product_Item data type contains general information relating to

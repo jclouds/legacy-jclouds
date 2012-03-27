@@ -19,7 +19,6 @@
 package org.jclouds.azureblob.predicates.validators;
 
 import org.testng.annotations.Test;
-import org.jclouds.azureblob.predicates.validators.ContainerNameValidator;
 
 public class ContainerNameValidatorTest {
 

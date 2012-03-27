@@ -24,9 +24,9 @@ import static com.google.common.collect.Iterables.filter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -60,10 +60,10 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**

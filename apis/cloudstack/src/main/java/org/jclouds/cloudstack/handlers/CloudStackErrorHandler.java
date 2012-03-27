@@ -18,8 +18,11 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import com.google.common.base.Throwables;
-import com.google.common.io.Closeables;
+import java.io.IOException;
+
+import javax.annotation.Resource;
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -29,9 +32,8 @@ import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 
-import javax.annotation.Resource;
-import javax.inject.Singleton;
-import java.io.IOException;
+import com.google.common.base.Throwables;
+import com.google.common.io.Closeables;
 
 /**
  * 

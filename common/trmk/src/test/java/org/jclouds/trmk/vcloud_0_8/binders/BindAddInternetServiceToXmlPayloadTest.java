@@ -31,7 +31,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.trmk.vcloud_0_8.binders.BindAddInternetServiceToXmlPayload;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 

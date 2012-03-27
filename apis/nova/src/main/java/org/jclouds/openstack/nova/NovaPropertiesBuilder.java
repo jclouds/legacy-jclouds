@@ -18,11 +18,11 @@
  */
 package org.jclouds.openstack.nova;
 
-import org.jclouds.PropertiesBuilder;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 
 import java.util.Properties;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import org.jclouds.PropertiesBuilder;
 
 /**
  * Builds properties used in Openstack Nova Clients

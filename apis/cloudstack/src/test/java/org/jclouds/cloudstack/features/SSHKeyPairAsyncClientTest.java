@@ -18,8 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Functions;
-import com.google.inject.TypeLiteral;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URLEncoder;
+
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.cloudstack.options.ListSSHKeyPairsOptions;
 import org.jclouds.crypto.SshKeys;
@@ -34,11 +38,8 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URLEncoder;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Functions;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code SSHKeyPairAsyncClient}

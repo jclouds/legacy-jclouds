@@ -24,12 +24,11 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
 import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;

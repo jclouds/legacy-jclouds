@@ -20,7 +20,6 @@ package org.jclouds.ec2.config;
 
 import java.util.Map;
 
-
 import org.jclouds.aws.config.WithZonesFormSigningRestClientModule;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;

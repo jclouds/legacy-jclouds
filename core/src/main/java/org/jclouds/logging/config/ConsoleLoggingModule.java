@@ -18,8 +18,8 @@
  */
 package org.jclouds.logging.config;
 
-import org.jclouds.logging.Logger;
 import org.jclouds.logging.ConsoleLogger;
+import org.jclouds.logging.Logger;
 
 /**
  * Configures logging of type {@link ConsoleLogger}

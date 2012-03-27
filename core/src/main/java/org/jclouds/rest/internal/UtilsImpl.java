@@ -23,9 +23,6 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.common.annotations.Beta;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Injector;
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -35,6 +32,9 @@ import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.Utils;
 
+import com.google.common.annotations.Beta;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 /**

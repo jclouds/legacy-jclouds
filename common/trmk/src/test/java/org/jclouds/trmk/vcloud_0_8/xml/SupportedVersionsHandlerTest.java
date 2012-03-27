@@ -27,7 +27,6 @@ import java.util.SortedMap;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.trmk.vcloud_0_8.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedMap;

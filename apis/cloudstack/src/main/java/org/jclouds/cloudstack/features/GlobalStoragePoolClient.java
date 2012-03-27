@@ -18,12 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.StoragePool;
 import org.jclouds.cloudstack.options.ListStoragePoolsOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack storage pool features.

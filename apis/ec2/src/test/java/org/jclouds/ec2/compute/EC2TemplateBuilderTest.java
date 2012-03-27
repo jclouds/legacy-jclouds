@@ -19,9 +19,9 @@
 package org.jclouds.ec2.compute;
 
 import static java.lang.String.format;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.c1_xlarge;
 import static org.jclouds.ec2.compute.domain.EC2HardwareBuilder.cc1_4xlarge;
@@ -63,9 +63,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 

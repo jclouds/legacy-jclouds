@@ -18,15 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.UsageRecord;
 import org.jclouds.cloudstack.options.GenerateUsageRecordsOptions;
 import org.jclouds.cloudstack.options.ListUsageRecordsOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.Date;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack usage features.

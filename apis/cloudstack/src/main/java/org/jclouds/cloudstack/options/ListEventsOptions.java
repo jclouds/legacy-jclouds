@@ -20,8 +20,9 @@ package org.jclouds.cloudstack.options;
 
 import java.util.Date;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control what events are returned

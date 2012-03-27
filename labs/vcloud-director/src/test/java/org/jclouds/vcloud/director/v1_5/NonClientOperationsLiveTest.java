@@ -25,7 +25,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;

@@ -27,16 +27,15 @@ import javax.inject.Named;
 import org.jclouds.Constants;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
-
-import com.google.common.util.concurrent.ExecutionList;
-import com.google.inject.name.Names;
 import org.testng.annotations.Test;
 
+import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
+import com.google.inject.name.Names;
 
 /**
  * 

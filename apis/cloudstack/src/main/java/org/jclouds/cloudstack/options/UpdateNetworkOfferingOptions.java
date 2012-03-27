@@ -18,8 +18,9 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.NetworkOfferingAvailabilityType;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options to control how network offerings are created

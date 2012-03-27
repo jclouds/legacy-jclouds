@@ -18,8 +18,9 @@
  */
 package org.jclouds.rimuhosting.miro.domain;
 
-import com.google.gson.annotations.SerializedName;
 import org.jclouds.rimuhosting.miro.data.PostData;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Attributes about a running VPS.&nbsp; Implicit with any changes to

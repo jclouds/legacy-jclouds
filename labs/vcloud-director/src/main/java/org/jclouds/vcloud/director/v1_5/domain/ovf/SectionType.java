@@ -19,12 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.domain.ovf;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
-
-import java.util.Collections;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -34,14 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
-import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * Metadata about a virtual machine or grouping of them.

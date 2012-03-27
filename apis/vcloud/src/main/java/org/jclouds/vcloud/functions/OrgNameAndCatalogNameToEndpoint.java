@@ -27,8 +27,8 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.Catalog;
 
 import com.google.common.base.Function;

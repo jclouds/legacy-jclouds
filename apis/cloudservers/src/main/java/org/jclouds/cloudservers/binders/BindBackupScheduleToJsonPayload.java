@@ -25,9 +25,9 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.Json;
-import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;

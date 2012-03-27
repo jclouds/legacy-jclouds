@@ -21,10 +21,10 @@ package org.jclouds.bluelock.vcloud.zone01;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.bluelock.vcloud.zone01.config.BluelockVCloudZone01RestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.bluelock.vcloud.zone01.config.BluelockVCloudZone01RestClientModule;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 
 import com.google.inject.Injector;

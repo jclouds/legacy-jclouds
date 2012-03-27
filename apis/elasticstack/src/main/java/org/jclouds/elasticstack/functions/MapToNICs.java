@@ -23,14 +23,14 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import com.google.inject.Inject;
 import org.jclouds.elasticstack.domain.Model;
 import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.rest.annotations.ApiVersion;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import org.jclouds.rest.annotations.ApiVersion;
+import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole

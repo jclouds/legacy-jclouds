@@ -20,9 +20,8 @@ package org.jclouds.atmos.domain;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.atmos.domain.internal.BoundedLinkedHashSet;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
 

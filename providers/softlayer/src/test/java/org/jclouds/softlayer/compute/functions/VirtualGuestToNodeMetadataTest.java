@@ -18,7 +18,7 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import static org.easymock.classextension.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Set;

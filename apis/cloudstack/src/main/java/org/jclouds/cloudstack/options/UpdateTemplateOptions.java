@@ -18,9 +18,10 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control how a template should be updated.

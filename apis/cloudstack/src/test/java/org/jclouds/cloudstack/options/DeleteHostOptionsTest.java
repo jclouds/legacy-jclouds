@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.Host;
+import static org.jclouds.cloudstack.options.DeleteHostOptions.Builder.forceDestroyLocalStorage;
+import static org.jclouds.cloudstack.options.DeleteHostOptions.Builder.forced;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.DeleteHostOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code DeleteHostOptions}

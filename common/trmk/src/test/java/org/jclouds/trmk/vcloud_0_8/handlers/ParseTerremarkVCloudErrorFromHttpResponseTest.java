@@ -25,7 +25,6 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.trmk.vcloud_0_8.handlers.ParseTerremarkVCloudErrorFromHttpResponse;
 import org.testng.annotations.Test;
 
 /**

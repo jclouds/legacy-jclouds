@@ -23,9 +23,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 

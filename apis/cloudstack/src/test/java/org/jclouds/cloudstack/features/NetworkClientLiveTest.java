@@ -18,6 +18,22 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
+import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.accountInDomain;
+import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.id;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkOffering;
@@ -26,20 +42,6 @@ import org.jclouds.cloudstack.predicates.NetworkOfferingPredicates;
 import org.jclouds.cloudstack.predicates.ZonePredicates;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import java.net.URI;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.google.common.collect.Iterables.*;
-import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
-import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
-import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.accountInDomain;
-import static org.jclouds.cloudstack.options.ListNetworksOptions.Builder.id;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Tests behavior of {@code NetworkClientLiveTest}

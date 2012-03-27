@@ -18,18 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+
+import java.util.Map;
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.crypto.SshKeys;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.Map;
-import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 
 /**
  * Tests behavior of {@code SSHKeyPairClient}

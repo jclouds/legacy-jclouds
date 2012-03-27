@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.xml.XMLParser;
 
 /**

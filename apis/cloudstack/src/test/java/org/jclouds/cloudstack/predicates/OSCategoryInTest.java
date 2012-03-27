@@ -19,8 +19,16 @@
 
 package org.jclouds.cloudstack.predicates;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Map;
+import java.util.Set;
+
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.OSType;
 import org.jclouds.cloudstack.domain.Template;
@@ -28,15 +36,8 @@ import org.jclouds.cloudstack.features.GuestOSClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Map;
-import java.util.Set;
-
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * @author Andrei Savu

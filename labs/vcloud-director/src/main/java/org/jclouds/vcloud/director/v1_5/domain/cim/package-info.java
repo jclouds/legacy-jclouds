@@ -29,8 +29,8 @@
 package org.jclouds.vcloud.director.v1_5.domain.cim;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_NS;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_VSSD_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_RASD_NS;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_CIM_VSSD_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OVF_NS;
 
 import javax.xml.bind.annotation.XmlAccessType;

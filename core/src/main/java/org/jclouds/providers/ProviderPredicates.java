@@ -18,11 +18,11 @@
  */
 package org.jclouds.providers;
 
+import org.jclouds.util.Preconditions2;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-
-import org.jclouds.util.Preconditions2;
 
 /**
  * Container for provider filters (predicates).

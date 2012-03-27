@@ -18,12 +18,19 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.options.AddDomainOptions;
-import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.AddRecordOptions;
+import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.EditRecordOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -31,12 +38,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to Domain (DNS) data via the Glesys REST API.

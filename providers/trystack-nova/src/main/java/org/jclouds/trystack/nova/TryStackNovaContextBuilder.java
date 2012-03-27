@@ -21,8 +21,8 @@ package org.jclouds.trystack.nova;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.trystack.nova.config.TryStackNovaServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.NovaContextBuilder;
+import org.jclouds.trystack.nova.config.TryStackNovaServiceContextModule;
 
 import com.google.inject.Module;
 

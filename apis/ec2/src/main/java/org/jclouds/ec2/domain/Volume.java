@@ -18,15 +18,16 @@
  */
 package org.jclouds.ec2.domain;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.javax.annotation.Nullable;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Sets.newHashSet;
 
 import java.util.Date;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Sets.newHashSet;
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 

@@ -25,10 +25,10 @@ import javax.management.relation.Role;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
+import org.jclouds.vcloud.director.v1_5.domain.RoleReference;
 import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 
 /**

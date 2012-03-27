@@ -18,11 +18,11 @@
  */
 package org.jclouds.ec2.compute.config;
 
-import com.google.inject.AbstractModule;
-
-import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.config.ResolvesImages;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
+
+import com.google.inject.AbstractModule;
 
 /**
  * @author Oleksiy Yarmula

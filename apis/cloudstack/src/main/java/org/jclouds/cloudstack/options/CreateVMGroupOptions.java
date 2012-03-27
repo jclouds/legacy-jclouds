@@ -18,8 +18,9 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options used to control options for creating a VM group

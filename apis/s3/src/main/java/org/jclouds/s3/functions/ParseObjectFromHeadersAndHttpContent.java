@@ -20,11 +20,11 @@ package org.jclouds.s3.functions;
 
 import javax.inject.Inject;
 
-import org.jclouds.s3.domain.MutableObjectMetadata;
-import org.jclouds.s3.domain.S3Object;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.s3.domain.MutableObjectMetadata;
+import org.jclouds.s3.domain.S3Object;
 
 import com.google.common.base.Function;
 

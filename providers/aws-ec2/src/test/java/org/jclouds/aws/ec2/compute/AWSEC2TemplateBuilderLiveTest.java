@@ -18,11 +18,15 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.inject.Module;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
@@ -44,14 +48,11 @@ import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.http.internal.TrackingJavaUrlHttpCommandExecutorService.getJavaMethodForRequestAtIndex;
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.inject.Module;
 
 /**
  * 

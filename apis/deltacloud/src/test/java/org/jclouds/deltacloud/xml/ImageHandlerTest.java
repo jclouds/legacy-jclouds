@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.deltacloud.domain.Image;
-import org.jclouds.deltacloud.xml.ImageHandler;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.Test;

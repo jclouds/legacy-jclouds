@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.location.suppliers.LocationIdToIso3166CodesSupplier;
-import org.jclouds.util.Suppliers2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;

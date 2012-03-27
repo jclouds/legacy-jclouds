@@ -18,7 +18,16 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import com.google.common.cache.LoadingCache;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.easymock.IAnswer;
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
@@ -28,15 +37,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Tests behavior of {@code InvalidateSessionAndRetryOn401AndLogoutOnClose} handler

@@ -18,7 +18,11 @@
  */
 package org.jclouds.glesys;
 
-import org.jclouds.glesys.features.*;
+import org.jclouds.glesys.features.ArchiveAsyncClient;
+import org.jclouds.glesys.features.DomainAsyncClient;
+import org.jclouds.glesys.features.EmailAsyncClient;
+import org.jclouds.glesys.features.IpAsyncClient;
+import org.jclouds.glesys.features.ServerAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**

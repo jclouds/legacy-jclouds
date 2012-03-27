@@ -25,10 +25,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.s3.domain.BucketMetadata;
-import org.jclouds.s3.domain.CanonicalUser;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.s3.domain.BucketMetadata;
+import org.jclouds.s3.domain.CanonicalUser;
 
 import com.google.common.collect.Sets;
 

@@ -18,12 +18,12 @@
  */
 package org.jclouds.cloudonestorage;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for PEER1's

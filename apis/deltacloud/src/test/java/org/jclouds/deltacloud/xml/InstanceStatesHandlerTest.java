@@ -22,11 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.deltacloud.domain.Instance.Action;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionAutomatically;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
-import org.jclouds.deltacloud.domain.Instance.Action;
-import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 

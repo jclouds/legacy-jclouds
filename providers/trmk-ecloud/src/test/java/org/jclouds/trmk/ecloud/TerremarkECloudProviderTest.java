@@ -20,7 +20,6 @@ package org.jclouds.trmk.ecloud;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.trmk.ecloud.TerremarkECloudProviderMetadata;
 import org.testng.annotations.Test;
 
 /**

@@ -30,9 +30,9 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 
 import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * 

@@ -18,10 +18,11 @@
  */
 package org.jclouds.openstack.nova.v1_1.predicates;
 
-import com.google.common.base.Predicate;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Predicate;
 
 /**
  * Predicates handy when working with KeyPairs

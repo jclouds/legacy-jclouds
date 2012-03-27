@@ -25,8 +25,8 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.BaseRestClientTest.MockModule;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

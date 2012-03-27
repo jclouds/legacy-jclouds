@@ -18,7 +18,11 @@
  */
 package org.jclouds.aws.ec2.compute.strategy;
 
-import com.google.inject.Guice;
+import static org.testng.Assert.assertEquals;
+
+import java.util.Collections;
+import java.util.Map;
+
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -34,10 +38,7 @@ import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-import java.util.Map;
-
-import static org.testng.Assert.assertEquals;
+import com.google.inject.Guice;
 
 public class AWSEC2ReviseParsedImageTest {
     private Map<OsFamily, Map<String, String>> osVersionMap;

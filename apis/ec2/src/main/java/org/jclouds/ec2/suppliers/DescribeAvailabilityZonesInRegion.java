@@ -37,10 +37,10 @@ import org.jclouds.util.Suppliers2;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import com.google.common.collect.ImmutableMap.Builder;
 
 @Singleton
 public class DescribeAvailabilityZonesInRegion implements RegionIdToZoneIdsSupplier {

@@ -19,24 +19,24 @@
 
 package org.jclouds.ec2.predicates;
 
-import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.Volume;
-import org.jclouds.ec2.services.ElasticBlockStoreClient;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
-import java.util.Date;
-import java.util.Set;
-
 import static com.google.common.collect.Sets.newHashSet;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.jclouds.ec2.domain.Attachment.Status;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+
+import java.util.Date;
+import java.util.Set;
+
+import org.jclouds.ec2.domain.Attachment;
+import org.jclouds.ec2.domain.Attachment.Status;
+import org.jclouds.ec2.domain.Volume;
+import org.jclouds.ec2.services.ElasticBlockStoreClient;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * @author Andrei Savu

@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

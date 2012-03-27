@@ -26,7 +26,8 @@ import static org.testng.Assert.assertTrue;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import com.google.common.base.Predicates;
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.Network;
@@ -41,8 +42,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-
-import javax.annotation.Nullable;
+import com.google.common.base.Predicates;
 
 /**
  * Tests behavior of {@code FirewallClientLiveTest}

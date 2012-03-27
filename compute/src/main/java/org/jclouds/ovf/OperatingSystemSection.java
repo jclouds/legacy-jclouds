@@ -18,9 +18,8 @@
  */
 package org.jclouds.ovf;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.cim.OSType;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * An OperatingSystemSection specifies the operating system installed on a virtual machine.

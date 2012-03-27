@@ -18,7 +18,15 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 import org.jclouds.glesys.domain.ArchiveDetails;
@@ -29,9 +37,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to Archive data via the Glesys REST API.

@@ -20,8 +20,8 @@ package org.jclouds.s3.blobstore.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.s3.options.ListBucketOptions;
 
 import com.google.common.base.Function;
 

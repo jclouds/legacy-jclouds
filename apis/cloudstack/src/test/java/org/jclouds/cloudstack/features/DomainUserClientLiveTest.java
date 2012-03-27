@@ -18,19 +18,19 @@
  */
 package org.jclouds.cloudstack.features;
 
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.User;
-import org.testng.annotations.Test;
-
-import java.util.Set;
-
 import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
 import static org.jclouds.cloudstack.features.GlobalUserClientLiveTest.createTestUser;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.AsyncCreateResponse;
+import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.User;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code DomainUserClient}

@@ -66,9 +66,8 @@ package org.jclouds.crypto;
 
 import java.security.MessageDigest;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.encryption.internal.JCECrypto;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Throwables;
 

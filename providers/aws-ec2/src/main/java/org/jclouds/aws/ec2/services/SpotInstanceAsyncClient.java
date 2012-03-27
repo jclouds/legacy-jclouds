@@ -23,7 +23,6 @@ import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -40,6 +39,7 @@ import org.jclouds.aws.ec2.xml.DescribeSpotPriceHistoryResponseHandler;
 import org.jclouds.aws.ec2.xml.SpotInstanceHandler;
 import org.jclouds.aws.ec2.xml.SpotInstancesHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;

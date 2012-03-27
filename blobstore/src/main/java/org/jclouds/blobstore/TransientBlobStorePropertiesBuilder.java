@@ -20,8 +20,8 @@ package org.jclouds.blobstore;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.util.Properties;

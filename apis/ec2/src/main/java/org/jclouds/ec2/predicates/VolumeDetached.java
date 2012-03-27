@@ -19,18 +19,19 @@
 
 package org.jclouds.ec2.predicates;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import static com.google.common.collect.Iterables.getLast;
+
+import javax.annotation.Resource;
+
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.logging.Logger;
 
-import javax.annotation.Resource;
-
-import static com.google.common.collect.Iterables.getLast;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * Tests to see if a volume is detached.

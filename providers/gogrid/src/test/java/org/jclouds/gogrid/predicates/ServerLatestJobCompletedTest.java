@@ -18,9 +18,9 @@
  */
 package org.jclouds.gogrid.predicates;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.EasyMock.replay;
 import static org.jclouds.gogrid.options.GetJobListOptions.Builder.latestJobForObjectByName;
 import static org.testng.Assert.assertTrue;
 

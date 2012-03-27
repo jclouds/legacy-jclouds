@@ -22,10 +22,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 
 import org.jclouds.crypto.Sha512Crypt;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;

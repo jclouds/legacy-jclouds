@@ -18,6 +18,7 @@
  */
 package org.jclouds.opsource.servers;
 
+import org.jclouds.opsource.servers.domain.Account;
 import org.jclouds.opsource.servers.features.AccountAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 

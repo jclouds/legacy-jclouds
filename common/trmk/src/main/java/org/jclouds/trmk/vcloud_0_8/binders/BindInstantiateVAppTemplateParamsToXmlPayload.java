@@ -31,7 +31,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.SortedMap;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -40,6 +39,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;

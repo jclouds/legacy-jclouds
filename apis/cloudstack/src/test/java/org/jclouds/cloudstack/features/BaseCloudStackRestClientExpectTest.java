@@ -18,10 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import static org.jclouds.crypto.CryptoStreams.md5Hex;
+
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Properties;
+
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
@@ -29,11 +31,10 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Properties;
-
-import static org.jclouds.crypto.CryptoStreams.md5Hex;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Base class for writing CloudStack Rest Client Expect tests

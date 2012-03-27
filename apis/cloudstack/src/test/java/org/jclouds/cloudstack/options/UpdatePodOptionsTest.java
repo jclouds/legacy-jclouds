@@ -18,12 +18,18 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.UpdatePodOptions.Builder.allocationState;
+import static org.jclouds.cloudstack.options.UpdatePodOptions.Builder.endIp;
+import static org.jclouds.cloudstack.options.UpdatePodOptions.Builder.gateway;
+import static org.jclouds.cloudstack.options.UpdatePodOptions.Builder.name;
+import static org.jclouds.cloudstack.options.UpdatePodOptions.Builder.netmask;
+import static org.jclouds.cloudstack.options.UpdatePodOptions.Builder.startIp;
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.UpdatePodOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code UpdatePodOptions}

@@ -18,12 +18,13 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.UpdateDiskOfferingOptions.Builder.displayText;
 import static org.jclouds.cloudstack.options.UpdateDiskOfferingOptions.Builder.name;
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code UpdateDiskOfferingOptions}

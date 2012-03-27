@@ -18,16 +18,16 @@
  */
 package org.jclouds.glesys.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.glesys.domain.Domain;
 import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.options.AddDomainOptions;
-import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.AddRecordOptions;
+import org.jclouds.glesys.options.DomainOptions;
 import org.jclouds.glesys.options.EditRecordOptions;
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to Domain requests.

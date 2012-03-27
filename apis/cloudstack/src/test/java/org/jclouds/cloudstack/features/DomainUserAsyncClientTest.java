@@ -18,9 +18,10 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.inject.TypeLiteral;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
+
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code DomainUserAsyncClient}

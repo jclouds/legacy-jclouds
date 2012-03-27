@@ -18,9 +18,10 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
 import org.jclouds.cloudstack.domain.Capacity;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options to the listCapacity command.

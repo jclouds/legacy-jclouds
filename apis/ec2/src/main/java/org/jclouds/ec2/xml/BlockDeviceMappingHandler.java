@@ -21,13 +21,13 @@ package org.jclouds.ec2.xml;
 import java.util.Date;
 import java.util.Map;
 
-import com.google.inject.Inject;
+import org.jclouds.date.DateService;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 /**
  *

@@ -18,6 +18,21 @@
  */
 package org.jclouds.cloudstack.compute;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
+import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.EncryptedPasswordAndPrivateKey;
 import org.jclouds.cloudstack.domain.Network;
@@ -33,21 +48,6 @@ import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.bouncycastle.BouncyCastleCrypto;
 import org.testng.annotations.Test;
-
-import java.net.URI;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.cloudstack.options.CreateNetworkOptions.Builder.vlan;
-import static org.jclouds.cloudstack.options.ListNetworkOfferingsOptions.Builder.specifyVLAN;
-import static org.testng.Assert.assertEquals;
 
 /**
  * @author Adrian Cole

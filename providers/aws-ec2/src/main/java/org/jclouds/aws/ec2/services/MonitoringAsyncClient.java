@@ -23,7 +23,6 @@ import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,6 +32,7 @@ import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.binders.BindInstanceIdsToIndexedFormParams;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;

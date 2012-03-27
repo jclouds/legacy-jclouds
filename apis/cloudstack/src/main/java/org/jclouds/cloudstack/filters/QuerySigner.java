@@ -18,11 +18,17 @@
  */
 package org.jclouds.cloudstack.filters;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Multimap;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.Constants;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
@@ -36,15 +42,11 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.util.Strings2;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
-import java.util.Map.Entry;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Multimap;
 
 /**
  * 

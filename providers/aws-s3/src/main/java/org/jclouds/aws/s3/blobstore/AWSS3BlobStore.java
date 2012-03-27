@@ -18,12 +18,13 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
+import static org.jclouds.s3.domain.ObjectMetadata.StorageClass.REDUCED_REDUNDANCY;
+
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import com.google.common.cache.CacheLoader;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
 import org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions;
@@ -45,14 +46,12 @@ import org.jclouds.s3.blobstore.functions.ContainerToBucketListOptions;
 import org.jclouds.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.s3.domain.AccessControlList;
-
-import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.options.PutObjectOptions;
 
-import static org.jclouds.s3.domain.ObjectMetadata.StorageClass.REDUCED_REDUNDANCY;
+import com.google.common.base.Supplier;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Provide AWS S3 specific extensions.

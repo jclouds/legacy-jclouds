@@ -20,16 +20,16 @@ package org.jclouds.rest;
 
 import java.util.concurrent.ExecutorService;
 
-import com.google.common.annotations.Beta;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Injector;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.internal.UtilsImpl;
 
+import com.google.common.annotations.Beta;
+import com.google.common.eventbus.EventBus;
 import com.google.inject.ImplementedBy;
+import com.google.inject.Injector;
 
 /**
  * 

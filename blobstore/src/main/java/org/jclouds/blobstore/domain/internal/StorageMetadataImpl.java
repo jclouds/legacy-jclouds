@@ -25,12 +25,11 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.internal.ResourceMetadataImpl;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Idpayload of the object

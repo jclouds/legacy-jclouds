@@ -22,7 +22,8 @@ package org.jclouds.virtualbox.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import javax.annotation.Resource;
 import javax.inject.Named;

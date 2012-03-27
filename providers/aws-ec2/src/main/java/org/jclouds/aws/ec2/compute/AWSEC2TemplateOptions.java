@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.options.RequestSpotInstancesOptions;
-import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;

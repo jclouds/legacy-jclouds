@@ -24,7 +24,6 @@ import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.trmk.vcloud_0_8.domain.DataCenter;
-import org.jclouds.trmk.vcloud_0_8.xml.DataCenterHandler;
 import org.testng.annotations.Test;
 
 /**

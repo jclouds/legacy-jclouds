@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.inject.Injector;
 import org.jclouds.Constants;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -39,6 +38,7 @@ import org.jclouds.ssh.SshClient.Factory;
 import com.google.common.base.Function;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * 

@@ -23,12 +23,12 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
-import org.jclouds.s3.domain.BucketLogging;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.Grant;
 import org.jclouds.s3.domain.AccessControlList.Permission;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.s3.domain.BucketLogging;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 

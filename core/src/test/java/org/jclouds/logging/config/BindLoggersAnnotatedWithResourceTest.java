@@ -19,7 +19,7 @@
 package org.jclouds.logging.config;
 
 import static com.google.inject.matcher.Matchers.any;
-import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Field;

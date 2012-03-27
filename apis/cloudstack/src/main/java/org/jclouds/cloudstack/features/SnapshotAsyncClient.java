@@ -18,7 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.cloudstack.binders.BindIdListToCommaDelimitedQueryParam;
 import org.jclouds.cloudstack.binders.BindSnapshotPolicyScheduleToQueryParam;
 import org.jclouds.cloudstack.domain.AsyncCreateResponse;
@@ -40,11 +46,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides synchronous access to CloudStack Snapshot features.

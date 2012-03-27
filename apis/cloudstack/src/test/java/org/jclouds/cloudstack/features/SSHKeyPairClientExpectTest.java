@@ -18,9 +18,11 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.sun.jersey.api.uri.UriComponent;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.SshKeyPair;
 import org.jclouds.crypto.SshKeys;
@@ -28,10 +30,9 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.sun.jersey.api.uri.UriComponent;
 
 /**
  * Test the CloudStack SSHKeyPairClient

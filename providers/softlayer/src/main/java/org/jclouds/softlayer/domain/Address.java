@@ -18,8 +18,8 @@
  */
 package org.jclouds.softlayer.domain;
 
-import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.emptyToNull;
 
 /**
  * 

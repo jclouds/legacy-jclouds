@@ -18,12 +18,17 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.ListPodsOptions.Builder.allocationState;
+import static org.jclouds.cloudstack.options.ListPodsOptions.Builder.id;
+import static org.jclouds.cloudstack.options.ListPodsOptions.Builder.keyword;
+import static org.jclouds.cloudstack.options.ListPodsOptions.Builder.name;
+import static org.jclouds.cloudstack.options.ListPodsOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.ListPodsOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListPodsOptions}

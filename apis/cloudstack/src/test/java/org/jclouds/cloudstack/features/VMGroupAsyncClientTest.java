@@ -18,8 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Functions;
-import com.google.inject.TypeLiteral;
+import java.io.IOException;
+import java.lang.reflect.Method;
+
 import org.jclouds.cloudstack.options.CreateVMGroupOptions;
 import org.jclouds.cloudstack.options.ListVMGroupsOptions;
 import org.jclouds.cloudstack.options.UpdateVMGroupOptions;
@@ -34,8 +35,8 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
+import com.google.common.base.Functions;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code VMGroupAsyncClient}

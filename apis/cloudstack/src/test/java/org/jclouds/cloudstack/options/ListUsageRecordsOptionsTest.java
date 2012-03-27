@@ -18,11 +18,15 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.accountId;
+import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.accountInDomain;
+import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.domainId;
+import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.keyword;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.ListUsageRecordsOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Options to the GlobalUsageClient.listUsageOptions() API call

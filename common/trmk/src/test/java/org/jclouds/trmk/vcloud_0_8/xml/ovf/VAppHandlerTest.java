@@ -28,8 +28,8 @@ import java.util.Set;
 
 import org.jclouds.Constants;
 import org.jclouds.cim.ResourceAllocationSettingData;
-import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
+import org.jclouds.cim.VirtualSystemSettingData;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;

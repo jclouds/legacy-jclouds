@@ -20,12 +20,12 @@ package org.jclouds.cloudservers.compute.functions;
 
 import javax.inject.Singleton;
 
+import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.cloudservers.domain.Flavor;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;

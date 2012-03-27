@@ -30,8 +30,8 @@ import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash
 import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

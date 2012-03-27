@@ -21,13 +21,12 @@ package org.jclouds.aws.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.aws.ec2.options.CreateSecurityGroupOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.SecurityGroupClient;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 

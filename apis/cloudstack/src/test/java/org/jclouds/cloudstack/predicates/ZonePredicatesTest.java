@@ -18,14 +18,14 @@
  */
 package org.jclouds.cloudstack.predicates;
 
-import org.jclouds.cloudstack.domain.NetworkType;
-import org.jclouds.cloudstack.domain.Zone;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.predicates.ZonePredicates.supportsAdvancedNetworks;
 import static org.jclouds.cloudstack.predicates.ZonePredicates.supportsSecurityGroups;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+
+import org.jclouds.cloudstack.domain.NetworkType;
+import org.jclouds.cloudstack.domain.Zone;
+import org.testng.annotations.Test;
 
 /**
  * @author Andrei Savu

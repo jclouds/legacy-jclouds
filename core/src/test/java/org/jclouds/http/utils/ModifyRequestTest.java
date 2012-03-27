@@ -18,23 +18,25 @@
  */
 package org.jclouds.http.utils;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
+import static org.jclouds.http.utils.ModifyRequest.parseQueryToMap;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+import java.util.Set;
+
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.MediaType;
-import java.net.URI;
-import java.util.Set;
-
-import static org.jclouds.http.utils.ModifyRequest.parseQueryToMap;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole

@@ -24,10 +24,9 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 

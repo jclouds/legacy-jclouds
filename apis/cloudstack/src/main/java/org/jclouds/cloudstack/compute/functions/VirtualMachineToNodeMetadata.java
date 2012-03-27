@@ -18,17 +18,20 @@
  */
 package org.jclouds.cloudstack.compute.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.UncheckedExecutionException;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.newHashSet;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
+import static org.jclouds.util.InetAddresses2.isPrivateIPAddress;
+
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.NIC;
 import org.jclouds.cloudstack.domain.VirtualMachine;
@@ -43,21 +46,17 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Throwables2;
 
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Sets.newHashSet;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
-import static org.jclouds.util.InetAddresses2.isPrivateIPAddress;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 /**
  * @author Adrian Cole, Andrei Savu

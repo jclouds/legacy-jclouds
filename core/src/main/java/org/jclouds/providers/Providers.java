@@ -21,10 +21,10 @@ package org.jclouds.providers;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 
-import com.google.common.base.Predicates;
-
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
+
+import com.google.common.base.Predicates;
 
 /**
  * The Providers class provides static methods for accessing providers.

@@ -18,11 +18,20 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.accountInDomain;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.domainId;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.forVirtualNetwork;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.id;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.keyword;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.networkId;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.podId;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.vlan;
+import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.ListVlanIPRangesOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code ListVlanIPRangesOptions}

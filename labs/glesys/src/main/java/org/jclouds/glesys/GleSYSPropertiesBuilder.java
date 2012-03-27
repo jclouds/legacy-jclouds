@@ -21,14 +21,14 @@ package org.jclouds.glesys;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.glesys.reference.GleSYSConstants.PROPERTY_GLESYS_DEFAULT_DC;
 import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
-import static org.jclouds.glesys.reference.GleSYSConstants.PROPERTY_GLESYS_DEFAULT_DC;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 
 /**
  * Builds properties used in GleSYS Clients

@@ -20,10 +20,10 @@ package org.jclouds.trmk.vcloud_0_8.xml;
 
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.trmk.vcloud_0_8.domain.IpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.IpAddress.Status;

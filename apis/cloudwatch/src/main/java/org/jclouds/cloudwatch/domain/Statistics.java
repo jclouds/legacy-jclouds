@@ -18,9 +18,9 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import com.google.common.base.CaseFormat;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.CaseFormat;
 
 /**
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html?r=5424"/>

@@ -18,11 +18,11 @@
  */
 package org.jclouds.cloudwatch.options;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Options used to control metric statistics are returned

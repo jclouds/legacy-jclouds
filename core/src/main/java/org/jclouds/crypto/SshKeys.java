@@ -54,8 +54,8 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Iterables;
 import com.google.common.io.InputSupplier;
 
 /**

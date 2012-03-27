@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;

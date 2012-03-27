@@ -44,9 +44,9 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ClientLiveTest;
 import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
-import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -54,7 +54,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code S3Client}

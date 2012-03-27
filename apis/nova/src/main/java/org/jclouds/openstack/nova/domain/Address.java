@@ -18,9 +18,10 @@
  */
 package org.jclouds.openstack.nova.domain;
 
+import org.jclouds.javax.annotation.Nullable;
+
 import com.google.common.base.Function;
 import com.google.gson.annotations.SerializedName;
-import org.jclouds.javax.annotation.Nullable;
 
 /**
  * @author Dmitri Babaev

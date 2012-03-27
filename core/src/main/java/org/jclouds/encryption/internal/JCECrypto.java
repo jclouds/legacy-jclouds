@@ -27,8 +27,6 @@ import java.security.Provider;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.NoSuchPaddingException;
@@ -37,6 +35,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.crypto.Crypto;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * 

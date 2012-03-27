@@ -38,8 +38,6 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import net.oauth.signature.pem.PEMReader;
 import net.oauth.signature.pem.PKCS1EncodedKeySpec;
 
@@ -48,6 +46,7 @@ import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
 import org.jclouds.crypto.Pems.PemProcessor.ResultParser;
 import org.jclouds.crypto.pem.PKCS1EncodedPublicKeySpec;
 import org.jclouds.io.InputSuppliers;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;

@@ -25,13 +25,12 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.azureblob.domain.BlobProperties;
 import org.jclouds.azureblob.domain.BlobType;
 import org.jclouds.azureblob.domain.LeaseStatus;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 

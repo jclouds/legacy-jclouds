@@ -18,22 +18,22 @@
  */
 package org.jclouds.ec2.compute.config;
 
-import org.jclouds.ec2.compute.strategy.EC2DestroyNodeStrategy;
-import org.jclouds.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
-import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
-import org.jclouds.ec2.compute.strategy.EC2RebootNodeStrategy;
-import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
-import org.jclouds.ec2.compute.strategy.EC2ResumeNodeStrategy;
-import org.jclouds.ec2.compute.strategy.EC2SuspendNodeStrategy;
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
+import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
+import org.jclouds.ec2.compute.strategy.EC2CreateNodesInGroupThenAddToSet;
+import org.jclouds.ec2.compute.strategy.EC2DestroyNodeStrategy;
+import org.jclouds.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
+import org.jclouds.ec2.compute.strategy.EC2ListNodesStrategy;
+import org.jclouds.ec2.compute.strategy.EC2RebootNodeStrategy;
+import org.jclouds.ec2.compute.strategy.EC2ResumeNodeStrategy;
+import org.jclouds.ec2.compute.strategy.EC2SuspendNodeStrategy;
 
 /**
  * @author Adrian Cole

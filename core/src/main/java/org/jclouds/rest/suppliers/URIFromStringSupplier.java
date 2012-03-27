@@ -27,8 +27,8 @@ import java.net.URI;
 import javax.inject.Inject;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Supplier;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Supplier;
 
 public class URIFromStringSupplier implements Supplier<URI> {
 

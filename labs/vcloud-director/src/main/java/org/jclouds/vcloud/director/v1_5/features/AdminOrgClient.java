@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;

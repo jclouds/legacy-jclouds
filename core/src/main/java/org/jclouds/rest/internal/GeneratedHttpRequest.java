@@ -24,11 +24,10 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.io.Payload;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

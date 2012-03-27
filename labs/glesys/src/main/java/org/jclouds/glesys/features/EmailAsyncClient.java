@@ -35,9 +35,9 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 /**
  * Provides asynchronous access to E-Mail data via the Glesys REST API.

@@ -18,10 +18,10 @@
  */
 package org.jclouds.trmk.vcloud_0_8.compute.strategy;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.compute.predicates.NodePredicates.parentLocationId;
 
 import java.net.URI;
@@ -33,8 +33,6 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.NodeMetadataToOrgAndName;
-import org.jclouds.trmk.vcloud_0_8.compute.strategy.CleanupOrphanKeys;
-import org.jclouds.trmk.vcloud_0_8.compute.strategy.DeleteKeyPair;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

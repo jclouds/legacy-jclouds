@@ -20,6 +20,8 @@ package org.jclouds.cloudstack.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.domain.GuestIPType;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
@@ -27,8 +29,6 @@ import org.jclouds.cloudstack.domain.NetworkService;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-
-import javax.annotation.Nullable;
 
 /**
  * 

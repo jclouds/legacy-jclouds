@@ -18,16 +18,16 @@
  */
 package org.jclouds.cloudstack.functions;
 
-import static org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
-import static org.jclouds.cloudstack.domain.AsyncJob.Status;
-import static org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.InputStream;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
+import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
+import org.jclouds.cloudstack.domain.AsyncJob.Status;
 import org.jclouds.cloudstack.domain.AsyncJobError;
+import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.Template;

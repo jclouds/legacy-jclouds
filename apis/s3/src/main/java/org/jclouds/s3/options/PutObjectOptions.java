@@ -34,7 +34,6 @@ import org.jclouds.s3.domain.CannedAccessPolicy;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import org.jclouds.s3.domain.ObjectMetadata;
 
 /**
  * Contains options supported in the REST API for the PUT object operation.

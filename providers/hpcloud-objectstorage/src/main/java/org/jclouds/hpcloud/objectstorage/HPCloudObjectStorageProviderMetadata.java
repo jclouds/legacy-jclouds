@@ -18,13 +18,13 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.providers.ProviderMetadata} for HP Cloud Services Object Storage

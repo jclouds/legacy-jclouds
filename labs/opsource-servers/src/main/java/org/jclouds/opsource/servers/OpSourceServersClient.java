@@ -21,6 +21,7 @@ package org.jclouds.opsource.servers;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.opsource.servers.domain.Account;
 import org.jclouds.opsource.servers.features.AccountClient;
 import org.jclouds.rest.annotations.Delegate;
 

@@ -18,12 +18,13 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.CreateUserOptions.Builder.domainId;
 import static org.jclouds.cloudstack.options.CreateUserOptions.Builder.timezone;
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code CreateUserOptions}

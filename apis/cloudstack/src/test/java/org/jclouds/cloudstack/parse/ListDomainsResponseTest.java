@@ -18,9 +18,8 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.util.Set;
+
 import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.Domain;
 import org.jclouds.json.BaseSetParserTest;
@@ -28,7 +27,9 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Andrei Savu

@@ -24,8 +24,6 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -35,6 +33,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 

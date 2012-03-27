@@ -25,7 +25,6 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_OV
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_VMW_NS;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
