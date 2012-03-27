@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,29 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-
 /**
- * 
- *                 Defines how a group is imported from LDAP.
- *             
- * 
- * <p>Java class for OrgLdapGroupAttributes complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * Defines how a group is imported from LDAP.
+ *
  * <pre>
  * &lt;complexType name="OrgLdapGroupAttributes">
  *   &lt;complexContent>
@@ -56,10 +46,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OrgLdapGroupAttributes", propOrder = {
     "objectClass",
     "objectIdentifier",

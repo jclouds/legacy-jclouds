@@ -31,14 +31,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.DeploymentOptionSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -73,10 +66,12 @@ import com.google.common.collect.Sets;
 })
 @XmlRootElement(name = "CaptureVAppParams")
 public class CaptureVAppParams extends ParamsType {
+
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromCaptureVAppParams(this);
    }
@@ -87,7 +82,7 @@ public class CaptureVAppParams extends ParamsType {
    public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private Reference source;
-      private Set<? extends SectionType> sections = ImmutableSet.of();
+      private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
 
       /**
        * @see CaptureVAppParams#getSource()

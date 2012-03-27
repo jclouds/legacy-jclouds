@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,17 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
 import java.util.Set;
 
-import javax.lang.model.type.ReferenceType;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -37,16 +32,9 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
 
-
 /**
- * 
- *                This is the container for returned elements in referenceView
- *             
- * 
- * <p>Java class for References complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * This is the container for returned elements in referenceView
+ *
  * <pre>
  * &lt;complexType name="References">
  *   &lt;complexContent>
@@ -59,10 +47,7 @@ import com.google.common.collect.Sets;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "References")
 @XmlType(propOrder = {
     "references"
@@ -72,6 +57,7 @@ public class References extends ContainerType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return new ConcreteBuilder().fromReferences(this);
    }
@@ -94,6 +80,7 @@ public class References extends ContainerType {
          return self();
       }
 
+      @Override
       public References build() {
          return new References(this);
       }
