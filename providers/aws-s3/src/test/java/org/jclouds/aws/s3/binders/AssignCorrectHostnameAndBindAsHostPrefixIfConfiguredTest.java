@@ -58,7 +58,7 @@ public class AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest {
       HttpRequest request = new HttpRequest("GET", URI.create("https://s3.amazonaws.com"));
 
       AssignCorrectHostnameAndBindAsHostPrefixIfConfigured binder = new AssignCorrectHostnameAndBindAsHostPrefixIfConfigured(
-               new BindAsHostPrefix(uriBuilderProvider), new RegionToEndpointOrProviderIfNull("aws-s3", Suppliers
+               new BindAsHostPrefix(uriBuilderProvider), true, "/", new RegionToEndpointOrProviderIfNull("aws-s3", Suppliers
                         .ofInstance(URI.create("https://s3.amazonaws.com")),
 
                Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.of("us-standard", Suppliers
@@ -76,7 +76,7 @@ public class AssignCorrectHostnameAndBindAsHostPrefixIfConfiguredTest {
       HttpRequest request = new HttpRequest("GET", URI.create("https://s3.amazonaws.com"));
 
       AssignCorrectHostnameAndBindAsHostPrefixIfConfigured binder = new AssignCorrectHostnameAndBindAsHostPrefixIfConfigured(
-               new BindAsHostPrefix(uriBuilderProvider), new RegionToEndpointOrProviderIfNull("aws-s3", Suppliers
+               new BindAsHostPrefix(uriBuilderProvider), true, "/", new RegionToEndpointOrProviderIfNull("aws-s3", Suppliers
                         .ofInstance(URI.create("https://s3.amazonaws.com")),
 
                Suppliers.<Map<String, Supplier<URI>>> ofInstance(ImmutableMap.of("us-standard", Suppliers
