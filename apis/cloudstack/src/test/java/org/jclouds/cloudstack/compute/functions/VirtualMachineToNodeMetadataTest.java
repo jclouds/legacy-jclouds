@@ -37,6 +37,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -48,12 +49,15 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole, Andrei Savu
  */
 @Test(groups = "unit", testName = "VirtualMachineToNodeMetadataTest")
 public class VirtualMachineToNodeMetadataTest {
+
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
 
    @Test
    public void testApplyWhereVirtualMachineWithIPForwardingRule() throws UnknownHostException {
@@ -73,7 +77,7 @@ public class VirtualMachineToNodeMetadataTest {
                return ImmutableSet.of(IPForwardingRule.builder().id(1234l).IPAddress("1.1.1.1").build());
             }
 
-         }));
+         }), namingConvention);
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualMachine guest = Iterables.get(new ListVirtualMachinesResponseTest().expected(), 0);
@@ -82,7 +86,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
             node.toString(),
-            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3")
+            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3-54")
                   .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
                   .privateAddresses(ImmutableSet.of("10.1.1.18")).publicAddresses(ImmutableSet.of("1.1.1.1"))
                   .hardware(addHypervisor(ServiceOfferingToHardwareTest.one, "XenServer"))
@@ -109,7 +113,7 @@ public class VirtualMachineToNodeMetadataTest {
                return ImmutableSet.of();
             }
 
-         }));
+         }), namingConvention);
 
       VirtualMachine guest =VirtualMachine.builder()
          .id(54)
@@ -145,7 +149,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
          node.toString(),
-         new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3")
+         new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3-54")
             .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
             .privateAddresses(ImmutableSet.<String>of())
             .publicAddresses(ImmutableSet.<String>of("1.1.1.5"))
@@ -172,7 +176,7 @@ public class VirtualMachineToNodeMetadataTest {
                throw new ResourceNotFoundException("no ip forwarding rule for: " + arg0);
             }
 
-         }));
+         }), namingConvention);
 
       // notice if we've already parsed this properly here, we can rely on it.
       VirtualMachine guest = Iterables.get(new ListVirtualMachinesResponseTest().expected(), 0);
@@ -181,7 +185,7 @@ public class VirtualMachineToNodeMetadataTest {
 
       assertEquals(
             node.toString(),
-            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3")
+            new NodeMetadataBuilder().id("54").providerId("54").name("i-3-54-VM").group("i-3-54")
                   .location(ZoneToLocationTest.one).state(NodeState.PENDING).hostname("i-3-54-VM")
                   .privateAddresses(ImmutableSet.of("10.1.1.18"))
                   .hardware(addHypervisor(ServiceOfferingToHardwareTest.one, "XenServer"))

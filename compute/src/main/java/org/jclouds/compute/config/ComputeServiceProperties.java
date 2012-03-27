@@ -24,6 +24,8 @@ package org.jclouds.compute.config;
  * @author Adrian Cole
  */
 public interface ComputeServiceProperties {
+   public static final String RESOURCENAME_PREFIX = "jclouds.compute.resourcename-prefix";
+   public static final String RESOURCENAME_DELIMITER = "jclouds.compute.resourcename-delimiter";
 
    public static final String TIMEOUT_NODE_TERMINATED = "jclouds.compute.timeout.node-terminated";
    public static final String TIMEOUT_NODE_RUNNING = "jclouds.compute.timeout.node-running";

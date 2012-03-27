@@ -38,6 +38,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.PersistNodeCredentials;
 import org.jclouds.compute.options.TemplateOptions;
@@ -67,7 +68,6 @@ import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
@@ -79,39 +79,41 @@ import com.google.common.collect.Multimap;
  */
 @Singleton
 public class NovaComputeService extends BaseComputeService {
-   private final NovaClient novaClient;
-   private final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap;
-   private final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
-   private final Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId;
+   protected final NovaClient novaClient;
+   protected final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap;
+   protected final LoadingCache<ZoneAndName, KeyPair> keyPairCache;
+   protected final Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId;
+   protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
    protected NovaComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy,
-            CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
-            DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy startNodeStrategy,
-            SuspendNodeStrategy stopNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<TemplateOptions> templateOptionsProvider,
-            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
-            @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
-            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
-            RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
-            PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, NovaClient novaClient,
-            LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap,
-            LoadingCache<ZoneAndName, KeyPair> keyPairCache,
-            Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
+         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+         ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
+         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
+         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
+         RunScriptOnNode.Factory runScriptOnNodeFactory, InitAdminAccess initAdminAccess,
+         PersistNodeCredentials persistNodeCredentials, Timeouts timeouts,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, NovaClient novaClient,
+         LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupMap,
+         LoadingCache<ZoneAndName, KeyPair> keyPairCache,
+         Function<Set<? extends NodeMetadata>, Multimap<String, String>> orphanedGroupsByZoneId,
+         GroupNamingConvention.Factory namingConvention) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
-               stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
-               nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory, persistNodeCredentials,
-               timeouts, executor);
+            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
+            templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended,
+            initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory, persistNodeCredentials, timeouts,
+            executor);
       this.novaClient = checkNotNull(novaClient, "novaClient");
       this.securityGroupMap = checkNotNull(securityGroupMap, "securityGroupMap");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.orphanedGroupsByZoneId = checkNotNull(orphanedGroupsByZoneId, "orphanedGroupsByZoneId");
+      this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
 
    @Override
@@ -132,7 +134,7 @@ public class NovaComputeService extends BaseComputeService {
       if (securityGroupClient.isPresent()) {
          for (String group : groups) {
             for (SecurityGroup securityGroup : Iterables.filter(securityGroupClient.get().listSecurityGroups(),
-                     SecurityGroupPredicates.nameEquals("jclouds_" + group))) {
+                  SecurityGroupPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, securityGroup.getName());
                logger.debug(">> deleting securityGroup(%s)", zoneAndName);
                securityGroupClient.get().deleteSecurityGroup(securityGroup.getId());
@@ -143,16 +145,14 @@ public class NovaComputeService extends BaseComputeService {
          }
       }
    }
-   
+
    private void cleanupOrphanedKeyPairsInZone(Set<String> groups, String zoneId) {
       Optional<KeyPairClient> keyPairClient = novaClient.getKeyPairExtensionForZone(zoneId);
       if (keyPairClient.isPresent()) {
          for (String group : groups) {
             for (Map<String, KeyPair> wrapper : keyPairClient.get().listKeyPairs()) {
-               for (KeyPair pair : Iterables.filter(
-                     wrapper.values(),
-                     Predicates.or(KeyPairPredicates.nameStartsWith("jclouds_" + group + "_"),
-                           KeyPairPredicates.nameEquals("jclouds_" + group)))) {
+               for (KeyPair pair : Iterables.filter(wrapper.values(),
+                     KeyPairPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                   ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());
                   logger.debug(">> deleting keypair(%s)", zoneAndName);
                   keyPairClient.get().deleteKeyPair(pair.getName());
@@ -161,7 +161,8 @@ public class NovaComputeService extends BaseComputeService {
                   logger.debug("<< deleted keypair(%s)", zoneAndName);
                }
             }
-            keyPairCache.invalidate(ZoneAndName.fromZoneAndName(zoneId, "jclouds_" + group));
+            keyPairCache.invalidate(ZoneAndName.fromZoneAndName(zoneId,
+                  namingConvention.create().sharedNameForGroup(group)));
          }
       }
    }

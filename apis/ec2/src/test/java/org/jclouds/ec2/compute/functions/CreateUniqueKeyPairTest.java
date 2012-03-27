@@ -36,7 +36,7 @@ import com.google.common.base.Supplier;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "CreateUniqueKeyPairTest")
 public class CreateUniqueKeyPairTest {
    @SuppressWarnings( { "unchecked" })
    @Test

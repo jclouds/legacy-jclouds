@@ -101,13 +101,6 @@ public class ${providerName}ComputeServiceContextModule extends ${providerName}C
    protected TemplateBuilder provideTemplate(TemplateBuilder template) {
       return template.osFamily(UBUNTU);
    }
-   
-   @Provides
-   @Named("NAMING_CONVENTION")
-   @Singleton
-   String provideNamingConvention() {
-      return "%s-%s";
-   }
 
    @Singleton
    public static class ${providerName}AddNodeWithTagStrategy implements AddNodeWithTagStrategy {

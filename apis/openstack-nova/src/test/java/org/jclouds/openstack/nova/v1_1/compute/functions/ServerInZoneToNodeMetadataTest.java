@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -44,62 +45,66 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
- * Tests for the function for transforming a nova specific Server into a generic NodeMetadata
- * object.
+ * Tests for the function for transforming a nova specific Server into a generic
+ * NodeMetadata object.
  * 
  * @author Matt Stephenson, Adam Lowe, Adrian Cole
  */
 @Test(testName = "ServerInZoneToNodeMetadataTest")
 public class ServerInZoneToNodeMetadataTest {
 
-   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("openstack-nova").description(
-            "openstack-nova").build();
-   Location zone = new LocationBuilder().id("az-1.region-a.geo-1").description("az-1.region-a.geo-1").scope(
-            LocationScope.ZONE).parent(provider).build();
+   Location provider = new LocationBuilder().scope(LocationScope.PROVIDER).id("openstack-nova")
+         .description("openstack-nova").build();
+   Location zone = new LocationBuilder().id("az-1.region-a.geo-1").description("az-1.region-a.geo-1")
+         .scope(LocationScope.ZONE).parent(provider).build();
    Supplier<Map<String, Location>> locationIndex = Suppliers.<Map<String, Location>> ofInstance(ImmutableMap
-            .<String, Location> of("az-1.region-a.geo-1", zone));
+         .<String, Location> of("az-1.region-a.geo-1", zone));
+
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
 
    @Test
    public void testWhenNoHardwareOrImageMatchServerScopedIdsImageIdIsStillSet() {
 
       Hardware existingHardware = new HardwareBuilder().id("az-1.region-a.geo-1/FOOOOOOOO").providerId("FOOOOOOOO")
-               .location(zone).build();
-      Image existingImage = new ImageBuilder().id("az-1.region-a.geo-1/FOOOOOOOO").operatingSystem(
-               OperatingSystem.builder().family(OsFamily.LINUX).description("foobuntu").build())
-               .providerId("FOOOOOOOO").description("foobuntu").location(zone).build();
+            .location(zone).build();
+      Image existingImage = new ImageBuilder().id("az-1.region-a.geo-1/FOOOOOOOO")
+            .operatingSystem(OperatingSystem.builder().family(OsFamily.LINUX).description("foobuntu").build())
+            .providerId("FOOOOOOOO").description("foobuntu").location(zone).build();
 
       checkHardwareAndImageStatus(null, existingHardware, "az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f6f006e54",
-               null, existingImage);
+            null, existingImage);
    }
 
    @Test
    public void testWhenNoHardwareAndImageMatchServerScopedIdsHardwareOperatingSystemAndImageIdAreSet() {
 
       Hardware existingHardware = new HardwareBuilder().id("az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f216543fd")
-               .providerId("52415800-8b69-11e0-9b19-734f216543fd").location(zone).build();
+            .providerId("52415800-8b69-11e0-9b19-734f216543fd").location(zone).build();
       Image existingImage = new ImageBuilder().id("az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f6f006e54")
-               .operatingSystem(OperatingSystem.builder().family(OsFamily.LINUX).description("foobuntu").build())
-               .providerId("52415800-8b69-11e0-9b19-734f6f006e54").description("foobuntu").location(zone).build();
+            .operatingSystem(OperatingSystem.builder().family(OsFamily.LINUX).description("foobuntu").build())
+            .providerId("52415800-8b69-11e0-9b19-734f6f006e54").description("foobuntu").location(zone).build();
 
-      checkHardwareAndImageStatus(existingHardware, existingHardware, existingImage.getId(), existingImage
-               .getOperatingSystem(), existingImage);
+      checkHardwareAndImageStatus(existingHardware, existingHardware, existingImage.getId(),
+            existingImage.getOperatingSystem(), existingImage);
    }
 
    // TODO: clean up this syntax
    private void checkHardwareAndImageStatus(Hardware expectedHardware, Hardware existingHardware,
-            String expectedImageId, OperatingSystem expectedOs, Image existingImage) {
+         String expectedImageId, OperatingSystem expectedOs, Image existingImage) {
 
       Set<Image> images = existingImage == null ? ImmutableSet.<Image> of() : ImmutableSet.of(existingImage);
       Set<Hardware> hardwares = existingHardware == null ? ImmutableSet.<Hardware> of() : ImmutableSet
-               .of(existingHardware);
+            .of(existingHardware);
       Server serverToConvert = new ParseServerTest().expected();
 
       ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
 
-      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
-               .<Set<? extends Image>> ofInstance(images), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex,
+            Suppliers.<Set<? extends Image>> ofInstance(images),
+            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata convertedNodeMetadata = converter.apply(serverInZoneToConvert);
 
@@ -129,8 +134,8 @@ public class ServerInZoneToNodeMetadataTest {
       assertEquals(convertedNodeMetadata.getPublicAddresses(), ImmutableSet.of("67.23.10.132", "67.23.10.131"));
 
       assertNotNull(convertedNodeMetadata.getUserMetadata());
-      assertEquals(convertedNodeMetadata.getUserMetadata(), ImmutableMap.<String, String> of("Server Label",
-               "Web Head 1", "Image Version", "2.1"));
+      assertEquals(convertedNodeMetadata.getUserMetadata(),
+            ImmutableMap.<String, String> of("Server Label", "Web Head 1", "Image Version", "2.1"));
    }
 
    @Test
@@ -143,9 +148,9 @@ public class ServerInZoneToNodeMetadataTest {
 
       ServerInZone serverInZoneToConvert = new ServerInZone(serverToConvert, "az-1.region-a.geo-1");
 
-
-      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
-               .<Set<? extends Image>> ofInstance(images), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+      ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex,
+            Suppliers.<Set<? extends Image>> ofInstance(images),
+            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata convertedNodeMetadata = converter.apply(serverInZoneToConvert);
 

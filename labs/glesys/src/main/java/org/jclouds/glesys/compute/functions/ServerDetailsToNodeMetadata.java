@@ -19,7 +19,6 @@
 package org.jclouds.glesys.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -41,6 +40,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.glesys.domain.Ip;
@@ -73,6 +73,7 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
 
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForServerDetails findLocationForServerDetails;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    private static class FindImageForServer implements Predicate<Image> {
       private final ServerDetails instance;
@@ -89,7 +90,9 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
 
    @Inject
    ServerDetailsToNodeMetadata(FindLocationForServerDetails findLocationForServerDetails,
-         @Memoized Supplier<Set<? extends Image>> images) {
+         @Memoized Supplier<Set<? extends Image>> images,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.findLocationForServerDetails = checkNotNull(findLocationForServerDetails, "findLocationForServerDetails");
       this.images = checkNotNull(images, "images");
    }
@@ -102,7 +105,7 @@ public class ServerDetailsToNodeMetadata implements Function<ServerDetails, Node
       builder.hostname(from.getHostname());
       Location location = findLocationForServerDetails.apply(from);
       assert (location != null) : String.format("no location matched ServerDetails %s", from);
-      builder.group(parseGroupFromName(from.getDescription()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getDescription()));
       builder.imageId(from.getTemplateName() + "");
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(new HardwareBuilder().ids(from.getId() + "").ram(from.getMemorySizeMB())

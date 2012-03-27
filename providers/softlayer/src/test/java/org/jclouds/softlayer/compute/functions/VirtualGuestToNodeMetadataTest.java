@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.functions.VirtualGuestToNodeMetadata.FindLocationForVirtualGuest;
@@ -46,12 +47,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "VirtualGuestToNodeMetadataTest")
 public class VirtualGuestToNodeMetadataTest {
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
 
    @Test
    public void testApplyWhereVirtualGuestWithNoPassword() {
@@ -65,7 +68,7 @@ public class VirtualGuestToNodeMetadataTest {
             .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -92,7 +95,7 @@ public class VirtualGuestToNodeMetadataTest {
             .<Location> of());
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -117,7 +120,7 @@ public class VirtualGuestToNodeMetadataTest {
             .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -145,7 +148,7 @@ public class VirtualGuestToNodeMetadataTest {
             .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 
@@ -173,7 +176,7 @@ public class VirtualGuestToNodeMetadataTest {
             .<Location> of(expectedLocation));
 
       VirtualGuestToNodeMetadata parser = new VirtualGuestToNodeMetadata(new FindLocationForVirtualGuest(
-            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock());
+            locationSupplier), new GetHardwareForVirtualGuestMock(), new GetImageForVirtualGuestMock(), namingConvention);
 
       NodeMetadata node = parser.apply(guest);
 

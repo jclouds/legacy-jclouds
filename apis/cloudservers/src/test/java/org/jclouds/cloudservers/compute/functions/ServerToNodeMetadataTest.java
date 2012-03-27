@@ -38,6 +38,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -47,13 +48,15 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ServerToNodeMetadataTest")
 public class ServerToNodeMetadataTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
 
    @Test
    public void testApplyWhereImageAndHardwareNotFound() {
@@ -63,7 +66,7 @@ public class ServerToNodeMetadataTest {
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
 
@@ -77,6 +80,7 @@ public class ServerToNodeMetadataTest {
                   .id("1234")
                   .providerId("1234")
                   .name("sample-server")
+                  .group("sample")
                   .hostname("sample-server")
                   .location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
@@ -94,7 +98,7 @@ public class ServerToNodeMetadataTest {
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
 
@@ -112,6 +116,7 @@ public class ServerToNodeMetadataTest {
                   .providerId("1234")
                   .name("sample-server")
                   .hostname("sample-server")
+                  .group("sample")
                   .location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
                               .description("e4d909c290d0fb1ca068ffaddf22cbd0").parent(provider).build())
@@ -127,7 +132,7 @@ public class ServerToNodeMetadataTest {
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
-               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+               .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
 
@@ -153,6 +158,7 @@ public class ServerToNodeMetadataTest {
                   .id("1234")
                   .providerId("1234")
                   .name("sample-server")
+                  .group("sample")
                   .hostname("sample-server")
                   .location(
                         new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")

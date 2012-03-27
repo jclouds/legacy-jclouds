@@ -19,7 +19,6 @@
 package org.jclouds.trmk.vcloud_0_8.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +34,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -58,11 +58,14 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    protected VAppToNodeMetadata(TerremarkVCloudComputeClient computeClient, Map<String, Credentials> credentialStore,
             Map<Status, NodeState> vAppStatusToNodeState, HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
-            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images) {
+            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images,
+            GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.images = checkNotNull(images, "images");
       this.hardwareForVCloudExpressVApp = checkNotNull(hardwareForVCloudExpressVApp, "hardwareForVCloudExpressVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
@@ -97,8 +100,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.state(vAppStatusToNodeState.get(from.getStatus()));
       builder.publicAddresses(computeClient.getPublicAddresses(from.getHref()));
       builder.privateAddresses(computeClient.getPrivateAddresses(from.getHref()));
-      String group = parseGroupFromName(from.getName());
-      builder.group(group);
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.credentials(LoginCredentials.fromCredentials(credentialStore
                .get("node#" + from.getHref().toASCIIString())));
       return builder.build();

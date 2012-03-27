@@ -40,6 +40,7 @@ import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -64,7 +65,7 @@ import com.google.common.primitives.Ints;
  */
 @Singleton
 public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet extends
-         CreateNodesWithGroupEncodedIntoNameThenAddToSet {
+      CreateNodesWithGroupEncodedIntoNameThenAddToSet {
 
    private final AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode;
    private final LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache;
@@ -74,28 +75,28 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
    @Inject
    protected ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet(
-            CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
-            ListNodesStrategy listNodesStrategy,
-            @Named("NAMING_CONVENTION") String nodeNamingConvention,
-            CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            Provider<TemplateBuilder> templateBuilderProvider,
-            AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode,
-            LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache,
-            LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaClient novaClient) {
-      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, executor,
-               customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
+         CreateNodeWithGroupEncodedIntoName addNodeWithTagStrategy,
+         ListNodesStrategy listNodesStrategy,
+         GroupNamingConvention.Factory namingConvention,
+         CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+         Provider<TemplateBuilder> templateBuilderProvider,
+         AllocateAndAddFloatingIpToNode allocateAndAddFloatingIpToNode,
+         LoadingCache<ZoneAndName, SecurityGroupInZone> securityGroupCache,
+         LoadingCache<ZoneAndName, KeyPair> keyPairCache, NovaClient novaClient) {
+      super(addNodeWithTagStrategy, listNodesStrategy, namingConvention, executor,
+            customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider, "templateBuilderProvider");
       this.securityGroupCache = checkNotNull(securityGroupCache, "securityGroupCache");
       this.keyPairCache = checkNotNull(keyPairCache, "keyPairCache");
       this.allocateAndAddFloatingIpToNode = checkNotNull(allocateAndAddFloatingIpToNode,
-               "allocateAndAddFloatingIpToNode");
+            "allocateAndAddFloatingIpToNode");
       this.novaClient = checkNotNull(novaClient, "novaClient");
    }
 
    @Override
    public Map<?, Future<Void>> execute(String group, int count, Template template, Set<NodeMetadata> goodNodes,
-            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
+         Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       // ensure we don't mutate the input template
       Template mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(mutableTemplate.getOptions());
@@ -104,15 +105,15 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
       if (templateOptions.shouldAutoAssignFloatingIp()) {
          checkArgument(novaClient.getFloatingIPExtensionForZone(zone).isPresent(),
-                  "Floating IPs are required by options, but the extension is not available! options: %s",
-                  templateOptions);
+               "Floating IPs are required by options, but the extension is not available! options: %s", templateOptions);
       }
 
       boolean keyPairExensionPresent = novaClient.getKeyPairExtensionForZone(zone).isPresent();
       if (templateOptions.shouldGenerateKeyPair()) {
          checkArgument(keyPairExensionPresent,
                "Key Pairs are required by options, but the extension is not available! options: %s", templateOptions);
-         KeyPair keyPair = keyPairCache.getUnchecked(ZoneAndName.fromZoneAndName(zone, "jclouds_" + group));
+         KeyPair keyPair = keyPairCache.getUnchecked(ZoneAndName.fromZoneAndName(zone, namingConvention.create()
+               .sharedNameForGroup(group)));
          keyPairCache.asMap().put(ZoneAndName.fromZoneAndName(zone, keyPair.getName()), keyPair);
          templateOptions.keyPairName(keyPair.getName());
       } else if (templateOptions.getKeyPairName() != null) {
@@ -130,10 +131,10 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
       List<Integer> inboundPorts = Ints.asList(templateOptions.getInboundPorts());
       if (templateOptions.getSecurityGroupNames().size() > 0) {
          checkArgument(novaClient.getSecurityGroupExtensionForZone(zone).isPresent(),
-                  "Security groups are required by options, but the extension is not available! options: %s",
-                  templateOptions);
+               "Security groups are required by options, but the extension is not available! options: %s",
+               templateOptions);
       } else if (securityGroupExensionPresent && inboundPorts.size() > 0) {
-         String securityGroupName = "jclouds_" + group;
+         String securityGroupName = namingConvention.create().sharedNameForGroup(group);
          try {
             securityGroupCache.get(new ZoneSecurityGroupNameAndPorts(zone, securityGroupName, inboundPorts));
          } catch (ExecutionException e) {
@@ -147,7 +148,7 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
 
    @Override
    protected Future<AtomicReference<NodeMetadata>> createNodeInGroupWithNameAndTemplate(String group,
-            final String name, Template template) {
+         final String name, Template template) {
 
       Future<AtomicReference<NodeMetadata>> future = super.createNodeInGroupWithNameAndTemplate(group, name, template);
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(template.getOptions());

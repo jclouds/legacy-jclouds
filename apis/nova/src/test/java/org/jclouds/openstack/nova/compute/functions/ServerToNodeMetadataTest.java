@@ -37,6 +37,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -50,6 +51,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
@@ -57,6 +59,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit")
 public class ServerToNodeMetadataTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
 
    @Test
    public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException, NoSuchMethodException,
@@ -68,7 +71,7 @@ public class ServerToNodeMetadataTest {
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
             Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider),
-            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
 
@@ -85,6 +88,7 @@ public class ServerToNodeMetadataTest {
             .privateAddresses(ImmutableSet.of("10.176.42.16", "::babe:10.176.42.16"))
             .id("1234")
             .providerId("1234")
+            .group("sample")
             .name("sample-server")
             .location(
                   new LocationBuilder().scope(LocationScope.HOST).id("e4d909c290d0fb1ca068ffaddf22cbd0")
@@ -104,7 +108,7 @@ public class ServerToNodeMetadataTest {
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
             Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider),
-            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
 
@@ -128,12 +132,13 @@ public class ServerToNodeMetadataTest {
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
             Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider),
-            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+            Suppliers.<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(server);
 
       NodeMetadata constructedMetadata = newNodeMetadataBuilder()
             .imageId("2")
+            .group("sample")
             .operatingSystem(
                   new OperatingSystem.Builder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
                         .is64Bit(true).build())

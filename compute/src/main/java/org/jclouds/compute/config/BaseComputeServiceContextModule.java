@@ -200,17 +200,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       return options;
    }
 
-   /**
-    * supplies how the tag is encoded into the name. A string of hex characters
-    * is the last argument and tag is the first
-    */
-   @Provides
-   @Named("NAMING_CONVENTION")
-   @Singleton
-   protected String provideNamingConvention() {
-      return "%s-%s";
-   }
-
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Image>> provideImageMap(@Memoized Supplier<Set<? extends Image>> images) {

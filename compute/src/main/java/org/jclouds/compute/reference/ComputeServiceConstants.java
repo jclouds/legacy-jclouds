@@ -31,11 +31,14 @@ import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_T
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_PORT_OPEN;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE;
 
+import java.security.SecureRandom;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.config.ComputeServiceProperties;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 
 /**
@@ -108,6 +111,20 @@ public interface ComputeServiceConstants {
    @Deprecated
    public static final String PROPERTY_OS_VERSION_MAP_JSON = OS_VERSION_MAP_JSON;
 
+   @Singleton
+   public static class NamingConvention {
+      
+      @Inject(optional = true)
+      public final Supplier<String> randomSuffix = new Supplier<String>() {
+         final SecureRandom random = new SecureRandom();
+
+         @Override
+         public String get() {
+            return random.nextInt(100) + "";
+         }
+      };
+   }
+   
    @Singleton
    public static class InitStatusProperties {
       @Inject(optional = true)

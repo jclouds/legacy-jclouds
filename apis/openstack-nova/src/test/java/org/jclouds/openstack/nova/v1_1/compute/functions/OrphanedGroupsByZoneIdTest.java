@@ -26,6 +26,7 @@ import java.util.Set;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -41,6 +42,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * 
@@ -57,6 +59,8 @@ public class OrphanedGroupsByZoneIdTest {
    Supplier<Map<String, Location>> locationIndex = Suppliers.<Map<String, Location>> ofInstance(ImmutableMap
             .<String, Location> of("az-1.region-a.geo-1", zone));
 
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
+   
    @Test
    public void testWhenComputeServiceSaysAllNodesAreDeadBothGroupsAreReturned() {
 
@@ -65,7 +69,7 @@ public class OrphanedGroupsByZoneIdTest {
       
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
                .<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of()), Suppliers
-               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()));
+               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()), namingConvention);
 
       Set<? extends NodeMetadata> set = ImmutableSet.of(converter.apply(withHost), converter.apply(withoutHost));
 
@@ -81,7 +85,7 @@ public class OrphanedGroupsByZoneIdTest {
 
       ServerInZoneToNodeMetadata converter = new ServerInZoneToNodeMetadata(locationIndex, Suppliers
                .<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of()), Suppliers
-               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()));
+               .<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of()), namingConvention);
 
       Set<? extends NodeMetadata> set = ImmutableSet.of(converter.apply(withHost), converter.apply(withoutHost));
 

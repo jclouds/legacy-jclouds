@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newHashSet;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 import static org.jclouds.util.InetAddresses2.isPrivateIPAddress;
 
 import java.util.Map;
@@ -44,6 +43,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Throwables2;
@@ -79,11 +79,14 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
    private final FindLocationForVirtualMachine findLocationForVirtualMachine;
    private final FindImageForVirtualMachine findImageForVirtualMachine;
    private final LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine;
+   private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    VirtualMachineToNodeMetadata(FindLocationForVirtualMachine findLocationForVirtualMachine,
          FindImageForVirtualMachine findImageForVirtualMachine,
-         LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine) {
+         LoadingCache<Long, Set<IPForwardingRule>> getIPForwardingRulesByVirtualMachine,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
       this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
       this.getIPForwardingRulesByVirtualMachine = checkNotNull(getIPForwardingRulesByVirtualMachine,
@@ -104,7 +107,7 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       // on hosts not started with jclouds
       builder.hostname(from.getDisplayName());
       builder.location(findLocationForVirtualMachine.apply(from));
-      builder.group(parseGroupFromName(from.getDisplayName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getDisplayName()));
       Image image = findImageForVirtualMachine.apply(from);
       if (image != null) {
          builder.imageId(image.getId());

@@ -19,7 +19,6 @@
 package org.jclouds.rimuhosting.miro.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -35,6 +34,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.domain.Server;
@@ -54,10 +54,12 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Resource
    protected Logger logger = Logger.NULL;
+   
    protected final Supplier<Set<? extends Location>> locations;
    protected final Function<Server, Iterable<String>> getPublicAddresses;
    protected final Map<RunningState, NodeState> runningStateToNodeState;
    protected final Supplier<Set<? extends Image>> images;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    private static class FindImageForServer implements Predicate<Image> {
       private final Location location;
@@ -79,7 +81,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Inject
    ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
          @Memoized Supplier<Set<? extends Location>> locations, Map<RunningState, NodeState> runningStateToNodeState,
-         @Memoized Supplier<Set<? extends Image>> images) {
+         @Memoized Supplier<Set<? extends Image>> images,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
       this.locations = checkNotNull(locations, "locations");
       this.runningStateToNodeState = checkNotNull(runningStateToNodeState, "serverStateToNodeState");
@@ -94,7 +98,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.hostname(from.getName());
       Location location = findLocationWithId(from.getLocation().getId());
       builder.location(location);
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from, location));
       builder.hardware(null);// TODO

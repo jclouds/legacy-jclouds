@@ -21,7 +21,6 @@ package org.jclouds.savvis.vpdc.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +34,7 @@ import org.jclouds.compute.domain.CIMOperatingSystem;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.savvis.vpdc.domain.VM;
 import org.jclouds.savvis.vpdc.util.Utils;
@@ -58,9 +58,12 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
                      NodeState.SUSPENDED).put(VM.Status.UNRESOLVED, NodeState.PENDING).build();
 
    private final FindLocationForVM findLocationForVM;
+   private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   VMToNodeMetadata(FindLocationForVM findLocationForVM) {
+   VMToNodeMetadata(FindLocationForVM findLocationForVM,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.findLocationForVM = checkNotNull(findLocationForVM, "findLocationForVM");
    }
 
@@ -70,7 +73,7 @@ public class VMToNodeMetadata implements Function<VM, NodeMetadata> {
       builder.ids(from.getHref().toASCIIString());
       builder.name(from.getName());
       builder.location(findLocationForVM.apply(from));
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       try {
          builder.operatingSystem(CIMOperatingSystem.toComputeOs(from.getOperatingSystemSection()));
       } catch (NullPointerException e) {

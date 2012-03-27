@@ -19,7 +19,6 @@
 package org.jclouds.slicehost.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -36,6 +35,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.domain.Slice;
@@ -54,6 +54,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    protected final Map<Slice.Status, NodeState> sliceToNodeState;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -87,7 +88,9 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    @Inject
    SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState,
             @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
-            @Memoized Supplier<Set<? extends Hardware>> hardwares) {
+            @Memoized Supplier<Set<? extends Hardware>> hardwares,
+            GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.sliceToNodeState = checkNotNull(sliceStateToNodeState, "sliceStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
@@ -101,7 +104,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       builder.name(from.getName());
       builder.hostname(from.getName());
       builder.location(location.get());
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.imageId(from.getImageId() + "");
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));

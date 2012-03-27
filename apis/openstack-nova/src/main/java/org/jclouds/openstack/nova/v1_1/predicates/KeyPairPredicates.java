@@ -32,24 +32,25 @@ import com.google.common.base.Predicate;
 
 public class KeyPairPredicates {
 
+
    /**
-    * matches name of the given keypair starts with the specified prefix
-    *
-    * @param prefix the prefix you are looking for
-    * @return the predicate
+    * matches name of the given key pair
+    * 
+    * @param name
+    * @return predicate that matches name
     */
-   public static Predicate<KeyPair> nameStartsWith(final String prefix) {
-      checkNotNull(prefix, "name must be defined");
+   public static Predicate<KeyPair> nameMatches(final Predicate<String> name) {
+      checkNotNull(name, "name must be defined");
 
       return new Predicate<KeyPair>() {
          @Override
          public boolean apply(KeyPair ext) {
-            return ext.getName() != null && ext.getName().startsWith(prefix);
+            return name.apply(ext.getName());
          }
 
          @Override
          public String toString() {
-            return "nameStartsWith(" + prefix + ")";
+            return "nameMatches(" + name + ")";
          }
       };
    }
