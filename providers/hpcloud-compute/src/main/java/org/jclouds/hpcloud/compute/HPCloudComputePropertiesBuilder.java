@@ -20,7 +20,7 @@ package org.jclouds.hpcloud.compute;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_TERMINATED;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
 import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
 import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
 import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
@@ -42,7 +42,7 @@ public class HPCloudComputePropertiesBuilder extends NovaPropertiesBuilder {
       properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:35357");
 
       // deallocating ip addresses can take a while
-      properties.setProperty(PROPERTY_TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
+      properties.setProperty(TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
 
       properties.setProperty(CREDENTIAL_TYPE, "apiAccessKeyCredentials");
       properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");

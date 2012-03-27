@@ -32,8 +32,8 @@ import org.jclouds.compute.predicates.NodeRunning;
 import org.jclouds.compute.predicates.NodeSuspended;
 import org.jclouds.compute.predicates.NodeTerminated;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
-import org.jclouds.compute.predicates.TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
+import org.jclouds.compute.predicates.TrueIfNullOrTerminatedRefreshAndDoubleCheckOnFalse;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.predicates.RetryablePredicate;
 

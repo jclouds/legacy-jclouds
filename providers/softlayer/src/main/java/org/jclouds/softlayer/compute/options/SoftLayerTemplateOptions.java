@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.io.Payload;
 import org.jclouds.softlayer.features.VirtualGuestClient;
 
 import com.google.common.net.InternetDomainName;
@@ -118,14 +117,6 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
       public static SoftLayerTemplateOptions blockOnPort(int port, int seconds) {
          SoftLayerTemplateOptions options = new SoftLayerTemplateOptions();
          return SoftLayerTemplateOptions.class.cast(options.blockOnPort(port, seconds));
-      }
-
-      /**
-       * @see TemplateOptions#runScript(Payload)
-       */
-      public static SoftLayerTemplateOptions runScript(Payload script) {
-         SoftLayerTemplateOptions options = new SoftLayerTemplateOptions();
-         return SoftLayerTemplateOptions.class.cast(options.runScript(script));
       }
 
       /**

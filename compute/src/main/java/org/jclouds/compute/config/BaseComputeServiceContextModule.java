@@ -17,9 +17,9 @@
  * under the License.
  */
 package org.jclouds.compute.config;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.compute.config.ComputeServiceProperties.IMAGE_ID;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
@@ -175,7 +175,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       template = provideTemplate(injector, template);
       String imageId = config.apply(provider + ".image-id");
       if (imageId == null)
-         imageId = config.apply(ComputeServiceConstants.PROPERTY_IMAGE_ID);
+         imageId = config.apply(IMAGE_ID);
       if (imageId != null)
          template.imageId(imageId);
       return template;
