@@ -106,7 +106,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test(description = "GET /vAppTemplate/{id}/owner")
    public void testGetVAppTemplateOwner() {
-      Owner owner = vAppTemplateClient.getOwnerOfVAppTemplate(vAppTemplateURI);
+      Owner owner = vAppTemplateClient.getOwner(vAppTemplateURI);
       
       checkOwner(owner);
       assertEquals(owner.getUser(), vAppTemplateClient.getVAppTemplate(vAppTemplateURI).getOwner().getUser());
@@ -114,14 +114,14 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test(description = "GET /vAppTemplate/{id}/customizationSection")
    public void testGetCustomizationSection() {
-      CustomizationSection customizationSection = vAppTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI);
+      CustomizationSection customizationSection = vAppTemplateClient.getCustomizationSection(vAppTemplateURI);
       
       checkCustomizationSection(customizationSection);
    }
    
    @Test(description = "GET /vAppTemplate/{id}/productSections")
    public void testGetProductSections() {
-      ProductSectionList productSectionList = vAppTemplateClient.getProductSectionsForVAppTemplate(vAppTemplateURI);
+      ProductSectionList productSectionList = vAppTemplateClient.getProductSections(vAppTemplateURI);
       
       checkProductSectionList(productSectionList);
    }
@@ -130,13 +130,13 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    public void testEditProductSections() {
       // TODO make a real modification
       
-      ProductSectionList origSections = vAppTemplateClient.getProductSectionsForVAppTemplate(vApp.getHref());
+      ProductSectionList origSections = vAppTemplateClient.getProductSections(vApp.getHref());
       ProductSectionList newSections = origSections.toBuilder().build();
       
-      Task task = vAppTemplateClient.editProductSectionsForVAppTemplate(vApp.getHref(), newSections);
+      Task task = vAppTemplateClient.modifyProductSections(vApp.getHref(), newSections);
       assertTaskSucceeds(task);
 
-      ProductSectionList modified = vAppTemplateClient.getProductSectionsForVAppTemplate(vApp.getHref());
+      ProductSectionList modified = vAppTemplateClient.getProductSections(vApp.getHref());
       checkProductSectionList(modified);
    }
    
@@ -145,7 +145,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       getGuestCustomizationSection(new Function<URI, GuestCustomizationSection>() {
          @Override
          public GuestCustomizationSection apply(URI uri) {
-            return vAppTemplateClient.getVAppTemplateGuestCustomizationSection(uri);
+            return vAppTemplateClient.getGuestCustomizationSection(uri);
          }
       });
    }
@@ -153,7 +153,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "GET /vAppTemplate/{id}/leaseSettingsSection")
    public void testGetLeaseSettingsSection() {
       // FIXME Wrong case for Vapp
-      LeaseSettingsSection leaseSettingsSection = vAppTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
+      LeaseSettingsSection leaseSettingsSection = vAppTemplateClient.getLeaseSettingsSection(vAppTemplateURI);
       
       checkLeaseSettingsSection(leaseSettingsSection);
    }
@@ -179,7 +179,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test(description = "GET /vAppTemplate/{id}/networkConfigSection")
    public void testGetVAppTemplateNetworkConfigSection() {
-      NetworkConfigSection networkConfigSection = vAppTemplateClient.getVAppTemplateNetworkConfigSection(vAppTemplateURI);
+      NetworkConfigSection networkConfigSection = vAppTemplateClient.getNetworkConfigSection(vAppTemplateURI);
       
       checkNetworkConfigSection(networkConfigSection);
    }
@@ -189,21 +189,21 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       getNetworkConnectionSection(new Function<URI, NetworkConnectionSection>() {
          @Override
          public NetworkConnectionSection apply(URI uri) {
-            return vAppTemplateClient.getVAppTemplateNetworkConnectionSection(uri);
+            return vAppTemplateClient.getNetworkConnectionSection(uri);
          }
       });
    }
 
    @Test(description = "GET /vAppTemplate/{id}/networkSection")
    public void testGetVAppTemplateNetworkSection() {
-      NetworkSection networkSection = vAppTemplateClient.getVAppTemplateNetworkSection(vAppTemplateURI);
+      NetworkSection networkSection = vAppTemplateClient.getNetworkSection(vAppTemplateURI);
 
       checkOvfNetworkSection(networkSection);
    }
 
    @Test(description = "GET /vAppTemplate/{id}/ovf")
    public void testGetVAppTemplateOvf() {
-      Envelope envelope = vAppTemplateClient.getVAppTemplateOvf(vAppTemplateURI);
+      Envelope envelope = vAppTemplateClient.getOvf(vAppTemplateURI);
       
       checkOvfEnvelope(envelope);
    }
@@ -217,7 +217,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .description(description)
                .build();
       
-      final Task task = vAppTemplateClient.editVAppTemplate(vAppTemplateURI, template);
+      final Task task = vAppTemplateClient.modifyVAppTemplate(vAppTemplateURI, template);
       retryTaskSuccess.apply(task);
 
       VAppTemplate newTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
@@ -288,10 +288,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .computerName(computerName)
                .build();
       
-      final Task task = vAppTemplateClient.editVAppTemplateGuestCustomizationSection(vm.getHref(), newSection);
+      final Task task = vAppTemplateClient.modifyGuestCustomizationSection(vm.getHref(), newSection);
       assertTaskSucceeds(task);
 
-      GuestCustomizationSection modified = vAppTemplateClient.getVAppTemplateGuestCustomizationSection(vm.getHref());
+      GuestCustomizationSection modified = vAppTemplateClient.getGuestCustomizationSection(vm.getHref());
       
       checkGuestCustomizationSection(modified);
       assertEquals(modified.getComputerName(), computerName);
@@ -299,7 +299,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test(description = "PUT /vAppTemplate/{id}/customizationSection")
    public void testEditCustomizationSection() {
-      boolean oldVal = vAppTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI).isCustomizeOnInstantiate();
+      boolean oldVal = vAppTemplateClient.getCustomizationSection(vAppTemplateURI).isCustomizeOnInstantiate();
       boolean newVal = !oldVal;
       
       CustomizationSection customizationSection = CustomizationSection.builder()
@@ -307,10 +307,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .customizeOnInstantiate(newVal)
                .build();
       
-      final Task task = vAppTemplateClient.editVAppTemplateCustomizationSection(vAppTemplateURI, customizationSection);
+      final Task task = vAppTemplateClient.modifyCustomizationSection(vAppTemplateURI, customizationSection);
       retryTaskSuccess.apply(task);
 
-      CustomizationSection newCustomizationSection = vAppTemplateClient.getVAppTemplateCustomizationSection(vAppTemplateURI);
+      CustomizationSection newCustomizationSection = vAppTemplateClient.getCustomizationSection(vAppTemplateURI);
       assertEquals(newCustomizationSection.isCustomizeOnInstantiate(), newVal);
    }
 
@@ -327,10 +327,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .deploymentLeaseInSeconds(deploymentLeaseInSeconds)
                .build();
       
-      final Task task = vAppTemplateClient.editVappTemplateLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
+      final Task task = vAppTemplateClient.modifyLeaseSettingsSection(vAppTemplateURI, leaseSettingSection);
       retryTaskSuccess.apply(task);
       
-      LeaseSettingsSection newLeaseSettingsSection = vAppTemplateClient.getVappTemplateLeaseSettingsSection(vAppTemplateURI);
+      LeaseSettingsSection newLeaseSettingsSection = vAppTemplateClient.getLeaseSettingsSection(vAppTemplateURI);
       assertEquals(newLeaseSettingsSection.getStorageLeaseInSeconds(), (Integer) storageLeaseInSeconds);
       assertEquals(newLeaseSettingsSection.getDeploymentLeaseInSeconds(), (Integer) deploymentLeaseInSeconds);
    }
@@ -339,7 +339,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    public void testEditNetworkConfigSection() {
       // TODO What to modify?
       
-      NetworkConfigSection oldSection = vAppTemplateClient.getVAppTemplateNetworkConfigSection(vApp.getHref());
+      NetworkConfigSection oldSection = vAppTemplateClient.getNetworkConfigSection(vApp.getHref());
       NetworkConfigSection newSection = oldSection.toBuilder().build();
       
 //      String networkName = ""+random.nextInt();
@@ -356,10 +356,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 //               .networkConfigs(vappNetworkConfigurations)
 //               .build();
       
-      final Task task = vAppTemplateClient.editVAppTemplateNetworkConfigSection(vApp.getHref(), newSection);
+      final Task task = vAppTemplateClient.modifyNetworkConfigSection(vApp.getHref(), newSection);
       assertTaskSucceeds(task);
 
-      NetworkConfigSection modified = vAppTemplateClient.getVAppTemplateNetworkConfigSection(vAppTemplateURI);
+      NetworkConfigSection modified = vAppTemplateClient.getNetworkConfigSection(vAppTemplateURI);
       checkNetworkConfigSection(modified);
 
 //      assertEquals(modified§.getNetworkConfigs().size(), 1);
@@ -383,10 +383,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                   .build())
             .build();
       
-      Task task = vAppTemplateClient.editVAppTemplateNetworkConnectionSection(vm.getHref(), newSection);
+      Task task = vAppTemplateClient.modifyNetworkConnectionSection(vm.getHref(), newSection);
       assertTaskSucceeds(task);
 
-      NetworkConnectionSection modified = vAppTemplateClient.getVAppTemplateNetworkConnectionSection(vm.getHref());
+      NetworkConnectionSection modified = vAppTemplateClient.getNetworkConnectionSection(vm.getHref());
       checkNetworkConnectionSection(modified);
    }
    
@@ -413,7 +413,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(description = "POST /vAppTemplate/{id}/action/disableDownload")
    public void testDisableVAppTemplateDownload() throws Exception {
-      vAppTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
+      vAppTemplateClient.disableDownload(vAppTemplateURI);
       
       // TODO Check that it really is disabled. The only thing I can see for determining this 
       // is the undocumented "download" link in the VAppTemplate. But that is brittle and we
@@ -428,8 +428,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "POST /vAppTemplate/{id}/action/enableDownload")
    public void testEnableVAppTemplateDownload() throws Exception {
       // First disable so that enable really has some work to do...
-      vAppTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
-      final Task task = vAppTemplateClient.enableDownloadVappTemplate(vAppTemplateURI);
+      vAppTemplateClient.disableDownload(vAppTemplateURI);
+      final Task task = vAppTemplateClient.enableDownload(vAppTemplateURI);
       retryTaskSuccess.apply(task);
       
       // TODO Check that it really is enabled. The only thing I can see for determining this 
@@ -454,7 +454,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test(description = "POST /vAppTemplate/{id}/action/consolidate")
    public void testConsolidateVAppTemplate() throws Exception {
-      final Task task = vAppTemplateClient.consolidateVappTemplate(vm.getHref());
+      final Task task = vAppTemplateClient.consolidateVm(vm.getHref());
       assertTaskSucceedsLong(task);
       
       // TODO Need assertion that command had effect
@@ -468,7 +468,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
                .datastore(dataStore)
                .build();
       
-      final Task task = vAppTemplateClient.relocateVappTemplate(vAppTemplateURI, relocateParams);
+      final Task task = vAppTemplateClient.relocateVm(vAppTemplateURI, relocateParams);
       assertTaskSucceedsLong(task);
    }
    
@@ -484,8 +484,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "test completed task not included in vAppTemplate") 
    public void testCompletedTaskNotIncludedInVAppTemplate() throws Exception {
       // Kick off a task, and wait for it to complete
-      vAppTemplateClient.disableDownloadVappTemplate(vAppTemplateURI);
-      final Task task = vAppTemplateClient.enableDownloadVappTemplate(vAppTemplateURI);
+      vAppTemplateClient.disableDownload(vAppTemplateURI);
+      final Task task = vAppTemplateClient.enableDownload(vAppTemplateURI);
       assertTaskDoneEventually(task);
 
       // Ask the VAppTemplate for its tasks, and the status of the matching task if it exists
