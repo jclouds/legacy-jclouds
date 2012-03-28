@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 
 /**
  * Provides synchronous access to {@link Group} objects.
@@ -31,49 +32,59 @@ import org.jclouds.vcloud.director.v1_5.domain.Group;
  * @author danikov
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface GroupClient {
+public interface UserClient {
+   /**
+    * Creates or imports a user in an organization. The user could be enabled or disabled.
+    *
+    * <pre>
+    * POST /admin/org/{id}/users
+    * </pre>
+    *
+    * @param orgRef the reference for the org
+    * @return the created user
+    */
+   User createUser(URI orgRef, User user);
    
    /**
-    * Imports a group in an organization.
+    * Retrieves a user. This entity could be enabled or disabled.
     *
     * <pre>
-    * POST /admin/org/{id}/groups
+    * GET /admin/user/{id}
     * </pre>
     *
-    * @param orgUri the admin org to create the group in
-    * @return the created group
+    * @param userRef the reference for the user
+    * @return a user
     */
-   Group createGroup(URI adminOrgUri, Group group);
+   User getUser(URI userRef);
    
    /**
-    * Retrieves a group.
+    * Modifies a user. The user object could be enabled or disabled. 
+    * Note: the lock status cannot be changed using this call: use unlockUser.
     *
     * <pre>
-    * GET /admin/group/{id}
+    * PUT /admin/user/{id}
     * </pre>
     *
-    * @param groupURI the reference for the group
-    * @return a group
+    * @param userRef the reference for the user
+    * @return the modified user
     */
-   Group getGroup(URI groupUri);
-
+   User updateUser(URI userRef, User user);
+   
    /**
-    * Modifies a group.
+    * Deletes a user. Enabled and disabled users could be deleted.
     * 
     * <pre>
-    * PUT /admin/group/{id}
+    * DELETE /admin/catalog/{id}
     * </pre>
-    * 
-    * @return the updated group
     */
-   Group updateGroup(URI groupRef, Group group);
-
+   void deleteUser(URI userRef);
+   
    /**
-    * Deletes a group.
+    * Unlocks a user.
     * 
     * <pre>
-    * DELETE /admin/group/{id}
+    * POST /admin/user/{id}/action/unlock
     * </pre>
     */
-   void deleteGroup(URI groupRef);
+   void unlockUser(URI userRef);
 }

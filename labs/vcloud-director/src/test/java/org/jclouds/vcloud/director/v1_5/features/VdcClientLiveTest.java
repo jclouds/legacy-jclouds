@@ -105,7 +105,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          cleanUpVApp(composedVApp);
       }
       
-      context.getApi().getAdminVdcClient().getMetadataClient()
+      adminContext.getApi().getVdcClient().getMetadataClient()
          .deleteMetadataEntry(toAdminUri(vdcURI), "key");
    }
 
@@ -309,7 +309,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "vdcClient admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
    public void testSetupMetadata() {
-      context.getApi().getAdminVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
+      adminContext.getApi().getVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
    }
    

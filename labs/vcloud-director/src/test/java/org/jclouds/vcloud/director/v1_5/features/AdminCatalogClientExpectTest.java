@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItems;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -42,13 +42,7 @@ import com.google.common.collect.ImmutableSet;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "admin", "catalog" }, singleThreaded = true, testName = "CatalogClientExpectTest")
-public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
-   
-   private Reference orgRef = Reference.builder()
-         .type("application/vnd.vmware.vcloud.catalog+xml")
-         .name("QunyingTestCatalog")
-         .href(URI.create(endpoint + "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
-         .build();
+public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
    
    private Reference catalogRef = Reference.builder()
          .type("application/vnd.vmware.vcloud.catalog+xml")
@@ -58,7 +52,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
    
    @Test
    public void testCreateCatalog() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", "/admin/org/???/catalogs")
             .xmlFilePayload("/catalog/admin/createCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
@@ -71,7 +65,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
       AdminCatalog source = createCatalogSource();
       AdminCatalog expected = createCatalog();
 
-      assertEquals(client.getAdminCatalogClient().createCatalog(catalogRef.getHref(), source), expected);
+      assertEquals(client.getCatalogClient().createCatalog(catalogRef.getHref(), source), expected);
    }
 
    // FIXME temporarily disabling this test due to JAXB error:
@@ -82,7 +76,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
    //    <{http://www.vmware.com/vcloud/v1.5}Task>
    @Test(enabled = false)
    public void testGetCatalog() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
             .acceptAnyMedia()
@@ -93,7 +87,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       AdminCatalog expected = catalog();
 
-      AdminCatalog actual = client.getAdminCatalogClient().getCatalog(catalogRef.getHref());
+      AdminCatalog actual = client.getCatalogClient().getCatalog(catalogRef.getHref());
       assertEquals(actual.getHref(), expected.getHref());
       assertEquals(actual.getLinks(), expected.getLinks());
       assertEquals(actual.getTasks(), expected.getTasks());
@@ -107,12 +101,12 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       assertEquals(actual.getOwner(), expected.getOwner());
       
-      assertEquals(client.getAdminCatalogClient().getCatalog(catalogRef.getHref()), expected);
+      assertEquals(client.getCatalogClient().getCatalog(catalogRef.getHref()), expected);
    }
    
    @Test
    public void testModifyCatalog() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
             .xmlFilePayload("/catalog/admin/updateCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
@@ -124,12 +118,12 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       AdminCatalog expected = modifyCatalog();
 
-      assertEquals(client.getAdminCatalogClient().updateCatalog(catalogRef.getHref(), expected), expected);
+      assertEquals(client.getCatalogClient().updateCatalog(catalogRef.getHref(), expected), expected);
    }
    
    @Test
    public void testGetOwner() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner")
                .acceptAnyMedia()
@@ -151,12 +145,12 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                         .build())
                .build();
 
-      assertEquals(client.getAdminCatalogClient().getOwner(catalogRef.getHref()), expected);
+      assertEquals(client.getCatalogClient().getOwner(catalogRef.getHref()), expected);
    }
    
    @Test
    public void testSetOwner() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("PUT", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/owner")
                .xmlFilePayload("/catalog/admin/updateOwnerSource.xml", VCloudDirectorMediaType.OWNER)
@@ -174,12 +168,12 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                   .build())
             .build();
       
-      client.getAdminCatalogClient().setOwner(catalogRef.getHref(), newOwner);
+      client.getCatalogClient().setOwner(catalogRef.getHref(), newOwner);
    }
    
    @Test
    public void testPublishCatalog() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4/action/publish")
                .xmlFilePayload("/catalog/admin/publishCatalogParams.xml", VCloudDirectorMediaType.PUBLISH_CATALOG_PARAMS)
@@ -192,12 +186,12 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             .isPublished(true)
             .build();
       
-      client.getAdminCatalogClient().publishCatalog(catalogRef.getHref(), params);
+      client.getCatalogClient().publishCatalog(catalogRef.getHref(), params);
    }
    
    @Test
    public void testDeleteCatalog() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4")
                .acceptAnyMedia()
@@ -205,7 +199,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpResponsePrimer()
                .httpResponseBuilder().statusCode(204).build());
       
-      client.getAdminCatalogClient().deleteCatalog(catalogRef.getHref());
+      client.getCatalogClient().deleteCatalog(catalogRef.getHref());
    }
    
    public static final AdminCatalog createCatalogSource() {

@@ -16,11 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -28,63 +29,60 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
-
+   
 /**
- * @see AdminNetworkClient
+ * @see GroupClient
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
-public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
+public interface GroupAsyncClient {
    
+   @POST
+   @Path("/groups")
+   @Consumes(VCloudDirectorMediaType.GROUP)
+   @Produces(VCloudDirectorMediaType.GROUP)
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Group> createGroup(@EndpointParam URI adminOrgUri, 
+         @BinderParam(BindToXMLPayload.class) Group group);
+
    /**
-    * @see AdminNetworkClient#getNetwork(URI)
+    * @see GroupClient#getGroup(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   @Override
-   ListenableFuture<ExternalNetwork> getNetwork(@EndpointParam URI networkRef);
-   
+   ListenableFuture<Group> getGroup(@EndpointParam URI groupUri);
+
    /**
-    * @see AdminNetworkClient#updateNetwork(URI, OrgNetwork)
+    * @see GroupClient#updateGroup(URI, Group)
     */
    @PUT
-   @Consumes(VCloudDirectorMediaType.TASK)
-   @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
+   @Consumes(VCloudDirectorMediaType.GROUP)
+   @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> updateNetwork(@EndpointParam URI networkRef, 
-         @BinderParam(BindToXMLPayload.class) OrgNetwork network);
-   
+   ListenableFuture<Group> updateGroup(@EndpointParam URI groupRef, 
+         @BinderParam(BindToXMLPayload.class) Group group);
+
    /**
-    * @see AdminNetworkClient#resetNetwork(URI)
+    * @see GroupClient#deleteGroup(URI)
     */
-   @POST
-   @Path("/action/reset")
+   @DELETE
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> resetNetwork(@EndpointParam URI networkRef);
-   
-   /**
-    * @return asynchronous access to admin {@link MetadataAsyncClient.Writeable} features
-    */
-   @Override
-   @Delegate
-   MetadataAsyncClient.Writeable getMetadataClient();
+   ListenableFuture<Void> deleteGroup(@EndpointParam URI groupRef);
 }

@@ -28,6 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -45,7 +46,6 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    /*
     * Convenience references to API clients.
     */
-
    private GroupClient groupClient;
 
    /*
@@ -58,11 +58,11 @@ public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
-      groupClient = context.getApi().getGroupClient();
+      groupClient = adminContext.getApi().getGroupClient();
       Reference orgRef = null;
       
       // TODO: requisite LDAP settings
-//      oldLdapSettings = context.getApi().getAdminOrgClient().getLdapSettings(orgRef.getHref());
+//      oldLdapSettings = adminContext.getApi().getAdminOrgClient().getLdapSettings(orgRef.getHref());
 //      OrgLdapSettings newLdapSettings = oldLdapSettings.toBuilder()
 //         .ldapMode(OrgLdapSettings.LdapMode.SYSTEM)  
 //         .build();

@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
@@ -52,6 +51,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.internal.annotations.Sets;
@@ -65,7 +65,7 @@ import com.google.common.collect.Multimaps;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "user", "vapp" }, singleThreaded = true, testName = "VAppClientExpectTest")
-public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
    
    private String vAppId = "vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be";
    private URI vAppURI = URI.create(endpoint + vAppId);
@@ -76,7 +76,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    
    @Test(enabled = false)//TODO
    public void testGetVapp() {
-      VCloudDirectorClient client = orderedRequestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = orderedRequestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", vAppId)
                .acceptMedia(VCloudDirectorMediaType.VAPP)
@@ -92,7 +92,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyVApp() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId)
             .xmlFilePayload("/vApp/modifyVApp.xml", VCloudDirectorMediaType.VAPP)
@@ -113,7 +113,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testDeleteVApp() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("DELETE", vAppId)
             .acceptAnyMedia()
@@ -129,7 +129,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testConsolidateVApp() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/consolidate")
             .acceptAnyMedia()
@@ -145,7 +145,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testControlAccess() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/controlAccess")
             .xmlFilePayload("/vApp/controlAccessParams.xml", VCloudDirectorMediaType.CONTROL_ACCESS)
@@ -164,7 +164,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testDeploy() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/deploy")
             .xmlFilePayload("/vApp/deployParams.xml", VCloudDirectorMediaType.DEPLOY_VAPP_PARAMS)
@@ -184,7 +184,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testDiscardSuspendedState() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/discardSuspendedState")
             .acceptAnyMedia()
@@ -200,7 +200,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testEnterMaintenanceMode() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/enterMaintenanceMode")
             .acceptAnyMedia()
@@ -214,7 +214,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testExitMaintenanceMode() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/exitMaintenanceMode")
             .acceptAnyMedia()
@@ -228,7 +228,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testInstallVMwareTools() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/installVMwareTools")
             .acceptAnyMedia()
@@ -244,7 +244,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testRecomposeVApp() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/recomposeVApp")
             .xmlFilePayload("/vApp/recomposeVAppParams.xml", VCloudDirectorMediaType.RECOMPOSE_VAPP_PARAMS)
@@ -264,7 +264,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testRelocate() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/relocate")
             .xmlFilePayload("/vApp/relocateParams.xml", VCloudDirectorMediaType.RELOCATE_VM_PARAMS)
@@ -284,7 +284,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testUndeploy() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/undeploy")
             .xmlFilePayload("/vApp/undeployParams.xml", VCloudDirectorMediaType.UNDEPLOY_VAPP_PARAMS)
@@ -304,7 +304,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testUpgradeHardwareVersion() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/action/upgradeHardwareVersion")
             .acceptAnyMedia()
@@ -320,7 +320,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testPowerOff() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/powerOff")
             .acceptAnyMedia()
@@ -336,7 +336,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testPowerOn() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/powerOn")
             .acceptAnyMedia()
@@ -352,7 +352,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testReboot() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/reboot")
             .acceptAnyMedia()
@@ -368,7 +368,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testReset() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/reset")
             .acceptAnyMedia()
@@ -384,7 +384,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testShutdown() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/shutdown")
             .acceptAnyMedia()
@@ -400,7 +400,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testSuspend() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/power/action/suspend")
             .acceptAnyMedia()
@@ -416,7 +416,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetControlAccesss() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/controlAccess")
             .acceptAnyMedia()
@@ -432,7 +432,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetGuestCustomizationSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/guestCustomizationSection")
             .acceptAnyMedia()
@@ -448,7 +448,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyGuestCustomizationSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/guestCustomizationSection")
             .xmlFilePayload("/vApp/modifyGuestCustomizationSection.xml", VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION)
@@ -468,7 +468,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetLeaseSettingsSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/leaseSettingsSection")
             .acceptAnyMedia()
@@ -484,7 +484,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyLeaseSettingsSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/leaseSettingsSection")
             .xmlFilePayload("/vApp/modifyLeaseSettingsSection.xml", VCloudDirectorMediaType.LEASE_SETTINGS_SECTION)
@@ -504,7 +504,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testEjectMedia() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/media/action/ejectMedia")
             .xmlFilePayload("/vApp/ejectMediaParams.xml", VCloudDirectorMediaType.MEDIA_PARAMS)
@@ -524,7 +524,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testInsertMedia() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/media/action/insertMedia")
             .xmlFilePayload("/vApp/insertMediaParams.xml", VCloudDirectorMediaType.MEDIA_PARAMS)
@@ -544,7 +544,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetNetworkConfigSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/networkConfigSection")
             .acceptAnyMedia()
@@ -560,7 +560,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyNetworkConfigSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/networkConfigSection")
             .xmlFilePayload("/vApp/modifyNetworkConfigSection.xml", VCloudDirectorMediaType.NETWORK_CONFIG_SECTION)
@@ -580,7 +580,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetNetworkConnectionSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/networkConnectionSection")
             .acceptAnyMedia()
@@ -596,7 +596,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyNetworkConnectionSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/networkConnectionSection")
             .xmlFilePayload("/vApp/modifyNetworkConnectionSection.xml", VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION)
@@ -616,7 +616,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetNetworkSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/networkSection")
             .acceptAnyMedia()
@@ -632,7 +632,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetOperatingSystemSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/operatingSystemSection")
             .acceptAnyMedia()
@@ -648,7 +648,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyOperatingSystemSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/operatingSystemSection")
             .xmlFilePayload("/vApp/modifyOperatingSystemSection.xml", VCloudDirectorMediaType.OPERATING_SYSTEM_SECTION)
@@ -668,7 +668,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetOwner() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/owner")
             .acceptAnyMedia()
@@ -684,7 +684,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyOwner() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/owner")
             .xmlFilePayload("/vApp/modifyOwner.xml", VCloudDirectorMediaType.OWNER)
@@ -701,7 +701,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetProductSections() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/productSections")
             .acceptAnyMedia()
@@ -717,7 +717,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyProductSections() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/productSections")
             .xmlFilePayload("/vApp/modifyProductSections.xml", VCloudDirectorMediaType.PRODUCT_SECTION_LIST)
@@ -734,7 +734,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetPendingQuestion() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/question")
             .acceptAnyMedia()
@@ -750,7 +750,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testAnswerQuestion() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/question/action/answer")
             .xmlFilePayload("/vApp/answerQuestion.xml", VCloudDirectorMediaType.VM_PENDING_ANSWER)
@@ -767,7 +767,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetRuntimeInfoSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/runtimeInfoSection")
             .acceptAnyMedia()
@@ -783,7 +783,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetScreenImage() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/screen")
             .acceptMedia(VCloudDirectorMediaType.ANY_IMAGE)
@@ -801,7 +801,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetScreenTicket() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", vAppId + "/screen/action/acquireTicket")
             .acceptAnyMedia()
@@ -817,7 +817,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetStartupSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/startupSection")
             .acceptAnyMedia()
@@ -833,7 +833,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyStartupSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/startupSection")
             .xmlFilePayload("/vApp/modifyStartupSection.xml", VCloudDirectorMediaType.STARTUP_SECTION)
@@ -853,7 +853,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetVirtualHardwareSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/virtualHardwareSection")
             .acceptAnyMedia()
@@ -869,7 +869,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyVirtualHardwareSection() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/virtualHardwareSection")
             .xmlFilePayload("/vApp/modifyVirtualHardwareSection.xml", VCloudDirectorMediaType.VIRTUAL_HARDWARE_SECTION)
@@ -889,7 +889,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetVirtualHardwareSectionCpu() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/virtualHardwareSection/cpu")
             .acceptAnyMedia()
@@ -905,7 +905,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyVirtualHardwareSectionCpu() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("", vAppId + "/virtualHardwareSection/cpu")
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionCpu.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
@@ -925,7 +925,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetVirtualHardwareSectionDisks() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/virtualHardwareSection/disks")
             .acceptAnyMedia()
@@ -941,7 +941,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyVirtualHardwareSectionDisks() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/virtualHardwareSection/disks")
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionDisks.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
@@ -961,7 +961,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetVirtualHardwareSectionMedia() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/virtualHardwareSection/media")
             .acceptAnyMedia()
@@ -977,7 +977,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetVirtualHardwareSectionMemory() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/virtualHardwareSection/memory")
             .acceptAnyMedia()
@@ -993,7 +993,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyVirtualHardwareSectionMemory() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/virtualHardwareSection/memory")
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionMemory.xml", VCloudDirectorMediaType.VAPP)
@@ -1013,7 +1013,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetVirtualHardwareSectionNetworkCards() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/virtualHardwareSection/networkCards")
             .acceptAnyMedia()
@@ -1029,7 +1029,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyVirtualHardwareSectionNetworkCards() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/virtualHardwareSection/networkCards")
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionNetworkCards.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)
@@ -1049,7 +1049,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testGetVirtualHardwareSectionSerialPorts() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", vAppId + "/virtualHardwareSection/serialPorts")
             .acceptAnyMedia()
@@ -1065,7 +1065,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(enabled = false)
    public void testModifyVirtualHardwareSectionSerialPorts() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", vAppId + "/virtualHardwareSection/serialPorts")
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionSerialPorts.xml", VCloudDirectorMediaType.OVF_RASD_ITEMS_LIST)

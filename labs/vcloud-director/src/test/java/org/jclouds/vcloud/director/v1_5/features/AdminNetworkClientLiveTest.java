@@ -39,6 +39,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.RouterInfo;
 import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -67,7 +68,7 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Override
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredClients() {
-      networkClient = context.getApi().getAdminNetworkClient();
+      networkClient = adminContext.getApi().getNetworkClient();
       networkRef = Reference.builder().href(networkURI).build().toAdminReference(endpoint);
    }
    

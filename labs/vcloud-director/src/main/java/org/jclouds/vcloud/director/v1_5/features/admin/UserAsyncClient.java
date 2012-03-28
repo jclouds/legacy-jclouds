@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import java.net.URI;
 
@@ -35,7 +35,7 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.Group;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
@@ -46,43 +46,55 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
-public interface GroupAsyncClient {
-   
+public interface UserAsyncClient {
+   /**
+    * @see UserClient#createUser(URI, User)
+    */
    @POST
-   @Path("/groups")
-   @Consumes(VCloudDirectorMediaType.GROUP)
-   @Produces(VCloudDirectorMediaType.GROUP)
+   @Path("/users")
+   @Consumes(VCloudDirectorMediaType.USER)
+   @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Group> createGroup(@EndpointParam URI adminOrgUri, 
-         @BinderParam(BindToXMLPayload.class) Group group);
-
+   ListenableFuture<User> createUser(@EndpointParam URI userRef, 
+         @BinderParam(BindToXMLPayload.class) User user);
+   
    /**
-    * @see GroupClient#getGroup(URI)
+    * @see UserClient#getUser(URI)
     */
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Group> getGroup(@EndpointParam URI groupUri);
-
+   ListenableFuture<User> getUser(@EndpointParam URI userRef);
+ 
    /**
-    * @see GroupClient#updateGroup(URI, Group)
+    * @see UserClient#updateUser(URI, User)
     */
    @PUT
-   @Consumes(VCloudDirectorMediaType.GROUP)
-   @Produces(VCloudDirectorMediaType.GROUP)
+   @Consumes(VCloudDirectorMediaType.USER)
+   @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Group> updateGroup(@EndpointParam URI groupRef, 
-         @BinderParam(BindToXMLPayload.class) Group group);
-
+   ListenableFuture<User> updateUser(@EndpointParam URI userRef, 
+         @BinderParam(BindToXMLPayload.class) User user);
+ 
    /**
-    * @see GroupClient#deleteGroup(URI)
+    * @see UserClient#deleteUser(URI)
     */
    @DELETE
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Void> deleteGroup(@EndpointParam URI groupRef);
+   ListenableFuture<Void> deleteUser(@EndpointParam URI userRef);
+ 
+   /**
+    * @see UserClient#unlockUser(URI)
+    */
+   @POST
+   @Path("/action/unlock")
+   @Consumes
+   @JAXBResponseParser
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<Void> unlockUser(@EndpointParam URI userRef);
 }

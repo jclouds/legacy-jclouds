@@ -23,7 +23,6 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.DhcpService;
@@ -42,6 +41,7 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -52,13 +52,13 @@ import com.google.common.collect.ImmutableSet;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "network" }, singleThreaded = true, testName = "NetworkClientExpectTest")
-public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
    
    @Test
    public void testGetNetwork() {
       URI networkUri = URI.create(endpoint + "/network/f3ba8256-6f48-4512-aad6-600e85b4dc38");
 
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/network/f3ba8256-6f48-4512-aad6-600e85b4dc38")
             .acceptAnyMedia()
@@ -75,7 +75,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    public void testGetNetworkWithInvalidId() {
       URI networkUri = URI.create(endpoint + "/network/NOTAUUID");
 
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/network/NOTAUUID")
             .acceptAnyMedia()
@@ -104,7 +104,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    public void testGetNetworkWithCatalogId() {
       URI networkUri = URI.create(endpoint + "/network/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
 
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/network/9e08c2f6-077a-42ce-bece-d5332e2ebb5c")
             .acceptAnyMedia()
@@ -133,7 +133,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    public void testGetNetworkWithFakeId() {
       URI networkUri = URI.create(endpoint + "/network/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
 
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/network/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
             .acceptAnyMedia()
@@ -162,7 +162,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    public void testGetMetadata() {
       URI networkUri = URI.create(endpoint + "/network/55a677cf-ab3f-48ae-b880-fab90421980c");
       
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata")
             .acceptAnyMedia()
@@ -189,7 +189,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    public void testGetMetadataValue() {
       URI networkUri = URI.create("https://vcloudbeta.bluelock.com/api/network/55a677cf-ab3f-48ae-b880-fab90421980c");
       
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/network/55a677cf-ab3f-48ae-b880-fab90421980c/metadata/KEY")
             .acceptAnyMedia()

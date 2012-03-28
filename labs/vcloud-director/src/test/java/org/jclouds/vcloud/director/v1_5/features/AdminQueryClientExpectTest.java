@@ -24,12 +24,12 @@ import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRoleRecord;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableMultimap;
  * @author Aled Sage
  */
 @Test(groups = { "unit", "admin", "query" }, singleThreaded = true, testName = "AdminQueryClientExpectTest")
-public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
 
    // TODO Write expect tests for all other admin-query operations
    
@@ -64,7 +64,7 @@ public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpe
               .payload(payloadFromResourceWithContentType("/query/admin/allGroups.xml", VCloudDirectorMediaType.QUERY_RESULT_RECORDS + ";version=1.5"))
               .build();
 
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
 
       QueryResultRecords expected = QueryResultRecords.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/groups/query?page=1&pageSize=25&format=records"))
@@ -85,7 +85,7 @@ public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpe
                         .build())
             .build();
       
-      assertEquals(client.getAdminQueryClient().groupsQueryAll(), expected);
+      assertEquals(client.getQueryClient().groupsQueryAll(), expected);
    }
    
 //   <?xml version="1.0" encoding="UTF-8"?>
@@ -112,7 +112,7 @@ public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpe
               .payload(payloadFromResourceWithContentType("/query/admin/allRoles.xml", VCloudDirectorMediaType.QUERY_RESULT_RECORDS + ";version=1.5"))
               .build();
 
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
 
       QueryResultRecords expected = QueryResultRecords.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/roles/query?page=1&pageSize=25&format=records"))
@@ -138,7 +138,7 @@ public class AdminQueryClientExpectTest extends BaseVCloudDirectorRestClientExpe
                         .build())
             .build();
       
-      assertEquals(client.getAdminQueryClient().rolesQueryAll(), expected);
+      assertEquals(client.getQueryClient().rolesQueryAll(), expected);
    }
 }
 		

@@ -62,13 +62,13 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
-      context.getApi().getAdminNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 
+      adminContext.getApi().getNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 
             "key", MetadataValue.builder().value("value").build());
    }
    
    @AfterClass(groups = { "live" })
    public void cleanUp() throws Exception {
-      context.getApi().getAdminNetworkClient().getMetadataClient()
+      adminContext.getApi().getNetworkClient().getMetadataClient()
       .deleteMetadataEntry(toAdminUri(networkURI), "key");
    }
    

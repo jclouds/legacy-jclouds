@@ -16,39 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5;
+package org.jclouds.vcloud.director.v1_5.user;
 
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
 import org.jclouds.vcloud.director.v1_5.domain.Catalog;
-import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
-import org.jclouds.vcloud.director.v1_5.features.AdminCatalogClient;
-import org.jclouds.vcloud.director.v1_5.features.AdminNetworkClient;
-import org.jclouds.vcloud.director.v1_5.features.AdminOrgClient;
-import org.jclouds.vcloud.director.v1_5.features.AdminQueryClient;
-import org.jclouds.vcloud.director.v1_5.features.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
-import org.jclouds.vcloud.director.v1_5.features.GroupClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.features.UploadClient;
-import org.jclouds.vcloud.director.v1_5.features.UserClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
@@ -58,11 +48,11 @@ import com.google.inject.Provides;
 /**
  * Provides synchronous access to VCloudDirector.
  * 
- * @see VCloudDirectorAsyncClient
- * @author Adrian Cole
+ * @see VCloudDirectorAdminAsyncClient
+ * @author danikov
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface VCloudDirectorClient {
+public interface VCloudDirectorUserClient {
    /**
     * @return the current login session
     */
@@ -75,12 +65,6 @@ public interface VCloudDirectorClient {
    @Delegate
    QueryClient getQueryClient();
 
-   /**
-    * @return asynchronous access to admin query features
-    */
-   @Delegate
-   AdminQueryClient getAdminQueryClient();
-   
    /**
     * @return synchronous access to {@link Org} features
     */
@@ -134,40 +118,4 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    VAppTemplateClient getVAppTemplateClient();
-   
-   /**
-    * @return synchronous access to {@link Catalog} admin features
-    */
-   @Delegate
-   AdminCatalogClient getAdminCatalogClient();
-   
-   /**
-    * @return synchronous access to admin {@link Group} features
-    */
-   @Delegate
-   GroupClient getGroupClient();
-
-   /**
-    * @return synchronous access to {@link AdminOrg} features
-    */
-   @Delegate
-   AdminOrgClient getAdminOrgClient();
-   
-   /**
-    * @return synchronous access to {@link User} features
-    */
-   @Delegate
-   UserClient getUserClient();
-   
-   /**
-    * @return synchronous access to {@link AdminVdc} features
-    */
-   @Delegate
-   AdminVdcClient getAdminVdcClient();
-   
-   /**
-    * @return synchronous access to admin {@link Network} features
-    */
-   @Delegate
-   AdminNetworkClient getAdminNetworkClient();
 }

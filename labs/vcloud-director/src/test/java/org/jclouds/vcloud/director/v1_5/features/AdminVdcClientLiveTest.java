@@ -33,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -62,7 +63,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
-      vdcClient = context.getApi().getAdminVdcClient();
+      vdcClient = adminContext.getApi().getVdcClient();
       metadataClient = vdcClient.getMetadataClient();
       assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
       adminVdcUri = toAdminUri(vdcURI);

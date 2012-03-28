@@ -22,12 +22,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -39,7 +40,7 @@ import com.google.common.collect.ImmutableSet;
  * @author danikov
  */
 @Test(groups = { "unit", "admin", "network"}, singleThreaded = true, testName = "AdminNetworkClientExpectTest")
-public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
    
    Reference networkRef = Reference.builder()
       .href(URI.create(endpoint+"/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1"))
@@ -47,7 +48,7 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
    
    @Test
    public void testGetNetworkWithOrgNetwork() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1")
             .acceptAnyMedia()
@@ -58,12 +59,12 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       OrgNetwork expected = orgNetwork();
 
-      assertEquals(client.getAdminNetworkClient().getNetwork(networkRef.getHref()), expected);
+      assertEquals(client.getNetworkClient().getNetwork(networkRef.getHref()), expected);
    }
    
    @Test
    public void testUpdateNetwork() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1")
             .xmlFilePayload("/network/admin/updateNetworkSource.xml", VCloudDirectorMediaType.ORG_NETWORK)
@@ -75,12 +76,12 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       Task expected = updateNetworkTask();
 
-      assertEquals(client.getAdminNetworkClient().updateNetwork(networkRef.getHref(), updateNetwork()), expected);
+      assertEquals(client.getNetworkClient().updateNetwork(networkRef.getHref(), updateNetwork()), expected);
    }
    
    @Test(enabled = false)
    public void testResetNetwork() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", "/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1/action/reset")
             .acceptMedia(VCloudDirectorMediaType.TASK)
@@ -91,7 +92,7 @@ public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientEx
 
       Task expected = resetNetworkTask();
 
-      assertEquals(client.getAdminNetworkClient().resetNetwork(networkRef.getHref()), expected);
+      assertEquals(client.getNetworkClient().resetNetwork(networkRef.getHref()), expected);
    }
    
    public final OrgNetwork orgNetwork() {

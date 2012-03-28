@@ -21,11 +21,11 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.NOT_EMPTY_OBJECT_FMT;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkControlAccessParams;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkOrg;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkReferenceType;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -69,7 +69,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @AfterClass(groups = { "live" })
    public void cleanUp() throws Exception {
       if (metadataSet) {
-         context.getApi().getAdminOrgClient().getMetadataClient()
+         adminContext.getApi().getOrgClient().getMetadataClient()
             .deleteMetadataEntry(toAdminUri(orgURI), "key");
       }
    }
@@ -114,7 +114,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(testName = "orgClient admin metadata setup", dependsOnMethods = { "testGetOrg" })
    public void testSetupMetadata() {
-      context.getApi().getAdminOrgClient().getMetadataClient().setMetadata(toAdminUri(orgURI), 
+      adminContext.getApi().getOrgClient().getMetadataClient().setMetadata(toAdminUri(orgURI), 
             "KEY", MetadataValue.builder().value("VALUE").build()); 
       metadataSet = true;
    }

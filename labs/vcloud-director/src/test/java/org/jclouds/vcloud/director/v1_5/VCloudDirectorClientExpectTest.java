@@ -22,17 +22,18 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.login.SessionClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "VCloudDirectorClient")
-public class VCloudDirectorClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class VCloudDirectorClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
 
    public void testRestClientModuleWorksProperly() throws Exception {
 
-      VCloudDirectorClient clientWhenSessionsExist = requestSendsResponse(loginRequest, sessionResponse);
+      VCloudDirectorUserClient clientWhenSessionsExist = requestSendsResponse(loginRequest, sessionResponse);
 
       assertEquals(clientWhenSessionsExist.getCurrentSession(), SessionClientExpectTest.SESSION);
    }
