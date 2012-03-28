@@ -32,6 +32,48 @@ COMPUTESERVICE
 ---------------
 Simplifies the task of managing machines in the cloud. For example, you can use ComputeService to start 5 machines and install your software on them.
 
+Compute Example (Java):
+
+	// init
+	context = new ComputeServiceContextFactory().createContext(
+	"aws-ec2",
+	accesskeyid,
+	secretaccesskey,
+	ImmutableSet.of(new Log4JLoggingModule(),
+	new SshjSshClientModule()));
+  
+  	client = context.getComputeService();
+
+	// define the requirements of your node
+	template = client.templateBuilder().osFamily(UBUNTU).smallest().build();
+
+	// setup a boot user which is the same as your login
+	template.getOptions().runScript(AdminAccess.standard());
+ 
+	// these nodes will be accessible via ssh when the call returns
+	nodes = client.createNodesInGroup("mycluster", 2, template);
+
+	// you can now run ad-hoc commands on the nodes based on predicates
+	responses = client.runScriptOnNodesMatching(inGroup("mycluster"), "uptime",
+	wrapInInitScript(false));
+
+Compute Example (Clojure):
+
+	(use 'org.jclouds.compute2)
+
+	; create a compute service using sshj and log4j extensions
+	(def compute (*compute* "trmk`-ecloud" "user" "password" :sshj :log4j))
+
+	; launch a couple nodes with the default operating system, installing your user.
+	(create-nodes *compute* "mycluster" 2
+	(TemplateOptions$Builder/runScript (AdminAccess/standard)))
+
+	; run a command on that group
+	(run-script-on-nodes-matching *compute* (in-group? "mycluster") "uptime" 
+	(RunScriptOptions$Builder/wrapInInitScript false))
+	
+check out https://github.com/jclouds/jclouds-examples for more examples!
+
 Features
 --------
 Even if you don't need the portable apis we provide, or could roll it your own, programming against cloud environments can be challenging. We focus on the following areas so that you can focus on using the cloud, rather than troubleshooting it!
@@ -75,45 +117,8 @@ Resources
 * User group: http://groups.google.com/group/jclouds
 * Dev group: http://groups.google.com/group/jclouds-dev
 * Twitter: http://twitter.com/jclouds
-  
-Configuring
------------
-
-Uptime uses [node-config](https://github.com/lorenwest/node-config) to allow YAML configuration and environment support. Here is the default configuration, taken from `config/default.yaml`:
-
-    mongodb:
-      server:   localhost
-      database: uptime
-      user:     root 
-      password:
-    
-    monitor:
-      name:                   origin
-      apiUrl:                 'http://localhost:8082/api'
-      pollingInterval:        10000      # ten seconds
-      updateInterval:         60000      # one minute
-      qosAggregationInterval: 600000     # ten minutes
-      timeout:                5000       # five seconds
-      pingHistory:            8035200000 # three months
-      http_proxy:      
-    
-    autoStartMonitor: true
-    
-    server:
-      port:     8082
-
-To modify this configuration, create a `development.yaml` or a `production.yaml` file in the same directory, and override just the settings you need. For instance, to run Uptime on port 80 in production, create a `production.yaml` file as follows:
-
-    server:
-      port:     80
-
-Using jclouds
--------------
-check out our examples site! https://github.com/jclouds/jclouds-examples
 
 License
 -------
-
 Copyright (C) 2009-2012 jclouds, Inc.
-
 Licensed under the Apache License, Version 2.0
