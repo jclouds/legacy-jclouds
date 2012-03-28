@@ -23,6 +23,7 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -165,19 +166,15 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
  
-      Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.media:e9cd3387-ac57-4d27-a481-9bee75e0690f)\".")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
+      String message = "No access to entity \"(com.vmware.vcloud.entity.media:e9cd3387-ac57-4d27-a481-9bee75e0690f)\".";
        
       try {
          client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
+      } catch (ResourceNotFoundException rnfe) {
+         assertEquals(rnfe.getMessage(), message);
       } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
+         fail("Should have thrown a ResourceNotFoundException");
       }
    }
  
@@ -194,19 +191,15 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/error403-fake.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
  
-      Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.media:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)\".")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
+      String message = "No access to entity \"(com.vmware.vcloud.entity.media:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)\".";
        
       try {
          client.getMediaClient().getMedia(mediaUri);
          fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
+      } catch (ResourceNotFoundException rnfe) {
+         assertEquals(rnfe.getMessage(), message);
       } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
+         fail("Should have thrown a ResourceNotFoundException");
       }
    }
    

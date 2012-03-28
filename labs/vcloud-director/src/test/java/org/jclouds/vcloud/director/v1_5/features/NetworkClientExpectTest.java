@@ -23,6 +23,7 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -113,19 +114,15 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      Error expected = Error.builder()
-         .message("This operation is denied.")
-         .majorErrorCode(403)
-         .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-         .build();
+      String message = "This operation is denied.";
 
       try {
          client.getNetworkClient().getNetwork(networkUri);
          fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
+      } catch (ResourceNotFoundException rnfe) {
+         assertEquals(rnfe.getMessage(), message);
       } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
+         fail("Should have thrown a ResourceNotFoundException");
       }
    }
 
@@ -142,19 +139,15 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-fake.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      Error expected = Error.builder()
-         .message("This operation is denied.")
-         .majorErrorCode(403)
-         .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-         .build();
+      String message = "This operation is denied.";
 
       try {
          client.getNetworkClient().getNetwork(networkUri);
          fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
+      } catch (ResourceNotFoundException rnfe) {
+         assertEquals(rnfe.getMessage(), message);
       } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
+         fail("Should have thrown a ResourceNotFoundException");
       }
    }
    

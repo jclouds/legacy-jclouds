@@ -25,6 +25,7 @@ import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -162,20 +163,16 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
 
-		Error expected = Error.builder()
-				.message("No access to entity \"com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".")
-				.majorErrorCode(403)
-				.minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-				.build();
+		String message = "No access to entity \"com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".";
 
 		try {
 			client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"));
 			fail("Should give HTTP 403 error");
-		} catch (VCloudDirectorException vde) {
-			assertEquals(vde.getError(), expected);
-		} catch (Exception e) {
-			fail("Should have thrown a VCloudDirectorException");
-		}
+      } catch (ResourceNotFoundException rnfe) {
+         assertEquals(rnfe.getMessage(), message);
+      } catch (Exception e) {
+         fail("Should have thrown a ResourceNotFoundException");
+      }
    }
 
    @Test

@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.FirewallRule;
@@ -119,7 +120,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       client.getVAppTemplate(uri);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorEditVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -157,7 +158,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testConsolidateMissingVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -208,7 +209,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testEnableDownloadMissingVAppTemplate() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -274,7 +275,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorGetCustomizationSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -286,7 +287,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       client.getVAppTemplateCustomizationSection(uri);
    }
    
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorEditCustomizationSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -362,7 +363,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorGetLeaseSettingsSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -374,7 +375,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       client.getVappTemplateLeaseSettingsSection(uri);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorEditLeaseSettingsSection() throws ParseException {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -455,7 +456,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorGetMetadataValue() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -479,7 +480,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       client.getMetadataClient().setMetadata(uri, "12345", exampleMetadataValue());
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testDeleteMissingMetadataValue() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
