@@ -76,6 +76,11 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, ISes
          final IProgress progress = machine
                  .launchVMProcess(session, type.stringValue(), environment);
          progress.waitForCompletion(-1);
+         try {
+            Thread.sleep(3000l);
+         } catch (InterruptedException e) {
+            propagate(e);
+         }
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {

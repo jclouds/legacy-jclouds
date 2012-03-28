@@ -33,6 +33,7 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
@@ -46,95 +47,82 @@ import com.google.inject.Injector;
  * @author Mattias Holmqvist
  */
 @Test(groups = "live", singleThreaded = true, testName = "CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest")
-public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends
-		BaseVirtualBoxClientLiveTest {
+public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends BaseVirtualBoxClientLiveTest {
 
-	private String ideControllerName;
-	private CleanupMode mode;
+   private String ideControllerName;
+   private CleanupMode mode;
+   private String vmName = "";
 
-	@Override
-	public void setupClient() {
-		super.setupClient();
-		ideControllerName = "IDE Controller";
-		mode = CleanupMode.Full;
-	}
+   @Override
+   public void setupClient() {
+      super.setupClient();
+      ideControllerName = "IDE Controller";
+      mode = CleanupMode.Full;
+   }
 
-	@Test
-	public void testCreateNewMachine() throws Exception {
-		String vmName = "jclouds-test-create-1-node";
-		String vmId = UUID.randomUUID().toString();
-		
+   @Test
+   public void testCreateNewMachine() throws Exception {
+      vmName = "jclouds-test-create-1-node";
+      String vmId = UUID.randomUUID().toString();
+
       StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
                .attachISO(0, 0, operatingSystemIso)
                .attachHardDisk(HardDisk.builder().diskpath(adminDisk(vmName)).controllerPort(0).deviceSlot(1).build())
                .attachISO(1, 1, guestAdditionsIso).build();
 
-		VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
-				.controller(ideController).cleanUpMode(mode).osTypeId("Debian")
-				.forceOverwrite(true).build();
+      VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
+               .osTypeId("Debian").forceOverwrite(true).build();
 
-		NetworkAdapter networkAdapter = NetworkAdapter.builder()
-				.networkAttachmentType(NetworkAttachmentType.NAT)
-				.tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-		NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-				.builder().addNetworkAdapter(networkAdapter).build();
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+               .build();
 
-		NetworkSpec networkSpec = NetworkSpec.builder()
-              .addNIC(networkInterfaceCard).build();
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
-		MasterSpec machineSpec = MasterSpec
-				.builder()
-				.iso(IsoSpec.builder().sourcePath(operatingSystemIso)
-						.installationScript("").build()).vm(vmSpec)
-				.network(networkSpec).build();
-		undoVm(vmSpec);
-		try {
-			IMachine debianNode = context.utils()
-					.injector()
-					.getInstance(
-							CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
-					.apply(machineSpec);
-			IMachine machine = manager.get().getVBox().findMachine(vmName);
-			assertEquals(debianNode.getName(), machine.getName());
-		} finally {
-			undoVm(vmSpec);
-		}
-	}
+      MasterSpec machineSpec = MasterSpec.builder()
+               .iso(IsoSpec.builder().sourcePath(operatingSystemIso).installationScript("").build()).vm(vmSpec)
+               .network(networkSpec).build();
+      // undoVm(vmSpec);
+      IMachine debianNode = context.utils().injector()
+               .getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(machineSpec);
+      IMachine machine = manager.get().getVBox().findMachine(vmName);
+      assertEquals(debianNode.getName(), machine.getName());
 
-	@Test
-	public void testCreateNewMachineWithBadOsType() throws Exception {
-		String vmName = "jclouds-test-create-2-node";
-		String vmId = UUID.randomUUID().toString();
-		
-		StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
-	               .attachISO(0, 0, operatingSystemIso)
-	               .attachHardDisk(HardDisk.builder().diskpath(adminDisk(vmName)).controllerPort(0).deviceSlot(1).build())
-	               .attachISO(1, 1, guestAdditionsIso).build();
+   }
 
-		VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512)
-				.controller(ideController).cleanUpMode(mode)
-				.osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
-		IsoSpec isoSpec = IsoSpec.builder().sourcePath(operatingSystemIso)
-				.installationScript("").build();
-		NetworkSpec networkSpec = NetworkSpec.builder().build();
-		MasterSpec machineSpec = MasterSpec.builder().iso(isoSpec).vm(vmSpec)
-				.network(networkSpec).build();
-		undoVm(vmSpec);
-		try {
-			Injector injector = context.utils().injector();
-			injector.getInstance(
-					CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class)
-					.apply(machineSpec);
-			fail();
-		} catch (VBoxException e) {
-			ErrorCode errorCode = ErrorCode.valueOf(e);
-			// According to the documentation VBOX_E_OBJECT_NOT_FOUND
-			// if osTypeId is not found.
-			assertEquals(errorCode, ErrorCode.VBOX_E_OBJECT_NOT_FOUND);
-		} finally {
-			undoVm(vmSpec);
-		}
+   @Test
+   public void testCreateNewMachineWithBadOsType() throws Exception {
+      vmName = "jclouds-test-create-2-node";
+      String vmId = UUID.randomUUID().toString();
 
-	}
+      StorageController ideController = StorageController.builder().name(ideControllerName).bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso)
+               .attachHardDisk(HardDisk.builder().diskpath(adminDisk(vmName)).controllerPort(0).deviceSlot(1).build())
+               .attachISO(1, 1, guestAdditionsIso).build();
+
+      VmSpec vmSpec = VmSpec.builder().id(vmId).name(vmName).memoryMB(512).controller(ideController).cleanUpMode(mode)
+               .osTypeId("SomeWeirdUnknownOs").forceOverwrite(true).build();
+      IsoSpec isoSpec = IsoSpec.builder().sourcePath(operatingSystemIso).installationScript("").build();
+      NetworkSpec networkSpec = NetworkSpec.builder().build();
+      MasterSpec machineSpec = MasterSpec.builder().iso(isoSpec).vm(vmSpec).network(networkSpec).build();
+      try {
+         Injector injector = context.utils().injector();
+         injector.getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(machineSpec);
+         fail();
+      } catch (VBoxException e) {
+         ErrorCode errorCode = ErrorCode.valueOf(e);
+         // According to the documentation VBOX_E_OBJECT_NOT_FOUND
+         // if osTypeId is not found.
+         assertEquals(errorCode, ErrorCode.VBOX_E_OBJECT_NOT_FOUND);
+      }
+   }
+   
+   @Override
+   @AfterMethod(groups = "live")
+   protected void tearDown() throws Exception {
+      undoVm(vmName);
+      super.tearDown();
+   }
 
 }

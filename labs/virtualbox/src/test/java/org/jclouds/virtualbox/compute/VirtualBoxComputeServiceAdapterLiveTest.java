@@ -50,8 +50,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
       String group = "foo";
       String name = "foo-ef4";
-      String machineName = VIRTUALBOX_NODE_PREFIX + "default-ubuntu-11.04-i386-" + group + "-" + name;
-
+      String machineName = VIRTUALBOX_NODE_PREFIX + "default-ubuntu-11.04-i386-" + "0x0-" + group + "-0x0-" + name;
       Template template = context.getComputeService().templateBuilder().build();
       machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
       

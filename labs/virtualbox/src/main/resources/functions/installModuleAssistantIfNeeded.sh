@@ -4,7 +4,7 @@ function installModuleAssistantIfNeeded {
    if [ $OSNAME = 'Ubuntu' ]
    then
       echo "OS is Ubuntu"
-      apt-get -f -y -qq --force-yes install dkms build-essential linux-headers-`uname -r` module-assistant;
+      apt-get -f -y -qq --force-yes install dkms build-essential linux-headers-`uname -r` module-assistant acpid;
       m-a prepare -i
       return 0
    fi

@@ -19,7 +19,6 @@
 
 package org.jclouds.virtualbox.util;
 
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.testng.AssertJUnit.assertTrue;
@@ -97,12 +96,10 @@ public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Test
    public void testEnsureMachineisLaunchedAndSessionIsUnlocked() {
-      IMachine vm = cloneFromMaster();
+      cloneFromMaster();
       ISession cloneMachineSession = machineController.ensureMachineIsLaunched(instanceName);
-      System.out.println("lock - cloneMachineSession " + cloneMachineSession.toString());
       assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
       cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
-      System.out.println("unlock - cloneMachineSession " + cloneMachineSession.toString());
       assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
    }
 

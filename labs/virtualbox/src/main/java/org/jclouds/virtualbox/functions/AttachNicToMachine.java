@@ -33,38 +33,34 @@ import com.google.common.base.Function;
  */
 public class AttachNicToMachine implements Function<NetworkInterfaceCard, Void> {
 
-	private final String vmName;
-	   private final MachineUtils machineUtils;
+   private final String vmName;
+   private final MachineUtils machineUtils;
 
+   public AttachNicToMachine(String vmName, MachineUtils machineUtils) {
+      this.vmName = checkNotNull(vmName, "vmName");
+      this.machineUtils = checkNotNull(machineUtils, "machineUtils");
+   }
 
-	public AttachNicToMachine(String vmName, MachineUtils machineUtils) {
-		this.vmName = checkNotNull(vmName, "vmName");
-		this.machineUtils = checkNotNull(machineUtils, "machineUtils");
-	}
-
-	@Override
+   @Override
    public Void apply(@Nullable NetworkInterfaceCard nic) {
-	  if(hasNatAdapter(nic)) {
-		  return machineUtils.writeLockMachineAndApply(vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(nic));
-
-	  } else if (hasBridgedAdapter(nic)) {
-		  return machineUtils.writeLockMachineAndApply(vmName, new AttachBridgedAdapterToMachine(nic));
+      if (hasNatAdapter(nic)) {
+         return machineUtils.writeLockMachineAndApply(vmName, new AttachNATAdapterToMachineIfNotAlreadyExists(nic));
+      } else if (hasBridgedAdapter(nic)) {
+         return machineUtils.writeLockMachineAndApply(vmName, new AttachBridgedAdapterToMachine(nic));
       } else if (hasHostOnlyAdapter(nic)) {
          return machineUtils.writeLockMachineAndApply(vmName, new AttachHostOnlyAdapter(nic));
-	  } else
-		  return null;
-	}
-
-	private boolean hasNatAdapter(NetworkInterfaceCard nic) {
-		return nic.getNetworkAdapter().getNetworkAttachmentType()
-				.equals(NetworkAttachmentType.NAT);
-	}
-	
-	private boolean hasBridgedAdapter(NetworkInterfaceCard nic) {
-		return nic.getNetworkAdapter().getNetworkAttachmentType()
-				.equals(NetworkAttachmentType.Bridged);
+      } else
+         return null;
    }
-	
+
+   private boolean hasNatAdapter(NetworkInterfaceCard nic) {
+      return nic.getNetworkAdapter().getNetworkAttachmentType().equals(NetworkAttachmentType.NAT);
+   }
+
+   private boolean hasBridgedAdapter(NetworkInterfaceCard nic) {
+      return nic.getNetworkAdapter().getNetworkAttachmentType().equals(NetworkAttachmentType.Bridged);
+   }
+
    private boolean hasHostOnlyAdapter(NetworkInterfaceCard nic) {
       return nic.getNetworkAdapter().getNetworkAttachmentType().equals(NetworkAttachmentType.HostOnly);
    }

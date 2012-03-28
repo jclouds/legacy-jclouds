@@ -82,6 +82,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
    // TODO parameterize
    public static final int MASTER_PORT = 2222;
+   public static final String HOST_ONLY_IFACE_NAME = "vboxnet0";
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -170,7 +171,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
                .slot(0L).build();
-
+      
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
       MasterSpec masterSpec = MasterSpec

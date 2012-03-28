@@ -39,6 +39,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.BridgedIf;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
 import org.jclouds.virtualbox.statements.ScanNetworkWithPing;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.NetworkAttachmentType;
@@ -59,14 +60,16 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 	private final SshClient.Factory sshClientFactory;
 	private final RunScriptOnNode.Factory scriptRunnerFactory;
 	private final Supplier<NodeMetadata> hostSupplier;
+	private final MachineUtils machineUtils;
 
 	@Inject
 	public IMachineToSshClient(SshClient.Factory sshClientFactory,
 			RunScriptOnNode.Factory scriptRunnerFactory,
-			Supplier<NodeMetadata> hostSupplier) {
+			Supplier<NodeMetadata> hostSupplier, MachineUtils machineUtils) {
 		this.sshClientFactory = sshClientFactory;
 		this.scriptRunnerFactory = scriptRunnerFactory;
 		this.hostSupplier = hostSupplier;
+		this.machineUtils = machineUtils;
 	}
 
 	@Override
@@ -104,6 +107,9 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 				NetworkAttachmentType.Bridged)) {
 			String network = "1.1.1.1";
 			clientIpAddress = getIpAddressFromBridgedNIC(networkAdapter, network);
+		} else if (networkAdapter.getAttachmentType().equals(
+                        NetworkAttachmentType.HostOnly)) {
+	             clientIpAddress = machineUtils.getIpAddressFromHostOnlyNIC(vm.getName());
 		}
 		
 		checkNotNull(clientIpAddress, "clientIpAddress");

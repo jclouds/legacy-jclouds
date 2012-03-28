@@ -48,6 +48,7 @@ import org.virtualbox_4_1.IMachine;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
@@ -105,19 +106,20 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
       configureOsInstallationWithKeyboardSequence(vmName, installationKeySequence);
 
+      // the OS installation is a long process: let's delay the check for ssh of 30 sec
+      try {
+         Thread.sleep(30000l);
+      } catch (InterruptedException e) {
+         Throwables.propagate(e);
+      }
+      
       SshClient client = sshClientForIMachine.apply(vm);
 
       logger.debug(">> awaiting installation to finish node(%s)", vmName);
 
       checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-      logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
-
       NodeMetadata nodeMetadata = imachineToNodeMetadata.apply(vm);
-      ListenableFuture<ExecResponse> execInstallGA = machineUtils.runScriptOnNode(nodeMetadata,
-               new InstallGuestAdditions(vmSpec, version), RunScriptOptions.NONE);
-      ExecResponse gaInstallationResponse = Futures.getUnchecked(execInstallGA);
-      checkState(gaInstallationResponse.getExitStatus() == 0);
 
       logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
       ListenableFuture<ExecResponse> execCleanup = machineUtils.runScriptOnNode(nodeMetadata,
@@ -125,9 +127,15 @@ public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
       ExecResponse cleanupResponse = Futures.getUnchecked(execCleanup);
       checkState(cleanupResponse.getExitStatus() == 0);
 
-      logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
+      
+      logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
+      ListenableFuture<ExecResponse> execInstallGA = machineUtils.runScriptOnNode(nodeMetadata,
+               new InstallGuestAdditions(vmSpec, version), RunScriptOptions.NONE);
+      ExecResponse gaInstallationResponse = Futures.getUnchecked(execInstallGA);
+      checkState(gaInstallationResponse.getExitStatus() == 0);
 
-      machineController.ensureMachineHasPowerDown(vmName);
+      machineController.ensureMachineIsShutdown(vmName);
+
       return vm;
    }
 

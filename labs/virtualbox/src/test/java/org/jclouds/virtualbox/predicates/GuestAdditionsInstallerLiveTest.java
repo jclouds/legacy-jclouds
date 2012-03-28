@@ -27,13 +27,10 @@ import static org.testng.Assert.assertTrue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
+import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.CloneSpec;
-import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
@@ -44,8 +41,7 @@ import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.functions.CloneAndRegisterMachineFromIMachineIfNotAlreadyExists;
 import org.jclouds.virtualbox.functions.CreateAndInstallVm;
-import org.jclouds.virtualbox.functions.LaunchMachineIfNotAlreadyRunning;
-import org.jclouds.virtualbox.statements.InstallGuestAdditions;
+import org.jclouds.virtualbox.functions.IMachineToSshClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -56,107 +52,99 @@ import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Injector;
 
 /**
  * @author Andrea Turli
  */
 @Test(groups = "live", singleThreaded = true, testName = "GuestAdditionsInstallerLiveTest")
-public class GuestAdditionsInstallerLiveTest extends
-		BaseVirtualBoxClientLiveTest {
+public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTest {
 
-	private MasterSpec machineSpec;
+   private Injector injector;
+   private Function<IMachine, SshClient> sshClientForIMachine;
+   private Predicate<SshClient> sshResponds;
 
-	@Override
-	@BeforeClass(groups = "live")
-	public void setupClient() {
-		super.setupClient();
-            String instanceName = VIRTUALBOX_IMAGE_PREFIX
-                     + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass()
-                                 .getSimpleName());
+   private MasterSpec machineSpec;
 
-         StorageController ideController = StorageController
-                     .builder()
-                     .name("IDE Controller")
-                     .bus(StorageBus.IDE)
-                     .attachISO(0, 0, operatingSystemIso)
-                     .attachHardDisk(
-                                 HardDisk.builder().diskpath(adminDisk(instanceName))
-                                             .controllerPort(0).deviceSlot(1)
-                                             .autoDelete(true).build())
-                     .attachISO(1, 1, guestAdditionsIso).build();
+   @Override
+   @BeforeClass(groups = "live")
+   public void setupClient() {
+      super.setupClient();
+      injector = context.utils().injector();
 
-         VmSpec instanceVmSpec = VmSpec.builder().id(instanceName)
-                     .name(instanceName).osTypeId("").memoryMB(512)
-                     .cleanUpMode(CleanupMode.Full).controller(ideController)
-                     .forceOverwrite(true).build();
+      String instanceName = VIRTUALBOX_IMAGE_PREFIX
+               + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
-         Injector injector = context.utils().injector();
-         Function<String, String> configProperties = injector
-                     .getInstance(ValueOfConfigurationKeyOrNull.class);
-         IsoSpec isoSpec = IsoSpec
-                     .builder()
-                     .sourcePath(operatingSystemIso)
-                     .installationScript(
-                                 configProperties.apply(
-                                             VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace(
-                                             "HOSTNAME", instanceVmSpec.getVmName()))
-                     .build();
+      StorageController ideController = StorageController
+               .builder()
+               .name("IDE Controller")
+               .bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso)
+               .attachHardDisk(
+                        HardDisk.builder().diskpath(adminDisk(instanceName)).controllerPort(0).deviceSlot(1)
+                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
 
-         NetworkAdapter networkAdapter = NetworkAdapter.builder()
-                     .networkAttachmentType(NetworkAttachmentType.NAT)
-                     .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-         NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-                     .builder().addNetworkAdapter(networkAdapter).build();
+      VmSpec instanceVmSpec = VmSpec.builder().id(instanceName).name(instanceName).osTypeId("").memoryMB(512)
+               .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
-         NetworkSpec networkSpec = NetworkSpec.builder()
-                     .addNIC(networkInterfaceCard).build();
-         machineSpec = MasterSpec.builder().iso(isoSpec)
-                     .vm(instanceVmSpec).network(networkSpec).build();
-	}
+      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
+      IsoSpec isoSpec = IsoSpec
+               .builder()
+               .sourcePath(operatingSystemIso)
+               .installationScript(
+                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
+                                 instanceVmSpec.getVmName())).build();
 
-	@Test
-	public void testGuestAdditionsAreInstalled() throws Exception {
-	   IMachine machine = null;
-		try {
-			machine = cloneFromMaster();
-			machineUtils.applyForMachine(machine.getName(),
-					new LaunchMachineIfNotAlreadyRunning(manager.get(),
-							ExecutionType.GUI, ""));		      
-			assertTrue(machineUtils.sharedLockMachineAndApplyToSession(
-					machine.getName(),
-                              new Function<ISession, Boolean>() {
-                                 @Override
-                                 public Boolean apply(ISession session) {
-                                       String s = session
-                                                   .getMachine()
-                                                   .getGuestPropertyValue(
-                                                               "/VirtualBox/GuestInfo/Net/0/V4/IP");
-                                       return isIpv4(s);
-                                 }
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+               .build();
 
-                                 private boolean isIpv4(String s) {
-                                       Pattern pattern = Pattern
-                                                   .compile(machineUtils.IP_V4_ADDRESS_PATTERN);
-                                       Matcher matcher = pattern.matcher(s);
-                                       return matcher.matches();
-                                 }
-                           }));
-		} finally {
-			for (String vmNameOrId : ImmutableSet.of(machine.getName())) {
-				machineController.ensureMachineHasPowerDown(vmNameOrId);
-				undoVm(vmNameOrId);
-			}
-		}
-	}
-	
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
+      machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
+   }
+
+   @Test
+   public void testGuestAdditionsAreInstalled() throws Exception {
+      IMachine machine = null;
+      try {
+         machine = cloneFromMaster();
+         machineController.ensureMachineIsLaunched(machine.getName());
+         sshClientForIMachine = injector.getInstance(IMachineToSshClient.class);
+         SshClient client = sshClientForIMachine.apply(machine);
+
+         sshResponds = injector.getInstance(SshResponds.class);
+         checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh",
+                  machine.getName());
+
+         assertTrue(machineUtils.sharedLockMachineAndApplyToSession(machine.getName(),
+                  new Function<ISession, Boolean>() {
+                     @Override
+                     public Boolean apply(ISession session) {
+                        String s = session.getMachine().getGuestPropertyValue("/VirtualBox/GuestInfo/Net/0/V4/IP");
+                        return isIpv4(s);
+                     }
+
+                     private boolean isIpv4(String s) {
+                        Pattern pattern = Pattern.compile(machineUtils.IP_V4_ADDRESS_PATTERN);
+                        Matcher matcher = pattern.matcher(s);
+                        return matcher.matches();
+                     }
+                  }));
+      } finally {
+         for (String vmNameOrId : ImmutableSet.of(machine.getName())) {
+            machineController.ensureMachineHasPowerDown(vmNameOrId);
+            undoVm(vmNameOrId);
+         }
+      }
+   }
+
    private IMachine cloneFromMaster() {
       IMachine source = getVmWithGuestAdditionsInstalled();
-      CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec())
-               .network(machineSpec.getNetworkSpec()).master(source).linked(true).build();
+      CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec()).network(machineSpec.getNetworkSpec())
+               .master(source).linked(true).build();
       return new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
                .apply(cloneSpec);
    }

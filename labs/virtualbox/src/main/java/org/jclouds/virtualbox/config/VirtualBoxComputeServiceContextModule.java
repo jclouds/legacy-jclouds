@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -158,7 +159,7 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Function<IMachine, SshClient>>() {
       }).to(IMachineToSshClient.class);
 
-      bind(ExecutionType.class).toInstance(ExecutionType.GUI);
+      bind(ExecutionType.class).toInstance(ExecutionType.HEADLESS);
       bind(LockType.class).toInstance(LockType.Write);
    }
 
@@ -213,7 +214,7 @@ public class VirtualBoxComputeServiceContextModule extends
    @Provides
    @Singleton
    protected Predicate<SshClient> sshResponds(SshResponds sshResponds, Timeouts timeouts) {
-      return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning);
+      return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning, 500l, TimeUnit.MILLISECONDS);
    }
 
    @Override

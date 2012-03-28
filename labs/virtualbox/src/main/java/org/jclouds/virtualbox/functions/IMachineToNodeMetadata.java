@@ -19,11 +19,11 @@
 
 package org.jclouds.virtualbox.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule.machineToNodeState;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -37,6 +37,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
+import org.jclouds.virtualbox.util.MachineUtils;
+import org.testng.collections.Lists;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.MachineState;
@@ -46,13 +48,23 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+   
+   private final MachineUtils machineUtils;
 
+   @Inject
+   public IMachineToNodeMetadata(MachineUtils machineUtils) {
+      this.machineUtils = machineUtils;
+   }
+   
    @Override
    public NodeMetadata apply(@Nullable IMachine vm) {
 
@@ -85,6 +97,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
 
       logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
 
+      /*
       // nat adapter
       INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);
       checkNotNull(natAdapter, "slot 0 networkadapter");
@@ -115,11 +128,53 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          nodeMetadataBuilder.privateAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
          nodeMetadataBuilder.publicAddresses(ImmutableSet.of((NodeCreator.VMS_NETWORK + ipTermination) + ""));
       } 
+      */
       
+      nodeMetadataBuilder = getIpAddresses(vm, nodeMetadataBuilder);
       LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
       nodeMetadataBuilder.credentials(loginCredentials);
 
       return nodeMetadataBuilder.build();
    }
+   
+   private NodeMetadataBuilder getIpAddresses(IMachine vm, NodeMetadataBuilder nodeMetadataBuilder) {
+      List<String> publicIpAddresses = Lists.newArrayList();
+      List<String> privateIpAddresses = Lists.newArrayList();
+
+      for(long slot = 0; slot < 4; slot ++) {
+         INetworkAdapter adapter = vm.getNetworkAdapter(slot);
+         if(adapter != null) {
+            if (adapter.getAttachmentType() == NetworkAttachmentType.NAT) {
+               publicIpAddresses.add(adapter.getNatDriver().getHostIP());
+               for (String nameProtocolnumberAddressInboudportGuestTargetport : adapter.getNatDriver().getRedirects()) {
+                  Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
+                  String protocolNumber = Iterables.get(stuff, 1);
+                  String hostAddress = Iterables.get(stuff, 2);
+                  String inboundPort = Iterables.get(stuff, 3);
+                  String targetPort = Iterables.get(stuff, 5);
+                  if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
+                     int inPort = Integer.parseInt(inboundPort);
+                     nodeMetadataBuilder.publicAddresses(ImmutableSet.of(hostAddress)).loginPort(inPort);
+                  }
+                  //privateIpAddresses.add((NodeCreator.VMS_NETWORK + ipTermination) + "");
+               }
+               // TODO this could be a public and private address
+            } else if (adapter.getAttachmentType() == NetworkAttachmentType.Bridged) {
+               String clientIpAddress = machineUtils.getIpAddressFromBridgedNIC(vm.getName());
+               //privateIpAddresses.add(clientIpAddress);
+               publicIpAddresses.add(clientIpAddress);
+
+            } else if (adapter.getAttachmentType() == NetworkAttachmentType.HostOnly) {
+               String clientIpAddress = machineUtils.getIpAddressFromHostOnlyNIC(vm.getName());
+               publicIpAddresses.add(clientIpAddress);
+
+            }
+         }
+      }
+      nodeMetadataBuilder.publicAddresses(publicIpAddresses);
+      nodeMetadataBuilder.privateAddresses(privateIpAddresses);
+
+      return nodeMetadataBuilder;
+   }   
 
 }

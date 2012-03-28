@@ -24,8 +24,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -44,49 +42,35 @@ import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.NodeSpec;
 import org.jclouds.virtualbox.domain.VmSpec;
 import org.jclouds.virtualbox.statements.DeleteGShadowLock;
-import org.jclouds.virtualbox.statements.SetIpAddress;
+import org.jclouds.virtualbox.statements.EnableNetworkInterface;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
-import org.virtualbox_4_1.INetworkAdapter;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * Creates nodes, by cloning a master vm and based on the provided {@link NodeSpec}. Must be
  * synchronized mainly because of snapshot creation (must be synchronized on a per-master-basis).
  * 
- * @author David Alves
+ * @author David Alves, Andrea Turli
  * 
  */
 @Singleton
 public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials<IMachine>> {
 
    // TODO parameterize
-   public static final int NODE_PORT_INIT = 3000;
-
-   // TODO parameterize
-   public static final String VMS_NETWORK = "192.168.86.";
-
-   // TODO parameterize
    public static final String HOST_ONLY_IFACE_NAME = "vboxnet0";
-
-   // TODO parameterize
-   public static final boolean USE_LINKED = true;
 
    private final Supplier<VirtualBoxManager> manager;
    private final Function<CloneSpec, IMachine> cloner;
-   private final AtomicInteger nodePorts;
-   private final AtomicInteger nodeIps;
    private final MachineUtils machineUtils;
    private final MachineController machineController;
 
@@ -95,8 +79,6 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
             MachineUtils machineUtils, RunScriptOnNode.Factory scriptRunnerFactory, MachineController machineController) {
       this.manager = manager;
       this.cloner = cloner;
-      this.nodePorts = new AtomicInteger(NODE_PORT_INIT);
-      this.nodeIps = new AtomicInteger(2);
       this.machineUtils = machineUtils;
       this.machineController = machineController;
    }
@@ -130,18 +112,18 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
 
       // CASE NAT + HOST-ONLY
       NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", this.nodePorts.getAndIncrement(), "", 22).build();
-      NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(0L).build();
+               .build();
+      NetworkInterfaceCard natIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(natAdapter).slot(1L).build();
 
       NetworkAdapter hostOnlyAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.HostOnly)
-               .staticIp(VMS_NETWORK + this.nodeIps.getAndIncrement()).build();
+               .build();
 
       NetworkInterfaceCard hostOnlyIfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(hostOnlyAdapter)
-               .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(1L).build();
+               .addHostInterfaceName(HOST_ONLY_IFACE_NAME).slot(0L).build();
 
       NetworkSpec networkSpec = createNetworkSpecForHostOnlyNATNICs(natIfaceCard, hostOnlyIfaceCard);
 
-      CloneSpec cloneSpec = CloneSpec.builder().linked(USE_LINKED).master(master.getMachine()).network(networkSpec)
+      CloneSpec cloneSpec = CloneSpec.builder().linked(true).master(master.getMachine()).network(networkSpec)
                .vm(cloneVmSpec).build();
 
       IMachine cloned = cloner.apply(cloneSpec);
@@ -156,8 +138,8 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
       machineUtils.runScriptOnNode(partialNodeMetadata, new DeleteGShadowLock(), RunScriptOptions.NONE);
 
       // CASE NAT + HOST-ONLY
-      machineUtils.runScriptOnNode(partialNodeMetadata, new SetIpAddress(hostOnlyIfaceCard), RunScriptOptions.NONE);
-      // //
+      machineUtils.runScriptOnNode(partialNodeMetadata, new EnableNetworkInterface(natIfaceCard), RunScriptOptions.NONE);
+      
 
       // TODO get credentials from somewhere else (they are also HC in
       // IMachineToSshClient)
@@ -168,21 +150,10 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
    }
    
    private NodeMetadata buildPartialNodeMetadata(IMachine clone) {
-      INetworkAdapter realNatAdapter = clone.getNetworkAdapter(0l);
       NodeMetadataBuilder nodeMetadataBuilder = new NodeMetadataBuilder();
       nodeMetadataBuilder.id(clone.getName());
       nodeMetadataBuilder.state(VirtualBoxComputeServiceContextModule.machineToNodeState.get(clone.getState()));
-      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(realNatAdapter.getNatDriver().getHostIP()));
-      for (String nameProtocolnumberAddressInboudportGuestTargetport : realNatAdapter.getNatDriver().getRedirects()) {
-         Iterable<String> stuff = Splitter.on(',').split(nameProtocolnumberAddressInboudportGuestTargetport);
-         String protocolNumber = Iterables.get(stuff, 1);
-         String inboundPort = Iterables.get(stuff, 3);
-         String targetPort = Iterables.get(stuff, 5);
-         if ("1".equals(protocolNumber) && "22".equals(targetPort)) {
-            int inPort = Integer.parseInt(inboundPort);
-            nodeMetadataBuilder.loginPort(inPort);
-         }
-      }
+      nodeMetadataBuilder.publicAddresses(ImmutableSet.of(machineUtils.getIpAddressFromHostOnlyNIC(clone.getName())));
       
       LoginCredentials loginCredentials = new LoginCredentials("toor", "password", null, true);
       nodeMetadataBuilder.credentials(loginCredentials);

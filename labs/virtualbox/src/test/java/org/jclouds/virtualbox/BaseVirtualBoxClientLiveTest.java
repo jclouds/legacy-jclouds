@@ -163,24 +163,13 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       checkNotNull(mastersCache.apply(template.getImage()));
    }
 
-
-   protected void undoVm(VmSpec vmSpecification) {
-      machineUtils.writeLockMachineAndApply(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(
-               vmSpecification));
-   }
-
    protected void undoVm(String vmNameOrId) {
       IMachine vm = null;
       try {
-         System.out.println("1: " + manager.get().getSessionObject().getState());
-
          vm = manager.get().getVBox().findMachine(vmNameOrId);
          VmSpec vmSpec = new IMachineToVmSpec().apply(vm);
-         System.out.println("2: " + vm.getSessionState());
          int attempts = 0;
          while (attempts < 10 && !vm.getSessionState().equals(SessionState.Unlocked)) {
-            // TODO understand why this behavior and see if IEvent can help
-            System.out.println("Unlocking ...");
             attempts++;
             try {
                Thread.sleep(200l);
