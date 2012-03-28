@@ -3,11 +3,12 @@ jclouds
 jclouds is an open source library that helps you get started in the cloud and reuse your java and clojure development skills. Our api allows you freedom to use portable abstractions or cloud-specific features. We test support of 30 cloud providers and cloud software stacks, including Amazon, GoGrid, Ninefold, vCloud, OpenStack, and Azure.
 We offer several API abstractions as java and clojure libraries. The following are the most mature:
 
-BLOBSTORE
+Blob Store
 -----------
 Simplifies dealing with key-value providers such as Amazon S3. For example, BlobStore can give you a simple Map view of a container.
 
 BlobStore Example (Java):
+
 	  // init
 	  context = new BlobStoreContextFactory().createContext(
 	                  "aws-s3",
@@ -23,12 +24,13 @@ BlobStore Example (Java):
 	  blobStore.putBlob("mycontainer", blob);
 
 BlobStore Example (Clojure):
+
 	  (use 'org.jclouds.blobstore2)
 	  (def *blobstore* (blobstore "azureblob" account encodedkey))
 	  (create-container *blobstore* "mycontainer")
 	  (put-blob *blobstore* "mycontainer" (blob "test" :payload "testdata"))
 
-COMPUTESERVICE
+Compute Service
 ---------------
 Simplifies the task of managing machines in the cloud. For example, you can use ComputeService to start 5 machines and install your software on them.
 
