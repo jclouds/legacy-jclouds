@@ -52,7 +52,7 @@ import com.google.inject.Provides;
  * @author danikov
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface VCloudDirectorUserClient {
+public interface VCloudDirectorClient {
    /**
     * @return the current login session
     */

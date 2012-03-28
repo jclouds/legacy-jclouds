@@ -43,10 +43,10 @@ import com.google.inject.Provides;
 /**
  * Provides asynchronous access to VCloudDirector via their REST API.
  * 
- * @see VCloudDirectorUserClient
+ * @see VCloudDirectorClient
  * @author Adrian Cole
  */
-public interface VCloudDirectorUserAsyncClient {
+public interface VCloudDirectorAsyncClient {
    /**
     * 
     * @return the current login session

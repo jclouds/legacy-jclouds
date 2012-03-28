@@ -31,7 +31,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -44,7 +44,7 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-public abstract class BaseVCloudDirectorRestClientExpectTest<T extends VCloudDirectorUserClient> 
+public abstract class BaseVCloudDirectorRestClientExpectTest<T extends VCloudDirectorClient> 
    extends BaseRestClientExpectTest<T> {
 
    public static final String user = "adrian@jclouds.org";

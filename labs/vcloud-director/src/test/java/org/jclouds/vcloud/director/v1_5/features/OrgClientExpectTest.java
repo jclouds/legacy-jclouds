@@ -34,7 +34,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -46,11 +46,11 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = { "unit", "user", "org" }, singleThreaded = true, testName = "OrgClientExpectTest")
-public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
+public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
 
    @Test
    public void testGetOrgList() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
 
@@ -67,7 +67,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
 
    @Test
    public void testGetOrgFromOrgListReference() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/"),
             getStandardPayloadResponse("/org/orglist.xml", VCloudDirectorMediaType.ORG_LIST));
 
@@ -86,7 +86,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetOrg() {
       URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             getStandardRequest("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"),
             getStandardPayloadResponse("/org/org.xml", VCloudDirectorMediaType.ORG));
       
@@ -99,7 +99,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetOrgFailOnInvalidOrgId() {
       URI orgUri = URI.create(endpoint + "/org/NOTAUUID");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             getStandardRequest("GET", "/org/NOTAUUID"),
             getStandardPayloadResponse(400, "/org/error400.xml", VCloudDirectorMediaType.ERROR));
 
@@ -123,7 +123,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetOrgFailOnWrongOrgId() {
       URI orgUri = URI.create(endpoint + "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             getStandardRequest("GET", "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"),
             getStandardPayloadResponse(403, "/org/error403-catalog.xml", VCloudDirectorMediaType.ERROR));
 
@@ -147,7 +147,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetOrgFailOnFakeOrgId() {
       URI orgUri = URI.create(endpoint + "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             getStandardRequest("GET", "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
             getStandardPayloadResponse(403, "/org/error403-fake.xml", VCloudDirectorMediaType.ERROR));
 
@@ -171,7 +171,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetOrgMetadata() {
       URI orgUri = URI.create(endpoint + "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata")
                .acceptAnyMedia()
@@ -198,7 +198,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetOrgMetadataValue() {
       URI orgUri = URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/metadata/KEY")
                .acceptAnyMedia()

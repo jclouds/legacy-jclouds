@@ -32,7 +32,7 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultCatalogRecord;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableMultimap;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "user", "query" }, singleThreaded = true, testName = "QueryClientExpectTest")
-public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
+public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
 
    @Test
    public void testQueryAllCatalogs() {
@@ -61,7 +61,7 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
               .payload(payloadFromResourceWithContentType("/query/allCatalogs.xml", VCloudDirectorMediaType.QUERY_RESULT_RECORDS + ";version=1.5"))
               .build();
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
       
       QueryResultRecords expected = QueryResultRecords.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=records"))
@@ -137,7 +137,7 @@ public class QueryClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
               .payload(payloadFromResourceWithContentType("/query/allCatalogReferences.xml", VCloudDirectorMediaType.QUERY_RESULT_RECORDS + ";version=1.5"))
               .build();
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, queryRequest, queryResponse);
       
       CatalogReferences expected = CatalogReferences.builder()
             .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogs/query?page=1&pageSize=25&format=references"))

@@ -32,7 +32,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableMultimap;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "user", "task" }, singleThreaded = true, testName = "TaskClientExpectTest")
-public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
+public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
 
    @Test
    public void testTaskListForValidOrg() {
@@ -75,7 +75,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .payload(payloadFromResourceWithContentType("/org/org.xml", VCloudDirectorMediaType.TASKS_LIST + ";version=1.5"))
             .build();
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
 
       TasksList expected = TasksList.builder()
               .name("Tasks Lists")
@@ -115,7 +115,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .payload(payloadFromResourceWithContentType("/org/error400.xml", VCloudDirectorMediaType.ERROR + ";version=1.5"))
             .build();
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
 
       Error expected = Error.builder()
             .message("validation error on field 'id': String value has invalid format or length")
@@ -160,7 +160,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .payload(payloadFromResourceWithContentType("/org/error403-fake.xml", VCloudDirectorMediaType.ERROR + ";version=1.5"))
             .build();
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
 
 		Error expected = Error.builder()
 				.message("No access to entity \"com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".")
@@ -194,7 +194,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
               .payload(payloadFromResourceWithContentType("/task/task.xml", VCloudDirectorMediaType.TASK + ";version=1.5"))
               .build();
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
       URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
       
@@ -219,7 +219,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
             .statusCode(200)
             .build();
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse);
 
       URI taskUri = URI.create(endpoint + "/task/5fcd2af3-d0ec-45ce-9451-8c585a2c766b");
       

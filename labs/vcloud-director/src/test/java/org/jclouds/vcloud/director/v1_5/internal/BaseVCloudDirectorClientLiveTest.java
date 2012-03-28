@@ -77,8 +77,8 @@ import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
@@ -97,7 +97,7 @@ import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
- * Tests behavior of {@link VCloudDirectorUserClient} and acts as parent for other client live tests.
+ * Tests behavior of {@link VCloudDirectorClient} and acts as parent for other client live tests.
  *
  * @author Adrian Cole
  * @author grkvlt@apache.org
@@ -122,7 +122,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    public Predicate<Task> retryTaskSuccessLong;
 
    protected RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext;
-   protected RestContext<VCloudDirectorUserClient, VCloudDirectorUserAsyncClient> context; // FIXME: rename to userContext?
+   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context; // FIXME: rename to userContext?
    protected Session adminSession;
    protected Session session;
 
@@ -166,9 +166,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       setupCredentials();
       Properties overrides = setupProperties();
       
-      RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> rootContext = 
+      VCloudDirectorContext rootContext = VCloudDirectorContext.class.cast(
             new RestContextFactory().createContext(provider, identity, credential, ImmutableSet.<Module> of(
-            new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+            new Log4JLoggingModule(), new SshjSshClientModule()), overrides));
       
       rootContext.utils().injector().injectMembers(this);
       Reference orgRef = Iterables.getFirst(rootContext.getApi().getOrgClient().getOrgList().getOrgs(), null)
@@ -177,7 +177,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       
       String adminIdentity = "testAdmin"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
       String adminCredential = "testAdminPassword";
-      rootContext.getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
+      rootContext.getAdminContext().getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
          .name(adminIdentity)
          .password(adminCredential)
          .description("test user with user-level privileges") //TODO desc

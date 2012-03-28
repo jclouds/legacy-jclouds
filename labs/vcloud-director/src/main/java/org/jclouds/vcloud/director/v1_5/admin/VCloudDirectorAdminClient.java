@@ -35,17 +35,17 @@ import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.UserClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 /**
  * Provides synchronous access to VCloudDirector Admin.
  * 
- * @see VCloudDirectorUserAsyncClient
+ * @see VCloudDirectorAsyncClient
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface VCloudDirectorAdminClient extends VCloudDirectorUserClient {
+public interface VCloudDirectorAdminClient extends VCloudDirectorClient {
    /**
     * @return asynchronous access to admin query features
     */

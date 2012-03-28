@@ -45,7 +45,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -55,7 +55,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "vdc" }, singleThreaded = true, testName = "VdcClientExpectTest")
-public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
+public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
    
    private URI vdcURI;
    
@@ -67,7 +67,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    
    @Test
    public void testGetVdc() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f")
                .acceptAnyMedia()
@@ -84,7 +84,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    @Test
    public void testResponse400ForInvalidVdcId() {
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/vdc/NOTAUUID")
                .acceptAnyMedia()
@@ -110,7 +110,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    @Test
    public void testResponse403ForFakeVdcId() {
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
                .acceptAnyMedia()
@@ -135,7 +135,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    
    @Test(enabled = false)
    public void testCaptureVApp() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/captureVApp")
                .xmlFilePayload("/vdc/params/captureVApp.xml", VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
@@ -157,7 +157,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    
    @Test(enabled = false)
    public void testResponse4xxForCaptureVAppNoParams() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/captureVApp")
                .xmlFilePayload("/vdc/params/captureVApp.xml", VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
@@ -183,7 +183,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    
    @Test(enabled = false)
    public void testCloneVApp() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVAppTemplate")
                .xmlFilePayload("/vdc/params/cloneVApp.xml", VCloudDirectorMediaType.CLONE_VAPP_PARAMS)
@@ -205,7 +205,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    
    @Test(enabled = false)
    public void testCloneVAppTemplate() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneVAppTemplate")
                .xmlFilePayload("/vdc/params/cloneVAppTemplate.xml", VCloudDirectorMediaType.CLONE_VAPP_TEMPLATE_PARAMS)
@@ -227,7 +227,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
 
    @Test(enabled = false)
    public void testComposeVApp() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/composeVApp")
                .xmlFilePayload("/vdc/params/composeVApp.xml", VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
@@ -249,7 +249,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
 
    @Test(enabled = false)
    public void testInstantiateVAppTemplate() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/instantiateVAppTemplate")
                .xmlFilePayload("/vdc/params/instantiateVAppTemplate.xml", VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
@@ -271,7 +271,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
 
    @Test(enabled = false)
    public void testUploadVAppTemplate() {
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/uploadVAppTemplate")
                .xmlFilePayload("/vdc/params/uploadVAppTemplate.xml", VCloudDirectorMediaType.UPLOAD_VAPP_TEMPLATE_PARAMS)
@@ -295,7 +295,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testCreateMedia() {
       URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/media")
                .acceptMedia(VCloudDirectorMediaType.MEDIA)
@@ -321,7 +321,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testCloneMedia() {
       URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia")
                .acceptMedia(VCloudDirectorMediaType.MEDIA)
@@ -351,7 +351,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetMetadata() {
       URI vdcUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                   .apiCommand("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata")
                   .acceptAnyMedia()
@@ -369,7 +369,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<
    public void testGetMetadataValue() {
       URI vdcUri = URI.create("https://vcloudbeta.bluelock.com/api/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/metadata/key")
                .acceptAnyMedia()

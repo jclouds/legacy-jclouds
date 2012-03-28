@@ -32,7 +32,7 @@ import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.GroupAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.UserAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 
 /**
  * Provides asynchronous access to VCloudDirector Admin via their REST API.
@@ -40,7 +40,7 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserAsyncClient;
  * @see VCloudDirectorAdminClient
  * @author danikov
  */
-public interface VCloudDirectorAdminAsyncClient extends VCloudDirectorUserAsyncClient {
+public interface VCloudDirectorAdminAsyncClient extends VCloudDirectorAsyncClient {
    /**
     * @return asynchronous access to admin query features
     */

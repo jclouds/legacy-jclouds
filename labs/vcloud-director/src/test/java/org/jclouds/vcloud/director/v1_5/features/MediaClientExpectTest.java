@@ -37,7 +37,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorUserClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -48,13 +48,13 @@ import com.google.common.collect.ImmutableSet;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "media" }, singleThreaded = true, testName = "MediaClientExpectTest")
-public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorUserClient> {
+public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
    
    @Test
    public void testCreateMedia() {
       URI uploadLink = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/media");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/media")
                .acceptMedia(VCloudDirectorMediaType.MEDIA)
@@ -80,7 +80,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testCloneMedia() {
       URI cloneUri = URI.create(endpoint + "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/vdc/e9cd3387-ac57-4d27-a481-9bee75e0690f/action/cloneMedia")
                .acceptMedia(VCloudDirectorMediaType.MEDIA)
@@ -110,7 +110,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testGetMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1")
                .acceptAnyMedia()
@@ -127,7 +127,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testResponse400ForInvalidMedia() {
       URI mediaUri = URI.create(endpoint + "/media/NOTAUUID");
  
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/media/NOTAUUID")
                .acceptAnyMedia()
@@ -156,7 +156,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testResponse403ForCatalogIdUsedAsMediaId() {
       URI mediaUri = URI.create(endpoint + "/media/e9cd3387-ac57-4d27-a481-9bee75e0690f");
  
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/media/e9cd3387-ac57-4d27-a481-9bee75e0690f")
                .acceptAnyMedia()
@@ -185,7 +185,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testResponse403ForFakeMediaId() {
       URI mediaUri = URI.create(endpoint + "/media/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
  
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/media/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
                .acceptAnyMedia()
@@ -214,7 +214,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testUpdateMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                .apiCommand("PUT", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1")
                .xmlFilePayload("/media/updateMedia.xml", VCloudDirectorMediaType.MEDIA)
@@ -234,7 +234,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testDeleteMedia() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1")
                .acceptMedia(VCloudDirectorMediaType.TASK)
@@ -252,7 +252,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testGetMetadata() {
       URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata")
                .acceptAnyMedia()
@@ -271,7 +271,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testMergeMetadata() {
       URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("POST", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata")
                .xmlFilePayload("/media/mergeMetadata.xml", VCloudDirectorMediaType.METADATA)
@@ -290,7 +290,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testGetMetadataValue() {
       URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata/key")
                .acceptAnyMedia()
@@ -309,7 +309,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testSetMetadataValue() {
       URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("PUT", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata/key")
                .xmlFilePayload("/media/setMetadataValue.xml", VCloudDirectorMediaType.METADATA_VALUE)
@@ -330,7 +330,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testDeleteMetadataValue() {
       URI mediaUri = URI.create("https://vcloudbeta.bluelock.com/api/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
       
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1/metadata/key")
                .acceptMedia(VCloudDirectorMediaType.TASK)
@@ -348,7 +348,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    public void testGetOwner() {
       URI mediaUri = URI.create(endpoint + "/media/794eb334-754e-4917-b5a0-5df85cbd61d1");
 
-      VCloudDirectorUserClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("GET", "/media/794eb334-754e-4917-b5a0-5df85cbd61d1/owner")
                .acceptAnyMedia()
