@@ -19,11 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -120,16 +120,7 @@ public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
                .xmlFilePayload("/vdc/error403-fake.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
 
-      String message = "No access to entity \"com.vmware.vcloud.entity.vdc:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".";
-      
-      try {
-         client.getVdcClient().getVdc(URI.create(endpoint + "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"));
-         fail("Should give HTTP 403 error");
-      } catch (ResourceNotFoundException rnfe) {
-         assertEquals(rnfe.getMessage(), message);
-      } catch (Exception e) {
-         fail("Should have thrown a ResourceNotFoundException");
-      }
+      assertNull(client.getVdcClient().getVdc(URI.create(endpoint + "/vdc/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")));
    }
    
    @Test(enabled = false)

@@ -35,12 +35,12 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -59,18 +59,17 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
    @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
    @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<AdminCatalog> createCatalog(@EndpointParam URI orgRef, 
          @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
 
    /**
     * @see AdminClient#getCatalog(URI)
     */
+   @Override
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   @Override
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<AdminCatalog> getCatalog(@EndpointParam URI catalogRef);
 
    /**
@@ -80,7 +79,6 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
    @Consumes(VCloudDirectorMediaType.ADMIN_CATALOG)
    @Produces(VCloudDirectorMediaType.ADMIN_CATALOG)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<AdminCatalog> updateCatalog(@EndpointParam URI catalogRef, 
          @BinderParam(BindToXMLPayload.class) AdminCatalog catalog);
    
@@ -90,7 +88,6 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> deleteCatalog(@EndpointParam URI catalogRef);
    
    /**
@@ -100,7 +97,7 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
    @Path("/owner")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam URI catalogRef);
    
    /**
@@ -111,7 +108,6 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
    @Consumes
    @Produces(VCloudDirectorMediaType.OWNER)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> setOwner(@EndpointParam URI catalogRef,
          @BinderParam(BindToXMLPayload.class) Owner newOwner);
    
@@ -123,7 +119,6 @@ public interface AdminCatalogAsyncClient extends CatalogAsyncClient {
    @Consumes
    @Produces(VCloudDirectorMediaType.PUBLISH_CATALOG_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> publishCatalog(@EndpointParam URI catalogRef,
          @BinderParam(BindToXMLPayload.class) PublishCatalogParams params);
 

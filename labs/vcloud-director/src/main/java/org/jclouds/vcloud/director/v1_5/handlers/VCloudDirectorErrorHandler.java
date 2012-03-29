@@ -21,48 +21,57 @@ package org.jclouds.vcloud.director.v1_5.handlers;
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
 import javax.inject.Singleton;
+import javax.xml.bind.JAXB;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.domain.Error;
+
+import com.google.common.base.Throwables;
 
 /**
  * This will parse and set an appropriate exception on the command object.
  * 
  * @author Adrian Cole
- * 
  */
-//TODO: is there error spec someplace? let's type errors, etc.
 @Singleton
 public class VCloudDirectorErrorHandler implements HttpErrorHandler {
 
+   @Override
    public void handleError(HttpCommand command, HttpResponse response) {
       // it is important to always read fully and close streams
       byte[] data = closeClientButKeepContentStream(response);
-      String message = data != null ? new String(data) : null;
 
-      Exception exception = message != null ? new HttpResponseException(command, response, message)
-               : new HttpResponseException(command, response);
-      message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
-               response.getStatusLine());
-      switch (response.getStatusCode()) {
-         case 401:
-         case 403:
-            exception = new AuthorizationException(message, exception);
-            break;
-         case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-               exception = new ResourceNotFoundException(message, exception);
-            }
-            break;
-         default:
-            exception = new HttpResponseException(command, response, message);
-            break;
+      // Create default exception
+      String message = data != null
+            ? new String(data)
+            : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(), response.getStatusLine());
+      Exception exception = new HttpResponseException(command, response, response.getPayload().getContentMetadata().getContentType());
+      
+      // Try to create a VCloudDirectorException from XML payload
+      if (response.getPayload().getContentMetadata().getContentType().startsWith(VCloudDirectorMediaType.ERROR)) {
+	      try {
+	         Error error = JAXB.unmarshal(InputSuppliers.of(data).getInput(), Error.class);
+	         exception = new VCloudDirectorException(error);
+	      } catch (Exception e) {
+	         Throwables.propagate(e);
+	      }
       }
+
+      // Create custom exception for error codes we know about
+      if (response.getStatusCode() == 401) {
+         exception = new AuthorizationException(message, exception);
+      } else if (response.getStatusCode() == 403 || response.getStatusCode() == 404) {
+         exception = new ResourceNotFoundException(message, exception);
+      }
+
       command.setException(exception);
    }
-
 }

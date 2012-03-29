@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Test the {@link GroupClient} by observing its side effects.
+ * Test the {@link AdminNetworkClient} by observing its side effects.
  * 
  * @author danikov
  */

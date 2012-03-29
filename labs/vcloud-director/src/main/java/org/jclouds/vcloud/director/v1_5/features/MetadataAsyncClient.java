@@ -35,12 +35,12 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -60,7 +60,7 @@ public interface MetadataAsyncClient {
       @Path("/metadata")
       @Consumes
       @JAXBResponseParser
-      @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+      @ExceptionParser(ReturnNullOnNotFoundOr404.class)
       ListenableFuture<Metadata> getMetadata(@EndpointParam URI metaDataUri);
       
       /**
@@ -70,7 +70,7 @@ public interface MetadataAsyncClient {
       @Path("/metadata/{key}")
       @Consumes
       @JAXBResponseParser
-      @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+      @ExceptionParser(ReturnNullOnNotFoundOr404.class)
       ListenableFuture<MetadataValue> getMetadataValue(@EndpointParam URI metaDataUri, @PathParam("key") String key);
    }
    
@@ -85,7 +85,6 @@ public interface MetadataAsyncClient {
       @Consumes(VCloudDirectorMediaType.TASK)
       @Produces(VCloudDirectorMediaType.METADATA)
       @JAXBResponseParser
-      @ExceptionParser(ThrowVCloudErrorOn4xx.class)
       ListenableFuture<Task> mergeMetadata(@EndpointParam URI metaDataUri, @BinderParam(BindToXMLPayload.class) Metadata metadata);
       
       /**
@@ -96,7 +95,6 @@ public interface MetadataAsyncClient {
       @Consumes(VCloudDirectorMediaType.TASK)
       @Produces(VCloudDirectorMediaType.METADATA_VALUE)
       @JAXBResponseParser
-      @ExceptionParser(ThrowVCloudErrorOn4xx.class)
       ListenableFuture<Task> setMetadata(@EndpointParam URI metaDataUri,
             @PathParam("key") String key, 
             @BinderParam(BindToXMLPayload.class) MetadataValue metadataValue);
@@ -108,7 +106,6 @@ public interface MetadataAsyncClient {
        @Path("/metadata/{key}")
        @Consumes(VCloudDirectorMediaType.TASK)
        @JAXBResponseParser
-       @ExceptionParser(ThrowVCloudErrorOn4xx.class)
        ListenableFuture<Task> deleteMetadataEntry(@EndpointParam URI metaDataUri, @PathParam("key") String key);
    }
 }

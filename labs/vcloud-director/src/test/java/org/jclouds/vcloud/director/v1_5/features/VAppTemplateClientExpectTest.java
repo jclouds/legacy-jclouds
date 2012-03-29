@@ -31,6 +31,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.TASK;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.VAPP_TEMPLATE;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.net.URI;
 import java.text.ParseException;
@@ -275,7 +276,6 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorGetCustomizationSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -284,7 +284,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/customizationSection").acceptMedia(CUSTOMIZATION_SECTION).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.getVAppTemplateCustomizationSection(uri);
+      assertNull(client.getVAppTemplateCustomizationSection(uri));
    }
    
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -363,7 +363,6 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorGetLeaseSettingsSection() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -372,7 +371,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/leaseSettingsSection").acceptMedia(LEASE_SETTINGS_SECTION).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.getVappTemplateLeaseSettingsSection(uri);
+      assertNull(client.getVappTemplateLeaseSettingsSection(uri));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
@@ -456,7 +455,6 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
       assertNotNull(task);
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testErrorGetMetadataValue() {
       final String templateId = "/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9";
       URI uri = URI.create(endpoint + templateId);
@@ -465,7 +463,7 @@ public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientEx
             new VcloudHttpRequestPrimer().apiCommand("GET", templateId + "/metadata/12345").acceptMedia(METADATA_ENTRY).httpRequestBuilder().build(),
             new VcloudHttpResponsePrimer().xmlFilePayload("/vapptemplate/error403.xml", ERROR).httpResponseBuilder().statusCode(403).build()).getVAppTemplateClient();
 
-      client.getMetadataClient().getMetadataValue(uri, "12345");
+      assertNull(client.getMetadataClient().getMetadataValue(uri, "12345"));
    }
    
    @Test(expectedExceptions = VCloudDirectorException.class)

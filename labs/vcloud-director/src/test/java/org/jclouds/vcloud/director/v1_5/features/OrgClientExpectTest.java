@@ -19,11 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -128,16 +128,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             getStandardRequest("GET", "/org/9e08c2f6-077a-42ce-bece-d5332e2ebb5c"),
             getStandardPayloadResponse(403, "/org/error403-catalog.xml", VCloudDirectorMediaType.ERROR));
 
-      String message = "No access to entity \"com.vmware.vcloud.entity.org:9e08c2f6-077a-42ce-bece-d5332e2ebb5c\".";
-
-      try {
-         client.getOrgClient().getOrg(orgUri);
-         fail("Should give HTTP 403 error");
-      } catch (ResourceNotFoundException rnfe) {
-         assertEquals(rnfe.getMessage(), message);
-      } catch (Exception e) {
-         fail("Should have thrown a ResourceNotFoundException");
-      }
+      assertNull(client.getOrgClient().getOrg(orgUri));
    }
 
    @Test
@@ -148,16 +139,7 @@ public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest 
             getStandardRequest("GET", "/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
             getStandardPayloadResponse(403, "/org/error403-fake.xml", VCloudDirectorMediaType.ERROR));
 
-      String message = "No access to entity \"com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".";
-
-      try {
-         client.getOrgClient().getOrg(orgUri);
-         fail("Should give HTTP 403 error");
-      } catch (ResourceNotFoundException rnfe) {
-         assertEquals(rnfe.getMessage(), message);
-      } catch (Exception e) {
-         fail("Should have thrown a ResourceNotFoundException");
-      }
+      assertNull(client.getOrgClient().getOrg(orgUri));
    }
    
    @Test
