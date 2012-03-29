@@ -30,6 +30,10 @@ import org.jclouds.opsource.servers.OpSourceServersAsyncClient;
 import org.jclouds.opsource.servers.OpSourceServersClient;
 import org.jclouds.opsource.servers.features.AccountAsyncClient;
 import org.jclouds.opsource.servers.features.AccountClient;
+import org.jclouds.opsource.servers.features.ServerAsyncClient;
+import org.jclouds.opsource.servers.features.ServerClient;
+import org.jclouds.opsource.servers.features.ServerImageAsyncClient;
+import org.jclouds.opsource.servers.features.ServerImageClient;
 import org.jclouds.opsource.servers.handlers.OpSourceServersErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
@@ -48,7 +52,10 @@ public class OpSourceServersRestClientModule extends
       RestClientModule<OpSourceServersClient, OpSourceServersAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(AccountClient.class, AccountAsyncClient.class).build();
+         .put(AccountClient.class, AccountAsyncClient.class)
+         .put(ServerImageClient.class, ServerImageAsyncClient.class)
+         .put(ServerClient.class, ServerAsyncClient.class)
+         .build();
 
    public OpSourceServersRestClientModule() {
       super(OpSourceServersClient.class, OpSourceServersAsyncClient.class, DELEGATE_MAP);

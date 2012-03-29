@@ -24,36 +24,36 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.opsource.servers.domain.Account;
-import org.jclouds.opsource.servers.domain.DataCentersList;
+import org.jclouds.opsource.servers.domain.DeployedServersList;
+import org.jclouds.opsource.servers.domain.PendingDeployServersList;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * @see AccountClient
- * @author Adrian Cole
+ * @see ServerClient
+ * @author Kedar Dave
  */
 @RequestFilters(BasicAuthentication.class)
-public interface AccountAsyncClient {
-
-   /**
-    * @see AccountClient#getMyAccount()
-    */
-   @GET
-   @Path("/myaccount")
-   @Consumes
-   @JAXBResponseParser
-   ListenableFuture<Account> getMyAccount();
-   
-   /**
-    * @see AccountClient#getDataCentersWithLimits()
-    */
-   @GET
-   @Path("/{org-id}/datacenterWithLimits")
-   @Consumes
-   @JAXBResponseParser
-   ListenableFuture<DataCentersList> getDataCentersWithLimits(@PathParam("org-id") String orgId);
-
+public interface ServerAsyncClient {
+	
+	/**
+	 * @see ServerClient#getDeployedServers()
+	 */
+	@GET
+	@Path("/{org-id}/server/deployed")
+	@Consumes
+	@JAXBResponseParser
+	ListenableFuture<DeployedServersList> getDeployedServers(@PathParam("org-id") String orgId);
+	
+	/**
+	 * @see ServerClient#getPendingDeployServers()
+	 */
+	@GET
+	@Path("/{org-id}/server/pendingDeploy")
+	@Consumes
+	@JAXBResponseParser
+	ListenableFuture<PendingDeployServersList> getPendingDeployServers(@PathParam("org-id") String orgId);
+	
 }

@@ -21,32 +21,27 @@ package org.jclouds.opsource.servers.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.opsource.servers.domain.Account;
-import org.jclouds.opsource.servers.domain.DataCentersList;
+import org.jclouds.opsource.servers.domain.DeployedServersList;
+import org.jclouds.opsource.servers.domain.PendingDeployServersList;
 
 /**
- * Provides synchronous access to Account.
+ * Provides synchronous access to server api's.
  * <p/>
  * 
- * @see AccountAsyncClient
- * @author Adrian Cole
+ * @see ServerAsyncClient
+ * @author Kedar Dave
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AccountClient {
-
-   /**
-    * Before you can begin using the range of Server, Network and Image APIs,
-    * you will need to first obtain your organization details.
-    * 
-    * @return the user's details, including their organization ID.
-    */
-   Account getMyAccount();
-   
-   /**
-    * identifies the list of data centers available to the organization of the authenticating user
-    * @param orgId
-    * @return
-    */
-  DataCentersList getDataCentersWithLimits(String orgId);
-
+public interface ServerClient {
+	
+	/**
+	 * @see ServerAsyncClient#getDeployedServers() 
+	 */
+	DeployedServersList getDeployedServers(String orgId);
+	
+	/**
+	 * @see ServerAsyncClient#getPendingDeployServers() 
+	 */
+	PendingDeployServersList getPendingDeployServers(String orgId);
+	
 }
