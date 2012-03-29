@@ -30,7 +30,7 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExp
 import org.testng.annotations.Test;
 
 /**
- * Allows us to test a client via its side effects.
+ * Test the {@link AdminVdcClient} by observing its side effects.
  * 
  * @author danikov
  */

@@ -35,11 +35,11 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -56,7 +56,7 @@ public interface CatalogAsyncClient {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends CatalogType> getCatalog(@EndpointParam URI catalogUri);
 
    /**
@@ -67,7 +67,6 @@ public interface CatalogAsyncClient {
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<CatalogItem> addCatalogItem(@EndpointParam URI catalogUri,
          @BinderParam(BindToXMLPayload.class) CatalogItem catalogItem);
    
@@ -77,7 +76,7 @@ public interface CatalogAsyncClient {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<CatalogItem> getCatalogItem(@EndpointParam URI catalogItemUri);
 
    /**
@@ -87,7 +86,6 @@ public interface CatalogAsyncClient {
    @Consumes(VCloudDirectorMediaType.CATALOG_ITEM)
    @Produces(VCloudDirectorMediaType.CATALOG_ITEM)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<CatalogItem> updateCatalogItem(@EndpointParam URI catalogItemUri,
          @BinderParam(BindToXMLPayload.class)  CatalogItem catalogItem);
 
@@ -97,7 +95,6 @@ public interface CatalogAsyncClient {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> deleteCatalogItem(@EndpointParam URI catalogItemUri);
 
    /**

@@ -36,11 +36,11 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -66,7 +66,7 @@ public interface OrgAsyncClient {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgUri);
 
    /**
@@ -77,7 +77,6 @@ public interface OrgAsyncClient {
    @Produces(CONTROL_ACCESS)
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI orgRef,
       @PathParam("catalogId") String catalogId,
       @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
@@ -89,7 +88,7 @@ public interface OrgAsyncClient {
    @Path("/catalog/{catalogId}/controlAccess")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ControlAccessParams> getControlAccess(@EndpointParam URI orgRef,
       @PathParam("catalogId") String catalogId);
    

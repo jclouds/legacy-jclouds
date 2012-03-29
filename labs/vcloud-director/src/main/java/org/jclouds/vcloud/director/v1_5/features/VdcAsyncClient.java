@@ -33,6 +33,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
@@ -46,7 +47,6 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
  
@@ -63,7 +63,7 @@ public interface VdcAsyncClient {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends Vdc> getVdc(@EndpointParam URI vdcURI);
    
    /**
@@ -74,7 +74,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.CAPTURE_VAPP_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VAppTemplate> captureVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CaptureVAppParams params);
    
@@ -86,7 +85,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Media> cloneMedia(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
    
@@ -98,7 +96,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.CLONE_VAPP_PARAMS) //TODO fix these etc.
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VApp> cloneVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CloneVAppParams params);
    
@@ -110,7 +107,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.CLONE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VAppTemplate> cloneVAppTemplate(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) CloneVAppTemplateParams params);
    
@@ -122,7 +118,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.COMPOSE_VAPP_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VApp> composeVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) ComposeVAppParams params);
    
@@ -134,7 +129,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.VAPP)
    @Produces(VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VApp> instantiateVApp(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) InstantiateVAppParamsType params);
    
@@ -146,7 +140,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.VAPP_TEMPLATE)
    @Produces(VCloudDirectorMediaType.UPLOAD_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<VAppTemplate> uploadVAppTemplate(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) UploadVAppTemplateParams params);
    
@@ -158,7 +151,6 @@ public interface VdcAsyncClient {
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Media> createMedia(@EndpointParam URI vdcURI,
          @BinderParam(BindToXMLPayload.class) Media media);
     

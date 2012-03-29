@@ -35,13 +35,13 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -58,7 +58,7 @@ public interface MediaAsyncClient {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Media> getMedia(@EndpointParam URI uri);
    
    /**
@@ -68,7 +68,6 @@ public interface MediaAsyncClient {
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Media> createMedia(@EndpointParam URI link,
          @BinderParam(BindToXMLPayload.class) Media media);
    
@@ -81,7 +80,6 @@ public interface MediaAsyncClient {
    @Consumes(VCloudDirectorMediaType.MEDIA)
    @Produces(VCloudDirectorMediaType.CLONE_MEDIA_PARAMS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Media> cloneMedia(@EndpointParam URI vdcRef,
          @BinderParam(BindToXMLPayload.class) CloneMediaParams params);
    
@@ -92,7 +90,6 @@ public interface MediaAsyncClient {
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.MEDIA)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> updateMedia(@EndpointParam URI uri, @BinderParam(BindToXMLPayload.class) Media media);
    
    /**
@@ -101,7 +98,6 @@ public interface MediaAsyncClient {
    @DELETE
    @Consumes(VCloudDirectorMediaType.TASK)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> deleteMedia(@EndpointParam URI uri);
    
    /**
@@ -111,7 +107,7 @@ public interface MediaAsyncClient {
    @Path("/owner")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwner(@EndpointParam URI uri);
    
    /**

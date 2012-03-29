@@ -34,10 +34,10 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
    
@@ -53,7 +53,6 @@ public interface GroupAsyncClient {
    @Consumes(VCloudDirectorMediaType.GROUP)
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Group> createGroup(@EndpointParam URI adminOrgUri, 
          @BinderParam(BindToXMLPayload.class) Group group);
 
@@ -63,7 +62,7 @@ public interface GroupAsyncClient {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Group> getGroup(@EndpointParam URI groupUri);
 
    /**
@@ -73,7 +72,6 @@ public interface GroupAsyncClient {
    @Consumes(VCloudDirectorMediaType.GROUP)
    @Produces(VCloudDirectorMediaType.GROUP)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Group> updateGroup(@EndpointParam URI groupRef, 
          @BinderParam(BindToXMLPayload.class) Group group);
 
@@ -83,6 +81,5 @@ public interface GroupAsyncClient {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> deleteGroup(@EndpointParam URI groupRef);
 }

@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Collections;
 
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -33,11 +33,11 @@ import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExp
 import org.testng.annotations.Test;
 
 /**
- * Test the {@link GroupClient} by observing its side effects.
+ * Test the {@link UserClient} by observing its side effects.
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "admin", "adminUser"}, singleThreaded = true, testName = "UserClientExpectTest")
+@Test(groups = { "unit", "admin", "adminUser" }, singleThreaded = true, testName = "UserClientExpectTest")
 public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
    
    private Reference orgRef = Reference.builder()
@@ -199,7 +199,7 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
       client.getUserClient().unlockUser(userRef.getHref());
    }
 
-   @Test(expectedExceptions = VCloudDirectorException.class)
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testUnlockUserFailNotFound() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
