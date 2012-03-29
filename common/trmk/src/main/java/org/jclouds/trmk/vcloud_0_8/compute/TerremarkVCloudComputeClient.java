@@ -25,9 +25,9 @@ import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Buil
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;

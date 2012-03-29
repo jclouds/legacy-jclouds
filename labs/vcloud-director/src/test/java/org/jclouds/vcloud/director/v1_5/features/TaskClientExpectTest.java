@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
@@ -162,20 +163,7 @@ public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, taskRequest, taskResponse, orgRequest, orgResponse);
 
-		Error expected = Error.builder()
-				.message("No access to entity \"com.vmware.vcloud.entity.org:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\".")
-				.majorErrorCode(403)
-				.minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-				.build();
-
-		try {
-			client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"));
-			fail("Should give HTTP 403 error");
-		} catch (VCloudDirectorException vde) {
-			assertEquals(vde.getError(), expected);
-		} catch (Exception e) {
-			fail("Should have thrown a VCloudDirectorException");
-		}
+		assertNull(client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")));
    }
 
    @Test

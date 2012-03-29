@@ -23,13 +23,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.io.Payload;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -255,14 +254,6 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
       }
 
       /**
-       * @see TemplateOptions#runScript(Payload)
-       */
-      public static CloudStackTemplateOptions runScript(Payload script) {
-         CloudStackTemplateOptions options = new CloudStackTemplateOptions();
-         return CloudStackTemplateOptions.class.cast(options.runScript(script));
-      }
-
-      /**
        * @see TemplateOptions#userMetadata(Map)
        */
       public static CloudStackTemplateOptions userMetadata(Map<String, String> userMetadata) {
@@ -311,15 +302,6 @@ public class CloudStackTemplateOptions extends TemplateOptions implements Clonea
    @Override
    public CloudStackTemplateOptions installPrivateKey(String privateKey) {
       return CloudStackTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(Payload)
-    */
-   @Deprecated
-   @Override
-   public CloudStackTemplateOptions runScript(Payload script) {
-      return CloudStackTemplateOptions.class.cast(super.runScript(script));
    }
 
    /**

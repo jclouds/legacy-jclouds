@@ -26,10 +26,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Map.Entry;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Multimap;

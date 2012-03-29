@@ -25,7 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
-import org.jclouds.javax.annotation.concurrent.NotThreadSafe;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
@@ -37,6 +36,7 @@ import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.javax.annotation.concurrent.NotThreadSafe;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;

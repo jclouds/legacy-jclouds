@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.List;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;

@@ -24,9 +24,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.s3.domain.Payer;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
+import org.jclouds.s3.domain.Payer;
 
 /**
  * 

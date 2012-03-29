@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudstack.options;
 
+import java.util.Set;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
-
-import java.util.Set;
 
 /**
  * Options used to control what load balancer rules are returned

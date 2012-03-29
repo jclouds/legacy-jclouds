@@ -19,6 +19,7 @@
 package org.jclouds.util;
 
 import java.net.URL;
+
 import com.google.common.io.Resources;
 
 public class ClassLoadingUtils {

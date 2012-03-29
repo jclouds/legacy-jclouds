@@ -23,14 +23,14 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.s3.domain.ListBucketResponse;
-import org.jclouds.s3.domain.MutableObjectMetadata;
-import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.s3.domain.ListBucketResponse;
+import org.jclouds.s3.domain.MutableObjectMetadata;
+import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.internal.ListBucketResponseImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

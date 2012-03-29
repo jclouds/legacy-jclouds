@@ -18,7 +18,8 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import static org.jclouds.aws.reference.FormParameters.*;
+import static org.jclouds.aws.reference.FormParameters.ACTION;
+import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Map;
 import java.util.Set;

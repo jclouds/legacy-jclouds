@@ -22,7 +22,6 @@ import static org.jclouds.cloudloadbalancers.options.ListOptions.Builder.limit;
 import static org.jclouds.cloudloadbalancers.options.ListOptions.Builder.marker;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.cloudloadbalancers.options.ListOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

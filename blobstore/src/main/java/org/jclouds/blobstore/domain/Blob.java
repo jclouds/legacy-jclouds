@@ -18,10 +18,9 @@
  */
 package org.jclouds.blobstore.domain;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 

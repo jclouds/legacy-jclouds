@@ -19,11 +19,12 @@
 
 package org.jclouds.glesys.domain;
 
-import com.google.gson.annotations.SerializedName;
-import org.jclouds.javax.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.jclouds.javax.annotation.Nullable;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents detailed information about an IP address.

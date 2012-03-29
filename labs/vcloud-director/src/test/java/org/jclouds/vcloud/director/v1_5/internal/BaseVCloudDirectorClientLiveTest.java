@@ -50,6 +50,7 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
@@ -66,11 +67,10 @@ import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
-import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -112,11 +112,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
    protected Session session;
 
-   protected String catalogName;
    protected String catalogId;
-   protected String networkName;
-   protected String userName;
-
    protected URI vAppTemplateURI;
    protected URI mediaURI;
    protected URI networkURI;
@@ -130,10 +126,10 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       provider = "vcloud-director";
    }
 
-   protected static DateService dateService;
+   protected DateService dateService;
 
-   @BeforeGroups(alwaysRun = true)
-   protected static void setupDateService() {
+   @BeforeClass(alwaysRun = true)
+   protected void setupDateService() {
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
    }
@@ -165,11 +161,8 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    // TODO change properties to URI, not id
-   @SuppressWarnings("unchecked")
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
-      catalogName = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-name"));
       catalogId = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
-      networkName = Strings.emptyToNull(System.getProperty("test." + provider + ".network-name"));
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
       if (vAppTemplateId != null)
@@ -191,31 +184,23 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       if (userId != null)
          userURI = URI.create(endpoint + "/admin/user/" + userId);
 
-      if (Iterables.any(Lists.newArrayList(catalogName, vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
+      if (Iterables.any(Lists.newArrayList(vAppTemplateURI, networkURI, vdcURI), Predicates.isNull())) {
          Org thisOrg = context.getApi().getOrgClient().getOrg(
                   Iterables.find(context.getApi().getOrgClient().getOrgList().getOrgs(),
-                           ReferenceTypePredicates.<Reference> nameEquals(session.getOrg())).getHref());
+                           ReferencePredicates.<Reference> nameEquals(session.getOrg())).getHref());
 
          if (vdcURI == null)
             vdcURI = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.VDC)).getHref();
+                     ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.VDC)).getHref();
 
          if (networkURI == null)
             networkURI = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
-
-         if (Strings.isNullOrEmpty(networkName))
-            networkName = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getName();
-
-         if (Strings.isNullOrEmpty(catalogName))
-            catalogName = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getName();
+                     ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.ORG_NETWORK)).getHref();
 
          // FIXME the URI should be opaque
          if (Strings.isNullOrEmpty(catalogId)) {
             String uri = Iterables.find(thisOrg.getLinks(),
-                     ReferenceTypePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getHref().toASCIIString();
+                     ReferencePredicates.<Link> typeEquals(VCloudDirectorMediaType.CATALOG)).getHref().toASCIIString();
             catalogId = Iterables.getLast(Splitter.on('/').split(uri));
          }
       }
@@ -338,7 +323,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       // Build the configuration object
       NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
             .parentNetwork(parentNetwork.get())
-            .fenceMode("bridged")
+            .fenceMode(Network.FenceMode.ISOLATED)
             .build();
 
       return networkConfiguration;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.reference;
+package org.jclouds.compute.config;
 
 import static org.testng.Assert.assertEquals;
 
@@ -33,8 +33,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ComputeServiceConstantsTest")
-public class ComputeServiceConstantsTest {
+@Test(groups = "unit", testName = "ComputeServicePropertiesTest")
+public class ComputeServicePropertiesTest {
    public void testDefaultInitStatusProperties() {
       InitStatusProperties props = new ComputeServiceContextFactory().createContext("stub", "", "").utils().injector()
             .getInstance(InitStatusProperties.class);
@@ -44,8 +44,8 @@ public class ComputeServiceConstantsTest {
 
    public void testOverrideInitStatusProperties() {
       Properties overrides = new Properties();
-      overrides.setProperty(ComputeServiceConstants.PROPERTY_INIT_STATUS_INITIAL_PERIOD, "501");
-      overrides.setProperty(ComputeServiceConstants.PROPERTY_INIT_STATUS_MAX_PERIOD, "5001");
+      overrides.setProperty(ComputeServiceProperties.INIT_STATUS_INITIAL_PERIOD, "501");
+      overrides.setProperty(ComputeServiceProperties.INIT_STATUS_MAX_PERIOD, "5001");
       
       InitStatusProperties props = new ComputeServiceContextFactory()
             .createContext("stub", "", "", ImmutableSet.<Module> of(), overrides).utils().injector()

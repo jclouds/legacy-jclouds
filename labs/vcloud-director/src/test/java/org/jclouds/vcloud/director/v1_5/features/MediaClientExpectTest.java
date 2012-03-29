@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
@@ -43,7 +44,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Allows us to test a client via its side effects.
+ * Test the {@link MediaClient} via its side effects.
  * 
  * @author danikov
  */
@@ -153,7 +154,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    }
  
    @Test
-   public void testResponse403ForCatalogIdUsedAsMediaId() {
+   public void testNullResponseForCatalogIdUsedAsMediaId() {
       URI mediaUri = URI.create(endpoint + "/media/e9cd3387-ac57-4d27-a481-9bee75e0690f");
  
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
@@ -165,20 +166,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
  
-      Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.media:e9cd3387-ac57-4d27-a481-9bee75e0690f)\".")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-       
-      try {
-         client.getMediaClient().getMedia(mediaUri);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
+      assertNull(client.getMediaClient().getMedia(mediaUri));
    }
  
    @Test
@@ -194,20 +182,7 @@ public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
                .xmlFilePayload("/media/error403-fake.xml", VCloudDirectorMediaType.ERROR)
                .httpResponseBuilder().statusCode(403).build());
  
-      Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.media:aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee)\".")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-       
-      try {
-         client.getMediaClient().getMedia(mediaUri);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
+      assertNull(client.getMediaClient().getMedia(mediaUri));
    }
    
    @Test

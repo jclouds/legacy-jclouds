@@ -18,17 +18,19 @@
  */
 package org.jclouds.cloudstack.suppliers;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Named;
+
+import org.jclouds.cloudstack.domain.Zone;
+
 import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Inject;
-import org.jclouds.cloudstack.domain.Zone;
-
-import javax.inject.Named;
-import java.util.concurrent.TimeUnit;
-
-import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 /**
  * Supplies a cache that maps from zone IDs to zones.

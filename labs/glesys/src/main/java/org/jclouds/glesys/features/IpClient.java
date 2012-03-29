@@ -18,11 +18,11 @@
  */
 package org.jclouds.glesys.features;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.glesys.domain.IpDetails;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.glesys.domain.IpDetails;
 
 /**
  * Provides synchronous access to IP Addresses.

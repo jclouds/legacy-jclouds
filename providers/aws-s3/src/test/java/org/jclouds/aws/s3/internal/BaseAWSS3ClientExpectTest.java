@@ -18,10 +18,8 @@
  */
 package org.jclouds.aws.s3.internal;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import java.util.Properties;
+
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.blobstore.BlobStore;
@@ -35,7 +33,10 @@ import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
 
-import java.util.Properties;
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Base class for writing Expect tests for AWS-S3

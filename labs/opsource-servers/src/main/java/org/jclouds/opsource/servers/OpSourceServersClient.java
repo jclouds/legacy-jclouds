@@ -21,7 +21,11 @@ package org.jclouds.opsource.servers;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.opsource.servers.domain.Account;
+import org.jclouds.opsource.servers.domain.ServerImage;
 import org.jclouds.opsource.servers.features.AccountClient;
+import org.jclouds.opsource.servers.features.ServerClient;
+import org.jclouds.opsource.servers.features.ServerImageClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -39,4 +43,16 @@ public interface OpSourceServersClient {
    @Delegate
    AccountClient getAccountClient();
 
+   /**
+    * @return synchronous access to {@link ServerImage} features
+    */
+   @Delegate
+   ServerImageClient getServerImageClient();
+   
+   /**
+    * @return synchronous access to server features
+    */
+   @Delegate
+   ServerClient getServerClient();
+   
 }

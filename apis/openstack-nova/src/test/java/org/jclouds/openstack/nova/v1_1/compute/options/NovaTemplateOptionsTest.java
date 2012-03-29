@@ -18,7 +18,13 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.options;
 
-import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.*;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.authorizePublicKey;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.autoAssignFloatingIp;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.blockOnPort;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.generateKeyPair;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.inboundPorts;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.installPrivateKey;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.securityGroupNames;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;

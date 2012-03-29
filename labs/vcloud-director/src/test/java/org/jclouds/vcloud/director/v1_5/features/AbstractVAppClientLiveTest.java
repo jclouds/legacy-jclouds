@@ -32,30 +32,28 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimBoolean;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedLong;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
-import org.jclouds.vcloud.director.v1_5.predicates.ReferenceTypePredicates;
+import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 
 import com.google.common.base.Function;
@@ -186,8 +184,8 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       Iterable<Reference> vApps = Iterables.filter(
             vdc.getResourceEntities(),
             Predicates.and(
-                  ReferenceTypePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
-                  ReferenceTypePredicates.<Reference>nameIn(vAppNames)
+                  ReferencePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
+                  ReferencePredicates.<Reference>nameIn(vAppNames)
             )
       );
 

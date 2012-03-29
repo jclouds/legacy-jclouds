@@ -24,8 +24,8 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.LoginCredentials;
@@ -72,7 +72,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
 
          
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-               .put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess)
+               .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
                .put(extensionsOfNovaRequest, extensionsOfNovaResponse)
                .put(listImagesDetail, listImagesDetailResponse)
                .put(listFlavorsDetail, listFlavorsDetailResponse)
@@ -115,7 +115,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
 
          
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
-               .put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess)
+               .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
                .put(extensionsOfNovaRequest, extensionsOfNovaResponse)
                .put(listImagesDetail, listImagesDetailResponse)
                .put(listFlavorsDetail, listFlavorsDetailResponse)

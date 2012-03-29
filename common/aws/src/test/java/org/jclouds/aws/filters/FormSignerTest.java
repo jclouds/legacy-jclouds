@@ -25,11 +25,11 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

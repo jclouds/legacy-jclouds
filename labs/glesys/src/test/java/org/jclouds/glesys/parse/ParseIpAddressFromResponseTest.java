@@ -18,20 +18,22 @@
  */
 package org.jclouds.glesys.parse;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import static java.util.Arrays.asList;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.glesys.config.GleSYSParserModule;
 import org.jclouds.json.BaseSetParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import java.util.HashSet;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 @Test(groups = "unit", testName = "ParseIpAddressFromResponseTest")
 public class ParseIpAddressFromResponseTest extends BaseSetParserTest<String> {

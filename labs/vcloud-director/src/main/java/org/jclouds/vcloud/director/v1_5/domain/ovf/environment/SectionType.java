@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain.ovf.environment;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAnyAttribute;

@@ -18,11 +18,13 @@
  */
 package org.jclouds.elastichosts;
 
-import org.jclouds.elasticstack.ElasticStackPropertiesBuilder;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 
 import java.util.Properties;
 
-import static org.jclouds.Constants.*;
+import org.jclouds.elasticstack.ElasticStackPropertiesBuilder;
 
 /**
  * 

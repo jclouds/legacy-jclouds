@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloudexpress;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.trmk.vcloudexpress.TerremarkVCloudExpressProviderMetadata;
 import org.testng.annotations.Test;
 
 /**

@@ -19,16 +19,17 @@
 
 package org.jclouds.glesys.parse;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.glesys.config.GleSYSParserModule;
 import org.jclouds.glesys.domain.IpDetails;
 import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 public class ParseFullIpDetailsTest extends BaseItemParserTest<IpDetails> {
 

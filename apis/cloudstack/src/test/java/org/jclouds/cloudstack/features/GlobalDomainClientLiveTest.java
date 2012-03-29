@@ -18,17 +18,18 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Predicate;
-import org.jclouds.cloudstack.domain.Domain;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
-import javax.annotation.Nullable;
-
 import static com.google.common.collect.Iterables.find;
 import static org.jclouds.cloudstack.options.UpdateDomainOptions.Builder.name;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+
+import javax.annotation.Nullable;
+
+import org.jclouds.cloudstack.domain.Domain;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code GlobalDomainClient}

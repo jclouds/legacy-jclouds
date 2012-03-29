@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.trmk.vcloud_0_8.domain.Node;
-import org.jclouds.trmk.vcloud_0_8.xml.NodesHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

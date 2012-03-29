@@ -30,9 +30,8 @@ import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash
 import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
@@ -98,17 +97,6 @@ public class ComputeServiceUtils {
 
    public static Statement extractZipIntoDirectory(URI zip, String directory) {
       return extractZipIntoDirectory(new HttpRequest("GET", zip), directory);
-   }
-
-   /**
-    * 
-    * @return null if group cannot be parsed
-    */
-   public static String parseGroupFromName(String from) {
-      if (from == null)
-         return null;
-      Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
-      return matcher.find() ? matcher.group(1) : null;
    }
 
    public static double getCores(Hardware input) {

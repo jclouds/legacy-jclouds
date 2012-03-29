@@ -25,7 +25,6 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
-import org.jclouds.vcloud.director.v1_5.domain.CatalogItems;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
@@ -37,7 +36,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Test the {@link CatalogClient} by observing its side effects.
+ * Test the {@link AdminCatalogClient} by observing its side effects.
  * 
  * @author grkvlt@apache.org
  */
@@ -47,7 +46,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
    private Reference orgRef = Reference.builder()
          .type("application/vnd.vmware.vcloud.catalog+xml")
          .name("QunyingTestCatalog")
-         .href(URI.create(endpoint + "/admin/catalog/7212e451-76e1-4631-b2de-ba1dfd8080e4"))
+         .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
          .build();
    
    private Reference catalogRef = Reference.builder()
@@ -60,7 +59,7 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
    public void testCreateCatalog() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
-            .apiCommand("POST", "/admin/org/???/catalogs")
+            .apiCommand("POST", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalogs")
             .xmlFilePayload("/catalog/admin/createCatalogSource.xml", VCloudDirectorMediaType.ADMIN_CATALOG)
             .acceptMedia(VCloudDirectorMediaType.ADMIN_CATALOG)
             .httpRequestBuilder().build(), 
@@ -71,15 +70,16 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
       AdminCatalog source = createCatalogSource();
       AdminCatalog expected = createCatalog();
 
-      assertEquals(client.getAdminCatalogClient().createCatalog(catalogRef.getHref(), source), expected);
+      assertEquals(client.getAdminCatalogClient().createCatalog(orgRef.getHref(), source), expected);
    }
 
-   // FIXME temporarily disabling this test due to JAXB error:
-   //    javax.xml.bind.UnmarshalException: unexpected element (uri:"http://www.vmware.com/vcloud/v1.5", local:"AdminCatalog").
-   //    Expected elements are <{http://www.vmware.com/vcloud/v1.5}Catalog>,<{http://www.vmware.com/vcloud/v1.5}CatalogItems>,
-   //    <{http://www.vmware.com/vcloud/v1.5}CatalogReference>,<{http://www.vmware.com/vcloud/v1.5}Error>,
-   //    <{http://www.vmware.com/vcloud/v1.5}Link>,<{http://www.vmware.com/vcloud/v1.5}Owner>,
-   //    <{http://www.vmware.com/vcloud/v1.5}Task>
+   // FIXME disabled due to intermittent JXB error: javax.xml.bind.UnmarshalException:
+   // unexpected element (uri:"http://www.vmware.com/vcloud/v1.5", local:"AdminCatalog").
+   // Expected elements are <{http://www.vmware.com/vcloud/v1.5}Catalog>, <{http://www.vmware.com/vcloud/v1.5}CatalogReference>,
+   // <{http://www.vmware.com/vcloud/v1.5}Error>,<{http://www.vmware.com/vcloud/v1.5}Link>,
+   // <{http://www.vmware.com/vcloud/v1.5}Owner>,<{http://www.vmware.com/vcloud/v1.5}Reference>,
+   // <{http://www.vmware.com/vcloud/v1.5}RoleReference>,<{http://www.vmware.com/vcloud/v1.5}Task>,
+   // <{http://www.vmware.com/vcloud/v1.5}VAppReference>
    @Test(enabled = false)
    public void testGetCatalog() {
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
@@ -289,8 +289,6 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                   .build())
                .build())
             .build())
-            .catalogItems(CatalogItems.builder()
-               .build())
             .isPublished(false)
          .build();
    }
@@ -337,27 +335,25 @@ public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientEx
                .build())
          .description("Testing")
          .owner(owner())
-         .catalogItems(CatalogItems.builder()
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("image")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/67a469a1-aafe-4b5b-bb31-a6202ad8961f"))
-                     .build())
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("ubuntu10")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
-                     .build())
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("imageTesting")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
-                     .build())
-               .item(Reference.builder()
-                     .type("application/vnd.vmware.vcloud.catalogItem+xml")
-                     .name("TestCase")
-                     .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/f7598606-aea4-41d7-8f67-2090e28e7876"))
-                     .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("image")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/67a469a1-aafe-4b5b-bb31-a6202ad8961f"))
+               .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("ubuntu10")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df"))
+               .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("imageTesting")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a9e0afdb-a42b-4688-8409-2ac68cf22939"))
+               .build())
+         .item(Reference.builder()
+               .type("application/vnd.vmware.vcloud.catalogItem+xml")
+               .name("TestCase")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/f7598606-aea4-41d7-8f67-2090e28e7876"))
                .build())
          .isPublished(false)
          .build();

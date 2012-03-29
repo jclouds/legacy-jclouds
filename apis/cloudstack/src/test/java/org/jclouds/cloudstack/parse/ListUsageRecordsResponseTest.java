@@ -18,9 +18,11 @@
  */
 package org.jclouds.cloudstack.parse;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.jclouds.cloudstack.config.CloudStackDateAdapter;
 import org.jclouds.cloudstack.domain.UsageRecord;
 import org.jclouds.json.BaseSetParserTest;
@@ -28,10 +30,9 @@ import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
-import java.util.TimeZone;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 

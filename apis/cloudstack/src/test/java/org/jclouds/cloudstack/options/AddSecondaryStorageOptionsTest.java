@@ -18,11 +18,12 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.AddSecondaryStorageOptions.Builder.zoneId;
+import static org.testng.Assert.assertEquals;
+
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.AddSecondaryStorageOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code AddSecondaryStorageOptions}

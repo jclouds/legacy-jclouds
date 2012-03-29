@@ -19,6 +19,7 @@
 package org.jclouds.opsource.servers.features;
 
 import org.jclouds.opsource.servers.domain.Account;
+import org.jclouds.opsource.servers.domain.DataCentersList;
 import org.jclouds.opsource.servers.internal.BaseOpSourceServersClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -33,6 +34,13 @@ public class AccountClientLiveTest extends BaseOpSourceServersClientLiveTest {
    public void testGetMyAccount() {
       Account account = context.getApi().getAccountClient().getMyAccount();
       assert account.getOrgId() != null;
+   }
+   
+   public void testGetDataCenterWithLimits() {
+	  Account account = context.getApi().getAccountClient().getMyAccount();
+	  assert account.getOrgId() != null;
+      DataCentersList dataCentersList = context.getApi().getAccountClient().getDataCentersWithLimits(account.getOrgId());
+      assert dataCentersList != null;
    }
 
 }

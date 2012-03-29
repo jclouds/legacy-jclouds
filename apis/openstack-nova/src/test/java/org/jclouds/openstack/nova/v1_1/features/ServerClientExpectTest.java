@@ -55,7 +55,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/server_list.json")).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertEquals(clientWhenServersExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -75,7 +75,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().isEmpty());
@@ -97,7 +97,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
             .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
-      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, createServer, createServerResponse);
 
       assertEquals(clientWithNewServer.getServerClientForZone("az-1.region-a.geo-1").createServer("test-e92", "1241", "100").toString(),
@@ -122,7 +122,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
          .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
 
-      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWithNewServer = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, createServer, createServerResponse);
 
       assertEquals(clientWithNewServer.getServerClientForZone("az-1.region-a.geo-1").createServer("test-e92", "1241",

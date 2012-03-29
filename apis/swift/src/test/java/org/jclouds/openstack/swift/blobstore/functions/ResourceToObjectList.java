@@ -24,7 +24,6 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
-import org.jclouds.openstack.swift.blobstore.functions.ResourceToObjectInfo;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
 
 import com.google.common.base.Function;

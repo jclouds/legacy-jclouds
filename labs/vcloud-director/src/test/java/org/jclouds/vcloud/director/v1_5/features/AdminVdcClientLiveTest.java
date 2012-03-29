@@ -80,7 +80,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
 
-   @Test(testName = "GET /admin/vdc/{id}")
+   @Test(description = "GET /admin/vdc/{id}")
    public void testGetVdc() {
       AdminVdc vdc = vdcClient.getVdc(adminVdcUri);
       assertNotNull(vdc, String.format(OBJ_REQ_LIVE, VDC));
@@ -90,7 +90,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "PUT /admin/vdc/{id}", enabled=false)
+   @Test(description = "PUT /admin/vdc/{id}", enabled=false)
    public void testEditVdc() throws Exception {
       String origName = vdcClient.getVdc(adminVdcUri).getName();
       String newName = name("a");
@@ -128,7 +128,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "DELETE /admin/vdc/{id}", enabled=false)
+   @Test(description = "DELETE /admin/vdc/{id}", enabled=false)
    public void testDeleteVdc() throws Exception {
       // TODO Need to have a VDC that we're happy to delete!
       Task task = vdcClient.deleteVdc(adminVdcUri);
@@ -142,7 +142,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "DISABLE/ENABLE /admin/vdc/{id}", enabled=false)
+   @Test(description = "DISABLE/ENABLE /admin/vdc/{id}", enabled=false)
    public void testDisableAndEnableVdc() throws Exception {
       // TODO Need to have a VDC that we're happy to delete!
       Exception exception = null;
@@ -165,7 +165,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/vdc/{id}/metadata")
+   @Test(description = "GET /admin/vdc/{id}/metadata")
    public void testGetMetadata() throws Exception {
       Metadata metadata = metadataClient.getMetadata(adminVdcUri);
 
@@ -173,7 +173,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "PUT /admin/vdc/{id}/metadata", enabled=false)
+   @Test(description = "PUT /admin/vdc/{id}/metadata", enabled=false)
    public void testSetMetadata() throws Exception {
       metadataKey = name("key-");
       metadataValue = name("value-");
@@ -190,7 +190,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "GET /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadata" }, enabled=false)
+   @Test(description = "GET /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadata" }, enabled=false)
    public void testGetMetadataValue() throws Exception {
       MetadataValue retrievedMetadataValue = metadataClient.getMetadataValue(adminVdcUri, metadataKey);
          
@@ -198,7 +198,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "PUT /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" }, enabled=false )
+   @Test(description = "PUT /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" }, enabled=false )
    public void testSetMetadataValue() throws Exception {
       metadataValue = name("value-");
       MetadataValue newV = MetadataValue.builder().value(metadataValue).build();
@@ -211,7 +211,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    // TODO insufficient permissions to test
-   @Test(testName = "DELETE /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" }, enabled=false )
+   @Test(description = "DELETE /admin/vdc/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" }, enabled=false )
    public void testDeleteMetadataValue() throws Exception {
       // TODO Remove dependency on other tests; make cleanUp delete a list of metadata entries?
       

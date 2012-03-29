@@ -25,10 +25,10 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.Map.Entry;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;

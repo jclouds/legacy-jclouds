@@ -21,7 +21,6 @@ package org.jclouds.vcloud.domain;
 import java.util.Date;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 
 import com.google.inject.ImplementedBy;

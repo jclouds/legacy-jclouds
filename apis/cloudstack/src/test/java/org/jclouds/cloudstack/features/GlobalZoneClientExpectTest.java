@@ -18,8 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
+import static org.jclouds.cloudstack.options.UpdateZoneOptions.Builder.name;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import java.net.URI;
+
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.NetworkType;
@@ -28,11 +32,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.jclouds.cloudstack.options.UpdateZoneOptions.Builder.name;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Test the CloudStack GlobalZoneClient

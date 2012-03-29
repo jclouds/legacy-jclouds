@@ -18,19 +18,20 @@
  */
 package org.jclouds.aws.s3;
 
-import com.google.common.collect.ImmutableMultimap;
+import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
+
+import java.net.URI;
+
 import org.jclouds.aws.s3.internal.BaseAWSS3ClientExpectTest;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
+import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions.Builder.storageClass;
-import static org.jclouds.s3.domain.ObjectMetadata.StorageClass;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Andrei Savu

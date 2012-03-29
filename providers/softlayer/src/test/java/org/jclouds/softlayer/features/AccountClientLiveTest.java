@@ -18,13 +18,13 @@
  */
 package org.jclouds.softlayer.features;
 
-import org.jclouds.softlayer.domain.ProductPackage;
-import org.testng.annotations.BeforeGroups;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import static org.testng.Assert.assertTrue;
+import org.jclouds.softlayer.domain.ProductPackage;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code AccountClient}

@@ -18,7 +18,22 @@
  */
 package org.jclouds.http.internal;
 
-import com.google.common.io.NullOutputStream;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.ByteStreams.copy;
+import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
+import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
+
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -33,20 +48,7 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Throwables2;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.io.ByteStreams.copy;
-import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
-import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
+import com.google.common.io.NullOutputStream;
 
 /**
  * 

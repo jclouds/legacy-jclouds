@@ -25,8 +25,8 @@ import java.util.Map.Entry;
 
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.ClaimType;
+import org.jclouds.elasticstack.domain.Drive;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;

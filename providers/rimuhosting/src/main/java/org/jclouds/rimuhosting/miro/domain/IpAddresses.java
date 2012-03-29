@@ -18,9 +18,9 @@
  */
 package org.jclouds.rimuhosting.miro.domain;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.SortedSet;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * IpAddresses assigned to an Interface. Not rimuhosting doesnt have private IPs.

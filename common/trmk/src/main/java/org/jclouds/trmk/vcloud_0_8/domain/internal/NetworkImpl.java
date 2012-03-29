@@ -21,8 +21,8 @@ package org.jclouds.trmk.vcloud_0_8.domain.internal;
 import java.net.URI;
 
 import org.jclouds.trmk.vcloud_0_8.domain.FenceMode;
-import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.Network;
+import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
 /**
  * Locations of resources in vCloud

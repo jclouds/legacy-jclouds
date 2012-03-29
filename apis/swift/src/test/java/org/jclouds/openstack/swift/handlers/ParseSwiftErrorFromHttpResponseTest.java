@@ -18,11 +18,11 @@
  */
 package org.jclouds.openstack.swift.handlers;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
@@ -33,7 +33,6 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
-import org.jclouds.openstack.swift.handlers.ParseSwiftErrorFromHttpResponse;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 

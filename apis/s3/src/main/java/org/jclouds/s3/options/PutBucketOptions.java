@@ -27,9 +27,9 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.s3.domain.CannedAccessPolicy;
 import org.jclouds.s3.reference.S3Headers;
-import org.jclouds.http.options.BaseHttpRequestOptions;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;

@@ -18,12 +18,17 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableList;
+import static org.jclouds.cloudstack.options.AddClusterOptions.Builder.allocationState;
+import static org.jclouds.cloudstack.options.AddClusterOptions.Builder.password;
+import static org.jclouds.cloudstack.options.AddClusterOptions.Builder.podId;
+import static org.jclouds.cloudstack.options.AddClusterOptions.Builder.url;
+import static org.jclouds.cloudstack.options.AddClusterOptions.Builder.username;
+import static org.testng.Assert.assertEquals;
+
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.testng.annotations.Test;
 
-import static org.jclouds.cloudstack.options.AddClusterOptions.Builder.*;
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code AddClusterOptions}

@@ -55,7 +55,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listSecurityGroupsResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_list.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listSecurityGroups,
                listSecurityGroupsResponse);
 
@@ -73,7 +73,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse listListSecurityGroupsResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, listListSecurityGroups,
                listListSecurityGroupsResponse);
 
@@ -91,7 +91,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_details.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
                getSecurityGroupResponse);
 
@@ -107,7 +107,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse getSecurityGroupResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenNoSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, getSecurityGroup,
                getSecurityGroupResponse);
 
@@ -123,18 +123,18 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
                         authToken).build())
                .payload(
                         payloadFromStringWithContentType(
-                                 "{\"security_group\":{\"name\":\"name\",\"description\":\"description\"}}",
+                                 "{\"security_group\":{\"name\":\"jclouds-test\",\"description\":\"jclouds-test\"}}",
                                  "application/json")).build();
 
       HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygroup_created.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroup,
                createSecurityGroupResponse);
 
       assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-               .createSecurityGroupWithNameAndDescription("name", "description").toString(),
+               .createSecurityGroupWithNameAndDescription("jclouds-test", "jclouds-test").toString(),
                createSecurityGroupExpected().toString());
    }
 
@@ -147,7 +147,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse deleteSecurityGroupResponse = HttpResponse.builder().statusCode(202).build();
 
-      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroup,
                deleteSecurityGroupResponse);
 
@@ -172,7 +172,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse createSecurityGroupRuleResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygrouprule_created.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroupRule,
                createSecurityGroupRuleResponse);
 
@@ -198,7 +198,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse createSecurityGroupRuleResponse = HttpResponse.builder().statusCode(200).payload(
                payloadFromResource("/securitygrouprule_created.json")).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, createSecurityGroupRule,
                createSecurityGroupRuleResponse);
 
@@ -217,7 +217,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse deleteSecurityGroupRuleResponse = HttpResponse.builder().statusCode(202).build();
 
-      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenSecurityGroupsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
                responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse, deleteSecurityGroupRule,
                deleteSecurityGroupRuleResponse);
 
@@ -227,7 +227,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
    }
 
    private SecurityGroup createSecurityGroupExpected() {
-      return SecurityGroup.builder().description("description").id("160").name("name").rules(
+      return SecurityGroup.builder().description("jclouds-test").id("160").name("jclouds-test").rules(
                ImmutableSet.<SecurityGroupRule> of()).tenantId("dev_16767499955063").build();
    }
 

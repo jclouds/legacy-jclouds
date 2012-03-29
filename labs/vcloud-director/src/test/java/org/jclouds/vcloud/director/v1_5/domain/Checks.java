@@ -68,6 +68,7 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.net.InetAddresses;
 
@@ -110,10 +111,17 @@ public class Checks {
    /**
     * Assumes the validTypes to be vcloud-specific types.
     * 
-    * @see checkReferenceType(ReferenceType, Collection<String>)
+    * @see #checkReferenceType(Reference, Collection)
     */
    public static void checkReferenceType(Reference reference) {
       checkReferenceType(reference, VCloudDirectorMediaType.ALL);
+   }
+
+   /**
+    * @see #checkReferenceType(Reference, Collection)
+    */
+   public static void checkReferenceType(Reference reference, String type) {
+      checkReferenceType(reference, ImmutableSet.of(type));
    }
    
    public static void checkReferenceType(Reference reference, Collection<String> validTypes) {
@@ -283,39 +291,24 @@ public class Checks {
       assertNotNull(org.getSettings(), String.format(NOT_NULL_OBJ_FIELD_FMT, "settings", "AdminOrg"));
       
       // optional
-      if (org.getGroups() != null) {
-         checkGroupsList(org.getGroups());
+      for (Reference user : org.getUsers()) {
+         checkReferenceType(user, VCloudDirectorMediaType.ADMIN_USER);
       }
-      if (org.getCatalogs() != null) {
-         checkCatalogsList(org.getCatalogs());
+      for (Reference group : org.getGroups()) {
+         checkReferenceType(group, VCloudDirectorMediaType.GROUP);
       }
-      if (org.getVdcs() != null) {
-         checkVdcs(org.getVdcs());
+      for (Reference catalog : org.getCatalogs()) {
+         checkReferenceType(catalog, VCloudDirectorMediaType.ADMIN_CATALOG);
       }
-      if (org.getNetworks() != null) {
-         checkNetworks(org.getNetworks());
+      for (Reference vdc : org.getVdcs()) {
+         checkReferenceType(vdc, VCloudDirectorMediaType.ADMIN_VDC);
+      }
+      for (Reference network : org.getNetworks()) {
+         checkReferenceType(network, VCloudDirectorMediaType.ADMIN_NETWORK);
       }
       
       // Check parent type
       checkOrg(org);
-   }
-   
-   public static void checkCatalogsList(CatalogsList catalogList) {
-      for (Reference catalogItem : catalogList.getCatalogItems()) {
-         checkReferenceType(catalogItem);
-      }
-   }
-   
-   public static void checkVdcs(Vdcs vdcs) {
-      for (Reference vdc : vdcs.getVdcs()) {
-         checkReferenceType(vdc);
-      }
-   }
-   
-   public static void checkNetworks(Networks networks) {
-      for (Reference network : networks.getNetwork()) {
-         checkReferenceType(network);
-      }
    }
    
    public static void checkAdminCatalog(AdminCatalog catalog) {
@@ -327,11 +320,8 @@ public class Checks {
       // Check optional elements/attributes
       Owner owner = catalog.getOwner();
       if (owner != null) checkOwner(owner);
-      CatalogItems catalogItems = catalog.getCatalogItems();
-      if (catalogItems != null) {
-         for (Reference catalogItemReference : catalogItems.getCatalogItems()) {
-            checkReferenceType(catalogItemReference);
-         }
+      for (Reference catalogItemReference : catalog.getCatalogItems()) {
+         checkReferenceType(catalogItemReference, VCloudDirectorMediaType.CATALOG_ITEM);
       }
       // NOTE isPublished cannot be checked
       
@@ -695,16 +685,9 @@ public class Checks {
       if (params.isSharedToEveryone()) {
          assertNotNull(params.getEveryoneAccessLevel(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "EveryoneAccessLevel"));
       } else {
-         AccessSettings accessSettings = params.getAccessSettings();
-         checkAccessSettings(accessSettings);
-      }
-   }
-
-   public static void checkAccessSettings(AccessSettings accessSettings) {
-      if (accessSettings != null && accessSettings.getAccessSettings() != null) {
-	      for (AccessSetting setting : accessSettings.getAccessSettings()) {
-	         checkAccessSetting(setting);
-	      }
+         for (AccessSetting setting : params.getAccessSettings()) {
+            checkAccessSetting(setting);
+         }
       }
    }
 
@@ -778,36 +761,18 @@ public class Checks {
       checkResourceEntityType(media);
    }
    
-   public static void checkGroupsList(GroupsList groupsList) {
-      // Check optional fields
-      if (groupsList.getGroups() != null) {
-         for (Reference group : groupsList.getGroups()) {
-            checkReferenceType(group);
-         }
-      }
-   }
-   
    public static void checkGroup(Group group) {
       // Check optional fields
       // NOTE nameInSource cannot be checked
-      if (group.getUsersList() != null) {
-         checkUsersList(group.getUsersList());
+      for (Reference user : group.getUsersList()) {
+         checkReferenceType(user, VCloudDirectorMediaType.USER);
       }
       if (group.getRole() != null) {
-         checkReferenceType(group.getRole());
+         checkReferenceType(group.getRole(), VCloudDirectorMediaType.ROLE);
       }
       
       // parent type
       checkEntityType(group);
-   }
-
-   public static void checkUsersList(UsersList usersList) {
-      // Check optional fields
-      if (usersList.getUsers() != null) {
-         for (Reference user : usersList.getUsers()) {
-            checkReferenceType(user);
-         }
-      }
    }
    
    public static void checkOrgSettings(OrgSettings settings) {

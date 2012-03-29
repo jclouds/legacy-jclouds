@@ -21,7 +21,6 @@ package org.jclouds.scriptbuilder.statements.ssh;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.statements.ssh.SshStatements;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

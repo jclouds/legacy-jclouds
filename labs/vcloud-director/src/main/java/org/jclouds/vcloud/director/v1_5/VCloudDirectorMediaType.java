@@ -38,6 +38,8 @@ public class VCloudDirectorMediaType {
 
    public static final String ANY_IMAGE = "image/*";
 
+   public static final String TEXT_XML = "text/xml";
+
    /** The default {@literal Accept} header for the vCloud API. */
    public static final String APPLICATION_XML_1_5 = "application/*+xml;version=1.5";
    
@@ -190,10 +192,10 @@ public class VCloudDirectorMediaType {
    public static final String VAPP_NETWORK = "application/vnd.vmware.vcloud.vAppNetwork+xml";
    
    public static final String ADMIN_VDC = "application/vnd.vmware.admin.vdc+xml";
-   
-   public static final String TEXT_XML = "text/xml";
 
    public static final String NETWORK_POOL = "application/vnd.vmware.admin.networkPool+xml";
+
+   public static final String ENTITY = "application/vnd.vmware.vcloud.entity+xml";
    
    /**
     * All acceptable media types.
@@ -218,7 +220,7 @@ public class VCloudDirectorMediaType {
          ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
          RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC, MEDIA_PARAMS,
          RUNTIME_INFO_SECTION, SCREEN_TICKET, VAPP_NETWORK,
-         TEXT_XML, ADMIN_VDC, NETWORK_POOL, ADMIN_ORG
+         TEXT_XML, ADMIN_VDC, NETWORK_POOL, ADMIN_ORG, ENTITY
       );
 
    // NOTE These lists must be updated whenever a new media type constant is added.

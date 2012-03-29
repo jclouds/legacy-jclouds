@@ -18,11 +18,32 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.glesys.domain.*;
-import org.jclouds.glesys.options.*;
+import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
+import org.jclouds.glesys.domain.Console;
+import org.jclouds.glesys.domain.Cost;
+import org.jclouds.glesys.domain.Ip;
+import org.jclouds.glesys.domain.OSTemplate;
+import org.jclouds.glesys.domain.ResourceUsage;
+import org.jclouds.glesys.domain.Server;
+import org.jclouds.glesys.domain.ServerDetails;
+import org.jclouds.glesys.domain.ServerSpec;
+import org.jclouds.glesys.domain.ServerStatus;
+import org.jclouds.glesys.domain.ServerUptime;
+import org.jclouds.glesys.options.CloneServerOptions;
+import org.jclouds.glesys.options.CreateServerOptions;
+import org.jclouds.glesys.options.DestroyServerOptions;
+import org.jclouds.glesys.options.EditServerOptions;
+import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.AuthorizationException;
@@ -30,12 +51,8 @@ import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
-import static org.testng.Assert.*;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncClient}

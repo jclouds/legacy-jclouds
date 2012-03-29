@@ -18,8 +18,8 @@
  */
 package org.jclouds.trmk.ecloud;
 
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.net.IPSocket;

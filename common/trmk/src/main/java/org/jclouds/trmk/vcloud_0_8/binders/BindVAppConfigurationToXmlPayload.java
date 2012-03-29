@@ -45,8 +45,8 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
-import org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
+import org.jclouds.trmk.vcloud_0_8.domain.VAppConfiguration;
 
 import com.google.common.base.Function;
 import com.google.inject.Inject;

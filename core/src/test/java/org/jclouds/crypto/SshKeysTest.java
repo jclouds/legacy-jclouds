@@ -21,8 +21,8 @@ package org.jclouds.crypto;
 import static org.jclouds.crypto.SshKeys.fingerprint;
 import static org.jclouds.crypto.SshKeys.generate;
 import static org.jclouds.crypto.SshKeys.privateKeyHasFingerprint;
-import static org.jclouds.crypto.SshKeys.privateKeyMatchesPublicKey;
 import static org.jclouds.crypto.SshKeys.privateKeyHasSha1;
+import static org.jclouds.crypto.SshKeys.privateKeyMatchesPublicKey;
 import static org.jclouds.crypto.SshKeys.publicKeySpecFromOpenSSH;
 import static org.testng.Assert.assertEquals;
 

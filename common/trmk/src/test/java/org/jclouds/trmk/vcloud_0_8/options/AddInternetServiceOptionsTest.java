@@ -23,7 +23,6 @@ import static org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions.Buil
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.trmk.vcloud_0_8.options.AddInternetServiceOptions;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;

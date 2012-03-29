@@ -18,15 +18,17 @@
  */
 package org.jclouds.cloudstack.functions;
 
-import com.google.common.base.Function;
+import java.io.File;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jclouds.cloudstack.domain.LoginResponse;
 import org.jclouds.cloudstack.features.SessionClient;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Credentials;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.File;
+import com.google.common.base.Function;
 
 @Singleton
 public class LoginWithPasswordCredentials implements Function<Credentials, LoginResponse> {

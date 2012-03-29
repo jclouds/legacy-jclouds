@@ -23,9 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.List;
 
-import com.google.common.base.Objects;
 import org.jclouds.util.Strings2;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 

@@ -18,19 +18,21 @@
  */
 package org.jclouds.cloudstack.filters;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.sun.jersey.api.uri.UriBuilderImpl;
-import com.sun.jersey.api.uri.UriComponent;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+import java.net.URLEncoder;
+
+import javax.ws.rs.core.UriBuilder;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
-import java.net.URLEncoder;
-
-import static org.testng.Assert.assertEquals;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.sun.jersey.api.uri.UriBuilderImpl;
+import com.sun.jersey.api.uri.UriComponent;
 
 /**
  * @author Adrian Cole

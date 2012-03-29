@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;

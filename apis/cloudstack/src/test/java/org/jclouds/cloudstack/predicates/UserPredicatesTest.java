@@ -18,11 +18,6 @@
  */
 package org.jclouds.cloudstack.predicates;
 
-import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.User;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.predicates.UserPredicates.apiKeyEquals;
 import static org.jclouds.cloudstack.predicates.UserPredicates.isAdminAccount;
 import static org.jclouds.cloudstack.predicates.UserPredicates.isDomainAdminAccount;
@@ -30,6 +25,11 @@ import static org.jclouds.cloudstack.predicates.UserPredicates.isUserAccount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
+
+import org.jclouds.cloudstack.domain.Account;
+import org.jclouds.cloudstack.domain.User;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * @author Andrei Savu

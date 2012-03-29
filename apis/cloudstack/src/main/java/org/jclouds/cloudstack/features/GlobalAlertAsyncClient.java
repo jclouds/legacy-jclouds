@@ -18,7 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Set;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.cloudstack.domain.Alert;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.ListAlertsOptions;
@@ -28,10 +33,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.core.MediaType;
-import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to CloudStack Account features available to Global

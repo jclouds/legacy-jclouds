@@ -20,11 +20,10 @@ package org.jclouds.io.payloads;
 
 import java.io.Serializable;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.ContentMetadataBuilder;
 import org.jclouds.io.MutableContentMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 

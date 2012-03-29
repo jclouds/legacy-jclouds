@@ -23,10 +23,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToJsonPayload;
 

@@ -18,7 +18,8 @@
  */
 package org.jclouds.trmk.vcloud_0_8.options;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * 

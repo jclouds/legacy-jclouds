@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
@@ -47,7 +48,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Allows us to test a client via its side effects.
+ * Test the {@link NetworkClient} via its side effects.
  * 
  * @author danikov
  */
@@ -113,20 +114,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      Error expected = Error.builder()
-         .message("This operation is denied.")
-         .majorErrorCode(403)
-         .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-         .build();
-
-      try {
-         client.getNetworkClient().getNetwork(networkUri);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
+      assertNull(client.getNetworkClient().getNetwork(networkUri));
    }
 
    @Test
@@ -142,20 +130,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-fake.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      Error expected = Error.builder()
-         .message("This operation is denied.")
-         .majorErrorCode(403)
-         .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-         .build();
-
-      try {
-         client.getNetworkClient().getNetwork(networkUri);
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
+      assertNull(client.getNetworkClient().getNetwork(networkUri));
    }
    
    @Test

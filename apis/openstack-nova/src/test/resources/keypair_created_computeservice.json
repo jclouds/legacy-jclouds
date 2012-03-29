@@ -1,0 +1,9 @@
+{
+    "keypair": {
+        "public_key": "ssh-rsa AAAXB3NzaC1yc2EAAAADAQABAAAAgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABACE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumADSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQ== nova@nv-aw2az1-api0001\n",
+        "private_key": "-----BEGIN RSA PRIVATE KEY-----\nMIICXQIAAAKBgQDFNyGjgs6c9akgmZ2ou/fJf7Pdrc23hC95/gM/33OrG4GZABAC\nE4DTioa/PGN+7rHv9YUavUCtXrWayhGniKq/wCuI5fo5TO4AmDNv7/sCGHIHFumA\nDSIoLx0vFhGJIetXEWxL9r0lfFC7//6yZM2W3KcGjbMtlPXqBT9K9PzdyQIDAQAB\nAoGAW8Ww+KbpQK8smcgCTr/RqcmsSI8VeL2hXjJvDq0L5WbyYuFdkanDvCztUVZn\nsmyfDtwAqZXB4Ct/dN1tY7m8QpdyRaKRW4Q+hghGCAQpsG7rYDdvwdEyvMaW5RA4\ntucQyajMNyQ/tozU3wMx/v8A7RvGcE9tqoG0WK1C3kBu95UCQQDrOd+joYDkvccz\nFIVu5gNPMXEh3fGGzDxk225UlvESquYLzfz4TfmuUjH4Z1BL3wRiwfJsrrjFkm33\njIidDE8PAkEA1qHjxuaIS1yz/rfzErmcOVNlbFHMP4ihjGTTvh1ZctXlNeLwzENQ\nEDaQV3IpUY1KQR6rxcWb5AXgfF9D9PYFpwJBANucAqGAbRgh3lJgPFtXP4u2O0tF\nLPOOxmvbOdybt6KYD4LB5AXmts77SlACFMNhCXUyYaT6UuOSXDyb5gfJsB0CQQC3\nFaGXKU9Z+doQjhlq/6mjvN/nZl80Uvh7Kgb1RVPoAU1kihGeLE0/h0vZTCiyyDNv\nGRqtucMg32J+tUTi0HpBAkAwHiCZMHMeJWHUwIwlRQY/dnR86FWobRl98ViF2rCL\nDHkDVOeIser3Q6zSqU5/m99lX6an5g8pAh/R5LqnOQZC\n-----END RSA PRIVATE KEY-----\n",
+        "user_id": "65649731189278",
+        "name": "jclouds-test-0",
+        "fingerprint": "d2:1f:c9:2b:d8:90:77:5f:15:64:27:e3:9f:77:1d:e4"
+    }
+}

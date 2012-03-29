@@ -18,25 +18,19 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.CloudStackContext;
-import org.jclouds.cloudstack.CloudStackGlobalClient;
-import org.jclouds.cloudstack.domain.AsyncCreateResponse;
-import org.jclouds.cloudstack.domain.ConfigurationEntry;
-import org.jclouds.cloudstack.domain.FirewallRule;
-import org.jclouds.cloudstack.domain.PortForwardingRule;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.BaseRestClientExpectTest;
-import org.testng.annotations.Test;
-
-import java.net.URI;
-import java.util.Set;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+
+import java.net.URI;
+
+import org.jclouds.cloudstack.CloudStackContext;
+import org.jclouds.cloudstack.domain.ConfigurationEntry;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Test the CloudStack GlobalConfigurationClient

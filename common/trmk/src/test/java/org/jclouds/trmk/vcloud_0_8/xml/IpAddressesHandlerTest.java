@@ -27,7 +27,6 @@ import java.util.Set;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.trmk.vcloud_0_8.domain.IpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.IpAddress.Status;
-import org.jclouds.trmk.vcloud_0_8.xml.IpAddressesHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;

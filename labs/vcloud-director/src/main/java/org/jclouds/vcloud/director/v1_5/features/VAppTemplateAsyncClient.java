@@ -21,8 +21,6 @@ package org.jclouds.vcloud.director.v1_5.features;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.CUSTOMIZATION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.GUEST_CUSTOMIZATION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.LEASE_SETTINGS_SECTION;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.METADATA_ENTRY;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONFIG_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_CONNECTION_SECTION;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType.NETWORK_SECTION;
@@ -40,7 +38,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
@@ -50,11 +47,10 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
-import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
@@ -66,7 +62,6 @@ import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -83,7 +78,7 @@ public interface VAppTemplateAsyncClient {
    @GET
    @Consumes(VAPP_TEMPLATE)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<VAppTemplate> getVAppTemplate(@EndpointParam URI reference);
 
 
@@ -94,7 +89,6 @@ public interface VAppTemplateAsyncClient {
    @Produces(VAPP_TEMPLATE)
    @Consumes(TASK)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVAppTemplate(@EndpointParam URI templateURI,
                                            @BinderParam(BindToXMLPayload.class) VAppTemplate template);
 
@@ -104,7 +98,6 @@ public interface VAppTemplateAsyncClient {
    @DELETE
    @Consumes(TASK)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> deleteVappTemplate(@EndpointParam URI templateUri);
 
    /**
@@ -114,7 +107,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/action/consolidate")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> consolidateVappTemplate(@EndpointParam URI templateURI);
 
    /**
@@ -123,7 +115,6 @@ public interface VAppTemplateAsyncClient {
    @POST
    @Path("/action/disableDownload")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> disableDownloadVappTemplate(@EndpointParam URI templateURI);
 
    /**
@@ -133,7 +124,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/action/enableDownload")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> enableDownloadVappTemplate(@EndpointParam URI templateURI);
 
    /**
@@ -144,7 +134,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/action/relocate")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> relocateVappTemplate(@EndpointParam URI templateURI,
                                                @BinderParam(BindToXMLPayload.class) RelocateParams params);
 
@@ -155,7 +144,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(CUSTOMIZATION_SECTION)
    @Path("/customizationSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<CustomizationSection> getVAppTemplateCustomizationSection(@EndpointParam URI templateURI);
 
    /**
@@ -166,7 +155,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/customizationSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVAppTemplateCustomizationSection(@EndpointParam URI templateURI,
                                                                @BinderParam(BindToXMLPayload.class) CustomizationSection sectionType);
 
@@ -177,7 +165,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(GUEST_CUSTOMIZATION_SECTION)
    @Path("/guestCustomizationSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<GuestCustomizationSection> getVAppTemplateGuestCustomizationSection(@EndpointParam URI templateURI);
 
    /**
@@ -188,7 +176,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/guestCustomizationSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVAppTemplateGuestCustomizationSection(@EndpointParam URI templateURI,
                                                                     @BinderParam(BindToXMLPayload.class) GuestCustomizationSection section);
 
@@ -199,7 +186,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(LEASE_SETTINGS_SECTION)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<LeaseSettingsSection> getVappTemplateLeaseSettingsSection(@EndpointParam URI templateURI);
 
    /**
@@ -210,63 +197,8 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/leaseSettingsSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVappTemplateLeaseSettingsSection(@EndpointParam URI templateURI,
                                                                @BinderParam(BindToXMLPayload.class) LeaseSettingsSection settingsSection);
-
-   /**
-    * @see VAppTemplateClient#getVAppTemplateMetadata(URI)
-    */
-   @GET
-   @Consumes(METADATA)
-   @Path("/metadata")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Metadata> getVAppTemplateMetadata(@EndpointParam URI templateURI);
-
-   @POST
-   @Produces(METADATA)
-   @Consumes(TASK)
-   @Path("/metadata")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> editVAppTemplateMetadata(@EndpointParam URI templateURI,
-                                                   @BinderParam(BindToXMLPayload.class) Metadata metadata);
-
-   /**
-    * @see VAppTemplateClient#getVAppTemplateMetadataValue(URI, String)
-    */
-   @GET
-   @Consumes(METADATA_ENTRY)
-   @Path("/metadata/{key}")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<MetadataValue> getVAppTemplateMetadataValue(@EndpointParam URI templateURI,
-                                                                @PathParam("key") String key);
-
-   /**
-    * @see VAppTemplateClient#editVAppTemplateMetadataValue(URI, String, org.jclouds.vcloud.director.v1_5.domain.MetadataValue)
-    */
-   @PUT
-   @Produces(METADATA_ENTRY)
-   @Consumes(TASK)
-   @Path("/metadata/{key}")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> editVAppTemplateMetadataValue(@EndpointParam URI templateURI,
-                                                        @PathParam("key") String key,
-                                                        @BinderParam(BindToXMLPayload.class) MetadataValue value);
-
-   /**
-    * @see VAppTemplateClient#deleteVAppTemplateMetadataValue(URI, String)
-    */
-   @DELETE
-   @Consumes(TASK)
-   @Path("/metadata/{key}")
-   @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   ListenableFuture<Task> deleteVAppTemplateMetadataValue(@EndpointParam URI templateURI,
-                                                          @PathParam("key") String key);
 
    /**
     * @see VAppTemplateClient#getVAppTemplateNetworkConfigSection(URI)
@@ -275,7 +207,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(NETWORK_CONFIG_SECTION)
    @Path("/networkConfigSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<NetworkConfigSection> getVAppTemplateNetworkConfigSection(@EndpointParam URI templateURI);
 
    /**
@@ -286,7 +218,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/networkConfigSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVAppTemplateNetworkConfigSection(@EndpointParam URI templateURI,
                                                                @BinderParam(BindToXMLPayload.class) NetworkConfigSection section);
 
@@ -297,7 +228,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(NETWORK_CONNECTION_SECTION)
    @Path("/networkConnectionSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<NetworkConnectionSection> getVAppTemplateNetworkConnectionSection(@EndpointParam URI templateURI);
 
    /**
@@ -308,7 +239,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/networkConnectionSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVAppTemplateNetworkConnectionSection(@EndpointParam URI templateURI,
                                                                    @BinderParam(BindToXMLPayload.class) NetworkConnectionSection section);
 
@@ -319,7 +249,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(NETWORK_SECTION)
    @Path("/networkSection")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<NetworkSection> getVAppTemplateNetworkSection(@EndpointParam URI templateURI);
 
    /**
@@ -329,7 +259,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes
    @Path("/ovf")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Envelope> getVAppTemplateOvf(@EndpointParam URI templateURI);
 
    /**
@@ -339,7 +269,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(OWNER)
    @Path("/owner")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Owner> getOwnerOfVAppTemplate(@EndpointParam URI templateURI);
 
    /**
@@ -349,7 +279,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes(PRODUCT_SECTION_LIST)
    @Path("/productSections")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ProductSectionList> getProductSectionsForVAppTemplate(@EndpointParam URI templateURI);
 
    /**
@@ -360,7 +290,6 @@ public interface VAppTemplateAsyncClient {
    @Consumes(TASK)
    @Path("/productSections")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editProductSectionsForVAppTemplate(@EndpointParam URI templateURI,
                                                              @BinderParam(BindToXMLPayload.class) ProductSectionList sections);
    
@@ -371,7 +300,7 @@ public interface VAppTemplateAsyncClient {
    @Consumes
    @Path("/shadowVms")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<References> getShadowVms(@EndpointParam URI templateURI);
 
    /**

@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.io.Payload;
 
 /**
  * Contains options supported by the
@@ -87,14 +86,6 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see TemplateOptions#runScript(Payload)
-       */
-      public static GoGridTemplateOptions runScript(Payload script) {
-         GoGridTemplateOptions options = new GoGridTemplateOptions();
-         return GoGridTemplateOptions.class.cast(options.runScript(script));
-      }
-      
-      /**
        * @see TemplateOptions#userMetadata(Map)
        */
       public static GoGridTemplateOptions userMetadata(Map<String, String> userMetadata) {
@@ -143,15 +134,6 @@ public class GoGridTemplateOptions extends TemplateOptions implements Cloneable 
    @Override
    public GoGridTemplateOptions installPrivateKey(String privateKey) {
       return GoGridTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(Payload)
-    */
-   @Deprecated
-   @Override
-   public GoGridTemplateOptions runScript(Payload script) {
-      return GoGridTemplateOptions.class.cast(super.runScript(script));
    }
 
    /**

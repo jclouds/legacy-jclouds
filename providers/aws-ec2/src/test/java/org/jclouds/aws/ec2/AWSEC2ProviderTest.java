@@ -18,7 +18,6 @@
  */
 package org.jclouds.aws.ec2;
 
-import org.jclouds.aws.ec2.AWSEC2ProviderMetadata;
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;

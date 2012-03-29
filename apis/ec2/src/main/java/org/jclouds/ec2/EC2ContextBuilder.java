@@ -21,10 +21,10 @@ package org.jclouds.ec2;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.ec2.config.EC2RestClientModule;
-import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 

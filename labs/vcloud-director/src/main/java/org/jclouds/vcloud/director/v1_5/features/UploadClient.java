@@ -25,8 +25,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.io.Payload;
 
 /**
- * Provides synchronous access to Upload.
- * <p/>
+ * Provides synchronous access to upload.
  * 
  * @see UploadAsyncClient
  * @author danikov

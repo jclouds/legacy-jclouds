@@ -22,10 +22,10 @@ import java.io.InputStream;
 import java.util.Comparator;
 import java.util.Map;
 
-import org.jclouds.javax.annotation.Nullable;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.util.Strings2;
 
 import com.google.common.collect.Multimap;

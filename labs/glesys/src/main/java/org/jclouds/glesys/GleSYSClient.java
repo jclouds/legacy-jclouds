@@ -18,11 +18,15 @@
  */
 package org.jclouds.glesys;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.glesys.features.*;
-import org.jclouds.rest.annotations.Delegate;
-
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.glesys.features.ArchiveClient;
+import org.jclouds.glesys.features.DomainClient;
+import org.jclouds.glesys.features.EmailClient;
+import org.jclouds.glesys.features.IpClient;
+import org.jclouds.glesys.features.ServerClient;
+import org.jclouds.rest.annotations.Delegate;
 
 /**
  * Provides synchronous access to GleSYS.

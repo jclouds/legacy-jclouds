@@ -18,12 +18,12 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.Capacity;
 import org.jclouds.cloudstack.options.ListCapacityOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack Capacities features available to Global

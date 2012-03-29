@@ -18,7 +18,10 @@
  */
 package org.jclouds.openstack.nova.v1_1.compute.config;
 
-import java.security.SecureRandom;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.TIMEOUT_SECURITYGROUP_PRESENT;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -45,8 +48,13 @@ import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
-import org.jclouds.openstack.nova.v1_1.compute.functions.*;
-import org.jclouds.openstack.nova.v1_1.compute.loaders.FindKeyPairOrCreate;
+import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupIfNeeded;
+import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorInZoneToHardware;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ImageInZoneToImage;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ImageToOperatingSystem;
+import org.jclouds.openstack.nova.v1_1.compute.functions.OrphanedGroupsByZoneId;
+import org.jclouds.openstack.nova.v1_1.compute.functions.ServerInZoneToNodeMetadata;
+import org.jclouds.openstack.nova.v1_1.compute.loaders.CreateUniqueKeyPair;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.FindSecurityGroupOrCreate;
 import org.jclouds.openstack.nova.v1_1.compute.loaders.LoadFloatingIpsForInstance;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
@@ -60,7 +68,6 @@ import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneSecurityGroupNameAndPorts;
 import org.jclouds.openstack.nova.v1_1.predicates.FindSecurityGroupWithNameAndReturnTrue;
-import org.jclouds.openstack.nova.v1_1.reference.NovaConstants;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
@@ -132,20 +139,17 @@ public class NovaComputeServiceContextModule
       bind(CreateNodesWithGroupEncodedIntoNameThenAddToSet.class).to(
                ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddToSet.class);
 
-      bind(new TypeLiteral<Function<ZoneAndName, KeyPair>>() {
-      }).to(CreateUniqueKeyPair.class);
-
       bind(new TypeLiteral<CacheLoader<ZoneAndName, KeyPair>>() {
-      }).to(FindKeyPairOrCreate.class);
+      }).to(CreateUniqueKeyPair.class);
    }
 
    @Override
    protected TemplateOptions provideTemplateOptions(Injector injector, TemplateOptions options) {
       return options.as(NovaTemplateOptions.class)
             .autoAssignFloatingIp(injector.getInstance(
-                  Key.get(boolean.class, Names.named(NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS))))
+                  Key.get(boolean.class, Names.named(AUTO_ALLOCATE_FLOATING_IPS))))
             .generateKeyPair(injector.getInstance(
-                  Key.get(boolean.class, Names.named(NovaConstants.PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS))));
+                  Key.get(boolean.class, Names.named(AUTO_GENERATE_KEYPAIRS))));
    }
 
    @Provides
@@ -174,7 +178,7 @@ public class NovaComputeServiceContextModule
    @Named("SECURITY")
    protected Predicate<AtomicReference<ZoneAndName>> securityGroupEventualConsistencyDelay(
             FindSecurityGroupWithNameAndReturnTrue in,
-            @Named(NovaConstants.PROPERTY_NOVA_TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
+            @Named(TIMEOUT_SECURITYGROUP_PRESENT) long msDelay) {
       return new RetryablePredicate<AtomicReference<ZoneAndName>>(in, msDelay, 100l, TimeUnit.MILLISECONDS);
    }
 
@@ -183,20 +187,6 @@ public class NovaComputeServiceContextModule
    protected LoadingCache<ZoneAndName, KeyPair> keyPairMap(
          CacheLoader<ZoneAndName, KeyPair> in) {
       return CacheBuilder.newBuilder().build(in);
-   }
-
-   @Provides
-   @Singleton
-   Supplier<String> provideSuffix() {
-      return new Supplier<String>() {
-         final SecureRandom random = new SecureRandom();
-
-         @Override
-         public String get() {
-            return random.nextInt(100) + "";
-         }
-      };
-
    }
 
    @Provides

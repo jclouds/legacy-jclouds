@@ -19,11 +19,14 @@
 package org.jclouds.aws.s3.binders;
 
 import static org.jclouds.http.utils.ModifyRequest.endpoint;
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 
 import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
@@ -45,9 +48,11 @@ public class AssignCorrectHostnameAndBindAsHostPrefixIfConfigured extends BindAs
 
    @Inject
    public AssignCorrectHostnameAndBindAsHostPrefixIfConfigured(BindAsHostPrefix bindAsHostPrefix,
+         @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
+         @Named(PROPERTY_S3_SERVICE_PATH) String servicePath,
          RegionToEndpointOrProviderIfNull r2, Provider<UriBuilder> uriBuilderProvider,
          @Bucket Map<String, String> bucketToRegion) {
-      super(bindAsHostPrefix, true, "/", uriBuilderProvider);
+      super(bindAsHostPrefix, isVhostStyle, servicePath, uriBuilderProvider);
       this.bucketToRegion = bucketToRegion;
       this.r2 = r2;
    }

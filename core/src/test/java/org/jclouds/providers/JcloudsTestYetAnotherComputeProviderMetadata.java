@@ -18,10 +18,10 @@
  */
 package org.jclouds.providers;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for testing.

@@ -24,7 +24,6 @@ import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
 
-
 import com.google.common.base.Function;
 
 /**

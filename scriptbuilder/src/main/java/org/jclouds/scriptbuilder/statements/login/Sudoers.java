@@ -28,8 +28,8 @@ import org.jclouds.scriptbuilder.domain.StatementList;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Control /etc/sudoers

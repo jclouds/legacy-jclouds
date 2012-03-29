@@ -18,19 +18,20 @@
  */
 package org.jclouds.cloudstack.compute.strategy;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Map;
+
 import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.NetworkService;
 import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
 import org.testng.annotations.Test;
 
-import java.util.Collections;
-import java.util.Map;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 @Test(singleThreaded = true, testName="OptionsConverterTest")
 public class OptionsConverterTest {

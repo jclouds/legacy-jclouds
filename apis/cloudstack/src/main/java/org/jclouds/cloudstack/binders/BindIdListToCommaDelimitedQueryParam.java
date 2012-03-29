@@ -18,19 +18,20 @@
  */
 package org.jclouds.cloudstack.binders;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.utils.ModifyRequest;
-import org.jclouds.rest.Binder;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.rest.Binder;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Richard Downer

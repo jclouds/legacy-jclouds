@@ -18,14 +18,14 @@
  */
 package org.jclouds.gogrid;
 
+import static java.lang.String.format;
+
+import java.util.Set;
+
 import org.jclouds.gogrid.domain.internal.ErrorResponse;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-
-import java.util.Set;
-
-import static java.lang.String.format;
 
 /**
  * @author Oleksiy Yarmula

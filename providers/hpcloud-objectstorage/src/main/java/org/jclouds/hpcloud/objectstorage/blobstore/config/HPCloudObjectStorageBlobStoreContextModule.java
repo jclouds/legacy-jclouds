@@ -35,6 +35,7 @@ import org.jclouds.hpcloud.objectstorage.blobstore.functions.HPCloudObjectStorag
 import org.jclouds.hpcloud.objectstorage.domain.ContainerCDNMetadata;
 import org.jclouds.hpcloud.objectstorage.extensions.HPCloudCDNClient;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.logging.Logger;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
@@ -46,8 +47,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.Provides;
-
-import org.jclouds.logging.Logger;
 
 /**
  * 

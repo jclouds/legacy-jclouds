@@ -20,8 +20,6 @@ package org.jclouds.cloudstack.parse;
 
 import java.util.Set;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.jclouds.cloudstack.config.CloudStackParserModule;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.json.BaseSetParserTest;
@@ -30,6 +28,8 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * 

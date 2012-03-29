@@ -16,59 +16,59 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.compute.functions;
+package org.jclouds.openstack.nova.v1_1.compute.loaders;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Optional;
+import com.google.common.cache.CacheLoader;
+import com.google.inject.Inject;
 
 /**
  * @author Adam Lowe
  */
 @Singleton
-public class CreateUniqueKeyPair implements Function<ZoneAndName, KeyPair> {
+public class CreateUniqueKeyPair extends CacheLoader<ZoneAndName, KeyPair> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final NovaClient novaClient;
-   protected final Supplier<String> randomSuffix;
+   protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
-   public CreateUniqueKeyPair(NovaClient novaClient, Supplier<String> randomSuffix) {
+   public CreateUniqueKeyPair(NovaClient novaClient, GroupNamingConvention.Factory namingConvention) {
       this.novaClient = checkNotNull(novaClient, "novaClient");
-      this.randomSuffix = randomSuffix;
+      this.namingConvention = checkNotNull(namingConvention, "namingConvention");
    }
 
    @Override
-   public KeyPair apply(ZoneAndName zoneAndName) {
+   public KeyPair load(ZoneAndName zoneAndName) {
       String zoneId = checkNotNull(zoneAndName, "zoneAndName").getZone();
       String prefix = zoneAndName.getName();
 
       Optional<KeyPairClient> client = novaClient.getKeyPairExtensionForZone(zoneId);
-      checkArgument(client.isPresent(), "Key pairs are required, but the extension is not available in zone %s!", zoneId);
+      checkArgument(client.isPresent(), "Key pairs are required, but the extension is not available in zone %s!",
+            zoneId);
 
       logger.debug(">> creating keyPair zone(%s) prefix(%s)", zoneId, prefix);
 
       KeyPair keyPair = null;
       while (keyPair == null) {
          try {
-            keyPair = client.get().createKeyPair(getNextName(prefix));
+            keyPair = client.get().createKeyPair(namingConvention.createWithoutPrefix().uniqueNameForGroup(prefix));
          } catch (IllegalStateException e) {
 
          }
@@ -78,10 +78,4 @@ public class CreateUniqueKeyPair implements Function<ZoneAndName, KeyPair> {
       return keyPair;
    }
 
-   // nova cannot use hashes, else a hang on the console like this:
-   // Caught exception reading instance data:
-   // http://169.254.169.254/2009-04-04/meta-data/mpi/jclouds#hpcloud-computeblock#11
-   private String getNextName(String prefix) {
-      return String.format("%s_%s", prefix, randomSuffix.get());
-   }
 }

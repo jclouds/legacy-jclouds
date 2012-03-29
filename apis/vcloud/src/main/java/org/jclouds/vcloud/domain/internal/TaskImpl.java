@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.Date;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;

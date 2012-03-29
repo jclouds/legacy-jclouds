@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 
 import com.google.inject.ImplementedBy;

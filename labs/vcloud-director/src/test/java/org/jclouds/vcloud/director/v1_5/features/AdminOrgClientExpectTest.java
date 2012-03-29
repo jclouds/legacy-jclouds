@@ -25,10 +25,7 @@ import java.net.URI;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.CatalogsList;
-import org.jclouds.vcloud.director.v1_5.domain.GroupsList;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.Networks;
 import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
@@ -38,13 +35,11 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
-import org.jclouds.vcloud.director.v1_5.domain.UsersList;
-import org.jclouds.vcloud.director.v1_5.domain.Vdcs;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
 /**
- * Test the {@link GroupClient} by observing its side effects.
+ * Test the {@link AdminOrgClient} by observing its side effects.
  * 
  * @author danikov
  */
@@ -126,7 +121,6 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
          .fullName("JClouds")
          .isEnabled(true)
          .settings(settings())
-         .users(UsersList.builder()
             .user(Reference.builder()
                .type("application/vnd.vmware.admin.user+xml")
                .name("adam.lowe@cloudsoftcorp.com")
@@ -152,10 +146,6 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
                .name("adk@cloudsoftcorp.com")
                .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/user/e9eb1b29-0404-4c5e-8ef7-e584acc51da9"))
                .build())
-            .build())
-         .groups(GroupsList.builder()
-            .build())
-         .catalogs(CatalogsList.builder()
             .catalog(Reference.builder()
                .type("application/vnd.vmware.admin.catalog+xml")
                .name("QunyingTestCatalog")
@@ -176,15 +166,11 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
                .name("test")
                .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/catalog/b7289d54-4ca4-497f-9a93-2d4afc97e3da"))
                .build())
-            .build())
-         .vdcs(Vdcs.builder()
             .vdc(Reference.builder()
                .type("application/vnd.vmware.vcloud.vdc+xml")
                .name("Cluster01-JClouds")
                .href(URI.create("https://vcloudbeta.bluelock.com/api/vdc/d16d333b-e3c0-4176-845d-a5ee6392df07"))
                .build())
-            .build())
-         .networks(Networks.builder()
             .network(Reference.builder()
                .type("application/vnd.vmware.admin.network+xml")
                .name("ilsolation01-Jclouds")
@@ -195,7 +181,6 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
                .name("internet01-Jclouds")
                .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/network/55a677cf-ab3f-48ae-b880-fab90421980c"))
                .build())
-            .build())
          .build();
    }
    

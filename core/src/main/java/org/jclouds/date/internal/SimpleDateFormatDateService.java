@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jclouds.date.internal;
-import static org.jclouds.date.internal.DateUtils.*;
+import static org.jclouds.date.internal.DateUtils.findTZ;
+import static org.jclouds.date.internal.DateUtils.trimTZ;
+import static org.jclouds.date.internal.DateUtils.trimToMillis;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

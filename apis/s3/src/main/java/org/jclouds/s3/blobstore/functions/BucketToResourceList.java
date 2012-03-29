@@ -24,11 +24,11 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
+import org.jclouds.s3.domain.ListBucketResponse;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

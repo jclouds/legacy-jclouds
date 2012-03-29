@@ -20,9 +20,8 @@ package org.jclouds.blobstore.domain.internal;
 
 import java.util.LinkedHashSet;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.collect.Iterables;
 

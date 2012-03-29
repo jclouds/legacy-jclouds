@@ -23,12 +23,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeRegionsOptions;
-import org.jclouds.concurrent.Timeout;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides EC2 Availability Zones and Regions services for EC2.

@@ -38,7 +38,6 @@ import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;

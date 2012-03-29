@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.domain;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 
 /**

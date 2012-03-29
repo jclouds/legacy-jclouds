@@ -31,12 +31,12 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.glesys.domain.AllowedArgumentsForCreateServer;
 import org.jclouds.glesys.domain.Console;
+import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.domain.Server;
 import org.jclouds.glesys.domain.ServerDetails;
 import org.jclouds.glesys.domain.ServerLimit;
 import org.jclouds.glesys.domain.ServerSpec;
 import org.jclouds.glesys.domain.ServerStatus;
-import org.jclouds.glesys.domain.OSTemplate;
 import org.jclouds.glesys.functions.ParseTemplatesFromHttpResponse;
 import org.jclouds.glesys.options.CloneServerOptions;
 import org.jclouds.glesys.options.CreateServerOptions;

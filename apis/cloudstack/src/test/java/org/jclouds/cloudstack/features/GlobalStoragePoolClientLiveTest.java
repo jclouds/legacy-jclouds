@@ -18,13 +18,16 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Strings;
-import org.jclouds.cloudstack.domain.StoragePool;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import static org.testng.Assert.*;
+import org.jclouds.cloudstack.domain.StoragePool;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Strings;
 
 /**
  * Tests behavior of {@code GlobalStoragePoolClient}

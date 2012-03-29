@@ -21,6 +21,12 @@ package org.jclouds.vcloud.director.v1_5;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+
 /**
  * @author grkvlt@apache.org
  */
@@ -29,19 +35,19 @@ public class VCloudDirectorException extends RuntimeException {
    /** The serialVersionUID. */
    private static final long serialVersionUID = -5292516858598372960L;
 
-   private static final String MSG_FMT = "%s: %s";   
+   private static final String MSG_FMT = "%s (%d) %s: %s";   
 
    private final Error error;
    private final Task task;
 
    public VCloudDirectorException(Error error) {
-      super(String.format(MSG_FMT, "Error", error.getMessage()));
+      super(message(error, "Error"));
       this.error = error;
       this.task = null;
    }
 
    public VCloudDirectorException(Task task) {
-      super(String.format(MSG_FMT, "Task error", task.getError().getMessage()));
+      super(message(task.getError(), "Task error"));
       this.error = task.getError();
       this.task = task;
    }
@@ -64,5 +70,15 @@ public class VCloudDirectorException extends RuntimeException {
 
    public Task getTask() {
       return task;
+   }
+
+   private static String message(Error error, String from) {
+      Iterable<String> words = Iterables.transform(Splitter.on('_').split(error.getMinorErrorCode()), new Function<String, String>() {
+         @Override
+         public String apply(String input) {
+            return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, input);
+         }
+      });
+      return String.format(MSG_FMT, Joiner.on(' ').join(words), error.getMajorErrorCode(), from, error.getMessage());
    }
 }

@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jclouds.aws.ec2.domain.MonitoringState;
-import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 

@@ -19,7 +19,6 @@
 package org.jclouds.servermanager.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +33,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
@@ -61,10 +61,13 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    private final FindLocationForServer findLocationForServer;
    private final FindImageForServer findImageForServer;
    private final Map<String, Credentials> credentialStore;
+   private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    ServerToNodeMetadata(Map<String, Credentials> credentialStore, FindHardwareForServer findHardwareForServer,
-         FindLocationForServer findLocationForServer, FindImageForServer findImageForServer) {
+         FindLocationForServer findLocationForServer, FindImageForServer findImageForServer,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.findHardwareForServer = checkNotNull(findHardwareForServer, "findHardwareForServer");
       this.findLocationForServer = checkNotNull(findLocationForServer, "findLocationForServer");
@@ -78,7 +81,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.ids(from.id + "");
       builder.name(from.name);
       builder.location(findLocationForServer.apply(from));
-      builder.group(parseGroupFromName(from.name));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.name));
       builder.imageId(from.imageId + "");
       Image image = findImageForServer.apply(from);
       if (image != null)

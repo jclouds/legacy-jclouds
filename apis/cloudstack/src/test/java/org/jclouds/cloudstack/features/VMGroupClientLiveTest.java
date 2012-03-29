@@ -18,16 +18,17 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.Iterables;
+import static org.testng.Assert.assertEquals;
+
+import java.util.Random;
+import java.util.Set;
+
 import org.jclouds.cloudstack.domain.VMGroup;
 import org.jclouds.cloudstack.options.ListVMGroupsOptions;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.Test;
 
-import java.util.Random;
-import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code VMGroupClient}

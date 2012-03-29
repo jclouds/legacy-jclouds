@@ -34,19 +34,20 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
    
 /**
- * @see GroupClient
+ * @see UserClient
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface UserAsyncClient {
+
    /**
     * @see UserClient#createUser(URI, User)
     */
@@ -55,7 +56,6 @@ public interface UserAsyncClient {
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<User> createUser(@EndpointParam URI userRef, 
          @BinderParam(BindToXMLPayload.class) User user);
    
@@ -65,7 +65,7 @@ public interface UserAsyncClient {
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<User> getUser(@EndpointParam URI userRef);
  
    /**
@@ -75,7 +75,6 @@ public interface UserAsyncClient {
    @Consumes(VCloudDirectorMediaType.USER)
    @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<User> updateUser(@EndpointParam URI userRef, 
          @BinderParam(BindToXMLPayload.class) User user);
  
@@ -85,7 +84,6 @@ public interface UserAsyncClient {
    @DELETE
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> deleteUser(@EndpointParam URI userRef);
  
    /**
@@ -95,6 +93,5 @@ public interface UserAsyncClient {
    @Path("/action/unlock")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> unlockUser(@EndpointParam URI userRef);
 }

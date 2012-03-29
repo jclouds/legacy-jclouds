@@ -18,7 +18,14 @@
  */
 package org.jclouds.cloudstack.handlers;
 
-import com.google.inject.Guice;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reportMatcher;
+import static org.easymock.EasyMock.verify;
+
+import java.net.URI;
+
 import org.easymock.IArgumentMatcher;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
@@ -29,13 +36,7 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.reportMatcher;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole

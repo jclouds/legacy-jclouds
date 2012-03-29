@@ -30,8 +30,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -425,6 +425,10 @@ public abstract class BaseRestClientExpectTest<S> {
    }
 
    public S requestsSendResponses(final Map<HttpRequest, HttpResponse> requestToResponse, Module module) {
+      return requestsSendResponses(requestToResponse, module, setupProperties());
+   }
+   
+   public S requestsSendResponses(final Map<HttpRequest, HttpResponse> requestToResponse, Module module, Properties props) {
       return createClient(new Function<HttpRequest, HttpResponse>() {
          ImmutableBiMap<HttpRequest, HttpResponse> bimap = ImmutableBiMap.copyOf(requestToResponse);
 
@@ -458,7 +462,7 @@ public abstract class BaseRestClientExpectTest<S> {
 
             return response;
          }
-      }, module);
+      }, module, props);
    }
 
    public String renderRequest(HttpRequest request) {
@@ -489,7 +493,6 @@ public abstract class BaseRestClientExpectTest<S> {
 
    public S createClient(Function<HttpRequest, HttpResponse> fn, Module module) {
       return createClient(fn, module, setupProperties());
-
    }
 
    public S createClient(Function<HttpRequest, HttpResponse> fn, Properties props) {

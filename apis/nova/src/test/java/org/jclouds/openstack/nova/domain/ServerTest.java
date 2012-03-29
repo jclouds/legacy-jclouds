@@ -18,9 +18,9 @@
  */
 package org.jclouds.openstack.nova.domain;
 
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
 
 /**
  * Tests behavior of {@code CreateImageBinder}

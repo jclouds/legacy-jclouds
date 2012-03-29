@@ -34,6 +34,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;
@@ -46,13 +47,15 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "SliceToNodeMetadataTest")
 public class SliceToNodeMetadataTest {
    Location provider = new LocationBuilder().scope(LocationScope.ZONE).id("dallas").description("description").build();
+   GroupNamingConvention.Factory namingConvention = Guice.createInjector().getInstance(GroupNamingConvention.Factory.class);
 
    @Test
    public void testApplyWhereImageAndHardwareNotFound() {
@@ -63,7 +66,7 @@ public class SliceToNodeMetadataTest {
 
       SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
-               .<Set<? extends Hardware>> ofInstance(hardwares));
+               .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(slice);
 
@@ -83,7 +86,7 @@ public class SliceToNodeMetadataTest {
 
       SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
-               .<Set<? extends Hardware>> ofInstance(hardwares));
+               .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(slice);
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
@@ -104,7 +107,7 @@ public class SliceToNodeMetadataTest {
 
       SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
-               .<Set<? extends Hardware>> ofInstance(hardwares));
+               .<Set<? extends Hardware>> ofInstance(hardwares), namingConvention);
 
       NodeMetadata metadata = parser.apply(slice);
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(

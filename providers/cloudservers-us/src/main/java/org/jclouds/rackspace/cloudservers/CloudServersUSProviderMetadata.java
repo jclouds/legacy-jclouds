@@ -18,12 +18,12 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.cloudservers.CloudServersProviderMetadata;
+
+import com.google.common.collect.ImmutableSet;
 
 
 /**

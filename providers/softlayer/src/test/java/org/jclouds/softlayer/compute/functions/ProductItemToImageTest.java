@@ -18,7 +18,19 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.softlayer.compute.functions.ProductItemToImage.imageId;
+import static org.jclouds.softlayer.compute.functions.ProductItemToImage.osBits;
+import static org.jclouds.softlayer.compute.functions.ProductItemToImage.osFamily;
+import static org.jclouds.softlayer.compute.functions.ProductItemToImage.osVersion;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
@@ -26,12 +38,7 @@ import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import static org.jclouds.softlayer.compute.functions.ProductItemToImage.*;
-import static org.testng.AssertJUnit.*;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests {@code ProductItemToImage}

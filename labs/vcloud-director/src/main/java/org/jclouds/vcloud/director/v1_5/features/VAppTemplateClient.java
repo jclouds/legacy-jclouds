@@ -26,7 +26,6 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
@@ -39,7 +38,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 
 /**
- * Provides synchronous access to {@link org.jclouds.vcloud.director.v1_5.domain.VAppTemplate} objects.
+ * Provides synchronous access to {@link VAppTemplate} objects.
  *
  * @author Adam Lowe
  * @see org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient
@@ -49,15 +48,24 @@ public interface VAppTemplateClient {
 
    /**
     * Retrieves a vApp template (can be used also to retrieve a VM from a vApp Template).
-    * The vApp could be in one of these statues: FAILED_CREATION(-1) - Transient entity state, 
-    * e.g., model object is created but the corresponding VC backing does not exist yet. This 
-    * is further sub-categorized in the respective entities. UNRESOLVED(0) - Entity is whole, 
-    * e.g., VM creation is complete and all the required model objects and VC backings are created. 
-    * RESOLVED(1) - Entity is resolved. UNKNOWN(6) - Entity state could not be retrieved from 
-    * the inventory, e.g., VM power state is null. POWERED_OFF(8) - All VMs of the vApp template 
-    * are powered off. MIXED(10) - vApp template status is set to MIXED when the VMs in the 
-    * vApp are in different power states.
     *
+    * The vApp could be in one of these statues:
+    * <ul>
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION} -
+    * Transient entity state, e.g., model object is created but the corresponding VC backing
+    * does not exist yet. This is further sub-categorized in the respective entities.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED} -
+    * Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are created. 
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED} -
+    * Entity is resolved.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN} -
+    * Entity state could not be retrieved from the inventory, e.g., VM power state is null.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_OFF} -
+    * All VMs of the vApp template 
+    * are powered off.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#MIXED} -
+    * vApp template status is set to MIXED when the VMs in the vApp are in different power states.
+    * </ul>
     * <pre>
     * GET /vAppTemplate/{id}
     * </pre>
@@ -236,17 +244,7 @@ public interface VAppTemplateClient {
    NetworkConfigSection getVAppTemplateNetworkConfigSection(URI templateUri);
 
    /**
-    * Modifies the network config section of a vApp. There are three general types of vApp 
-    * networks which could be configured from this section. They are specified by the element 
-    * value in /. isolated - this is a vApp network which is not connected to any external 
-    * organization network and is used only to connect VMs internally in a vApp. In this 
-    * network you could configure only its element of /. bridged - this is a vApp network 
-    * which is directly connected to an external organization network. In this network you 
-    * should configure only the element of /. In this case the element is inherit from the 
-    * parent network. natRouted - this is a vApp network which is NAT routed to an external 
-    * organization network. In this network you could configure the and also you should 
-    * specify and the element of /. When the network is NAT routed you could specify DHCP, 
-    * firewall rules and NAT rules, for fine-grained configuration of your network.
+    * Modifies the network config section of a vApp.
     *
     * <pre>
     * PUT /vAppTemplate/{id}/networkConfigSection

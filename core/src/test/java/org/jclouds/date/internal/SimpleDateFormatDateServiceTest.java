@@ -18,11 +18,11 @@
  */
 package org.jclouds.date.internal;
 
-import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.Date;
 
-import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.Test;
 
 @Test(groups = "unit", testName = "SimpleDateFormatDateServiceTest")
 public class SimpleDateFormatDateServiceTest {

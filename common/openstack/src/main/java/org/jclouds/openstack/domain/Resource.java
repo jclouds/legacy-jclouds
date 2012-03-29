@@ -28,6 +28,7 @@ import java.util.Set;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -148,7 +149,11 @@ public class Resource implements Comparable<Resource> {
 
    @Override
    public String toString() {
-      return toStringHelper("").add("id", getId()).add("name", name).add("links", links).toString();
+      return string().toString();
+   }
+
+   protected ToStringHelper string() {
+      return toStringHelper("").add("id", getId()).add("name", name).add("links", links);
    }
 
    @Override

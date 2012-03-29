@@ -18,6 +18,9 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.Cluster;
 import org.jclouds.cloudstack.domain.Host;
 import org.jclouds.cloudstack.options.AddClusterOptions;
@@ -29,9 +32,6 @@ import org.jclouds.cloudstack.options.ListHostsOptions;
 import org.jclouds.cloudstack.options.UpdateClusterOptions;
 import org.jclouds.cloudstack.options.UpdateHostOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack host features.

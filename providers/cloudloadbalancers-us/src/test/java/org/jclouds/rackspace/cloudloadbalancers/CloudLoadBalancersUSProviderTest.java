@@ -20,7 +20,6 @@ package org.jclouds.rackspace.cloudloadbalancers;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
 import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.rackspace.cloudloadbalancers.CloudLoadBalancersUSProviderMetadata;
 import org.testng.annotations.Test;
 
 /**

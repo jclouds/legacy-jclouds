@@ -21,11 +21,11 @@ package org.jclouds.s3;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
-import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
+import org.jclouds.s3.config.S3RestClientModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;

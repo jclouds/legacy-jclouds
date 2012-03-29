@@ -18,11 +18,6 @@
  */
 package org.jclouds.cloudstack.options;
 
-import com.google.common.collect.ImmutableSet;
-import org.jclouds.cloudstack.domain.StorageType;
-import org.jclouds.cloudstack.domain.SystemVmType;
-import org.testng.annotations.Test;
-
 import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.highlyAvailable;
 import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.hostTags;
 import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.isSystem;
@@ -32,6 +27,12 @@ import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builde
 import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.systemVmType;
 import static org.jclouds.cloudstack.options.CreateServiceOfferingOptions.Builder.tags;
 import static org.testng.Assert.assertEquals;
+
+import org.jclouds.cloudstack.domain.StorageType;
+import org.jclouds.cloudstack.domain.SystemVmType;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code CreateServiceOfferingOptions}

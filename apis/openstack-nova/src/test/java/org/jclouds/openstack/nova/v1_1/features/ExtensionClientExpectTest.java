@@ -55,7 +55,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse listExtensionsResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_list.json")).build();
 
-      NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
       assertEquals(clientWhenExtensionsExist.getConfiguredZones(), ImmutableSet.of("az-1.region-a.geo-1"));
@@ -75,7 +75,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
 
       HttpResponse listExtensionsResponse = HttpResponse.builder().statusCode(404).build();
 
-      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, listExtensions, listExtensionsResponse);
 
       assertTrue(clientWhenNoServersExist.getExtensionClientForZone("az-1.region-a.geo-1").listExtensions().isEmpty());
@@ -95,7 +95,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse getExtensionResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_details.json")).build();
 
-      NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenExtensionsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
       assertEquals(clientWhenExtensionsExist.getExtensionClientForZone("az-1.region-a.geo-1").getExtensionByAlias("RS-PIE")
@@ -114,7 +114,7 @@ public class ExtensionClientExpectTest extends BaseNovaClientExpectTest {
       HttpResponse getExtensionResponse = HttpResponse.builder().statusCode(404)
             .payload(payloadFromResource("/extension_details.json")).build();
 
-      NovaClient clientWhenNoExtensionsExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
+      NovaClient clientWhenNoExtensionsExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
             responseWithKeystoneAccess, getExtension, getExtensionResponse);
 
       assertNull(clientWhenNoExtensionsExist.getExtensionClientForZone("az-1.region-a.geo-1").getExtensionByAlias("RS-PIE"));

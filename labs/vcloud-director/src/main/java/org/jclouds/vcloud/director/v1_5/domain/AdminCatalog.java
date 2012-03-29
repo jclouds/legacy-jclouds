@@ -45,6 +45,7 @@ public class AdminCatalog extends CatalogType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromAdminCatalog(this);
    }
@@ -54,6 +55,7 @@ public class AdminCatalog extends CatalogType {
    
    public static abstract class Builder<B extends Builder<B>> extends CatalogType.Builder<B> {
       
+      @Override
       public AdminCatalog build() {
          return new AdminCatalog(this);
       }

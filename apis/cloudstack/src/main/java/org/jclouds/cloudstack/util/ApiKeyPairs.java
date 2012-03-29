@@ -18,8 +18,13 @@
  */
 package org.jclouds.cloudstack.util;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.net.URI;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.Set;
+
 import org.jclouds.Constants;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.domain.Account;
@@ -29,12 +34,8 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.rest.RestContextFactory;
 
-import java.net.URI;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * @author Andrei Savu

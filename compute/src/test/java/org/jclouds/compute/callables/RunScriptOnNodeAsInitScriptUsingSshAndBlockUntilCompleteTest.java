@@ -30,12 +30,12 @@ import java.util.List;
 
 import org.easymock.IAnswer;
 import org.jclouds.Constants;
+import org.jclouds.compute.config.ComputeServiceProperties;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -72,7 +72,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
                protected void configure() {
                   bindConstant().annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).to(1);
                   bindConstant().annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).to(1);
-                  bindConstant().annotatedWith(Names.named(ComputeServiceConstants.PROPERTY_TIMEOUT_SCRIPT_COMPLETE))
+                  bindConstant().annotatedWith(Names.named(ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE))
                            .to(100);
                   install(new FactoryModuleBuilder()
                            .build(BlockUntilInitScriptStatusIsZeroThenReturnOutput.Factory.class));
@@ -84,7 +84,7 @@ public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilCompleteTest {
 
       @Override
       protected void configure() {
-         bindConstant().annotatedWith(Names.named(ComputeServiceConstants.PROPERTY_TIMEOUT_SCRIPT_COMPLETE)).to(100l);
+         bindConstant().annotatedWith(Names.named(ComputeServiceProperties.TIMEOUT_SCRIPT_COMPLETE)).to(100l);
       }
    }).getInstance(Timeouts.class);
 

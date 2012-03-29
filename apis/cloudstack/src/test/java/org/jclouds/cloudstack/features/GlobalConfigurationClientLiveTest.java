@@ -18,20 +18,22 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.jclouds.cloudstack.options.ListConfigurationEntriesOptions.Builder.name;
+import static org.testng.Assert.assertEquals;
+
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
 import org.jclouds.cloudstack.domain.ConfigurationEntry;
 import org.testng.annotations.Test;
 import org.testng.collections.Sets;
 
-import javax.annotation.Nullable;
-import java.util.Set;
-
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static org.jclouds.cloudstack.options.ListConfigurationEntriesOptions.Builder.name;
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code GlobalConfigurationClient}

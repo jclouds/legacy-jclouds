@@ -18,8 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.AllocationState;
 import org.jclouds.cloudstack.domain.Cluster;
@@ -34,15 +41,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
-import java.util.TimeZone;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Test the CloudStack GlobalHostClient

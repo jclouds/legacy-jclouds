@@ -34,7 +34,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.google.common.collect.ForwardingSet;
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.compute.config.ClusterCompute;
 import org.jclouds.compute.domain.Image;
@@ -49,6 +48,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ForwardingSet;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;

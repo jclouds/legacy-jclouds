@@ -19,7 +19,6 @@
 package org.jclouds.deltacloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -37,6 +36,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.domain.Location;
@@ -67,6 +67,7 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
    protected final Supplier<Set<? extends Location>> locations;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
+   protected final GroupNamingConvention nodeNamingConvention;
 
    private static class FindImageForInstance implements Predicate<Image> {
       private final Instance instance;
@@ -136,7 +137,9 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
 
    @Inject
    InstanceToNodeMetadata(@Memoized Supplier<Set<? extends Location>> locations,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.images = checkNotNull(images, "images");
       this.locations = checkNotNull(locations, "locations");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -148,7 +151,7 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       builder.ids(from.getHref().toASCIIString());
       builder.name(from.getName());
       builder.location(parseLocation(from));
-      builder.group(parseGroupFromName(from.getName()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
       builder.imageId(from.getImage().toASCIIString());
       builder.operatingSystem(parseOperatingSystem(from));
       builder.hardware(parseHardware(from));

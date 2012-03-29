@@ -20,8 +20,8 @@ package org.jclouds.compute.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;

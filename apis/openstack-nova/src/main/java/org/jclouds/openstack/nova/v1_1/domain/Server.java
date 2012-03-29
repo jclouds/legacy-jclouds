@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
-import static com.google.common.base.Objects.toStringHelper;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
@@ -35,10 +34,10 @@ import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Multimaps2;
 
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -562,15 +561,11 @@ public class Server extends Resource {
    // hashCode/equals from super is ok
 
    @Override
-   public String toString() {
-      return string().toString();
-   }
-
    protected ToStringHelper string() {
-      return toStringHelper("").add("id", id).add("uuid", uuid).add("name", name).add("tenantId", tenantId).add(
+      return super.string().add("uuid", uuid).add("tenantId", tenantId).add(
                "userId", userId).add("hostId", getHostId()).add("updated", updated).add("created", created).add(
                "accessIPv4", getAccessIPv4()).add("accessIPv6", getAccessIPv6()).add("status", status).add(
                "configDrive", getConfigDrive()).add("image", image).add("flavor", flavor).add("metadata", metadata)
-               .add("links", links).add("addresses", getAddresses()).add("adminPass", adminPass);
+               .add("addresses", getAddresses()).add("adminPass", adminPass);
    }
 }

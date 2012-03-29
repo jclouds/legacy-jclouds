@@ -27,7 +27,6 @@ import java.util.Map;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
-import org.jclouds.trmk.vcloud_0_8.xml.OrgListHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

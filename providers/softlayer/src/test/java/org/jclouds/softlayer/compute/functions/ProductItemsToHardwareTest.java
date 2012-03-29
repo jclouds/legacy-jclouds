@@ -18,10 +18,13 @@
  */
 package org.jclouds.softlayer.compute.functions;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import static com.google.inject.name.Names.bindProperties;
+import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.hardwareId;
+import static org.testng.AssertJUnit.assertEquals;
+
+import java.util.List;
+import java.util.Properties;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
@@ -32,12 +35,10 @@ import org.jclouds.softlayer.domain.ProductItemPrice;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.List;
-import java.util.Properties;
-
-import static com.google.inject.name.Names.bindProperties;
-import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.hardwareId;
-import static org.testng.AssertJUnit.assertEquals;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 
 /**
  * Tests {@code ProductItemsToHardware}

@@ -25,4 +25,6 @@ package org.jclouds.opsource.servers;
  */
 public interface OpSourceNameSpaces {
    public static final String DIRECTORY = "http://oec.api.opsource.net/schemas/directory";
+   public static final String DATACENTER = "http://oec.api.opsource.net/schemas/datacenter";
+   public static final String SERVER = "http://oec.api.opsource.net/schemas/server";
 }

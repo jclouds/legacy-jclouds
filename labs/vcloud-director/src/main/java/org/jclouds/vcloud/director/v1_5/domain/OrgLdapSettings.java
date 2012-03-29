@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -24,25 +23,15 @@ import static com.google.common.base.Objects.equal;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-
-
 /**
- * 
- *                 Base settings for LDAP connection
- *             
- * 
- * <p>Java class for OrgLdapSettings complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * Base settings for LDAP connection
+ *
  * <pre>
  * &lt;complexType name="OrgLdapSettings">
  *   &lt;complexContent>
@@ -57,10 +46,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "OrgLdapSettings")
 @XmlType(propOrder = {
     "ldapMode",
@@ -68,14 +54,15 @@ import com.google.common.base.Objects.ToStringHelper;
     "customOrgLdapSettings"
 })
 public class OrgLdapSettings extends ResourceType {
+
    public static final class LdapMode {
       public static final String NONE = "NONE";
       public static final String SYSTEM = "SYSTEM";
       public static final String CUSTOM = "CUSTOM";
 
       /**
-       * All acceptable {@link OrgLdapSettings#getLdapMode()} values.
-       * <p/>
+       * All acceptable {@link #getLdapMode()} values.
+       *
        * This list must be updated whenever a new mode is added.
        */
       public static final List<String> ALL = Arrays.asList(
@@ -87,6 +74,7 @@ public class OrgLdapSettings extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromOrgLdapSettings(this);
    }
@@ -124,6 +112,7 @@ public class OrgLdapSettings extends ResourceType {
          return self();
       }
 
+      @Override
       public OrgLdapSettings build() {
          return new OrgLdapSettings(this);
       }

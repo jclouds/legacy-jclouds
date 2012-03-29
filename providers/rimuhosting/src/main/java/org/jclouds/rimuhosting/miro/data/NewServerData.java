@@ -20,11 +20,11 @@ package org.jclouds.rimuhosting.miro.data;
 
 import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.jclouds.rimuhosting.miro.domain.MetaData;
-import org.jclouds.rimuhosting.miro.domain.ServerParameters;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
+import org.jclouds.rimuhosting.miro.domain.ServerParameters;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * This structure defines the VPS to be setup.

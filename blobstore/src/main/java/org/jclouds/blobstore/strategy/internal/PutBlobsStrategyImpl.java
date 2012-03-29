@@ -22,6 +22,7 @@ import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -36,7 +37,6 @@ import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Maps;
-import java.util.concurrent.Future;
 import com.google.inject.Inject;
 
 /**

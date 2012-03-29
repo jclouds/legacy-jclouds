@@ -18,11 +18,11 @@
  */
 package org.jclouds.openstack.nova.domain;
 
-import com.google.common.collect.Maps;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * An image is a collection of files used to create or rebuild a server. Rackspace provides a number

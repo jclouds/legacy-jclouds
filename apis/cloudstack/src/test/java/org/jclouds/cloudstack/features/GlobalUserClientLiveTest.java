@@ -18,8 +18,15 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
+import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+import java.util.Properties;
+import java.util.Set;
+
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
@@ -32,14 +39,8 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
-import java.util.Properties;
-import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.cloudstack.features.GlobalAccountClientLiveTest.createTestAccount;
-import static org.jclouds.cloudstack.options.UpdateUserOptions.Builder.userName;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code GlobaUserClient}

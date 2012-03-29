@@ -21,9 +21,11 @@ package org.jclouds.opsource.servers.features;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.opsource.servers.domain.Account;
+import org.jclouds.opsource.servers.domain.DataCentersList;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 
@@ -44,5 +46,14 @@ public interface AccountAsyncClient {
    @Consumes
    @JAXBResponseParser
    ListenableFuture<Account> getMyAccount();
+   
+   /**
+    * @see AccountClient#getDataCentersWithLimits()
+    */
+   @GET
+   @Path("/{org-id}/datacenterWithLimits")
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<DataCentersList> getDataCentersWithLimits(@PathParam("org-id") String orgId);
 
 }

@@ -21,10 +21,9 @@ package org.jclouds.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.javax.annotation.Nullable;
-
-import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.domain.KeyPair;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * Provides access to EC2 via their REST API.

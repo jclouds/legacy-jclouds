@@ -24,12 +24,12 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.s3.domain.BucketLogging;
 import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.Grant;
 import org.jclouds.s3.domain.AccessControlList.Grantee;
 import org.jclouds.s3.domain.AccessControlList.GroupGrantee;
+import org.jclouds.s3.domain.BucketLogging;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;

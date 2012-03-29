@@ -19,6 +19,8 @@
 package org.jclouds.openstack.nova.v1_1.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.blockUntilRunning;
+import static org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions.Builder.keyPairName;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -26,6 +28,7 @@ import static org.testng.Assert.assertTrue;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -36,9 +39,13 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaComputeServiceExpectTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests the compute service abstraction of the nova client.
@@ -50,10 +57,10 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
 
    public void testListLocationsWhenResponseIs2xx() throws Exception {
 
-      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
-               keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
-               extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
-               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
+      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
+            .put(extensionsOfNovaRequest, extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse)
+            .put(listServers, listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
 
       ComputeService clientWhenServersExist = requestsSendResponses(requestResponseMap);
 
@@ -65,39 +72,44 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       assertNotNull(clientWhenServersExist.listNodes());
       assertEquals(clientWhenServersExist.listNodes().size(), 1);
       assertEquals(clientWhenServersExist.listNodes().iterator().next().getId(),
-               "az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f000004d2");
+            "az-1.region-a.geo-1/52415800-8b69-11e0-9b19-734f000004d2");
       assertEquals(clientWhenServersExist.listNodes().iterator().next().getName(), "sample-server");
    }
 
+   Map<HttpRequest, HttpResponse> defaultTemplateTryStack = ImmutableMap
+         .<HttpRequest, HttpResponse> builder()
+         .put(keystoneAuthWithUsernameAndPassword,
+               HttpResponse
+                     .builder()
+                     .statusCode(200)
+                     .message("HTTP/1.1 200")
+                     .payload(
+                           payloadFromResourceWithContentType("/keystoneAuthResponse_trystack.json", "application/json"))
+                     .build())
+         .put(extensionsOfNovaRequest.toBuilder()
+               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/extensions")).build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/extension_list_trystack.json"))
+                     .build())
+         .put(listImagesDetail.toBuilder()
+               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/images/detail")).build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/image_list_detail_trystack.json"))
+                     .build())
+         .put(listServers.toBuilder()
+               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers/detail")).build(),
+               listServersResponse)
+         .put(listFlavorsDetail.toBuilder()
+               .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/flavors/detail")).build(),
+               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/flavor_list_detail_trystack.json"))
+                     .build()).build();
+
    public void testDefaultTemplateTryStack() throws Exception {
 
-      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
-               keystoneAuthWithAccessKeyAndSecretKey,
-               HttpResponse.builder().statusCode(200).message("HTTP/1.1 200").payload(
-                        payloadFromResourceWithContentType("/keystoneAuthResponse_trystack.json", "application/json"))
-                        .build()).put(
-               extensionsOfNovaRequest.toBuilder().endpoint(
-                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/extensions")).build(),
-               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/extension_list_trystack.json"))
-                        .build()).put(
-               listImagesDetail.toBuilder().endpoint(
-                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/images/detail")).build(),
-               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/image_list_detail_trystack.json"))
-                        .build()).put(
-               listServers.toBuilder().endpoint(
-                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers/detail")).build(),
-               listServersResponse).put(
-               listFlavorsDetail.toBuilder().endpoint(
-                        URI.create("https://nova-api.trystack.org:9774/v1.1/3456/flavors/detail")).build(),
-               HttpResponse.builder().statusCode(200).payload(payloadFromResource("/flavor_list_detail_trystack.json"))
-                        .build()).build();
-
-      ComputeService clientForTryStack = requestsSendResponses(requestResponseMap);
+      ComputeService clientForTryStack = requestsSendResponses(defaultTemplateTryStack);
 
       Template defaultTemplate = clientForTryStack.templateBuilder().imageId("RegionOne/15").build();
       checkTemplate(defaultTemplate);
       checkTemplate(clientForTryStack.templateBuilder().fromTemplate(defaultTemplate).build());
-   
+
    }
 
    private void checkTemplate(Template defaultTemplate) {
@@ -110,30 +122,194 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    }
 
    public void testListServersWhenReponseIs404IsEmpty() throws Exception {
-      HttpRequest listServers = HttpRequest.builder().method("GET").endpoint(
-               URI.create("https://compute.north.host/v1.1/3456/servers/detail")).headers(
-               ImmutableMultimap.<String, String> builder().put("Accept", "application/json").put("X-Auth-Token",
-                        authToken).build()).build();
+      HttpRequest listServers = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/detail"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse listServersResponse = HttpResponse.builder().statusCode(404).build();
 
-      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithAccessKeyAndSecretKey,
-               responseWithKeystoneAccess, listServers, listServersResponse);
+      ComputeService clientWhenNoServersExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+            responseWithKeystoneAccess, listServers, listServersResponse);
 
       assertTrue(clientWhenNoServersExist.listNodes().isEmpty());
    }
 
-   @Test(enabled = false)
-   public void testCreateNodeSetsCredential() throws Exception {
+   HttpRequest listSecurityGroups = HttpRequest
+         .builder()
+         .method("GET")
+         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                     .put("X-Auth-Token", authToken).build()).build();
 
-      Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
-               keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess).put(extensionsOfNovaRequest,
-               extensionsOfNovaResponse).put(listImagesDetail, listImagesDetailResponse).put(listServers,
-               listServersResponse).put(listFlavorsDetail, listFlavorsDetailResponse).build();
+   HttpResponse notFound = HttpResponse.builder().statusCode(404).build();
 
-      ComputeService clientThatCreatesNode = requestsSendResponses(requestResponseMap);
+   HttpRequest createSecurityGroupWithPrefixOnGroup = HttpRequest
+         .builder()
+         .method("POST")
+         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                     .put("X-Auth-Token", authToken).build())
+         .payload(
+               payloadFromStringWithContentType(
+                     "{\"security_group\":{\"name\":\"jclouds-test\",\"description\":\"jclouds-test\"}}",
+                     "application/json")).build();
 
-      NodeMetadata node = Iterables.getOnlyElement(clientThatCreatesNode.createNodesInGroup("test", 1));
-      assertEquals(node.getCredentials().getPassword(), "foo");
+   HttpResponse securityGroupCreated = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/securitygroup_created.json")).build();
+
+   HttpRequest createSecurityGroupRuleForDefaultPort22 = HttpRequest
+         .builder()
+         .method("POST")
+         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-group-rules"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                     .put("X-Auth-Token", authToken).build())
+         .payload(
+               payloadFromStringWithContentType(
+                     "{\"security_group_rule\":{\"parent_group_id\":\"160\",\"cidr\":\"0.0.0.0/0\",\"ip_protocol\":\"tcp\",\"from_port\":\"22\",\"to_port\":\"22\"}}",
+                     "application/json")).build();
+
+   HttpResponse securityGroupRuleCreated = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/securitygrouprule_created.json")).build();
+
+   HttpRequest getSecurityGroup = HttpRequest
+         .builder()
+         .method("GET")
+         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-security-groups/160"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                     .put("X-Auth-Token", authToken).build()).build();
+
+   HttpResponse securityGroupWithPort22 = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/securitygroup_details_port22.json")).build();
+   
+   HttpRequest createKeyPair = HttpRequest
+         .builder()
+         .method("POST")
+         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/os-keypairs"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                     .put("X-Auth-Token", authToken).build())
+         .payload(
+               payloadFromStringWithContentType(
+                     "{\"keypair\":{\"name\":\"jclouds-test-0\"}}",
+                     "application/json")).build();
+
+   HttpResponse keyPairWithPrivateKey = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/keypair_created_computeservice.json")).build();
+
+   @Test
+   public void testCreateNodeWithGeneratedKeyPair() throws Exception {
+      Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .putAll(defaultTemplateTryStack);
+      requestResponseMap.put(listSecurityGroups, notFound);
+
+      requestResponseMap.put(createSecurityGroupWithPrefixOnGroup, securityGroupCreated);
+
+      requestResponseMap.put(createSecurityGroupRuleForDefaultPort22, securityGroupRuleCreated);
+
+      requestResponseMap.put(getSecurityGroup, securityGroupWithPort22);
+
+      requestResponseMap.put(createKeyPair, keyPairWithPrivateKey);
+
+      HttpRequest createServerWithGeneratedKeyPair = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build())
+            .payload(
+                  payloadFromStringWithContentType(
+                        "{\"server\":{\"name\":\"test-1\",\"imageRef\":\"14\",\"flavorRef\":\"1\",\"key_name\":\"jclouds-test-0\",\"security_groups\":[{\"name\":\"jclouds-test\"}]}}",
+                        "application/json")).build();
+
+      HttpResponse createdServer = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+            .payload(payloadFromResourceWithContentType("/new_server.json", "application/json; charset=UTF-8")).build();
+
+      requestResponseMap.put(createServerWithGeneratedKeyPair, createdServer);
+
+      ComputeService clientThatCreatesNode = requestsSendResponses(requestResponseMap.build(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            // predicatable node names
+            final AtomicInteger suffix = new AtomicInteger();
+            bind(new TypeLiteral<Supplier<String>>() {
+            }).toInstance(new Supplier<String>() {
+
+               @Override
+               public String get() {
+                  return suffix.getAndIncrement() + "";
+               }
+
+            });
+         }
+
+      });
+
+      NodeMetadata node = Iterables.getOnlyElement(clientThatCreatesNode.createNodesInGroup("test", 1,
+            blockUntilRunning(false).generateKeyPair(true)));
+      assertNotNull(node.getCredentials().getPrivateKey());
+   }
+
+   @Test
+   public void testCreateNodeWhileUserSpecifiesKeyPair() throws Exception {
+      Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
+            .putAll(defaultTemplateTryStack);
+      requestResponseMap.put(listSecurityGroups, notFound);
+
+      requestResponseMap.put(createSecurityGroupWithPrefixOnGroup, securityGroupCreated);
+
+      requestResponseMap.put(createSecurityGroupRuleForDefaultPort22, securityGroupRuleCreated);
+
+      requestResponseMap.put(getSecurityGroup, securityGroupWithPort22);
+
+      HttpRequest createServerWithSuppliedKeyPair = HttpRequest
+            .builder()
+            .method("POST")
+            .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build())
+            .payload(
+                  payloadFromStringWithContentType(
+                        "{\"server\":{\"name\":\"test-0\",\"imageRef\":\"14\",\"flavorRef\":\"1\",\"key_name\":\"fooPair\",\"security_groups\":[{\"name\":\"jclouds-test\"}]}}",
+                        "application/json")).build();
+
+      HttpResponse createdServer = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
+            .payload(payloadFromResourceWithContentType("/new_server.json", "application/json; charset=UTF-8")).build();
+
+      requestResponseMap.put(createServerWithSuppliedKeyPair, createdServer);
+
+      ComputeService clientThatCreatesNode = requestsSendResponses(requestResponseMap.build(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            // predicatable node names
+            final AtomicInteger suffix = new AtomicInteger();
+            bind(new TypeLiteral<Supplier<String>>() {
+            }).toInstance(new Supplier<String>() {
+
+               @Override
+               public String get() {
+                  return suffix.getAndIncrement() + "";
+               }
+
+            });
+         }
+
+      });
+
+      NodeMetadata node = Iterables.getOnlyElement(clientThatCreatesNode.createNodesInGroup("test", 1,
+            keyPairName("fooPair").blockUntilRunning(false)));
+      // we don't have access to this private key
+      assertEquals(node.getCredentials().getPrivateKey(), null);
    }
 }

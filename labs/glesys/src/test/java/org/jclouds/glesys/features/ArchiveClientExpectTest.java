@@ -18,8 +18,14 @@
  */
 package org.jclouds.glesys.features;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+import java.util.List;
+
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Archive;
 import org.jclouds.glesys.domain.ArchiveAllowedArguments;
@@ -31,11 +37,8 @@ import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-import java.util.List;
-
-import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
-import static org.testng.Assert.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Tests parsing of {@code ArchiveAsyncClient}

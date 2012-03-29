@@ -18,9 +18,9 @@
  */
 package org.jclouds.gogrid.domain;
 
-import com.google.common.base.CaseFormat;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.CaseFormat;
 
 /**
  * @author Oleksiy Yarmula

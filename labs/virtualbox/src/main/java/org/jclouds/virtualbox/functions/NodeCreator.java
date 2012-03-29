@@ -37,7 +37,6 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 import org.jclouds.virtualbox.domain.CloneSpec;
-import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.Master;
 import org.jclouds.virtualbox.domain.NetworkAdapter;
 import org.jclouds.virtualbox.domain.NetworkInterfaceCard;

@@ -21,8 +21,8 @@ package org.jclouds.opsource.servers;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.opsource.servers.config.OpSourceServersRestClientModule;
+import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
 

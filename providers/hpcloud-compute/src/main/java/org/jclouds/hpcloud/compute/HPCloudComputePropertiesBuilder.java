@@ -20,9 +20,10 @@ package org.jclouds.hpcloud.compute;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_TERMINATED;
-import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS;
-import static org.jclouds.openstack.nova.v1_1.reference.NovaConstants.PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_TERMINATED;
+import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.CREDENTIAL_TYPE;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_ALLOCATE_FLOATING_IPS;
+import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERATE_KEYPAIRS;
 
 import java.util.Properties;
 
@@ -39,13 +40,13 @@ public class HPCloudComputePropertiesBuilder extends NovaPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV");
       properties.setProperty(PROPERTY_ENDPOINT, "https://region-a.geo-1.identity.hpcloudsvc.com:35357");
-      properties.setProperty(PROPERTY_NOVA_AUTO_ALLOCATE_FLOATING_IPS, "true");
-      // auth fail can happen while cloud-init applies keypair updates
-      properties.setProperty("jclouds.ssh.max-retries", "7");
-      properties.setProperty("jclouds.ssh.retry-auth", "true");
-      properties.setProperty(PROPERTY_NOVA_AUTO_GENERATE_KEYPAIRS, "true");
+
       // deallocating ip addresses can take a while
-      properties.setProperty(PROPERTY_TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
+      properties.setProperty(TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
+
+      properties.setProperty(CREDENTIAL_TYPE, "apiAccessKeyCredentials");
+      properties.setProperty(AUTO_ALLOCATE_FLOATING_IPS, "true");
+      properties.setProperty(AUTO_GENERATE_KEYPAIRS, "true");
       return properties;
    }
 

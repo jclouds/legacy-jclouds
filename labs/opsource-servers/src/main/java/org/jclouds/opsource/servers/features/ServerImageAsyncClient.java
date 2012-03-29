@@ -16,29 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.predicates;
+package org.jclouds.opsource.servers.features;
 
-import javax.inject.Singleton;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.opsource.servers.domain.ServerImagesList;
+import org.jclouds.rest.annotations.JAXBResponseParser;
+import org.jclouds.rest.annotations.RequestFilters;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Inject;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * 
- * Tests to see if a node is running.
- * 
- * @author Adrian Cole
- * @see AtomicNodeRunning
+ * @see ServerImageClient
+ * @author Kedar Dave
  */
-@Singleton
-@Deprecated
-public class NodeRunning extends NodePresentAndInIntendedState {
-
-   @Inject
-   public NodeRunning(GetNodeMetadataStrategy client) {
-      super(NodeState.RUNNING, ImmutableSet.of(NodeState.ERROR, NodeState.TERMINATED), client);
-   }
+@RequestFilters(BasicAuthentication.class)
+public interface ServerImageAsyncClient {
+	
+	/**
+	 * @see ServerImageClient#getServerImages()
+	 */
+	@GET
+	@Path("/base/image")
+	@Consumes
+	@JAXBResponseParser
+	ListenableFuture<ServerImagesList> getServerImages();
+	
 }

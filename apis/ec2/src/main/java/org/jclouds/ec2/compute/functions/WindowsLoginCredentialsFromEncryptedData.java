@@ -18,22 +18,24 @@
  */
 package org.jclouds.ec2.compute.functions;
 
-import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.inject.Singleton;
+import java.nio.charset.Charset;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.KeySpec;
+
+import javax.annotation.Nullable;
+import javax.crypto.Cipher;
+import javax.inject.Inject;
+
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.encryption.internal.Base64;
 
-import javax.annotation.Nullable;
-import javax.crypto.Cipher;
-import javax.inject.Inject;
-import java.nio.charset.Charset;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.spec.KeySpec;
+import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.inject.Singleton;
 
 /**
  * Given an encrypted Windows Administrator password and the decryption key, return a LoginCredentials instance.

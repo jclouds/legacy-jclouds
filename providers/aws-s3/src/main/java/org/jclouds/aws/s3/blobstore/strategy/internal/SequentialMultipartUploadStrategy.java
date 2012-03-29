@@ -20,7 +20,6 @@ package org.jclouds.aws.s3.blobstore.strategy.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-
 import java.util.SortedMap;
 
 import javax.annotation.Resource;

@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 
 import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.vcloud.domain.network.nat.NatPolicy;
 import org.jclouds.vcloud.domain.network.nat.NatRule;
 import org.jclouds.vcloud.domain.network.nat.NatType;

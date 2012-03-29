@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.Domain;
 import org.jclouds.cloudstack.options.ListDomainChildrenOptions;
 import org.jclouds.cloudstack.options.ListDomainsOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack Domain features available to Domain

@@ -16,28 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.predicates;
+package org.jclouds.opsource.servers.features;
 
-import javax.inject.Singleton;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-
-import com.google.inject.Inject;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.opsource.servers.domain.ServerImagesList;
 
 /**
+ * Provides synchronous access to ServerImage.
+ * <p/>
  * 
- * Tests to see if a node is suspended.
- * 
- * @author Adrian Cole
- * @see AtomicNodeSuspended
+ * @see ServerImageAsyncClient
+ * @author Kedar Dave
  */
-@Singleton
-@Deprecated
-public class NodeSuspended extends NodePresentAndInIntendedState {
-
-   @Inject
-   public NodeSuspended(GetNodeMetadataStrategy client) {
-      super(NodeState.SUSPENDED, client);
-   }
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+public interface ServerImageClient {
+	
+	/**
+	 * @see ServerImageAsyncClient#getServerImages() 
+	 */
+	ServerImagesList getServerImages();
+	
 }

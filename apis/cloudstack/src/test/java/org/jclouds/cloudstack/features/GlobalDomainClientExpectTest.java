@@ -18,21 +18,19 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
+import static org.jclouds.cloudstack.options.UpdateDomainOptions.Builder.name;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
+import java.net.URI;
+
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Domain;
-import org.jclouds.cloudstack.options.UpdateDomainOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
-import static org.jclouds.cloudstack.options.ListDomainChildrenOptions.Builder.parentDomainId;
-import static org.jclouds.cloudstack.options.UpdateDomainOptions.Builder.name;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Test the CloudStack GlobalDomainClient

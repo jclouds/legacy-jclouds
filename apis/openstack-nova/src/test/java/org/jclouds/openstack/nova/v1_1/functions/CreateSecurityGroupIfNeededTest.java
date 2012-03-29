@@ -34,9 +34,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
@@ -57,7 +57,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
 
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse>builder();
       
-      builder.put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess);
+      builder.put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess);
       builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
       int groupId = 2769;
 
@@ -135,7 +135,7 @@ public class CreateSecurityGroupIfNeededTest extends BaseNovaClientExpectTest {
 
       Builder<HttpRequest, HttpResponse> builder = ImmutableMap.<HttpRequest, HttpResponse>builder();
       
-      builder.put(keystoneAuthWithAccessKeyAndSecretKey, responseWithKeystoneAccess);
+      builder.put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess);
       builder.put(extensionsOfNovaRequest, extensionsOfNovaResponse);
 
       HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(400)

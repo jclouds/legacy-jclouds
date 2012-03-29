@@ -20,10 +20,9 @@ package org.jclouds.blobstore.domain;
 
 import java.net.URI;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 import com.google.inject.ImplementedBy;
 

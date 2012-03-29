@@ -18,18 +18,20 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.base.Predicate;
-import org.jclouds.cloudstack.domain.Domain;
-import org.testng.annotations.Test;
-
-import javax.annotation.Nullable;
-import java.util.Set;
-
 import static com.google.common.collect.Iterables.find;
 import static org.jclouds.cloudstack.options.ListDomainChildrenOptions.Builder.parentDomainId;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.jclouds.cloudstack.domain.Domain;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
 
 /**
  * Tests behavior of {@code DomainDomainClient}

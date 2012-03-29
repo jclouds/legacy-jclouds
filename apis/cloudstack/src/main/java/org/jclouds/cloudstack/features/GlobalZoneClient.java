@@ -18,13 +18,13 @@
  */
 package org.jclouds.cloudstack.features;
 
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.cloudstack.domain.NetworkType;
 import org.jclouds.cloudstack.domain.Zone;
 import org.jclouds.cloudstack.options.CreateZoneOptions;
 import org.jclouds.cloudstack.options.UpdateZoneOptions;
 import org.jclouds.concurrent.Timeout;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Provides synchronous access to CloudStack Zone features available to Global

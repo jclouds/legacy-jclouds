@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-@XmlSeeAlso( {OrgNetwork.class, ExternalNetwork.class} )
+@XmlSeeAlso({ OrgNetwork.class, ExternalNetwork.class })
 public abstract class Network extends EntityType {
    public static final class FenceMode {
 

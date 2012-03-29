@@ -25,7 +25,6 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static org.jclouds.concurrent.Futures.compose;
 
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -44,6 +43,7 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.CreateNodesInGroupThenAddToSet;
@@ -94,7 +94,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
    protected Logger logger = Logger.NULL;
    protected final CreateNodeWithGroupEncodedIntoName addNodeWithGroupStrategy;
    protected final ListNodesStrategy listNodesStrategy;
-   protected final String nodeNamingConvention;
+   protected final GroupNamingConvention.Factory namingConvention;
    protected final ExecutorService executor;
    protected final CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory;
 
@@ -102,12 +102,12 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
    protected CreateNodesWithGroupEncodedIntoNameThenAddToSet(
             CreateNodeWithGroupEncodedIntoName addNodeWithGroupStrategy,
             ListNodesStrategy listNodesStrategy,
-            @Named("NAMING_CONVENTION") String nodeNamingConvention,
+            GroupNamingConvention.Factory namingConvention,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory) {
       this.addNodeWithGroupStrategy = addNodeWithGroupStrategy;
       this.listNodesStrategy = listNodesStrategy;
-      this.nodeNamingConvention = nodeNamingConvention;
+      this.namingConvention = namingConvention;
       this.executor = executor;
       this.customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory = customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory;
    }
@@ -185,7 +185,7 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
       int maxTries = 100;
       int currentTries = 0;
       while (names.size() < count && currentTries++ < maxTries) {
-         final String name = getNextName(group, template);
+         final String name = namingConvention.createWithoutPrefix().uniqueNameForGroup(group);
          if (!any(currentNodes, new Predicate<ComputeMetadata>() {
 
             @Override
@@ -198,17 +198,6 @@ public class CreateNodesWithGroupEncodedIntoNameThenAddToSet implements CreateNo
          }
       }
       return names;
-   }
-
-   /**
-    * Get a name using a random mechanism that still ties all nodes in a group together.
-    * 
-    * This implementation will pass the group and a hex formatted random number to the configured
-    * naming convention.
-    * 
-    */
-   protected String getNextName(final String group, final Template template) {
-      return String.format(nodeNamingConvention, group, Integer.toHexString(new SecureRandom().nextInt(4095)));
    }
 
 }

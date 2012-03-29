@@ -19,10 +19,10 @@
 package org.jclouds.softlayer.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.nullToEmpty;
 
 import javax.inject.Inject;
 
-import static com.google.common.base.Strings.nullToEmpty;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationBuilder;
 import org.jclouds.domain.LocationScope;

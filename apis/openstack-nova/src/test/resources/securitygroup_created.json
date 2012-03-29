@@ -3,7 +3,7 @@
         "rules": [ ],
         "tenant_id": "dev_16767499955063",
         "id": 160,
-        "name": "name",
-        "description": "description"
+        "name": "jclouds-test",
+        "description": "jclouds-test"
     }
 }

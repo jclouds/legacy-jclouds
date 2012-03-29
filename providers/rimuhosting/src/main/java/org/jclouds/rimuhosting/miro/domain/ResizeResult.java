@@ -18,9 +18,9 @@
  */
 package org.jclouds.rimuhosting.miro.domain;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Information about a resource change.

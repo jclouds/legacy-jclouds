@@ -19,7 +19,6 @@
 package org.jclouds.softlayer.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseGroupFromName;
 
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +33,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.domain.Location;
 import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.domain.Datacenter;
@@ -62,10 +62,13 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
    private final FindLocationForVirtualGuest findLocationForVirtualGuest;
    private final GetHardwareForVirtualGuest getHardwareForVirtualGuest;
    private final GetImageForVirtualGuest getImageForVirtualGuest;
+   private final GroupNamingConvention nodeNamingConvention;
 
    @Inject
    VirtualGuestToNodeMetadata(FindLocationForVirtualGuest findLocationForVirtualGuest,
-         GetHardwareForVirtualGuest getHardwareForVirtualGuest, GetImageForVirtualGuest getImageForVirtualGuest) {
+         GetHardwareForVirtualGuest getHardwareForVirtualGuest, GetImageForVirtualGuest getImageForVirtualGuest,
+         GroupNamingConvention.Factory namingConvention) {
+      this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
       this.findLocationForVirtualGuest = checkNotNull(findLocationForVirtualGuest, "findLocationForVirtualGuest");
       this.getHardwareForVirtualGuest = checkNotNull(getHardwareForVirtualGuest, "getHardwareForVirtualGuest");
       this.getImageForVirtualGuest = checkNotNull(getImageForVirtualGuest, "getImageForVirtualGuest");
@@ -79,7 +82,7 @@ public class VirtualGuestToNodeMetadata implements Function<VirtualGuest, NodeMe
       builder.name(from.getHostname());
       builder.hostname(from.getHostname());
       builder.location(findLocationForVirtualGuest.apply(from));
-      builder.group(parseGroupFromName(from.getHostname()));
+      builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getHostname()));
 
       Image image = getImageForVirtualGuest.getImage(from);
       if (image != null) {

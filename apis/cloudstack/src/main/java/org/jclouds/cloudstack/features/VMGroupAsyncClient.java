@@ -18,22 +18,28 @@
  */
 package org.jclouds.cloudstack.features;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import org.jclouds.cloudstack.domain.VMGroup;
-import org.jclouds.cloudstack.filters.AuthenticationFilter;
-import org.jclouds.cloudstack.options.CreateVMGroupOptions;
-import org.jclouds.cloudstack.options.ListVMGroupsOptions;
-import org.jclouds.cloudstack.options.UpdateVMGroupOptions;
-import org.jclouds.rest.annotations.*;
-import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.Set;
+
+import org.jclouds.cloudstack.domain.VMGroup;
+import org.jclouds.cloudstack.filters.AuthenticationFilter;
+import org.jclouds.cloudstack.options.CreateVMGroupOptions;
+import org.jclouds.cloudstack.options.ListVMGroupsOptions;
+import org.jclouds.cloudstack.options.UpdateVMGroupOptions;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.OnlyElement;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SelectJson;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to CloudStack VM group features.

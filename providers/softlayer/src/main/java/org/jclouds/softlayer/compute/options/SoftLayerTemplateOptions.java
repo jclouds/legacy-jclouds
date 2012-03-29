@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.io.Payload;
 import org.jclouds.softlayer.features.VirtualGuestClient;
 
 import com.google.common.net.InternetDomainName;
@@ -121,14 +120,6 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
       }
 
       /**
-       * @see TemplateOptions#runScript(Payload)
-       */
-      public static SoftLayerTemplateOptions runScript(Payload script) {
-         SoftLayerTemplateOptions options = new SoftLayerTemplateOptions();
-         return SoftLayerTemplateOptions.class.cast(options.runScript(script));
-      }
-
-      /**
        * @see TemplateOptions#userMetadata(Map)
        */
       public static SoftLayerTemplateOptions userMetadata(Map<String, String> userMetadata) {
@@ -177,15 +168,6 @@ public class SoftLayerTemplateOptions extends TemplateOptions implements Cloneab
    @Override
    public SoftLayerTemplateOptions installPrivateKey(String privateKey) {
       return SoftLayerTemplateOptions.class.cast(super.installPrivateKey(privateKey));
-   }
-
-   /**
-    * @see TemplateOptions#runScript(Payload)
-    */
-   @Deprecated
-   @Override
-   public SoftLayerTemplateOptions runScript(Payload script) {
-      return SoftLayerTemplateOptions.class.cast(super.runScript(script));
    }
 
    /**

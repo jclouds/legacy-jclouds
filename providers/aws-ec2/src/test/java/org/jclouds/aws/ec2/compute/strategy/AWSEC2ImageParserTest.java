@@ -18,14 +18,11 @@
  */
 package org.jclouds.aws.ec2.compute.strategy;
 
-import com.google.common.base.Predicates;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.inject.Guice;
+import static org.testng.Assert.assertEquals;
+
+import java.util.Map;
+import java.util.Set;
+
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -43,10 +40,14 @@ import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
-import java.util.Map;
-import java.util.Set;
-
-import static org.testng.Assert.assertEquals;
+import com.google.common.base.Predicates;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole

@@ -18,18 +18,19 @@
  */
 package org.jclouds.cloudstack.compute.strategy;
 
-import com.google.common.collect.Iterables;
-import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
-import org.jclouds.cloudstack.domain.Network;
-import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
-
-import java.util.Map;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.defaultNetworkInZone;
 import static org.jclouds.cloudstack.predicates.NetworkPredicates.supportsStaticNAT;
+
+import java.util.Map;
+
+import org.jclouds.cloudstack.compute.options.CloudStackTemplateOptions;
+import org.jclouds.cloudstack.domain.Network;
+import org.jclouds.cloudstack.options.DeployVirtualMachineOptions;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Convert template options into DeployVirtualMachineOptions, when the target zone has advanced networking.

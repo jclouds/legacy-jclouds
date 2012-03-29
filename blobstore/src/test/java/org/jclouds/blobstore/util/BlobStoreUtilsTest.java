@@ -18,10 +18,10 @@
  */
 package org.jclouds.blobstore.util;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getNameFor;
 import static org.jclouds.blobstore.util.BlobStoreUtils.parseContainerFromPath;

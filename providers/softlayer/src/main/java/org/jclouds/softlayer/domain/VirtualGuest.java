@@ -18,12 +18,12 @@
  */
 package org.jclouds.softlayer.domain;
 
-import com.google.common.base.CaseFormat;
-import com.google.gson.annotations.SerializedName;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Date;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.CaseFormat;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * The virtual guest data type presents the structure in which all virtual guests will be presented.

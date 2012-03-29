@@ -19,9 +19,9 @@
 package org.jclouds.blobstore.options;
 
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 

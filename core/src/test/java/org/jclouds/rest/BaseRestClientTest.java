@@ -20,7 +20,7 @@ package org.jclouds.rest;
 
 import static com.google.common.base.Throwables.propagate;
 import static com.google.inject.util.Types.newParameterizedType;
-import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.EasyMock.createMock;
 import static org.eclipse.jetty.http.HttpHeaders.TRANSFER_ENCODING;
 import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
 import static org.testng.Assert.assertEquals;

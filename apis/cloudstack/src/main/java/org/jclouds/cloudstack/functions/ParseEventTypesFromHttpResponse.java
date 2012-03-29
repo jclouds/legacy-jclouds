@@ -20,17 +20,19 @@ package org.jclouds.cloudstack.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Singleton;
 import java.util.Set;
+
+import javax.inject.Singleton;
+
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ParseFirstJsonValueNamed;
+import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ParseFirstJsonValueNamed;
-import org.jclouds.json.internal.GsonWrapper;
 
 /**
  * @author Vijay Kiran

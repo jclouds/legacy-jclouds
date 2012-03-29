@@ -18,19 +18,20 @@
  */
 package org.jclouds.hpcloud.objectstorage.internal;
 
-import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.net.HttpHeaders;
+import static java.lang.String.format;
+import static org.jclouds.rest.BaseRestClientExpectTest.payloadFromStringWithContentType;
+
+import java.io.IOException;
+import java.net.URI;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
 import org.jclouds.util.Strings2;
 
-import java.io.IOException;
-import java.net.URI;
-
-import static java.lang.String.format;
-import static org.jclouds.rest.BaseRestClientExpectTest.payloadFromStringWithContentType;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.net.HttpHeaders;
 
 /**
  * Base class for writing HP Cloud Object Storage Rest Client Expect tests

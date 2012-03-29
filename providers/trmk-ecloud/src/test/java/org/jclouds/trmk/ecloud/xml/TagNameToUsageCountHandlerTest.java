@@ -28,7 +28,6 @@ import java.util.Properties;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.trmk.ecloud.xml.TagNameToUsageCountHandler;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

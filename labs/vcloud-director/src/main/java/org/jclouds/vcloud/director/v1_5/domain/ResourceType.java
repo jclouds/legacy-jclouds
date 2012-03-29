@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Objects;
@@ -132,15 +131,7 @@ public class ResourceType {
       this.type = builder.type;
       this.links = builder.links == null ? Collections.<Link>emptySet() : builder.links;
    }
-     
-   @Deprecated
-   public ResourceType(URI href, String type, @Nullable Set<Link> links) {
-      this.href = href;
-      this.type = type;
-      // nullable so that jaxb wont persist empty collections?
-      this.links = links == null ? Collections.<Link>emptySet() : links;
-   }
-
+   
    protected ResourceType() {
       // For JAXB
    }

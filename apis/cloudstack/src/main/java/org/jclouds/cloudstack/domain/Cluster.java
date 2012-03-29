@@ -18,10 +18,10 @@
  */
 package org.jclouds.cloudstack.domain;
 
-import com.google.gson.annotations.SerializedName;
-
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Represents a CloudStack Cluster.

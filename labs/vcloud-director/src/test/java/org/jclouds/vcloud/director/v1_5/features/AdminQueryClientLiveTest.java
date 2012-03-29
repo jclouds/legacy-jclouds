@@ -54,7 +54,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       queryClient = context.getApi().getAdminQueryClient();
    }
 
-   @Test(testName = "GET /admin/groups/query")
+   @Test(description = "GET /admin/groups/query")
    public void testQueryAllGroups() {
       // TODO Ensure there will be at least one record, for asserting result
       QueryResultRecords resultRecords = queryClient.groupsQueryAll();
@@ -64,7 +64,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/orgs/query")
+   @Test(description = "GET /admin/orgs/query")
    public void testQueryAllOrgs() {
       // TODO Ensure there will be at least one record, for asserting result
       QueryResultRecords resultRecords = queryClient.orgsQueryAll();
@@ -74,7 +74,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/rights/query")
+   @Test(description = "GET /admin/rights/query")
    public void testQueryAllRights() {
       // TODO Ensure there will be at least one record, for asserting result
       QueryResultRecords resultRecords = queryClient.rightsQueryAll();
@@ -85,7 +85,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/roles/query")
+   @Test(description = "GET /admin/roles/query")
    public void testQueryAllRoles() {
       // TODO Ensure there will be at least one record, for asserting result
       QueryResultRecords resultRecords = queryClient.rolesQueryAll();
@@ -102,7 +102,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/strandedUsers/query")
+   @Test(description = "GET /admin/strandedUsers/query")
    public void testQueryAllStrandedUsers() {
       // TODO Ensure there will be at least one record, for asserting result
       QueryResultRecords resultRecords = queryClient.strandedUsersQueryAll();
@@ -113,7 +113,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/users/query")
+   @Test(description = "GET /admin/users/query")
    public void testQueryAllUsers() {
       // TODO Ensure there will be at least one record, for asserting result
       QueryResultRecords resultRecords = queryClient.usersQueryAll();
@@ -124,7 +124,7 @@ public class AdminQueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(testName = "GET /admin/vdcs/query")
+   @Test(description = "GET /admin/vdcs/query")
    public void testQueryAllVdc() {
       // TODO Ensure there will be at least one record, for asserting result
       QueryResultRecords resultRecords = queryClient.vdcsQueryAll();

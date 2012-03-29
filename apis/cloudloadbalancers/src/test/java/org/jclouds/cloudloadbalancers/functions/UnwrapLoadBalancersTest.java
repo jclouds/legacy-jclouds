@@ -21,8 +21,8 @@ package org.jclouds.cloudloadbalancers.functions;
 import java.util.Set;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
+import org.jclouds.cloudloadbalancers.domain.VirtualIP;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.json.BaseSetParserTest;

@@ -18,10 +18,9 @@
  */
 package org.jclouds.compute;
 
-import org.jclouds.javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.UtilsImpl;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
