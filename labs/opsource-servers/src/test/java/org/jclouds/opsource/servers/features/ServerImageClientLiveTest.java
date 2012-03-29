@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,35 +18,21 @@
  */
 package org.jclouds.opsource.servers.features;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.opsource.servers.domain.Account;
-import org.jclouds.opsource.servers.domain.DataCentersList;
+import org.jclouds.opsource.servers.domain.ServerImagesList;
+import org.jclouds.opsource.servers.internal.BaseOpSourceServersClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Provides synchronous access to Account.
- * <p/>
+ * Tests live behavior of {@link ServerImageClient}.
  * 
- * @see AccountAsyncClient
- * @author Adrian Cole
+ * @author Kedar Dave
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AccountClient {
+@Test(groups = { "live" }, singleThreaded = true, testName = "ServerImageClientLiveTest")
+public class ServerImageClientLiveTest extends BaseOpSourceServersClientLiveTest {
 
-   /**
-    * Before you can begin using the range of Server, Network and Image APIs,
-    * you will need to first obtain your organization details.
-    * 
-    * @return the user's details, including their organization ID.
-    */
-   Account getMyAccount();
-   
-   /**
-    * identifies the list of data centers available to the organization of the authenticating user
-    * @param orgId
-    * @return
-    */
-  DataCentersList getDataCentersWithLimits(String orgId);
+   public void testGetServerImages() {
+      ServerImagesList serverImagesList = context.getApi().getServerImageClient().getServerImages();
+      assert serverImagesList != null;
+   }
 
 }
