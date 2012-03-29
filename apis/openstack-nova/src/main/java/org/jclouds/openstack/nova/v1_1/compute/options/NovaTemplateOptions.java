@@ -66,6 +66,8 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          NovaTemplateOptions eTo = NovaTemplateOptions.class.cast(to);
          eTo.autoAssignFloatingIp(shouldAutoAssignFloatingIp());
          eTo.securityGroupNames(getSecurityGroupNames());
+         eTo.generateKeyPair(shouldGenerateKeyPair());
+         eTo.keyPairName(getKeyPairName());
       }
    }
 
@@ -301,6 +303,15 @@ public class NovaTemplateOptions extends TemplateOptions implements Cloneable {
          NovaTemplateOptions options = new NovaTemplateOptions();
          return options.overrideLoginCredentials(credentials);
       }
+      
+      /**
+       * @see TemplateOptions#blockUntilRunning
+       */
+      public static NovaTemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+         NovaTemplateOptions options = new NovaTemplateOptions();
+         return options.blockUntilRunning(blockUntilRunning);
+      }
+      
    }
 
    // methods that only facilitate returning the correct object type

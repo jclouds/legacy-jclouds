@@ -18,18 +18,23 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.config.CredentialStoreModule;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.InputSupplier;
 import com.google.inject.Module;
 
 /**
@@ -78,8 +83,11 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
    }
 
    private ComputeServiceContext createComputeServiceContext(Function<HttpRequest, HttpResponse> fn, Module module,
-            Properties props) {
+         Properties props) {
+      // the following will wipe out credential store between tests
       return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props);
+            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), new CredentialStoreModule(
+                  new CopyInputStreamInputSupplierMap(new ConcurrentHashMap<String, InputSupplier<InputStream>>())),
+                  module), props);
    }
 }

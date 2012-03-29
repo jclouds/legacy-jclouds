@@ -100,7 +100,9 @@ public class ApplyNovaTemplateOptionsCreateNodesWithGroupEncodedIntoNameThenAddT
       // ensure we don't mutate the input template
       Template mutableTemplate = templateBuilderProvider.get().fromTemplate(template).build();
       NovaTemplateOptions templateOptions = NovaTemplateOptions.class.cast(mutableTemplate.getOptions());
-
+      
+      assert template.getOptions().equals(templateOptions) : "options didn't clone properly";
+      
       String zone = mutableTemplate.getLocation().getId();
 
       if (templateOptions.shouldAutoAssignFloatingIp()) {

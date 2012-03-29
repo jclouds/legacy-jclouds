@@ -123,7 +123,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
                         authToken).build())
                .payload(
                         payloadFromStringWithContentType(
-                                 "{\"security_group\":{\"name\":\"name\",\"description\":\"description\"}}",
+                                 "{\"security_group\":{\"name\":\"jclouds-test\",\"description\":\"jclouds-test\"}}",
                                  "application/json")).build();
 
       HttpResponse createSecurityGroupResponse = HttpResponse.builder().statusCode(200).payload(
@@ -134,7 +134,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
                createSecurityGroupResponse);
 
       assertEquals(clientWhenSecurityGroupsExist.getSecurityGroupExtensionForZone("az-1.region-a.geo-1").get()
-               .createSecurityGroupWithNameAndDescription("name", "description").toString(),
+               .createSecurityGroupWithNameAndDescription("jclouds-test", "jclouds-test").toString(),
                createSecurityGroupExpected().toString());
    }
 
@@ -227,7 +227,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
    }
 
    private SecurityGroup createSecurityGroupExpected() {
-      return SecurityGroup.builder().description("description").id("160").name("name").rules(
+      return SecurityGroup.builder().description("jclouds-test").id("160").name("jclouds-test").rules(
                ImmutableSet.<SecurityGroupRule> of()).tenantId("dev_16767499955063").build();
    }
 
