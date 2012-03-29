@@ -19,7 +19,10 @@
 package org.jclouds.opsource.servers;
 
 import org.jclouds.opsource.servers.domain.Account;
+import org.jclouds.opsource.servers.domain.ServerImage;
 import org.jclouds.opsource.servers.features.AccountAsyncClient;
+import org.jclouds.opsource.servers.features.ServerAsyncClient;
+import org.jclouds.opsource.servers.features.ServerImageAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -35,5 +38,17 @@ public interface OpSourceServersAsyncClient {
     */
    @Delegate
    AccountAsyncClient getAccountClient();
+   
+   /**
+    * @return asynchronous access to {@link ServerImage} features
+    */
+   @Delegate
+   ServerImageAsyncClient getServerImageClient();
+   
+   /**
+    * @return asynchronous access to server features
+    */
+   @Delegate
+   ServerAsyncClient getServerClient();
 
 }
