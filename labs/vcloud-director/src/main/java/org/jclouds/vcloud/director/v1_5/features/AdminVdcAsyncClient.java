@@ -33,11 +33,11 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -48,38 +48,34 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
 public interface AdminVdcAsyncClient extends VdcAsyncClient {
    
+   @Override
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   @Override
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<AdminVdc> getVdc(@EndpointParam URI vdcRef);
    
    @PUT
    @Consumes
    @Produces(VCloudDirectorMediaType.ADMIN_VDC)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> editVdc(@EndpointParam URI vdcRef, AdminVdc vdc);
    
    @DELETE
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> deleteVdc(@EndpointParam URI vdcRef);
    
    @POST
    @Consumes
    @Path("/action/enable")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> enableVdc(@EndpointParam URI vdcRef);
    
    @POST
    @Consumes
    @Path("/action/disable")
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Void> disableVdc(@EndpointParam URI vdcRef);
    
    /**

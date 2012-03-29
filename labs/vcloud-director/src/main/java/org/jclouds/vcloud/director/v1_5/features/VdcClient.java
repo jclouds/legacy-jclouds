@@ -30,7 +30,6 @@ import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;

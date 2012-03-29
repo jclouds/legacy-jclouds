@@ -19,11 +19,11 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -48,7 +48,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Allows us to test a client via its side effects.
+ * Test the {@link NetworkClient} via its side effects.
  * 
  * @author danikov
  */
@@ -114,16 +114,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-catalog.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      String message = "This operation is denied.";
-
-      try {
-         client.getNetworkClient().getNetwork(networkUri);
-         fail("Should give HTTP 403 error");
-      } catch (ResourceNotFoundException rnfe) {
-         assertEquals(rnfe.getMessage(), message);
-      } catch (Exception e) {
-         fail("Should have thrown a ResourceNotFoundException");
-      }
+      assertNull(client.getNetworkClient().getNetwork(networkUri));
    }
 
    @Test
@@ -139,16 +130,7 @@ public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .xmlFilePayload("/network/error403-fake.xml", VCloudDirectorMediaType.ERROR)
             .httpResponseBuilder().statusCode(403).build());
       
-      String message = "This operation is denied.";
-
-      try {
-         client.getNetworkClient().getNetwork(networkUri);
-         fail("Should give HTTP 403 error");
-      } catch (ResourceNotFoundException rnfe) {
-         assertEquals(rnfe.getMessage(), message);
-      } catch (Exception e) {
-         fail("Should have thrown a ResourceNotFoundException");
-      }
+      assertNull(client.getNetworkClient().getNetwork(networkUri));
    }
    
    @Test

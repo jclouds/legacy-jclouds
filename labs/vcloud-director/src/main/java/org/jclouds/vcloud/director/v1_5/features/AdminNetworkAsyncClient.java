@@ -34,12 +34,12 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
-import org.jclouds.vcloud.director.v1_5.functions.ThrowVCloudErrorOn4xx;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -53,11 +53,11 @@ public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    /**
     * @see AdminNetworkClient#getNetwork(URI)
     */
+   @Override
    @GET
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
-   @Override
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<ExternalNetwork> getNetwork(@EndpointParam URI networkRef);
    
    /**
@@ -67,7 +67,6 @@ public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    @Consumes(VCloudDirectorMediaType.TASK)
    @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> updateNetwork(@EndpointParam URI networkRef, 
          @BinderParam(BindToXMLPayload.class) OrgNetwork network);
    
@@ -78,7 +77,6 @@ public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
    @Path("/action/reset")
    @Consumes
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<Task> resetNetwork(@EndpointParam URI networkRef);
    
    /**
