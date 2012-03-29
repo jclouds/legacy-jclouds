@@ -62,7 +62,7 @@ public class HPCloudObjectStorageBlobStore extends SwiftBlobStore {
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache) {
       super(context, blobUtils, defaultLocation, locations, sync, container2ResourceMd, container2ContainerListOptions,
                container2ResourceList, object2Blob, blob2Object, object2BlobMd, blob2ObjectGetOptions,
-               fetchBlobMetadataProvider);
+               fetchBlobMetadataProvider, null);
       this.enableCDNAndCache = enableCDNAndCache;
 
    }

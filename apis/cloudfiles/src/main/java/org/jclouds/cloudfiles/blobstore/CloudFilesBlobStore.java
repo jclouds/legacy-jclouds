@@ -42,6 +42,7 @@ import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
 
 import com.google.common.base.Supplier;
+import org.jclouds.openstack.swift.blobstore.strategy.internal.MultipartUploadStrategy;
 
 /**
  * 
@@ -62,7 +63,7 @@ public class CloudFilesBlobStore extends SwiftBlobStore {
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache) {
       super(context, blobUtils, defaultLocation, locations, sync, container2ResourceMd, container2ContainerListOptions,
                container2ResourceList, object2Blob, blob2Object, object2BlobMd, blob2ObjectGetOptions,
-               fetchBlobMetadataProvider);
+               fetchBlobMetadataProvider, null);
       this.enableCDNAndCache = enableCDNAndCache;
 
    }
