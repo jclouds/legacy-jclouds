@@ -18,35 +18,31 @@
  */
 package org.jclouds.opsource.servers.features;
 
-import java.util.concurrent.TimeUnit;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.opsource.servers.domain.Account;
-import org.jclouds.opsource.servers.domain.DataCentersList;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.opsource.servers.domain.ServerImagesList;
+import org.jclouds.rest.annotations.JAXBResponseParser;
+import org.jclouds.rest.annotations.RequestFilters;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides synchronous access to Account.
- * <p/>
- * 
- * @see AccountAsyncClient
- * @author Adrian Cole
+ * @see ServerImageClient
+ * @author Kedar Dave
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface AccountClient {
-
-   /**
-    * Before you can begin using the range of Server, Network and Image APIs,
-    * you will need to first obtain your organization details.
-    * 
-    * @return the user's details, including their organization ID.
-    */
-   Account getMyAccount();
-   
-   /**
-    * identifies the list of data centers available to the organization of the authenticating user
-    * @param orgId
-    * @return
-    */
-  DataCentersList getDataCentersWithLimits(String orgId);
-
+@RequestFilters(BasicAuthentication.class)
+public interface ServerImageAsyncClient {
+	
+	/**
+	 * @see ServerImageClient#getServerImages()
+	 */
+	@GET
+	@Path("/base/image")
+	@Consumes
+	@JAXBResponseParser
+	ListenableFuture<ServerImagesList> getServerImages();
+	
 }

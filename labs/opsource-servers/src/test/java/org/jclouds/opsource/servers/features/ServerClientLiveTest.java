@@ -19,28 +19,31 @@
 package org.jclouds.opsource.servers.features;
 
 import org.jclouds.opsource.servers.domain.Account;
-import org.jclouds.opsource.servers.domain.DataCentersList;
+import org.jclouds.opsource.servers.domain.DeployedServersList;
+import org.jclouds.opsource.servers.domain.PendingDeployServersList;
 import org.jclouds.opsource.servers.internal.BaseOpSourceServersClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * Tests live behavior of {@link AccountClient}.
+ * Tests live behavior of {@link ServerClient}.
  * 
- * @author Adrian Cole
+ * @author Kedar Dave
  */
-@Test(groups = { "live" }, singleThreaded = true, testName = "AccountClientLiveTest")
-public class AccountClientLiveTest extends BaseOpSourceServersClientLiveTest {
+@Test(groups = { "live" }, singleThreaded = true, testName = "ServerClientLiveTest")
+public class ServerClientLiveTest extends BaseOpSourceServersClientLiveTest {
 
-   public void testGetMyAccount() {
-      Account account = context.getApi().getAccountClient().getMyAccount();
-      assert account.getOrgId() != null;
-   }
-   
-   public void testGetDataCenterWithLimits() {
+   public void testGetDeployedServers() {
 	  Account account = context.getApi().getAccountClient().getMyAccount();
 	  assert account.getOrgId() != null;
-      DataCentersList dataCentersList = context.getApi().getAccountClient().getDataCentersWithLimits(account.getOrgId());
-      assert dataCentersList != null;
+      DeployedServersList deployedServersList = context.getApi().getServerClient().getDeployedServers(account.getOrgId());
+      assert deployedServersList != null;
+   }
+   
+   public void testGetPendingDeployServers() {
+	  Account account = context.getApi().getAccountClient().getMyAccount();
+	  assert account.getOrgId() != null;
+	  PendingDeployServersList pendingDeployServersList = context.getApi().getServerClient().getPendingDeployServers(account.getOrgId());
+      assert pendingDeployServersList != null;
    }
 
 }
