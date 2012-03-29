@@ -138,8 +138,7 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Supplier<Map<Image, YamlImage>>>() {
       }).to((Class) ImagesToYamlImagesFromYamlDescriptor.class);
       // the yaml config provider
-      bind(new TypeLiteral<Supplier<String>>() {
-      }).to((Class) YamlImagesFromFileConfig.class);
+      bind(YamlImagesFromFileConfig.class);
       // the master machines cache
       bind(new TypeLiteral<LoadingCache<Image, Master>>() {
       }).to((Class) MastersLoadingCache.class);
