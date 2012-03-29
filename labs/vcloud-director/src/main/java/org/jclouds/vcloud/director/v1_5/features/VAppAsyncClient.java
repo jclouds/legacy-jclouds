@@ -123,24 +123,25 @@ public interface VAppAsyncClient {
    ListenableFuture<Task> deleteVApp(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppClient#consolidateVApp(URI)
+    * @see VAppClient#consolidateVm(URI)
     */
    @POST
    @Path("/action/consolidate")
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> consolidateVApp(@EndpointParam URI vAppURI);
+   ListenableFuture<Task> consolidateVm(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppClient#controlAccess(URI, ControlAccessParams)
+    * @see VAppClient#modifyControlAccess(URI, ControlAccessParams)
     */
    @POST
    @Path("/action/controlAccess")
    @Produces(CONTROL_ACCESS)
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   ListenableFuture<ControlAccessParams> controlAccess(@EndpointParam URI vAppURI,
-                                                       @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
+   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
+   ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI vAppURI,
+                                                             @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
 
    /**
     * @see VAppClient#deploy(URI, DeployVAppParams)
@@ -190,26 +191,26 @@ public interface VAppAsyncClient {
    ListenableFuture<Task> installVMwareTools(@EndpointParam URI vAppURI);
 
    /**
-    * @see VAppClient#recomposeVApp(URI, RecomposeVAppParams)
+    * @see VAppClient#recompose(URI, RecomposeVAppParams)
     */
    @POST
    @Path("/action/recomposeVApp")
    @Produces(RECOMPOSE_VAPP_PARAMS)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> recomposeVApp(@EndpointParam URI vAppURI,
-                                        @BinderParam(BindToXMLPayload.class) RecomposeVAppParams params);
+   ListenableFuture<Task> recompose(@EndpointParam URI vAppURI,
+                                    @BinderParam(BindToXMLPayload.class) RecomposeVAppParams params);
 
    /**
-    * @see VAppClient#relocate(URI, RelocateParams)
+    * @see VAppClient#relocateVm(URI, RelocateParams)
     */
    @POST
    @Path("/action/relocate")
    @Produces(RELOCATE_VM_PARAMS)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> relocate(@EndpointParam URI vAppURI,
-                                   @BinderParam(BindToXMLPayload.class) RelocateParams params);
+   ListenableFuture<Task> relocateVm(@EndpointParam URI vAppURI,
+                                     @BinderParam(BindToXMLPayload.class) RelocateParams params);
 
    /**
     * @see VAppClient#undeploy(URI, UndeployVAppParams)

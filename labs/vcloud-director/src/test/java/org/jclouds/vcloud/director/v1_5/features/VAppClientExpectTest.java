@@ -140,7 +140,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		
 		Task expected = consolidateVAppTask();
 		
-		assertEquals(client.getVAppClient().consolidateVApp(vAppURI), expected);
+		assertEquals(client.getVAppClient().consolidateVm(vAppURI), expected);
    }
 
    @Test(enabled = false)
@@ -159,7 +159,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		
 		ControlAccessParams expected = controlAccessParams();
 		         
-		assertEquals(client.getVAppClient().controlAccess(vAppURI, params), expected);
+		assertEquals(client.getVAppClient().modifyControlAccess(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -259,7 +259,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		
 		Task expected = recomposeVAppTask();
 		
-		assertEquals(client.getVAppClient().recomposeVApp(vAppURI, params), expected);
+		assertEquals(client.getVAppClient().recompose(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
@@ -279,7 +279,7 @@ public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 		
 		Task expected = relocateTask();
 		
-		assertEquals(client.getVAppClient().relocate(vAppURI, params), expected);
+		assertEquals(client.getVAppClient().relocateVm(vAppURI, params), expected);
    }
 
    @Test(enabled = false)
