@@ -172,7 +172,7 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          }
       }
       nodeMetadataBuilder.publicAddresses(publicIpAddresses);
-      nodeMetadataBuilder.privateAddresses(privateIpAddresses);
+      nodeMetadataBuilder.privateAddresses(publicIpAddresses);
 
       return nodeMetadataBuilder;
    }   
