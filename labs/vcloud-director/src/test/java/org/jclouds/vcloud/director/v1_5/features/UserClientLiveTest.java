@@ -217,15 +217,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          dependsOnMethods = { "testCreateUser" } )
    public void testDeleteUser() {
       // Create a user to be deleted (so we remove dependencies on test ordering)
-      String name = name("a");
-      User newUser = User.builder()
-         .name(name)
-         .role(Reference.builder() // FIXME: auto-fetch a role? or inject
-                  .name("vApp User")
-                  .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/role/ff1e0c91-1288-3664-82b7-a6fa303af4d1"))
-                  .build())
-         .password("password")
-         .build();
+      User newUser = randomTestUser("testDeleteUser");
       User userToBeDeleted = userClient.createUser(orgRef.getHref(), newUser);
 
       // Delete the user

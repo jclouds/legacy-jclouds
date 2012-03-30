@@ -169,6 +169,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       VCloudDirectorContext rootContext = VCloudDirectorContext.class.cast(
             new RestContextFactory().createContext(provider, identity, credential, ImmutableSet.<Module> of(
             new Log4JLoggingModule(), new SshjSshClientModule()), overrides));
+      adminContext = rootContext.getAdminContext();
       
       rootContext.utils().injector().injectMembers(this);
       Reference orgRef = Iterables.getFirst(rootContext.getApi().getOrgClient().getOrgList().getOrgs(), null)
@@ -215,7 +216,8 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    
    public Reference getRoleReferenceFor(String name) {
       RoleReferences roles = adminContext.getApi().getQueryClient().roleReferencesQueryAll();
-      return Iterables.find(roles.getReferences(), ReferencePredicates.nameEquals(name));
+      // wrapped in a builder to strip out unwanted xml cruft that the api chokes on
+      return Reference.builder().fromReference(Iterables.find(roles.getReferences(), ReferencePredicates.nameEquals(name))).build();
    }
    
    public User randomTestUser(String prefix) {
