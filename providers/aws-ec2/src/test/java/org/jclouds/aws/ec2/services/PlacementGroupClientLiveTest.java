@@ -149,7 +149,7 @@ public class PlacementGroupClientLiveTest extends BaseVersionedServiceLiveTest {
       assertEquals(template.getImage().getUserMetadata().get("hypervisor"), "xen");
       
       template.getOptions().runScript(
-               Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromURL()));
+               Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromOpenJDK()));
 
       String group = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
