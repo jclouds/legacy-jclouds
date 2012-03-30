@@ -19,14 +19,17 @@
 package org.jclouds.vcloud.director.v1_5.internal;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
@@ -43,10 +46,11 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -56,9 +60,12 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
+import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
+import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -70,6 +77,9 @@ import org.jclouds.vcloud.director.v1_5.features.VdcClient;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -105,11 +115,15 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    public static final String VAPP = "vApp";
    public static final String VAPP_TEMPLATE = "vAppTemplate";
    public static final String VDC = "vdc";
+   public static final int REQUIRED_ADMIN_VM_QUOTA = 0;
+   public static final int REQUIRED_USER_VM_QUOTA = 0;
    
    public Predicate<Task> retryTaskSuccess;
    public Predicate<Task> retryTaskSuccessLong;
 
-   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context;
+   protected RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext;
+   protected RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context; // FIXME: rename to userContext?
+   protected Session adminSession;
    protected Session session;
 
    protected String catalogId;
@@ -151,13 +165,79 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected void setupContext() throws Exception {
       setupCredentials();
       Properties overrides = setupProperties();
-
-      context = new RestContextFactory().createContext(provider, identity, credential, ImmutableSet.<Module> of(
+      
+      VCloudDirectorContext rootContext = VCloudDirectorContext.class.cast(
+            new RestContextFactory().createContext(provider, identity, credential, ImmutableSet.<Module> of(
+            new Log4JLoggingModule(), new SshjSshClientModule()), overrides));
+      
+      rootContext.utils().injector().injectMembers(this);
+      Reference orgRef = Iterables.getFirst(rootContext.getApi().getOrgClient().getOrgList().getOrgs(), null)
+            .toAdminReference(endpoint);
+      assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
+      
+      String adminIdentity = "testAdmin"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+      String adminCredential = "testAdminPassword";
+      rootContext.getAdminContext().getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
+         .name(adminIdentity)
+         .password(adminCredential)
+         .description("test user with user-level privileges") //TODO desc
+         .role(getRoleReferenceFor(DefaultRoles.ORG_ADMIN))
+         .deployedVmQuota(REQUIRED_ADMIN_VM_QUOTA)
+         .isEnabled(true)
+         .build());
+      
+      rootContext.close(); rootContext = null;
+      
+      adminContext = VCloudDirectorContext.class.cast(new RestContextFactory().createContext(provider, adminIdentity, adminCredential, ImmutableSet.<Module> of(
+            new Log4JLoggingModule(), new SshjSshClientModule()), overrides)).getAdminContext();
+      adminSession = adminContext.getApi().getCurrentSession();
+      adminContext.utils().injector().injectMembers(this);
+      String userIdentity = "test"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+      String userCredential = "testPassword";
+      
+      adminContext.getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
+         .name(userIdentity)
+         .password(userCredential)
+         .description("test user with user-level privileges")
+         .role(getRoleReferenceFor(DefaultRoles.USER))
+         .deployedVmQuota(REQUIRED_USER_VM_QUOTA)
+         .isEnabled(true)
+         .build());
+      
+      context = new RestContextFactory().createContext(provider, userIdentity, userCredential, ImmutableSet.<Module> of(
                new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       session = context.getApi().getCurrentSession();
       context.utils().injector().injectMembers(this);
+      
       initTestParametersFromPropertiesOrLazyDiscover();
       setupRequiredClients();
+   }
+   
+   public Reference getRoleReferenceFor(String name) {
+      RoleReferences roles = adminContext.getApi().getQueryClient().roleReferencesQueryAll();
+      return Iterables.find(roles.getReferences(), ReferencePredicates.nameEquals(name));
+   }
+   
+   public User randomTestUser(String prefix) {
+      return randomTestUser(prefix, getRoleReferenceFor(DefaultRoles.USER));
+   }
+   
+   public User randomTestUser(String prefix, Reference role) {
+      return User.builder()
+         .name(name(prefix)+random.nextInt(999999))
+         .fullName("testFullName")
+         .emailAddress("test@test.com")
+         .telephone("555-1234")
+         .isEnabled(false)
+         .im("testIM")
+         .isAlertEnabled(false)
+         .alertEmailPrefix("testPrefix")
+         .alertEmail("testAlert@test.com")
+         .isExternal(false)
+         .isGroupRole(false)
+         .role(role)
+         .password("password")
+         .build();
    }
 
    // TODO change properties to URI, not id
@@ -206,9 +286,12 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       }
    }
 
+   @AfterClass(alwaysRun = true)
    protected void tearDown() {
       if (context != null)
          context.close();
+      if (adminContext != null)
+         adminContext.close();
    }
    
    public URI toAdminUri(Reference ref) {

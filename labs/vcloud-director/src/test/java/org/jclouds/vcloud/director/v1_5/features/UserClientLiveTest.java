@@ -27,20 +27,18 @@ import static org.testng.Assert.fail;
 import static org.testng.AssertJUnit.assertFalse;
 
 import java.net.URI;
-import java.util.Random;
 
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
+import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.User;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
+import org.jclouds.vcloud.director.v1_5.features.admin.UserClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.login.SessionClient;
 import org.testng.annotations.AfterClass;
@@ -69,12 +67,11 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    private Reference orgRef;
    private User user;
-   private static Random random = new Random();
 
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
-      userClient = context.getApi().getUserClient();
+      userClient = adminContext.getApi().getUserClient();
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
    }
    
@@ -91,7 +88,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @Test(description = "POST /admin/org/{id}/users")
    public void testCreateUser() {
-      User newUser = randomTestUser("testCreateUser", context);
+      User newUser = randomTestUser("testCreateUser");
       user = userClient.createUser(orgRef.getHref(), newUser);
       Checks.checkUser(newUser);
    }
@@ -122,7 +119,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          .password("newPassword")
          // TODO test setting other fields?
 //         .name("new"+oldUser.getName())
-         .role(nonVAppUserRole(context))
+         .role(getRoleReferenceFor(DefaultRoles.AUTHOR))
          .build();
       
       userClient.updateUser(user.getHref(), newUser);
@@ -165,7 +162,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(description = "POST /admin/user/{id}/action/unlock", dependsOnMethods = { "testUpdateUser" })
    public void testUnlockUser() {
       // Need to know how many times to fail login to lock account
-      AdminOrgClient adminOrgClient = context.getApi().getAdminOrgClient();
+      AdminOrgClient adminOrgClient = adminContext.getApi().getOrgClient();
       OrgPasswordPolicySettings settingsToRevertTo = null;
 
       // session client isn't typically exposed to the user, as it is implicit
@@ -248,49 +245,5 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       } catch (VCloudDirectorException vde) {
          assertEquals(vde.getError(), expected);
       }
-   }
-   
-   public static Reference vAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
-      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
-      for (Reference role : roles.getReferences()) {
-         if (equal(role.getName(), "vApp User")) {
-            return Reference.builder().fromReference(role).build();
-         }
-      }
-      
-      return null;
-   }
-   
-   public static Reference nonVAppUserRole(RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
-      RoleReferences roles = context.getApi().getAdminQueryClient().roleReferencesQueryAll();
-      for (Reference role : roles.getReferences()) {
-         if (!equal(role.getName(), "vApp User")) {
-            return Reference.builder().fromReference(role).build();
-         }
-      }
-      
-      return null;
-   }
-   
-   public static User randomTestUser(String prefix, RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> context) {
-      return randomTestUser(prefix, vAppUserRole(context));
-   }
-   
-   public static User randomTestUser(String prefix, Reference role) {
-      return User.builder()
-         .name(name(prefix)+random.nextInt(999999))
-         .fullName("testFullName")
-         .emailAddress("test@test.com")
-         .telephone("555-1234")
-         .isEnabled(false)
-         .im("testIM")
-         .isAlertEnabled(false)
-         .alertEmailPrefix("testPrefix")
-         .alertEmail("testAlert@test.com")
-         .isExternal(false)
-         .isGroupRole(false)
-         .role(role)
-         .password("password")
-         .build();
    }
 }

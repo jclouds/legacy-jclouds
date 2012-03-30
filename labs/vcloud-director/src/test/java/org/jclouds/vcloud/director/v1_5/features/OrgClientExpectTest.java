@@ -24,7 +24,6 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
@@ -36,6 +35,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -47,7 +47,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = { "unit", "user", "org" }, singleThreaded = true, testName = "OrgClientExpectTest")
-public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
 
    @Test
    public void testGetOrgList() {

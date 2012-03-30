@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
@@ -35,6 +35,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -44,7 +45,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "org"}, singleThreaded = true, testName = "AdminOrgClientExpectTest")
-public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
    
    private Reference orgRef = Reference.builder()
          .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
@@ -52,7 +53,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    
    @Test
    public void testGetOrg() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")
             .acceptAnyMedia()
@@ -64,7 +65,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       AdminOrg expected = adminOrg();
 
-      assertEquals(client.getAdminOrgClient().getOrg(orgRef.getHref()), expected);
+      assertEquals(client.getOrgClient().getOrg(orgRef.getHref()), expected);
    }
    
    public static final AdminOrg adminOrg() {
@@ -186,7 +187,7 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    
    @Test(enabled = false)
    public void testGetSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/")
             .acceptAnyMedia()
@@ -198,7 +199,318 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       OrgSettings expected = settings();
 
-      assertEquals(client.getAdminOrgClient().getSettings(orgRef.getHref()), expected);
+      assertEquals(client.getOrgClient().getSettings(orgRef.getHref()), expected);
+   }
+   
+   @Test(enabled = false)
+   public void testUpdateSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/")
+            .xmlFilePayload("/org/admin/updateSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateSettings.xml", 
+                  VCloudDirectorMediaType.ORG_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgSettings expected = updateSettings();
+
+      assertEquals(client.getOrgClient().updateSettings(orgRef.getHref(), expected), expected);
+   }
+   
+   @Test
+   public void testGetEmailSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/emailSettings.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgEmailSettings expected = emailSettings();
+
+      assertEquals(client.getOrgClient().getEmailSettings(orgRef.getHref()), expected);
+   }
+   
+   @Test
+   public void testUpdateEmailSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email")
+            .xmlFilePayload("/org/admin/updateEmailSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateEmailSettings.xml", 
+                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgEmailSettings expected = updateEmailSettings();
+
+      assertEquals(client.getOrgClient().updateEmailSettings(orgRef.getHref(), expected), expected);
+   }
+   
+   @Test(enabled = false)
+   public void testGetGeneralSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/generalSettings.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgGeneralSettings expected = generalSettings();
+
+      assertEquals(client.getOrgClient().getGeneralSettings(orgRef.getHref()), expected);
+   }
+
+   public static final OrgGeneralSettings generalSettings() {
+      return OrgGeneralSettings.builder()
+         .type("application/vnd.vmware.admin.organizationGeneralSettings+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general"))
+         .link(Link.builder()
+            .rel("edit")
+            .type("application/vnd.vmware.admin.organizationGeneralSettings+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general"))
+            .build())
+         .canPublishCatalogs(false)
+         .deployedVMQuota(0)
+         .storedVmQuota(0)
+         .useServerBootSequence(false)
+         .delayAfterPowerOnSeconds(0)
+         .build();
+   }
+   
+   @Test(enabled = false)
+   public void testUpdateGeneralSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general")
+            .xmlFilePayload("/org/admin/updateGeneralSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateGeneralSettings.xml", 
+                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgGeneralSettings expected = updateGeneralSettings();
+
+      assertEquals(client.getOrgClient().updateGeneralSettings(orgRef.getHref(), expected), expected);
+   }
+   
+   public static final OrgGeneralSettings updateGeneralSettings() {
+      return generalSettings().toBuilder()
+         
+         .build();
+   }
+ 
+   @Test
+   public void testGetLdapSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/ldapSettings.xml", 
+                  VCloudDirectorMediaType.ORG_LDAP_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgLdapSettings expected = ldapSettings();
+
+      assertEquals(client.getOrgClient().getLdapSettings(orgRef.getHref()), expected);
+   }
+   
+   public static final OrgLdapSettings ldapSettings() {
+      return OrgLdapSettings.builder()
+         .type("application/vnd.vmware.admin.organizationLdapSettings+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap"))
+         .ldapMode("NONE")
+         .build();
+   }
+ 
+   @Test
+   public void testGetPasswordPolicy() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/passwordPolicy.xml", 
+                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgPasswordPolicySettings expected = passwordPolicy();
+
+      assertEquals(client.getOrgClient().getPasswordPolicy(orgRef.getHref()), expected);
+   }
+   
+   public static final OrgPasswordPolicySettings passwordPolicy() {
+      return OrgPasswordPolicySettings.builder()
+         .type("application/vnd.vmware.admin.organizationPasswordPolicySettings+xml")
+         .link(Link.builder()
+               .rel("edit")
+               .type("application/vnd.vmware.admin.organizationPasswordPolicySettings+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"))
+               .build())
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"))
+         .accountLockoutEnabled(false)
+         .invalidLoginsBeforeLockout(5)
+         .accountLockoutIntervalMinutes(10)
+         .build();
+   }
+   
+   @Test
+   public void testUpdatePasswordPolicy() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy")
+            .xmlFilePayload("/org/admin/updatePasswordPolicySource.xml", 
+                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updatePasswordPolicy.xml", 
+                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgPasswordPolicySettings expected = updateOrgPasswordPolicy();
+
+      assertEquals(client.getOrgClient().updatePasswordPolicy(orgRef.getHref(), expected), expected);
+   }
+   
+   public static final OrgPasswordPolicySettings updateOrgPasswordPolicy() {
+      return passwordPolicy().toBuilder()
+         .accountLockoutEnabled(true)
+         .invalidLoginsBeforeLockout(6)
+         .accountLockoutIntervalMinutes(11)
+         .build();
+   }
+ 
+   @Test(enabled = false)
+   public void testGetVAppLeaseSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/vAppLeaseSettings.xml", 
+                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgLeaseSettings expected = vAppLeaseSettings();
+
+      assertEquals(client.getOrgClient().getVAppLeaseSettings(orgRef.getHref()), expected);
+   }
+   
+   public static final OrgLeaseSettings vAppLeaseSettings() {
+      return OrgLeaseSettings.builder()
+         .type("application/vnd.vmware.admin.vAppLeaseSettings+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings"))
+         .link(Link.builder()
+            .rel("edit")
+            .type("application/vnd.vmware.admin.vAppLeaseSettings+xml")
+            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings"))
+            .build())
+         .deleteOnStorageLeaseExpiration(false)
+         .deploymentLeaseSeconds(0)
+         .storageLeaseSeconds(0)
+         .build();
+   }
+   
+   @Test(enabled = false)
+   public void testUpdateOrgVAppLeaseSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings")
+            .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateVAppLeaseSettings.xml", 
+                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgLeaseSettings expected = updateVAppLeaseSettings();
+
+      assertEquals(client.getOrgClient().updateVAppLeaseSettings(orgRef.getHref(), expected), expected);
+   }
+   
+   public static final OrgLeaseSettings updateVAppLeaseSettings() {
+      return vAppLeaseSettings().toBuilder()
+         
+         .build();
+   }
+ 
+   @Test(enabled = false)
+   public void testGetVAppTemplateLeaseSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings")
+            .acceptAnyMedia()
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/vAppTemplateLeaseSettings.xml", 
+                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgVAppTemplateLeaseSettings expected = vAppTemplateLeaseSettings();
+
+      assertEquals(client.getOrgClient().getVAppTemplateLeaseSettings(orgRef.getHref()), expected);
+   }
+   
+   public static final OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings() {
+      return OrgVAppTemplateLeaseSettings.builder()
+         .type("application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml")
+         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings"))
+         .link(Link.builder()
+               .rel("edit")
+               .type("application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml")
+               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings"))
+               .build())
+         .deleteOnStorageLeaseExpiration(false)
+         .storageLeaseSeconds(0)
+         .build();
+   }
+   
+   @Test(enabled = false)
+   public void testUpdateOrgVAppTemplateLeaseSettings() {
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
+         new VcloudHttpRequestPrimer()
+            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings")
+            .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml", 
+                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .acceptMedia(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .httpRequestBuilder().build(), 
+         new VcloudHttpResponsePrimer()
+            .xmlFilePayload("/org/admin/updateVAppLeaseSettings.xml", 
+                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
+            .httpResponseBuilder().build());
+
+      OrgVAppTemplateLeaseSettings expected = updateVAppTemplateLeaseSettings();
+
+      assertEquals(client.getOrgClient().updateVAppTemplateLeaseSettings(orgRef.getHref(), expected), expected);
+   }
+   
+   public static final OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings() {
+      return vAppTemplateLeaseSettings().toBuilder()
+         
+         .build();
    }
    
    public static final OrgSettings settings() {
@@ -249,46 +561,10 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
          .build();
    }
    
-   @Test(enabled = false)
-   public void testUpdateSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/")
-            .xmlFilePayload("/org/admin/updateSettingsSource.xml", 
-                  VCloudDirectorMediaType.ORG_SETTINGS)
-            .acceptMedia(VCloudDirectorMediaType.ORG_SETTINGS)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/updateSettings.xml", 
-                  VCloudDirectorMediaType.ORG_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgSettings expected = updateSettings();
-
-      assertEquals(client.getAdminOrgClient().updateSettings(orgRef.getHref(), expected), expected);
-   }
-   
    @Test
    public static final OrgSettings updateSettings() {
       return settings().toBuilder()
          .build();
-   }
- 
-   @Test
-   public void testGetEmailSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/emailSettings.xml", 
-                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgEmailSettings expected = emailSettings();
-
-      assertEquals(client.getAdminOrgClient().getEmailSettings(orgRef.getHref()), expected);
    }
    
    public static final OrgEmailSettings emailSettings() {
@@ -315,25 +591,6 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
    }
    
    @Test
-   public void testUpdateEmailSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/email")
-            .xmlFilePayload("/org/admin/updateEmailSettingsSource.xml", 
-                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
-            .acceptMedia(VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/updateEmailSettings.xml", 
-                  VCloudDirectorMediaType.ORG_EMAIL_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgEmailSettings expected = updateEmailSettings();
-
-      assertEquals(client.getAdminOrgClient().updateEmailSettings(orgRef.getHref(), expected), expected);
-   }
-   
-   @Test
    public static final OrgEmailSettings updateEmailSettings() {
       return emailSettings().toBuilder()
          .isDefaultSmtpServer(false)
@@ -349,259 +606,4 @@ public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpect
          .build();
    }
    
-   @Test(enabled = false)
-   public void testGetGeneralSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/generalSettings.xml", 
-                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgGeneralSettings expected = generalSettings();
-
-      assertEquals(client.getAdminOrgClient().getGeneralSettings(orgRef.getHref()), expected);
-   }
-   
-   public static final OrgGeneralSettings generalSettings() {
-      return OrgGeneralSettings.builder()
-         .type("application/vnd.vmware.admin.organizationGeneralSettings+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general"))
-         .link(Link.builder()
-            .rel("edit")
-            .type("application/vnd.vmware.admin.organizationGeneralSettings+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general"))
-            .build())
-         .canPublishCatalogs(false)
-         .deployedVMQuota(0)
-         .storedVmQuota(0)
-         .useServerBootSequence(false)
-         .delayAfterPowerOnSeconds(0)
-         .build();
-   }
-   
-   @Test(enabled = false)
-   public void testUpdateGeneralSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/general")
-            .xmlFilePayload("/org/admin/updateGeneralSettingsSource.xml", 
-                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
-            .acceptMedia(VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/updateGeneralSettings.xml", 
-                  VCloudDirectorMediaType.ORG_GENERAL_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgGeneralSettings expected = updateGeneralSettings();
-
-      assertEquals(client.getAdminOrgClient().updateGeneralSettings(orgRef.getHref(), expected), expected);
-   }
-   
-   public static final OrgGeneralSettings updateGeneralSettings() {
-      return generalSettings().toBuilder()
-         
-         .build();
-   }
- 
-   @Test
-   public void testGetLdapSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/ldapSettings.xml", 
-                  VCloudDirectorMediaType.ORG_LDAP_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgLdapSettings expected = ldapSettings();
-
-      assertEquals(client.getAdminOrgClient().getLdapSettings(orgRef.getHref()), expected);
-   }
-   
-   public static final OrgLdapSettings ldapSettings() {
-      return OrgLdapSettings.builder()
-         .type("application/vnd.vmware.admin.organizationLdapSettings+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/ldap"))
-         .ldapMode("NONE")
-         .build();
-   }
- 
-   @Test
-   public void testGetPasswordPolicy() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/passwordPolicy.xml", 
-                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgPasswordPolicySettings expected = passwordPolicy();
-
-      assertEquals(client.getAdminOrgClient().getPasswordPolicy(orgRef.getHref()), expected);
-   }
-   
-   public static final OrgPasswordPolicySettings passwordPolicy() {
-      return OrgPasswordPolicySettings.builder()
-         .type("application/vnd.vmware.admin.organizationPasswordPolicySettings+xml")
-         .link(Link.builder()
-               .rel("edit")
-               .type("application/vnd.vmware.admin.organizationPasswordPolicySettings+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"))
-               .build())
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy"))
-         .accountLockoutEnabled(false)
-         .invalidLoginsBeforeLockout(5)
-         .accountLockoutIntervalMinutes(10)
-         .build();
-   }
-   
-   @Test
-   public void testUpdatePasswordPolicy() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/passwordPolicy")
-            .xmlFilePayload("/org/admin/updatePasswordPolicySource.xml", 
-                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
-            .acceptMedia(VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/updatePasswordPolicy.xml", 
-                  VCloudDirectorMediaType.ORG_PASSWORD_POLICY_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgPasswordPolicySettings expected = updateOrgPasswordPolicy();
-
-      assertEquals(client.getAdminOrgClient().updatePasswordPolicy(orgRef.getHref(), expected), expected);
-   }
-   
-   public static final OrgPasswordPolicySettings updateOrgPasswordPolicy() {
-      return passwordPolicy().toBuilder()
-         .accountLockoutEnabled(true)
-         .invalidLoginsBeforeLockout(6)
-         .accountLockoutIntervalMinutes(11)
-         .build();
-   }
- 
-   @Test(enabled = false)
-   public void testGetVAppLeaseSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/vAppLeaseSettings.xml", 
-                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgLeaseSettings expected = vAppLeaseSettings();
-
-      assertEquals(client.getAdminOrgClient().getVAppLeaseSettings(orgRef.getHref()), expected);
-   }
-   
-   public static final OrgLeaseSettings vAppLeaseSettings() {
-      return OrgLeaseSettings.builder()
-         .type("application/vnd.vmware.admin.vAppLeaseSettings+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings"))
-         .link(Link.builder()
-            .rel("edit")
-            .type("application/vnd.vmware.admin.vAppLeaseSettings+xml")
-            .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings"))
-            .build())
-         .deleteOnStorageLeaseExpiration(false)
-         .deploymentLeaseSeconds(0)
-         .storageLeaseSeconds(0)
-         .build();
-   }
-   
-   @Test(enabled = false)
-   public void testUpdateOrgVAppLeaseSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppLeaseSettings")
-            .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml", 
-                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
-            .acceptMedia(VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/updateVAppLeaseSettings.xml", 
-                  VCloudDirectorMediaType.ORG_LEASE_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgLeaseSettings expected = updateVAppLeaseSettings();
-
-      assertEquals(client.getAdminOrgClient().updateVAppLeaseSettings(orgRef.getHref(), expected), expected);
-   }
-   
-   public static final OrgLeaseSettings updateVAppLeaseSettings() {
-      return vAppLeaseSettings().toBuilder()
-         
-         .build();
-   }
- 
-   @Test(enabled = false)
-   public void testGetVAppTemplateLeaseSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("GET", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings")
-            .acceptAnyMedia()
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/vAppTemplateLeaseSettings.xml", 
-                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgVAppTemplateLeaseSettings expected = vAppTemplateLeaseSettings();
-
-      assertEquals(client.getAdminOrgClient().getVAppTemplateLeaseSettings(orgRef.getHref()), expected);
-   }
-   
-   public static final OrgVAppTemplateLeaseSettings vAppTemplateLeaseSettings() {
-      return OrgVAppTemplateLeaseSettings.builder()
-         .type("application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml")
-         .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings"))
-         .link(Link.builder()
-               .rel("edit")
-               .type("application/vnd.vmware.admin.vAppTemplateLeaseSettings+xml")
-               .href(URI.create("https://vcloudbeta.bluelock.com/api/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings"))
-               .build())
-         .deleteOnStorageLeaseExpiration(false)
-         .storageLeaseSeconds(0)
-         .build();
-   }
-   
-   @Test(enabled = false)
-   public void testUpdateOrgVAppTemplateLeaseSettings() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
-         new VcloudHttpRequestPrimer()
-            .apiCommand("PUT", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/settings/vAppTemplateLeaseSettings")
-            .xmlFilePayload("/org/admin/updateVAppLeaseSettingsSource.xml", 
-                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
-            .acceptMedia(VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
-            .httpRequestBuilder().build(), 
-         new VcloudHttpResponsePrimer()
-            .xmlFilePayload("/org/admin/updateVAppLeaseSettings.xml", 
-                  VCloudDirectorMediaType.ORG_VAPP_TEMPLATE_LEASE_SETTINGS)
-            .httpResponseBuilder().build());
-
-      OrgVAppTemplateLeaseSettings expected = updateVAppTemplateLeaseSettings();
-
-      assertEquals(client.getAdminOrgClient().updateVAppTemplateLeaseSettings(orgRef.getHref(), expected), expected);
-   }
-   
-   public static final OrgVAppTemplateLeaseSettings updateVAppTemplateLeaseSettings() {
-      return vAppTemplateLeaseSettings().toBuilder()
-         
-         .build();
-   }
 }

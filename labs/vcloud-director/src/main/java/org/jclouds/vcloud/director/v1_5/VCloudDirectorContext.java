@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,23 +18,20 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import static org.testng.Assert.assertEquals;
-
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.login.SessionClientExpectTest;
+import org.jclouds.rest.RestContext;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorContextImpl;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
-import org.testng.annotations.Test;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * @author Adrian Cole
+ * @author danikov
  */
-@Test(groups = "unit", testName = "VCloudDirectorClient")
-public class VCloudDirectorClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
-
-   public void testRestClientModuleWorksProperly() throws Exception {
-
-      VCloudDirectorClient clientWhenSessionsExist = requestSendsResponse(loginRequest, sessionResponse);
-
-      assertEquals(clientWhenSessionsExist.getCurrentSession(), SessionClientExpectTest.SESSION);
-   }
+@ImplementedBy(VCloudDirectorContextImpl.class)
+public interface VCloudDirectorContext extends RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> {
+   
+   RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> getAdminContext();
 }

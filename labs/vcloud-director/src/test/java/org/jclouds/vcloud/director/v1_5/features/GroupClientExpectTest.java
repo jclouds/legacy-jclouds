@@ -22,10 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -35,7 +36,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "admin", "group"}, singleThreaded = true, testName = "GroupClientExpectTest")
-public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
    
    private Reference groupRef = Reference.builder()
          .type("application/vnd.vmware.admin.group+xml")
@@ -45,7 +46,7 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test(enabled = false)
    public void testGetGroup() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/group/???")
             .acceptAnyMedia()
@@ -67,7 +68,7 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test(enabled = false)
    public void testUpdateGroup() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", "/admin/group/???")
             .xmlFilePayload("/group/updateGroupSource.xml", VCloudDirectorMediaType.GROUP)
@@ -88,7 +89,7 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
    
    @Test
    public void testDeleteGroup() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/admin/group/???")
                .acceptAnyMedia()
@@ -96,6 +97,6 @@ public class GroupClientExpectTest extends BaseVCloudDirectorRestClientExpectTes
             new VcloudHttpResponsePrimer()
                .httpResponseBuilder().statusCode(204).build());
       
-      client.getAdminCatalogClient().deleteCatalog(groupRef.getHref());
+      client.getCatalogClient().deleteCatalog(groupRef.getHref());
    }
 }

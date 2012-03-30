@@ -24,7 +24,6 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Capabilities;
@@ -47,6 +46,7 @@ import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -56,7 +56,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "vdc" }, singleThreaded = true, testName = "VdcClientExpectTest")
-public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
    
    private URI vdcURI;
    

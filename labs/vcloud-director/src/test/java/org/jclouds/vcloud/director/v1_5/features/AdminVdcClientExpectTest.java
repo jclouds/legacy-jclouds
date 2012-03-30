@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "admin", "vdc" }, singleThreaded = true, testName = "AdminVdcClientExpectTest")
-public class AdminVdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class AdminVdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
    
    private Reference vdcRef = Reference.builder()
          .href(URI.create(endpoint + "???"))
@@ -43,7 +43,7 @@ public class AdminVdcClientExpectTest extends BaseVCloudDirectorRestClientExpect
    
    @Test( enabled = false )
    public void testGetVdc() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/vdc/???")
             .acceptAnyMedia()
@@ -55,7 +55,7 @@ public class AdminVdcClientExpectTest extends BaseVCloudDirectorRestClientExpect
 
       AdminVdc expected = adminVdc();
 
-      assertEquals(client.getAdminVdcClient().getVdc(vdcRef.getHref()), expected);
+      assertEquals(client.getVdcClient().getVdc(vdcRef.getHref()), expected);
    }
    
    public static final AdminVdc adminVdc() {

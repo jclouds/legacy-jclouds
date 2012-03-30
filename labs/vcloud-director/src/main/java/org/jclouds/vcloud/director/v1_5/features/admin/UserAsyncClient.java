@@ -16,11 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import java.net.URI;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -28,7 +29,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.JAXBResponseParser;
@@ -36,53 +36,62 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;
-
+   
 /**
- * @see AdminNetworkClient
+ * @see UserClient
  * @author danikov
  */
 @RequestFilters(AddVCloudAuthorizationToRequest.class)
-public interface AdminNetworkAsyncClient extends NetworkAsyncClient {
+public interface UserAsyncClient {
+
+   /**
+    * @see UserClient#createUser(URI, User)
+    */
+   @POST
+   @Path("/users")
+   @Consumes(VCloudDirectorMediaType.USER)
+   @Produces(VCloudDirectorMediaType.USER)
+   @JAXBResponseParser
+   ListenableFuture<User> createUser(@EndpointParam URI userRef, 
+         @BinderParam(BindToXMLPayload.class) User user);
    
    /**
-    * @see AdminNetworkClient#getNetwork(URI)
+    * @see UserClient#getUser(URI)
     */
-   @Override
    @GET
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ExternalNetwork> getNetwork(@EndpointParam URI networkRef);
-   
+   ListenableFuture<User> getUser(@EndpointParam URI userRef);
+ 
    /**
-    * @see AdminNetworkClient#updateNetwork(URI, OrgNetwork)
+    * @see UserClient#updateUser(URI, User)
     */
    @PUT
-   @Consumes(VCloudDirectorMediaType.TASK)
-   @Produces(VCloudDirectorMediaType.ADMIN_ORG_NETWORK)
+   @Consumes(VCloudDirectorMediaType.USER)
+   @Produces(VCloudDirectorMediaType.USER)
    @JAXBResponseParser
-   ListenableFuture<Task> updateNetwork(@EndpointParam URI networkRef, 
-         @BinderParam(BindToXMLPayload.class) OrgNetwork network);
-   
+   ListenableFuture<User> updateUser(@EndpointParam URI userRef, 
+         @BinderParam(BindToXMLPayload.class) User user);
+ 
    /**
-    * @see AdminNetworkClient#resetNetwork(URI)
+    * @see UserClient#deleteUser(URI)
     */
-   @POST
-   @Path("/action/reset")
+   @DELETE
    @Consumes
    @JAXBResponseParser
-   ListenableFuture<Task> resetNetwork(@EndpointParam URI networkRef);
-   
+   ListenableFuture<Void> deleteUser(@EndpointParam URI userRef);
+ 
    /**
-    * @return asynchronous access to admin {@link MetadataAsyncClient.Writeable} features
+    * @see UserClient#unlockUser(URI)
     */
-   @Override
-   @Delegate
-   MetadataAsyncClient.Writeable getMetadataClient();
+   @POST
+   @Path("/action/unlock")
+   @Consumes
+   @JAXBResponseParser
+   ListenableFuture<Void> unlockUser(@EndpointParam URI userRef);
 }

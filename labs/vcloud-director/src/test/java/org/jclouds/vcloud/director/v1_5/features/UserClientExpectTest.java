@@ -24,11 +24,12 @@ import java.net.URI;
 import java.util.Collections;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.User;
+import org.jclouds.vcloud.director.v1_5.features.admin.UserClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -37,8 +38,8 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "admin", "adminUser" }, singleThreaded = true, testName = "UserClientExpectTest")
-public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+@Test(groups = { "unit", "admin", "adminUser"}, singleThreaded = true, testName = "UserClientExpectTest")
+public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
    
    private Reference orgRef = Reference.builder()
          .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
@@ -50,7 +51,7 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    
    @Test
    public void testCreateUser() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("POST", "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0/catalogs")
             .xmlFilePayload("/user/createUserSource.xml", VCloudDirectorMediaType.USER)
@@ -113,7 +114,7 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    
    @Test
    public void testGetUser() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("GET", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6")
             .acceptAnyMedia()
@@ -135,7 +136,7 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
  
    @Test
    public void testUpdateUser() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
          new VcloudHttpRequestPrimer()
             .apiCommand("PUT", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6")
             .xmlFilePayload("/user/updateUserSource.xml", VCloudDirectorMediaType.USER)
@@ -175,7 +176,7 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
  
    @Test
    public void testDeleteUser() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, 
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse, 
             new VcloudHttpRequestPrimer()
                .apiCommand("DELETE", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6")
                .acceptAnyMedia()
@@ -188,7 +189,7 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
    
    @Test
    public void testUnlockUser() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                   .apiCommand("POST", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6/action/unlock")
                   .acceptAnyMedia()
@@ -201,7 +202,7 @@ public class UserClientExpectTest extends BaseVCloudDirectorRestClientExpectTest
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testUnlockUserFailNotFound() {
-      VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse,
+      VCloudDirectorAdminClient client = requestsSendResponses(loginRequest, sessionResponse,
             new VcloudHttpRequestPrimer()
                   .apiCommand("POST", "/admin/user/b37223f3-8792-477a-820f-334998f61cd6/action/unlock")
                   .acceptAnyMedia()

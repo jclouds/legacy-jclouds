@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
@@ -52,6 +51,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.internal.annotations.Sets;
@@ -65,7 +65,7 @@ import com.google.common.collect.Multimaps;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "user", "vapp" }, singleThreaded = true, testName = "VAppClientExpectTest")
-public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class VAppClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
    
    private String vAppId = "vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be";
    private URI vAppURI = URI.create(endpoint + vAppId);

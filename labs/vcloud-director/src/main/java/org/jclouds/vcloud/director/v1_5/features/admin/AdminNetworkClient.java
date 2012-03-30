@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +26,9 @@ import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
+import org.jclouds.vcloud.director.v1_5.features.NetworkClient;
+import org.jclouds.vcloud.director.v1_5.features.MetadataClient.Writeable;
 
 /**
  * Provides synchronous access to admin {@link Network} objects.

@@ -24,7 +24,6 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.DhcpService;
@@ -43,6 +42,7 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableSet;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "network" }, singleThreaded = true, testName = "NetworkClientExpectTest")
-public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class NetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
    
    @Test
    public void testGetNetwork() {
