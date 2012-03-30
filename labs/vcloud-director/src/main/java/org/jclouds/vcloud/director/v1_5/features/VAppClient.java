@@ -63,32 +63,32 @@ public interface VAppClient {
     *
     * The vApp/VM could be in one of these statuses:
     * <ul>
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION FAILED_CREATION(-1)} -
     *    Transient entity state, e.g., model object is created but the corresponding VC backing does not
     *		exist yet. This is further sub-categorized in the respective entities.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)} -
     *		Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are
     *		created.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED RESOLVED(1)} -
     *		Entity is resolved.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#DEPLOYED} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#DEPLOYED DEPLOYED(2)} -
     *		Entity is deployed.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#SUSPENDED} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#SUSPENDED SUSPENDED(3)} -
     *		All VMs of the vApp are suspended.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_ON} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_ON POWERED_ON(4)} -
     *		All VMs of the vApp are powered on.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#WAITING_FOR_INPUT} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#WAITING_FOR_INPUT WAITING_FOR_INPUT(5)} -
     *		VM is pending response on a question.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN UNKNOWN(6)} -
     *		Entity state could not be retrieved from the inventory, e.g., VM power state is null.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRECOGNIZED} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRECOGNIZED UNRECOGNIZED(7)} -
     *		Entity state was retrieved from the inventory but could not be mapped to an internal state.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_OFF} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_OFF POWERED_OFF(8)} -
     *		All VMs of the vApp are powered off.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#INCONSISTENT_STATE} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#INCONSISTENT_STATE INCONSISTENT_STATE(9)} -
     *		Apply to VM status, if a vm is {@code POWERED_ON}, or {@code WAITING_FOR_INPUT}, but is
     *    undeployed, it is in an inconsistent state.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#MIXED} -
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#MIXED MIXED(10)} -
     *		vApp status is set to {@code MIXED} when the VMs in the vApp are in different power states
     * </ul>
     *
@@ -131,7 +131,7 @@ public interface VAppClient {
     *
     * @since 1.5
     */
-   Task consolidateVApp(URI vAppURI);
+   Task consolidateVm(URI vAppURI);
 
    /**
     * Modifies the control access of a vApp.
@@ -142,7 +142,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   ControlAccessParams controlAccess(URI vAppURI, ControlAccessParams params);
+   ControlAccessParams modifyControlAccess(URI vAppURI, ControlAccessParams params);
 
    /**
     * Deploys a vApp/VM.
@@ -231,7 +231,7 @@ public interface VAppClient {
     *
     * @since 1.0
     */
-   Task recomposeVApp(URI vAppURI, RecomposeVAppParams params);
+   Task recompose(URI vAppURI, RecomposeVAppParams params);
 
    /**
     * Relocates a vm.
@@ -242,7 +242,7 @@ public interface VAppClient {
     *
     * @since 1.5
     */
-   Task relocate(URI vAppURI, RelocateParams params);
+   Task relocateVm(URI vAppURI, RelocateParams params);
 
    /**
     * Undeploy a vApp/VM.
