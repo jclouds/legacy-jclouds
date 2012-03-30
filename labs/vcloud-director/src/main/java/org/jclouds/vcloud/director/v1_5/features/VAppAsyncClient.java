@@ -139,7 +139,6 @@ public interface VAppAsyncClient {
    @Produces(CONTROL_ACCESS)
    @Consumes(CONTROL_ACCESS)
    @JAXBResponseParser
-   @ExceptionParser(ThrowVCloudErrorOn4xx.class)
    ListenableFuture<ControlAccessParams> modifyControlAccess(@EndpointParam URI vAppURI,
                                                              @BinderParam(BindToXMLPayload.class) ControlAccessParams params);
 
