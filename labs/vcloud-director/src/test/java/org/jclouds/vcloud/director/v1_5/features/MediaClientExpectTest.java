@@ -37,7 +37,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
@@ -49,7 +49,7 @@ import com.google.common.collect.ImmutableSet;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "media" }, singleThreaded = true, testName = "MediaClientExpectTest")
-public class MediaClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
+public class MediaClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    @Test
    public void testCreateMedia() {

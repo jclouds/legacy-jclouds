@@ -36,7 +36,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
 /**
@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "org"}, singleThreaded = true, testName = "AdminOrgClientExpectTest")
-public class AdminOrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
+public class AdminOrgClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private Reference orgRef = Reference.builder()
          .href(URI.create(endpoint + "/admin/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))

@@ -26,7 +26,8 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcClient;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
 /**
@@ -35,7 +36,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "admin", "vdc" }, singleThreaded = true, testName = "AdminVdcClientExpectTest")
-public class AdminVdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
+public class AdminVdcClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private Reference vdcRef = Reference.builder()
          .href(URI.create(endpoint + "???"))

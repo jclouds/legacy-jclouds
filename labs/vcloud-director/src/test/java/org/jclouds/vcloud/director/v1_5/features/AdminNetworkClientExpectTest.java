@@ -28,8 +28,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkClient;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableSet;
  * @author danikov
  */
 @Test(groups = { "unit", "admin", "network"}, singleThreaded = true, testName = "AdminNetworkClientExpectTest")
-public class AdminNetworkClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
+public class AdminNetworkClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    Reference networkRef = Reference.builder()
       .href(URI.create(endpoint+"/admin/network/b466c0c5-8a5c-4335-b703-a2e2e6b5f3e1"))

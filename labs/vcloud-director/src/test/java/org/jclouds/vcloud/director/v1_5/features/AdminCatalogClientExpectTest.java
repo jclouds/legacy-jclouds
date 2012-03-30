@@ -30,7 +30,8 @@ import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +42,7 @@ import com.google.common.collect.ImmutableSet;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "admin", "catalog" }, singleThreaded = true, testName = "CatalogClientExpectTest")
-public class AdminCatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorAdminClient> {
+public class AdminCatalogClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private Reference catalogRef = Reference.builder()
          .type("application/vnd.vmware.vcloud.catalog+xml")

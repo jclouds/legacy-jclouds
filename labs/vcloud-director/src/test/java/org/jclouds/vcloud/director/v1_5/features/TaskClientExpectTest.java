@@ -32,7 +32,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableMultimap;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "user", "task" }, singleThreaded = true, testName = "TaskClientExpectTest")
-public class TaskClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
+public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    @Test
    public void testTaskListForValidOrg() {

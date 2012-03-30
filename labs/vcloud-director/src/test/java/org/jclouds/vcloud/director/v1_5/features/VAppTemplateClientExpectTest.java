@@ -66,8 +66,7 @@ import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -78,7 +77,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adam Lowe
  */
 @Test(groups = { "unit", "user", "vapptemplate" }, testName = "VAppTemplateClientExpectTest")
-public class VAppTemplateClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
+public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    public VAppTemplateClientExpectTest() {
       TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));

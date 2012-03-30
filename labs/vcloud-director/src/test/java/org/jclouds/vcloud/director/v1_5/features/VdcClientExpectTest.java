@@ -45,7 +45,7 @@ import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -56,7 +56,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = { "unit", "user", "vdc" }, singleThreaded = true, testName = "VdcClientExpectTest")
-public class VdcClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
+public class VdcClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private URI vdcURI;
    

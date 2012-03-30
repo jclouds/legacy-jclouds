@@ -201,6 +201,16 @@ public interface VAppTemplateAsyncClient {
                                                      @BinderParam(BindToXMLPayload.class) LeaseSettingsSection settingsSection);
 
    /**
+    * @see VAppTemplateClient#getNetworkConnectionSection(URI)
+    */
+   @GET
+   @Consumes(NETWORK_CONFIG_SECTION)
+   @Path("/networkConnectionSection")
+   @JAXBResponseParser
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<NetworkConnectionSection> getNetworkConnectionSection(@EndpointParam URI templateURI);
+
+   /**
     * @see VAppTemplateClient#getNetworkConfigSection(URI)
     */
    @GET

@@ -34,7 +34,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
@@ -47,7 +47,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = { "unit", "user", "org" }, singleThreaded = true, testName = "OrgClientExpectTest")
-public class OrgClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
+public class OrgClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    @Test
    public void testGetOrgList() {

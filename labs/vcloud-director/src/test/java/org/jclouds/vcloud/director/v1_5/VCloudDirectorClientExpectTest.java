@@ -20,7 +20,7 @@ package org.jclouds.vcloud.director.v1_5;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.login.SessionClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "VCloudDirectorClient")
-public class VCloudDirectorClientExpectTest extends BaseVCloudDirectorRestClientExpectTest<VCloudDirectorClient> {
+public class VCloudDirectorClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    public void testRestClientModuleWorksProperly() throws Exception {
 
