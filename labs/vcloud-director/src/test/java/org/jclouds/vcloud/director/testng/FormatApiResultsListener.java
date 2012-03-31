@@ -28,7 +28,9 @@ import org.testng.ITestResult;
 import org.testng.TestListenerAdapter;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -79,15 +81,16 @@ public class FormatApiResultsListener extends TestListenerAdapter {
    }
 
    private String getApi(ITestResult res) {
-      return Iterables.find(Arrays.asList(res.getMethod().getGroups()), Predicates.in(apis));
+      Optional<String> found = Iterables.tryFind(Arrays.asList(res.getMethod().getGroups()), Predicates.in(apis));
+      return found.isPresent() ? found.get() : "";
    }
 
    private String getOperation(ITestResult res) {
-      return res.getMethod().getDescription();
+      return Strings.nullToEmpty(res.getMethod().getDescription());
    }
 
    private String getTest(ITestResult res) {
-      return res.getName();
+      return Strings.nullToEmpty(res.getName());
    }
 
    private String getStart(ITestResult res) {
