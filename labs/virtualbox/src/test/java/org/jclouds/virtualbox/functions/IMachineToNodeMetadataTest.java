@@ -70,7 +70,7 @@ public class IMachineToNodeMetadataTest {
       NodeMetadata node = new IMachineToNodeMetadata(machineUtils).apply(vm);
 
       assertEquals(MASTER_NAME, node.getName());
-      assertEquals(0, node.getPrivateAddresses().size());
+      assertEquals(1, node.getPrivateAddresses().size());
       assertEquals(1, node.getPublicAddresses().size());
       assertEquals("127.0.0.1", Iterables.get(node.getPublicAddresses(), 0));
       assertEquals(MastersLoadingCache.MASTER_PORT, node.getLoginPort());
