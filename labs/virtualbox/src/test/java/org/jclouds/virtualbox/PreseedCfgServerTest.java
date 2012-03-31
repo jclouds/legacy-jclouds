@@ -25,20 +25,19 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.eclipse.jetty.server.Server;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
-import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
+import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.testng.annotations.Test;
 
 /**
- * Tests that jetty is able to serve the preseed.cfg file. This test is here to have access to the
- * defaultProperties() method in {@link VirtualBoxPropertiesBuilder}.
+ * Tests that jetty is able to serve the preseed.cfg from the provided yaml image. This test is here
+ * to have access to the defaultProperties() method in {@link VirtualBoxPropertiesBuilder}.
  * 
  * @author dralves
  * 
  */
 @Test(groups = "live", singleThreaded = true, testName = "StartJettyIfNotAlreadyRunningLiveTest")
-public class StartJettyIfNotAlreadyRunningLiveTest {
+public class PreseedCfgServerTest {
 
    @Test
    public void testJettyServerServesPreseedFile() throws Exception {
@@ -48,15 +47,14 @@ public class StartJettyIfNotAlreadyRunningLiveTest {
 
       int port = URI.create(preconfigurationUrl).getPort();
 
-      Server server = new Server(port);
+      PreseedCfgServer starter = new PreseedCfgServer();
 
-      StartJettyIfNotAlreadyRunning starter = new StartJettyIfNotAlreadyRunning(preconfigurationUrl, server);
-
-      starter.load(null);
+      starter.start(preconfigurationUrl, BaseVirtualBoxClientLiveTest.getDefaultImage().preseed_cfg);
 
       String preseedFileFromJetty = IOUtils.toString(new URL("http://127.0.0.1:" + port + "/preseed.cfg").openStream());
-      String preseedFileFromFile = IOUtils
-               .toString(this.getClass().getClassLoader().getResourceAsStream("preseed.cfg")) + "\n";
+      String preseedFileFromFile = BaseVirtualBoxClientLiveTest.getDefaultImage().preseed_cfg + "\n";
       assertEquals(preseedFileFromFile, preseedFileFromJetty);
+
+      starter.stop();
    }
 }

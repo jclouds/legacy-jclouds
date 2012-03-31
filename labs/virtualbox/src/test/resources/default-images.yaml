@@ -66,7 +66,7 @@ images:
                       # debconf-get-selections --install
                       #Use mirror
                       choose-mirror-bin mirror/http/proxy string
-    - id: ubuntu-11.10-i386
+    - id: test-ubuntu-11.10-i386
       name: ubuntu-11.10-server-i386
       description: ubuntu 11.10 server (i386)
       os_arch: x86

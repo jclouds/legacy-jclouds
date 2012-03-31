@@ -21,6 +21,8 @@ package org.jclouds.virtualbox.config;
 
 import java.io.File;
 
+import org.jclouds.compute.domain.OsFamily;
+
 /**
  * Configuration properties used for interacting with VirtualBox instances.
  * 
@@ -30,7 +32,7 @@ import java.io.File;
 public interface VirtualBoxConstants {
 
    public static final String VIRTUALBOX_NODE_NAME_SEPARATOR = "-0x0-";
-   
+
    public static final String VIRTUALBOX_IMAGE_PREFIX = "jclouds-image" + VIRTUALBOX_NODE_NAME_SEPARATOR;
 
    public static final String VIRTUALBOX_NODE_PREFIX = "jclouds-node" + VIRTUALBOX_NODE_NAME_SEPARATOR;
@@ -59,6 +61,12 @@ public interface VirtualBoxConstants {
 
    public static final String VIRTUALBOX_DEFAULT_DIR = System.getProperty("user.home") + File.separator
             + ".jclouds-vbox";
+
+   public static final OsFamily VIRTUALBOX_DEFAULT_IMAGE_OS = OsFamily.UBUNTU;
+   
+   public static final String VIRTUALBOX_DEFAULT_IMAGE_VERSION = "11.10";
+   
+   public static final String VIRTUALBOX_DEFAULT_IMAGE_ARCH = "x86";
 
    public static final String VIRTUALBOX_PROVIDER = "virtualbox";
 
