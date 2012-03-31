@@ -30,6 +30,7 @@ import org.jclouds.virtualbox.domain.ErrorCode;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
+import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -52,7 +53,7 @@ import com.google.common.base.Function;
  * @author Mattias Holmqvist
  * @see ErrorCode
  */
-public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void> {
+public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, ISession> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -69,14 +70,17 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void
    }
 
    @Override
-   public Void apply(@Nullable IMachine machine) {
+   public ISession apply(@Nullable IMachine machine) {
+      ISession session = manager.getSessionObject();
       try {
          final IProgress progress = machine
-                 .launchVMProcess(manager.getSessionObject(), type.stringValue(), environment);
+                 .launchVMProcess(session, type.stringValue(), environment);
          progress.waitForCompletion(-1);
-         Thread.sleep(5000);
-      } catch (InterruptedException e) {
-         propagate(e);
+         try {
+            Thread.sleep(3000l);
+         } catch (InterruptedException e) {
+            propagate(e);
+         }
       } catch (VBoxException e) {
          ErrorCode errorCode = ErrorCode.valueOf(e);
          switch (errorCode) {
@@ -88,11 +92,12 @@ public class LaunchMachineIfNotAlreadyRunning implements Function<IMachine, Void
                propagate(e);
          }
       } finally {
-         if (manager.getSessionObject().getState() == SessionState.Locked) {
+         if (session.getState() == SessionState.Locked) {
             // Remove session lock taken by launchVmProcess()
-            manager.getSessionObject().unlockMachine();
+            session.unlockMachine();
+            // TODO this unlock is not IMMEDIATELY visible outside (vbox doc)
          }
       }
-      return null;
+      return session;
    }
 }

@@ -166,15 +166,12 @@ public class BridgedIf {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (o instanceof VmSpec) {
+		if (o instanceof BridgedIf) {
 			BridgedIf other = (BridgedIf) o;
 			return Objects.equal(name, other.name)
-					&& Objects.equal(guid, other.guid)
 					&& Objects.equal(dhcp, other.dhcp)
 					&& Objects.equal(ipAddress, other.ipAddress)
 					&& Objects.equal(networkMask, other.networkMask)
-					&& Objects.equal(ipv6Address, other.ipv6Address)
-					&& Objects.equal(ipv6NetworkMask, other.ipv6NetworkMask)
 					&& Objects.equal(mediumType, other.mediumType)
 					&& Objects.equal(status, other.status);
 		}

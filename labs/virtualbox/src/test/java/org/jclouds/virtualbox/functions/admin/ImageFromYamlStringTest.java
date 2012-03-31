@@ -28,9 +28,9 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 /**
@@ -39,29 +39,23 @@ import com.google.common.collect.Iterables;
 @Test(groups = "unit")
 public class ImageFromYamlStringTest {
 
-  public static final Image TEST1 = new ImageBuilder()
-                                      .id("default-ubuntu-11.04-i386")
-                                      .name("ubuntu-11.04-server-i386")
-                                      .description("ubuntu 11.04 server (i386)")
-                                      .operatingSystem(
-                                          OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU)
-                                              .version("11.04").build()).build();
+   public static final Image TEST1 = new ImageBuilder()
+            .id("default-ubuntu-11.04-i386")
+            .name("ubuntu-11.04-server-i386")
+            .description("ubuntu 11.04 server (i386)")
+            .operatingSystem(
+                     OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU).version("11.04").build())
+            .build();
 
-  @Test
-  public void testNodesParse() throws Exception {
+   @Test
+   public void testNodesParse() throws Exception {
 
-    final StringBuilder yamlFileLines = new StringBuilder();
-    for (Object line : IOUtils.readLines(new InputStreamReader(getClass().getResourceAsStream("/default-images.yaml")))) {
-      yamlFileLines.append(line).append("\n");
-    }
-
-    ImagesToYamlImagesFromYamlDescriptor parser = new ImagesToYamlImagesFromYamlDescriptor(new Supplier<String>() {
-
-      @Override
-      public String get() {
-        return yamlFileLines.toString();
+      final StringBuilder yamlFileLines = new StringBuilder();
+      for (Object line : IOUtils
+               .readLines(new InputStreamReader(getClass().getResourceAsStream("/default-images.yaml")))) {
+         yamlFileLines.append(line).append("\n");
       }
-    });
-    assertEquals(Iterables.getFirst(parser.get().keySet(), null), TEST1);
-  }
+       ImagesToYamlImagesFromYamlDescriptor parser = new ImagesToYamlImagesFromYamlDescriptor(new YamlImagesFromFileConfig("/default-images.yaml"));
+       assertEquals(Iterables.getFirst(parser.get().keySet(), null), TEST1);
+   }
 }

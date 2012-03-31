@@ -4,11 +4,8 @@ function installModuleAssistantIfNeeded {
    if [ $OSNAME = 'Ubuntu' ]
    then
       echo "OS is Ubuntu"
-      apt-get -f -y -qq --force-yes install build-essential module-assistant;
+      apt-get -f -y -qq --force-yes install dkms build-essential linux-headers-`uname -r` module-assistant acpid;
       m-a prepare -i
-      rm /etc/udev/rules.d/70-persistent-net.rules;
-      mkdir /etc/udev/rules.d/70-persistent-net.rules;
-      rm -rf /dev/.udev/;
-      rm /lib/udev/rules.d/75-persistent-net-generator.rules
+      return 0
    fi
 }

@@ -35,7 +35,7 @@ import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
-import org.jclouds.virtualbox.domain.ExecutionType;
+import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.MasterSpec;
@@ -73,13 +73,14 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
             .getInstance(Json.class));
 
-   private VmSpec vmSpecification;
-   private MasterSpec masterSpec;
    private Injector injector;
    private Function<IMachine, SshClient> sshClientForIMachine;
    private Predicate<SshClient> sshResponds;
-   private String vmName;
+   
+   private MasterSpec machineSpec;
+   private String instanceName;
 
+   /*
    @Override
    @BeforeClass(groups = "live")
    public void setupClient() {
@@ -97,12 +98,13 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
       injector = context.utils().injector();
       Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
 
-      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+      NetworkAdapter natAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
                .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
-               .build();
 
-      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
+      NetworkInterfaceCard networkInterfaceCard1 = NetworkInterfaceCard.builder().slot(0l)
+               .addNetworkAdapter(natAdapter).build();
+
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard1).build();
 
       masterSpec = MasterSpec
                .builder()
@@ -113,25 +115,51 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
                         .installationScript(
                                  configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
                                           vmSpecification.getVmName())).build()).network(networkSpec).build();
+   }*/
+   
+   @Override
+   @BeforeClass(groups = "live")
+   public void setupClient() {
+      super.setupClient();
+      instanceName = VIRTUALBOX_IMAGE_PREFIX
+               + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 
-      undoVm(vmSpecification);
-   }
+      StorageController ideController = StorageController
+               .builder()
+               .name("IDE Controller")
+               .bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso)
+               .attachHardDisk(
+                        HardDisk.builder().diskpath(adminDisk(instanceName)).controllerPort(0).deviceSlot(1)
+                                 .autoDelete(true).build()).attachISO(1, 1, guestAdditionsIso).build();
 
-   @Test
-   public void testCreateImageMachineFromIso() throws Exception {
-      IMachine imageMachine = getVmWithGuestAdditionsInstalled();
-      IMachineToImage iMachineToImage = new IMachineToImage(manager, map);
-      Image newImage = iMachineToImage.apply(imageMachine);
-      assertEquals(vmName, newImage.getName());
+      VmSpec instanceVmSpec = VmSpec.builder().id(instanceName).name(instanceName).osTypeId("").memoryMB(512)
+               .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
+
+      injector = context.utils().injector();
+      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
+      IsoSpec isoSpec = IsoSpec
+               .builder()
+               .sourcePath(operatingSystemIso)
+               .installationScript(
+                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
+                                 instanceVmSpec.getVmName())).build();
+
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+               .build();
+
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
+      machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
    }
 
    @Test
    public void testGuestAdditionsAreInstalled() throws Exception {
       try {
-         IMachine machine = getVmWithGuestAdditionsInstalled();
+         IMachine machine = cloneFromMaster();
+         machineController.ensureMachineIsLaunched(machine.getName());
 
-         machineUtils.applyForMachine(machine.getName(), new LaunchMachineIfNotAlreadyRunning(manager.get(),
-                  ExecutionType.GUI, ""));
          sshClientForIMachine = injector.getInstance(IMachineToSshClient.class);
          SshClient client = sshClientForIMachine.apply(machine);
 
@@ -141,35 +169,44 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
 
          String vboxVersion = Iterables.get(
                   Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-         assertEquals(vboxVersion, machineUtils.sharedLockMachineAndApplyToSession(machine.getName(), 
-                  new Function<ISession, String>() {
+         assertEquals(vboxVersion,
+                  machineUtils.sharedLockMachineAndApplyToSession(machine.getName(), new Function<ISession, String>() {
                      @Override
                      public String apply(ISession session) {
                         return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestAdd/Version");
                      }
                   }));
       } finally {
-         for (VmSpec spec : ImmutableSet.of(vmSpecification)) {
-            machineController.ensureMachineHasPowerDown(spec.getVmName());
+         for (VmSpec spec : ImmutableSet.of(machineSpec.getVmSpec())) {
+            machineController.ensureMachineIsShutdown(spec.getVmName());
          }
       }
    }
 
+   private IMachine cloneFromMaster() {
+      IMachine source = getVmWithGuestAdditionsInstalled();
+      CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec()).network(machineSpec.getNetworkSpec())
+               .master(source).linked(true).build();
+      return new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
+               .apply(cloneSpec);
+   }
+   
    private IMachine getVmWithGuestAdditionsInstalled() {
+      MasterSpec masterSpecForTest = super.getMasterSpecForTest();
       try {
          Injector injector = context.utils().injector();
-         return injector.getInstance(CreateAndInstallVm.class).apply(masterSpec);
+         return injector.getInstance(CreateAndInstallVm.class).apply(masterSpecForTest);
       } catch (IllegalStateException e) {
          // already created
-         return manager.get().getVBox().findMachine(masterSpec.getVmSpec().getVmId());
+         return manager.get().getVBox().findMachine(masterSpecForTest.getVmSpec().getVmId());
       }
    }
 
    @Override
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
-      for (VmSpec spec : ImmutableSet.of(vmSpecification)) {
-         undoVm(spec);
+      for (String vmName : ImmutableSet.of(instanceName)) {
+         undoVm(vmName);
       }
       super.tearDown();
    }

@@ -29,6 +29,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.INATEngine;
@@ -62,13 +63,14 @@ public class IMachineToNodeMetadataTest {
       expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,2222,,22"));
 
       INetworkAdapter hostOnly = createNiceMock(INetworkAdapter.class);
+      MachineUtils machineUtils = createNiceMock(MachineUtils.class);
 
-      replay(vm, nat, natEng, hostOnly);
+      replay(vm, nat, natEng, hostOnly, machineUtils);
 
-      NodeMetadata node = new IMachineToNodeMetadata().apply(vm);
+      NodeMetadata node = new IMachineToNodeMetadata(machineUtils).apply(vm);
 
       assertEquals(MASTER_NAME, node.getName());
-      assertEquals(0, node.getPrivateAddresses().size());
+      assertEquals(1, node.getPrivateAddresses().size());
       assertEquals(1, node.getPublicAddresses().size());
       assertEquals("127.0.0.1", Iterables.get(node.getPublicAddresses(), 0));
       assertEquals(MastersLoadingCache.MASTER_PORT, node.getLoginPort());
@@ -99,17 +101,14 @@ public class IMachineToNodeMetadataTest {
       expect(nat.getNatDriver()).andReturn(natEng).anyTimes();
       expect(natEng.getHostIP()).andReturn("127.0.0.1").once();
       expect(natEng.getRedirects()).andReturn(ImmutableList.of("0,1,127.0.0.1,3000,,22"));
+      MachineUtils machineUtils = createNiceMock(MachineUtils.class);
 
-      replay(vm, nat, natEng, hostOnly);
+      replay(vm, nat, natEng, hostOnly, machineUtils);
 
-      NodeMetadata node = new IMachineToNodeMetadata().apply(vm);
+      NodeMetadata node = new IMachineToNodeMetadata(machineUtils).apply(vm);
 
       assertEquals(name, node.getName());
       assertEquals(group, node.getGroup());
-      assertEquals(1, node.getPrivateAddresses().size());
-      assertEquals((NodeCreator.VMS_NETWORK + 2), Iterables.get(node.getPrivateAddresses(), 0));
       assertEquals(1, node.getPublicAddresses().size());
-      assertEquals((NodeCreator.VMS_NETWORK + 2), Iterables.get(node.getPublicAddresses(), 0));
-      assertEquals(22, node.getLoginPort());
    }
 }

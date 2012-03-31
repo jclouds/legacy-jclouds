@@ -112,7 +112,7 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
       IProgress progress = currentSnapshot.getMachine().cloneTo(clonedMachine, CloneMode.MachineState, options);
 
       progress.waitForCompletion(-1);
-      logger.debug("clone done");
+      logger.debug(String.format("Machine %s is cloned correctly", clonedMachine.getName()));
 
       // registering
       manager.get().getVBox().registerMachine(clonedMachine);

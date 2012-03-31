@@ -20,6 +20,7 @@
 package org.jclouds.virtualbox;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 
 import java.io.File;
 import java.net.URI;
@@ -38,25 +39,41 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
+import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
 import org.jclouds.virtualbox.domain.Master;
+import org.jclouds.virtualbox.domain.MasterSpec;
+import org.jclouds.virtualbox.domain.NetworkAdapter;
+import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
+import org.jclouds.virtualbox.domain.NetworkSpec;
+import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.functions.IMachineToVmSpec;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import org.virtualbox_4_1.CleanupMode;
+import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_1.SessionState;
+import org.virtualbox_4_1.StorageBus;
+import org.virtualbox_4_1.VBoxException;
 import org.virtualbox_4_1.VirtualBoxManager;
 
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -146,18 +163,69 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       checkNotNull(mastersCache.apply(template.getImage()));
    }
 
+   protected void undoVm(String vmNameOrId) {
+      IMachine vm = null;
+      try {
+         vm = manager.get().getVBox().findMachine(vmNameOrId);
+         VmSpec vmSpec = new IMachineToVmSpec().apply(vm);
+         int attempts = 0;
+         while (attempts < 10 && !vm.getSessionState().equals(SessionState.Unlocked)) {
+            attempts++;
+            try {
+               Thread.sleep(200l);
+            } catch (InterruptedException e) {
+            }
+         }
+         machineUtils.applyForMachine(vmNameOrId, new UnregisterMachineIfExistsAndDeleteItsMedia(vmSpec));
 
-   protected void undoVm(VmSpec vmSpecification) {
-      machineUtils.writeLockMachineAndApply(vmSpecification.getVmId(), new UnregisterMachineIfExistsAndDeleteItsMedia(
-               vmSpecification));
+      } catch (VBoxException e) {
+         if (e.getMessage().contains("Could not find a registered machine named"))
+            return;
+      }
    }
-
-
 
    public String adminDisk(String vmName) {
       return workingDir + File.separator + vmName + ".vdi";
    }
 
+   public MasterSpec getMasterSpecForTest() {
+      String masterName = "jclouds-image-0x0-default-ubuntu-11.04-i386";
+      StorageController ideController = StorageController
+               .builder()
+               .name("IDE Controller")
+               .bus(StorageBus.IDE)
+               .attachISO(0, 0, operatingSystemIso)
+               .attachHardDisk(
+                        HardDisk.builder().diskpath(adminDisk(masterName)).controllerPort(0).deviceSlot(1)
+                                 .autoDelete(true).build()).attachISO(1, 0, guestAdditionsIso).build();
+
+            VmSpec sourceVmSpec = VmSpec.builder().id(masterName).name(masterName)
+                        .osTypeId("").memoryMB(512).cleanUpMode(CleanupMode.Full)
+                        .controller(ideController).forceOverwrite(true).build();
+
+            Injector injector = context.utils().injector();
+            Function<String, String> configProperties = injector
+                        .getInstance(ValueOfConfigurationKeyOrNull.class);
+            IsoSpec isoSpec = IsoSpec
+                        .builder()
+                        .sourcePath(operatingSystemIso)
+                        .installationScript(
+                                    configProperties.apply(
+                                                VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace(
+                                                "HOSTNAME", sourceVmSpec.getVmName())).build();
+            
+            NetworkAdapter networkAdapter = NetworkAdapter.builder()
+                        .networkAttachmentType(NetworkAttachmentType.NAT)
+                        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+            NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
+                        .builder().addNetworkAdapter(networkAdapter).build();
+
+            NetworkSpec networkSpec = NetworkSpec.builder()
+                        .addNIC(networkInterfaceCard).build();
+            return MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec)
+                        .network(networkSpec).build();
+   }
+   
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
       if (context != null)

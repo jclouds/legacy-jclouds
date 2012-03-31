@@ -17,12 +17,11 @@
  * under the License.
  */
 
-package org.jclouds.virtualbox.predicates;
+package org.jclouds.virtualbox.util;
 
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
-import static org.jclouds.virtualbox.predicates.IMachinePredicates.isLinkedClone;
-import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertTrue;
 
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
@@ -42,7 +41,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
 import org.virtualbox_4_1.IMachine;
+import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.NetworkAttachmentType;
+import org.virtualbox_4_1.SessionState;
 import org.virtualbox_4_1.StorageBus;
 
 import com.google.common.base.CaseFormat;
@@ -50,13 +51,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 
-/**
- * 
- * @author Andrea Turli
- */
-@Test(groups = "live", singleThreaded = true, testName = "IMachinePredicatesLiveTest")
-public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
-   
+@Test(groups = "live", testName = "MachineControllerLiveTest")
+public class MachineControllerLiveTest extends BaseVirtualBoxClientLiveTest {
+
    private MasterSpec machineSpec;
    private String instanceName;
 
@@ -95,17 +92,30 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
 
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
       machineSpec = MasterSpec.builder().iso(isoSpec).vm(instanceVmSpec).network(networkSpec).build();
-
    }
-   
+
    @Test
-   public void testCloneMachineFromAnotherMachine() {
+   public void testEnsureMachineisLaunchedAndSessionIsUnlocked() {
+      cloneFromMaster();
+      ISession cloneMachineSession = machineController.ensureMachineIsLaunched(instanceName);
+      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
+      cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
+      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
+   }
+
+   @Test(dependsOnMethods="testEnsureMachineisLaunchedAndSessionIsUnlocked")
+   public void testEnsureMachineCanBePoweredOffMoreThanOneTimeAndSessionIsUnlocked() {
+      ISession cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
+      cloneMachineSession = machineController.ensureMachineHasPowerDown(instanceName);
+      assertTrue(cloneMachineSession.getState() == SessionState.Unlocked);
+   }
+
+   private IMachine cloneFromMaster() {
       IMachine source = getVmWithGuestAdditionsInstalled();
       CloneSpec cloneSpec = CloneSpec.builder().vm(machineSpec.getVmSpec()).network(machineSpec.getNetworkSpec())
                .master(source).linked(true).build();
-      IMachine clone = new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
+      return new CloneAndRegisterMachineFromIMachineIfNotAlreadyExists(manager, workingDir, machineUtils)
                .apply(cloneSpec);
-      assertTrue(isLinkedClone().apply(clone));
    }
 
    private IMachine getVmWithGuestAdditionsInstalled() {
@@ -118,7 +128,7 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
          return manager.get().getVBox().findMachine(masterSpecForTest.getVmSpec().getVmId());
       }
    }
-   
+
    @Override
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
