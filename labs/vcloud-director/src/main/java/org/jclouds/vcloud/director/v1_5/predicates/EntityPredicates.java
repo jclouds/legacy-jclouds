@@ -22,32 +22,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.EntityType;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
- * Predicates for working with {@link Reference} collections.
+ * Predicates for working with {@link EntityType} collections.
  * 
- * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
-public class ReferencePredicates {
+public class EntityPredicates {
 
    /**
-    * Matches {@link Reference}s with the given name.
+    * Matches {@link EntityType entities} with the given name.
     * 
-    * @param T type of the reference, for example {@link Link}
-    * @param name value of the name attribute of the referenced object
-    * @return predicate that will match references of the given name
+    * @param T type of the entity, for example {@link Vm}
+    * @param name value of the name attribute of the entity
+    * @return predicate that will match entities of the given name
     */
-   public static <T extends Reference> Predicate<T> nameEquals(final String name) {
+   public static <T extends EntityType> Predicate<T> nameEquals(final String name) {
       checkNotNull(name, "name must be defined");
 
       return new Predicate<T>() {
          @Override
-         public boolean apply(T reference) {
-            return name.equals(reference.getName());
+         public boolean apply(T entity) {
+            return name.equals(entity.getName());
          }
 
          @Override
@@ -58,19 +58,19 @@ public class ReferencePredicates {
    }
 
    /**
-    * Matches {@link Reference}s with names starting with the given prefix.
+    * Matches {@link EntityType entities} with names starting with the given prefix.
     * 
-    * @param T type of the reference, for example {@link Link}
-    * @param name prefix of the name attribute of the referenced object
-    * @return predicate that will match references with names starting with the given prefix
+    * @param T type of the entity, for example {@link Vm}
+    * @param name prefix of the name attribute of the entity
+    * @return predicate that will match entities with names starting with the given prefix
     */
-   public static <T extends Reference> Predicate<T> nameStartsWith(final String prefix) {
+   public static <T extends EntityType> Predicate<T> nameStartsWith(final String prefix) {
       checkNotNull(prefix, "prefix must be defined");
 
       return new Predicate<T>() {
          @Override
-         public boolean apply(T reference) {
-            String name = reference.getName();
+         public boolean apply(T entity) {
+            String name = entity.getName();
             return name != null && name.startsWith(prefix);
          }
 
@@ -82,19 +82,19 @@ public class ReferencePredicates {
    }
 
    /**
-    * Matches {@link Reference}s with names in the given collection.
+    * Matches {@link EntityType entities} with names in the given collection.
     *
-    * @param T type of the reference, for example {@link Link}
-    * @param names collection of values for the name attribute of the referenced object
-    * @return predicate that will match references with names starting with the given prefix
+    * @param T type of the entity, for example {@link Vm}
+    * @param names collection of values for the name attribute of the entity
+    * @return predicate that will match entities with names starting with the given prefix
     */
-   public static <T extends Reference> Predicate<T> nameIn(final Iterable<String> names) {
+   public static <T extends EntityType> Predicate<T> nameIn(final Iterable<String> names) {
       checkNotNull(names, "names must be defined");
 
       return new Predicate<T>() {
          @Override
-         public boolean apply(T reference) {
-            String name = reference.getName();
+         public boolean apply(T entity) {
+            String name = entity.getName();
             return Iterables.contains(names, name);
          }
 
@@ -106,20 +106,20 @@ public class ReferencePredicates {
    }
 
    /**
-    * Matches {@link Reference}s of the given type.
+    * Matches {@link EntityType entities} of the given type.
     * 
-    * @param T type of the reference, for example {@link Link}
-    * @param type the media type string of the referenced object, for example {@link VCloudDirectorMediaType#CATALOG}
-    * @return predicate that will match references of the given type
+    * @param T type of the entity, for example {@link Vm}
+    * @param type the media type string of the entity, for example {@link VCloudDirectorMediaType#CATALOG}
+    * @return predicate that will match entities of the given type
     * @see VCloudDirectorMediaType
     */
-   public static <T extends Reference> Predicate<T> typeEquals(final String type) {
+   public static <T extends EntityType> Predicate<T> typeEquals(final String type) {
       checkNotNull(type, "type must be defined");
 
       return new Predicate<T>() {
          @Override
-         public boolean apply(T reference) {
-            return type.equals(reference.getType());
+         public boolean apply(T entity) {
+            return type.equals(entity.getType());
          }
 
          @Override
@@ -130,20 +130,20 @@ public class ReferencePredicates {
    }
 
    /**
-    * Matches {@link Reference}s with the given {@link URI}.
+    * Matches {@link EntityType entities} with the given {@link URI}.
     * 
-    * @param T type of the reference, for example {@link Link}
-    * @param  href the URI of the reference
-    * @return predicate that will match references with the given URI
+    * @param T type of the entity, for example {@link Vm}
+    * @param  href the URI of the entity
+    * @return predicate that will match entities with the given URI
     * @see VCloudDirectorMediaType
     */
-   public static <T extends Reference> Predicate<T> hrefEquals(final URI href) {
+   public static <T extends EntityType> Predicate<T> hrefEquals(final URI href) {
       checkNotNull(href, "href must be defined");
 
       return new Predicate<T>() {
          @Override
-         public boolean apply(T reference) {
-            return href.equals(reference.getHref());
+         public boolean apply(T entity) {
+            return href.equals(entity.getHref());
          }
 
          @Override

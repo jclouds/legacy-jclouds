@@ -32,12 +32,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(name = "CloneVAppParams")
 @XmlRootElement(name = "CloneVAppParams")
-public class CloneVAppParams extends InstantiateVAppParamsType {
+public class CloneVAppParams extends InstantiateVAppParams {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromCloneVAppParams(this);
    }
@@ -45,7 +46,13 @@ public class CloneVAppParams extends InstantiateVAppParamsType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends InstantiateVAppParamsType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends InstantiateVAppParams.Builder<B> {
+
+      @SuppressWarnings("unchecked")
+      @Override
+      protected B self() {
+         return (B) this;
+      }
 
       @Override
       public CloneVAppParams build() {

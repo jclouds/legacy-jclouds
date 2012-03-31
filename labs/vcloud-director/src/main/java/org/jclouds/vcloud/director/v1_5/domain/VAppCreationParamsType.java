@@ -30,11 +30,10 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * Represents vApp creation parameters.
  *
- * <pre>
- * &lt;complexType name="VAppCreationParams" /&gt;
- * </pre>
- *
  * @author grkvlt@apache.org
+ * @see <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/VAppCreationParamsType.html">
+ *    vCloud REST API - VAppCreationParamsType</a>
+ * @since 0.9
  */
 @XmlType(name = "VAppCreationParamsType")
 public class VAppCreationParamsType extends ParamsType {
@@ -43,6 +42,7 @@ public class VAppCreationParamsType extends ParamsType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVAppCreationParamsType(this);
    }
@@ -148,28 +148,30 @@ public class VAppCreationParamsType extends ParamsType {
    protected Boolean powerOn;
 
    /**
-    * Gets the value of the vAppParent property.
+    * Reserved.
+    *
+    * Unimplemented.
     */
    public Reference getVAppParent() {
       return vAppParent;
    }
 
    /**
-    * Gets the value of the instantiationParams property.
+    * Instantiation parameters of a VApp.
     */
    public InstantiationParams getInstantiationParams() {
       return instantiationParams;
    }
 
    /**
-    * Gets the value of the deploy property.
+    * Flag to deploy the VApp after successful creation.
     */
    public Boolean isDeploy() {
       return deploy;
    }
 
    /**
-    * Gets the value of the powerOn property.
+    * Flag to deploy and power on the VApp after successful creation.
     */
    public Boolean isPowerOn() {
       return powerOn;

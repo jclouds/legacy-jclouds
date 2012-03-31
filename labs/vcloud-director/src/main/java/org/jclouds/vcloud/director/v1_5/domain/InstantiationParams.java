@@ -21,7 +21,6 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
@@ -29,19 +28,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
  * Represents a list of ovf:Section to configure for instantiating a VApp.
  * 
- * <pre>
- * &lt;complexType name="InstantiationParams" /&gt;
- * </pre>
- * 
  * @author grkvlt@apache.org
+ * @see <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/InstantiationParamsType.html">
+ *    vCloud REST API - InstantiationParamsType</a>
+ * @since 0.9
  */
 @XmlRootElement(name = "InstantiationParams")
 @XmlType(name = "InstantiationParamsType")
@@ -56,13 +54,21 @@ public class InstantiationParams {
    }
 
    public static class Builder {
-      private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
+      private Set<SectionType> sections = Sets.newLinkedHashSet();
 
       /**
        * @see InstantiationParams#getSections()
        */
-      public Builder sections(Set<? extends SectionType> sections) {
-         this.sections = checkNotNull(sections, "sections");
+      public Builder sections(Iterable<? extends SectionType> sections) {
+         this.sections = Sets.newLinkedHashSet(checkNotNull(sections, "sections"));
+         return this;
+      }
+
+      /**
+       * @see InstantiationParams#getSections()
+       */
+      public Builder section(SectionType section) {
+         this.sections.add(checkNotNull(section, "section"));
          return this;
       }
 
@@ -81,7 +87,7 @@ public class InstantiationParams {
    }
 
    private InstantiationParams(Set<? extends SectionType> sections) {
-      this.sections = sections;
+      this.sections = ImmutableSet.copyOf(sections);
    }
 
    @XmlElementRef
@@ -113,7 +119,7 @@ public class InstantiationParams {
     * </ul>
     */
    public Set<? extends SectionType> getSections() {
-      return Collections.unmodifiableSet(this.sections);
+      return sections;
    }
 
    @Override
@@ -123,7 +129,7 @@ public class InstantiationParams {
       if (o == null || getClass() != o.getClass())
          return false;
       InstantiationParams that = InstantiationParams.class.cast(o);
-      return equal(sections, that.sections);
+      return equal(this.sections, that.sections);
    }
 
    @Override

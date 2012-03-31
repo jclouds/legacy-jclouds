@@ -30,11 +30,11 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * A basic type used to specify parameters for operations.
  *
- * <pre>
- * &lt;complexType name="Params" /&gt;
- * </pre>
+ * @see <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/ParamsType.html">
+ *    vCloud REST API - ParamsType</a>
+ * @since 0.9
  */
-@XmlType(name = "Params")
+@XmlType(name = "ParamsType")
 public class ParamsType {
 
    public static Builder<?> builder() {
@@ -100,14 +100,14 @@ public class ParamsType {
    protected String name;
 
    /**
-    * Gets the value of the description property.
+    * Optional description.
     */
    public String getDescription() {
       return description;
    }
 
    /**
-    * Gets the value of the name property.
+    * A name as parameter.
     */
    public String getName() {
       return name;
