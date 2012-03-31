@@ -1,4 +1,7 @@
-function installJDK() {
+# note this does not work until someone addresses user auth
+# https://issues.jenkins-ci.org/browse/JENKINS-10556
+# https://forums.oracle.com/forums/thread.jspa?messageID=10236239&tstart=0
+function installJDKFromURL() {
   if hash curl 2>/dev/null; then
     if [ `uname -m` == 'x86_64' ]; then
       local url=${1:-http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz}

@@ -24,7 +24,7 @@ import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorClient;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
@@ -34,7 +34,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
  * @author grkvlt@apache.org
  */
 @Test(groups = { "unit", "user", "catalog" }, singleThreaded = true, testName = "CatalogClientExpectTest")
-public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectTest {
+public class CatalogClientExpectTest extends VCloudDirectorClientExpectTest {
 
    @Test
    public void testGetCatalog() {
@@ -181,11 +181,11 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
 
       VCloudDirectorClient client = requestsSendResponses(loginRequest, sessionResponse, catalogItemRequest, catalogItemResponse);
 
-		URI catalogItemURI =	URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
-			
-		CatalogItem expected = catalogItem();
-		
-		assertEquals(client.getCatalogClient().getCatalogItem(catalogItemURI), expected);
+      URI catalogItemURI =   URI.create("https://vcloudbeta.bluelock.com/api/catalogItem/a36fdac9-b8c2-43e2-9a4c-2ffaf3ee13df");
+         
+      CatalogItem expected = catalogItem();
+      
+      assertEquals(client.getCatalogClient().getCatalogItem(catalogItemURI), expected);
    }
 
    @Test
@@ -443,10 +443,10 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
    
    public static Reference ubuntuVappTemplateReference() {
       return Reference.builder()
-				      .type("application/vnd.vmware.vcloud.vAppTemplate+xml")
-				      .name("ubuntu10")
-				      .href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"))
-				      .build();
+                  .type("application/vnd.vmware.vcloud.vAppTemplate+xml")
+                  .name("ubuntu10")
+                  .href(URI.create("https://vcloudbeta.bluelock.com/api/vAppTemplate/vappTemplate-ef4415e6-d413-4cbb-9262-f9bbec5f2ea9"))
+                  .build();
    }
 
    public static MetadataEntry metadataEntry() {
@@ -626,4 +626,4 @@ public class CatalogClientExpectTest extends BaseVCloudDirectorRestClientExpectT
             .build();
    }
 }
-		
+      

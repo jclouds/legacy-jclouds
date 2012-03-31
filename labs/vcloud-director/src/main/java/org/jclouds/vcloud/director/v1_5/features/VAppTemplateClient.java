@@ -39,7 +39,7 @@ import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 
 /**
  * Provides synchronous access to {@link VAppTemplate} objects.
- *
+ * 
  * @author Adam Lowe
  * @see org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient
  */
@@ -51,25 +51,25 @@ public interface VAppTemplateClient {
     *
     * The vApp could be in one of these statues:
     * <ul>
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION} -
-    * Transient entity state, e.g., model object is created but the corresponding VC backing
-    * does not exist yet. This is further sub-categorized in the respective entities.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED} -
-    * Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are created. 
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED} -
-    * Entity is resolved.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN} -
-    * Entity state could not be retrieved from the inventory, e.g., VM power state is null.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_OFF} -
-    * All VMs of the vApp template 
-    * are powered off.
-    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#MIXED} -
-    * vApp template status is set to MIXED when the VMs in the vApp are in different power states.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#FAILED_CREATION FAILED_CREATION(-1)} -
+    *    Transient entity state, e.g., model object is created but the corresponding VC backing does not exist yet. This
+    *    is further sub-categorized in the respective entities.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNRESOLVED UNRESOLVED(0)} -
+    *    Entity is whole, e.g., VM creation is complete and all the required model objects and VC backings are created.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#RESOLVED RESOLVED(1)} -
+    *    Entity is resolved.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#UNKNOWN UNKNOWN(6)} -
+    *    Entity state could not be retrieved from the inventory, e.g., VM power state is null.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#POWERED_OFF POWERED_OFF(8)} -
+    *    All VMs of the vApp template are powered off.
+    * <li>{@link org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status#MIXED MIXED(10)} -
+    *    vApp template status is set to {@code MIXED} when the VMs in the vApp are in different power states.
     * </ul>
+    * 
     * <pre>
     * GET /vAppTemplate/{id}
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the requested template
     */
@@ -77,159 +77,159 @@ public interface VAppTemplateClient {
 
    /**
     * Modifies only the name/description of a vApp template.
-    *
+    * 
     * <pre>
     * PUT /vAppTemplate/{id}
     * </pre>
     * 
     * @param templateUri the URI of the template
-    * @param template    the template containing the new name and/or description
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @param template the template containing the new name and/or description
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task editVAppTemplate(URI templateUri, VAppTemplate template);
+   Task modifyVAppTemplate(URI templateUri, VAppTemplate template);
 
    /**
     * Deletes a vApp template.
-    *
+    * 
     * <pre>
     * DELETE /vAppTemplate/{id}
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
    Task deleteVappTemplate(URI templateUri);
 
    /**
     * Consolidates a VM
-    *
+    * 
     * <pre>
     * POST /vAppTemplate/{id}/action/consolidate
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task consolidateVappTemplate(URI templateUri);
+   Task consolidateVm(URI templateUri);
 
    /**
     * Disables the download link to the ovf of a vApp template.
-    *
+    * 
     * <pre>
     * POST /vAppTemplate/{id}/action/disableDownload
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     */
-   void disableDownloadVappTemplate(URI templateUri);
+   void disableDownload(URI templateUri);
 
    /**
     * Enables downloading of the ovf of a vApp template.
-    *
+    * 
     * <pre>
     * POST /vAppTemplate/{id}/action/enableDownload
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task enableDownloadVappTemplate(URI templateUri);
+   Task enableDownload(URI templateUri);
 
    /**
     * Relocates a virtual machine in a vApp template to a different datastore.
-    *
+    * 
     * <pre>
     * POST /vAppTemplate/{id}/action/relocate
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @param params      contains the reference to the new datastore
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @param params contains the reference to the new datastore
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task relocateVappTemplate(URI templateUri, RelocateParams params);
+   Task relocateVm(URI templateUri, RelocateParams params);
 
    /**
     * Retrieves the customization section of a vApp template.
-    *
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/customizationSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the customization section
     */
-   CustomizationSection getVAppTemplateCustomizationSection(URI templateUri);
+   CustomizationSection getCustomizationSection(URI templateUri);
 
    /**
     * Modifies the vApp template customization information.
-    *
+    * 
     * <pre>
     * PUT /vAppTemplate/{id}/customizationSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @param section     the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @param section the new configuration to apply
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task editVAppTemplateCustomizationSection(URI templateUri, CustomizationSection section);
+   Task modifyCustomizationSection(URI templateUri, CustomizationSection section);
 
    /**
     * Retrieves the Guest Customization Section of a VM
-    *
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/guestCustomizationSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the guest customization section
     */
-   GuestCustomizationSection getVAppTemplateGuestCustomizationSection(URI templateUri);
+   GuestCustomizationSection getGuestCustomizationSection(URI templateUri);
 
    /**
     * Modifies the guest customization options of a VM.
-    *
+    * 
     * <pre>
     * PUT /vAppTemplate/{id}/guestCustomizationSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @param section     the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @param section the new configuration to apply
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task editVAppTemplateGuestCustomizationSection(URI templateUri, GuestCustomizationSection section);
+   Task modifyGuestCustomizationSection(URI templateUri, GuestCustomizationSection section);
 
    /**
     * Retrieves the lease settings section of a vApp or vApp template
-    *
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/leaseSettingsSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the lease settings
     */
-   LeaseSettingsSection getVappTemplateLeaseSettingsSection(URI templateUri);
+   LeaseSettingsSection getLeaseSettingsSection(URI templateUri);
 
    /**
     * Modifies the lease settings section of a vApp or vApp template.
-    *
+    * 
     * <pre>
     * PUT /vAppTemplate/{id}/leaseSettingsSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @param section     the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @param section the new configuration to apply
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task editVappTemplateLeaseSettingsSection(URI templateUri, LeaseSettingsSection section);
+   Task modifyLeaseSettingsSection(URI templateUri, LeaseSettingsSection section);
 
    /**
     * Retrieves the network config section of a vApp or vApp template.
@@ -237,122 +237,122 @@ public interface VAppTemplateClient {
     * <pre>
     * GET /vAppTemplate/{id}/networkConfigSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the network config section requested
     */
-   NetworkConfigSection getVAppTemplateNetworkConfigSection(URI templateUri);
+   NetworkConfigSection getNetworkConfigSection(URI templateUri);
 
    /**
     * Modifies the network config section of a vApp.
-    *
+    * 
     * <pre>
     * PUT /vAppTemplate/{id}/networkConfigSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @param section     the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @param section the new configuration to apply
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task editVAppTemplateNetworkConfigSection(URI templateUri, NetworkConfigSection section);
+   Task modifyNetworkConfigSection(URI templateUri, NetworkConfigSection section);
 
    /**
     * Retrieves the network connection section of a VM
-    *
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/networkConnectionSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the network connection section requested
     */
-   NetworkConnectionSection getVAppTemplateNetworkConnectionSection(URI templateUri);
+   NetworkConnectionSection getNetworkConnectionSection(URI templateUri);
 
    /**
     * Modifies the network connection section of a VM.
-    *
+    * 
     * <pre>
     * PUT /vAppTemplate/{id}/networkConnectionSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @param section     the new configuration to apply
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @param section the new configuration to apply
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task editVAppTemplateNetworkConnectionSection(URI templateUri, NetworkConnectionSection section);
+   Task modifyNetworkConnectionSection(URI templateUri, NetworkConnectionSection section);
 
    /**
     * Retrieves the network section of a vApp or vApp template.
-    *
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/networkSection
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the network section requested
     */
-   NetworkSection getVAppTemplateNetworkSection(URI templateUri);
+   NetworkSection getNetworkSection(URI templateUri);
 
    /**
-    * Retrieves an OVF descriptor of a vApp template. This OVF represents the vApp 
-    * template as it is, with all vCloud specific information (like mac address, 
-    * parent networks, etc). The OVF which could be downloaded by enabling for 
-    * download will not contain this information. There no specific states bound 
-    * to this entity.
+    * Retrieves an OVF descriptor of a vApp template.
     *
+    * This OVF represents the vApp template as it is, with all vCloud specific information (like mac address, parent
+    * networks, etc). The OVF which could be downloaded by enabling for download will not contain this information.
+    * There are no specific states bound to this entity.
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/ovf
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the ovf envelope
     */
-   Envelope getVAppTemplateOvf(URI templateUri);
+   Envelope getOvf(URI templateUri);
 
    /**
     * Retrieves vApp template owner.
-    *
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/owner
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the owner of the vApp template
     */
-   Owner getOwnerOfVAppTemplate(URI templateUri);
+   Owner getOwner(URI templateUri);
 
    /**
     * Retrieves VAppTemplate/VM product sections
-    *
+    * 
     * <pre>
     * GET /vAppTemplate/{id}/productSections
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return the product sections
     */
-   ProductSectionList getProductSectionsForVAppTemplate(URI templateUri);
+   ProductSectionList getProductSections(URI templateUri);
 
    /**
     * Modifies the product sections of a vApp or vApp template.
-    *
+    * 
     * <pre>
     * PUT /vAppTemplate/{id}/productSections
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
-    * @return the task performing the action. This operation is asynchronous and the user 
-    * should monitor the returned task status in order to check when it is completed.
+    * @return the task performing the action. This operation is asynchronous and the user should monitor the returned
+    *         task status in order to check when it is completed.
     */
-   Task editProductSectionsForVAppTemplate(URI templateUri, ProductSectionList sections);
-   
+   Task modifyProductSections(URI templateUri, ProductSectionList sections);
+
    /**
     * <pre>
     * GET /vAppTemplate/{id}/shadowVms
     * </pre>
-    *
+    * 
     * @param templateUri the URI of the template
     * @return shadowVM references
     */

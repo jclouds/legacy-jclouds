@@ -31,22 +31,43 @@ import org.jclouds.scriptbuilder.domain.StatementList;
  * @author Adrian Cole
  */
 public class InstallJDK {
+   // TODO: this doesn't work
+   public static Statement fromOracle() {
+      throw new UnsupportedOperationException("Oracle JDK install doesn't currently work due to license agreement");
+   }
+
+   public static Statement fromOpenJDK() {
+      return new FromOpenJDK();
+   }
+
+   /**
+    * @see fromOpenJDK
+    */
+   @Deprecated
    public static Statement fromURL() {
-      return new FromURL();
+      return fromOpenJDK();
    }
 
    public static Statement fromURL(URI url) {
       return new FromURL(url);
    }
 
+   public static class FromOpenJDK extends StatementList {
+
+      public FromOpenJDK() {
+         super(call("setupPublicCurl"), call("installOpenJDK"));
+      }
+
+   }
+
    public static class FromURL extends StatementList {
 
       public FromURL() {
-         super(call("setupPublicCurl"), call("installJDK"));
+         super(call("setupPublicCurl"), call("installJDKFromURL"));
       }
 
       public FromURL(URI jdk7Url) {
-         super(call("setupPublicCurl"), call("installJDK", jdk7Url.toASCIIString()));
+         super(call("setupPublicCurl"), call("installJDKFromURL", jdk7Url.toASCIIString()));
       }
    }
 }

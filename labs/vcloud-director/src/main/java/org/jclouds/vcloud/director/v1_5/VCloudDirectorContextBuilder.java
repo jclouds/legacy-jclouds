@@ -23,6 +23,9 @@ import java.util.Properties;
 
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
+import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorContextImpl;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 import com.google.inject.Module;
 
@@ -39,5 +42,10 @@ public class VCloudDirectorContextBuilder extends RestContextBuilder<VCloudDirec
    protected void addClientModule(List<Module> modules) {
       modules.add(new VCloudDirectorRestClientModule());
    }
-
+   
+   @SuppressWarnings("unchecked")
+   @Override
+   public VCloudDirectorContext buildContext() {
+      return buildInjector().getInstance(VCloudDirectorContextImpl.class);
+   }
 }

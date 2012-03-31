@@ -61,7 +61,7 @@ public class RunScriptData {
    public static StatementList installAdminUserJBossAndOpenPorts(OperatingSystem os) throws IOException {
       return new StatementList(//
                         AdminAccess.builder().adminUsername("web").build(),//
-                        InstallJDK.fromURL(),//
+                        InstallJDK.fromOpenJDK(),//
                         authorizePortsInIpTables(22, 8080),//
                         extractTargzIntoDirectory(JBOSS7_URL, "/usr/local"),//
                         exec("{md} " + JBOSS_HOME), exec("mv /usr/local/jboss-*/* " + JBOSS_HOME),//

@@ -39,14 +39,14 @@ import com.google.common.io.Resources;
 @Test(groups = "unit", testName = "InstallJDKTest")
 public class InstallJDKTest {
 
-   Statement installJDK = InstallJDK.fromURL();
+   Statement installJDK = InstallJDK.fromOpenJDK();
 
    public void testInstallJDKUNIX() throws IOException {
-      assertEquals(InstallJDK.fromURL().render(OsFamily.UNIX), "setupPublicCurl || return 1\ninstallJDK || return 1\n");
+      assertEquals(InstallJDK.fromOpenJDK().render(OsFamily.UNIX), "setupPublicCurl || return 1\ninstallOpenJDK || return 1\n");
    }
 
    public void testInstallJDKUNIXInScriptBuilderSourcesSetupPublicCurl() throws IOException {
-      assertEquals(InitScript.builder().name("install_jdk").run(InstallJDK.fromURL()).build().render(OsFamily.UNIX),
+      assertEquals(InitScript.builder().name("install_jdk").run(InstallJDK.fromOpenJDK()).build().render(OsFamily.UNIX),
             CharStreams.toString(Resources.newReaderSupplier(
                   Resources.getResource("test_install_jdk_scriptbuilder." + ShellToken.SH.to(OsFamily.UNIX)),
                   Charsets.UTF_8)));
@@ -54,7 +54,7 @@ public class InstallJDKTest {
 
    public void testInstallJDKUNIXWithURL() throws IOException {
       assertEquals(InstallJDK.fromURL(URI.create("http://foo")).render(OsFamily.UNIX),
-            "setupPublicCurl || return 1\ninstallJDK http://foo || return 1\n");
+            "setupPublicCurl || return 1\ninstallJDKFromURL http://foo || return 1\n");
    }
 
 }

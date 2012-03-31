@@ -79,7 +79,21 @@ public class UndeployVAppParams {
    protected String undeployPowerAction;
 
    /**
-    * Gets the value of the undeployPowerAction property.
+    * The specified action is applied to all VMs in the vApp.
+    *
+    * All values other than {@code default} ignore actions, order, and delay specified in the StartupSection. One of:
+    * <ul>
+    *    <li>{@code powerOff} (Power off the VMs. This is the default action if this attribute is missing or empty)
+    *    <li>{@code suspend} (Suspend the VMs)
+    *    <li>{@code shutdown} (Shut down the VMs)
+    *    <li>{@code force} (Attempt to power off the VMs.
+    * </ul>
+    * Failures in undeploying the VM or associated networks are ignored. All references to the vApp and its VMs are
+    * removed from the database), default (Use the actions, order, and delay specified in the StartupSection).
+    *
+    * TODO add an enumeration for these values
+    *
+    * @since 1.5
     */
    public String getUndeployPowerAction() {
       return undeployPowerAction;

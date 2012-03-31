@@ -51,6 +51,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
@@ -92,7 +93,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             .description("created by CatalogClientLiveTest")
             .build();
       
-      AdminCatalogClient adminCatalogClient = context.getApi().getAdminCatalogClient();
+      AdminCatalogClient adminCatalogClient = adminContext.getApi().getCatalogClient();
       adminCatalog = adminCatalogClient.createCatalog(orgRef.getHref(), newCatalog);
       catalogRef = find(adminCatalog.getLinks(), and(relEquals("alternate"), typeEquals(VCloudDirectorMediaType.CATALOG)));
 
@@ -114,7 +115,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          context.getApi().getMediaClient().deleteMedia(media.getHref());
       
       if (adminCatalog != null) {
-         context.getApi().getAdminCatalogClient().deleteCatalog(adminCatalog.getHref());
+         adminContext.getApi().getCatalogClient().deleteCatalog(adminCatalog.getHref());
          try {
             catalogClient.getCatalog(catalogRef.getHref());
             fail("The Catalog should have been deleted");

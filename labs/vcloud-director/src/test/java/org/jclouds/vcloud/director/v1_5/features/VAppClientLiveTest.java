@@ -316,7 +316,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       vApp = powerOn(vApp);
 
       // The method under test
-      Task consolidateVApp = vAppClient.consolidateVApp(vApp.getHref());
+      Task consolidateVApp = vAppClient.consolidateVm(vApp.getHref());
       assertTrue(retryTaskSuccess.apply(consolidateVApp), String.format(TASK_COMPLETE_TIMELY, "consolidateVApp"));
    }
 
@@ -331,7 +331,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // The method under test
-      ControlAccessParams modified = vAppClient.controlAccess(vApp.getHref(), params);
+      ControlAccessParams modified = vAppClient.modifyControlAccess(vApp.getHref(), params);
 
       // Check the retrieved object is well formed
       checkControlAccessParams(modified);
@@ -347,7 +347,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
             .build();
 
       // The method under test
-      ControlAccessParams modified = vAppClient.controlAccess(vApp.getHref(), params);
+      ControlAccessParams modified = vAppClient.modifyControlAccess(vApp.getHref(), params);
 
       // Check the retrieved object is well formed
       checkControlAccessParams(modified);
@@ -436,7 +436,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       RecomposeVAppParams params = RecomposeVAppParams.builder().build();
 
       // The method under test
-      Task recomposeVApp = vAppClient.recomposeVApp(vApp.getHref(), params);
+      Task recomposeVApp = vAppClient.recompose(vApp.getHref(), params);
       assertTrue(retryTaskSuccess.apply(recomposeVApp), String.format(TASK_COMPLETE_TIMELY, "recomposeVApp"));
    }
 
@@ -449,7 +449,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       RelocateParams params = RelocateParams.builder().datastore(Reference.builder().href(datastore.getHref()).build()).build();
 
       // The method under test
-      Task relocate = vAppClient.relocate(vApp.getHref(), params);
+      Task relocate = vAppClient.relocateVm(vApp.getHref(), params);
       assertTrue(retryTaskSuccess.apply(relocate), String.format(TASK_COMPLETE_TIMELY, "relocate"));
    }
 

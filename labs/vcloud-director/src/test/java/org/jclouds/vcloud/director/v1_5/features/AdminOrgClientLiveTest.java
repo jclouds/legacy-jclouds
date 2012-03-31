@@ -35,6 +35,7 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -72,7 +73,7 @@ public class AdminOrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
-      orgClient = context.getApi().getAdminOrgClient();
+      orgClient = adminContext.getApi().getOrgClient();
       orgRef = Iterables.getFirst(orgClient.getOrgList().getOrgs(), null).toAdminReference(endpoint);
       assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
    }

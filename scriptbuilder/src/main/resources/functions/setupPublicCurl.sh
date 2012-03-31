@@ -11,7 +11,7 @@ function ensure_cmd_or_install_package_apt(){
 function ensure_cmd_or_install_package_yum(){
   local cmd=$1
   local pkg=$2
-  hash $cmd 2>/dev/null || yum --nogpgcheck -y ensure $pkg
+  hash $cmd 2>/dev/null || yum --nogpgcheck -y install $pkg
 }
 
 function ensure_netutils_apt() {

@@ -213,7 +213,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
    public void testCorrectExceptionRunningNodesNotFound() throws Exception {
-      client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), InstallJDK.fromURL());
+      client.runScriptOnNodesMatching(runningInGroup("zebras-are-awesome"), InstallJDK.fromOpenJDK());
    }
 
    // since surefire and eclipse don't otherwise guarantee the order, we are
@@ -375,7 +375,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    protected static Template addRunScriptToTemplate(Template template) {
       template.getOptions().runScript(
-            Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromURL()));
+            Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromOpenJDK()));
       return template;
    }
 
@@ -439,7 +439,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
          LoginCredentials creds) throws RunScriptOnNodesException {
-      return client.runScriptOnNodesMatching(runningInGroup(group), InstallJDK.fromURL(), overrideLoginCredentials(creds)
+      return client.runScriptOnNodesMatching(runningInGroup(group), InstallJDK.fromOpenJDK(), overrideLoginCredentials(creds)
             .nameTask("runScriptWithCreds"));
    }
 

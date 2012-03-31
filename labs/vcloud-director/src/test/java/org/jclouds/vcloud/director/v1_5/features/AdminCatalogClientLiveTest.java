@@ -40,6 +40,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.User;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -74,7 +75,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Override
    @BeforeClass(alwaysRun = true)
    protected void setupRequiredClients() {
-      catalogClient = context.getApi().getAdminCatalogClient();
+      catalogClient = adminContext.getApi().getCatalogClient();
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
    }
    
@@ -109,8 +110,8 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @Test(description = "PUT /admin/catalog/{id}/owner",
          dependsOnMethods = { "testGetCatalog" })
    public void updateCatalogOwner() {
-      User newOwnerUser = UserClientLiveTest.randomTestUser("testUpdateCatalogOwner", context);
-      newOwnerUser = context.getApi().getUserClient().createUser(orgRef.getHref(), newOwnerUser);
+      User newOwnerUser = randomTestUser("testUpdateCatalogOwner");
+      newOwnerUser = adminContext.getApi().getUserClient().createUser(orgRef.getHref(), newOwnerUser);
       assertNotNull(newOwnerUser, "failed to create temp user to test updateCatalogOwner");
       
       Owner oldOwner = owner;
@@ -129,7 +130,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       } finally {
          catalogClient.setOwner(catalog.getHref(), oldOwner);
          owner = catalogClient.getOwner(catalog.getHref());
-         context.getApi().getUserClient().deleteUser(newOwnerUser.getHref());
+         adminContext.getApi().getUserClient().deleteUser(newOwnerUser.getHref());
       }
    }
    

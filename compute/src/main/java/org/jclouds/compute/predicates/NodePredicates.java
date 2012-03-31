@@ -213,7 +213,7 @@ public class NodePredicates {
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
-            return nodeMetadata.getGroup() != null;
+            return nodeMetadata != null && nodeMetadata.getGroup() != null;
          }
 
          @Override

@@ -96,7 +96,7 @@ function ensure_cmd_or_install_package_apt(){
 function ensure_cmd_or_install_package_yum(){
   local cmd=$1
   local pkg=$2
-  hash $cmd 2>/dev/null || yum --nogpgcheck -y ensure $pkg
+  hash $cmd 2>/dev/null || yum --nogpgcheck -y install $pkg
 }
 
 function ensure_netutils_apt() {
@@ -133,41 +133,42 @@ function setupPublicCurl() {
   ensure_can_resolve_public_dns
   return 0  
 }
-function installJDK() {
-  if hash curl 2>/dev/null; then
-    if [ `uname -m` == 'x86_64' ]; then
-      local url=${1:-http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz}
-    else
-      local url=${1:-http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-i586.tar.gz}
-    fi
-    curl -q -s -S -L --connect-timeout 10 --max-time 600 --retry 20 -X GET $url |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
-    mv /usr/local/jdk* /usr/local/jdk/
-    test -n \"$SUDO_USER\" && cat >> /home/$SUDO_USER/.bashrc <<-'END_OF_JCLOUDS_FILE'
+function setupJavaHomeInProfile() {
+  test -n \"$SUDO_USER\" && cat >> `getent passwd $SUDO_USER| cut -f6 -d:`/.bashrc <<-'END_OF_JCLOUDS_FILE'
 	export JAVA_HOME=/usr/local/jdk
 	export PATH=$JAVA_HOME/bin:$PATH
 END_OF_JCLOUDS_FILE
-    cat >> /etc/bashrc <<-'END_OF_JCLOUDS_FILE'
+  cat >> /etc/bashrc <<-'END_OF_JCLOUDS_FILE'
 	export JAVA_HOME=/usr/local/jdk
 	export PATH=$JAVA_HOME/bin:$PATH
 END_OF_JCLOUDS_FILE
-    cat >> $HOME/.bashrc <<-'END_OF_JCLOUDS_FILE'
+  cat >> $HOME/.bashrc <<-'END_OF_JCLOUDS_FILE'
 	export JAVA_HOME=/usr/local/jdk
 	export PATH=$JAVA_HOME/bin:$PATH
 END_OF_JCLOUDS_FILE
-    cat >> /etc/skel/.bashrc <<-'END_OF_JCLOUDS_FILE'
+  cat >> /etc/skel/.bashrc <<-'END_OF_JCLOUDS_FILE'
 	export JAVA_HOME=/usr/local/jdk
 	export PATH=$JAVA_HOME/bin:$PATH
 END_OF_JCLOUDS_FILE
-    # TODO: eventhough we are setting the above, sometimes images (ex.
-    # cloudservers ubuntu) kick out of .bashrc (ex. [ -z "$PS1" ] &&
-    # return), for this reason, we should also explicitly link.
-    # A better way would be to update using alternatives or the like
-    ln -fs /usr/local/jdk/bin/java /usr/bin/java
-    /usr/bin/java -version || abort "cannot run /usr/bin/java"
+}
+
+function installOpenJDK() {
+  if hash apt-get 2>/dev/null; then
+    export pkg=openjdk-7-jdk
+    apt-get-install $pkg || ( apt-get-upgrade && apt-get-install $pkg )
+    export JAVA_HOME=`ls -d /usr/lib/jvm/java-7-openjdk-*|grep -v common`
+  elif hash yum 2>/dev/null; then
+    #TODO: find a jdk7 yum repo
+    export pkg=java-1.6.0-openjdk-devel
+    yum --nogpgcheck -y install $pkg
+    export JAVA_HOME=`ls -d /usr/lib/jvm/java-1.6.0-openjdk-*`
   else
-    abort "curl not available.. cannot install openjdk"
+    abort "we only support apt-get and yum right now... please contribute!"
+    return 1
   fi
-  return 0
+  ln -Fs $JAVA_HOME /usr/local/jdk 
+  /usr/local/jdk/bin/java -version || abort "cannot run java"
+  setupJavaHomeInProfile
 }
 
 END_OF_JCLOUDS_SCRIPT
@@ -198,7 +199,7 @@ END_OF_JCLOUDS_SCRIPT
 	awk -v user=^${SUDO_USER:=${USER}}: -v password='crypt(randompassword)' 'BEGIN { FS=OFS=":" } $0 ~ user { $2 = password } 1' /etc/shadow >/etc/shadow.${SUDO_USER:=${USER}}
 	test -f /etc/shadow.${SUDO_USER:=${USER}} && mv /etc/shadow.${SUDO_USER:=${USER}} /etc/shadow
 	setupPublicCurl || return 1
-	installJDK || return 1
+	installOpenJDK || return 1
 	iptables -I INPUT 1 -p tcp --dport 22 -j ACCEPT
 	iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
 	iptables-save
