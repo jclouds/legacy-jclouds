@@ -167,10 +167,10 @@ public class NetworkAdapter {
 
 	@Override
 	public String toString() {
-		return "NetworkAdapter{" + "networkAttachmentType= "+ 
+		return "NetworkAdapter{networkAttachmentType="+ 
 				networkAttachmentType + 
-				"macAddress= " + macAddress +
-				"redirectRules= " + redirectRules +
+				", macAddress=" + macAddress +
+				", redirectRules=" + redirectRules +
 				'}';
 	}
 }

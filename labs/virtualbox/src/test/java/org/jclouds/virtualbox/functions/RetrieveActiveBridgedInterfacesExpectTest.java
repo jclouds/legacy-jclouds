@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.BridgedIf;
+import org.jclouds.virtualbox.domain.BridgedIf.Builder;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -33,8 +34,8 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Andrea Turli
  */
-@Test(groups = "live", singleThreaded = true, testName = "RetrieveActiveBridgedInterfacesLiveTest")
-public class RetrieveActiveBridgedInterfacesLiveTest extends BaseVirtualBoxClientLiveTest {
+@Test(singleThreaded = true, testName = "RetrieveActiveBridgedInterfacesExpectTest")
+public class RetrieveActiveBridgedInterfacesExpectTest {
 
    public static final String TEST1 = "Name:            eth0\n"
             + "GUID:            30687465-0000-4000-8000-00261834d0cb\n" + "Dhcp:            Disabled\n"
@@ -48,19 +49,16 @@ public class RetrieveActiveBridgedInterfacesLiveTest extends BaseVirtualBoxClien
             + "HardwareAddress: 5a:3d:ed:99:3f:ed\n" + "MediumType:      Ethernet\n" + "Status:          Down\n"
             + "VBoxNetworkName: HostInterfaceNetworking-vbox0\n";
 
-   public static final List<String> expectedBridgedInterfaces = ImmutableList.of("eth0", "vbox0");
+   public static final List<BridgedIf> expectedBridgedInterfaces = ImmutableList.of(
+            BridgedIf.builder().name("eth0").ip("209.x.x.x").networkMask("255.255.255.0").mediumType("Ethernet")
+            .status("Up").build(), 
+            BridgedIf.builder().name("vbox0").ip("192.168.56.1").networkMask("255.255.255.0").mediumType("Ethernet")
+            .status("Down").build());
 
    @Test
    public void retrieveBridgedInterfaceNamesTest() {
       List<BridgedIf> activeBridgedInterfaces = retrieveBridgedInterfaceNames(TEST1);
-      assertEquals(activeBridgedInterfaces, expectedBridgedInterfaces);
-   }
-
-   @Test
-   public void retrieveAvailableBridgedInterfaceInfoTest() {
-      List<BridgedIf> bridgedInterface = context.utils().injector().getInstance(RetrieveActiveBridgedInterfaces.class)
-               .apply(host.get());
-      assertFalse(bridgedInterface.isEmpty());
+         assertEquals(activeBridgedInterfaces, expectedBridgedInterfaces);
    }
 
 }

@@ -67,10 +67,9 @@ public class VirtualBoxExperimentLiveTest {
 
    @Test
    public void testLaunchCluster() throws RunNodesException {
-      int numNodes = 4;
+      int numNodes = 2;
       final String clusterName = "test-launch-cluster";
-      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
-               TemplateOptions.Builder.runScript(AdminAccess.standard()));
+      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes, TemplateOptions.Builder.runScript(AdminAccess.standard()));
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
          assertTrue(node.getGroup().equals("test-launch-cluster"));

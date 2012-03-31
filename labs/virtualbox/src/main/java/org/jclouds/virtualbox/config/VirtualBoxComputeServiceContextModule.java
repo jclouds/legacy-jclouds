@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -137,8 +138,7 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Supplier<Map<Image, YamlImage>>>() {
       }).to((Class) ImagesToYamlImagesFromYamlDescriptor.class);
       // the yaml config provider
-      bind(new TypeLiteral<Supplier<String>>() {
-      }).to((Class) YamlImagesFromFileConfig.class);
+      bind(YamlImagesFromFileConfig.class);
       // the master machines cache
       bind(new TypeLiteral<LoadingCache<Image, Master>>() {
       }).to((Class) MastersLoadingCache.class);
@@ -213,7 +213,7 @@ public class VirtualBoxComputeServiceContextModule extends
    @Provides
    @Singleton
    protected Predicate<SshClient> sshResponds(SshResponds sshResponds, Timeouts timeouts) {
-      return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning);
+      return new RetryablePredicate<SshClient>(sshResponds, timeouts.nodeRunning, 500l, TimeUnit.MILLISECONDS);
    }
 
    @Override
