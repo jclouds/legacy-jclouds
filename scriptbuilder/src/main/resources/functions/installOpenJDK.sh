@@ -17,18 +17,20 @@ END_OF_JCLOUDS_FILE
 END_OF_JCLOUDS_FILE
 }
 
-function installJDK() {
+function installOpenJDK() {
   if hash apt-get 2>/dev/null; then
     export pkg=openjdk-7-jdk
     apt-get-install $pkg || ( apt-get-upgrade && apt-get-install $pkg )
+    export JAVA_HOME=`ls -d /usr/lib/jvm/java-7-openjdk-*|grep -v common`
   elif hash yum 2>/dev/null; then
-    export pkg=java-1.7.0-openjdk
-    yum --nogpgcheck -y ensure $pkg
+    #TODO: find a jdk7 yum repo
+    export pkg=java-1.6.0-openjdk-devel
+    yum --nogpgcheck -y install $pkg
+    export JAVA_HOME=`ls -d /usr/lib/jvm/java-1.6.0-openjdk-*`
   else
     abort "we only support apt-get and yum right now... please contribute!"
     return 1
   fi
-  JAVA_HOME=`ls -d /usr/lib/jvm/java-7-openjdk-*|grep -v common`
   ln -Fs $JAVA_HOME /usr/local/jdk 
   /usr/local/jdk/bin/java -version || abort "cannot run java"
   setupJavaHomeInProfile
