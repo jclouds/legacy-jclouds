@@ -48,6 +48,7 @@ import org.virtualbox_4_1.IMachine;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
@@ -57,98 +58,94 @@ import com.google.inject.Inject;
 @Singleton
 public class CreateAndInstallVm implements Function<MasterSpec, IMachine> {
 
-	@Resource
-	@Named(ComputeServiceConstants.COMPUTE_LOGGER)
-	protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
 
-	private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
-	private final Predicate<SshClient> sshResponds;
-	private LoadingCache<IsoSpec, URI> preConfiguration;
-	private final Function<IMachine, SshClient> sshClientForIMachine;
-	private final MachineUtils machineUtils;
-	private final IMachineToNodeMetadata imachineToNodeMetadata;
-	private final MachineController machineController;
-	private final String version;
-	
+   private final CreateAndRegisterMachineFromIsoIfNotAlreadyExists createAndRegisterMachineFromIsoIfNotAlreadyExists;
+   private final Predicate<SshClient> sshResponds;
+   private LoadingCache<IsoSpec, URI> preConfiguration;
+   private final Function<IMachine, SshClient> sshClientForIMachine;
+   private final MachineUtils machineUtils;
+   private final IMachineToNodeMetadata imachineToNodeMetadata;
+   private final MachineController machineController;
+   private final String version;
 
-	@Inject
-	public CreateAndInstallVm(
-			CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
-			IMachineToNodeMetadata imachineToNodeMetadata,
-			Predicate<SshClient> sshResponds,
-			Function<IMachine, SshClient> sshClientForIMachine,
-			MachineUtils machineUtils,
-			@Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration, 
-			MachineController machineController, @Named(Constants.PROPERTY_BUILD_VERSION) String version) {
-		this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
-		this.sshResponds = sshResponds;
-		this.sshClientForIMachine = sshClientForIMachine;
-		this.machineUtils = machineUtils;
-		this.preConfiguration = preConfiguration;
-		this.imachineToNodeMetadata = imachineToNodeMetadata;
-		this.machineController = machineController;
-		this.version = Iterables.get(Splitter.on('r').split(version), 0);
-	}
+   @Inject
+   public CreateAndInstallVm(
+            CreateAndRegisterMachineFromIsoIfNotAlreadyExists CreateAndRegisterMachineFromIsoIfNotAlreadyExists,
+            IMachineToNodeMetadata imachineToNodeMetadata, Predicate<SshClient> sshResponds,
+            Function<IMachine, SshClient> sshClientForIMachine, MachineUtils machineUtils,
+            @Preconfiguration LoadingCache<IsoSpec, URI> preConfiguration, MachineController machineController,
+            @Named(Constants.PROPERTY_BUILD_VERSION) String version) {
+      this.createAndRegisterMachineFromIsoIfNotAlreadyExists = CreateAndRegisterMachineFromIsoIfNotAlreadyExists;
+      this.sshResponds = sshResponds;
+      this.sshClientForIMachine = sshClientForIMachine;
+      this.machineUtils = machineUtils;
+      this.preConfiguration = preConfiguration;
+      this.imachineToNodeMetadata = imachineToNodeMetadata;
+      this.machineController = machineController;
+      this.version = Iterables.get(Splitter.on('r').split(version), 0);
+   }
 
-	@Override
-	public IMachine apply(MasterSpec masterSpec) {
+   @Override
+   public IMachine apply(MasterSpec masterSpec) {
 
-		VmSpec vmSpec = masterSpec.getVmSpec();
-		IsoSpec isoSpec = masterSpec.getIsoSpec();
-		String vmName = vmSpec.getVmName();
+      VmSpec vmSpec = masterSpec.getVmSpec();
+      IsoSpec isoSpec = masterSpec.getIsoSpec();
+      String vmName = vmSpec.getVmName();
 
-		IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists
-				.apply(masterSpec);
+      IMachine vm = createAndRegisterMachineFromIsoIfNotAlreadyExists.apply(masterSpec);
 
-		// Launch machine and wait for it to come online
-		machineController.ensureMachineIsLaunched(vmName);
+      // Launch machine and wait for it to come online
+      machineController.ensureMachineIsLaunched(vmName);
 
-		URI uri = preConfiguration.getUnchecked(isoSpec);
-		String installationKeySequence = isoSpec.getInstallationKeySequence()
-				.replace("PRECONFIGURATION_URL", uri.toASCIIString());
+      URI uri = preConfiguration.getUnchecked(isoSpec);
+      String installationKeySequence = isoSpec.getInstallationKeySequence().replace("PRECONFIGURATION_URL",
+               uri.toASCIIString());
 
-		configureOsInstallationWithKeyboardSequence(vmName,
-				installationKeySequence);
-		
-		SshClient client = sshClientForIMachine.apply(vm);
+      configureOsInstallationWithKeyboardSequence(vmName, installationKeySequence);
 
-		logger.debug(">> awaiting installation to finish node(%s)", vmName);
+      // the OS installation is a long process: let's delay the check for ssh of 30 sec
+      try {
+         Thread.sleep(30000l);
+      } catch (InterruptedException e) {
+         Throwables.propagate(e);
+      }
+      
+      SshClient client = sshClientForIMachine.apply(vm);
 
-		checkState(sshResponds.apply(client),
-				"timed out waiting for guest %s to be accessible via ssh",
-				vmName);
+      logger.debug(">> awaiting installation to finish node(%s)", vmName);
 
-      logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
+      checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh", vmName);
 
-      ListenableFuture<ExecResponse> execFuture = machineUtils.runScriptOnNode(imachineToNodeMetadata.apply(vm),
-               new InstallGuestAdditions(vmSpec, version), RunScriptOptions.NONE);
-      ExecResponse execResponse = Futures.getUnchecked(execFuture);
-
-      checkState(execResponse.getExitStatus() == 0);
+      NodeMetadata nodeMetadata = imachineToNodeMetadata.apply(vm);
 
       logger.debug(">> awaiting post-installation actions on vm: %s", vmName);
+      ListenableFuture<ExecResponse> execCleanup = machineUtils.runScriptOnNode(nodeMetadata,
+               call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
+      ExecResponse cleanupResponse = Futures.getUnchecked(execCleanup);
+      checkState(cleanupResponse.getExitStatus() == 0);
 
-      NodeMetadata vmMetadata = imachineToNodeMetadata.apply(vm);
+      
+      logger.debug(">> awaiting installation of guest additions on vm: %s", vmName);
+      ListenableFuture<ExecResponse> execInstallGA = machineUtils.runScriptOnNode(nodeMetadata,
+               new InstallGuestAdditions(vmSpec, version), RunScriptOptions.NONE);
+      ExecResponse gaInstallationResponse = Futures.getUnchecked(execInstallGA);
+      checkState(gaInstallationResponse.getExitStatus() == 0);
 
-      execFuture = machineUtils.runScriptOnNode(vmMetadata, call("cleanupUdevIfNeeded"), RunScriptOptions.NONE);
+      machineController.ensureMachineIsShutdown(vmName);
 
-      execResponse = Futures.getUnchecked(execFuture);
-      checkState(execResponse.getExitStatus() == 0);
-
-      logger.debug("<< installation of image complete. Powering down node(%s)", vmName);
-
-      machineController.ensureMachineHasPowerDown(vmName);
       return vm;
    }
 
-	private void configureOsInstallationWithKeyboardSequence(String vmName,
-			String installationKeySequence) {
-		Iterable<List<Integer>> scancodelist = transform(Splitter.on(" ")
-				.split(installationKeySequence), new StringToKeyCode());
+   private void configureOsInstallationWithKeyboardSequence(String vmName, String installationKeySequence) {
+      Iterable<List<Integer>> scancodelist = transform(Splitter.on(" ").split(installationKeySequence),
+               new StringToKeyCode());
 
-		for (List<Integer> scancodes : scancodelist) {
-			machineUtils.sharedLockMachineAndApplyToSession(vmName,new SendScancodes(scancodes));
-		}
-	}
+      for (List<Integer> scancodes : scancodelist) {
+         machineUtils.sharedLockMachineAndApplyToSession(vmName, new SendScancodes(scancodes));
+      }
+   }
 
 }

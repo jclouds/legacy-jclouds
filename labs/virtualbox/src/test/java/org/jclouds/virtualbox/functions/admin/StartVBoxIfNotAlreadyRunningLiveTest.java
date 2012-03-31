@@ -57,10 +57,11 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       URI provider = URI.create("http://localhost:18083/");
       String identity = "adminstrator";
       String credential = "12345";
+      expect(client.seconds(3)).andReturn(client);
 
       expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(true);
 
-      manager.connect(provider.toASCIIString(), identity, credential);
+      manager.connect(provider.toASCIIString(), "", "");
 
       replay(manager, runScriptOnNodeFactory, client);
 
@@ -84,14 +85,15 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       URI provider = URI.create("http://localhost:18083/");
       String identity = "adminstrator";
       String credential = "12345";
-
+      
+      expect(client.seconds(3)).andReturn(client);
       expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(false);
       expect(
                runScriptOnNodeFactory.create(host, Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
                         runAsRoot(false).wrapInInitScript(false))).andReturn(runScriptOnNode);
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
-      
+      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(true);
       expect(
                runScriptOnNodeFactory.create(host, Statements.exec("vboxwebsrv -t 10000 -v -b"), runAsRoot(false)
                         .wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv"))).andReturn(
@@ -99,7 +101,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
       
-      manager.connect(provider.toASCIIString(), identity, credential);
+      manager.connect(provider.toASCIIString(), "", "");
 
       replay(manager, runScriptOnNodeFactory, runScriptOnNode, client);
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
