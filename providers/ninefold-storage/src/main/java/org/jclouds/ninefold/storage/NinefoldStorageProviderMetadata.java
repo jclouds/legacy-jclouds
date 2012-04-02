@@ -19,11 +19,9 @@
 package org.jclouds.ninefold.storage;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.atmos.AtmosApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Ninefold's
@@ -33,76 +31,36 @@ import com.google.common.collect.ImmutableSet;
  */
 public class NinefoldStorageProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "ninefold-storage";
+   public NinefoldStorageProviderMetadata() {
+      this(builder()
+            .id("ninefold-storage")
+            .name("Ninefold Storage")
+            .api(new AtmosApiMetadata())
+            .homepage(URI.create("http://ninefold.com/cloud-storage/"))
+            .console(URI.create("https://ninefold.com/portal/"))
+            .iso3166Codes("AU-NSW"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return BLOBSTORE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected NinefoldStorageProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Ninefold Storage";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public NinefoldStorageProviderMetadata build() {
+         return new NinefoldStorageProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Subtenant ID (UID)";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Shared Secret";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://ninefold.com/cloud-storage/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://ninefold.com/portal/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://ninefold.com/support/display/SPT/API+Documentation");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("AU-NSW");
-   }
-
 }

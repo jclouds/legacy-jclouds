@@ -35,8 +35,8 @@
  */
 package org.jclouds.trystack.nova;
 
+import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +47,6 @@ import org.testng.annotations.Test;
 public class TryStackNovaProviderTest extends BaseProviderMetadataTest {
 
    public TryStackNovaProviderTest() {
-      super(new TryStackNovaProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new TryStackNovaProviderMetadata(), new NovaApiMetadata());
    }
 }

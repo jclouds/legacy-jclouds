@@ -18,8 +18,8 @@
  */
 package org.jclouds.openhosting;
 
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class OpenHostingEast1ProviderTest extends BaseProviderMetadataTest {
 
    public OpenHostingEast1ProviderTest() {
-      super(new OpenHostingEast1ProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new OpenHostingEast1ProviderMetadata(), new ElasticStackApiMetadata());
    }
 
 }

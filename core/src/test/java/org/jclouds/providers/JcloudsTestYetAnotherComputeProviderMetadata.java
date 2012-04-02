@@ -19,7 +19,8 @@
 package org.jclouds.providers;
 
 import java.net.URI;
-import java.util.Set;
+
+import org.jclouds.apis.JcloudsTestComputeApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -30,76 +31,36 @@ import com.google.common.collect.ImmutableSet;
  */
 public class JcloudsTestYetAnotherComputeProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getId()}
-    */
-   @Override
-   public String getId() {
-      return "test-yet-another-compute-provider";
+   public JcloudsTestYetAnotherComputeProviderMetadata() {
+      this(builder()
+            .api(new JcloudsTestComputeApiMetadata())
+            .id("test-yet-another-compute-provider")
+            .name("Test Yet Another Compute Provider")
+            .homepage(URI.create("http://jclouds.org"))
+            .console(URI.create("http://jclouds.org/console"))
+            .iso3166Codes(ImmutableSet.of("JP-13")));
    }
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getType()}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected JcloudsTestYetAnotherComputeProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getName()}
-    */
-   @Override
-   public String getName() {
-      return "Test Yet Another Compute Provider";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public JcloudsTestYetAnotherComputeProviderMetadata build() {
+         return new JcloudsTestYetAnotherComputeProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "user";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "password";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getHomepage()}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://jclouds.org");
-   }
-
-   /**
-    * {@ see org.jclouds.types.ProviderMetadata#getConsole()}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://jclouds.org/console");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://jclouds.org/documentation");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("JP-13");
-   }
-
 }

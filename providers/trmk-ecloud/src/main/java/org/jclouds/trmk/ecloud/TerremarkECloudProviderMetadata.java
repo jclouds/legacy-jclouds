@@ -19,12 +19,8 @@
 package org.jclouds.trmk.ecloud;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's Enterprise Cloud.
@@ -32,77 +28,36 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class TerremarkECloudProviderMetadata extends BaseProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "trmk-ecloud";
+   public TerremarkECloudProviderMetadata() {
+      this(builder()
+            .id("trmk-ecloud")
+            .name("Terremark Enterprise Cloud v2.8")
+            .api(new TerremarkECloudApiMetadata())
+            .homepage(URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx"))
+            .console(URI.create("https://icenter.digitalops.net"))
+            .iso3166Codes("US-FL", "US-VA", "NL-NH", "BR-SP"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected TerremarkECloudProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Terremark Enterprise Cloud";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public TerremarkECloudProviderMetadata build() {
+         return new TerremarkECloudProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "email";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "password";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://icenter.digitalops.net");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://support.theenterprisecloud.com/kb/default.asp?id=533&Lang=1&SID=");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-FL", "US-VA", "NL-NH", "BR-SP");
-   }
-
 }

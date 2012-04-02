@@ -19,7 +19,6 @@
 package org.jclouds.azureblob;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +29,6 @@ import org.testng.annotations.Test;
 public class AzureBlobProviderTest extends BaseProviderMetadataTest {
 
    public AzureBlobProviderTest() {
-      super(new AzureBlobProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+      super(new AzureBlobProviderMetadata(), new AzureBlobApiMetadata());
    }
 }

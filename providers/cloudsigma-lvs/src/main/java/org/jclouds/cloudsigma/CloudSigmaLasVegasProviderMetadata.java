@@ -19,97 +19,46 @@
 package org.jclouds.cloudsigma;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for CloudSigma LasVegas.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for CloudSigma Las Vegas.
  *
  * @author Adrian Cole
  */
 public class CloudSigmaLasVegasProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudsigma-lvs";
+   public CloudSigmaLasVegasProviderMetadata() {
+      this(builder()
+            .id("cloudsigma-lvs")
+            .name("CloudSigma Las Vegas")
+            .api(new CloudSigmaApiMetadata())
+            .homepage(URI.create("http://www.cloudsigma.com/en/our-cloud/features"))
+            .console(URI.create("https://gui.lvs.cloudsigma.com/"))
+            .iso3166Codes("US-NV"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected CloudSigmaLasVegasProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "CloudSigma LasVegas";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public CloudSigmaLasVegasProviderMetadata build() {
+         return new CloudSigmaLasVegasProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Email";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.cloudsigma.com/en/our-cloud/features");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://gui.lvs.cloudsigma.com/");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://cloudsigma.com/en/platform-details/the-api");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudsigma-lvs");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-LV");
-   }
-
 }

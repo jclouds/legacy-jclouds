@@ -18,8 +18,8 @@
  */
 package org.jclouds.ninefold.compute;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class NinefoldComputeProviderTest extends BaseProviderMetadataTest {
 
    public NinefoldComputeProviderTest() {
-      super(new NinefoldComputeProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new NinefoldComputeProviderMetadata(), new CloudStackApiMetadata());
    }
 
 }

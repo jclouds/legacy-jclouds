@@ -19,12 +19,8 @@
 package org.jclouds.slicehost;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Slicehost
@@ -32,85 +28,36 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class SlicehostProviderMetadata extends BaseProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "slicehost";
+   public SlicehostProviderMetadata() {
+      this(builder()
+            .id("slicehost")
+            .name("Slicehost")
+            .api(new SlicehostApiMetadata())
+            .homepage(URI.create("http://www.slicehost.com"))
+            .console(URI.create("https://manage.slicehost.com/"))
+            .iso3166Codes("US-IL", "US-TX", "US-MO"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected SlicehostProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Slicehost";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public SlicehostProviderMetadata build() {
+         return new SlicehostProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "API password";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return null;
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.slicehost.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.slicehost.com/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://articles.slicehost.com/api");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("slicehost");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-IL", "US-TX", "US-MO");
-   }
-
 }

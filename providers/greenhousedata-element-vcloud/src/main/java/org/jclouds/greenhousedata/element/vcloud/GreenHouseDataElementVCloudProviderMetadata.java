@@ -19,12 +19,9 @@
 package org.jclouds.greenhousedata.element.vcloud;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.vcloud.VCloudApiMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Green House Data Element vCloud
@@ -33,84 +30,37 @@ import com.google.common.collect.ImmutableSet;
  */
 public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "greenhousedata-element-vcloud";
+   public GreenHouseDataElementVCloudProviderMetadata() {
+      this(builder()
+            .id("greenhousedata-element-vcloud")
+            .name("Green House Data Element vCloud")
+            .api(new VCloudApiMetadata())
+            .homepage(URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/"))
+            .console(URI.create("https://mycloud.greenhousedata.com/cloud/org/YOUR_ORG_HERE"))
+            .iso3166Codes("US-WY"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected GreenHouseDataElementVCloudProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Green House Data Element vCloud";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public GreenHouseDataElementVCloudProviderMetadata build() {
+         return new GreenHouseDataElementVCloudProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User at Organization (user@org)";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://mycloud.greenhousedata.com/cloud/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("greenhousedata-element-vcloud");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-WY");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

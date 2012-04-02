@@ -19,7 +19,6 @@
 package org.jclouds.cloudsigma;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +29,6 @@ import org.testng.annotations.Test;
 public class CloudSigmaLasVegasProviderTest extends BaseProviderMetadataTest {
 
    public CloudSigmaLasVegasProviderTest() {
-      super(new CloudSigmaLasVegasProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new CloudSigmaLasVegasProviderMetadata(), new CloudSigmaApiMetadata());
    }
 }

@@ -19,11 +19,9 @@
 package org.jclouds.cloudonestorage;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.atmos.AtmosApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for PEER1's
@@ -33,76 +31,36 @@ import com.google.common.collect.ImmutableSet;
  */
 public class CloudOneStorageProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudonestorage";
+   public CloudOneStorageProviderMetadata() {
+      this(builder()
+            .id("cloudonestorage")
+            .name("PEER1 CloudOne Storage")
+            .api(new AtmosApiMetadata())
+            .homepage(URI.create("http://www.peer1.com/hosting/cloudone-storage.php"))
+            .console(URI.create("https://mypeer1.com/"))
+            .iso3166Codes("US-GA", "US-TX"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return BLOBSTORE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected CloudOneStorageProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "PEER1 CloudOne Storage";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public CloudOneStorageProviderMetadata build() {
+         return new CloudOneStorageProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Subtenant ID (UID)";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Shared Secret";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.peer1.com/hosting/cloudone-storage.php");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://mypeer1.com/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.peer1.com/sites/default/files/pdf/Atmos_System_Management_API_Guide_1.3.0A.pdf");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-GA", "US-TX");
-   }
-
 }

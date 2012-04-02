@@ -19,97 +19,48 @@
 package org.jclouds.skalicloud;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for SkaliCloud Malaysia.
  *
  * @author Adrian Cole
  */
-public class SkaliCloudMalaysiaProviderMetadata extends BaseProviderMetadata {
+public class SkaliCloudMalaysiaProviderMetadata  extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "skalicloud-sdg-my";
+   public SkaliCloudMalaysiaProviderMetadata() {
+      this(builder()
+            .id("skalicloud-sdg-my")
+            .name("SkaliCloud Malaysia")
+            .api(new ElasticStackApiMetadata())
+            .homepage(URI.create("http://sdg-my.skalicloud.com"))
+            .console(URI.create("http://sdg-my.skalicloud.com/accounts"))
+            .iso3166Codes("MY-10"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected SkaliCloudMalaysiaProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "SkaliCloud Malaysia";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public SkaliCloudMalaysiaProviderMetadata build() {
+         return new SkaliCloudMalaysiaProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.skalicloud.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://sdg-my.skalicloud.com");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.skalicloud.com/cloud-api");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("skalicloud-sdg-my");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("MY-10");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

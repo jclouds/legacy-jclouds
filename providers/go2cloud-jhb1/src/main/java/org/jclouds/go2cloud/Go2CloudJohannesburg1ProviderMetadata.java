@@ -19,11 +19,9 @@
 package org.jclouds.go2cloud;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Go2Cloud's
@@ -33,76 +31,37 @@ import com.google.common.collect.ImmutableSet;
  */
 public class Go2CloudJohannesburg1ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "go2cloud-jhb1";
+   public Go2CloudJohannesburg1ProviderMetadata() {
+      this(builder()
+            .id("go2cloud-jhb1")
+            .name("Go2Cloud Johannesburg1")
+            .api(new ElasticStackApiMetadata())
+            .homepage(URI.create("https://jhb1.go2cloud.co.za"))
+            .console(URI.create("https://jhb1.go2cloud.co.za/accounts"))
+            .iso3166Codes("ZA-GP"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected Go2CloudJohannesburg1ProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Go2Cloud Johannesburg1";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public Go2CloudJohannesburg1ProviderMetadata build() {
+         return new Go2CloudJohannesburg1ProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User UUID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://jhb1.go2cloud.co.za/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://jhb1.go2cloud.co.za/accounts");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.go2cloud.co.za/Home/QuickStart");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("ZA-GP");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

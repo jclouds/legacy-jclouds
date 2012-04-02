@@ -19,12 +19,8 @@
 package org.jclouds.rimuhosting.miro;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for RimuHosting.
@@ -32,84 +28,37 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class RimuHostingProviderMetadata extends BaseProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "rimuhosting";
+   public RimuHostingProviderMetadata() {
+      this(builder()
+            .id("rimuhosting")
+            .name("RimuHosting")
+            .api(new RimuHostingApiMetadata())
+            .homepage(URI.create("http://www.rimuhosting.com"))
+            .console(URI.create("https://rimuhosting.com/cp"))
+            .iso3166Codes("NZ-AUK", "US-TX", "AU-NSW", "GB-LND"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected RimuHostingProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "RimuHosting";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public RimuHostingProviderMetadata build() {
+         return new RimuHostingProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://rimuhosting.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://rimuhosting.com/cp");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://apidocs.rimuhosting.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("rimuhosting");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("NZ-AUK", "US-TX", "AU-NSW", "GB-LND");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

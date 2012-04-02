@@ -19,7 +19,7 @@
 package org.jclouds.greenhousedata.element.vcloud;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class GreenHouseDataElementVCloudProviderTest extends BaseProviderMetadataTest {
 
    public GreenHouseDataElementVCloudProviderTest() {
-      super(new GreenHouseDataElementVCloudProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new GreenHouseDataElementVCloudProviderMetadata(), new VCloudApiMetadata());
    }
 }

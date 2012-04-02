@@ -18,8 +18,8 @@
  */
 package org.jclouds.skalicloud;
 
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class SkaliCloudMalaysiaProviderTest extends BaseProviderMetadataTest {
 
    public SkaliCloudMalaysiaProviderTest() {
-      super(new SkaliCloudMalaysiaProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new SkaliCloudMalaysiaProviderMetadata(), new ElasticStackApiMetadata());
    }
 }

@@ -18,10 +18,13 @@
  */
 package org.jclouds.providers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
-import java.util.Set;
+import java.util.logging.Logger;
 
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.apis.ApiType;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -33,15 +36,15 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = "unit")
 public abstract class BaseProviderMetadataTest {
-   protected Set<String> allTypes = ImmutableSet.of(ProviderMetadata.BLOBSTORE_TYPE, ProviderMetadata.COMPUTE_TYPE,
-            ProviderMetadata.LOADBALANCER_TYPE, ProviderMetadata.QUEUE_TYPE, ProviderMetadata.TABLE_TYPE);
 
    private final ProviderMetadata toTest;
-   private final String expectedType;
+   private final ApiType expectedType;
+   private final ApiMetadata expectedApi;
 
-   public BaseProviderMetadataTest(ProviderMetadata toTest, String expectedType) {
-      this.toTest = toTest;
-      this.expectedType = expectedType;
+   public BaseProviderMetadataTest(ProviderMetadata toTest, ApiMetadata expectedApi) {
+      this.toTest = checkNotNull(toTest, "toTest must be defined");
+      this.expectedApi = checkNotNull(expectedApi, "expectedApi must be defined");
+      this.expectedType = expectedApi.getType();
    }
 
    @Test
@@ -50,6 +53,14 @@ public abstract class BaseProviderMetadataTest {
 
       assertEquals(toTest, providerMetadata);
       assert providerMetadata.getLinkedServices().contains(toTest.getId());
+   }
+   
+   @Test
+   public void testOfApiContains() {
+      if (expectedApi == null)
+         Logger.getAnonymousLogger().warning("please update your test class");
+      ImmutableSet<ProviderMetadata> ofApi = ImmutableSet.copyOf(Providers.ofApi(expectedApi));
+      assert ofApi.contains(toTest) : String.format("%s not found in %s", toTest, ofApi);
    }
 
    // it is ok to have multiple services in the same classpath (ex. ec2 vs elb)

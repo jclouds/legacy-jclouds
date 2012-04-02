@@ -19,65 +19,48 @@
 package org.jclouds.rackspace.cloudloadbalancers;
 
 import java.net.URI;
-import java.util.Set;
 
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
+import org.jclouds.providers.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers in US.
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersUSProviderMetadata extends CloudLoadBalancersProviderMetadata {
+public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudloadbalancers-us";
+   public CloudLoadBalancersUSProviderMetadata() {
+      this(builder()
+            .id("cloudloadbalancers-us")
+            .name("Rackspace Cloud Load Balancers US")
+            .api(new CloudLoadBalancersApiMetadata())
+            .homepage(URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers"))
+            .console(URI.create("https://manage.rackspacecloud.com"))
+            .linkedServices("cloudloadbalancers-us", "cloudservers-us", "cloudfiles-us")
+            .iso3166Codes("US-IL","US-TX"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Rackspace Cloud Load Balancers US";
-   }
-   
-   /**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public URI getHomepage() {
-		return URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers");
-	}
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.rackspacecloud.com");
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected CloudLoadBalancersUSProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudfiles-us", "cloudservers-us", "cloudloadbalancers-us");
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public CloudLoadBalancersUSProviderMetadata build() {
+         return new CloudLoadBalancersUSProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-IL","US-TX");
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
 }

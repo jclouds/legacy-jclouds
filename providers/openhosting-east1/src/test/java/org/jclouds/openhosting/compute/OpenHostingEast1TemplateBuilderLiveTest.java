@@ -80,6 +80,6 @@ public class OpenHostingEast1TemplateBuilderLiveTest extends BaseTemplateBuilder
 
    @Override
    protected Set<String> getIso3166Codes() {
-      return ImmutableSet.<String> of("US-FL");
+      return ImmutableSet.<String> of("US-VA");
    }
 }

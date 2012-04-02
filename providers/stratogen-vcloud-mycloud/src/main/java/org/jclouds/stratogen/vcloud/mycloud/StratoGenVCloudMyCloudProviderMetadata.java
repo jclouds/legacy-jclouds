@@ -19,12 +19,9 @@
 package org.jclouds.stratogen.vcloud.mycloud;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.vcloud.VCloudApiMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for StratoGen VMware hosting
@@ -33,84 +30,37 @@ import com.google.common.collect.ImmutableSet;
  */
 public class StratoGenVCloudMyCloudProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "stratogen-vcloud-mycloud";
+   public StratoGenVCloudMyCloudProviderMetadata() {
+      this(builder()
+            .id("stratogen-vcloud-mycloud")
+            .name("StratoGen VMware hosting")
+            .api(new VCloudApiMetadata())
+            .homepage(URI.create("http://www.stratogen.net"))
+            .console(URI.create("https://mycloud.stratogen.net/cloud/org/YOUR_ORG_HERE"))
+            .iso3166Codes("GB"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected StratoGenVCloudMyCloudProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "StratoGen VMware hosting";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public StratoGenVCloudMyCloudProviderMetadata build() {
+         return new StratoGenVCloudMyCloudProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User at Organization (user@org)";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.stratogen.net");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://mycloud.stratogen.net/cloud/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("stratogen-vcloud-mycloud");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("GB");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

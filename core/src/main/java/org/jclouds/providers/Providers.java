@@ -24,6 +24,9 @@ import static com.google.common.collect.Iterables.find;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.apis.ApiType;
+
 import com.google.common.base.Predicates;
 
 /**
@@ -34,7 +37,8 @@ import com.google.common.base.Predicates;
 public class Providers {
 
    /**
-    * Returns the providers located on the classpath via {@link java.util.ServiceLoader}.
+    * Returns the providers located on the classpath via
+    * {@link java.util.ServiceLoader}.
     * 
     * @return all available providers loaded from classpath via ServiceLoader
     */
@@ -68,52 +72,52 @@ public class Providers {
 
    /**
     * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#BLOBSTORE_TYPE}.
+    * {@link org.jclouds.providers.ProviderMetadata#BLOBSTORE}.
     * 
     * @return the blobstore providers
     */
    public static Iterable<ProviderMetadata> allBlobStore() {
-      return filter(all(), ProviderPredicates.type(ProviderMetadata.BLOBSTORE_TYPE));
+      return filter(all(), ProviderPredicates.type(ApiType.BLOBSTORE));
    }
 
    /**
     * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#COMPUTE_TYPE}.
+    * {@link org.jclouds.providers.ProviderMetadata#COMPUTE}.
     * 
     * @return the compute service providers
     */
    public static Iterable<ProviderMetadata> allCompute() {
-      return filter(all(), ProviderPredicates.type(ProviderMetadata.COMPUTE_TYPE));
+      return filter(all(), ProviderPredicates.type(ApiType.COMPUTE));
    }
 
    /**
     * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#QUEUE_TYPE}.
+    * {@link org.jclouds.providers.ProviderMetadata#QUEUE}.
     * 
     * @return the queue service providers
     */
    public static Iterable<ProviderMetadata> allQueue() {
-      return filter(all(), ProviderPredicates.type(ProviderMetadata.QUEUE_TYPE));
+      return filter(all(), ProviderPredicates.type(ApiType.QUEUE));
    }
 
    /**
     * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#TABLE_TYPE}.
+    * {@link org.jclouds.providers.ProviderMetadata#TABLE}.
     * 
     * @return the table service providers
     */
    public static Iterable<ProviderMetadata> allTable() {
-      return filter(all(), ProviderPredicates.type(ProviderMetadata.TABLE_TYPE));
+      return filter(all(), ProviderPredicates.type(ApiType.TABLE));
    }
 
    /**
     * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#LOADBALANCER_TYPE}.
+    * {@link org.jclouds.providers.ProviderMetadata#LOADBALANCER}.
     * 
     * @return the load balancer service providers
     */
    public static Iterable<ProviderMetadata> allLoadBalancer() {
-      return filter(all(), ProviderPredicates.type(ProviderMetadata.LOADBALANCER_TYPE));
+      return filter(all(), ProviderPredicates.type(ApiType.LOADBALANCER));
    }
 
    /**
@@ -124,15 +128,36 @@ public class Providers {
     * 
     * @return the providers of the provided type
     */
-   public static Iterable<ProviderMetadata> ofType(String type) {
+   public static Iterable<ProviderMetadata> ofType(ApiType type) {
       return filter(all(), ProviderPredicates.type(type));
    }
 
    /**
-    * Returns the providers that are bound to the same location as the given ISO 3166 code regardless of type.
+    * Returns the providers that are of the provided api.
+    * 
+    * @param api
+    *           the api to providers to return
+    * 
+    * @return the providers of the provided api
+    */
+   public static Iterable<ProviderMetadata> ofApi(ApiMetadata api) {
+      return filter(all(), ProviderPredicates.api(api));
+   }
+   
+   /**
+    * @see #ofType(ApiMetadata)
+    */
+   @Deprecated
+   public static Iterable<ProviderMetadata> ofType(String type) {
+      return ofType(ApiType.fromValue(type));
+   }
+
+   /**
+    * Returns the providers that are bound to the same location as the given ISO
+    * 3166 code regardless of type.
     * 
     * @param isoCode
-    *                the ISO 3166 code to filter providers by
+    *           the ISO 3166 code to filter providers by
     * 
     * @return the providers bound by the given ISO 3166 code
     */
@@ -141,25 +166,36 @@ public class Providers {
    }
 
    /**
-    * Returns the providers that are bound to the same location as the given ISO 3166 code and of the given type.
+    * Returns the providers that are bound to the same location as the given ISO
+    * 3166 code and of the given type.
     * 
     * @param iso3166Code
-    *                    the ISO 3166 code to filter providers by
+    *           the ISO 3166 code to filter providers by
     * @param type
-    *             the type to filter providers by
+    *           the type to filter providers by
     * 
-    * @return the providers bound by the given ISO 3166 code and of the proper type
+    * @return the providers bound by the given ISO 3166 code and of the proper
+    *         type
     */
-   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code, String type) {
-      return filter(all(), Predicates.and(ProviderPredicates.boundedByIso3166Code(iso3166Code),
-            ProviderPredicates.type(type)));
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code, ApiType type) {
+      return filter(all(),
+            Predicates.and(ProviderPredicates.boundedByIso3166Code(iso3166Code), ProviderPredicates.type(type)));
    }
 
    /**
-    * Returns the providers that have at least one common ISO 3166 code in common regardless of type.
+    * @see #boundedByIso3166Code(String iso3166Code, ApiType)
+    */
+   @Deprecated
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code, String type) {
+      return boundedByIso3166Code(iso3166Code, ApiType.fromValue(type));
+   }
+
+   /**
+    * Returns the providers that have at least one common ISO 3166 code in
+    * common regardless of type.
     * 
     * @param providerMetadata
-    *                         the provider metadata to use to filter providers by
+    *           the provider metadata to use to filter providers by
     * 
     * @return the providers that share at least one common ISO 3166 code
     */
@@ -168,17 +204,28 @@ public class Providers {
    }
 
    /**
-    * Returns the providers that have at least one common ISO 3166 code and are of the given type.
+    * Returns the providers that have at least one common ISO 3166 code and are
+    * of the given type.
     * 
     * @param providerMetadata
-    *                         the provider metadata to use to filter providers by
+    *           the provider metadata to use to filter providers by
     * @param type
-    *             the type to filter providers by
+    *           the type to filter providers by
     * 
-    * @return the providers that share at least one common ISO 3166 code and of the given type
+    * @return the providers that share at least one common ISO 3166 code and of
+    *         the given type
     */
-   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata, String type) {
-      return filter(all(), Predicates.and(ProviderPredicates.intersectingIso3166Code(providerMetadata),
-            ProviderPredicates.type(type)));
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata, ApiType type) {
+      return filter(all(),
+            Predicates.and(ProviderPredicates.intersectingIso3166Code(providerMetadata), ProviderPredicates.type(type)));
    }
+
+   /**
+    * @see #collocatedWith(ProviderMetadata iso3166Code, ApiType)
+    */
+   @Deprecated
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata, String type) {
+      return collocatedWith(providerMetadata, ApiType.fromValue(type));
+   }
+
 }

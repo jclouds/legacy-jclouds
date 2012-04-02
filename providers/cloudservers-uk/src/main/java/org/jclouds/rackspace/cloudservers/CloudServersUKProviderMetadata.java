@@ -19,65 +19,49 @@
 package org.jclouds.rackspace.cloudservers;
 
 import java.net.URI;
-import java.util.Set;
 
-import org.jclouds.cloudservers.CloudServersProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.cloudservers.CloudServersApiMetadata;
+import org.jclouds.providers.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers in UK.
  * 
  * @author Adrian Cole
  */
-public class CloudServersUKProviderMetadata extends CloudServersProviderMetadata {
+public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "cloudservers-uk";
+   public CloudServersUKProviderMetadata() {
+      this(builder()
+            .id("cloudservers-uk")
+            .name("Rackspace Cloud Servers UK")
+            .api(new CloudServersApiMetadata())
+            .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-servers"))
+            .console(URI.create("https://lon.manage.rackspacecloud.com"))
+            .linkedServices("cloudloadbalancers-uk", "cloudservers-uk", "cloudfiles-uk")
+            .iso3166Codes("GB-SLG"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Rackspace Cloud Servers UK";
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected CloudServersUKProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-servers");
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public CloudServersUKProviderMetadata build() {
+         return new CloudServersUKProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://lon.manage.rackspacecloud.com");
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("cloudfiles-uk", "cloudservers-uk", "cloudloadbalancers-uk");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("GB-SLG");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

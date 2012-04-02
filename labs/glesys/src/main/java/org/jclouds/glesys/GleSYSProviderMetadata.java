@@ -19,97 +19,47 @@
 package org.jclouds.glesys;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for GleSYS.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for GleSYS.
  *
  * @author Adrian Cole
  */
 public class GleSYSProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "glesys";
+   public GleSYSProviderMetadata() {
+      this(builder()
+            .id("glesys")
+            .name("GleSYS")
+            .api(new GleSYSApiMetadata())
+            .homepage(URI.create("http://www.glesys.com"))
+            .console(URI.create("https://customer.glesys.com/cloud.php"))
+            .iso3166Codes("NL-NH","SE-N","US-NY","SE-AB"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected GleSYSProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "GleSYS";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public GleSYSProviderMetadata build() {
+         return new GleSYSProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.glesys.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://customer.glesys.com/cloud.php");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://customer.glesys.com/api.php");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("glesys");
-   }
-
-   /**
-   * {@inheritDoc}
-   */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("NL-NH","SE-N","US-NY","SE-AB");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

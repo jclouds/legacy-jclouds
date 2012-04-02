@@ -19,12 +19,8 @@
 package org.jclouds.hpcloud.compute;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 
 /**
@@ -34,84 +30,37 @@ import com.google.common.collect.ImmutableSet;
  */
 public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "hpcloud-compute";
+   public HPCloudComputeProviderMetadata() {
+      this(builder()
+            .id("hpcloud-compute")
+            .name("HP Cloud Compute Services")
+            .api(new HPCloudComputeApiMetadata())
+            .homepage(URI.create("http://hpcloud.com"))
+            .console(URI.create("https://manage.hpcloud.com/compute"))
+            .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
+            .iso3166Codes("US-NV"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected HPCloudComputeProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "tenantId:accessKey";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public HPCloudComputeProviderMetadata build() {
+         return new HPCloudComputeProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret Key";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "HP Cloud Compute Services";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://hpcloud.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.hpcloud.com/compute");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("TODO");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("hpcloud-compute", "hpcloud-objectstorage");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-NV");
-   }
-
 }

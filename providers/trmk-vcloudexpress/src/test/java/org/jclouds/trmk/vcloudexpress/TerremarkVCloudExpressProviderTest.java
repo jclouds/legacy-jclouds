@@ -19,7 +19,6 @@
 package org.jclouds.trmk.vcloudexpress;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -31,6 +30,6 @@ import org.testng.annotations.Test;
 public class TerremarkVCloudExpressProviderTest extends BaseProviderMetadataTest {
 
    public TerremarkVCloudExpressProviderTest() {
-      super(new TerremarkVCloudExpressProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new TerremarkVCloudExpressProviderMetadata(), new TerremarkVCloudExpressApiMetadata());
    }
 }

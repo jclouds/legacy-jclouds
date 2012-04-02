@@ -19,90 +19,48 @@
 package org.jclouds.openhosting;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for OpenHosting's
- * East1 provider.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts London Peer 1.
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
 public class OpenHostingEast1ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "openhosting-east1";
+   public OpenHostingEast1ProviderMetadata() {
+      this(builder()
+            .id("openhosting-east1")
+            .name("OpenHosting East1")
+            .api(new ElasticStackApiMetadata())
+            .homepage(URI.create("https://east1.openhosting.com"))
+            .console(URI.create("https://east1.openhosting.com/accounts"))
+            .iso3166Codes("US-VA"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected OpenHostingEast1ProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "OpenHosting East1";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public OpenHostingEast1ProviderMetadata build() {
+         return new OpenHostingEast1ProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User UUID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://east1.openhosting.com/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://east1.openhosting.com/accounts/login");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.openhosting.com/support/api/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-FL");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }
