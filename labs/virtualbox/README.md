@@ -3,7 +3,7 @@
 
 Have virtualbox 4.1.8 installed. 
 
-Make sure you change your VirtualBox preferences to not auto-capture keyboard, and also set host key to none. Otherwise you may accidentally screw-up automated installs.
+Have an ssh daemon with passwordless login to localhost (i.e. "ssh [me]@localhost" must work without password).
 
 That's it! 
 

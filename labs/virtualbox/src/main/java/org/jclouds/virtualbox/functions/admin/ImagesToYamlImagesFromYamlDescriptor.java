@@ -48,7 +48,7 @@ public class ImagesToYamlImagesFromYamlDescriptor implements Supplier<Map<Image,
    private String yamlDescriptor;
 
    @Inject
-   public ImagesToYamlImagesFromYamlDescriptor(/*Supplier<String> yamlDescriptorSupplier*/YamlImagesFromFileConfig yamlDescriptorSupplier) {
+   public ImagesToYamlImagesFromYamlDescriptor(YamlImagesFromFileConfig yamlDescriptorSupplier) {
       this.yamlDescriptor = yamlDescriptorSupplier.get();
       checkNotNull(yamlDescriptor, "yaml descriptor");
       checkState(!yamlDescriptor.equals(""), "yaml descriptor is empty");

@@ -39,6 +39,7 @@ import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -51,7 +52,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "VirtualBoxExperimentLiveTest")
-public class VirtualBoxExperimentLiveTest {
+public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -69,7 +70,8 @@ public class VirtualBoxExperimentLiveTest {
    public void testLaunchCluster() throws RunNodesException {
       int numNodes = 2;
       final String clusterName = "test-launch-cluster";
-      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes, TemplateOptions.Builder.runScript(AdminAccess.standard()));
+      Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(clusterName, numNodes,
+               TemplateOptions.Builder.runScript(AdminAccess.standard()));
       assertEquals(numNodes, nodes.size(), "wrong number of nodes");
       for (NodeMetadata node : nodes) {
          assertTrue(node.getGroup().equals("test-launch-cluster"));
