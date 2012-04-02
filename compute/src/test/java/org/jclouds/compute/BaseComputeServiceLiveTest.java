@@ -61,6 +61,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -83,12 +84,14 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.logging.LoggingModules;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
@@ -107,6 +110,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.io.InputSupplier;
 import com.google.common.net.InetAddresses;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.annotations.SerializedName;
@@ -130,7 +134,10 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
 
    protected Template template;
    protected Map<String, String> keyPair;
-
+   // isolate tests from eachother, as default credentialStore is static
+   protected Module credentialStoreModule = new CredentialStoreModule(
+            new CopyInputStreamInputSupplierMap(new ConcurrentHashMap<String, InputSupplier<InputStream>>()));
+            
    @BeforeGroups(groups = { "integration", "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       setServiceDefaults();
@@ -189,7 +196,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseVersionedServiceLiv
          overrides.setProperty(provider + ".identity", "MOMMA");
          overrides.setProperty(provider + ".credential", "MIA");
          context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-               ImmutableSet.<Module> of(getLoggingModule()), overrides);
+               ImmutableSet.<Module> of(getLoggingModule(), credentialStoreModule), overrides);
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;

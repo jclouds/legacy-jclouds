@@ -22,11 +22,13 @@ import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -40,10 +42,12 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.LoggingModules;
 import org.jclouds.logging.config.LoggingModule;
+import org.jclouds.rest.config.CredentialStoreModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -55,6 +59,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.io.InputSupplier;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -269,6 +274,10 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
    }
 
    protected void tryOverrideUsingPropertyKey(String propertyKey) {
+      // isolate tests from eachother, as default credentialStore is static
+      Module credentialStoreModule = new CredentialStoreModule(
+               new CopyInputStreamInputSupplierMap(new ConcurrentHashMap<String, InputSupplier<InputStream>>()));
+      
       ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
@@ -278,7 +287,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
          overrides.setProperty(propertyKey + ".image.authenticate-sudo", auth + "");
 
          context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(getLoggingModule()), overrides);
+               ImmutableSet.<Module> of(getLoggingModule(), credentialStoreModule), overrides);
 
          Iterable<String> userPass = Splitter.on(':').split(login);
          String user = Iterables.get(userPass, 0);
@@ -287,9 +296,6 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseVersionedServiceLi
                LoginCredentials.builder().user(user).password(pass).authenticateSudo(auth).build());
       } finally {
          if (context != null){
-            // Need to clear persisted credentials; otherwise next time a ComputeServiceContext is created  
-            // then it will have these "foo" credentials!
-            context.credentialStore().clear();
             context.close();
          }
       }
