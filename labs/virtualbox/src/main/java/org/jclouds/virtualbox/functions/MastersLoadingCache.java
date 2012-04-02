@@ -19,12 +19,14 @@
 
 package org.jclouds.virtualbox.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.*;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_DIR;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_NAME_SEPARATOR;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_WORKINGDIR;
 import static org.jclouds.virtualbox.util.MachineUtils.machineNotFoundException;
 
@@ -215,9 +217,11 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
    }
 
    @Override
-   public synchronized Master getIfPresent(Image key) {
-      if (masters.containsKey(key.getId())) {
-         return masters.get(key.getId());
+   public synchronized Master getIfPresent(Object key) {
+      checkArgument(key instanceof Image, "this cache is for entries who's keys are Images");
+      Image image = Image.class.cast(key);
+      if (masters.containsKey(image.getId())) {
+         return masters.get(image.getId());
       }
       return null;
    }
