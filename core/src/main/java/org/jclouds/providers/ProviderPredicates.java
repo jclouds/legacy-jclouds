@@ -206,22 +206,22 @@ public class ProviderPredicates {
    }
 
    /**
-    * Returns all providers with the given api.
+    * Returns all providers with an instance of the given api.
     * 
-    * @param type
-    *           the type of the provider to return
+    * @param apiClass
+    *           the api of the provider to return
     * 
     * @return the providers with the given api
     */
-   public static Predicate<ProviderMetadata> api(final ApiMetadata api) {
-      Preconditions.checkNotNull(api, "api must be defined");
+   public static Predicate<ProviderMetadata> apiInstanceOf(final Class<? extends ApiMetadata> apiClass) {
+      Preconditions.checkNotNull(apiClass, "api must be defined");
       return new Predicate<ProviderMetadata>() {
          /**
           * {@inheritDoc}
           */
          @Override
          public boolean apply(ProviderMetadata providerMetadata) {
-            return providerMetadata.getApi().equals(api);
+            return Predicates.instanceOf(apiClass).apply(providerMetadata.getApi());
          }
 
          /**
@@ -229,7 +229,7 @@ public class ProviderPredicates {
           */
          @Override
          public String toString() {
-            return "api(" + api + ")";
+            return "apiInstanceOf(" + apiClass + ")";
          }
       };
    }

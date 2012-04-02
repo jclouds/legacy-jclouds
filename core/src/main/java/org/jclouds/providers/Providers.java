@@ -27,6 +27,7 @@ import java.util.ServiceLoader;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiType;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 
 /**
@@ -141,7 +142,8 @@ public class Providers {
     * @return the providers of the provided api
     */
    public static Iterable<ProviderMetadata> ofApi(ApiMetadata api) {
-      return filter(all(), ProviderPredicates.api(api));
+      Preconditions.checkNotNull(api, "api must be defined");
+      return filter(all(), ProviderPredicates.apiInstanceOf(api.getClass()));
    }
    
    /**
