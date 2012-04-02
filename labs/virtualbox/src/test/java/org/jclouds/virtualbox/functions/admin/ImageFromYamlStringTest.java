@@ -19,16 +19,19 @@
 
 package org.jclouds.virtualbox.functions.admin;
 
+import static junit.framework.Assert.assertTrue;
 import static org.testng.Assert.assertEquals;
 
-import java.io.InputStreamReader;
+import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
+import org.jclouds.virtualbox.predicates.DefaultImagePredicate;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -40,22 +43,31 @@ import com.google.common.collect.Iterables;
 public class ImageFromYamlStringTest {
 
    public static final Image TEST1 = new ImageBuilder()
-            .id("default-ubuntu-11.04-i386")
+            .id("ubuntu-11.04-i386")
             .name("ubuntu-11.04-server-i386")
             .description("ubuntu 11.04 server (i386)")
             .operatingSystem(
-                     OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU).version("11.04").build())
-            .build();
+                     OperatingSystem.builder().description("ubuntu").family(OsFamily.UBUNTU).version("11.04")
+                              .arch("x86").build()).build();
+
+   Map<Image, YamlImage> images;
+
+   @BeforeMethod
+   public void setUp() {
+      images = new ImagesToYamlImagesFromYamlDescriptor(new YamlImagesFromFileConfig("/default-images.yaml")).get();
+   }
 
    @Test
-   public void testNodesParse() throws Exception {
+   public void testNodesParse() {
+      assertEquals(Iterables.getFirst(images.keySet(), null), TEST1);
+   }
 
-      final StringBuilder yamlFileLines = new StringBuilder();
-      for (Object line : IOUtils
-               .readLines(new InputStreamReader(getClass().getResourceAsStream("/default-images.yaml")))) {
-         yamlFileLines.append(line).append("\n");
-      }
-       ImagesToYamlImagesFromYamlDescriptor parser = new ImagesToYamlImagesFromYamlDescriptor(new YamlImagesFromFileConfig("/default-images.yaml"));
-       assertEquals(Iterables.getFirst(parser.get().keySet(), null), TEST1);
+   @Test
+   public void testDefaultImagePresent() {
+
+      Iterable<Image> defaultImage = Iterables.filter(images.keySet(), new DefaultImagePredicate());
+
+      assertTrue(!Iterables.isEmpty(defaultImage));
+      assertEquals(1, Iterables.size(defaultImage));
    }
 }

@@ -20,10 +20,11 @@
 package org.jclouds.virtualbox;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 
 import java.io.File;
-import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
@@ -52,11 +53,16 @@ import org.jclouds.virtualbox.domain.NetworkInterfaceCard;
 import org.jclouds.virtualbox.domain.NetworkSpec;
 import org.jclouds.virtualbox.domain.StorageController;
 import org.jclouds.virtualbox.domain.VmSpec;
+import org.jclouds.virtualbox.domain.YamlImage;
 import org.jclouds.virtualbox.functions.IMachineToVmSpec;
+import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
+import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
 import org.jclouds.virtualbox.functions.admin.UnregisterMachineIfExistsAndDeleteItsMedia;
+import org.jclouds.virtualbox.predicates.DefaultImagePredicate;
 import org.jclouds.virtualbox.util.MachineController;
 import org.jclouds.virtualbox.util.MachineUtils;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.CleanupMode;
@@ -83,12 +89,15 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
 public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
+
+   public static final String DONT_DESTROY_MASTER = "jclouds.virtualbox.keep-test-master";
+
    public BaseVirtualBoxClientLiveTest() {
       provider = "virtualbox";
    }
-   
+
    protected ComputeServiceContext context;
-   
+
    @Inject
    protected MachineController machineController;
 
@@ -104,11 +113,6 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    @Inject
    protected MachineUtils machineUtils;
 
-   // this will eagerly startup Jetty, note the impl will shut itself down
-   @Inject
-   @Preconfiguration
-   protected LoadingCache<IsoSpec, URI> preconfigurationUri;
-
    protected String hostVersion;
    protected String operatingSystemIso;
    protected String guestAdditionsIso;
@@ -122,8 +126,9 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    protected PrioritizeCredentialsFromTemplate prioritizeCredentialsFromTemplate;
    @Inject
    protected LoadingCache<Image, Master> mastersCache;
-   
-   private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor(); 
+
+   private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor();
+   private String masterVmName;
 
    @Override
    protected void setupCredentials() {
@@ -147,16 +152,19 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
                .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), new ExecutorServiceModule(
                         singleThreadExec, singleThreadExec)), overrides);
-      
+
       context.utils().injector().injectMembers(this);
 
-      imageId = "ubuntu-11.04-server-i386";
+      YamlImage image = getDefaultImage();
+
+      imageId = image.id;
+      masterVmName = VIRTUALBOX_IMAGE_PREFIX + image.id;
       isosDir = workingDir + File.separator + "isos";
 
       hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-      operatingSystemIso = String.format("%s/%s.iso", isosDir, imageId);
+      operatingSystemIso = String.format("%s/%s.iso", isosDir, image.name);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
-      
+
       // try and get a master from the cache, this will initialize the config/download isos and
       // prepare everything IF a master is not available, subsequent calls should be pretty fast
       Template template = context.getComputeService().templateBuilder().build();
@@ -189,7 +197,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    public MasterSpec getMasterSpecForTest() {
-      String masterName = "jclouds-image-0x0-default-ubuntu-11.04-i386";
+      String masterName = "jclouds-image-0x0-" + imageId;
+
       StorageController ideController = StorageController
                .builder()
                .name("IDE Controller")
@@ -199,37 +208,45 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
                         HardDisk.builder().diskpath(adminDisk(masterName)).controllerPort(0).deviceSlot(1)
                                  .autoDelete(true).build()).attachISO(1, 0, guestAdditionsIso).build();
 
-            VmSpec sourceVmSpec = VmSpec.builder().id(masterName).name(masterName)
-                        .osTypeId("").memoryMB(512).cleanUpMode(CleanupMode.Full)
-                        .controller(ideController).forceOverwrite(true).build();
+      VmSpec sourceVmSpec = VmSpec.builder().id(masterName).name(masterName).osTypeId("").memoryMB(512)
+               .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
-            Injector injector = context.utils().injector();
-            Function<String, String> configProperties = injector
-                        .getInstance(ValueOfConfigurationKeyOrNull.class);
-            IsoSpec isoSpec = IsoSpec
-                        .builder()
-                        .sourcePath(operatingSystemIso)
-                        .installationScript(
-                                    configProperties.apply(
-                                                VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace(
-                                                "HOSTNAME", sourceVmSpec.getVmName())).build();
-            
-            NetworkAdapter networkAdapter = NetworkAdapter.builder()
-                        .networkAttachmentType(NetworkAttachmentType.NAT)
-                        .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
-            NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard
-                        .builder().addNetworkAdapter(networkAdapter).build();
+      Injector injector = context.utils().injector();
+      Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
+      IsoSpec isoSpec = IsoSpec
+               .builder()
+               .sourcePath(operatingSystemIso)
+               .installationScript(
+                        configProperties.apply(VIRTUALBOX_INSTALLATION_KEY_SEQUENCE).replace("HOSTNAME",
+                                 sourceVmSpec.getVmName())).build();
 
-            NetworkSpec networkSpec = NetworkSpec.builder()
-                        .addNIC(networkInterfaceCard).build();
-            return MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec)
-                        .network(networkSpec).build();
+      NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
+               .tcpRedirectRule("127.0.0.1", 2222, "", 22).build();
+      NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
+               .build();
+
+      NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
+      return MasterSpec.builder().iso(isoSpec).vm(sourceVmSpec).network(networkSpec).build();
    }
-   
+
+   public static YamlImage getDefaultImage() {
+      Map<Image, YamlImage> images = new ImagesToYamlImagesFromYamlDescriptor(new YamlImagesFromFileConfig(
+               "/default-images.yaml")).get();
+      return images.get(Iterables.getOnlyElement(Iterables.filter(images.keySet(), new DefaultImagePredicate())));
+   }
+
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
       if (context != null)
          context.close();
+   }
+
+   @AfterSuite
+   protected void destroyMaster() {
+      if (System.getProperty(DONT_DESTROY_MASTER) == null
+               || !Boolean.parseBoolean(System.getProperty(DONT_DESTROY_MASTER))) {
+         undoVm(masterVmName);
+      }
    }
 
 }
