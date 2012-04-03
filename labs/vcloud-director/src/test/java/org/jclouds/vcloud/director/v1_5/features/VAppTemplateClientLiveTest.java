@@ -41,6 +41,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.vcloud.director.v1_5.AbstractVAppClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;

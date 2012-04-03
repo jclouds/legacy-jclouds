@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
@@ -33,6 +33,9 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
+import org.jclouds.vcloud.director.v1_5.features.VdcClient;
+import org.jclouds.vcloud.director.v1_5.features.MetadataClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
