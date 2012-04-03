@@ -28,6 +28,8 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.util.Collections;
+
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.IpScope;
@@ -94,9 +96,10 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
       //TODO: ensure network instanceof OrgNetwork, may require queries
       assertTrue(network instanceof OrgNetwork, String.format(REF_REQ_LIVE, "OrgNetwork"));
       
-      OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network).toBuilder()
-         .tasks(null)
-         .build();
+      OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network)
+            .toBuilder()
+            .tasks(Collections.<Task>emptySet())
+            .build();
       
       OrgNetwork updateNetwork = getMutatedOrgNetwork(oldNetwork);
       
@@ -159,8 +162,8 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
    
    private static OrgNetwork getMutatedOrgNetwork(OrgNetwork network) {
        OrgNetwork.Builder<?> networkBuilder = OrgNetwork.builder().fromNetwork(network)
-          .tasks(null)
-//          .name("new "+network.getName())
+             .tasks(Collections.<Task>emptySet())
+//           .name("new "+network.getName())
           .description("new "+network.getDescription())
           .configuration(getMutatedNetworkConfiguration(network.getConfiguration()));
        
