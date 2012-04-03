@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static org.testng.Assert.assertEquals;
 

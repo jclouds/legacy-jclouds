@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;

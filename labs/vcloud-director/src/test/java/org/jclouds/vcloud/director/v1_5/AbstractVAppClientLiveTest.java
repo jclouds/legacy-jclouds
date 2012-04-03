@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
@@ -49,6 +49,13 @@ import org.jclouds.vcloud.director.v1_5.domain.cim.CimString;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedInt;
 import org.jclouds.vcloud.director.v1_5.domain.cim.CimUnsignedLong;
 import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
+import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
+import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
+import org.jclouds.vcloud.director.v1_5.features.QueryClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppClient;
+import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
+import org.jclouds.vcloud.director.v1_5.features.VdcClient;
+import org.jclouds.vcloud.director.v1_5.features.MetadataClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.xml.internal.JAXBParser;
