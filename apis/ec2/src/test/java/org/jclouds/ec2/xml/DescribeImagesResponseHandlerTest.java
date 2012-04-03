@@ -92,6 +92,18 @@ public class DescribeImagesResponseHandlerTest {
 
       assertEquals(result, contents);
    }
+   
+   public void testDiabloWithIncorrectDisplayNameField() {
+      Set<Image> contents = ImmutableSet.of(new Image("us-east-1", Architecture.X86_64, "CentOS 6.2 Server 64-bit 20120125", "", "ami-0000054e",
+               "local (CentOS 6.2 Server 64-bit 20120125)", "", ImageState.AVAILABLE,
+               ImageType.MACHINE, true, Sets.<String> newHashSet(), "aki-0000054c", null, "ari-0000054d",
+               RootDeviceType.INSTANCE_STORE, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of(),
+               VirtualizationType.PARAVIRTUAL, Hypervisor.XEN));
+      
+      Set<Image> result = parseImages("/describe_images_nova.xml");
+
+      assertEquals(result.toString(), contents.toString());
+   }
 
    static ParseSax<Set<Image>> createParser() {
       Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {

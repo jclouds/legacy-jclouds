@@ -48,6 +48,7 @@
        <module>atmos</module>
        <module>nova</module>
        <module>openstack-nova</module>
+       <module>openstack-nova-ec2</module>
        <module>cloudwatch</module>
        <module>cloudsigma</module>
        <module>cloudstack</module>
