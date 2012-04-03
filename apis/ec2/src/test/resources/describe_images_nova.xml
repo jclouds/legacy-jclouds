@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-04-04/">
+    <requestId>f3daebdd-c435-4af4-86fc-d467e4530e57</requestId>
+    <imagesSet>
+        <item>
+            <displayName>CentOS 6.2 Server 64-bit 20120125</displayName>
+            <description />
+            <imageOwnerId />
+            <isPublic>true</isPublic>
+            <imageId>ami-0000054e</imageId>
+            <imageState>available</imageState>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <architecture>x86_64</architecture>
+            <imageLocation>local (CentOS 6.2 Server 64-bit 20120125)</imageLocation>
+            <kernelId>aki-0000054c</kernelId>
+            <ramdiskId>ari-0000054d</ramdiskId>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <imageType>machine</imageType>
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>
