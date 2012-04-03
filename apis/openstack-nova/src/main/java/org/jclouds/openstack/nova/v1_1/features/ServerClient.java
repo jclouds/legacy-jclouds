@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
@@ -156,4 +157,17 @@ public interface ServerClient {
     *           The new name for the server
     */
    void renameServer(String id, String newName);
+
+   /**
+    * Create an image from a server.
+    *
+    * @param id
+    *           id of the server
+    * @param name
+    *           The name of the new image
+    *
+    * @return ID of the new / updated image
+    */
+   String createImageFromServer(String id, String name);
+
 }

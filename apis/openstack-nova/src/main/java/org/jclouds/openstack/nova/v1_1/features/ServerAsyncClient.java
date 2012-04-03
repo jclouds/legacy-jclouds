@@ -33,7 +33,9 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
+import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.functions.ParseImageIdFromLocationHeader;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;
 import org.jclouds.openstack.nova.v1_1.options.RebuildServerOptions;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -41,9 +43,11 @@ import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SelectJson;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -182,4 +186,17 @@ public interface ServerAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Payload("%7B\"server\":%7B\"name\":\"{name}\"%7D%7D")
    ListenableFuture<Void> renameServer(@PathParam("id") String id, @PayloadParam("name") String newName);
+
+   /**
+    * @see ServerClient#createImageFromServer
+    */
+   @POST
+   @Path("/servers/{id}/action")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @Produces(MediaType.APPLICATION_JSON)
+   @Payload("%7B\"createImage\":%7B\"name\":\"{name}\", \"metadata\": %7B%7D%7D%7D")
+   @ExceptionParser(MapHttp4xxCodesToExceptions.class)
+   @ResponseParser(ParseImageIdFromLocationHeader.class)
+   ListenableFuture<String> createImageFromServer(@PathParam("id") String id, @PayloadParam("name") String name);
+
 }
