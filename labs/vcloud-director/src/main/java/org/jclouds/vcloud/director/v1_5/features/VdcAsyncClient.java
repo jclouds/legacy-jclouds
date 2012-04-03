@@ -40,7 +40,7 @@ import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -130,7 +130,7 @@ public interface VdcAsyncClient {
    @Produces(VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS)
    @JAXBResponseParser
    ListenableFuture<VApp> instantiateVApp(@EndpointParam URI vdcURI,
-         @BinderParam(BindToXMLPayload.class) InstantiateVAppParamsType params);
+         @BinderParam(BindToXMLPayload.class) InstantiateVAppParams params);
    
    /**
     * @see VdcClient#uploadVAppTemplate(URI, UploadVAppTemplateParams)
