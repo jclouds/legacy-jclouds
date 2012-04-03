@@ -28,17 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 
 /**
  * Represents parameters for copying a vApp template and optionally
  * deleting the source.
- * <p/>
- * <p/>
- * <p>Java class for CloneVAppTemplateParams complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="CloneVAppTemplateParams">
  *   &lt;complexContent>
@@ -63,6 +59,7 @@ public class CloneVAppTemplateParams extends ParamsType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromCloneVAppTemplateParams(this);
    }
@@ -74,6 +71,12 @@ public class CloneVAppTemplateParams extends ParamsType {
 
       private Reference source;
       private Boolean isSourceDelete;
+
+      @SuppressWarnings("unchecked")
+      @Override
+      protected B self() {
+         return (B) this;
+      }
 
       /**
        * @see CloneVAppTemplateParams#getSource()
@@ -101,6 +104,7 @@ public class CloneVAppTemplateParams extends ParamsType {
          return self();
       }
 
+      @Override
       public CloneVAppTemplateParams build() {
          return new CloneVAppTemplateParams(this);
       }
@@ -130,9 +134,6 @@ public class CloneVAppTemplateParams extends ParamsType {
 
    /**
     * Gets the value of the source property.
-    *
-    * @return possible object is
-    *         {@link Reference }
     */
    public Reference getSource() {
       return source;
@@ -140,9 +141,6 @@ public class CloneVAppTemplateParams extends ParamsType {
 
    /**
     * Gets the value of the isSourceDelete property.
-    *
-    * @return possible object is
-    *         {@link Boolean }
     */
    public Boolean isSourceDelete() {
       return isSourceDelete;
@@ -155,21 +153,21 @@ public class CloneVAppTemplateParams extends ParamsType {
       if (o == null || getClass() != o.getClass())
          return false;
       CloneVAppTemplateParams that = CloneVAppTemplateParams.class.cast(o);
-      return equal(source, that.source) &&
-            equal(isSourceDelete, that.isSourceDelete);
+      return super.equals(that) &&
+            equal(this.source, that.source) &&
+            equal(this.isSourceDelete, that.isSourceDelete);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(source,
-            isSourceDelete);
+      return Objects.hashCode(super.hashCode(), source, isSourceDelete);
    }
 
    @Override
-   public String toString() {
-      return Objects.toStringHelper("")
+   public ToStringHelper string() {
+      return super.string()
             .add("source", source)
-            .add("isSourceDelete", isSourceDelete).toString();
+            .add("isSourceDelete", isSourceDelete);
    }
 
 }
