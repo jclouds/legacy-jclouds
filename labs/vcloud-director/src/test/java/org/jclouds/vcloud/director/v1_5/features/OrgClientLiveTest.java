@@ -70,7 +70,7 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void cleanUp() throws Exception {
       if (metadataSet) {
          adminContext.getApi().getOrgClient().getMetadataClient()
-            .deleteMetadataEntry(toAdminUri(orgURI), "key");
+            .deleteMetadataEntry(toAdminUri(orgURI), "KEY");
       }
    }
 
@@ -112,15 +112,18 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkOrg(org);
    }
    
-   @Test(description = "orgClient admin metadata setup", dependsOnMethods = { "testGetOrg" })
-   public void testSetupMetadata() {
+   private void setupMetadata() {
       adminContext.getApi().getOrgClient().getMetadataClient().setMetadata(toAdminUri(orgURI), 
             "KEY", MetadataValue.builder().value("VALUE").build()); 
       metadataSet = true;
    }
    
-   @Test(description = "GET /org/{id}/metadata", dependsOnMethods = { "testSetupMetadata" })
+   @Test(description = "GET /org/{id}/metadata", dependsOnMethods = { "testGetOrg" })
    public void testGetOrgMetadata() {
+      if (adminContext != null) {
+         setupMetadata();
+      }
+      
       // Call the method being tested
       Metadata metadata = orgClient.getMetadataClient().getMetadata(orgURI);
       

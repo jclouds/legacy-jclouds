@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
+import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
@@ -127,6 +128,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected Session session;
 
    protected String catalogId;
+   protected URI catalogURI;
    protected URI vAppTemplateURI;
    protected URI mediaURI;
    protected URI networkURI;
@@ -135,6 +137,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
 
    protected final Set<String> vAppNames = Sets.newLinkedHashSet();
    protected static final Random random = new Random();
+   
+   private User createdAdminUser;
+   private User createdUser;
    
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
@@ -169,49 +174,82 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       VCloudDirectorContext rootContext = VCloudDirectorContext.class.cast(
             new RestContextFactory().createContext(provider, identity, credential, ImmutableSet.<Module> of(
             new Log4JLoggingModule(), new SshjSshClientModule()), overrides));
-      adminContext = rootContext.getAdminContext();
       
-      rootContext.utils().injector().injectMembers(this);
-      Reference orgRef = Iterables.getFirst(rootContext.getApi().getOrgClient().getOrgList().getOrgs(), null)
-            .toAdminReference(endpoint);
-      assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
+      if (rootContext.getApi().getCurrentSession().getLinks().contains(Link.builder()
+         .rel("down")
+         .type("application/vnd.vmware.admin.vcloud+xml")
+         .href(URI.create(endpoint+"/admin/"))
+         .build())) {
+         
+         adminContext = rootContext.getAdminContext();
+         
+         rootContext.utils().injector().injectMembers(this);
+         Reference orgRef = Iterables.getFirst(rootContext.getApi().getOrgClient().getOrgList().getOrgs(), null)
+               .toAdminReference(endpoint);
+         assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
+         
+         Reference userRef = Iterables.find(adminContext.getApi().getOrgClient().getOrg(orgRef.getHref()).getUsers(), 
+               ReferencePredicates.nameEquals(adminContext.getApi().getCurrentSession().getUser()));
+         
+         User user = adminContext.getApi().getUserClient().getUser(userRef.getHref());
+         Reference orgAdmin = user.getRole();
+         assertTrue(equal(orgAdmin.getName(), DefaultRoles.ORG_ADMIN), "must give org admin or user-only credentials");
+         
+         String adminIdentity = "testAdmin"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+         String adminCredential = "testAdminPassword";
+         
+         createdAdminUser = rootContext.getAdminContext().getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
+            .name(adminIdentity)
+            .password(adminCredential)
+            .description("test user with user-level privileges")
+            .role(orgAdmin)
+            .deployedVmQuota(REQUIRED_ADMIN_VM_QUOTA)
+            .isEnabled(true)
+            .build());
+         
+         rootContext.close(); rootContext = null;
+         
+         adminContext = VCloudDirectorContext.class.cast(new RestContextFactory().createContext(provider, adminIdentity, adminCredential, ImmutableSet.<Module> of(
+               new Log4JLoggingModule(), new SshjSshClientModule()), overrides)).getAdminContext();
+         adminSession = adminContext.getApi().getCurrentSession();
+         adminContext.utils().injector().injectMembers(this);
+         String userIdentity = "test"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+         String userCredential = "testPassword";
+         
+         createdUser = adminContext.getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
+            .name(userIdentity)
+            .password(userCredential)
+            .description("test user with user-level privileges")
+            .role(getRoleReferenceFor(DefaultRoles.USER))
+            .deployedVmQuota(REQUIRED_USER_VM_QUOTA)
+            .isEnabled(true)
+            .build());
+         
+         context = new RestContextFactory().createContext(provider, userIdentity, userCredential, ImmutableSet.<Module> of(
+                  new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      } else {
+         context = rootContext;
+      }
       
-      String adminIdentity = "testAdmin"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-      String adminCredential = "testAdminPassword";
-      rootContext.getAdminContext().getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
-         .name(adminIdentity)
-         .password(adminCredential)
-         .description("test user with user-level privileges") //TODO desc
-         .role(getRoleReferenceFor(DefaultRoles.ORG_ADMIN))
-         .deployedVmQuota(REQUIRED_ADMIN_VM_QUOTA)
-         .isEnabled(true)
-         .build());
-      
-      rootContext.close(); rootContext = null;
-      
-      adminContext = VCloudDirectorContext.class.cast(new RestContextFactory().createContext(provider, adminIdentity, adminCredential, ImmutableSet.<Module> of(
-            new Log4JLoggingModule(), new SshjSshClientModule()), overrides)).getAdminContext();
-      adminSession = adminContext.getApi().getCurrentSession();
-      adminContext.utils().injector().injectMembers(this);
-      String userIdentity = "test"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-      String userCredential = "testPassword";
-      
-      adminContext.getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
-         .name(userIdentity)
-         .password(userCredential)
-         .description("test user with user-level privileges")
-         .role(getRoleReferenceFor(DefaultRoles.USER))
-         .deployedVmQuota(REQUIRED_USER_VM_QUOTA)
-         .isEnabled(true)
-         .build());
-      
-      context = new RestContextFactory().createContext(provider, userIdentity, userCredential, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       session = context.getApi().getCurrentSession();
       context.utils().injector().injectMembers(this);
       
       initTestParametersFromPropertiesOrLazyDiscover();
       setupRequiredClients();
+   }
+   
+   @AfterClass(alwaysRun = true)
+   protected void tearDown() {
+      if (createdAdminUser != null) {
+         adminContext.getApi().getUserClient().deleteUser(createdAdminUser.getHref());
+      }
+      if (createdUser != null) {
+         adminContext.getApi().getUserClient().deleteUser(createdUser.getHref());
+      }
+      if (context != null)
+         context.close();
+      if (adminContext != null)
+         adminContext.close();
    }
    
    public Reference getRoleReferenceFor(String name) {
@@ -245,6 +283,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    // TODO change properties to URI, not id
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
       catalogId = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
+      if (catalogId != null) {
+         catalogURI = URI.create(endpoint + "/catalog/" + catalogId);
+      }
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
       if (vAppTemplateId != null)
@@ -286,14 +327,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
             catalogId = Iterables.getLast(Splitter.on('/').split(uri));
          }
       }
-   }
-
-   @AfterClass(alwaysRun = true)
-   protected void tearDown() {
-      if (context != null)
-         context.close();
-      if (adminContext != null)
-         adminContext.close();
    }
    
    public URI toAdminUri(Reference ref) {

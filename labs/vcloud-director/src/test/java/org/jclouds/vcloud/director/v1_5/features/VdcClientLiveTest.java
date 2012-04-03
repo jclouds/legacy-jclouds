@@ -83,6 +83,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private VAppTemplate clonedVAppTemplate;
    private VAppTemplate capturedVAppTemplate;
    private VAppTemplate uploadedVAppTemplate;
+   private boolean metadataSet = false;
    
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
@@ -105,8 +106,10 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          cleanUpVApp(composedVApp);
       }
       
-      adminContext.getApi().getVdcClient().getMetadataClient()
-         .deleteMetadataEntry(toAdminUri(vdcURI), "key");
+      if (metadataSet) {
+         adminContext.getApi().getVdcClient().getMetadataClient()
+            .deleteMetadataEntry(toAdminUri(vdcURI), "key");
+      }
    }
 
    @Override
@@ -307,14 +310,18 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
    }
    
-   @Test(description = "vdcClient admin metadata configuration", dependsOnMethods = { "testGetVdc" } )
-   public void testSetupMetadata() {
+   private void setupMetadata() {
       adminContext.getApi().getVdcClient().getMetadataClient().setMetadata(toAdminUri(vdcURI), 
             "key", MetadataValue.builder().value("value").build());
+      metadataSet = true;
    }
    
-   @Test(description = "GET /vdc/{id}/metadata", dependsOnMethods = { "testSetupMetadata" } )
+   @Test(description = "GET /vdc/{id}/metadata", dependsOnMethods = { "testGetVdc" } )
    public void testGetMetadata() {
+      if(adminContext != null) {
+         setupMetadata();
+      }
+      
       Metadata metadata = vdcClient.getMetadataClient().getMetadata(vdcURI);
       
       // required for testing
