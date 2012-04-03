@@ -87,29 +87,33 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       if (adminCatalog != null) return;
       catalogClient = context.getApi().getCatalogClient();
       Reference orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
-
-      AdminCatalog newCatalog = AdminCatalog.builder()
-            .name(name("Test Catalog "))
-            .description("created by CatalogClientLiveTest")
-            .build();
       
-      AdminCatalogClient adminCatalogClient = adminContext.getApi().getCatalogClient();
-      adminCatalog = adminCatalogClient.createCatalog(orgRef.getHref(), newCatalog);
-      catalogRef = find(adminCatalog.getLinks(), and(relEquals("alternate"), typeEquals(VCloudDirectorMediaType.CATALOG)));
-
-      Metadata newMetadata = Metadata.builder()
-            .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
-            .build();
-
-      Task mergeCatalogMetadata = adminCatalogClient.getMetadataClient().mergeMetadata(adminCatalog.getHref(), newMetadata);
-      checkTask(mergeCatalogMetadata);
-      assertTrue(retryTaskSuccess.apply(mergeCatalogMetadata), String.format(TASK_COMPLETE_TIMELY, "setupRequiredClients"));
+      if (adminContext != null) {
+         AdminCatalog newCatalog = AdminCatalog.builder()
+               .name(name("Test Catalog "))
+               .description("created by CatalogClientLiveTest")
+               .build();
+         
+         AdminCatalogClient adminCatalogClient = adminContext.getApi().getCatalogClient();
+         adminCatalog = adminCatalogClient.createCatalog(orgRef.getHref(), newCatalog);
+         catalogRef = find(adminCatalog.getLinks(), and(relEquals("alternate"), typeEquals(VCloudDirectorMediaType.CATALOG)));
+   
+         Metadata newMetadata = Metadata.builder()
+               .entry(MetadataEntry.builder().entry("KEY", "MARMALADE").build())
+               .build();
+   
+         Task mergeCatalogMetadata = adminCatalogClient.getMetadataClient().mergeMetadata(adminCatalog.getHref(), newMetadata);
+         checkTask(mergeCatalogMetadata);
+         assertTrue(retryTaskSuccess.apply(mergeCatalogMetadata), String.format(TASK_COMPLETE_TIMELY, "setupRequiredClients"));
+      } else {
+         catalogRef = Reference.builder().href(catalogURI).build();
+      }
    }
    
    @AfterClass(alwaysRun = true)
    public void tearDown() {
       if (catalogItem != null)
-         catalogClient.deleteCatalogItem(catalogItem.getHref());               
+         catalogClient.deleteCatalogItem(catalogItem.getHref());
          
       if (media != null)
          context.getApi().getMediaClient().deleteMedia(media.getHref());

@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.internal;
 
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_NON_NULL;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -40,13 +39,9 @@ import javax.inject.Inject;
 import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.date.DateService;
 import org.jclouds.logging.Logger;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
@@ -79,8 +74,9 @@ import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -94,7 +90,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Guice;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@link VCloudDirectorClient} and acts as parent for other client live tests.
@@ -127,6 +122,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected Session session;
 
    protected String catalogId;
+   protected URI catalogURI;
    protected URI vAppTemplateURI;
    protected URI mediaURI;
    protected URI networkURI;
@@ -141,6 +137,10 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    protected DateService dateService;
+
+   private static VCloudDirectorTestSession testSession;
+
+   private static String testStamp;
 
    @BeforeClass(alwaysRun = true)
    protected void setupDateService() {
@@ -160,53 +160,37 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected void initTaskSuccessLong(TaskSuccess taskSuccess) {
       retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
+   
+   @BeforeSuite(alwaysRun = true)
+   protected void setupTestSession() {
+      setupCredentials();
+      Properties overrides = setupProperties();
+      testSession = VCloudDirectorTestSession.builder()
+         .identity(identity)
+         .credential(credential)
+         .provider(provider)
+         .overrides(overrides)
+         .endpoint(endpoint)
+         .build();
+   }
+   
+   @AfterSuite(alwaysRun = true)
+   protected void tearDownTestSession() {
+      testSession.close();
+   }
 
    @BeforeClass(alwaysRun = true)
    protected void setupContext() throws Exception {
       setupCredentials();
-      Properties overrides = setupProperties();
       
-      VCloudDirectorContext rootContext = VCloudDirectorContext.class.cast(
-            new RestContextFactory().createContext(provider, identity, credential, ImmutableSet.<Module> of(
-            new Log4JLoggingModule(), new SshjSshClientModule()), overrides));
-      adminContext = rootContext.getAdminContext();
+      context = testSession.getUserContext();
+      adminContext = testSession.getAdminContext();
       
-      rootContext.utils().injector().injectMembers(this);
-      Reference orgRef = Iterables.getFirst(rootContext.getApi().getOrgClient().getOrgList().getOrgs(), null)
-            .toAdminReference(endpoint);
-      assertNotNull(orgRef, String.format(REF_REQ_LIVE, "admin org"));
+      if(adminContext != null) {
+         adminSession = adminContext.getApi().getCurrentSession();
+         adminContext.utils().injector().injectMembers(this);
+      }
       
-      String adminIdentity = "testAdmin"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-      String adminCredential = "testAdminPassword";
-      rootContext.getAdminContext().getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
-         .name(adminIdentity)
-         .password(adminCredential)
-         .description("test user with user-level privileges") //TODO desc
-         .role(getRoleReferenceFor(DefaultRoles.ORG_ADMIN))
-         .deployedVmQuota(REQUIRED_ADMIN_VM_QUOTA)
-         .isEnabled(true)
-         .build());
-      
-      rootContext.close(); rootContext = null;
-      
-      adminContext = VCloudDirectorContext.class.cast(new RestContextFactory().createContext(provider, adminIdentity, adminCredential, ImmutableSet.<Module> of(
-            new Log4JLoggingModule(), new SshjSshClientModule()), overrides)).getAdminContext();
-      adminSession = adminContext.getApi().getCurrentSession();
-      adminContext.utils().injector().injectMembers(this);
-      String userIdentity = "test"+new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-      String userCredential = "testPassword";
-      
-      adminContext.getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
-         .name(userIdentity)
-         .password(userCredential)
-         .description("test user with user-level privileges")
-         .role(getRoleReferenceFor(DefaultRoles.USER))
-         .deployedVmQuota(REQUIRED_USER_VM_QUOTA)
-         .isEnabled(true)
-         .build());
-      
-      context = new RestContextFactory().createContext(provider, userIdentity, userCredential, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
       session = context.getApi().getCurrentSession();
       context.utils().injector().injectMembers(this);
       
@@ -214,7 +198,19 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       setupRequiredClients();
    }
    
+   public static String getTestDateTimeStamp() {
+      if (testStamp == null) {
+         testStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+      }
+      
+      return testStamp;
+   }
+   
    public Reference getRoleReferenceFor(String name) {
+      return getRoleReferenceFor(name, adminContext);
+   }
+   
+   public static Reference getRoleReferenceFor(String name, RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext) {
       RoleReferences roles = adminContext.getApi().getQueryClient().roleReferencesQueryAll();
       // wrapped in a builder to strip out unwanted xml cruft that the api chokes on
       return Reference.builder().fromReference(Iterables.find(roles.getReferences(), ReferencePredicates.nameEquals(name))).build();
@@ -226,7 +222,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    
    public User randomTestUser(String prefix, Reference role) {
       return User.builder()
-         .name(name(prefix)+random.nextInt(999999))
+         .name(name(prefix)+getTestDateTimeStamp())
          .fullName("testFullName")
          .emailAddress("test@test.com")
          .telephone("555-1234")
@@ -245,6 +241,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    // TODO change properties to URI, not id
    protected void initTestParametersFromPropertiesOrLazyDiscover() {
       catalogId = Strings.emptyToNull(System.getProperty("test." + provider + ".catalog-id"));
+      if (catalogId != null) {
+         catalogURI = URI.create(endpoint + "/catalog/" + catalogId);
+      }
 
       String vAppTemplateId = Strings.emptyToNull(System.getProperty("test." + provider + ".vapptemplate-id"));
       if (vAppTemplateId != null)
@@ -286,14 +285,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
             catalogId = Iterables.getLast(Splitter.on('/').split(uri));
          }
       }
-   }
-
-   @AfterClass(alwaysRun = true)
-   protected void tearDown() {
-      if (context != null)
-         context.close();
-      if (adminContext != null)
-         adminContext.close();
    }
    
    public URI toAdminUri(Reference ref) {

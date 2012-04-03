@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.features;
+package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static org.testng.Assert.assertEquals;
 
@@ -28,6 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.features.NetworkClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;

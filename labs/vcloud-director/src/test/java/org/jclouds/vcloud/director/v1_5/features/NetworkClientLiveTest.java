@@ -57,19 +57,21 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     * Convenience reference to API client.
     */
    protected NetworkClient networkClient;
+   
+   private boolean metadataSet = false;
     
    @Override
    @BeforeClass(alwaysRun = true)
    public void setupRequiredClients() {
       networkClient = context.getApi().getNetworkClient();
-      adminContext.getApi().getNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 
-            "key", MetadataValue.builder().value("value").build());
    }
    
-   @AfterClass(groups = { "live" })
+   @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
-      adminContext.getApi().getNetworkClient().getMetadataClient()
-      .deleteMetadataEntry(toAdminUri(networkURI), "key");
+      if (metadataSet) {
+         adminContext.getApi().getNetworkClient().getMetadataClient()
+            .deleteMetadataEntry(toAdminUri(networkURI), "key");
+      }
    }
    
    @Test(description = "GET /network/{id}")
@@ -87,8 +89,18 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkOrgNetwork(network);
    }
    
-   @Test(description = "GET /network/{id}/metadata")
+   private void setupMetadata() {
+      adminContext.getApi().getNetworkClient().getMetadataClient().setMetadata(toAdminUri(networkURI), 
+            "key", MetadataValue.builder().value("value").build());
+      metadataSet = true;
+   }
+   
+   @Test(description = "GET /network/{id}/metadata", dependsOnMethods = { "testGetNetwork" })
    public void testGetMetadata() {
+      if (adminContext != null) {
+         setupMetadata();
+      }
+      
       Metadata metadata = networkClient.getMetadataClient().getMetadata(networkURI);
       // required for testing
       assertFalse(Iterables.isEmpty(metadata.getMetadataEntries()), 
@@ -109,7 +121,7 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(description = "GET /network/{id}/metadata/{key}")
+   @Test(description = "GET /network/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata" })
    public void testGetMetadataValue() {
       MetadataValue metadataValue = networkClient.getMetadataClient().getMetadataValue(networkURI, "key");
        
