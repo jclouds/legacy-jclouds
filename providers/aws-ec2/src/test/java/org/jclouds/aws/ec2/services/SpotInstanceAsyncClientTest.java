@@ -55,7 +55,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=RequestSpotInstances&LaunchSpecification.ImageId=m1.small&SpotPrice=0.01&LaunchSpecification.InstanceType=ami-voo",
+            "Action=RequestSpotInstances&LaunchSpecification.ImageId=m1.small&SpotPrice=0.01&LaunchSpecification.InstanceType=ami-voo",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -77,7 +77,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
       assertNonPayloadHeadersEqual(request, "Host: ec2.eu-west-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=RequestSpotInstances&InstanceCount=3&SpotPrice=0.01&ValidFrom=1970-05-23T21%3A21%3A18Z&ValidUntil=2009-02-13T23%3A31%3A31Z&AvailabilityZoneGroup=availabilityZoneGroup&LaunchGroup=launchGroup&LaunchSpecification.ImageId=ami-voo&LaunchSpecification.Placement.AvailabilityZone=eu-west-1a&LaunchSpecification.SecurityGroup.1=group1&LaunchSpecification.InstanceType=m1.small&LaunchSpecification.KernelId=kernelId",
+            "Action=RequestSpotInstances&InstanceCount=3&SpotPrice=0.01&ValidFrom=1970-05-23T21%3A21%3A18Z&ValidUntil=2009-02-13T23%3A31%3A31Z&AvailabilityZoneGroup=availabilityZoneGroup&LaunchGroup=launchGroup&LaunchSpecification.ImageId=ami-voo&LaunchSpecification.Placement.AvailabilityZone=eu-west-1a&LaunchSpecification.SecurityGroup.1=group1&LaunchSpecification.InstanceType=m1.small&LaunchSpecification.KernelId=kernelId",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -94,7 +94,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=CancelSpotInstanceRequests&SpotInstanceRequestId.1=id",
+      assertPayloadEquals(request, "Action=CancelSpotInstanceRequests&SpotInstanceRequestId.1=id",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -111,7 +111,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeSpotInstanceRequests",
+      assertPayloadEquals(request, "Action=DescribeSpotInstanceRequests",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -130,7 +130,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=DescribeSpotInstanceRequests&SpotInstanceRequestId.1=1&SpotInstanceRequestId.2=2",
+            "Action=DescribeSpotInstanceRequests&SpotInstanceRequestId.1=1&SpotInstanceRequestId.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -147,7 +147,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeSpotPriceHistory",
+      assertPayloadEquals(request, "Action=DescribeSpotPriceHistory",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -170,7 +170,7 @@ public class SpotInstanceAsyncClientTest extends BaseAWSEC2AsyncClientTest<SpotI
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=DescribeSpotPriceHistory&StartTime=1970-05-23T21%3A21%3A18.910Z&EndTime=2009-02-13T23%3A31%3A31.011Z&ProductDescription=description&InstanceType.1=m1.small",
+            "Action=DescribeSpotPriceHistory&StartTime=1970-05-23T21%3A21%3A18.910Z&EndTime=2009-02-13T23%3A31%3A31.011Z&ProductDescription=description&InstanceType.1=m1.small",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

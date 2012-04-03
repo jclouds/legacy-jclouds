@@ -61,7 +61,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&Size=20",
+      assertPayloadEquals(request, "Action=CreateVolume&AvailabilityZone=us-east-1a&Size=20",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -79,7 +79,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId",
+               "Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -97,7 +97,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId&Size=15",
+               "Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId&Size=15",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -113,7 +113,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DeleteVolume&VolumeId=id",
+      assertPayloadEquals(request, "Action=DeleteVolume&VolumeId=id",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -130,7 +130,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeVolumes", "application/x-www-form-urlencoded",
+      assertPayloadEquals(request, "Action=DescribeVolumes", "application/x-www-form-urlencoded",
                false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -147,7 +147,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeVolumes&VolumeId.1=1&VolumeId.2=2",
+      assertPayloadEquals(request, "Action=DescribeVolumes&VolumeId.1=1&VolumeId.2=2",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -165,7 +165,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2010-06-15&Action=AttachVolume&InstanceId=instanceId&VolumeId=id&Device=%2Fdevice",
+               "Action=AttachVolume&InstanceId=instanceId&VolumeId=id&Device=%2Fdevice",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -182,7 +182,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DetachVolume&Force=false&VolumeId=id",
+      assertPayloadEquals(request, "Action=DetachVolume&Force=false&VolumeId=id",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -201,7 +201,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2010-06-15&Action=DetachVolume&Force=true&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice",
+               "Action=DetachVolume&Force=true&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -218,7 +218,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=CreateSnapshot&VolumeId=volumeId",
+      assertPayloadEquals(request, "Action=CreateSnapshot&VolumeId=volumeId",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -237,7 +237,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2010-06-15&Action=CreateSnapshot&VolumeId=volumeId&Description=description",
+               "Action=CreateSnapshot&VolumeId=volumeId&Description=description",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -254,7 +254,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeSnapshots", "application/x-www-form-urlencoded",
+      assertPayloadEquals(request, "Action=DescribeSnapshots", "application/x-www-form-urlencoded",
                false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -274,7 +274,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2010-06-15&Action=DescribeSnapshots&Owner.1=o1&Owner.2=o2&RestorableBy.1=r1&RestorableBy.2=r2&SnapshotId.1=s1&SnapshotId.2=s2",
+               "Action=DescribeSnapshots&Owner.1=o1&Owner.2=o2&RestorableBy.1=r1&RestorableBy.2=r2&SnapshotId.1=s1&SnapshotId.2=s2",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -293,7 +293,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2010-06-15&Action=DescribeSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
+               "Action=DescribeSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -313,7 +313,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2010-06-15&Action=ModifySnapshotAttribute&OperationType=add&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
+               "Action=ModifySnapshotAttribute&OperationType=add&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -334,7 +334,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2010-06-15&Action=ModifySnapshotAttribute&OperationType=remove&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
+               "Action=ModifySnapshotAttribute&OperationType=remove&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -353,7 +353,7 @@ public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<Ela
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2010-06-15&Action=ResetSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
+               "Action=ResetSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
                "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);

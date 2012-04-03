@@ -77,7 +77,7 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
       assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2010-08-01&Action=GetMetricStatistics&Statistics.member.1=Average&Period=60&Namespace=AWS%2FEC2&MetricName=CPUUtilization&StartTime=1970-01-01T02%3A46%3A40Z&EndTime=1970-01-01T02%3A46%3A40Z&Dimensions.member.1.Name=InstanceId&Dimensions.member.1.Value=i-12312313",
+               "Action=GetMetricStatistics&Statistics.member.1=Average&Period=60&Namespace=AWS%2FEC2&MetricName=CPUUtilization&StartTime=1970-01-01T02%3A46%3A40Z&EndTime=1970-01-01T02%3A46%3A40Z&Dimensions.member.1.Name=InstanceId&Dimensions.member.1.Value=i-12312313",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

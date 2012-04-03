@@ -52,7 +52,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = "Version", values = CloudWatchAsyncClient.VERSION)
 @VirtualHost
 public interface CloudWatchAsyncClient {
    public static final String VERSION = "2010-08-01";

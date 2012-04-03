@@ -58,7 +58,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DeleteSecurityGroup&GroupId=id",
+      assertPayloadEquals(request, "Action=DeleteSecurityGroup&GroupId=id",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -75,7 +75,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeSecurityGroups",
+      assertPayloadEquals(request, "Action=DescribeSecurityGroups",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -92,7 +92,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2011-05-15&Action=DescribeSecurityGroups&GroupId.1=1&GroupId.2=2",
+      assertPayloadEquals(request, "Action=DescribeSecurityGroups&GroupId.1=1&GroupId.2=2",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -110,7 +110,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-            "Version=2011-05-15&Action=CreateSecurityGroup&GroupDescription=description&GroupName=name",
+            "Action=CreateSecurityGroup&GroupDescription=description&GroupName=name",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -129,7 +129,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=AuthorizeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=-1&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=0.0.0.0%2F0",
+            "Action=AuthorizeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=-1&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=0.0.0.0%2F0",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -150,7 +150,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=AuthorizeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=tcp&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=1.1.1.1%2F32&IpPermissions.1.IpProtocol=icmp&IpPermissions.1.FromPort=8&IpPermissions.1.ToPort=0&IpPermissions.1.Groups.0.GroupId=groupId",
+            "Action=AuthorizeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=tcp&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=1.1.1.1%2F32&IpPermissions.1.IpProtocol=icmp&IpPermissions.1.FromPort=8&IpPermissions.1.ToPort=0&IpPermissions.1.Groups.0.GroupId=groupId",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -169,7 +169,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=RevokeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=-1&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=0.0.0.0%2F0",
+            "Action=RevokeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=-1&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=0.0.0.0%2F0",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -190,7 +190,7 @@ public class AWSSecurityGroupAsyncClientTest extends BaseAWSEC2AsyncClientTest<A
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
             request,
-            "Version=2011-05-15&Action=RevokeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=tcp&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=1.1.1.1%2F32&IpPermissions.1.IpProtocol=icmp&IpPermissions.1.FromPort=8&IpPermissions.1.ToPort=0&IpPermissions.1.Groups.0.GroupId=groupId",
+            "Action=RevokeSecurityGroupIngress&GroupId=group&IpPermissions.0.IpProtocol=tcp&IpPermissions.0.FromPort=1&IpPermissions.0.ToPort=65535&IpPermissions.0.IpRanges.0.CidrIp=1.1.1.1%2F32&IpPermissions.1.IpProtocol=icmp&IpPermissions.1.FromPort=8&IpPermissions.1.ToPort=0&IpPermissions.1.Groups.0.GroupId=groupId",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
