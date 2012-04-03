@@ -65,6 +65,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -80,6 +81,16 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = { "live", "user", "vapptemplate" }, singleThreaded = true, testName = "VAppTemplateClientLiveTest")
 public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
+
+   private String key;
+   private String val;
+   
+   @AfterClass(alwaysRun = true)
+   protected void tidyUp() {
+      if (key != null) {
+         assertTaskSucceeds(vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key));
+      }
+   }
 
    // FIXME cloneVAppTemplate is giving back 500 error
    private VAppTemplate cloneVAppTemplate(boolean waitForTask) throws Exception {
@@ -228,13 +239,11 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(description = "POST /vAppTemplate/{id}/metadata", dependsOnMethods = { "testGetVAppTemplate" })
    public void testEditMetadata() {
-      // TODO Cleanup after ourselves..
-      
       Metadata oldMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       Map<String,String> oldMetadataMap = metadataToMap(oldMetadata);
 
-      String key = name("key-");
-      String val = name("value-");
+      key = name("key-");
+      val = name("value-");
       MetadataEntry metadataEntry = MetadataEntry.builder().entry(key, val).build();
       Metadata metadata = Metadata.builder().fromMetadata(oldMetadata).entry(metadataEntry).build();
       
@@ -251,10 +260,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    
    @Test(description = "PUT /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testEditMetadata" })
    public void testEditMetadataValue() {
-      // TODO Cleanup after ourselves..
-      
-      String key = name("key-");
-      String val = name("value-");
+      val = "new"+val;
       MetadataValue metadataValue = MetadataValue.builder().value(val).build();
       
       final Task task = vAppTemplateClient.getMetadataClient().setMetadata(vAppTemplateURI, key, metadataValue);
@@ -266,19 +272,12 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(description = "DELETE /vAppTemplate/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadataValue" })
    public void testDeleteVAppTemplateMetadataValue() {
-      // First store a value
-      String key = name("key-");
-      MetadataValue metadataValue = MetadataValue.builder().value("myval").build();
-      final Task task = vAppTemplateClient.getMetadataClient().setMetadata(vAppTemplateURI, key, metadataValue);
-      retryTaskSuccess.apply(task);
-      
-      // Then delete the entry
       final Task deletionTask = vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key);
       retryTaskSuccess.apply(deletionTask);
 
-      // Then confirm the entry is not there
       Metadata newMetadata = vAppTemplateClient.getMetadataClient().getMetadata(vAppTemplateURI);
       checkMetadataKeyAbsentFor("vAppTemplate", newMetadata, key);
+      key = null;
    }
 
    @Test(description = "PUT /vAppTemplate/{id}/guestCustomizationSection")

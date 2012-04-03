@@ -101,7 +101,7 @@ public class VCloudDirectorTestSession {
          Reference orgAdmin = user.getRole();
          assertTrue(equal(orgAdmin.getName(), DefaultRoles.ORG_ADMIN), "must give org admin or user-only credentials");
          
-         String adminIdentity = "testAdmin"+BaseVCloudDirectorClientLiveTest.datetimeStamp();
+         String adminIdentity = "testAdmin"+BaseVCloudDirectorClientLiveTest.getTestDateTimeStamp();
          String adminCredential = "testAdminPassword";
          
          createdAdminUser = rootContext.getAdminContext().getApi().getUserClient().createUser(orgRef.getHref(), User.builder()
@@ -117,7 +117,7 @@ public class VCloudDirectorTestSession {
          
          adminContext = VCloudDirectorContext.class.cast(new RestContextFactory().createContext(provider, adminIdentity, adminCredential, ImmutableSet.<Module> of(
                new Log4JLoggingModule(), new SshjSshClientModule()), overrides)).getAdminContext();
-         String userIdentity = "test"+BaseVCloudDirectorClientLiveTest.datetimeStamp();
+         String userIdentity = "test"+BaseVCloudDirectorClientLiveTest.getTestDateTimeStamp();
          String userCredential = "testPassword";
          
          createdUser = adminContext.getApi().getUserClient().createUser(orgRef.getHref(), User.builder()

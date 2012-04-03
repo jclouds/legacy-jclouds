@@ -74,7 +74,6 @@ import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
@@ -141,6 +140,8 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
 
    private static VCloudDirectorTestSession testSession;
 
+   private static String testStamp;
+
    @BeforeClass(alwaysRun = true)
    protected void setupDateService() {
       dateService = Guice.createInjector().getInstance(DateService.class);
@@ -197,8 +198,12 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       setupRequiredClients();
    }
    
-   public static String datetimeStamp() {
-      return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+   public static String getTestDateTimeStamp() {
+      if (testStamp == null) {
+         testStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+      }
+      
+      return testStamp;
    }
    
    public Reference getRoleReferenceFor(String name) {
@@ -217,7 +222,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    
    public User randomTestUser(String prefix, Reference role) {
       return User.builder()
-         .name(name(prefix)+datetimeStamp())
+         .name(name(prefix)+getTestDateTimeStamp())
          .fullName("testFullName")
          .emailAddress("test@test.com")
          .telephone("555-1234")

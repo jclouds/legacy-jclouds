@@ -85,6 +85,16 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private VAppTemplate uploadedVAppTemplate;
    private boolean metadataSet = false;
    
+   @Override
+   @BeforeClass(alwaysRun = true)
+   public void setupRequiredClients() {
+      vdcClient = context.getApi().getVdcClient();
+      vappTemplateClient = context.getApi().getVAppTemplateClient();
+      vappClient = context.getApi().getVAppClient();
+      
+      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
+   }
+   
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (clonedVAppTemplate != null) {
@@ -110,16 +120,6 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          adminContext.getApi().getVdcClient().getMetadataClient()
             .deleteMetadataEntry(toAdminUri(vdcURI), "key");
       }
-   }
-
-   @Override
-   @BeforeClass(alwaysRun = true)
-   public void setupRequiredClients() {
-      vdcClient = context.getApi().getVdcClient();
-      vappTemplateClient = context.getApi().getVAppTemplateClient();
-      vappClient = context.getApi().getVAppClient();
-      
-      assertNotNull(vdcURI, String.format(REF_REQ_LIVE, VDC));
    }
    
    @Test(description = "GET /vdc/{id}")

@@ -23,6 +23,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.N
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkError;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -77,6 +78,20 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    protected void setupRequiredClients() {
       catalogClient = adminContext.getApi().getCatalogClient();
       orgRef = Iterables.getFirst(context.getApi().getOrgClient().getOrgList().getOrgs(), null).toAdminReference(endpoint);
+   }
+   
+   @AfterClass(alwaysRun = true)
+   protected void tidyUp() {
+      if (catalog != null) {
+         catalogClient.deleteCatalog(catalog.getHref());
+         try {
+            catalogClient.getCatalog(catalog.getHref());
+            fail("The Catalog should have been deleted");
+         } catch (VCloudDirectorException vcde) {
+            checkError(vcde.getError());
+            assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The majorErrorCode should be 403 since the item has been deleted");
+         }
+      }
    }
    
    @Test(description = "POST /admin/org/{id}/catalogs")
@@ -222,13 +237,6 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       
       if (deleteCatalog != null) { // guard against NPE on the .toStrings
          assertNull(deleteCatalog, String.format(OBJ_DEL, CATALOG, deleteCatalog.toString()));
-      }
-   }
-   
-   @AfterClass
-   protected void tidyUp() {
-      if (catalog != null) {
-         catalogClient.deleteCatalog(catalog.getHref());
       }
    }
 }

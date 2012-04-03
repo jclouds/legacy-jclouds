@@ -217,7 +217,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          dependsOnMethods = { "testCreateUser" } )
    public void testDeleteUser() {
       // Create a user to be deleted (so we remove dependencies on test ordering)
-      User newUser = randomTestUser("testDeleteUser");
+      User newUser = randomTestUser("testDeleteUser"+getTestDateTimeStamp());
       User userToBeDeleted = userClient.createUser(orgRef.getHref(), newUser);
 
       // Delete the user
