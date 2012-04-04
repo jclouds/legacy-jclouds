@@ -173,7 +173,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 					   .put("X-Auth-Token", authToken)
 					   .put("Content-Type", "application/json").build())
 			   .payload(payloadFromStringWithContentType(
-                  "{\"createImage\":{\"name\": " + imageName + ", \"metadata\": {}}}", "application/json"))
+					   "{\"createImage\":{\"name\":\"" + imageName + "\", \"metadata\": {}}}", "application/json"))
                .build();
 
 	   HttpResponse createImageResponse = HttpResponse.builder().statusCode(404).build();
