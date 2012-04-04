@@ -104,7 +104,7 @@ public interface SecurityGroupAsyncClient {
    @DELETE
    @Path("/os-security-groups/{id}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Consumes
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Boolean> deleteSecurityGroup(@PathParam("id") String id);
 
    /**
