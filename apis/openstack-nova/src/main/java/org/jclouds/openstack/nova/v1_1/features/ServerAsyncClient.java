@@ -33,7 +33,6 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.openstack.domain.Resource;
 import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.openstack.nova.v1_1.domain.RebootType;
-import org.jclouds.openstack.nova.v1_1.domain.Image;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.functions.ParseImageIdFromLocationHeader;
 import org.jclouds.openstack.nova.v1_1.options.CreateServerOptions;

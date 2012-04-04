@@ -18,23 +18,15 @@
  */
 package org.jclouds.openstack.nova.v1_1.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.openstack.nova.v1_1.domain.Image;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ParseJson;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMultimap;
  
 
 /**
