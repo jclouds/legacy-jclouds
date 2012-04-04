@@ -160,13 +160,13 @@ public interface ServerClient {
    /**
     * Create an image from a server.
     *
-    * @param id
-    *           id of the server
     * @param name
     *           The name of the new image
+    * @param id
+    *           id of the server
     *
     * @return ID of the new / updated image
     */
-   String createImageFromServer(String id, String name);
+   String createImageFromServer(String name, String id);
 
 }

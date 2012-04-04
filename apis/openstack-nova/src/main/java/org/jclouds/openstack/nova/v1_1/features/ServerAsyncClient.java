@@ -196,6 +196,6 @@ public interface ServerAsyncClient {
    @Payload("%7B\"createImage\":%7B\"name\":\"{name}\", \"metadata\": %7B%7D%7D%7D")
    @ExceptionParser(MapHttp4xxCodesToExceptions.class)
    @ResponseParser(ParseImageIdFromLocationHeader.class)
-   ListenableFuture<String> createImageFromServer(@PathParam("id") String id, @PayloadParam("name") String name);
+   ListenableFuture<String> createImageFromServer(@PayloadParam("name") String name, @PathParam("id") String id);
 
 }
