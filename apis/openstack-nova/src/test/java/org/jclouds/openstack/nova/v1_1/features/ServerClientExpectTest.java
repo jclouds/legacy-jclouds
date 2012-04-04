@@ -20,6 +20,7 @@ package org.jclouds.openstack.nova.v1_1.features;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 import java.net.URI;
 
@@ -37,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests annotation parsing of {@code ServerAsyncClient}
- * 
+ *
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ServerAsyncClientTest")
@@ -80,7 +81,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
 
       assertTrue(clientWhenNoServersExist.getServerClientForZone("az-1.region-a.geo-1").listServers().isEmpty());
    }
-   
+
    public void testCreateServerWhenResponseIs202() throws Exception {
       HttpRequest createServer = HttpRequest
             .builder()
@@ -93,7 +94,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
                      "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\"}}","application/json"))
             .build();
 
-     
+
       HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
             .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
@@ -117,7 +118,7 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
                   "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"security_groups\":[{\"name\":\"group2\"},{\"name\":\"group1\"}]}}","application/json"))
          .build();
 
-  
+
       HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
          .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
@@ -128,6 +129,63 @@ public class ServerClientExpectTest extends BaseNovaClientExpectTest {
       assertEquals(clientWithNewServer.getServerClientForZone("az-1.region-a.geo-1").createServer("test-e92", "1241",
                "100", new CreateServerOptions().securityGroupNames("group1", "group2")).toString(),
               new ParseCreatedServerTest().expected().toString());
+   }
+
+   public void testCreateImageWhenResponseIs2xx() throws Exception {
+	   String serverId = "123";
+	   String imageId = "456";
+	   String imageName = "foo";
+
+	   HttpRequest createImage = HttpRequest
+			   .builder()
+			   .method("POST")
+			   .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/" + serverId + "/action"))
+			   .headers(
+					   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+					   .put("X-Auth-Token", authToken).build())
+			   .payload(payloadFromStringWithContentType(
+					   "{\"createImage\":{\"name\":\"" + imageName + "\", \"metadata\": {}}}", "application/json"))
+               .build();
+
+	   HttpResponse createImageResponse = HttpResponse.builder()
+			   .statusCode(200)
+			   .headers(
+					   ImmutableMultimap.<String, String> builder()
+					   .put("Location", "https://compute.north.host/v1.1/3456/images/" + imageId).build()).build();
+
+	   NovaClient clientWhenServerExists = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+	            responseWithKeystoneAccess, createImage, createImageResponse);
+
+	   assertEquals(clientWhenServerExists.getServerClientForZone("az-1.region-a.geo-1").createImageFromServer(imageName, serverId),
+			   imageId);
+   }
+
+   public void testCreateImageWhenResponseIs404IsEmpty() throws Exception {
+	   String serverId = "123";
+	   String imageName = "foo";
+
+	   HttpRequest createImage = HttpRequest
+			   .builder()
+			   .method("POST")
+			   .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/" + serverId + "/action"))
+			   .headers(
+					   ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+					   .put("X-Auth-Token", authToken)
+					   .put("Content-Type", "application/json").build())
+			   .payload(payloadFromStringWithContentType(
+					   "{\"createImage\":{\"name\":\"" + imageName + "\", \"metadata\": {}}}", "application/json"))
+               .build();
+
+	   HttpResponse createImageResponse = HttpResponse.builder().statusCode(404).build();
+	   NovaClient clientWhenServerDoesNotExist = requestsSendResponses(keystoneAuthWithUsernameAndPassword,
+	            responseWithKeystoneAccess, createImage, createImageResponse);
+
+	   try {
+		   clientWhenServerDoesNotExist.getServerClientForZone("az-1.region-a.geo-1").createImageFromServer(imageName, serverId);
+		   fail("Expected an exception.");
+	   } catch (Exception e) {
+		   ;
+	   }
    }
 
 }
