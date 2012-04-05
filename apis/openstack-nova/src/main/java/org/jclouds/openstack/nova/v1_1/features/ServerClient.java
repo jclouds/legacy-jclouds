@@ -156,4 +156,17 @@ public interface ServerClient {
     *           The new name for the server
     */
    void renameServer(String id, String newName);
+
+   /**
+    * Create an image from a server.
+    *
+    * @param name
+    *           The name of the new image
+    * @param id
+    *           id of the server
+    *
+    * @return ID of the new / updated image
+    */
+   String createImageFromServer(String name, String id);
+
 }
