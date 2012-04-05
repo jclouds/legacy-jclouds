@@ -19,50 +19,73 @@
 package org.jclouds.softlayer;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for SoftLayer API
+ * Implementation of {@link ApiMetadata} for  API
  * 
  * @author Adrian Cole
  */
-public class SoftLayerApiMetadata extends BaseApiMetadata {
+public class SoftLayerApiMetadata
+      extends
+      BaseComputeServiceApiMetadata<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> {
 
-   public SoftLayerApiMetadata() {
-      this(builder()
-            .id("softlayer")
-            .type(ApiType.COMPUTE)
-            .name("SoftLayer API")
-            .identityName("API Username")
-            .credentialName("API Key")
-            .documentation(URI.create("http://sldn.softlayer.com/article/REST")));
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected SoftLayerApiMetadata(Builder<?> builder) {
+   public SoftLayerApiMetadata() {
+      this(new Builder());
+   }
+
+   protected SoftLayerApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+      properties.setProperty("jclouds.ssh.max-retries", "5");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseComputeServiceApiMetadata.Builder<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> {
+
+      protected Builder() {
+         id("softlayer")
+         .type(ApiType.COMPUTE)
+         .name("SoftLayer API")
+         .identityName("API Username")
+         .credentialName("API Key")
+         .documentation(URI.create("http://sldn.softlayer.com/article/REST"))
+         .version("3")
+         .defaultEndpoint("https://api.softlayer.com/rest")
+         .defaultProperties(SoftLayerApiMetadata.defaultProperties())
+         .javaApi(SoftLayerClient.class, SoftLayerAsyncClient.class)
+         .contextBuilder(TypeToken.of(SoftLayerContextBuilder.class));
+      }
 
       @Override
       public SoftLayerApiMetadata build() {
          return new SoftLayerApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(SoftLayerApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

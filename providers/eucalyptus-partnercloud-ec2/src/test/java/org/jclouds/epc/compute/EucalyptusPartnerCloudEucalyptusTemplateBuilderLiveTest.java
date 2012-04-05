@@ -25,11 +25,14 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.ec2.compute.EC2TemplateBuilderLiveTest;
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.util.EC2ComputeUtils;
 import org.testng.annotations.Test;
 
@@ -42,7 +45,8 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
+public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends
+      BaseTemplateBuilderLiveTest<EC2Client, EC2AsyncClient, ComputeServiceContext<EC2Client, EC2AsyncClient>> {
 
    public EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest() {
       provider = "eucalyptus-partnercloud-ec2";

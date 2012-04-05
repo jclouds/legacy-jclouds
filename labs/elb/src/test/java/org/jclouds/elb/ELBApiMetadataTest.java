@@ -18,8 +18,7 @@
  */
 package org.jclouds.elb;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.loadbalancer.internal.BaseLoadBalancerServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,10 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ELBApiMetadataTest")
-public class ELBApiMetadataTest extends BaseApiMetadataTest {
+public class ELBApiMetadataTest extends BaseLoadBalancerServiceApiMetadataTest {
 
+   @SuppressWarnings("rawtypes")
    public ELBApiMetadataTest() {
-      super(new ELBApiMetadata(), ApiType.LOADBALANCER);
+      super(new ELBApiMetadata());
    }
 }

@@ -26,26 +26,20 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.domain.AvailabilityZoneInfo;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code AvailabilityZoneAndRegionClient}
@@ -53,21 +47,18 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AvailabilityZoneAndRegionClientLiveTest")
-public class AvailabilityZoneAndRegionClientLiveTest extends BaseVersionedServiceLiveTest {
+public class AvailabilityZoneAndRegionClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
    public AvailabilityZoneAndRegionClientLiveTest() {
       provider = "ec2";
    }
    
    private AvailabilityZoneAndRegionClient client;
-   private RestContext<EC2Client, EC2AsyncClient> context;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi().getAvailabilityZoneAndRegionServices();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices();
    }
 
    public void testDescribeAvailabilityZones() {
@@ -106,8 +97,4 @@ public class AvailabilityZoneAndRegionClientLiveTest extends BaseVersionedServic
       assertEquals(iterator.next().getKey(), r2);
    }
 
-   @AfterTest
-   public void shutdown() {
-      context.close();
-   }
 }

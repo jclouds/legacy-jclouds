@@ -20,39 +20,43 @@ package org.jclouds.glesys.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.glesys.GleSYSAsyncClient;
+import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.GleSYSProviderMetadata;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.io.Closeables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "GleSYSExperimentLiveTest")
-public class GleSYSExperimentLiveTest extends BaseVersionedServiceLiveTest {
+public class GleSYSExperimentLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>> {
+
    public GleSYSExperimentLiveTest() {
       provider = "glesys";
    }
 
    @Test
    public void testAndExperiment() {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<GleSYSClient, GleSYSAsyncClient> context = null;
       try {
 
-         context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
-                  .<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()));
+         context = ComputeServiceContextBuilder
+               .newBuilder(new GleSYSProviderMetadata())
+               .overrides(setupProperties())
+               .modules(setupModules()).build();
 
          assertEquals(context.getComputeService().listAssignableLocations().size(), 4);
 
       } finally {
-         if (context != null)
-            context.close();
+         Closeables.closeQuietly(context);
       }
    }
 

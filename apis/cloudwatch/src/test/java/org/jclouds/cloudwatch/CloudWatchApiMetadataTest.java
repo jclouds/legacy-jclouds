@@ -19,15 +19,16 @@
 package org.jclouds.cloudwatch;
 
 import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.apis.internal.BaseRestApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
+@SuppressWarnings("rawtypes")
 @Test(groups = "unit", testName = "CloudWatchApiMetadataTest")
-public class CloudWatchApiMetadataTest extends BaseApiMetadataTest {
+public class CloudWatchApiMetadataTest extends BaseRestApiMetadataTest {
 
    public CloudWatchApiMetadataTest() {
       super(new CloudWatchApiMetadata(), ApiType.MONITOR);

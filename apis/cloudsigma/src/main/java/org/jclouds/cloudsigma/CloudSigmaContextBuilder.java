@@ -19,11 +19,12 @@
 package org.jclouds.cloudsigma;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule;
 import org.jclouds.cloudsigma.config.CloudSigmaRestClientModule;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -31,10 +32,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudSigmaContextBuilder extends ComputeServiceContextBuilder<CloudSigmaClient, CloudSigmaAsyncClient> {
+public class CloudSigmaContextBuilder
+      extends
+      ComputeServiceContextBuilder<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> {
 
-   public CloudSigmaContextBuilder(Properties props) {
-      super(CloudSigmaClient.class, CloudSigmaAsyncClient.class, props);
+   public CloudSigmaContextBuilder(
+         ProviderMetadata<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public CloudSigmaContextBuilder(CloudSigmaApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

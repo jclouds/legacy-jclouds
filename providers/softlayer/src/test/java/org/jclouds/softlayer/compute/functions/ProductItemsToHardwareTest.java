@@ -23,12 +23,11 @@ import static org.jclouds.softlayer.compute.functions.ProductItemsToHardware.har
 import static org.testng.AssertJUnit.assertEquals;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.softlayer.SoftLayerPropertiesBuilder;
+import org.jclouds.softlayer.SoftLayerProviderMetadata;
 import org.jclouds.softlayer.domain.ProductItem;
 import org.jclouds.softlayer.domain.ProductItemCategory;
 import org.jclouds.softlayer.domain.ProductItemPrice;
@@ -59,7 +58,7 @@ public class ProductItemsToHardwareTest {
       toHardware = Guice.createInjector(new AbstractModule() {
          @Override
          protected void configure() {
-            bindProperties(binder(), new SoftLayerPropertiesBuilder(new Properties()).build());
+            bindProperties(binder(), new SoftLayerProviderMetadata().getDefaultProperties());
          }
       }).getInstance(ProductItemsToHardware.class);
 

@@ -20,25 +20,19 @@ package org.jclouds.ec2.services;
 
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code EC2Client}
@@ -46,23 +40,18 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "InstanceClientLiveTest")
-public class InstanceClientLiveTest extends BaseVersionedServiceLiveTest {
+public class InstanceClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
    public InstanceClientLiveTest() {
       provider = "ec2";
    }
 
    private InstanceClient client;
-   private RestContext<EC2Client, EC2AsyncClient> context;
-  
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
-      client = context.getApi().getInstanceServices();
-
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getInstanceServices();
    }
 
    @Test
@@ -73,10 +62,5 @@ public class InstanceClientLiveTest extends BaseVersionedServiceLiveTest {
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();
       }
-   }
-
-   @AfterTest
-   public void shutdown() {
-      context.close();
    }
 }

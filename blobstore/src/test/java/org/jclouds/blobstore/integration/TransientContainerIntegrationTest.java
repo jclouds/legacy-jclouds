@@ -43,7 +43,10 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(groups = { "integration", "live" })
 public class TransientContainerIntegrationTest extends BaseContainerIntegrationTest {
-
+   public TransientContainerIntegrationTest() {
+      provider = "transient";
+   }
+   
    @Test(groups = { "integration", "live" })
    public void testNotWithDetails() throws InterruptedException {
 

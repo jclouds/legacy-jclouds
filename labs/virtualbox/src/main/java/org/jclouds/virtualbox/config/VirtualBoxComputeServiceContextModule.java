@@ -34,13 +34,14 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
+import org.jclouds.byon.BYONApiMetadata;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -169,11 +170,10 @@ public class VirtualBoxComputeServiceContextModule extends
    @Host
    @Singleton
    protected ComputeServiceContext provideHostController() {
-      String provider = "byon";
-      String identity = "";
-      String credential = "";
-      return new ComputeServiceContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()));
+      return ComputeServiceContextBuilder.newBuilder(new BYONApiMetadata())
+            .credentials("", "")
+            .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()))
+            .build();
    }
 
    @Provides

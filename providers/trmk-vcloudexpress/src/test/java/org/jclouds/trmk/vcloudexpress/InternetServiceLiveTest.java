@@ -19,26 +19,20 @@
 package org.jclouds.trmk.vcloudexpress;
 
 import java.net.URI;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Node;
 import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code TerremarkVCloudClient}
@@ -46,7 +40,9 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "InternetServiceLiveTest")
-public class InternetServiceLiveTest extends BaseVersionedServiceLiveTest {
+public class InternetServiceLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>> {
    public InternetServiceLiveTest() {
       provider = "trmk-vcloudexpress";
    }
@@ -54,8 +50,6 @@ public class InternetServiceLiveTest extends BaseVersionedServiceLiveTest {
    TerremarkVCloudExpressClient tmClient;
 
    private Set<InternetService> services = Sets.newLinkedHashSet();
-
-   private RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> context;
 
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
@@ -90,18 +84,12 @@ public class InternetServiceLiveTest extends BaseVersionedServiceLiveTest {
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       delete(services);
    }
-
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-
-      context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides)
-               .getProviderSpecificContext();
-
-      tmClient = context.getApi();
+   
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      tmClient = context.getProviderSpecificContext().getApi();
 
    }
 

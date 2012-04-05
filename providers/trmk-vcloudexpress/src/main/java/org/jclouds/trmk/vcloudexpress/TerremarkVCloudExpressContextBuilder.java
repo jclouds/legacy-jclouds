@@ -19,10 +19,11 @@
 package org.jclouds.trmk.vcloudexpress;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudContextBuilder;
 import org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceContextModule;
 import org.jclouds.trmk.vcloudexpress.config.TerremarkVCloudExpressRestClientModule;
@@ -46,11 +47,20 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see TerremarkVCloudComputeServiceContext
  */
-public class TerremarkVCloudExpressContextBuilder extends
-      TerremarkVCloudContextBuilder<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
+public class TerremarkVCloudExpressContextBuilder
+      extends
+      TerremarkVCloudContextBuilder<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> {
+   public TerremarkVCloudExpressContextBuilder() {
+      this(new TerremarkVCloudExpressProviderMetadata());
+   }
 
-   public TerremarkVCloudExpressContextBuilder(Properties props) {
-      super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class, props);
+   public TerremarkVCloudExpressContextBuilder(
+         ProviderMetadata<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public TerremarkVCloudExpressContextBuilder(TerremarkVCloudExpressApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

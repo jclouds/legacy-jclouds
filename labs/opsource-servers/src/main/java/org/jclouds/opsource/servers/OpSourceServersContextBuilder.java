@@ -19,23 +19,36 @@
 package org.jclouds.opsource.servers;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.opsource.servers.config.OpSourceServersRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
 
 /**
+ * 
  * @author Adrian Cole
  */
-public class OpSourceServersContextBuilder extends RestContextBuilder<OpSourceServersClient, OpSourceServersAsyncClient> {
+public class OpSourceServersContextBuilder
+      extends
+      RestContextBuilder<OpSourceServersClient, OpSourceServersAsyncClient, RestContext<OpSourceServersClient, OpSourceServersAsyncClient>, OpSourceServersApiMetadata> {
 
-   public OpSourceServersContextBuilder(Properties props) {
-      super(OpSourceServersClient.class, OpSourceServersAsyncClient.class, props);
+   public OpSourceServersContextBuilder(
+         ProviderMetadata<OpSourceServersClient, OpSourceServersAsyncClient, RestContext<OpSourceServersClient, OpSourceServersAsyncClient>, OpSourceServersApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
 
-   @Override
+   public OpSourceServersContextBuilder(OpSourceServersApiMetadata apiMetadata) {
+      super(apiMetadata);
+   }
+//
+//   @Override
+//   protected void addContextModule(List<Module> modules) {
+//      modules.add(new OpSourceServersComputeServiceContextModule());
+//   }
+
    protected void addClientModule(List<Module> modules) {
       modules.add(new OpSourceServersRestClientModule());
    }

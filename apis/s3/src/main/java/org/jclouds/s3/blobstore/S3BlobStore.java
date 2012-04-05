@@ -84,7 +84,7 @@ public class S3BlobStore extends BaseBlobStore {
    private final LoadingCache<String, AccessControlList> bucketAcls;
 
    @Inject
-   protected S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+   protected S3BlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations, S3Client sync,
          BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
          BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,

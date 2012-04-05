@@ -32,7 +32,7 @@ import org.jclouds.rest.Utils;
  * @author Adrian Cole
  */
 @Singleton
-public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerServiceContext {
+public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerServiceContext<S, A> {
    private final LoadBalancerService loadBalancerService;
    private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
@@ -46,10 +46,9 @@ public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerService
       this.loadBalancerService = checkNotNull(loadBalancerService, "loadBalancerService");
    }
 
-   @SuppressWarnings({ "unchecked", "hiding" })
    @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) providerSpecificContext;
+   public RestContext<S, A> getProviderSpecificContext() {
+      return providerSpecificContext;
    }
 
    @Override

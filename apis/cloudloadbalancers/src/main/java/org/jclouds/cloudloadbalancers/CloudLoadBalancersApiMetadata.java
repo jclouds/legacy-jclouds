@@ -19,50 +19,71 @@
 package org.jclouds.cloudloadbalancers;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.loadbalancer.internal.BaseLoadBalancerServiceApiMetadata;
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for Rackspace Cloud Load Balancers API
+ * Implementation of {@link ApiMetadata} for CloudLoadBalancers 1.0 API
  * 
- * @author Dan Lo Bianco
+ * @author Adrian Cole
  */
-public class CloudLoadBalancersApiMetadata extends BaseApiMetadata {
+public class CloudLoadBalancersApiMetadata
+      extends
+      BaseLoadBalancerServiceApiMetadata<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
 
-   public CloudLoadBalancersApiMetadata() {
-      this(builder()
-            .id("cloudloadbalancers")
-            .type(ApiType.LOADBALANCER)
-            .name("Rackspace Cloud Load Balancers API")
-            .identityName("Username")
-            .credentialName("API Key")
-            .documentation(URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html")));
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudLoadBalancersApiMetadata(Builder<?> builder) {
+   public CloudLoadBalancersApiMetadata() {
+      this(new Builder());
+   }
+
+   protected CloudLoadBalancersApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = BaseLoadBalancerServiceApiMetadata.Builder.defaultProperties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseLoadBalancerServiceApiMetadata.Builder<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
+
+      protected Builder() {
+         id("cloudloadbalancers")
+         .name("Rackspace Cloud Load Balancers API")
+         .identityName("Username")
+         .credentialName("API Key")
+         .documentation(URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html"))
+         .version(OpenStackAuthAsyncClient.VERSION)
+         .defaultEndpoint("https://auth.api.rackspacecloud.com")
+         .javaApi(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class)
+         .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
+         .contextBuilder(TypeToken.of(CloudLoadBalancersContextBuilder.class));
+      }
 
       @Override
       public CloudLoadBalancersApiMetadata build() {
          return new CloudLoadBalancersApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(CloudLoadBalancersApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

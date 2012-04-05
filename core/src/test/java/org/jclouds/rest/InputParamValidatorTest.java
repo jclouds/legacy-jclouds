@@ -18,9 +18,6 @@
  */
 package org.jclouds.rest;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContextBuilder;
-
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +30,7 @@ import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.predicates.validators.AllLowerCaseValidator;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.TestException;
 import org.testng.annotations.BeforeClass;
@@ -139,12 +137,10 @@ public class InputParamValidatorTest {
 
    @BeforeClass
    void setupFactory() {
-
-      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-               "http://localhost:9999", "1", "", "", "userFoo", null, IntegrationTestClient.class,
-               IntegrationTestAsyncClient.class);
-
-      injector = createContextBuilder(contextSpec).buildInjector();
+      injector =  ContextBuilder
+            .newBuilder(
+                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
+                        "http://localhost:9999")).buildInjector();
 
    }
 

@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
 
 @Test(groups = { "integration", "live" })
 public class TransientBlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
-
+   public TransientBlobMapIntegrationTest() {
+      provider = "transient";
+   }
 }

@@ -18,50 +18,84 @@
  */
 package org.jclouds.elb;
 
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.apis.internal.BaseApiMetadata;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.loadbalancer.internal.BaseLoadBalancerServiceApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's Elastic Load Balancing api.
+ * <h3>note</h3>
+ * <p/>
+ * This class allows overriding of types {@code S}(client) and {@code A}(asyncClient), so that
+ * children can add additional methods not declared here, such as new features
+ * from AWS.
+ * <p/>
+ * 
+ * This class is not setup to allow a different context than {@link LoadBalancerServiceContext}
+ * . By doing so, it reduces the type complexity.
  * 
  * @author Adrian Cole
  */
-public class ELBApiMetadata extends BaseApiMetadata {
+public class ELBApiMetadata<S extends ELBClient, A extends ELBAsyncClient> extends
+      BaseLoadBalancerServiceApiMetadata<S, A, LoadBalancerServiceContext<S, A>, ELBApiMetadata<S, A>> {
+
+   @Override
+   public Builder<S, A> toBuilder() {
+      return new Builder<S, A>(getApi(), getAsyncApi()).fromApiMetadata(this);
+   }
 
    public ELBApiMetadata() {
-      this(builder()
-            .id("elb")
-            .type(ApiType.LOADBALANCER)
-            .name("Amazon Elastic Load Balancing Api")
-            .identityName("Access Key ID")
-            .credentialName("Secret Access Key")
-            .documentation(URI.create("http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference")));
+      this(new Builder<ELBClient, ELBAsyncClient>(ELBClient.class, ELBAsyncClient.class));
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected ELBApiMetadata(ConcreteBuilder builder) {
+   protected ELBApiMetadata(Builder<?, ?> builder) {
       super(builder);
    }
+   
+   protected static Properties defaultProperties() {
+      Properties properties = BaseApiMetadata.Builder.defaultProperties();
+      properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
+      properties.setProperty(PROPERTY_HEADER_TAG, "amz");
+      return properties;
+   }
+   
+   public static class Builder<S extends ELBClient, A extends ELBAsyncClient> extends
+         BaseLoadBalancerServiceApiMetadata.Builder<S, A, LoadBalancerServiceContext<S, A>, ELBApiMetadata<S, A>> {
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      protected Builder(Class<S> client, Class<A> asyncClient) {
+         id("elb")
+         .name("Amazon Elastic Load Balancing Api")
+         .identityName("Access Key ID")
+         .credentialName("Secret Access Key")
+         .version(ELBAsyncClient.VERSION)
+         .defaultProperties(ELBApiMetadata.defaultProperties())
+         .defaultEndpoint("https://elasticloadbalancing.us-east-1.amazonaws.com")
+         .documentation(URI.create("http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference"))
+         .javaApi(client, asyncClient)
+         .contextBuilder(new TypeToken<ELBContextBuilder<S, A>>(getClass()){
+            private static final long serialVersionUID = 1L;
+            });
+      }
 
       @Override
-      public ELBApiMetadata build() {
-         return new ELBApiMetadata(this);
+      public ELBApiMetadata<S, A> build() {
+         return new ELBApiMetadata<S, A>(this);
+      }
+      
+      @Override
+      public Builder<S, A> fromApiMetadata(ELBApiMetadata<S, A> in) {
+         super.fromApiMetadata(in);
+         return this;
       }
    }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

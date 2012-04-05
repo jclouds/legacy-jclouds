@@ -18,15 +18,11 @@
  */
 package org.jclouds.compute;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
-
 import java.util.List;
-import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
+import org.jclouds.compute.ComputeServiceApiMetadata;
 import org.jclouds.compute.config.StandaloneComputeServiceClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -34,25 +30,21 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class StandaloneComputeServiceContextBuilder<D> extends ComputeServiceContextBuilder<D, D> {
+public class StandaloneComputeServiceContextBuilder<D, C extends ComputeServiceContext<D, D>, M extends ComputeServiceApiMetadata<D, D, C, M>>
+      extends ComputeServiceContextBuilder<D, D, C, M> {
 
-   public StandaloneComputeServiceContextBuilder(Class<D> driverClass, Properties props) {
-      super(driverClass, driverClass, props);
-      if (properties.size() == 0)
-         properties.putAll(new PropertiesBuilder().build());
-      if (!properties.containsKey("jclouds.provider"))
-         properties.setProperty("jclouds.provider", "standalone");
-      if (!properties.containsKey(PROPERTY_ENDPOINT))
-         properties.setProperty(PROPERTY_ENDPOINT, "standalone");
-      if (!properties.containsKey(PROPERTY_API_VERSION))
-         properties.setProperty(PROPERTY_API_VERSION, "1");
-      if (!properties.containsKey(PROPERTY_IDENTITY))
-         properties.setProperty(PROPERTY_IDENTITY, System.getProperty("user.name"));
+   public StandaloneComputeServiceContextBuilder(ProviderMetadata<D, D, C, M> providerMetadata) {
+      super(providerMetadata);
    }
-
+   
+   public StandaloneComputeServiceContextBuilder(M apiMetadata) {
+      super(apiMetadata);
+   }
+   
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new StandaloneComputeServiceClientModule<D>(syncClientType));
+      modules.add(new StandaloneComputeServiceClientModule<D>(providerMetadata.getApiMetadata()
+            .getApi()));
    }
 
 }

@@ -19,49 +19,73 @@
 package org.jclouds.go2cloud;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
+import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Go2Cloud's
  * Johannesburg1 provider.
- *
+ * 
  * @author Adrian Cole
  */
-public class Go2CloudJohannesburg1ProviderMetadata extends BaseProviderMetadata {
+public class Go2CloudJohannesburg1ProviderMetadata
+      extends
+      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
 
-   public Go2CloudJohannesburg1ProviderMetadata() {
-      this(builder()
-            .id("go2cloud-jhb1")
-            .name("Go2Cloud Johannesburg1")
-            .api(new ElasticStackApiMetadata())
-            .homepage(URI.create("https://jhb1.go2cloud.co.za"))
-            .console(URI.create("https://jhb1.go2cloud.co.za/accounts"))
-            .iso3166Codes("ZA-GP"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected Go2CloudJohannesburg1ProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public Go2CloudJohannesburg1ProviderMetadata() {
+      super(builder());
+   }
+
+   public Go2CloudJohannesburg1ProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+
+      protected Builder() {
+         id("go2cloud-jhb1")
+         .name("Go2Cloud Johannesburg1")
+         .apiMetadata(new ElasticStackApiMetadata().toBuilder().version("2.0").build())
+         .homepage(URI.create("https://jhb1.go2cloud.co.za"))
+         .console(URI.create("https://jhb1.go2cloud.co.za/accounts"))
+         .iso3166Codes("ZA-GP")
+         .endpoint("https://api.jhb1.go2cloud.co.za")
+         .defaultProperties(Go2CloudJohannesburg1ProviderMetadata.defaultProperties());
+      }
 
       @Override
       public Go2CloudJohannesburg1ProviderMetadata build() {
          return new Go2CloudJohannesburg1ProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

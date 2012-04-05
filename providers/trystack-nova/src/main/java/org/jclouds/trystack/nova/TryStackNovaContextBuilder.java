@@ -19,9 +19,13 @@
 package org.jclouds.trystack.nova;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
+import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.NovaContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.trystack.nova.config.TryStackNovaServiceContextModule;
 
 import com.google.inject.Module;
@@ -32,12 +36,18 @@ import com.google.inject.Module;
  */
 public class TryStackNovaContextBuilder extends NovaContextBuilder {
 
-   public TryStackNovaContextBuilder(Properties props) {
-      super(props);
+   public TryStackNovaContextBuilder(
+         ProviderMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public TryStackNovaContextBuilder(NovaApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new TryStackNovaServiceContextModule());
    }
+
 }

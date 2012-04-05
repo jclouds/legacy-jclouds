@@ -18,9 +18,12 @@
  */
 package org.jclouds.vcloud.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudClient;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -32,7 +35,9 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class VCloudComputeServiceLiveTest
+      extends
+      BaseComputeServiceLiveTest<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>> {
 
    public VCloudComputeServiceLiveTest() {
       provider = "vcloud";

@@ -19,48 +19,71 @@
 package org.jclouds.elastichosts;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
+import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts London BlueSquare.
- *
  * @author Adrian Cole
  */
-public class ElasticHostsBlueSquareLondonProviderMetadata extends BaseProviderMetadata {
+public class ElasticHostsBlueSquareLondonProviderMetadata
+      extends
+      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
 
-   public ElasticHostsBlueSquareLondonProviderMetadata() {
-      this(builder()
-            .id("elastichosts-lon-b")
-            .name("ElasticHosts Los Angeles BlueSquare")
-            .api(new ElasticStackApiMetadata())
-            .homepage(URI.create("https://lon-b.elastichosts.com"))
-            .console(URI.create("https://lon-b.elastichosts.com/accounts"))
-            .iso3166Codes("GB-LND"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected ElasticHostsBlueSquareLondonProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public ElasticHostsBlueSquareLondonProviderMetadata() {
+      super(builder());
+   }
+
+   public ElasticHostsBlueSquareLondonProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+
+      protected Builder() {
+         id("elastichosts-lon-b")
+         .name("ElasticHosts Los Angeles BlueSquare")
+         .apiMetadata(new ElasticStackApiMetadata().toBuilder().version("2.0").build())
+         .homepage(URI.create("https://lon-b.elastichosts.com"))
+         .console(URI.create("https://lon-b.elastichosts.com/accounts"))
+         .iso3166Codes("GB-LND")
+         .endpoint("https://api.lon-b.elastichosts.com")
+         .defaultProperties(ElasticHostsBlueSquareLondonProviderMetadata.defaultProperties());
+      }
 
       @Override
       public ElasticHostsBlueSquareLondonProviderMetadata build() {
          return new ElasticHostsBlueSquareLondonProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

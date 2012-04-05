@@ -19,7 +19,7 @@
 package org.jclouds.hpcloud.objectstorage.internal;
 
 import static java.lang.String.format;
-import static org.jclouds.rest.BaseRestClientExpectTest.payloadFromStringWithContentType;
+import static org.jclouds.rest.internal.BaseRestClientExpectTest.payloadFromStringWithContentType;
 
 import java.io.IOException;
 import java.net.URI;

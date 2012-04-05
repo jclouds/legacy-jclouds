@@ -45,7 +45,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
@@ -60,9 +59,9 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
    private static final String TEST_HOSTNAME_PREFIX = "livetest";
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getVirtualGuestClient();
+   public void setupContext() {
+      super.setupContext();
+      client = socontext.getApi().getVirtualGuestClient();
    }
 
    private VirtualGuestClient client;
@@ -94,9 +93,9 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
          }
       }
 
-      int pkgId = Iterables.find(context.getApi().getAccountClient().getActivePackages(),
+      int pkgId = Iterables.find(socontext.getApi().getAccountClient().getActivePackages(),
                named(ProductPackageClientLiveTest.CLOUD_SERVER_PACKAGE_NAME)).getId();
-      ProductPackage productPackage = context.getApi().getProductPackageClient().getProductPackage(pkgId);
+      ProductPackage productPackage = socontext.getApi().getProductPackageClient().getProductPackage(pkgId);
 
       Iterable<ProductItem> ramItems = Iterables.filter(productPackage.getItems(), Predicates.and(categoryCode("ram"),
                capacity(2.0f)));
@@ -117,7 +116,7 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
                osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
 
       Builder<ProductItemPrice> prices = ImmutableSet.builder();
-      prices.addAll(Guice.createInjector(module).getInstance(Key.get(new TypeLiteral<Iterable<ProductItemPrice>>() {
+      prices.addAll(context.utils().injector().getInstance(Key.get(new TypeLiteral<Iterable<ProductItemPrice>>() {
       })));
       prices.add(ramPrice);
       prices.add(cpuPrice);
@@ -129,11 +128,11 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       ProductOrder order = ProductOrder.builder().packageId(pkgId).quantity(1).useHourlyPricing(true).prices(
                prices.build()).virtualGuest(guest).build();
 
-      ProductOrderReceipt receipt = context.getApi().getVirtualGuestClient().orderVirtualGuest(order);
+      ProductOrderReceipt receipt = socontext.getApi().getVirtualGuestClient().orderVirtualGuest(order);
       ProductOrder order2 = receipt.getOrderDetails();
       VirtualGuest result = Iterables.get(order2.getVirtualGuests(), 0);
 
-      ProductOrder order3 = context.getApi().getVirtualGuestClient().getOrderTemplate(result.getId());
+      ProductOrder order3 = socontext.getApi().getVirtualGuestClient().getOrderTemplate(result.getId());
 
       assertEquals(order.getPrices(), order3.getPrices());
       assertNotNull(receipt);

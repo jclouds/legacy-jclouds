@@ -19,7 +19,7 @@
 package org.jclouds.compute.predicates;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.testng.annotations.Test;
@@ -34,8 +34,7 @@ import com.google.common.collect.Iterables;
  */
 @Test
 public class ImagePredicatesTest {
-   ComputeService computeService = new ComputeServiceContextFactory().createContext("stub", "foo", "bar")
-         .getComputeService();
+   ComputeService computeService = ComputeServiceContextBuilder.forTests().build().getComputeService();
 
    public void testImageId() {
       Image first = Iterables.get(computeService.listImages(), 0);

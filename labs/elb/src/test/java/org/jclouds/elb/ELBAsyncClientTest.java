@@ -22,11 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.elb.config.ELBRestClientModule;
@@ -38,11 +38,9 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -56,7 +54,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "ELBAsyncClientTest")
-public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
+public class ELBAsyncClientTest extends BaseAsyncClientTest<ELBAsyncClient> {
 
    public void testCreateLoadBalancerInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ELBAsyncClient.class.getMethod("createLoadBalancerInRegion", String.class, String.class,
@@ -176,14 +174,10 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
    protected Module createModule() {
       return new TestELBRestClientModule();
    }
-
-   protected String provider = "elb";
-
-
+   
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "identity", "credential",
-            new Properties());
+   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new ELBApiMetadata<ELBClient, ELBAsyncClient>();
    }
 
    @Override

@@ -30,6 +30,11 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", testName = "EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest")
 public class EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest extends WalrusServiceIntegrationLiveTest {
+
+   public EucalyptusPartnerCloudWalrusServiceIntegrationLiveTest() {
+      provider = "eucalyptus-partnercloud-s3";
+   }
+
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US-CA");

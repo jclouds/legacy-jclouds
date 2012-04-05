@@ -19,12 +19,13 @@
 package org.jclouds.byon;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.byon.config.BYONComputeServiceContextModule;
 import org.jclouds.byon.config.ConfiguresNodeStore;
 import org.jclouds.byon.config.YamlNodeStoreModule;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -36,12 +37,17 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @SuppressWarnings("rawtypes")
-public class BYONComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
+public class BYONComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier, ComputeServiceContext<Supplier, Supplier>, BYONApiMetadata> {
 
-   public BYONComputeServiceContextBuilder(Properties props) {
-      super(Supplier.class, props);
+   public BYONComputeServiceContextBuilder(
+         ProviderMetadata<Supplier, Supplier, ComputeServiceContext<Supplier, Supplier>, BYONApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
-
+   
+   public BYONComputeServiceContextBuilder(BYONApiMetadata apiMetadata) {
+      super(apiMetadata);
+   }
+   
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new BYONComputeServiceContextModule());

@@ -18,8 +18,6 @@
  */
 package org.jclouds.tools.ant.taskdefs.compute;
 
-import static org.jclouds.rest.RestContextFactory.getPropertiesFromResource;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.NoSuchElementException;
@@ -73,13 +71,13 @@ public class ComputeTaskUtils {
          @SuppressWarnings("unchecked")
          @Override
          public ComputeServiceContext load(URI from) {
-            Properties props = getPropertiesFromResource("/rest.properties");
+            Properties props = new Properties();
             props.putAll(projectProvider.get().getProperties());
             // adding the properties to the factory will allow us to pass
             // alternate endpoints
             String provider = from.getHost();
             Credentials creds = Credentials.parse(from);
-            return new ComputeServiceContextFactory(props).createContext(provider, creds.identity, creds.credential,
+            return new ComputeServiceContextFactory().createContext(provider, creds.identity, creds.credential,
                      ImmutableSet.of((Module) new AntLoggingModule(projectProvider.get(),
                               ComputeServiceConstants.COMPUTE_LOGGER), new JschSshClientModule()), props);
 

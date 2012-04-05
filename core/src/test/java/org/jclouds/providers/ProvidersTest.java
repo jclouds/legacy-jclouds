@@ -19,6 +19,7 @@
 package org.jclouds.providers;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.fail;
 
 import java.util.NoSuchElementException;
@@ -36,13 +37,13 @@ import com.google.common.collect.Iterables;
 @Test(groups = "unit", testName = "ProvidersTest")
 public class ProvidersTest {
 
-   private final ProviderMetadata testBlobstoreProvider = new JcloudsTestBlobStoreProviderMetadata();
-   private final ProviderMetadata testComputeProvider = new JcloudsTestComputeProviderMetadata();
-   private final ProviderMetadata testYetAnotherComputeProvider = new JcloudsTestYetAnotherComputeProviderMetadata();
+   private final JcloudsTestBlobStoreProviderMetadata testBlobstoreProvider = new JcloudsTestBlobStoreProviderMetadata();
+   private final JcloudsTestComputeProviderMetadata testComputeProvider = new JcloudsTestComputeProviderMetadata();
+   private final JcloudsTestYetAnotherComputeProviderMetadata testYetAnotherComputeProvider = new JcloudsTestYetAnotherComputeProviderMetadata();
 
    @Test
    public void testWithId() {
-      ProviderMetadata providerMetadata;
+      ProviderMetadata<?, ?, ?, ?> providerMetadata;
 
       try {
          providerMetadata = Providers.withId("fake-id");
@@ -54,19 +55,21 @@ public class ProvidersTest {
       providerMetadata = Providers.withId(testBlobstoreProvider.getId());
 
       assertEquals(testBlobstoreProvider, providerMetadata);
+      assertNotEquals(testBlobstoreProvider, testComputeProvider);
+      assertNotEquals(testBlobstoreProvider, testYetAnotherComputeProvider);
    }
 
    @Test
    public void testOfType() {
-      Iterable<ProviderMetadata> providersMetadata = Providers.ofType(ApiType.BLOBSTORE);
+      Iterable<ProviderMetadata<?, ?, ?, ?>> providersMetadata = Providers.ofType(ApiType.BLOBSTORE);
 
-      for (ProviderMetadata providerMetadata : providersMetadata) {
+      for (ProviderMetadata<?, ?, ?, ?> providerMetadata : providersMetadata) {
          assertEquals(testBlobstoreProvider, providerMetadata);
       }
 
       providersMetadata = Providers.ofType(ApiType.COMPUTE);
 
-      for (ProviderMetadata providerMetadata : providersMetadata) {
+      for (ProviderMetadata<?, ?, ?, ?> providerMetadata : providersMetadata) {
          if (providerMetadata.getName().equals(testComputeProvider.getName())) {
             assertEquals(testComputeProvider, providerMetadata);
          } else {
@@ -80,34 +83,10 @@ public class ProvidersTest {
    }
 
    @Test
-   @Deprecated
-   public void testOfTypeDeprecated() {
-      Iterable<ProviderMetadata> providersMetadata = Providers.ofType(ProviderMetadata.BLOBSTORE_TYPE);
-
-      for (ProviderMetadata providerMetadata : providersMetadata) {
-         assertEquals(testBlobstoreProvider, providerMetadata);
-      }
-
-      providersMetadata = Providers.ofType(ProviderMetadata.COMPUTE_TYPE);
-
-      for (ProviderMetadata providerMetadata : providersMetadata) {
-         if (providerMetadata.getName().equals(testComputeProvider.getName())) {
-            assertEquals(testComputeProvider, providerMetadata);
-         } else {
-            assertEquals(testYetAnotherComputeProvider, providerMetadata);
-         }
-      }
-
-      providersMetadata = Providers.ofType("fake-type");
-
-      assertEquals(false, providersMetadata.iterator().hasNext());
-   }
-
-   @Test
    public void testAll() {
-      Iterable<ProviderMetadata> providersMetadata = Providers.all();
+      Iterable<ProviderMetadata<?, ?, ?, ?>> providersMetadata = Providers.all();
 
-      for (ProviderMetadata providerMetadata : providersMetadata) {
+      for (ProviderMetadata<?, ?, ?, ?> providerMetadata : providersMetadata) {
          if (providerMetadata.getName().equals(testBlobstoreProvider.getName())) {
             assertEquals(testBlobstoreProvider, providerMetadata);
          } else if (providerMetadata.getName().equals(testComputeProvider.getName())) {
@@ -142,6 +121,7 @@ public class ProvidersTest {
    @Test
    public void testCollocatedWith() {
       // Test filtering by collocation alone
+      assertEquals(Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider)), 0);
       assertEquals(Iterables.size(Providers.collocatedWith(testBlobstoreProvider)), 1);
       assertEquals(Iterables.size(Providers.collocatedWith(testComputeProvider)), 1);
       assertEquals(Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider)), 0);
@@ -155,44 +135,4 @@ public class ProvidersTest {
       assertEquals(Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider, ApiType.BLOBSTORE)), 0);
    }
 
-   @Test
-   @Deprecated
-   public void testBoundedByIso3166CodeDeprecated() {
-      // Test filtering by ISO 3166 code alone
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-CA")), 2);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-FL")), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US")), 2);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("JP-13")), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("JP")), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("FAKE-CODE")), 0);
-
-      // Test filtering by ISO 3166 code and type
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-CA", ProviderMetadata.BLOBSTORE_TYPE)), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-CA", ProviderMetadata.COMPUTE_TYPE)), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-FL", ProviderMetadata.BLOBSTORE_TYPE)), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US-FL", ProviderMetadata.COMPUTE_TYPE)), 0);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US", ProviderMetadata.BLOBSTORE_TYPE)), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("US", ProviderMetadata.COMPUTE_TYPE)), 1);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("FAKE-CODE", ProviderMetadata.BLOBSTORE_TYPE)), 0);
-      assertEquals(Iterables.size(Providers.boundedByIso3166Code("FAKE-CODE", ProviderMetadata.COMPUTE_TYPE)), 0);
-   }
-
-   @Test
-   @Deprecated
-   public void testCollocatedWithDeprecated() {
-      // Test filtering by collocation alone
-      assertEquals(Iterables.size(Providers.collocatedWith(testBlobstoreProvider)), 1);
-      assertEquals(Iterables.size(Providers.collocatedWith(testComputeProvider)), 1);
-      assertEquals(Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider)), 0);
-
-      // Test filtering by collocation and type
-      assertEquals(Iterables.size(Providers.collocatedWith(testBlobstoreProvider, ProviderMetadata.BLOBSTORE_TYPE)), 0);
-      assertEquals(Iterables.size(Providers.collocatedWith(testBlobstoreProvider, ProviderMetadata.COMPUTE_TYPE)), 1);
-      assertEquals(Iterables.size(Providers.collocatedWith(testComputeProvider, ProviderMetadata.COMPUTE_TYPE)), 0);
-      assertEquals(Iterables.size(Providers.collocatedWith(testComputeProvider, ProviderMetadata.BLOBSTORE_TYPE)), 1);
-      assertEquals(
-            Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider, ProviderMetadata.COMPUTE_TYPE)), 0);
-      assertEquals(
-            Iterables.size(Providers.collocatedWith(testYetAnotherComputeProvider, ProviderMetadata.BLOBSTORE_TYPE)), 0);
-   }
 }

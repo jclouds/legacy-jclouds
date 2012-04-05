@@ -18,20 +18,14 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import java.util.Properties;
-
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -39,25 +33,27 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseNovaClientLiveTest extends BaseVersionedServiceLiveTest {
+public class BaseNovaClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>> {
+
    public BaseNovaClientLiveTest() {
       provider = "openstack-nova";
    }
 
-   protected RestContext<NovaClient, NovaAsyncClient> context;
+   protected RestContext<NovaClient, NovaAsyncClient> novaContext;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(getLoggingModule(), new SshjSshClientModule()), overrides);
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      novaContext = context.getProviderSpecificContext();
    }
 
    @AfterGroups(groups = "live")
    protected void tearDown() {
-      if (context != null)
-         context.close();
+      if (novaContext != null)
+         novaContext.close();
    }
 
 }

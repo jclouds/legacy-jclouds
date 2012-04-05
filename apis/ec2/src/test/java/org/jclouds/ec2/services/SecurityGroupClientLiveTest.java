@@ -22,23 +22,20 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.domain.UserIdGroupPair;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -47,7 +44,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SecurityGroupClient}
@@ -55,21 +51,18 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "SecurityGroupClientLiveTest")
-public class SecurityGroupClientLiveTest extends BaseVersionedServiceLiveTest {
+public class SecurityGroupClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
    public SecurityGroupClientLiveTest() {
       provider = "ec2";
    }
 
    protected SecurityGroupClient client;
-   private RestContext<EC2Client, EC2AsyncClient> context;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi().getSecurityGroupServices();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getSecurityGroupServices();
    }
 
    @Test

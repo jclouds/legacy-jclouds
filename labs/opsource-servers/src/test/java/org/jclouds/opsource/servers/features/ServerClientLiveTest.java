@@ -33,16 +33,16 @@ import org.testng.annotations.Test;
 public class ServerClientLiveTest extends BaseOpSourceServersClientLiveTest {
 
    public void testGetDeployedServers() {
-	  Account account = context.getApi().getAccountClient().getMyAccount();
+	  Account account = restContext.getApi().getAccountClient().getMyAccount();
 	  assert account.getOrgId() != null;
-      DeployedServersList deployedServersList = context.getApi().getServerClient().getDeployedServers(account.getOrgId());
+      DeployedServersList deployedServersList = restContext.getApi().getServerClient().getDeployedServers(account.getOrgId());
       assert deployedServersList != null;
    }
    
    public void testGetPendingDeployServers() {
-	  Account account = context.getApi().getAccountClient().getMyAccount();
+	  Account account = restContext.getApi().getAccountClient().getMyAccount();
 	  assert account.getOrgId() != null;
-	  PendingDeployServersList pendingDeployServersList = context.getApi().getServerClient().getPendingDeployServers(account.getOrgId());
+	  PendingDeployServersList pendingDeployServersList = restContext.getApi().getServerClient().getPendingDeployServers(account.getOrgId());
       assert pendingDeployServersList != null;
    }
 

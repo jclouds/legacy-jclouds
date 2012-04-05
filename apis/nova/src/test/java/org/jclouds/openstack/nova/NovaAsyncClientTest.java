@@ -18,7 +18,6 @@
  */
 package org.jclouds.openstack.nova;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.openstack.nova.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.openstack.nova.options.ListOptions.Builder.changesSince;
@@ -29,7 +28,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
@@ -46,13 +44,13 @@ import org.jclouds.openstack.nova.domain.RebootType;
 import org.jclouds.openstack.nova.options.CreateServerOptions;
 import org.jclouds.openstack.nova.options.ListOptions;
 import org.jclouds.openstack.nova.options.RebuildServerOptions;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.AnonymousProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -67,7 +65,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", singleThreaded = true, testName = "NovaAsyncClientTest")
-public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
+public class NovaAsyncClientTest extends BaseAsyncClientTest<NovaAsyncClient> {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[]{}.getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[]{}
          .getClass();
@@ -780,15 +778,7 @@ public class NovaAsyncClientTest extends RestClientTest<NovaAsyncClient> {
    protected String provider = "nova";
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory(setupRestProperties()).createContextSpec(provider, "user", "password", setupProperties());
-   }
-
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(PROPERTY_API_VERSION, "api-version");
-      overrides.setProperty(provider + ".endpoint", "http://endpoint");
-      return overrides;
+   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+      return AnonymousProviderMetadata.forApiWithEndpoint(new NovaApiMetadata(), "http://endpoint");
    }
 }

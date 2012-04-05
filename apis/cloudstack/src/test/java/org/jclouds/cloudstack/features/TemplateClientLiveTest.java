@@ -149,7 +149,7 @@ public class TemplateClientLiveTest extends BaseCloudStackClientLiveTest {
       String extractUrl = extract.getUrl();
       assertNotNull(extractUrl);
       URI uri = new URI(URLDecoder.decode(extractUrl, "utf-8"));
-      assertTrue(context.utils().http().exists(uri), "does not exist: " + uri);
+      assertTrue(cloudStackContext.utils().http().exists(uri), "does not exist: " + uri);
    }
 
    @Test(enabled = true)

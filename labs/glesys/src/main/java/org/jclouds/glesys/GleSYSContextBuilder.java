@@ -19,11 +19,12 @@
 package org.jclouds.glesys;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
 import org.jclouds.glesys.config.GleSYSRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -31,10 +32,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class GleSYSContextBuilder extends ComputeServiceContextBuilder<GleSYSClient, GleSYSAsyncClient> {
+public class GleSYSContextBuilder
+      extends
+      ComputeServiceContextBuilder<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> {
 
-   public GleSYSContextBuilder(Properties props) {
-      super(GleSYSClient.class, GleSYSAsyncClient.class, props);
+   public GleSYSContextBuilder(
+         ProviderMetadata<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public GleSYSContextBuilder(GleSYSApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -42,7 +50,6 @@ public class GleSYSContextBuilder extends ComputeServiceContextBuilder<GleSYSCli
       modules.add(new GleSYSComputeServiceContextModule());
    }
 
-   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new GleSYSRestClientModule());
    }

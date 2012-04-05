@@ -19,11 +19,12 @@
 package org.jclouds.elasticstack;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
 import org.jclouds.elasticstack.config.ElasticStackRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -31,12 +32,19 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class ElasticStackContextBuilder extends
-      ComputeServiceContextBuilder<ElasticStackClient, ElasticStackAsyncClient> {
+public class ElasticStackContextBuilder
+      extends
+      ComputeServiceContextBuilder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
 
-   public ElasticStackContextBuilder(Properties props) {
-      super(ElasticStackClient.class, ElasticStackAsyncClient.class, props);
+   public ElasticStackContextBuilder(
+         ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
+
+   public ElasticStackContextBuilder(ElasticStackApiMetadata apiMetadata) {
+      super(apiMetadata);
+   }
+
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new ElasticStackComputeServiceContextModule());

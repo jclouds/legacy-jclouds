@@ -47,10 +47,10 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    public final String testDomain = "glesystest.jclouds.org";
 
    @BeforeGroups(groups = {"live"})
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
 
-      client = context.getApi().getDomainClient();
+      client = gleContext.getApi().getDomainClient();
       domainCounter = new RetryablePredicate<Integer>(
             new Predicate<Integer>() {
                public boolean apply(Integer value) {
@@ -73,12 +73,12 @@ public class DomainClientLiveTest extends BaseGleSYSClientLiveTest {
    }
 
    @AfterGroups(groups = {"live"})
-   public void tearDown() {
+   public void tearDownContext() {
       int before = client.listDomains().size();
       client.deleteDomain(testDomain);
       assertTrue(domainCounter.apply(before - 1));
    
-      super.tearDown();
+      super.tearDownContext();
    }
 
    private DomainClient client;

@@ -18,7 +18,6 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagateIfPossible;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.testng.Assert.assertEquals;
@@ -44,6 +43,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -58,7 +58,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
-public class BaseBlobStoreIntegrationTest {
+public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreContext<?, ?>>{
    protected static final String LOCAL_ENCODING = System.getProperty("file.encoding");
    protected static final String XML_STRING_FORMAT = "<apples><apple name=\"%s\"></apple> </apples>";
    protected static final String TEST_STRING = String.format(XML_STRING_FORMAT, "apple");
@@ -75,7 +75,6 @@ public class BaseBlobStoreIntegrationTest {
    public static long INCONSISTENCY_WINDOW = 10000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
 
-   protected volatile BlobStoreContext context;
    protected static volatile int containerCount = Integer.parseInt(System.getProperty("test.blobstore.container-count",
          "10"));
    public static final String CONTAINER_PREFIX = System.getProperty("user.name") + "-blobstore";
@@ -89,17 +88,14 @@ public class BaseBlobStoreIntegrationTest {
     */
    @BeforeSuite
    public void setUpResourcesForAllThreads(ITestContext testContext) throws Exception {
-      // TODO: close this context
-      createContainersSharedByAllThreads(getCloudResources(testContext), testContext);
+      setupContext();
+      createContainersSharedByAllThreads(context, testContext);
+      context.close();
+      context = null;
    }
-
-   @SuppressWarnings("unchecked")
-   private BlobStoreContext getCloudResources(ITestContext testContext) throws ClassNotFoundException,
-         InstantiationException, IllegalAccessException, Exception {
-      String initializerClass = checkNotNull(System.getProperty("test.initializer"), "test.initializer");
-      Class<BaseTestInitializer> clazz = (Class<BaseTestInitializer>) Class.forName(initializerClass);
-      BaseTestInitializer initializer = clazz.newInstance();
-      return initializer.init(createHttpModule(), testContext);
+   
+   protected Iterable<Module> setupModules() {
+      return ImmutableSet.<Module> of(getLoggingModule(), createHttpModule());
    }
 
    protected ExecutorService exec;
@@ -110,24 +106,24 @@ public class BaseBlobStoreIntegrationTest {
     * want to have a different implementation of context.getBlobStore(). For example, one class may
     * want non-blocking i/o and another class google appengine.
     */
-   @BeforeClass(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" }, dependsOnMethods = "setupContext")
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
-      context = getCloudResources(testContext);
       exec = Executors.newCachedThreadPool();
    }
 
+   
    @AfterClass(groups = { "integration", "live" })
-   protected void tearDownClient() throws Exception {
+   @Override
+   protected void tearDownContext() {
       if (exec != null) {
-         exec.shutdown();
-         exec.awaitTermination(60, TimeUnit.SECONDS);
+         exec.shutdownNow();
       }
       context.close();
    }
 
    private static volatile boolean initialized = false;
 
-   protected void createContainersSharedByAllThreads(BlobStoreContext context, ITestContext testContext)
+   protected void createContainersSharedByAllThreads(BlobStoreContext<?, ?> context, ITestContext testContext)
          throws Exception {
       while (!initialized) {
          synchronized (BaseBlobStoreIntegrationTest.class) {
@@ -160,7 +156,7 @@ public class BaseBlobStoreIntegrationTest {
       }
    }
 
-   private static void deleteContainerOrWarnIfUnable(BlobStoreContext context, String containerName) {
+   private static void deleteContainerOrWarnIfUnable(BlobStoreContext<?, ?> context, String containerName) {
       try {
          context.getBlobStore().deleteContainer(containerName);
       } catch (Throwable ex) {
@@ -175,7 +171,7 @@ public class BaseBlobStoreIntegrationTest {
    /**
     * Tries to delete all containers, runs up to two times
     */
-   protected static void deleteEverything(final BlobStoreContext context) throws Exception {
+   protected static void deleteEverything(final BlobStoreContext<?, ?> context) throws Exception {
       try {
          for (int i = 0; i < 2; i++) {
             Iterable<? extends StorageMetadata> testContainers = Iterables.filter(context.getBlobStore().list(),
@@ -204,7 +200,7 @@ public class BaseBlobStoreIntegrationTest {
     * Due to eventual consistency, container commands may not return correctly immediately. Hence,
     * we will try up to the inconsistency window to see if the assertion completes.
     */
-   protected static void assertConsistencyAware(BlobStoreContext context, Runnable assertion)
+   protected static void assertConsistencyAware(BlobStoreContext<?, ?> context, Runnable assertion)
          throws InterruptedException {
       if (context.getConsistencyModel() == ConsistencyModel.STRICT) {
          assertion.run();
@@ -230,7 +226,7 @@ public class BaseBlobStoreIntegrationTest {
       assertConsistencyAware(context, assertion);
    }
 
-   protected static void createContainerAndEnsureEmpty(BlobStoreContext context, final String containerName)
+   protected static void createContainerAndEnsureEmpty(BlobStoreContext<?, ?> context, final String containerName)
          throws InterruptedException {
       context.getBlobStore().createContainerInLocation(null, containerName);
       if (context.getConsistencyModel() == ConsistencyModel.EVENTUAL)

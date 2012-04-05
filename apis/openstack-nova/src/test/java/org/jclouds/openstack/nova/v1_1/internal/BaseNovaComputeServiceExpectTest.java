@@ -30,7 +30,7 @@ import org.jclouds.compute.ComputeServiceContext;
 public class BaseNovaComputeServiceExpectTest extends BaseNovaComputeServiceContextExpectTest<ComputeService> {
 
    @Override
-   public ComputeService apply(ComputeServiceContext input) {
+   public ComputeService apply(@SuppressWarnings("rawtypes") ComputeServiceContext input) {
       return input.getComputeService();
    }
 

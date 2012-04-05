@@ -19,35 +19,49 @@
 package org.jclouds.azureblob;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.azureblob.blobstore.config.AzureBlobStoreContextModule;
 import org.jclouds.azureblob.config.AzureBlobRestClientModule;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link AzureBlobStoreContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link AzureBlobStoreContext} or {@link Injector} instances based on
+ * the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
  * @see AzureBlobStoreContext
  */
-public class AzureBlobContextBuilder extends
-         BlobStoreContextBuilder<AzureBlobClient, AzureBlobAsyncClient> {
+public class AzureBlobContextBuilder
+      extends
+      BlobStoreContextBuilder<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> {
+  
+   public AzureBlobContextBuilder() {
+      this(new AzureBlobProviderMetadata());
+   }
 
-   public AzureBlobContextBuilder(Properties props) {
-      super(AzureBlobClient.class, AzureBlobAsyncClient.class, props);
+   public AzureBlobContextBuilder(
+         ProviderMetadata<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public AzureBlobContextBuilder(AzureBlobApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

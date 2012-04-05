@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "AWSS3ContainerIntegrationLiveTest")
 public class AWSS3ContainerIntegrationLiveTest extends S3ContainerIntegrationLiveTest {
-
+   public AWSS3ContainerIntegrationLiveTest() {
+      provider = "aws-s3";
+   }
 }

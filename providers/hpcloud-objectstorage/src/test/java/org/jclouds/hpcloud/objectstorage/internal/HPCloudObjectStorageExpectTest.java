@@ -8,17 +8,16 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.domain.Location;
+import org.jclouds.hpcloud.objectstorage.HPCloudObjectStorageProviderMetadata;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 @Test(groups = "unit", testName = "HPCloudObjectStorageExpectTest")
@@ -42,12 +41,6 @@ public class HPCloudObjectStorageExpectTest extends BaseRestClientExpectTest<Blo
         identity = KeystoneFixture.INSTANCE.getTenantName() + ":" + identity;
     }
 
-    public BlobStore createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-        return new BlobStoreContextFactory(setupRestProperties())
-                .createContext(provider, identity, credential, ImmutableSet.<Module>of(new ExpectModule(fn),
-                        new NullLoggingModule(), module), props)
-                .getBlobStore();
-    }
 
     public void testListObjectsWhenResponseIs2xx() throws Exception {
         Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder().put(
@@ -59,5 +52,14 @@ public class HPCloudObjectStorageExpectTest extends BaseRestClientExpectTest<Blo
         assertNotNull(locations);
         assertEquals(locations.size(), 1);
         assertEquals(locations.iterator().next().getId(), "region-a.geo-1");
+    }
+    
+    @Override
+    public BlobStore createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
+       return createInjector(fn, module, props).getInstance(BlobStore.class);
+    }
+    
+    @Override public ProviderMetadata<?, ?, ?, ?> createProviderMetadata(){
+       return new HPCloudObjectStorageProviderMetadata();
     }
 }

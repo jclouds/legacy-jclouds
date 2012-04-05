@@ -73,6 +73,7 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDependenciesModule {
+   @SuppressWarnings("rawtypes")
    @Override
    protected void configure() {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);

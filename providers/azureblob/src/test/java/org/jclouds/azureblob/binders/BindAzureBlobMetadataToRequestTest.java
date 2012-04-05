@@ -22,18 +22,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Properties;
 
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.azureblob.AzureBlobAsyncClient;
+import org.jclouds.azureblob.AzureBlobProviderMetadata;
 import org.jclouds.azureblob.domain.AzureBlob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -48,7 +46,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindAzureBlobMetadataToRequestTest")
-public class BindAzureBlobMetadataToRequestTest extends RestClientTest<AzureBlobAsyncClient> {
+public class BindAzureBlobMetadataToRequestTest extends BaseAsyncClientTest<AzureBlobAsyncClient> {
 
    @Test
    public void testPassWithMinimumDetailsAndPayload64MB() {
@@ -147,7 +145,7 @@ public class BindAzureBlobMetadataToRequestTest extends RestClientTest<AzureBlob
    }
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("azureblob", "identity", "credential", new Properties());
+   public AzureBlobProviderMetadata createProviderMetadata() {
+      return new AzureBlobProviderMetadata();
    }
 }

@@ -47,6 +47,7 @@ public class TransientBlobStoreContextModule extends AbstractModule {
    static final ConcurrentHashMap<String, ConcurrentMap<String, Blob>> map = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
    static final ConcurrentHashMap<String, Location> containerToLocation = new ConcurrentHashMap<String, Location>();
 
+   @SuppressWarnings("rawtypes")
    @Override
    protected void configure() {
       bind(new TypeLiteral<BlobStoreContext>() {

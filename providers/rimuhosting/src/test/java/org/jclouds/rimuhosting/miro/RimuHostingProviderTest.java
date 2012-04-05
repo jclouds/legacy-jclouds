@@ -18,7 +18,7 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**

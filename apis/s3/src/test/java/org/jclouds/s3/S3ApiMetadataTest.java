@@ -18,18 +18,18 @@
  */
 package org.jclouds.s3;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
+@SuppressWarnings("rawtypes")
 @Test(groups = "unit", testName = "S3ApiMetadataTest")
-public class S3ApiMetadataTest extends BaseApiMetadataTest {
+public class S3ApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 
    public S3ApiMetadataTest() {
-      super(new S3ApiMetadata(), ApiType.BLOBSTORE);
+      super(new S3ApiMetadata());
    }
 }

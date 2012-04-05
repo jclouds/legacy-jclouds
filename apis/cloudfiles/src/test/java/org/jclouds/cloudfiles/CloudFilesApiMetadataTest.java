@@ -18,8 +18,7 @@
  */
 package org.jclouds.cloudfiles;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "CloudFilesApiMetadataTest")
-public class CloudFilesApiMetadataTest extends BaseApiMetadataTest {
+public class CloudFilesApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 
    public CloudFilesApiMetadataTest() {
-      super(new CloudFilesApiMetadata(), ApiType.BLOBSTORE);
+      super(new CloudFilesApiMetadata());
    }
 }

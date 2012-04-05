@@ -26,5 +26,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "CloudOneStorageContainerLiveTest")
 public class CloudOneStorageContainerLiveTest extends AtmosContainerLiveTest {
+   public CloudOneStorageContainerLiveTest() {
+      provider = "cloudonestorage";
+   }
 
 }

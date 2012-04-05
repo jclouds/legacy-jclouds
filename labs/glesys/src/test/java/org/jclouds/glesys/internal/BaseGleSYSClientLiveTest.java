@@ -26,9 +26,8 @@ import static org.testng.Assert.assertTrue;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.domain.Server;
@@ -38,17 +37,12 @@ import org.jclouds.glesys.domain.ServerStatus;
 import org.jclouds.glesys.features.DomainClient;
 import org.jclouds.glesys.features.ServerClient;
 import org.jclouds.glesys.options.ServerStatusOptions;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.sshj.config.SshjSshClientModule;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code GleSYSClient}
@@ -56,33 +50,25 @@ import com.google.inject.Module;
  * @author Adrian Cole, Adam Lowe
  */
 @Test(groups = "live")
-public class BaseGleSYSClientLiveTest extends BaseVersionedServiceLiveTest {
-   protected ComputeServiceContext computeContext;
-   protected RestContext<GleSYSClient, GleSYSAsyncClient> context;
+public class BaseGleSYSClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>> {
+
+   protected RestContext<GleSYSClient, GleSYSAsyncClient> gleContext;
 
    public BaseGleSYSClientLiveTest() {
       provider = "glesys";
    }
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-
-      computeContext = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), setupProperties());
-      context = computeContext.getProviderSpecificContext();
-   }
-
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (context != null) {
-         context.close();
-         context = null;
-      }
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      gleContext = context.getProviderSpecificContext();
    }
 
    protected void createDomain(String domain) {
-      final DomainClient client = context.getApi().getDomainClient();
+      final DomainClient client = gleContext.getApi().getDomainClient();
       int before = client.listDomains().size();
       client.addDomain(domain);
       RetryablePredicate<Integer> result = new RetryablePredicate<Integer>(new Predicate<Integer>() {
@@ -95,7 +81,7 @@ public class BaseGleSYSClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    protected ServerStatusChecker createServer(String hostName) {
-      ServerClient client = context.getApi().getServerClient();
+      ServerClient client = gleContext.getApi().getServerClient();
 
       ServerDetails testServer = client.createServerWithHostnameAndRootPassword(
             ServerSpec.builder().datacenter("Falkenberg").platform("OpenVZ").templateName("Ubuntu 10.04 LTS 32-bit")

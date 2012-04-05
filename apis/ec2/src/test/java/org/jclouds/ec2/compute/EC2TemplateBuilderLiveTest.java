@@ -27,10 +27,11 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.options.DescribeAvailabilityZonesOptions;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.ec2.options.DescribeRegionsOptions;
@@ -47,7 +48,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.inject.Module;
 
-public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public abstract class EC2TemplateBuilderLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseTemplateBuilderLiveTest<S, A, C> {
    
    @Test
    public void testTemplateBuilderCanUseImageIdWithoutFetchingAllImages() throws Exception {
@@ -55,14 +56,14 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
       String defaultImageId = defaultTemplate.getImage().getId();
       String defaultImageProviderId = defaultTemplate.getImage().getProviderId();
 
-      ComputeServiceContext context = null;
+      ComputeServiceContext<S, A> context = null;
       try {
          // Track http commands
          final List<HttpCommand> commandsInvoked = Lists.newArrayList();
-         context = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, 
-                  ImmutableSet.<Module> of(new Log4JLoggingModule(), 
-                  TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)), 
-                  setupProperties());
+         context = createContext(
+               setupProperties(),
+               ImmutableSet.<Module> of(new Log4JLoggingModule(),
+                     TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)));
          
          Template template = context.getComputeService().templateBuilder().imageId(defaultImageId)
                   .build();

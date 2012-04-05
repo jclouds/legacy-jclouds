@@ -21,7 +21,6 @@ package org.jclouds.aws.s3;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
@@ -38,8 +37,6 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -65,10 +62,6 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "AWSS3AsyncClientTest")
 public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3AsyncClient> {
-
-   public AWSS3AsyncClientTest() {
-      this.provider = "aws-s3";
-   }
 
    public void testGetBucketLocationEU() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);
@@ -282,10 +275,9 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
    protected Module createModule() {
       return new TestAWSS3RestClientModule();
    }
-
+   
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      Properties props = new Properties();
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", props);
+   public AWSS3ProviderMetadata createProviderMetadata() {
+      return new AWSS3ProviderMetadata();
    }
 }

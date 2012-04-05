@@ -26,8 +26,6 @@ import static com.google.common.io.ByteStreams.newInputStreamSupplier;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -55,9 +53,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
+import org.jclouds.rest.AnonymousProviderMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -173,7 +171,7 @@ public abstract class BaseJettyTest {
 
       Properties properties = new Properties();
       addConnectionProperties(properties);
-      context = newBuilder(testPort, properties, createConnectionModule()).buildContext();
+      context = newBuilder(testPort, properties, createConnectionModule()).build();
       client = context.getApi();
       assert client != null;
 
@@ -282,14 +280,16 @@ public abstract class BaseJettyTest {
       return temp;
    }
 
-   public static RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> newBuilder(int testPort,
-            Properties properties, Module... connectionModules) {
+   public static ContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, ?> newBuilder(
+         int testPort, Properties properties, Module... connectionModules) {
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-               "http://localhost:" + testPort, "1", "", "", "identity", null, IntegrationTestClient.class,
-               IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
-      return createContextBuilder(contextSpec, properties);
+      return ContextBuilder
+            .newBuilder(
+                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
+                        "http://localhost:" + testPort))
+            .modules(ImmutableSet.<Module> copyOf(connectionModules))
+            .overrides(properties);
    }
 
    @AfterTest

@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "AWSS3BlobLiveTest")
 public class AWSS3BlobLiveTest extends S3BlobLiveTest {
-
+   public AWSS3BlobLiveTest() {
+      provider = "aws-s3";
+   }
 }

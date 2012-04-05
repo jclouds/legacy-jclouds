@@ -55,7 +55,7 @@ import com.google.common.collect.Maps;
  */
 @Test(groups = "live")
 public abstract class CommonSwiftClientLiveTest<C extends CommonSwiftClient> extends BaseBlobStoreIntegrationTest {
-
+   
    public abstract C getApi();
 
    /**

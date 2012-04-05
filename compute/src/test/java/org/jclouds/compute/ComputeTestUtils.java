@@ -23,7 +23,6 @@ import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
@@ -35,6 +34,7 @@ import org.jclouds.rest.HttpClient;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
@@ -45,7 +45,7 @@ import com.google.common.io.Files;
  */
 public class ComputeTestUtils {
 
-   public static Map<String, String> setupKeyPair() throws FileNotFoundException, IOException {
+   public static Map<String, String> setupKeyPair()  {
       String secretKeyFile;
       try {
          secretKeyFile = checkNotNull(System.getProperty("test.ssh.keyfile"), "test.ssh.keyfile");
@@ -53,16 +53,20 @@ public class ComputeTestUtils {
          secretKeyFile = System.getProperty("user.home") + "/.ssh/id_rsa";
       }
       checkSecretKeyFile(secretKeyFile);
-      String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
-      assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
-      return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
-               + ".pub"), Charsets.UTF_8));
+      try {
+         String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
+         assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
+         return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
+                  + ".pub"), Charsets.UTF_8));
+      } catch (IOException e) {
+        throw Throwables.propagate(e);
+      }
    }
 
-   public static void checkSecretKeyFile(String secretKeyFile) throws FileNotFoundException {
+   public static void checkSecretKeyFile(String secretKeyFile) {
       Preconditions2.checkNotEmpty(secretKeyFile, "System property: [test.ssh.keyfile] set to an empty string");
       if (!new File(secretKeyFile).exists()) {
-         throw new FileNotFoundException("secretKeyFile not found at: " + secretKeyFile);
+         throw new IllegalStateException("secretKeyFile not found at: " + secretKeyFile);
       }
    }
 

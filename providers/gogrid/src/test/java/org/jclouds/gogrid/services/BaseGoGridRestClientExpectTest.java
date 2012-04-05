@@ -4,7 +4,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.base.Supplier;

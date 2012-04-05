@@ -19,50 +19,71 @@
 package org.jclouds.glesys;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for GleSYS API
+ * Implementation of {@link ApiMetadata} for  API
  * 
  * @author Adrian Cole
  */
-public class GleSYSApiMetadata extends BaseApiMetadata {
+public class GleSYSApiMetadata
+      extends
+      BaseComputeServiceApiMetadata<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> {
 
-   public GleSYSApiMetadata() {
-      this(builder()
-            .id("glesys")
-            .type(ApiType.COMPUTE)
-            .name("GleSYS API")
-            .identityName("Username")
-            .credentialName("API Key")
-            .documentation(URI.create("https://customer.glesys.com/api.php")));
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected GleSYSApiMetadata(Builder<?> builder) {
+   public GleSYSApiMetadata() {
+      this(new Builder());
+   }
+
+   protected GleSYSApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+      properties.setProperty("jclouds.ssh.max-retries", "5");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseComputeServiceApiMetadata.Builder<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> {
+
+      protected Builder() {
+         id("glesys")
+         .name("GleSYS API")
+         .identityName("Username")
+         .credentialName("API Key")
+         .documentation(URI.create("https://customer.glesys.com/api.php"))
+         .version("1")
+         .defaultEndpoint("https://api.glesys.com")
+         .defaultProperties(GleSYSApiMetadata.defaultProperties())
+         .javaApi(GleSYSClient.class, GleSYSAsyncClient.class)
+         .contextBuilder(TypeToken.of(GleSYSContextBuilder.class));
+      }
 
       @Override
       public GleSYSApiMetadata build() {
          return new GleSYSApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(GleSYSApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

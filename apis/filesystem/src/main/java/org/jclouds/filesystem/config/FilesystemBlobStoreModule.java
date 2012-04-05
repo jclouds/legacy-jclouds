@@ -24,7 +24,7 @@ import org.jclouds.filesystem.FilesystemBlobStore;
 import org.jclouds.rest.config.RestClientModule;
 
 /**
- *
+ * 
  * @author Alfredo "Rainbowbreeze" Morresi
  */
 public class FilesystemBlobStoreModule extends RestClientModule<FilesystemBlobStore, AsyncBlobStore> {
@@ -33,12 +33,10 @@ public class FilesystemBlobStoreModule extends RestClientModule<FilesystemBlobSt
       super(FilesystemBlobStore.class, AsyncBlobStore.class);
    }
 
-    @Override
-    protected void configure() {
-        super.configure();
-    }
-
-
+   @Override
+   protected void configure() {
+      super.configure();
+   }
 
    @Override
    protected void bindAsyncClient() {

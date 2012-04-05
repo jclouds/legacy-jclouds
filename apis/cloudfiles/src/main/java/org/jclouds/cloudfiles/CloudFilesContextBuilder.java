@@ -19,34 +19,45 @@
 package org.jclouds.cloudfiles;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.cloudfiles.config.CloudFilesRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link CloudFilesBlobStoreContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
+ * Creates {@link CloudFilesStoreContext} or {@link Injector} instances based on
+ * the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
- * @see CloudFilesBlobStoreContext
+ * @see CloudFilesStoreContext
  */
-public class CloudFilesContextBuilder extends BlobStoreContextBuilder<CloudFilesClient, CloudFilesAsyncClient> {
+public class CloudFilesContextBuilder
+      extends
+      BlobStoreContextBuilder<CloudFilesClient, CloudFilesAsyncClient, BlobStoreContext<CloudFilesClient, CloudFilesAsyncClient>, CloudFilesApiMetadata> {
 
-   public CloudFilesContextBuilder(Properties props) {
-      super(CloudFilesClient.class, CloudFilesAsyncClient.class, props);
+   public CloudFilesContextBuilder(
+         ProviderMetadata<CloudFilesClient, CloudFilesAsyncClient, BlobStoreContext<CloudFilesClient, CloudFilesAsyncClient>, CloudFilesApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public CloudFilesContextBuilder(CloudFilesApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

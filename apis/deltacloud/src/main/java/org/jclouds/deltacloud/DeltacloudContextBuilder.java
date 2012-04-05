@@ -19,11 +19,12 @@
 package org.jclouds.deltacloud;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.deltacloud.compute.config.DeltacloudComputeServiceContextModule;
 import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -31,10 +32,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class DeltacloudContextBuilder extends ComputeServiceContextBuilder<DeltacloudClient, DeltacloudAsyncClient> {
+public class DeltacloudContextBuilder
+      extends
+      ComputeServiceContextBuilder<DeltacloudClient, DeltacloudAsyncClient, ComputeServiceContext<DeltacloudClient, DeltacloudAsyncClient>, DeltacloudApiMetadata> {
 
-   public DeltacloudContextBuilder(Properties props) {
-      super(DeltacloudClient.class, DeltacloudAsyncClient.class, props);
+   public DeltacloudContextBuilder(
+         ProviderMetadata<DeltacloudClient, DeltacloudAsyncClient, ComputeServiceContext<DeltacloudClient, DeltacloudAsyncClient>, DeltacloudApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public DeltacloudContextBuilder(DeltacloudApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

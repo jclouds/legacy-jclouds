@@ -21,7 +21,7 @@ package org.jclouds.rackspace.cloudfiles;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.cloudfiles.CloudFilesClient;
-import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
+import org.jclouds.cloudfiles.CloudFilesClientLiveTest;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.testng.annotations.Test;
 
@@ -31,7 +31,11 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudFilesUKClientLiveTest")
-public class CloudFilesUKClientLiveTest extends CommonSwiftClientLiveTest<CloudFilesClient> {
+public class CloudFilesUKClientLiveTest extends CloudFilesClientLiveTest {
+   public CloudFilesUKClientLiveTest() {
+      provider = "cloudfiles-uk";
+   }
+   
    // NOTE cloudfilesuk doesn't have cdn
 
    @Override

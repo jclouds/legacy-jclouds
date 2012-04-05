@@ -18,6 +18,7 @@
  */
 package org.jclouds.rest;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -41,7 +42,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(RestContextImpl.class)
-public interface RestContext<S, A> extends Location {
+public interface RestContext<S, A> extends Location, Closeable {
 
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
@@ -96,6 +97,7 @@ public interface RestContext<S, A> extends Location {
    /**
     * Closes all connections to Cloud Files.
     */
+   @Override
    void close();
 
 }

@@ -19,11 +19,14 @@
 package org.jclouds.openstack.nova.ec2;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.EC2ContextBuilder;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2ComputeServiceContextModule;
 import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -31,13 +34,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class NovaEC2ContextBuilder extends EC2ContextBuilder {
+public class NovaEC2ContextBuilder extends EC2ContextBuilder<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, NovaEC2ApiMetadata> {
 
-   public NovaEC2ContextBuilder(Properties props) {
-      super(props);
+   public NovaEC2ContextBuilder(
+         ProviderMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, NovaEC2ApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
 
-   
+   public NovaEC2ContextBuilder(NovaEC2ApiMetadata apiMetadata) {
+      super(apiMetadata);
+   }
+
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new NovaEC2RestClientModule());

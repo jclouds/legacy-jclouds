@@ -36,7 +36,7 @@
 package org.jclouds.trystack.nova;
 
 import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**

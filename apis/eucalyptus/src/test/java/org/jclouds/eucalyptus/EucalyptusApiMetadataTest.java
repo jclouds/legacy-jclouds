@@ -18,8 +18,7 @@
  */
 package org.jclouds.eucalyptus;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "EucalyptusApiMetadataTest")
-public class EucalyptusApiMetadataTest extends BaseApiMetadataTest {
+public class EucalyptusApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public EucalyptusApiMetadataTest() {
-      super(new EucalyptusApiMetadata(), ApiType.COMPUTE);
+      super(new EucalyptusApiMetadata());
    }
 }

@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class CloudFilesInputStreamMapIntegrationLiveTest extends SwiftInputStreamMapIntegrationLiveTest {
-
+   public CloudFilesInputStreamMapIntegrationLiveTest(){
+      provider = "cloudfiles";
+   }
 }

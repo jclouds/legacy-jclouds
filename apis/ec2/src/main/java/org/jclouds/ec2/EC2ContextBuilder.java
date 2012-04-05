@@ -19,40 +19,44 @@
 package org.jclouds.ec2;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link EC2ComputeServiceContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link EC2ComputeServiceContext} or {@link Injector} instances based
+ * on the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole
  * @see EC2ComputeServiceContext
  */
-public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, EC2AsyncClient> {
+public class EC2ContextBuilder<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>, M extends EC2ApiMetadata<S, A, C, M>>
+      extends ComputeServiceContextBuilder<S, A, C, M> {
 
-   public EC2ContextBuilder(Properties props) {
-      super(EC2Client.class, EC2AsyncClient.class, props);
+   public EC2ContextBuilder(ProviderMetadata<S, A, C, M> providerMetadata) {
+      super(providerMetadata);
    }
 
-   @Override
-   public EC2ContextBuilder withModules(Iterable<Module> modules) {
-      return (EC2ContextBuilder) super.withModules(modules);
+   public EC2ContextBuilder(M apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -62,7 +66,8 @@ public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, E
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(EC2RestClientModule.create());
+      modules.add(new EC2RestClientModule<S, A>(apiMetadata.getApi(), apiMetadata.getAsyncApi(),
+            EC2RestClientModule.DELEGATE_MAP));
    }
 
    @Override

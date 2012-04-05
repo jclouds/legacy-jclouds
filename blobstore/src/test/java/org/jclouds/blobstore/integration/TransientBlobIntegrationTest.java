@@ -28,5 +28,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration" })
 public class TransientBlobIntegrationTest extends BaseBlobIntegrationTest {
-
+   public TransientBlobIntegrationTest() {
+      provider = "transient";
+   }
 }

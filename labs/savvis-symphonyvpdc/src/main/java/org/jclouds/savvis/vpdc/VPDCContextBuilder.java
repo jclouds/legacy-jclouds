@@ -19,9 +19,10 @@
 package org.jclouds.savvis.vpdc;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.savvis.vpdc.compute.config.VPDCComputeServiceContextModule;
 import org.jclouds.savvis.vpdc.config.VPDCRestClientModule;
 
@@ -31,19 +32,26 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class VPDCContextBuilder extends ComputeServiceContextBuilder<VPDCClient, VPDCAsyncClient> {
+public class VPDCContextBuilder
+      extends
+      ComputeServiceContextBuilder<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>, VPDCApiMetadata> {
 
-   public VPDCContextBuilder(Properties props) {
-      super(VPDCClient.class, VPDCAsyncClient.class, props);
+   public VPDCContextBuilder(
+         ProviderMetadata<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>, VPDCApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
 
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new VPDCRestClientModule());
+   public VPDCContextBuilder(VPDCApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new VPDCComputeServiceContextModule());
+   }
+
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new VPDCRestClientModule());
    }
 
 }

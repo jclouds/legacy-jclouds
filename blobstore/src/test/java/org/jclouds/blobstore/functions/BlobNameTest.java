@@ -22,9 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.Test;
 
 /**
@@ -34,8 +34,8 @@ import org.testng.annotations.Test;
 @Test(groups = "unit")
 public class BlobNameTest {
    BlobName fn = new BlobName();
-   private static final Factory BLOB_FACTORY = new RestContextFactory()
-         .createContextBuilder("transient", "identity", "credential").buildInjector().getInstance(Blob.Factory.class);
+   
+   private static final Factory BLOB_FACTORY = BlobStoreContextBuilder.forTests().buildInjector().getInstance(Blob.Factory.class);
 
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {

@@ -23,62 +23,57 @@ import static org.testng.Assert.assertEquals;
 import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.StandaloneComputeServiceContextSpec;
+import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.rest.RestContext;
-import org.jclouds.servermanager.Datacenter;
-import org.jclouds.servermanager.Hardware;
-import org.jclouds.servermanager.Image;
-import org.jclouds.servermanager.Server;
 import org.jclouds.servermanager.ServerManager;
+import org.jclouds.servermanager.ServerManagerApiMetadata;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-@Test(groups = "unit")
+@Test(groups = "unit", testName = "ServerManagerComputeServiceContextBuilderTest")
 public class ServerManagerComputeServiceContextBuilderTest {
 
    @Test
    public void testCanBuildDirectly() {
-      ComputeServiceContext context = new ServerManagerComputeServiceContextBuilder(new Properties())
-               .buildComputeServiceContext();
+      ComputeServiceContext<ServerManager, ServerManager> context = new ServerManagerComputeServiceContextBuilder()
+            .build();
       context.close();
    }
 
    @Test
-   public void testCanBuildWithContextSpec() {
-      ComputeServiceContext context = new ComputeServiceContextFactory()
-               .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
-                        "servermanager", "http://host", "1", "", "", "identity", "credential", ServerManager.class,
-                        ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
-
+   public void testCanBuildWithApiMetadata() {
+      ComputeServiceContext<ServerManager, ServerManager> context = ComputeServiceContextBuilder.newBuilder(
+            new ServerManagerApiMetadata()).build();
       context.close();
    }
 
    @Test
-   public void testCanBuildWithRestProperties() {
-      Properties restProperties = new Properties();
-      restProperties.setProperty("servermanager.contextbuilder", ServerManagerComputeServiceContextBuilder.class
-               .getName());
-      restProperties.setProperty("servermanager.endpoint", "http://host");
-      restProperties.setProperty("servermanager.api-version", "1");
+   public void testCanBuildById() {
+      ComputeServiceContext<?, ?> context = ComputeServiceContextBuilder.newBuilder("servermanager").build();
+      context.close();
+   }
 
-      ComputeServiceContext context = new ComputeServiceContextFactory(restProperties).createContext("servermanager",
-               "identity", "credential");
+   @Test
+   public void testCanBuildWithOverridingProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty("servermanager.endpoint", "http://host");
+      overrides.setProperty("servermanager.api-version", "1");
+
+      ComputeServiceContext<ServerManager, ServerManager> context = new ServerManagerComputeServiceContextBuilder()
+            .overrides(overrides).build();
 
       context.close();
    }
 
    @Test
    public void testProviderSpecificContextIsCorrectType() {
-      ComputeServiceContext context = new ServerManagerComputeServiceContextBuilder(new Properties())
-               .buildComputeServiceContext();
+      ComputeServiceContext<ServerManager, ServerManager> context = new ServerManagerComputeServiceContextBuilder()
+            .build();
+
       RestContext<ServerManager, ServerManager> providerContext = context.getProviderSpecificContext();
 
       assertEquals(providerContext.getApi().getClass(), ServerManager.class);

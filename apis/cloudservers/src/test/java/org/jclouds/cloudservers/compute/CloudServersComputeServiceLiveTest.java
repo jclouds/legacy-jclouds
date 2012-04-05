@@ -24,11 +24,10 @@ import java.io.IOException;
 
 import org.jclouds.cloudservers.CloudServersAsyncClient;
 import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -41,7 +40,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "CloudServersComputeServiceLiveTest")
-public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class CloudServersComputeServiceLiveTest
+      extends
+      BaseComputeServiceLiveTest<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>> {
+
    public CloudServersComputeServiceLiveTest() {
       provider = "cloudservers";
    }
@@ -49,12 +51,6 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<CloudServersClient, CloudServersAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override

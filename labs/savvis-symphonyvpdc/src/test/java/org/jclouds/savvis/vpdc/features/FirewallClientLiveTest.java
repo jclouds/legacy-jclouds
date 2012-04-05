@@ -21,7 +21,6 @@ package org.jclouds.savvis.vpdc.features;
 import org.jclouds.savvis.vpdc.domain.FirewallRule;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.Task;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -36,8 +35,8 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 
    @Override
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       client = restContext.getApi().getFirewallClient();
    }
    
@@ -109,11 +108,5 @@ public class FirewallClientLiveTest extends BaseVPDCClientLiveTest {
 	   assert task.getId() != null && task.getError() == null : task;
 
 	   assert this.taskTester.apply(task.getId());
-   }
-
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      //TODO cleanup resources
-      super.tearDown();
    }
 }

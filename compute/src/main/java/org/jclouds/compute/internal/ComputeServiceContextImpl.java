@@ -35,7 +35,7 @@ import org.jclouds.rest.RestContext;
  * @author Adrian Cole
  */
 @Singleton
-public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
+public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext<S, A> {
    private final ComputeService computeService;
    private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
@@ -55,9 +55,8 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
       return computeService;
    }
 
-   @SuppressWarnings( { "unchecked", "hiding" })
    @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
+   public RestContext<S, A> getProviderSpecificContext() {
       return (RestContext<S, A>) providerSpecificContext;
    }
 

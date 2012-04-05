@@ -18,39 +18,47 @@
  */
 package org.jclouds.azure.storage;
 
+import java.io.Closeable;
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.ContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link AzureStorageStoreContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link AzureStorageStoreContext} or {@link Injector} instances based
+ * on the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
  * @see AzureStorageStoreContext
  */
-public class AzureStorageContextBuilder<S, A> extends RestContextBuilder<S, A> {
+public class AzureStorageContextBuilder<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> extends
+      ContextBuilder<S, A, C, M> {
+   public AzureStorageContextBuilder(ProviderMetadata<S, A, C, M> providerMetadata) {
+      super(providerMetadata);
+   }
 
-   public AzureStorageContextBuilder(Class<S> syncClientClass, Class<A> asyncClientClass,
-            Properties properties) {
-      super(syncClientClass, asyncClientClass, properties);
+   public AzureStorageContextBuilder(M apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new AzureStorageRestClientModule<S, A>(syncClientType, asyncClientType));
+      modules.add(new AzureStorageRestClientModule<S, A>(apiMetadata.getApi(), apiMetadata.getAsyncApi()));
    }
 }

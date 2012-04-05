@@ -37,7 +37,7 @@ public class ProductItemPredicatesTest {
    private ProductItem emptyItem;
 
    @BeforeGroups(groups = { "unit" })
-   public void setupClient() {
+   public void setupContext() {
       ramCategory = ProductItemCategory.builder().id(1).categoryCode("ram").build();
 
       item = ProductItem.builder().id(1).description("a test item").categories(ImmutableSet.of(ramCategory)).capacity(

@@ -44,7 +44,7 @@ public interface BlobStore {
    /**
     * @return a reference to the context that created this BlobStore.
     */
-   BlobStoreContext getContext();
+   BlobStoreContext<?,?> getContext();
 
    /**
     * 

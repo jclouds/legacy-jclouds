@@ -18,8 +18,10 @@
  */
 package org.jclouds.opsource.servers.internal;
 
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.opsource.servers.OpSourceServersApiMetadata;
 import org.jclouds.opsource.servers.OpSourceServersClient;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 /**
  * Base class for writing OpSourceServersClient Expect tests
@@ -34,4 +36,8 @@ public class BaseOpSourceServersRestClientExpectTest extends BaseRestClientExpec
       credential = "password";
    }
 
+   @Override
+   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new OpSourceServersApiMetadata();
+   }
 }

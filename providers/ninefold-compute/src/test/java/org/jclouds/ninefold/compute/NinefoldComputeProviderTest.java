@@ -19,7 +19,7 @@
 package org.jclouds.ninefold.compute;
 
 import org.jclouds.cloudstack.CloudStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**

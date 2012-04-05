@@ -19,38 +19,30 @@
 package org.jclouds.rimuhosting.miro;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rimuhosting.miro.compute.config.RimuHostingComputeServiceContextModule;
 import org.jclouds.rimuhosting.miro.config.RimuHostingRestClientModule;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link RimuHostingComputeServiceContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
- * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
- * <p/>
- * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see RimuHostingComputeServiceContext
  */
-public class RimuHostingContextBuilder extends ComputeServiceContextBuilder<RimuHostingClient, RimuHostingAsyncClient> {
+public class RimuHostingContextBuilder
+      extends
+      ComputeServiceContextBuilder<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> {
 
-   public RimuHostingContextBuilder(Properties props) {
-      super(RimuHostingClient.class, RimuHostingAsyncClient.class, props);
+   public RimuHostingContextBuilder(
+         ProviderMetadata<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public RimuHostingContextBuilder(RimuHostingApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -58,16 +50,8 @@ public class RimuHostingContextBuilder extends ComputeServiceContextBuilder<Rimu
       modules.add(new RimuHostingComputeServiceContextModule());
    }
 
-   @Override
-   public ComputeServiceContext buildComputeServiceContext() {
-      // need the generic type information
-      return (ComputeServiceContext) this.buildInjector().getInstance(
-               Key.get(new TypeLiteral<ComputeServiceContextImpl<RimuHostingClient, RimuHostingAsyncClient>>() {
-               }));
-   }
-
-   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new RimuHostingRestClientModule());
    }
+
 }

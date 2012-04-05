@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBAsyncClientTest;
+import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -35,15 +36,16 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "AWSELBAsyncClientTest")
 public class AWSELBAsyncClientTest extends ELBAsyncClientTest {
 
-   public AWSELBAsyncClientTest() {
-      this.provider = "aws-elb";
-   }
-
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ELBAsyncClient.class.getMethod("describeLoadBalancersInRegion", String.class, String[].class);
       for (String region : Region.DEFAULT_REGIONS) {
          processor.createRequest(method, region);
       }
+   }
+   
+   @Override
+   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+      return new AWSELBProviderMetadata();
    }
 
 }

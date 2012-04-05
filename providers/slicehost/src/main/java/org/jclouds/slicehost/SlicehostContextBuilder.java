@@ -19,35 +19,30 @@
 package org.jclouds.slicehost;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.slicehost.compute.config.SlicehostComputeServiceContextModule;
 import org.jclouds.slicehost.config.SlicehostRestClientModule;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link SlicehostComputeServiceContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
- * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
- * <p/>
- * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see SlicehostComputeServiceContext
  */
-public class SlicehostContextBuilder extends
-         ComputeServiceContextBuilder<SlicehostClient, SlicehostAsyncClient> {
+public class SlicehostContextBuilder
+      extends
+      ComputeServiceContextBuilder<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> {
 
-   public SlicehostContextBuilder(Properties props) {
-      super(SlicehostClient.class, SlicehostAsyncClient.class, props);
+   public SlicehostContextBuilder(
+         ProviderMetadata<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public SlicehostContextBuilder(SlicehostApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -55,7 +50,6 @@ public class SlicehostContextBuilder extends
       modules.add(new SlicehostComputeServiceContextModule());
    }
 
-   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new SlicehostRestClientModule());
    }

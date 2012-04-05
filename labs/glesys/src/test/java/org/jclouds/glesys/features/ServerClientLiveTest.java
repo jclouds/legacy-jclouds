@@ -58,20 +58,20 @@ public class ServerClientLiveTest extends BaseGleSYSClientLiveTest {
    public static final String testHostName2 = "jclouds-test2";
    
    @BeforeGroups(groups = {"live"})
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getServerClient();
+   public void setupContext() {
+      super.setupContext();
+      client = gleContext.getApi().getServerClient();
       serverStatusChecker = createServer(testHostName1);
       testServerId = serverStatusChecker.getServerId();
    }
 
    @AfterGroups(groups = {"live"})
-   public void tearDown() {
+   public void tearDownContext() {
       client.destroyServer(testServerId, DestroyServerOptions.Builder.discardIp());
       if (testServerId2 != null) {
          client.destroyServer(testServerId2, DestroyServerOptions.Builder.discardIp());
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    private ServerClient client;

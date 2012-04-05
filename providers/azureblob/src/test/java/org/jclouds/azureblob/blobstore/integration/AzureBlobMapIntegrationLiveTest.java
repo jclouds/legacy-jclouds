@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AzureBlobMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
-
+   public AzureBlobMapIntegrationLiveTest() {
+      provider = "azureblob";
+   }
 }

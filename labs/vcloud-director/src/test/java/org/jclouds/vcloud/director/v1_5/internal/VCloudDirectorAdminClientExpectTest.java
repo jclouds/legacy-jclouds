@@ -22,13 +22,10 @@ import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -50,8 +47,7 @@ public abstract class VCloudDirectorAdminClientExpectTest extends
    }
 
    private VCloudDirectorContext createVCloudDirectorContext(Function<HttpRequest, HttpResponse> fn, Module module,
-            Properties props) {
-      return VCloudDirectorContext.class.cast(new RestContextFactory(setupRestProperties()).createContext(provider,
-               identity, credential, ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props));
+         Properties props) {
+      return createInjector(fn, module, props).getInstance(VCloudDirectorContext.class);
    }
 }

@@ -23,7 +23,7 @@ import java.net.URI;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.collect.ImmutableMultimap;
 

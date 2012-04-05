@@ -161,6 +161,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       assertNotNull(server);
       assertEquals(server.getCredentials(), LoginCredentials.builder().privateKey("privateKey").build());
    }
+   
    @Override
    public Injector apply(ComputeServiceContext input) {
       return input.utils().injector();

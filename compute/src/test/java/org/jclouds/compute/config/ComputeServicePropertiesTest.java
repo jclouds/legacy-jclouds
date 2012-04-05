@@ -22,12 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.InitStatusProperties;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
@@ -36,7 +33,7 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "ComputeServicePropertiesTest")
 public class ComputeServicePropertiesTest {
    public void testDefaultInitStatusProperties() {
-      InitStatusProperties props = new ComputeServiceContextFactory().createContext("stub", "", "").utils().injector()
+      InitStatusProperties props = ComputeServiceContextBuilder.forTests().buildInjector()
             .getInstance(InitStatusProperties.class);
       assertEquals(props.initStatusInitialPeriod, 500);
       assertEquals(props.initStatusMaxPeriod, 5000);
@@ -47,8 +44,7 @@ public class ComputeServicePropertiesTest {
       overrides.setProperty(ComputeServiceProperties.INIT_STATUS_INITIAL_PERIOD, "501");
       overrides.setProperty(ComputeServiceProperties.INIT_STATUS_MAX_PERIOD, "5001");
       
-      InitStatusProperties props = new ComputeServiceContextFactory()
-            .createContext("stub", "", "", ImmutableSet.<Module> of(), overrides).utils().injector()
+      InitStatusProperties props = ComputeServiceContextBuilder.forTests().overrides(overrides).buildInjector()
             .getInstance(InitStatusProperties.class);
       
       assertEquals(props.initStatusInitialPeriod, 501);

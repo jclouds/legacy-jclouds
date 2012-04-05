@@ -66,8 +66,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
 
       loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 60, 1, 1,
             TimeUnit.SECONDS);

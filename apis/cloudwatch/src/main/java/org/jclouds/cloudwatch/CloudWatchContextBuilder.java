@@ -19,33 +19,42 @@
 package org.jclouds.cloudwatch;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link MonitoringContext} or {@link Injector} instances based on the most commonly requested
- * arguments.
+ * Creates {@link MonitoringContext} or {@link Injector} instances based on the
+ * most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole
  * @see MonitoringContext
  */
-public class CloudWatchContextBuilder extends RestContextBuilder<CloudWatchClient, CloudWatchAsyncClient> {
+public class CloudWatchContextBuilder<S extends CloudWatchClient, A extends CloudWatchAsyncClient>
+      extends RestContextBuilder<S, A, RestContext<S, A>, CloudWatchApiMetadata<S, A>> {
 
-   public CloudWatchContextBuilder(Properties props) {
-      super(CloudWatchClient.class, CloudWatchAsyncClient.class, props);
+   public CloudWatchContextBuilder(ProviderMetadata<S, A, RestContext<S, A>, CloudWatchApiMetadata<S, A>> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public CloudWatchContextBuilder(CloudWatchApiMetadata<S, A> apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

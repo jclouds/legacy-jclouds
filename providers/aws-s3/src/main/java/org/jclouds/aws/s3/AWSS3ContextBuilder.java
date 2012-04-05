@@ -19,10 +19,11 @@
 package org.jclouds.aws.s3;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.aws.s3.blobstore.AWSS3BlobStoreContext;
 import org.jclouds.aws.s3.blobstore.config.AWSS3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.s3.S3ContextBuilder;
 
 import com.google.inject.Module;
@@ -31,10 +32,19 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class AWSS3ContextBuilder extends S3ContextBuilder {
+public class AWSS3ContextBuilder extends
+      S3ContextBuilder<AWSS3Client, AWSS3AsyncClient, AWSS3BlobStoreContext, AWSS3ApiMetadata> {
+   public AWSS3ContextBuilder() {
+      this(new AWSS3ProviderMetadata());
+   }
 
-   public AWSS3ContextBuilder(Properties props) {
-      super(props);
+   public AWSS3ContextBuilder(
+         ProviderMetadata<AWSS3Client, AWSS3AsyncClient, AWSS3BlobStoreContext, AWSS3ApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public AWSS3ContextBuilder(AWSS3ApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

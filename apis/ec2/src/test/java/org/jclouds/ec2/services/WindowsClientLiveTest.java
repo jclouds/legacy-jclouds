@@ -28,36 +28,28 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.EC2ContextBuilder;
-import org.jclouds.ec2.EC2PropertiesBuilder;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.PasswordData;
 import org.jclouds.ec2.reference.EC2Constants;
-import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code WindowsClient}
@@ -65,7 +57,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "WindowsClientLiveTest")
-public class WindowsClientLiveTest extends BaseVersionedServiceLiveTest {
+public class WindowsClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
    public WindowsClientLiveTest() {
       provider = "ec2";
    }
@@ -74,29 +66,23 @@ public class WindowsClientLiveTest extends BaseVersionedServiceLiveTest {
    private WindowsClient client;
    private static final String DEFAULT_INSTANCE = "i-TODO";
    private static final String DEFAULT_BUCKET = "TODO";
-
-   private RestContext<EC2Client, EC2AsyncClient> context;
+   
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = super.setupProperties();
+      overrides.put(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "206029621532"); /* Amazon Owner ID */
+      return overrides;
+   }
 
    @Override
-   public Properties setupRestProperties() {
-      Properties rest = super.setupRestProperties();
-      rest.put("ec2.contextbuilder", EC2ContextBuilder.class.getName());
-      rest.put("ec2.propertiesbuilder", EC2PropertiesBuilder.class.getName());
-      return rest;
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getWindowsServices();
+      computeService = context.getComputeService();
    }
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      overrides.put(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "206029621532"); /* Amazon Owner ID */
-      ComputeServiceContext serviceContext = new ComputeServiceContextFactory(setupRestProperties()).createContext(provider,
-         ImmutableSet.<Module>of(new Log4JLoggingModule(), new BouncyCastleCryptoModule()), overrides);
-      computeService = serviceContext.getComputeService();
-      context = serviceContext.getProviderSpecificContext();
-      client = context.getApi().getWindowsServices();
-   }
-
+   
    @Test(enabled = false)
    // TODO get instance
    public void testBundleInstanceInRegion() {
@@ -135,7 +121,6 @@ public class WindowsClientLiveTest extends BaseVersionedServiceLiveTest {
       Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup("test", 1, template);
       NodeMetadata node = Iterables.getOnlyElement(nodes);
 
-      boolean shutdown = true;
       try {
 
          // The Administrator password will take some time before it is ready - Amazon says sometimes 15 minutes.

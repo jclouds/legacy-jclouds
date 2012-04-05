@@ -22,8 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
@@ -31,9 +30,11 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.trmk.ecloud.TerremarkECloudAsyncClient;
+import org.jclouds.trmk.ecloud.TerremarkECloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.Test;
@@ -48,7 +49,9 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class TerremarkECloudComputeServiceLiveTest
+      extends
+      BaseComputeServiceLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> {
 
    @Override
    protected Properties setupProperties() {
@@ -104,10 +107,9 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
-         RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+         RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient> tmContext = context.getProviderSpecificContext();
          VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(allData.getLocation().getParent().getDescription(),
-                  allData.getLocation().getDescription(), allData.getName());
+               allData.getLocation().getDescription(), allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }
    }

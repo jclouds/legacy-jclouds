@@ -26,5 +26,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class HPCloudObjectStorageInputStreamMapIntegrationLiveTest extends SwiftInputStreamMapIntegrationLiveTest {
+   public HPCloudObjectStorageInputStreamMapIntegrationLiveTest() {
+      provider = "hpcloud-objectstorage";
+   }
 
 }

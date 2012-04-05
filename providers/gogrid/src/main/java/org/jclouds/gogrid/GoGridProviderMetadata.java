@@ -18,47 +18,81 @@
  */
 package org.jclouds.gogrid;
 
-import java.net.URI;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for GoGrid.
- * 
  * @author Adrian Cole
  */
-public class GoGridProviderMetadata extends BaseProviderMetadata {
-   public GoGridProviderMetadata() {
-      this(builder()
-            .id("gogrid")
-            .name("GoGrid")
-            .api(new GoGridApiMetadata())
-            .homepage(URI.create("http://www.gogrid.com"))
-            .console(URI.create("https://my.gogrid.com/gogrid"))
-            .iso3166Codes("US-CA", "US-VA", "BR-SP"));
+public class GoGridProviderMetadata
+      extends
+      BaseProviderMetadata<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> {
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected GoGridProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public GoGridProviderMetadata() {
+      super(builder());
+   }
+
+   public GoGridProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_ZONES, "1,2,3");
+      properties.setProperty(PROPERTY_ZONE + ".1." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_ZONE + ".2." + ISO3166_CODES, "US-VA");
+      properties.setProperty(PROPERTY_ZONE + ".3." + ISO3166_CODES, "NL-NH");
+      properties.setProperty(PROPERTY_API_VERSION, GoGridAsyncClient.VERSION);
+      properties.setProperty(PROPERTY_GOGRID_DEFAULT_DC, "1");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> {
+
+      protected Builder() {
+         id("gogrid")
+         .name("GoGrid")
+         .apiMetadata(new GoGridApiMetadata())
+         .homepage(URI.create("http://www.gogrid.com"))
+         .console(URI.create("https://my.gogrid.com/gogrid"))
+         .iso3166Codes("US-CA", "US-VA", "BR-SP")
+         .endpoint("https://api.gogrid.com/api")
+         .defaultProperties(GoGridProviderMetadata.defaultProperties());
+      }
 
       @Override
       public GoGridProviderMetadata build() {
          return new GoGridProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

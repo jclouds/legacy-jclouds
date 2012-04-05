@@ -20,25 +20,22 @@ package org.jclouds.cloudstack.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Properties;
-
-import org.jclouds.cloudstack.CloudStackAsyncClient;
-import org.jclouds.cloudstack.CloudStackClient;
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.config.CloudStackRestClientModule;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.AnonymousProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 
 import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
  */
-public abstract class BaseCloudStackAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseCloudStackAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    @RequiresHttp
    @ConfiguresRestClient
@@ -58,10 +55,9 @@ public abstract class BaseCloudStackAsyncClientTest<T> extends RestClientTest<T>
    }
 
    @Override
-   public RestContextSpec<CloudStackClient, CloudStackAsyncClient> createContextSpec() {
-      Properties props = new Properties();
-      props.setProperty("cloudstack.endpoint", "http://localhost:8080/client/api");
-      return new RestContextFactory().createContextSpec("cloudstack", "apiKey", "secretKey", props);
+   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+      return  AnonymousProviderMetadata.forApiWithEndpoint(new CloudStackApiMetadata(),
+            "http://localhost:8080/client/api");
    }
 
 }

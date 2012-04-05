@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class SwiftBlobMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
-
+   public SwiftBlobMapIntegrationLiveTest() {
+      provider = "swift";
+   }
 }

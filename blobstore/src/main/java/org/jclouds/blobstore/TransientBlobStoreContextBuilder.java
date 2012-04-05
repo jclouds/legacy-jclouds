@@ -19,10 +19,11 @@
 package org.jclouds.blobstore;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.blobstore.config.TransientBlobStore;
 import org.jclouds.blobstore.config.TransientBlobStoreContextModule;
 import org.jclouds.blobstore.config.TransientBlobStoreModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -30,18 +31,15 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class TransientBlobStoreContextBuilder extends
-         BlobStoreContextBuilder<BlobStore, AsyncBlobStore> {
+      BlobStoreContextBuilder<TransientBlobStore, AsyncBlobStore, BlobStoreContext<TransientBlobStore, AsyncBlobStore>, TransientApiMetadata> {
 
-   /**
-    * This is only to have the same syntax.
-    * 
-    */
-   public TransientBlobStoreContextBuilder() {
-      this(new Properties());
+   public TransientBlobStoreContextBuilder(
+         ProviderMetadata<TransientBlobStore, AsyncBlobStore, BlobStoreContext<TransientBlobStore, AsyncBlobStore>, TransientApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
-
-   public TransientBlobStoreContextBuilder(Properties props) {
-      super(BlobStore.class, AsyncBlobStore.class, props);
+   
+   public TransientBlobStoreContextBuilder(TransientApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

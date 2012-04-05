@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.cloudwatch.AWSCloudWatchProviderMetadata;
+import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
@@ -55,7 +57,7 @@ import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
@@ -73,7 +75,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AWSEC2ComputeServiceLiveTest")
-public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
+public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
 
    public AWSEC2ComputeServiceLiveTest() {
       provider = "aws-ec2";
@@ -165,9 +167,9 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
          // stop the spinner
          future.cancel(true);
 
-         RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory()
-                  .createContext("aws-cloudwatch", identity, credential, ImmutableSet
-                           .<Module> of(new Log4JLoggingModule()));
+         RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = ContextBuilder
+               .newBuilder(new AWSCloudWatchProviderMetadata())
+               .modules(ImmutableSet.<Module> of(new Log4JLoggingModule())).build();
 
          try {
             Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),

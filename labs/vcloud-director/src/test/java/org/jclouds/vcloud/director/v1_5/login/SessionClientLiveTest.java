@@ -18,8 +18,6 @@
  */
 package org.jclouds.vcloud.director.v1_5.login;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -27,19 +25,16 @@ import static org.testng.Assert.assertTrue;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.Constants;
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SessionClient}. Note this class is tested completely independently of
@@ -48,32 +43,42 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Listeners(FormatApiResultsListener.class)
-@Test(groups = { "live", "user" }, testName = "SessionClientLiveTest")
-public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
+@Test(groups = { "live", "user", "login" }, testName = "SessionClientLiveTest")
+public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<SessionClient, SessionAsyncClient>> {
    public SessionClientLiveTest() {
       provider = "vcloud-director";
    }
 
-   private RestContext<SessionClient, SessionAsyncClient> context;
-
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      RestContextSpec<SessionClient, SessionAsyncClient> contextSpec = contextSpec("vcloud-director", endpoint,
-               apiVersion, buildVersion, "", identity, credential, SessionClient.class, SessionAsyncClient.class);
-
-      context = createContextBuilder(contextSpec, overrides).withModules(
-               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildContext();
-
+   public void setupContext() {
+      super.setupContext();
       // session client isn't typically exposed to the user, as it is implicit
-      client = context.utils().injector().getInstance(SessionClient.class);
+      client = context.getApi();
    }
 
    private SessionClient client;
    private SessionWithToken sessionWithToken;
 
-   @Test(description = "POST /sessions")
+   //temporary until we marry up the test fixtures
+
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      identity = setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
+      credential = setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
+      endpoint = setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
+      setIfTestSystemPropertyPresent(overrides,  provider + ".api-version");
+      setIfTestSystemPropertyPresent(overrides,  provider + ".build-version");
+      return overrides;
+   }
+   
+   @Test(testName = "POST /sessions")
    public void testLogin() {
       String user = identity.substring(0, identity.lastIndexOf('@'));
       String org = identity.substring(identity.lastIndexOf('@') + 1);
@@ -96,11 +101,9 @@ public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
    public void testLogout() {
       client.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
-
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (context != null)
-         context.close();
+   
+   @Override
+   protected ApiMetadata<?, ?, RestContext<SessionClient, SessionAsyncClient>, ?> createApiMetadata() {
+      return AnonymousRestApiMetadata.forClientMappedToAsyncClient(SessionClient.class, SessionAsyncClient.class);
    }
-
 }

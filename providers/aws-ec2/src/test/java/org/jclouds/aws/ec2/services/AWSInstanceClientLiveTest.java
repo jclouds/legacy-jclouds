@@ -20,23 +20,16 @@ package org.jclouds.aws.ec2.services;
 
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code EC2Client}
@@ -44,7 +37,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AWSInstanceClientLiveTest extends BaseVersionedServiceLiveTest {
+public class AWSInstanceClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
    public AWSInstanceClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -52,29 +45,21 @@ public class AWSInstanceClientLiveTest extends BaseVersionedServiceLiveTest {
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";
 
    private AWSInstanceClient client;
-   private RestContext<AWSEC2Client, AWSEC2AsyncClient> context;
    
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi().getInstanceServices();
-
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getInstanceServices();
    }
 
    @Test
    void testDescribeInstances() {
-      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<? extends Reservation<? extends RunningInstance>> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();
       }
    }
 
-   @AfterTest
-   public void shutdown() {
-      context.close();
-   }
 }

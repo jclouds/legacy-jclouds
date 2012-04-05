@@ -18,10 +18,26 @@
  */
 package org.jclouds.aws.elb;
 
-import java.net.URI;
+import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
+import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
+import static org.jclouds.aws.domain.Region.EU_WEST_1;
+import static org.jclouds.aws.domain.Region.SA_EAST_1;
+import static org.jclouds.aws.domain.Region.US_EAST_1;
+import static org.jclouds.aws.domain.Region.US_WEST_1;
+import static org.jclouds.aws.domain.Region.US_WEST_2;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_ZONECLIENT_ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elb.ELBAsyncClient;
+import org.jclouds.elb.ELBClient;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's Elastic Load Balancing
@@ -29,40 +45,65 @@ import org.jclouds.providers.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class AWSELBProviderMetadata extends BaseProviderMetadata {
-
-   public AWSELBProviderMetadata() {
-      this(builder()
-            .id("aws-elb")
-            .name("Amazon Elastic Load Balancing")
-            .api(new ELBApiMetadata())
-            .homepage(URI.create("http://aws.amazon.com/elasticloadbalancing"))
-            .console(URI.create("https://console.aws.amazon.com/ec2/home"))
-            .linkedServices("aws-ec2","aws-elb", "aws-elb", "aws-s3", "aws-simpledb")
-            .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13"));
+public class AWSELBProviderMetadata extends BaseProviderMetadata<ELBClient, ELBAsyncClient, LoadBalancerServiceContext<ELBClient, ELBAsyncClient>, ELBApiMetadata<ELBClient, ELBAsyncClient>> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AWSELBProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromProviderMetadata(this));
+   }
+   
+   public AWSELBProviderMetadata() {
+      super(builder());
+   }
+
+   public AWSELBProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.putAll(Region.regionProperties());
+      properties.setProperty(PROPERTY_REGION + "." + US_EAST_1 + ".endpoint",
+            "https://elasticloadbalancing.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + ".endpoint",
+            "https://elasticloadbalancing.us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_2 + ".endpoint",
+            "https://elasticloadbalancing.us-west-2.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + SA_EAST_1 + ".endpoint",
+            "https://elasticloadbalancing.sa-east-1.amazonaws.com");      
+      properties.setProperty(PROPERTY_REGION + "." + EU_WEST_1 + ".endpoint",
+            "https://elasticloadbalancing.eu-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + ".endpoint",
+            "https://elasticloadbalancing.ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_NORTHEAST_1 + ".endpoint",
+            "https://elasticloadbalancing.ap-northeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_ZONECLIENT_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<ELBClient, ELBAsyncClient, LoadBalancerServiceContext<ELBClient, ELBAsyncClient>, ELBApiMetadata<ELBClient, ELBAsyncClient>> {
+
+      protected Builder(){
+         id("aws-elb")
+         .name("Amazon Elastic Load Balancing")
+         .endpoint("https://elasticloadbalancing.us-east-1.amazonaws.com")
+         .homepage(URI.create("http://aws.amazon.com/elasticloadbalancing"))
+         .console(URI.create("https://console.aws.amazon.com/ec2/home"))
+         .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
+         .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13")
+         .apiMetadata(new ELBApiMetadata<ELBClient, ELBAsyncClient>())
+         .defaultProperties(AWSELBProviderMetadata.defaultProperties());
+      }
 
       @Override
-      public AWSELBProviderMetadata build() {
-         return new AWSELBProviderMetadata(this);
+      public Builder fromProviderMetadata(
+            ProviderMetadata<ELBClient, ELBAsyncClient, LoadBalancerServiceContext<ELBClient, ELBAsyncClient>, ELBApiMetadata<ELBClient, ELBAsyncClient>> in) {
+         super.fromProviderMetadata(in);
+         return this;
       }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

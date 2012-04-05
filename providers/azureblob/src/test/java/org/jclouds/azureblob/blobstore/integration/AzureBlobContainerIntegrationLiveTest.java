@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AzureBlobContainerIntegrationLiveTest extends BaseContainerIntegrationTest {
-
+   public AzureBlobContainerIntegrationLiveTest() {
+      provider = "azureblob";
+   }
 }

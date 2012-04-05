@@ -19,35 +19,30 @@
 package org.jclouds.cloudservers;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceContextModule;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link CloudServersComputeServiceContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
- * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
- * <p/>
- * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see CloudServersComputeServiceContext
  */
-public class CloudServersContextBuilder extends
-         ComputeServiceContextBuilder<CloudServersClient, CloudServersAsyncClient> {
+public class CloudServersContextBuilder
+      extends
+      ComputeServiceContextBuilder<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
 
-   public CloudServersContextBuilder(Properties props) {
-      super(CloudServersClient.class, CloudServersAsyncClient.class, props);
+   public CloudServersContextBuilder(
+         ProviderMetadata<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public CloudServersContextBuilder(CloudServersApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -55,7 +50,6 @@ public class CloudServersContextBuilder extends
       modules.add(new CloudServersComputeServiceContextModule());
    }
 
-   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new CloudServersRestClientModule());
    }

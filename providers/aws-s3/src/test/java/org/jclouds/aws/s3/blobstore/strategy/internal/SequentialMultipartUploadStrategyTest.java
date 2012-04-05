@@ -54,6 +54,7 @@ import com.google.common.collect.Maps;
 @Test(groups = "unit")
 public class SequentialMultipartUploadStrategyTest {
    
+   @SuppressWarnings("unchecked")
    @Test
    public void testWithTwoParts() {
       AWSS3BlobStore ablobStore = createMock(AWSS3BlobStore.class);      
@@ -64,8 +65,8 @@ public class SequentialMultipartUploadStrategyTest {
       MutableBlobMetadata blobMeta = createMock(MutableBlobMetadata.class);
       Payload payload = createMock(Payload.class);
       MutableContentMetadata contentMeta = createMock(MutableContentMetadata.class);
+      @SuppressWarnings("rawtypes")
       BlobStoreContext context = createMock(BlobStoreContext.class);
-      @SuppressWarnings("unchecked")
       RestContext<Object, Object> psc = createMock(RestContextImpl.class);
       AWSS3Client client = createMock(AWSS3Client.class);
       ObjectMetadata ometa = createMock(ObjectMetadata.class);
@@ -117,6 +118,7 @@ public class SequentialMultipartUploadStrategyTest {
       verify(ometa);
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testWithTimeout() {
       AWSS3BlobStore ablobStore = createMock(AWSS3BlobStore.class);      
@@ -127,8 +129,8 @@ public class SequentialMultipartUploadStrategyTest {
       MutableBlobMetadata blobMeta = createMock(MutableBlobMetadata.class);
       Payload payload = createMock(Payload.class);
       MutableContentMetadata contentMeta = createMock(MutableContentMetadata.class);
+      @SuppressWarnings("rawtypes")
       BlobStoreContext context = createMock(BlobStoreContext.class);
-      @SuppressWarnings("unchecked")
       RestContext<Object, Object> psc = createMock(RestContextImpl.class);
       AWSS3Client client = createMock(AWSS3Client.class);
       ObjectMetadata ometa = createMock(ObjectMetadata.class);

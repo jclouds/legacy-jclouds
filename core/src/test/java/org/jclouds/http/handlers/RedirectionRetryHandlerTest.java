@@ -32,8 +32,8 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;

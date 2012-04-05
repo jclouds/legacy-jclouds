@@ -18,7 +18,7 @@
  */
 package org.jclouds.carrenza.vcloud.director;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
 import org.testng.annotations.Test;
 

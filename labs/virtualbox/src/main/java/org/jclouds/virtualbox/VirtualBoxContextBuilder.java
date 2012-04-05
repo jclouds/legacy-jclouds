@@ -21,12 +21,13 @@ package org.jclouds.virtualbox;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.byon.Node;
 import org.jclouds.byon.config.CacheNodeStoreModule;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 
 import com.google.common.base.Predicate;
@@ -41,10 +42,15 @@ import com.google.inject.Module;
  * @author Mattias Holmqvist, Andrea Turli
  */
 @SuppressWarnings("rawtypes")
-public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
+public class VirtualBoxContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier, ComputeServiceContext<Supplier, Supplier>, VirtualBoxApiMetadata> {
 
-   public VirtualBoxContextBuilder(Properties properties) {
-      super(Supplier.class, new VirtualBoxPropertiesBuilder(properties).defaultProperties());
+   public VirtualBoxContextBuilder(
+         ProviderMetadata<Supplier, Supplier, ComputeServiceContext<Supplier, Supplier>, VirtualBoxApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+   
+   public VirtualBoxContextBuilder(VirtualBoxApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

@@ -18,8 +18,11 @@
  */
 package org.jclouds.slicehost.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
+import org.jclouds.slicehost.SlicehostAsyncClient;
+import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -32,7 +35,10 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class SlicehostComputeServiceLiveTest
+      extends
+      BaseComputeServiceLiveTest<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>> {
+
    public SlicehostComputeServiceLiveTest() {
       provider = "slicehost";
    }

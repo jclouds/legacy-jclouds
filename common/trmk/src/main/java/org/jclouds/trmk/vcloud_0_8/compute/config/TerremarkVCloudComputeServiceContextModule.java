@@ -77,6 +77,7 @@ public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServi
       return VAPPSTATUS_TO_NODESTATE;
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
    protected void configure() {
       super.configure();

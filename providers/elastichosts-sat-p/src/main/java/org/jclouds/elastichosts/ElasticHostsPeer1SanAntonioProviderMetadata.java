@@ -1,6 +1,6 @@
 /**
  * Licensed to jclouds, Inc. (jclouds) under one or more
- * contribusat license agreements.  See the NOTICE file
+ * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
  * to you under the Apache License, Version 2.0 (the
@@ -19,47 +19,72 @@
 package org.jclouds.elastichosts;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
+import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts San Antonio Peer 1.
- *
+ * 
  * @author Adrian Cole
  */
-public class ElasticHostsPeer1SanAntonioProviderMetadata extends BaseProviderMetadata {
+public class ElasticHostsPeer1SanAntonioProviderMetadata
+      extends
+      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
 
-   public ElasticHostsPeer1SanAntonioProviderMetadata() {
-      this(builder()
-            .id("elastichosts-sat-p")
-            .name("ElasticHosts San Antonio Peer 1")
-            .api(new ElasticStackApiMetadata())
-            .homepage(URI.create("https://sat-p.elastichosts.com"))
-            .console(URI.create("https://sat-p.elastichosts.com/accounts"))
-            .iso3166Codes("US-TX"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected ElasticHostsPeer1SanAntonioProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public ElasticHostsPeer1SanAntonioProviderMetadata() {
+      super(builder());
+   }
+
+   public ElasticHostsPeer1SanAntonioProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+
+      protected Builder() {
+         id("elastichosts-sat-p")
+         .name("ElasticHosts San Antonio Peer 1")
+         .apiMetadata(new ElasticStackApiMetadata().toBuilder().version("2.0").build())
+         .homepage(URI.create("https://sat-p.elastichosts.com"))
+         .console(URI.create("https://sat-p.elastichosts.com/accounts"))
+         .iso3166Codes("US-TX")
+         .endpoint("https://api.sat-p.elastichosts.com")
+         .defaultProperties(ElasticHostsPeer1SanAntonioProviderMetadata.defaultProperties());
+      }
 
       @Override
       public ElasticHostsPeer1SanAntonioProviderMetadata build() {
          return new ElasticHostsPeer1SanAntonioProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
 }

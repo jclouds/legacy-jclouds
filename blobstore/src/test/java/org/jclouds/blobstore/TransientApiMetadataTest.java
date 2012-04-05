@@ -18,8 +18,7 @@
  */
 package org.jclouds.blobstore;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "TransientApiMetadataTest")
-public class TransientApiMetadataTest extends BaseApiMetadataTest {
+public class TransientApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 
    public TransientApiMetadataTest() {
-      super(new TransientApiMetadata(), ApiType.BLOBSTORE);
+      super(new TransientApiMetadata());
    }
 }

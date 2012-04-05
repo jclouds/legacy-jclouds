@@ -19,47 +19,72 @@
 package org.jclouds.serverlove;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
+import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Serverlove Manchester.
- *
+ * 
  * @author Adrian Cole
  */
-public class ServerloveManchesterProviderMetadata extends BaseProviderMetadata {
+public class ServerloveManchesterProviderMetadata
+      extends
+      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
 
-   public ServerloveManchesterProviderMetadata() {
-      this(builder()
-            .id("serverlove-z1-man")
-            .name("Serverlove Manchester")
-            .api(new ElasticStackApiMetadata())
-            .homepage(URI.create("http://www.serverlove.com"))
-            .console(URI.create("http://www.serverlove.com/accounts"))
-            .iso3166Codes("GB-MAN"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected ServerloveManchesterProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public ServerloveManchesterProviderMetadata() {
+      super(builder());
+   }
+
+   public ServerloveManchesterProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+
+      protected Builder() {
+         id("serverlove-z1-man")
+         .name("Serverlove Manchester")
+         .apiMetadata(new ElasticStackApiMetadata())
+         .homepage(URI.create("http://www.serverlove.com"))
+         .console(URI.create("http://www.serverlove.com/accounts"))
+         .iso3166Codes("GB-MAN")
+         .endpoint("https://api.z1-man.serverlove.com")
+         .defaultProperties(ServerloveManchesterProviderMetadata.defaultProperties());
+      }
 
       @Override
       public ServerloveManchesterProviderMetadata build() {
          return new ServerloveManchesterProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
 }

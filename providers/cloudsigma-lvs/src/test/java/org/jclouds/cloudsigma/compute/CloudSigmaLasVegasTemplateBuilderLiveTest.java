@@ -24,10 +24,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
+import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
+import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -39,7 +42,9 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "CloudSigmaLasVegasTemplateBuilderLiveTest")
-public class CloudSigmaLasVegasTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class CloudSigmaLasVegasTemplateBuilderLiveTest
+      extends
+      BaseTemplateBuilderLiveTest<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>> {
 
    public CloudSigmaLasVegasTemplateBuilderLiveTest() {
       provider = "cloudsigma-lvs";

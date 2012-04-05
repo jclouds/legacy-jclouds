@@ -18,22 +18,13 @@
  */
 package org.jclouds.gogrid.services;
 
-import java.util.Properties;
-
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.sshj.config.SshjSshClientModule;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code GoGridClient}
@@ -41,27 +32,22 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseGoGridClientLiveTest")
-public class BaseGoGridClientLiveTest extends BaseVersionedServiceLiveTest {
+public class BaseGoGridClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>> {
+
    public BaseGoGridClientLiveTest() {
       provider = "gogrid";
    }
 
    protected RestContext<GoGridClient, GoGridAsyncClient> restContext;
-   protected ComputeServiceContext context;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
       restContext = context.getProviderSpecificContext();
    }
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (context != null)
-         context.close();
-   }
 
 }

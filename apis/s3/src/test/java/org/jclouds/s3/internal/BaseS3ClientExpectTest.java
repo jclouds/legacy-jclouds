@@ -18,16 +18,13 @@
  */
 package org.jclouds.s3.internal;
 
-import java.util.Properties;
-
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.s3.S3ApiMetadata;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
-import org.jclouds.s3.S3ContextBuilder;
-import org.jclouds.s3.S3PropertiesBuilder;
 import org.jclouds.s3.config.S3RestClientModule;
 
 import com.google.common.base.Supplier;
@@ -40,19 +37,6 @@ import com.google.inject.Module;
 public abstract class BaseS3ClientExpectTest extends BaseRestClientExpectTest<S3Client> {
 
    protected static final String CONSTANT_DATE = "2009-11-08T15:54:08.897Z";
-
-   public BaseS3ClientExpectTest() {
-      provider = "s3";
-   }
-
-   @Override
-   protected Properties setupRestProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(provider + ".endpoint", "https://s3.amazonaws.com");
-      overrides.setProperty(provider + ".propertiesbuilder", S3PropertiesBuilder.class.getName());
-      overrides.setProperty(provider + ".contextbuilder", S3ContextBuilder.class.getName());
-      return overrides;
-   }
 
    @RequiresHttp
    @ConfiguresRestClient
@@ -72,4 +56,11 @@ public abstract class BaseS3ClientExpectTest extends BaseRestClientExpectTest<S3
    protected Module createModule() {
       return new TestS3RestClientModule();
    }
+   
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   @Override
+   public S3ApiMetadata createApiMetadata() {
+      return new S3ApiMetadata();
+   }
+
 }

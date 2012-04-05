@@ -28,10 +28,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterClass;
@@ -49,7 +49,7 @@ import com.google.inject.Module;
 @Test(groups = "live")
 public class BYONComputeServiceLiveTest {
 
-   private ComputeServiceContext context;
+   private ComputeServiceContext<?, ?> context;
 
    @BeforeClass(groups = "live")
    public void setup() throws FileNotFoundException, IOException {
@@ -72,9 +72,8 @@ public class BYONComputeServiceLiveTest {
                .append("\n");
 
       contextProperties.setProperty("byon.nodes", nodes.toString());
-
-      context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module> of(
-               new SshjSshClientModule(), new Log4JLoggingModule()), contextProperties);
+      context = ContextBuilder.newBuilder(new BYONApiMetadata()).overrides(contextProperties)
+            .modules(ImmutableSet.<Module> of(new SshjSshClientModule(), new Log4JLoggingModule())).build();
    }
 
    public void testCanRunCommandAsCurrentUser() throws Exception {

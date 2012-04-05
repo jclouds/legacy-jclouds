@@ -19,45 +19,64 @@
 package org.jclouds.trmk.ecloud;
 
 import java.net.URI;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's Enterprise Cloud.
  * 
  * @author Adrian Cole
  */
-public class TerremarkECloudProviderMetadata extends BaseProviderMetadata {
-   public TerremarkECloudProviderMetadata() {
-      this(builder()
-            .id("trmk-ecloud")
-            .name("Terremark Enterprise Cloud v2.8")
-            .api(new TerremarkECloudApiMetadata())
-            .homepage(URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx"))
-            .console(URI.create("https://icenter.digitalops.net"))
-            .iso3166Codes("US-FL", "US-VA", "NL-NH", "BR-SP"));
+public class TerremarkECloudProviderMetadata extends BaseProviderMetadata<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>, TerremarkECloudApiMetadata> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected TerremarkECloudProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public TerremarkECloudProviderMetadata() {
+      super(builder());
+   }
+
+   public TerremarkECloudProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>, TerremarkECloudApiMetadata> {
+
+      protected Builder(){
+            id("trmk-ecloud")
+            .name("Terremark Enterprise Cloud v2.8")
+            .apiMetadata(new TerremarkECloudApiMetadata())
+            .endpoint("https://services.enterprisecloud.terremark.com/api")
+            .homepage(URI.create("http://www.terremark.com/services/cloudcomputing/theenterprisecloud.aspx"))
+            .console(URI.create("https://icenter.digitalops.net"))
+            .iso3166Codes("US-FL", "US-VA", "NL-NH", "BR-SP");
+      }
 
       @Override
       public TerremarkECloudProviderMetadata build() {
          return new TerremarkECloudProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>, TerremarkECloudApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
 }

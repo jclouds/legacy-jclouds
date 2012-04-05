@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -34,11 +33,12 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.xml.EnvelopeHandlerTest;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.AnonymousProviderMetadata;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudVersionsClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
@@ -78,7 +78,7 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", testName = "BaseVCloudAsyncClientTest")
-public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    @Override
    protected void checkFilters(HttpRequest request) {
@@ -90,14 +90,13 @@ public abstract class BaseVCloudAsyncClientTest<T> extends RestClientTest<T> {
    protected Module createModule() {
       return new VCloudRestClientModuleExtension();
    }
-
+   
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      Properties overrides = new Properties();
-      overrides.setProperty("vcloud.endpoint", "https://vcenterprise.bluelock.com/api/v1.0");
-      return new RestContextFactory().createContextSpec("vcloud", "identity", "credential", overrides);
+   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+      return  AnonymousProviderMetadata.forApiWithEndpoint(new VCloudApiMetadata(),
+            "https://vcenterprise.bluelock.com/api/v1.0");
    }
-
+   
    protected static final ReferenceTypeImpl ORG_REF = new ReferenceTypeImpl("org", VCloudMediaType.ORG_XML,
          URI.create("https://vcenterprise.bluelock.com/api/v1.0/org/1"));
 

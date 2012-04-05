@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.io.Payloads.calculateMD5;
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.io.Payloads.newStringPayload;
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -102,12 +100,11 @@ import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.AnonymousProviderMetadata;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Endpoint;
@@ -422,21 +419,13 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    private Injector injectorForCaller(HttpCommandExecutorService service, Module... modules) {
-
-      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec(
-            "test",
-            "http://localhost:9999",
-            "1",
-            "",
-            "",
-            "userfoo",
-            null,
-            Caller.class,
-            AsyncCaller.class,
-            ImmutableSet.<Module> builder().add(new MockModule(service)).add(new NullLoggingModule())
-                  .add(new CallerModule()).addAll(ImmutableSet.<Module> copyOf(modules)).build());
-
-      return createContextBuilder(contextSpec).buildInjector();
+      return ContextBuilder
+            .newBuilder(
+                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(Caller.class, AsyncCaller.class,
+                        "http://localhost:9999"))
+            .modules(
+                  ImmutableSet.<Module> builder().add(new MockModule(service)).add(new NullLoggingModule())
+                        .add(new CallerModule()).addAll(ImmutableSet.<Module> copyOf(modules)).build()).buildInjector();
 
    }
 
@@ -2543,9 +2532,11 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
-      RestContextSpec<Callee, AsyncCallee> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "",
-            "userfoo", null, Callee.class, AsyncCallee.class,
-            ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
+      injector =  ContextBuilder
+            .newBuilder(
+                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(Callee.class, AsyncCallee.class,
+                        "http://localhost:9999"))
+            .modules(ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
 
                @Override
                protected void configure() {
@@ -2565,9 +2556,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                   throw new AuthorizationException();
                }
 
-            }));
-
-      injector = createContextBuilder(contextSpec).buildInjector();
+            })).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       crypto = injector.getInstance(Crypto.class);
    }

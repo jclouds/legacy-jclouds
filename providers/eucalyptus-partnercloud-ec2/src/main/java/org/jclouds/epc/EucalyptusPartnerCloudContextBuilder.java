@@ -19,10 +19,14 @@
 package org.jclouds.epc;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.EC2ContextBuilder;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.epc.config.EucalyptusPartnerCloudComputeServiceContextModule;
+import org.jclouds.eucalyptus.EucalyptusApiMetadata;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -30,10 +34,14 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class EucalyptusPartnerCloudContextBuilder extends EC2ContextBuilder {
+public class EucalyptusPartnerCloudContextBuilder extends EC2ContextBuilder<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> {
 
-   public EucalyptusPartnerCloudContextBuilder(Properties props) {
-      super(props);
+   public EucalyptusPartnerCloudContextBuilder(ProviderMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public EucalyptusPartnerCloudContextBuilder(EucalyptusApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

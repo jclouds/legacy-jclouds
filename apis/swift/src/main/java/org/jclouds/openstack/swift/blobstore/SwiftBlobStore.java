@@ -73,7 +73,7 @@ public class SwiftBlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   protected SwiftBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+   protected SwiftBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, CommonSwiftClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,

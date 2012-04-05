@@ -23,24 +23,26 @@ import java.util.Properties;
 
 import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
 import org.jclouds.cloudstack.config.CloudStackRestClientModule;
-import org.jclouds.cloudstack.internal.CloudStackContextImpl;
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CloudStackContextBuilder extends ComputeServiceContextBuilder<CloudStackClient, CloudStackAsyncClient> {
+public class CloudStackContextBuilder extends
+      ComputeServiceContextBuilder<CloudStackClient, CloudStackAsyncClient, CloudStackContext, CloudStackApiMetadata> {
 
-   public CloudStackContextBuilder(Properties props) {
-      super(CloudStackClient.class, CloudStackAsyncClient.class, props);
+   public CloudStackContextBuilder(
+         ProviderMetadata<CloudStackClient, CloudStackAsyncClient, CloudStackContext, CloudStackApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
 
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new CloudStackComputeServiceContextModule());
+   public CloudStackContextBuilder(CloudStackApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -49,7 +51,13 @@ public class CloudStackContextBuilder extends ComputeServiceContextBuilder<Cloud
    }
 
    @Override
-   public CloudStackContext buildComputeServiceContext() {
-      return buildInjector().getInstance(CloudStackContextImpl.class);
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new CloudStackComputeServiceContextModule());
    }
+
+   @VisibleForTesting
+   public Properties getOverrides() {
+      return overrides;
+   }
+
 }

@@ -18,49 +18,78 @@
  */
 package org.jclouds.bluelock.vcloud.zone01;
 
-import java.net.URI;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.VCloudApiMetadata;
+import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudClient;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Zone 1.
  * 
  * @author Adrian Cole
  */
-public class BluelockVCloudZone01ProviderMetadata extends BaseProviderMetadata {
+public class BluelockVCloudZone01ProviderMetadata
+      extends
+      BaseProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
 
-   public BluelockVCloudZone01ProviderMetadata() {
-      this(builder()
-            .id("bluelock-vcloud-zone01")
-            .name("Bluelock vCloud Zone 1")
-            .api(new VCloudApiMetadata())
-            .homepage(URI.create("http://www.bluelock.com/bluelock-cloud-hosting"))
-            .console(URI.create("https://zone01.bluelock.com/cloud/org/YOUR_ORG_HERE"))
-            .iso3166Codes("US-IN"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected BluelockVCloudZone01ProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public BluelockVCloudZone01ProviderMetadata() {
+      super(builder());
+   }
+
+   public BluelockVCloudZone01ProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "internet01-.*");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+
+      protected Builder(){
+         id("bluelock-vcloud-zone01")
+         .name("Bluelock vCloud Zone 1")
+               .apiMetadata(
+                     new VCloudApiMetadata().toBuilder()
+                     .buildVersion("1.5.0.464915")
+                           .contextBuilder(TypeToken.of(BluelockVCloudZone01ContextBuilder.class)).build())
+         .homepage(URI.create("http://www.bluelock.com/bluelock-cloud-hosting"))
+         .console(URI.create("https://zone01.bluelock.com/cloud/org/YOUR_ORG_HERE"))
+         .iso3166Codes("US-IN")
+         .endpoint("https://zone01.bluelock.com/api")
+         .defaultProperties(BluelockVCloudZone01ProviderMetadata.defaultProperties());
+      }
 
       @Override
       public BluelockVCloudZone01ProviderMetadata build() {
          return new BluelockVCloudZone01ProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

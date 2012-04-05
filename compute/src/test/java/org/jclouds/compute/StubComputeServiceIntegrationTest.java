@@ -25,7 +25,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reportMatcher;
 import static org.testng.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
@@ -38,6 +37,7 @@ import java.util.concurrent.TimeoutException;
 import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
@@ -45,7 +45,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess.Configuration;
 import org.jclouds.ssh.SshClient;
@@ -65,8 +64,10 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
+@SuppressWarnings("rawtypes")
 @Test(groups = "live", testName="StubComputeServiceIntegrationTest")
-public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTest {
+public class StubComputeServiceIntegrationTest extends
+      BaseComputeServiceLiveTest<ConcurrentMap, ConcurrentMap, ComputeServiceContext<ConcurrentMap, ConcurrentMap>> {
 
    private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
    private static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);
@@ -377,12 +378,6 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       };
    }
 
-   @Override
-   protected void setupCredentials() {
-      identity = "stub";
-      credential = "stub";
-   }
-
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
       // TODO: this fails so we override it.
    }
@@ -390,12 +385,6 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    public static Payload payloadEq(String value) {
       reportMatcher(new PayloadEquals(value));
       return null;
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<ConcurrentMap<String, NodeMetadata>, ConcurrentMap<String, NodeMetadata>> stubContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    private static class PayloadEquals implements IArgumentMatcher, Serializable {
@@ -453,7 +442,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    }
 
    @Override
-   protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
+   protected void setupKeyPairForTest() {
       keyPair = ImmutableMap.<String, String> of("public", "ssh-rsa", "private", "-----BEGIN RSA PRIVATE KEY-----");
    }
 

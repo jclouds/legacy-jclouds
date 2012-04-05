@@ -19,13 +19,18 @@
 package org.jclouds.s3.blobstore.integration;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = "live", testName = "S3BlobSignerLiveTest")
 public class S3BlobSignerLiveTest extends BaseBlobSignerLiveTest {
 
+   public S3BlobSignerLiveTest() {
+      provider = "s3";
+      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
 }

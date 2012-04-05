@@ -21,6 +21,10 @@ package org.jclouds.providers;
 import java.net.URI;
 
 import org.jclouds.apis.JcloudsTestBlobStoreApiMetadata;
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -29,38 +33,46 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
+public class JcloudsTestBlobStoreProviderMetadata
+      extends
+      BaseProviderMetadata<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestBlobStoreApiMetadata> {
 
-   public JcloudsTestBlobStoreProviderMetadata() {
-      this(builder()
-            .api(new JcloudsTestBlobStoreApiMetadata())
-            .id("test-blobstore-api")
-            .name("Test Blobstore Provider")
-            .homepage(URI.create("http://jclouds.org"))
-            .console(URI.create("http://jclouds.org/console"))
-            .iso3166Codes(ImmutableSet.of("US-VA", "US-CA", "US-FL")));
+   public static Builder builder() {
+      return new Builder();
+   }
+   
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromProviderMetadata(this));
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected JcloudsTestBlobStoreProviderMetadata(ConcreteBuilder builder) {
+   public JcloudsTestBlobStoreProviderMetadata() {
+      super(builder());
+   }
+
+   public JcloudsTestBlobStoreProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestBlobStoreApiMetadata> {
+
+      protected Builder(){
+         id("test-blobstore-api")
+         .name("Test Blobstore Provider")
+         .endpoint("http://mock")
+         .homepage(URI.create("http://jclouds.org"))
+         .console(URI.create("http://jclouds.org/console"))
+         .iso3166Codes(ImmutableSet.of("US-VA", "US-CA", "US-FL"))
+         .apiMetadata(new JcloudsTestBlobStoreApiMetadata());
+      }
 
       @Override
       public JcloudsTestBlobStoreProviderMetadata build() {
          return new JcloudsTestBlobStoreProviderMetadata(this);
       }
+
    }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
 }

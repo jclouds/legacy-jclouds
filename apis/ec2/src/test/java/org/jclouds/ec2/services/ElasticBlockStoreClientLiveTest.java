@@ -22,33 +22,27 @@ import static org.jclouds.ec2.options.DescribeSnapshotsOptions.Builder.snapshotI
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.predicates.SnapshotCompleted;
 import org.jclouds.ec2.predicates.VolumeAvailable;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code ElasticBlockStoreClient}
@@ -56,28 +50,25 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ElasticBlockStoreClientLiveTest")
-public class ElasticBlockStoreClientLiveTest extends BaseVersionedServiceLiveTest {
+public class ElasticBlockStoreClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
    public ElasticBlockStoreClientLiveTest() {
       provider = "ec2";
    }
    
    private ElasticBlockStoreClient client;
-   private RestContext<EC2Client, EC2AsyncClient> context;
    private String volumeId;
    private Snapshot snapshot;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi().getElasticBlockStoreServices();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getElasticBlockStoreServices();
    }
 
    @Test
    void testDescribeVolumes() {
-      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -227,8 +218,4 @@ public class ElasticBlockStoreClientLiveTest extends BaseVersionedServiceLiveTes
       assert client.describeSnapshotsInRegion(snapshot.getRegion(), snapshotIds(snapshot.getId())).size() == 0;
    }
 
-   @AfterTest
-   public void shutdown() {
-      context.close();
-   }
 }

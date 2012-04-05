@@ -67,7 +67,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/list?"
             + "v=1.5&isPublic=true&image.state=Available&" + "image.type=Web%20Server&"
-            + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+            + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -90,7 +90,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/get?v=1.5&"
-            + "name=name1&name=name2&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+            + "name=name1&name=name2&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -113,7 +113,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
-            + "image=imageName&description=newDesc&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+            + "image=imageName&description=newDesc&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -136,7 +136,7 @@ public class GridImageAsyncClientTest extends BaseGoGridAsyncClientTest<GridImag
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/image/edit?v=1.5&"
-            + "image=imageName&friendlyName=newFriendlyName&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo "
+            + "image=imageName&friendlyName=newFriendlyName&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity "
             + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);

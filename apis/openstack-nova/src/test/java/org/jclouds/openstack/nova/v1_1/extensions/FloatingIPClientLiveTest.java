@@ -51,8 +51,8 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testListFloatingIPs() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
@@ -73,8 +73,8 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testAllocateAndDeallocateFloatingIPs() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
@@ -104,12 +104,12 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testAddAndRemoveFloatingIp() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         Optional<FloatingIPClient> clientOption = context.getApi().getFloatingIPExtensionForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         Optional<FloatingIPClient> clientOption = novaContext.getApi().getFloatingIPExtensionForZone(zoneId);
          if (!clientOption.isPresent())
             continue;
          FloatingIPClient client = clientOption.get();
-         ServerClient serverClient = context.getApi().getServerClientForZone(zoneId);
+         ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
          Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
          blockUntilServerActive(server.getId(), serverClient);
          FloatingIP floatingIP = client.allocate();
@@ -125,12 +125,12 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
    }
 
    private String imageIdForZone(String zoneId) {
-      ImageClient imageClient = context.getApi().getImageClientForZone(zoneId);
+      ImageClient imageClient = novaContext.getApi().getImageClientForZone(zoneId);
       return Iterables.getLast(imageClient.listImages()).getId();
    }
 
    private String flavorRefForZone(String zoneId) {
-      FlavorClient flavorClient = context.getApi().getFlavorClientForZone(zoneId);
+      FlavorClient flavorClient = novaContext.getApi().getFlavorClientForZone(zoneId);
       return Iterables.getLast(flavorClient.listFlavors()).getId();
    }
 

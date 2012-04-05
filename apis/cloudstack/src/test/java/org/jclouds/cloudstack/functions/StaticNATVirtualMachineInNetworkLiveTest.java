@@ -61,7 +61,7 @@ public class StaticNATVirtualMachineInNetworkLiveTest extends NATClientLiveTest 
 
    @BeforeGroups(groups = "live")
    public void setupClient() {
-      super.setupClient();
+      super.setupContext();
       prefix += "nat";
       try {
          network = find(client.getNetworkClient().listNetworks(), NetworkPredicates.supportsStaticNAT());

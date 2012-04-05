@@ -55,8 +55,8 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
    private Zone zone;
 
    @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
 
       try {
          zone = find(client.getZoneClient().listZones(), ZonePredicates.supportsAdvancedNetworks());
@@ -104,7 +104,7 @@ public class NetworkClientLiveTest extends BaseCloudStackClientLiveTest {
       final NetworkOffering offering;
       try {
          offering = get(
-               context.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zone.getId())), 0);
+               cloudStackContext.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zone.getId())), 0);
       } catch (NoSuchElementException e) {
          Logger.getAnonymousLogger().log(Level.SEVERE, "VLAN networks not supported, skipping test");
          return;

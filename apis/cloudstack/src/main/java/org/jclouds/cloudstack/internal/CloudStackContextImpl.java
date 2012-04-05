@@ -57,7 +57,6 @@ public class CloudStackContextImpl extends ComputeServiceContextImpl<CloudStackC
       this.globalContext = globalContext;
    }
    
-   @SuppressWarnings("unchecked")
    @Override
    public RestContext<CloudStackClient,CloudStackAsyncClient> getProviderSpecificContext() {
       return providerSpecificContext;

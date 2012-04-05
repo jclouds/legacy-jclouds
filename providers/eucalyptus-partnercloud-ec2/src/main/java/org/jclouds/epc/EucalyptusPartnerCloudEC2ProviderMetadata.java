@@ -18,51 +18,80 @@
  */
 package org.jclouds.epc;
 
-import java.net.URI;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.eucalyptus.EucalyptusApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Eucalpytus'
- * Partner Cloud EC2 provider.
+ * Implementation of {@link org.jclouds.providers.ProviderMetadata} for Eucalyptus Partner Cloud EC2.
  * 
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
-public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetadata {
-
-   public EucalyptusPartnerCloudEC2ProviderMetadata() {
-      this(builder()
-            .id("eucalyptus-partnercloud-ec2")
-            .name("Eucalyptus Partner Cloud (EC2)")
-            .api(new EucalyptusApiMetadata())
-            .homepage(URI.create("http://www.eucalyptus.com/partners"))
-            .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
-            .linkedServices("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3")
-            .iso3166Codes("US-CA"));
+public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected EucalyptusPartnerCloudEC2ProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public EucalyptusPartnerCloudEC2ProviderMetadata() {
+      super(builder());
+   }
+
+   public EucalyptusPartnerCloudEC2ProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
+      properties.setProperty(PROPERTY_REGION + ".Eucalyptus." + ISO3166_CODES, "US-CA");
+      properties.setProperty("eucalyptus-partnercloud-ec2.virtualization-type", "kvm");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> {
+
+      protected Builder(){
+         id("eucalyptus-partnercloud-ec2")
+         .name("Eucalyptus Partner Cloud (EC2)")
+               .apiMetadata(
+                     new EucalyptusApiMetadata().toBuilder()
+                           .contextBuilder(TypeToken.of(EucalyptusPartnerCloudContextBuilder.class)).build())
+         .homepage(URI.create("http://www.eucalyptus.com/partners"))
+         .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
+         .linkedServices("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3")
+         .iso3166Codes("US-CA")
+         .endpoint("http://partnercloud.eucalyptus.com:8773/services/Eucalyptus")
+         .defaultProperties(EucalyptusPartnerCloudEC2ProviderMetadata.defaultProperties());
+      }
 
       @Override
       public EucalyptusPartnerCloudEC2ProviderMetadata build() {
          return new EucalyptusPartnerCloudEC2ProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

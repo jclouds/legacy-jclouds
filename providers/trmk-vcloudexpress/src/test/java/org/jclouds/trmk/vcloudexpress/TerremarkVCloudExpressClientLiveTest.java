@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "TerremarkVCloudExpressClientLiveTest")
-public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest {
+public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
 
    @Override
    protected SshClient getConnectionFor(IPSocket socket) {

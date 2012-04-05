@@ -30,6 +30,10 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", testName = "CloudOneStorageServiceIntegrationLiveTest")
 public class CloudOneStorageServiceIntegrationLiveTest extends AtmosServiceIntegrationLiveTest {
+   public CloudOneStorageServiceIntegrationLiveTest() {
+      provider = "cloudonestorage";
+   }
+
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US-GA", "US-TX");

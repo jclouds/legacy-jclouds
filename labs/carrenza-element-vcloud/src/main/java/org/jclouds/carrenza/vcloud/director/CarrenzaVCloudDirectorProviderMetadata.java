@@ -18,49 +18,78 @@
  */
 package org.jclouds.carrenza.vcloud.director;
 
-import java.net.URI;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Carrenza vCloud Director
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for StratoGen VMware hosting
  * 
- * @author dankov
+ * @author Adrian Cole
  */
-public class CarrenzaVCloudDirectorProviderMetadata extends BaseProviderMetadata {
+public class CarrenzaVCloudDirectorProviderMetadata
+      extends
+      BaseProviderMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
 
-   public CarrenzaVCloudDirectorProviderMetadata() {
-      this(builder()
-            .id("carrenza-vcloud-director")
-            .name("Carrenza vCloud Director")
-            .api(new VCloudDirectorApiMetadata())
-            .homepage(URI.create("http://carrenza.com/"))
-            .console(URI.create("https://myvdc.carrenza.net/cloud/org/YOUR_ORG_HERE"))
-            .iso3166Codes("GB-LND"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CarrenzaVCloudDirectorProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CarrenzaVCloudDirectorProviderMetadata() {
+      super(builder());
+   }
+
+   public CarrenzaVCloudDirectorProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_BUILD_VERSION, "???"); //FIXME
+//      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External"); FIXME: needed?
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
+
+      protected Builder(){
+         id("carrenza-vcloud-director")
+         .name("Carrenza vCloud Director")
+         .apiMetadata(new VCloudDirectorApiMetadata().toBuilder()
+                     .buildVersion("1.5.0.464915")
+                           .contextBuilder(TypeToken.of(CarrenzaVCloudDirectorContextBuilder.class)).build())
+         .homepage(URI.create("http://carrenza.com/"))
+         .console(URI.create("https://myvdc.carrenza.net/cloud/org/YOUR_ORG_HERE"))
+         .iso3166Codes("GB-LND")
+         .endpoint("https://myvdc.carrenza.net/api")
+         .defaultProperties(CarrenzaVCloudDirectorProviderMetadata.defaultProperties());
+      }
 
       @Override
       public CarrenzaVCloudDirectorProviderMetadata build() {
          return new CarrenzaVCloudDirectorProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

@@ -69,7 +69,7 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
    private final BlobToObject blob2Object;
 
    @Inject
-   public AWSS3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
+   public AWSS3AsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AWSS3AsyncClient async, AWSS3Client sync,
             BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,

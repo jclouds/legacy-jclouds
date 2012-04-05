@@ -18,20 +18,13 @@
  */
 package org.jclouds.opsource.servers.internal;
 
-import java.util.Properties;
-
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.opsource.servers.OpSourceServersAsyncClient;
 import org.jclouds.opsource.servers.OpSourceServersClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.sshj.config.SshjSshClientModule;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@link OpSourceServersClient} and acts as parent for other
@@ -40,25 +33,21 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public abstract class BaseOpSourceServersClientLiveTest extends BaseVersionedServiceLiveTest {
+public abstract class BaseOpSourceServersClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<OpSourceServersClient, OpSourceServersAsyncClient, ComputeServiceContext<OpSourceServersClient, OpSourceServersAsyncClient>> {
 
    protected BaseOpSourceServersClientLiveTest() {
       provider = "opsource-servers";
    }
 
-   protected RestContext<OpSourceServersClient, OpSourceServersAsyncClient> context;
+   protected RestContext<OpSourceServersClient, OpSourceServersAsyncClient> restContext;
 
-   @BeforeClass(groups = { "live" })
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
    public void setupContext() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-
-      context = new RestContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      super.setupContext();
+      restContext = context.getProviderSpecificContext();
    }
 
-   protected void tearDown() {
-      if (context != null)
-         context.close();
-   }
 }

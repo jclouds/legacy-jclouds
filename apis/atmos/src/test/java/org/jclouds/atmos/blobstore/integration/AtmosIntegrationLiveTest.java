@@ -35,7 +35,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" })
 public class AtmosIntegrationLiveTest extends BaseBlobIntegrationTest {
-
+   public AtmosIntegrationLiveTest() {
+      provider = "atmos";
+   }
    @DataProvider(name = "delete")
    // no unicode support
    @Override

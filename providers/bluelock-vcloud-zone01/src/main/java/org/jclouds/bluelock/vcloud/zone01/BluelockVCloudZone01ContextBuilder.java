@@ -19,11 +19,15 @@
 package org.jclouds.bluelock.vcloud.zone01;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.bluelock.vcloud.zone01.config.BluelockVCloudZone01RestClientModule;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.vcloud.VCloudApiMetadata;
+import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudContextBuilder;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 
@@ -31,21 +35,28 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link BlueLockVCloudComputeServiceContext} or {@link Injector} instances based on the
- * most commonly requested arguments.
+ * Creates {@link BlueLockVCloudComputeServiceContext} or {@link Injector}
+ * instances based on the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole
  */
 public class BluelockVCloudZone01ContextBuilder extends VCloudContextBuilder {
+   public BluelockVCloudZone01ContextBuilder(
+         ProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
 
-   public BluelockVCloudZone01ContextBuilder(Properties props) {
-      super(props);
+   public BluelockVCloudZone01ContextBuilder(VCloudApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

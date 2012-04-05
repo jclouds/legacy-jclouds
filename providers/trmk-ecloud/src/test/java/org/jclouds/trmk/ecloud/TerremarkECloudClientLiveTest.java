@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "TerremarkECloudClientLiveTest")
-public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
+public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient> {
 
    public TerremarkECloudClientLiveTest() {
       this.provider = "trmk-ecloud";

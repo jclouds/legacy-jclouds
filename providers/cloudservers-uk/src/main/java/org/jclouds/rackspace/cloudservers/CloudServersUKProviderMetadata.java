@@ -18,50 +18,69 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.cloudservers.CloudServersApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.cloudservers.CloudServersAsyncClient;
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers in UK.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Servers UK.
  * 
  * @author Adrian Cole
  */
-public class CloudServersUKProviderMetadata extends BaseProviderMetadata {
-
-   public CloudServersUKProviderMetadata() {
-      this(builder()
-            .id("cloudservers-uk")
-            .name("Rackspace Cloud Servers UK")
-            .api(new CloudServersApiMetadata())
-            .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-servers"))
-            .console(URI.create("https://lon.manage.rackspacecloud.com"))
-            .linkedServices("cloudloadbalancers-uk", "cloudservers-uk", "cloudfiles-uk")
-            .iso3166Codes("GB-SLG"));
+public class CloudServersUKProviderMetadata extends BaseProviderMetadata<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudServersUKProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CloudServersUKProviderMetadata() {
+      super(builder());
+   }
+
+   public CloudServersUKProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "UK");
+      return properties;
+   }
+   public static class Builder extends BaseProviderMetadata.Builder<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
+
+      protected Builder(){
+         id("cloudservers-uk")
+         .name("Rackspace Cloud Servers UK")
+         .apiMetadata(new CloudServersApiMetadata())
+         .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-servers"))
+         .console(URI.create("https://lon.manage.rackspacecloud.com"))
+         .linkedServices("cloudloadbalancers-uk", "cloudservers-uk", "cloudfiles-uk")
+         .iso3166Codes("GB-SLG");
+      }
 
       @Override
       public CloudServersUKProviderMetadata build() {
          return new CloudServersUKProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

@@ -20,17 +20,15 @@ package org.jclouds.gogrid.services;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Properties;
-
 import org.jclouds.date.TimeStamp;
+import org.jclouds.gogrid.GoGridProviderMetadata;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -41,7 +39,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public abstract class BaseGoGridAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseGoGridAsyncClientTest<T> extends BaseAsyncClientTest<T> {
    @Override
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
@@ -68,8 +66,8 @@ public abstract class BaseGoGridAsyncClientTest<T> extends RestClientTest<T> {
    }
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("gogrid", "foo", "bar", new Properties());
+   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+      return new GoGridProviderMetadata();
    }
 
 }

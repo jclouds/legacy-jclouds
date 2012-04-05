@@ -21,8 +21,11 @@ package org.jclouds.savvis.vpdc.compute;
 import java.util.Properties;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
+import org.jclouds.savvis.vpdc.VPDCAsyncClient;
+import org.jclouds.savvis.vpdc.VPDCClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -38,7 +41,9 @@ import com.google.inject.Module;
  * 
  */
 @Test(enabled = true, groups = "live")
-public class VPDCComputeServiceLiveTestDisabled extends BaseComputeServiceLiveTest {
+public class VPDCComputeServiceLiveTestDisabled
+      extends
+      BaseComputeServiceLiveTest<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>> {
 
    public VPDCComputeServiceLiveTestDisabled() {
       provider = "savvis-symphonyvpdc";

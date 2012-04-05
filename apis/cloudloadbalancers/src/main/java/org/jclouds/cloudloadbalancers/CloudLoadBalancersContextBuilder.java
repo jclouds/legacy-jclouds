@@ -19,11 +19,12 @@
 package org.jclouds.cloudloadbalancers;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
 import org.jclouds.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.loadbalancer.LoadBalancerServiceContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -31,11 +32,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersContextBuilder extends
-         LoadBalancerServiceContextBuilder<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> {
+public class CloudLoadBalancersContextBuilder
+      extends
+      LoadBalancerServiceContextBuilder<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
 
-   public CloudLoadBalancersContextBuilder(Properties props) {
-      super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class, props);
+   public CloudLoadBalancersContextBuilder(
+         ProviderMetadata<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public CloudLoadBalancersContextBuilder(CloudLoadBalancersApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

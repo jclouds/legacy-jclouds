@@ -19,48 +19,72 @@
 package org.jclouds.skalicloud;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
+import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for SkaliCloud Malaysia.
- *
+ * 
  * @author Adrian Cole
  */
-public class SkaliCloudMalaysiaProviderMetadata  extends BaseProviderMetadata {
+public class SkaliCloudMalaysiaProviderMetadata
+      extends
+      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
 
-   public SkaliCloudMalaysiaProviderMetadata() {
-      this(builder()
-            .id("skalicloud-sdg-my")
-            .name("SkaliCloud Malaysia")
-            .api(new ElasticStackApiMetadata())
-            .homepage(URI.create("http://sdg-my.skalicloud.com"))
-            .console(URI.create("http://sdg-my.skalicloud.com/accounts"))
-            .iso3166Codes("MY-10"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected SkaliCloudMalaysiaProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public SkaliCloudMalaysiaProviderMetadata() {
+      super(builder());
+   }
+
+   public SkaliCloudMalaysiaProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+
+      protected Builder() {
+         id("skalicloud-sdg-my")
+         .name("SkaliCloud Malaysia")
+         .apiMetadata(new ElasticStackApiMetadata())
+         .homepage(URI.create("https://sdg-my.skalicloud.com"))
+         .console(URI.create("https://api.sdg-my.skalicloud.com/accounts"))
+         .iso3166Codes("MY-10")
+         .endpoint("https://api.sdg-my.skalicloud.com")
+         .defaultProperties(SkaliCloudMalaysiaProviderMetadata.defaultProperties());
+      }
 
       @Override
       public SkaliCloudMalaysiaProviderMetadata build() {
          return new SkaliCloudMalaysiaProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

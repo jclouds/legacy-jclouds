@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.testng.annotations.Test;
 
 /**
@@ -29,9 +30,14 @@ import org.testng.annotations.Test;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = "live", testName = "S3BlobIntegrationLiveTest")
 public class S3BlobIntegrationLiveTest extends BaseBlobIntegrationTest {
 
+   public S3BlobIntegrationLiveTest() {
+      provider = "s3";
+      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
+   
    @Override
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {

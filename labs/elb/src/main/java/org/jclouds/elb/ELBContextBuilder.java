@@ -19,13 +19,14 @@
 package org.jclouds.elb;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.elb.config.ELBRestClientModule;
 import org.jclouds.elb.loadbalancer.config.ELBLoadBalancerContextModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.loadbalancer.LoadBalancerServiceContextBuilder;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -43,15 +44,20 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see ELBContext
  */
-public class ELBContextBuilder extends LoadBalancerServiceContextBuilder<ELBClient, ELBAsyncClient> {
+public class ELBContextBuilder<S extends ELBClient, A extends ELBAsyncClient> extends
+      LoadBalancerServiceContextBuilder<S, A, LoadBalancerServiceContext<S, A>, ELBApiMetadata<S, A>> {
 
+   public ELBContextBuilder(ProviderMetadata<S, A, LoadBalancerServiceContext<S, A>, ELBApiMetadata<S, A>> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public ELBContextBuilder(ELBApiMetadata<S, A> apiMetadata) {
+      super(apiMetadata);
+   }
+   
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new ELBLoadBalancerContextModule());
-   }
-
-   public ELBContextBuilder(Properties props) {
-      super(ELBClient.class, ELBAsyncClient.class, props);
    }
 
    @Override

@@ -25,10 +25,13 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
+import org.jclouds.trmk.ecloud.TerremarkECloudAsyncClient;
+import org.jclouds.trmk.ecloud.TerremarkECloudClient;
 import org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants;
 import org.testng.annotations.Test;
 
@@ -40,7 +43,9 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class TerremarkECloudTemplateBuilderLiveTest
+      extends
+      BaseTemplateBuilderLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> {
    @Override
    protected Properties setupProperties() {
       Properties props = super.setupProperties();

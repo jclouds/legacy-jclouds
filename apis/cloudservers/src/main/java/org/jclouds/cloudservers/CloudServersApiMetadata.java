@@ -19,50 +19,70 @@
 package org.jclouds.cloudservers;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for Rackspace Cloud Servers API
+ * Implementation of {@link ApiMetadata} for CloudServers 1.0 API
  * 
  * @author Adrian Cole
  */
-public class CloudServersApiMetadata extends BaseApiMetadata {
+public class CloudServersApiMetadata
+      extends
+      BaseComputeServiceApiMetadata<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
 
-   public CloudServersApiMetadata() {
-      this(builder()
-            .id("cloudservers")
-            .type(ApiType.COMPUTE)
-            .name("Rackspace Cloud Servers API")
-            .identityName("Username")
-            .credentialName("API Key")
-            .documentation(URI.create("http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide/content/ch01.html")));
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudServersApiMetadata(Builder<?> builder) {
+   public CloudServersApiMetadata() {
+      this(new Builder());
+   }
+
+   protected CloudServersApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseComputeServiceApiMetadata.Builder<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
+
+      protected Builder() {
+         id("cloudservers")
+         .name("Rackspace Cloud Servers API")
+         .identityName("Username")
+         .credentialName("API Key")
+         .documentation(URI.create("http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide/content/ch01.html"))
+         .version(OpenStackAuthAsyncClient.VERSION)
+         .defaultEndpoint("https://auth.api.rackspacecloud.com")
+         .javaApi(CloudServersClient.class, CloudServersAsyncClient.class)
+         .defaultProperties(CloudServersApiMetadata.defaultProperties())
+         .contextBuilder(TypeToken.of(CloudServersContextBuilder.class));
+      }
 
       @Override
       public CloudServersApiMetadata build() {
          return new CloudServersApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(CloudServersApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

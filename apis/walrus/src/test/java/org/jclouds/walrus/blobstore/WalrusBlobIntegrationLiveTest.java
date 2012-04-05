@@ -29,7 +29,11 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "WalrusBlobIntegrationLiveTest")
 public class WalrusBlobIntegrationLiveTest extends S3BlobIntegrationLiveTest {
-
+   
+   public WalrusBlobIntegrationLiveTest() {
+      provider = "walrus";
+   }
+   
    // no support for content encoding
    @Override
    protected void checkContentEncoding(Blob blob, String contentEncoding) {

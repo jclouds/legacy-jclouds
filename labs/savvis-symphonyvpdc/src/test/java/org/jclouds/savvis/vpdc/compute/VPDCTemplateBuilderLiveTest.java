@@ -26,11 +26,14 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.savvis.vpdc.VPDCAsyncClient;
+import org.jclouds.savvis.vpdc.VPDCClient;
 import org.jclouds.savvis.vpdc.reference.VPDCConstants;
 import org.testng.annotations.Test;
 
@@ -42,7 +45,8 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class VPDCTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class VPDCTemplateBuilderLiveTest extends
+      BaseTemplateBuilderLiveTest<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>> {
 
    public VPDCTemplateBuilderLiveTest() {
       provider = "savvis-symphonyvpdc";

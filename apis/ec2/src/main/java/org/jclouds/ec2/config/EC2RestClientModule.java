@@ -73,10 +73,6 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
             .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
             .build();
 
-   public static EC2RestClientModule<EC2Client, EC2AsyncClient> create() {
-      return new EC2RestClientModule<EC2Client, EC2AsyncClient>(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
-   }
-
    public EC2RestClientModule(Class<S> sync, Class<A> async, Map<Class<?>, Class<?>> delegateMap) {
       super(sync, async, delegateMap);
    }

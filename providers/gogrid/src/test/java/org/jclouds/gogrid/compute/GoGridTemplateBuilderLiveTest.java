@@ -24,10 +24,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
+import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.gogrid.GoGridClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -40,7 +43,9 @@ import com.google.common.collect.ImmutableSet;
  */
 //NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "live", singleThreaded = true, testName = "GoGridTemplateBuilderLiveTest")
-public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class GoGridTemplateBuilderLiveTest
+      extends
+      BaseTemplateBuilderLiveTest<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>> {
 
    public GoGridTemplateBuilderLiveTest() {
       provider = "gogrid";

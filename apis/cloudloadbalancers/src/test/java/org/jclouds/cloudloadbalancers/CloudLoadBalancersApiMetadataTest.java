@@ -18,8 +18,7 @@
  */
 package org.jclouds.cloudloadbalancers;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.loadbalancer.internal.BaseLoadBalancerServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "CloudLoadBalancersApiMetadataTest")
-public class CloudLoadBalancersApiMetadataTest extends BaseApiMetadataTest {
+public class CloudLoadBalancersApiMetadataTest extends BaseLoadBalancerServiceApiMetadataTest {
 
    public CloudLoadBalancersApiMetadataTest() {
-      super(new CloudLoadBalancersApiMetadata(), ApiType.LOADBALANCER);
+      super(new CloudLoadBalancersApiMetadata());
    }
 }

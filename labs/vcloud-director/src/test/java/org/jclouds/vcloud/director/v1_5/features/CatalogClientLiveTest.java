@@ -79,7 +79,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private Reference catalogRef;
 
    @Override
-   protected void setupRequiredClients() throws Exception {
+   protected void setupRequiredClients() {
       // TODO why do I need a guard clause here?
       if (adminCatalog != null) return;
       catalogClient = context.getApi().getCatalogClient();

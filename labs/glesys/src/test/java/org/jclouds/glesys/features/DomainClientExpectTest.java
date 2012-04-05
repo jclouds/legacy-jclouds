@@ -33,7 +33,7 @@ import org.jclouds.glesys.domain.DomainRecord;
 import org.jclouds.glesys.options.AddDomainOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 

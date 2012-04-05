@@ -18,50 +18,80 @@
  */
 package org.jclouds.rimuhosting.miro;
 
+import static org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT;
+import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.config.ComputeServiceProperties;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.concurrent.Timeout;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for RimuHosting API
  * 
  * @author Adrian Cole
  */
-public class RimuHostingApiMetadata extends BaseApiMetadata {
+public class RimuHostingApiMetadata
+      extends
+      BaseComputeServiceApiMetadata<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> {
 
-   public RimuHostingApiMetadata() {
-      this(builder()
-            .id("rimuhosting")
-            .type(ApiType.COMPUTE)
-            .name("RimuHosting API")
-            .identityName("API Key")
-            .documentation(URI.create("http://apidocs.rimuhosting.com")));
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected RimuHostingApiMetadata(Builder<?> builder) {
+   public RimuHostingApiMetadata() {
+      this(new Builder());
+   }
+
+   protected RimuHostingApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+      Timeout timeout = RimuHostingClient.class.getAnnotation(Timeout.class);
+      long timeoutMillis = timeout.timeUnit().toMillis(timeout.duration());
+      properties.setProperty(PROPERTY_SO_TIMEOUT, timeoutMillis + "");
+      properties.setProperty(PROPERTY_CONNECTION_TIMEOUT, timeoutMillis + "");
+      properties.setProperty(ComputeServiceProperties.TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseComputeServiceApiMetadata.Builder<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> {
+
+      protected Builder() {
+         id("rimuhosting")
+         .type(ApiType.COMPUTE)
+         .name("RimuHosting API")
+         .identityName("API Key")
+         .documentation(URI.create("http://apidocs.rimuhosting.com"))
+         .version("1")
+         .defaultEndpoint("https://api.rimuhosting.com/r")
+         .javaApi(RimuHostingClient.class, RimuHostingAsyncClient.class)
+         .contextBuilder(TypeToken.of(RimuHostingContextBuilder.class));
+      }
 
       @Override
       public RimuHostingApiMetadata build() {
          return new RimuHostingApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(RimuHostingApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

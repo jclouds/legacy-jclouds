@@ -62,10 +62,10 @@ public class ProductPackageClientLiveTest extends BaseSoftLayerClientLiveTest {
    public static final String CLOUD_SERVER_PACKAGE_NAME = "Cloud Server";
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getProductPackageClient();
-      accountClient = context.getApi().getAccountClient();
+   public void setupContext() {
+      super.setupContext();
+      client = socontext.getApi().getProductPackageClient();
+      accountClient = socontext.getApi().getAccountClient();
 
       // This is used several times, so cache to speed up the test.
       cloudServerPackageId = Iterables.find(accountClient.getActivePackages(), named(CLOUD_SERVER_PACKAGE_NAME))

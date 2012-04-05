@@ -19,9 +19,12 @@
 package org.jclouds.walrus;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ContextBuilder;
+import org.jclouds.s3.blobstore.S3BlobStoreContext;
 import org.jclouds.walrus.config.WalrusRestClientModule;
 
 import com.google.inject.Module;
@@ -31,10 +34,19 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class WalrusContextBuilder extends S3ContextBuilder {
+public class WalrusContextBuilder extends
+      S3ContextBuilder<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> {
+   public WalrusContextBuilder() {
+      this(new WalrusApiMetadata());
+   }
 
-   public WalrusContextBuilder(Properties props) {
-      super(props);
+   public WalrusContextBuilder(
+         ProviderMetadata<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public WalrusContextBuilder(WalrusApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

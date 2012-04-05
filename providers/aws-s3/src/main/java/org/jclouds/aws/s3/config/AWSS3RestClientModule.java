@@ -90,11 +90,10 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
    /**
     * so that we can inject RestContext<S3Client, S3AsyncClient>
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Singleton
    @Provides
-   RestContext<S3Client, S3AsyncClient>
-   provideBaseContext(RestContext<AWSS3Client, AWSS3AsyncClient> in) {
+   RestContext<S3Client, S3AsyncClient> provideBaseContext(RestContext<AWSS3Client, AWSS3AsyncClient> in) {
       return (RestContext) in;
    }
 

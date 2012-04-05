@@ -33,14 +33,8 @@ import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code GlobaUserClient}
@@ -89,9 +83,7 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkAuthAsUser(ApiKeyPair keyPair) {
-      ComputeServiceContext context = new ComputeServiceContextFactory(setupRestProperties()).
-         createContext(provider, ImmutableSet.<Module>of(
-            new Log4JLoggingModule(), new SshjSshClientModule()), credentialsAsProperties(keyPair));
+      ComputeServiceContext<?, ?> context = createContext(credentialsAsProperties(keyPair), setupModules());
 
       CloudStackClient client = CloudStackClient.class.cast(context.getProviderSpecificContext().getApi());
       Set<Account> accounts = client.getAccountClient().listAccounts();

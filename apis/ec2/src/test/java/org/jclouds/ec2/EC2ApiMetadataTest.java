@@ -18,18 +18,18 @@
  */
 package org.jclouds.ec2;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
+@SuppressWarnings("rawtypes")
 @Test(groups = "unit", testName = "EC2ApiMetadataTest")
-public class EC2ApiMetadataTest extends BaseApiMetadataTest {
+public class EC2ApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public EC2ApiMetadataTest() {
-      super(new EC2ApiMetadata(), ApiType.COMPUTE);
+      super(new EC2ApiMetadata());
    }
 }

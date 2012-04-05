@@ -19,7 +19,7 @@
 package org.jclouds.virtualbox;
 
 import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.apis.internal.BaseApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**

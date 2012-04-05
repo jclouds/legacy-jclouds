@@ -62,6 +62,10 @@ import com.google.common.collect.Maps;
  */
 @Test(groups = { "integration", "live" })
 public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
+   public S3ClientLiveTest() {
+      this.provider = "s3";
+   }
+   
    public S3Client getApi() {
       return (S3Client) context.getProviderSpecificContext().getApi();
    }

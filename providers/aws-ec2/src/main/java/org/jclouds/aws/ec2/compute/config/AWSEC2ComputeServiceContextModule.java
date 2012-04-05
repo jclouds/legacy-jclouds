@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2PropertiesBuilder;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.functions.AWSRunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.predicates.AWSEC2InstancePresent;

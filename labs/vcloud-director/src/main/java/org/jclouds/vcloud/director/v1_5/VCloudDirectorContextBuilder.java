@@ -19,33 +19,43 @@
 package org.jclouds.vcloud.director.v1_5;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
-import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorContextImpl;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 import com.google.inject.Module;
 
 /**
+ * 
  * @author Adrian Cole
  */
-public class VCloudDirectorContextBuilder extends RestContextBuilder<VCloudDirectorClient, VCloudDirectorAsyncClient> {
+public class VCloudDirectorContextBuilder
+      extends
+      // ComputeServiceContextBuilder<VCloudDirectorClient,
+      // VCloudDirectorAsyncClient, VCloudDirectorContext,
+      // VCloudDirectorApiMetadata> {
+      RestContextBuilder<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
 
-   public VCloudDirectorContextBuilder(Properties props) {
-      super(VCloudDirectorClient.class, VCloudDirectorAsyncClient.class, props);
+   public VCloudDirectorContextBuilder(
+         ProviderMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
 
-   @Override
+   public VCloudDirectorContextBuilder(VCloudDirectorApiMetadata apiMetadata) {
+      super(apiMetadata);
+   }
+
+   // TODO
+   // @Override
+   // protected void addContextModule(List<Module> modules) {
+   // modules.add(new VCloudDirectorComputeServiceContextModule());
+   // }
+
    protected void addClientModule(List<Module> modules) {
       modules.add(new VCloudDirectorRestClientModule());
    }
-   
-   @SuppressWarnings("unchecked")
-   @Override
-   public VCloudDirectorContext buildContext() {
-      return buildInjector().getInstance(VCloudDirectorContextImpl.class);
-   }
+
 }

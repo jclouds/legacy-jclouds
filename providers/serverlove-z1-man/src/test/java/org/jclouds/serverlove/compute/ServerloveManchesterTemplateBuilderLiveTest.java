@@ -23,10 +23,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
+import org.jclouds.elasticstack.ElasticStackClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -38,7 +41,9 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class ServerloveManchesterTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class ServerloveManchesterTemplateBuilderLiveTest
+      extends
+      BaseTemplateBuilderLiveTest<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>> {
 
    public ServerloveManchesterTemplateBuilderLiveTest() {
       provider = "serverlove-z1-man";
@@ -51,16 +56,16 @@ public class ServerloveManchesterTemplateBuilderLiveTest extends BaseTemplateBui
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case UBUNTU:
-                  return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
-               case DEBIAN:
-                  return (input.version.equals("") || input.version.equals("6.0")) && input.is64Bit;
-               case CENTOS:
-                  return (input.version.equals("") || input.version.equals("5.7")) && input.is64Bit;
-               case WINDOWS:
-                  return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
-               default:
-                  return false;
+            case UBUNTU:
+               return (input.version.equals("") || input.version.equals("10.04")) && input.is64Bit;
+            case DEBIAN:
+               return (input.version.equals("") || input.version.equals("6.0")) && input.is64Bit;
+            case CENTOS:
+               return (input.version.equals("") || input.version.equals("5.7")) && input.is64Bit;
+            case WINDOWS:
+               return (input.version.equals("") || input.version.equals("2008 R2")) && input.is64Bit;
+            default:
+               return false;
             }
          }
 

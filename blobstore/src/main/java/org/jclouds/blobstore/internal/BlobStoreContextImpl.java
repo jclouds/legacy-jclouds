@@ -38,7 +38,7 @@ import org.jclouds.rest.Utils;
  * @author Adrian Cole
  */
 @Singleton
-public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
+public class BlobStoreContextImpl<S, A> implements BlobStoreContext<S, A> {
    private final BlobMap.Factory blobMapFactory;
    private final InputStreamMap.Factory inputStreamMapFactory;
    private final AsyncBlobStore ablobStore;
@@ -100,10 +100,9 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
       return ablobStore;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) providerSpecificContext;
+      return providerSpecificContext;
    }
 
    @Override

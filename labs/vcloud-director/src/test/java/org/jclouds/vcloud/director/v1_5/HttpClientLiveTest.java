@@ -51,8 +51,7 @@ public class HttpClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private SessionWithToken sessionWithToken;
 
    @Override
-   protected void setupRequiredClients() throws Exception {
-      setupCredentials();
+   protected void setupRequiredClients() {
    }
 
    @Test(description = "POST /login")

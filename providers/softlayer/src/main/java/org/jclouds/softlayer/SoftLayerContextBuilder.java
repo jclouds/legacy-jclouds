@@ -19,9 +19,10 @@
 package org.jclouds.softlayer;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.softlayer.compute.config.SoftLayerComputeServiceContextModule;
 import org.jclouds.softlayer.config.SoftLayerRestClientModule;
 
@@ -31,10 +32,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class SoftLayerContextBuilder extends ComputeServiceContextBuilder<SoftLayerClient, SoftLayerAsyncClient> {
+public class SoftLayerContextBuilder
+      extends
+      ComputeServiceContextBuilder<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> {
 
-   public SoftLayerContextBuilder(Properties props) {
-      super(SoftLayerClient.class, SoftLayerAsyncClient.class, props);
+   public SoftLayerContextBuilder(
+         ProviderMetadata<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public SoftLayerContextBuilder(SoftLayerApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -42,7 +50,6 @@ public class SoftLayerContextBuilder extends ComputeServiceContextBuilder<SoftLa
       modules.add(new SoftLayerComputeServiceContextModule());
    }
 
-   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new SoftLayerRestClientModule());
    }

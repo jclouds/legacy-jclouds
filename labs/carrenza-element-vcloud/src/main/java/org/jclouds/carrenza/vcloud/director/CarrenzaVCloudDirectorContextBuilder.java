@@ -19,11 +19,14 @@
 package org.jclouds.carrenza.vcloud.director;
 
 import java.util.List;
-import java.util.Properties;
 
-import org.jclouds.carrenza.vcloud.director.config.CarrenzaVCloudDirectorComputeServiceContextModule;
 import org.jclouds.carrenza.vcloud.director.config.CarrenzaVCloudDirectorRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContextBuilder;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 import com.google.inject.Module;
 
@@ -34,8 +37,13 @@ import com.google.inject.Module;
  */
 public class CarrenzaVCloudDirectorContextBuilder extends VCloudDirectorContextBuilder {
 
-   public CarrenzaVCloudDirectorContextBuilder(Properties props) {
-      super(props);
+   public CarrenzaVCloudDirectorContextBuilder(
+         ProviderMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public CarrenzaVCloudDirectorContextBuilder(VCloudDirectorApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

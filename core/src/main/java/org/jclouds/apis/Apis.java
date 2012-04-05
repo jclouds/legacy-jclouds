@@ -24,6 +24,9 @@ import static com.google.common.collect.Iterables.find;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
+import com.google.common.base.Function;
+import com.google.common.reflect.TypeToken;
+
 /**
  * The Apis class provides static methods for accessing apis.
  * 
@@ -31,14 +34,29 @@ import java.util.ServiceLoader;
  */
 public class Apis {
 
+   public static enum IdFunction implements Function<ApiMetadata<?, ?, ?, ?>, String> {
+      INSTANCE;
+
+      @Override
+      public String apply(ApiMetadata<?, ?, ?, ?> input) {
+         return input.getId();
+      }
+
+   }
+
+   public static Function<ApiMetadata<?, ?, ?, ?>, String> idFunction() {
+      return IdFunction.INSTANCE;
+   }
+   
    /**
     * Returns the apis located on the classpath via
     * {@link java.util.ServiceLoader}.
     * 
     * @return all available apis loaded from classpath via ServiceLoader
     */
-   private static Iterable<ApiMetadata> fromServiceLoader() {
-      return ServiceLoader.load(ApiMetadata.class);
+   @SuppressWarnings("unchecked")
+   private static Iterable<ApiMetadata<?, ?, ?, ?>> fromServiceLoader() {
+      return Iterable.class.cast(ServiceLoader.load(ApiMetadata.class));
    }
 
    /**
@@ -46,7 +64,7 @@ public class Apis {
     * 
     * @return all available apis
     */
-   public static Iterable<ApiMetadata> all() {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> all() {
       return fromServiceLoader();
    }
 
@@ -61,7 +79,7 @@ public class Apis {
     * @throws NoSuchElementException
     *            whenever there are no apis with the provided id
     */
-   public static ApiMetadata withId(String id) throws NoSuchElementException {
+   public static ApiMetadata<?, ?, ?, ?> withId(String id) throws NoSuchElementException {
       return find(all(), ApiPredicates.id(id));
    }
 
@@ -71,7 +89,7 @@ public class Apis {
     * 
     * @return the blobstore apis
     */
-   public static Iterable<ApiMetadata> allBlobStore() {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> allBlobStore() {
       return filter(all(), ApiPredicates.type(ApiType.BLOBSTORE));
    }
 
@@ -81,7 +99,7 @@ public class Apis {
     * 
     * @return the compute service apis
     */
-   public static Iterable<ApiMetadata> allCompute() {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> allCompute() {
       return filter(all(), ApiPredicates.type(ApiType.COMPUTE));
    }
 
@@ -91,7 +109,7 @@ public class Apis {
     * 
     * @return the queue service apis
     */
-   public static Iterable<ApiMetadata> allQueue() {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> allQueue() {
       return filter(all(), ApiPredicates.type(ApiType.QUEUE));
    }
 
@@ -101,7 +119,7 @@ public class Apis {
     * 
     * @return the table service apis
     */
-   public static Iterable<ApiMetadata> allTable() {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> allTable() {
       return filter(all(), ApiPredicates.type(ApiType.TABLE));
    }
 
@@ -111,7 +129,7 @@ public class Apis {
     * 
     * @return the load balancer service apis
     */
-   public static Iterable<ApiMetadata> allLoadBalancer() {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> allLoadBalancer() {
       return filter(all(), ApiPredicates.type(ApiType.LOADBALANCER));
    }
 
@@ -121,7 +139,7 @@ public class Apis {
     * 
     * @return the load balancer service apis
     */
-   public static Iterable<ApiMetadata> allMonitor() {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> allMonitor() {
       return filter(all(), ApiPredicates.type(ApiType.MONITOR));
    }
 
@@ -133,7 +151,20 @@ public class Apis {
     * 
     * @return the apis of the provided type
     */
-   public static Iterable<ApiMetadata> ofType(ApiType type) {
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> ofType(ApiType type) {
       return filter(all(), ApiPredicates.type(type));
    }
+   
+   /**
+    * Returns all apis who's contexts are assignable from the parameter
+    *
+    * @param type
+    *           the type of the context to search for
+    *           
+    * @return the apis with contexts assignable from given type
+    */
+   public static Iterable<ApiMetadata<?, ?, ?, ?>> contextAssignableFrom(TypeToken<?> type) {
+      return filter(all(), ApiPredicates.contextAssignableFrom(type));
+   }
+   
 }

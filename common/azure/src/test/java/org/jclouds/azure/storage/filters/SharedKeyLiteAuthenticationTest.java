@@ -26,21 +26,19 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.AnonymousRestApiMetadata;
+import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
+import org.jclouds.rest.internal.ContextBuilder;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -58,18 +56,19 @@ public class SharedKeyLiteAuthenticationTest {
    @DataProvider(parallel = true)
    public Object[][] dataProvider() {
       return new Object[][] {
-               { new HttpRequest(HttpMethod.PUT, URI.create("http://" + ACCOUNT
-                        + ".blob.core.windows.net/movies/MOV1.avi?comp=block&blockid=BlockId1&timeout=60")) },
-               { new HttpRequest(HttpMethod.PUT, URI.create("http://" + ACCOUNT
-                        + ".blob.core.windows.net/movies/MOV1.avi?comp=blocklist&timeout=120")) },
-               { new HttpRequest(HttpMethod.GET, URI.create("http://" + ACCOUNT
-                        + ".blob.core.windows.net/movies/MOV1.avi")) } };
+            { new HttpRequest(HttpMethod.PUT, URI.create("http://" + ACCOUNT
+                  + ".blob.core.windows.net/movies/MOV1.avi?comp=block&blockid=BlockId1&timeout=60")) },
+            { new HttpRequest(HttpMethod.PUT, URI.create("http://" + ACCOUNT
+                  + ".blob.core.windows.net/movies/MOV1.avi?comp=blocklist&timeout=120")) },
+            { new HttpRequest(HttpMethod.GET,
+                  URI.create("http://" + ACCOUNT + ".blob.core.windows.net/movies/MOV1.avi")) } };
    }
 
    /**
-    * NOTE this test is dependent on how frequently the timestamp updates. At the time of writing,
-    * this was once per second. If this timestamp update interval is increased, it could make this
-    * test appear to hang for a long time.
+    * NOTE this test is dependent on how frequently the timestamp updates. At
+    * the time of writing, this was once per second. If this timestamp update
+    * interval is increased, it could make this test appear to hang for a long
+    * time.
     */
    @Test(threadPoolSize = 3, dataProvider = "dataProvider", timeOut = 3000)
    void testIdempotent(HttpRequest request) {
@@ -84,7 +83,7 @@ public class SharedKeyLiteAuthenticationTest {
          request = filter.filter(request);
       }
       System.out.printf("%s: %d iterations before the timestamp updated %n", Thread.currentThread().getName(),
-               iterations);
+            iterations);
    }
 
    @Test
@@ -117,7 +116,7 @@ public class SharedKeyLiteAuthenticationTest {
    @Test
    void testAclQueryStringRelativeWithExtraJunk() {
       URI host = URI.create("http://" + ACCOUNT
-               + ".blob.core.windows.net/mycontainer?comp=list&marker=marker&maxresults=1&prefix=prefix");
+            + ".blob.core.windows.net/mycontainer?comp=list&marker=marker&maxresults=1&prefix=prefix");
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       StringBuilder builder = new StringBuilder();
       filter.appendUriPath(request, builder);
@@ -132,16 +131,17 @@ public class SharedKeyLiteAuthenticationTest {
     */
    @BeforeClass
    protected void createFilter() throws IOException {
-      injector = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector();
+      injector = ContextBuilder
+            .newBuilder(
+                  AnonymousRestApiMetadata
+                        .forClientMappedToAsyncClient(IntegrationTestClient.class, IntegrationTestAsyncClient.class)
+                        .toBuilder().build())
+            .endpoint("https://${jclouds.identity}.blob.core.windows.net")
+            .credentials(ACCOUNT, "credential")
+            .modules(
+                  ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(),
+                        new AzureStorageRestClientModule<IntegrationTestClient, IntegrationTestAsyncClient>(
+                              IntegrationTestClient.class, IntegrationTestAsyncClient.class))).buildInjector();
       filter = injector.getInstance(SharedKeyLiteAuthentication.class);
    }
-
-   @SuppressWarnings("unchecked")
-   public static final RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> DUMMY_SPEC = new RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient>(
-            "provider", "endpoint", "apiVersion", "buildVersion", "", "identity", "credential", IntegrationTestClient.class,
-            IntegrationTestAsyncClient.class, PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList
-                     .<Module> of(new MockModule(), new NullLoggingModule(),
-                              new AzureStorageRestClientModule<IntegrationTestClient, IntegrationTestAsyncClient>(IntegrationTestClient.class,
-                                       IntegrationTestAsyncClient.class)));
-
 }

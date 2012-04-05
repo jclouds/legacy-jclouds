@@ -19,46 +19,65 @@
 package org.jclouds.trmk.vcloudexpress;
 
 import java.net.URI;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's vCloud Express.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Terremark's Enterprise Cloud.
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata {
-   public TerremarkVCloudExpressProviderMetadata() {
-      this(builder()
-            .id("trmk-vcloudexpress")
-            .name("Terremark vCloud Express")
-            .api(new TerremarkVCloudExpressApiMetadata())
-            .homepage(URI.create("https://vcloudexpress.terremark.com/"))
-            .console(URI.create("https://my.vcloudexpress.terremark.com"))
-            .iso3166Codes("US-FL"));
+public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected TerremarkVCloudExpressProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public TerremarkVCloudExpressProviderMetadata() {
+      super(builder());
+   }
+
+   public TerremarkVCloudExpressProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> {
+
+      protected Builder(){
+            id("trmk-vcloudexpress")
+            .name("Terremark vCloud Express")
+            .apiMetadata(new TerremarkVCloudExpressApiMetadata())
+            .endpoint("https://services.vcloudexpress.terremark.com/api")
+            .homepage(URI.create("https://vcloudexpress.terremark.com/"))
+            .console(URI.create("https://my.vcloudexpress.terremark.com"))
+            .iso3166Codes("US-FL")
+            .defaultProperties(TerremarkVCloudExpressProviderMetadata.defaultProperties());
+      }
 
       @Override
       public TerremarkVCloudExpressProviderMetadata build() {
          return new TerremarkVCloudExpressProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

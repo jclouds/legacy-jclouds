@@ -18,16 +18,17 @@
  */
 package org.jclouds.openstack;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -40,7 +41,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "OpenStackAuthAsyncClientTest")
-public class OpenStackAuthAsyncClientTest extends RestClientTest<OpenStackAuthAsyncClient> {
+public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackAuthAsyncClient> {
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpenStackAuthAsyncClient.class.getMethod("authenticate", String.class, String.class);
@@ -71,9 +72,9 @@ public class OpenStackAuthAsyncClientTest extends RestClientTest<OpenStackAuthAs
    }
 
    @Override
-   public RestContextSpec<OpenStackAuthClient, OpenStackAuthAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1.0", "", "", "identity", "credential",
-               OpenStackAuthClient.class, OpenStackAuthAsyncClient.class);
+   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return AnonymousRestApiMetadata.forClientMappedToAsyncClient(IntegrationTestClient.class, IntegrationTestAsyncClient.class).toBuilder().defaultEndpoint(
+            "http://localhost:8080").version("1.0").build();
    }
 
    @Override

@@ -64,6 +64,11 @@ import com.google.common.collect.Iterables;
  */
 @Test(groups = { "integration", "live" })
 public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
+   public BucketsLiveTest() {
+      this.provider = "s3";
+      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
+
    public S3Client getApi() {
       return (S3Client) context.getProviderSpecificContext().getApi();
    }

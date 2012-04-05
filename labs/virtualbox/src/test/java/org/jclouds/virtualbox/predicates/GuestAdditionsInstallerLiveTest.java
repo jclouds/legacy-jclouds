@@ -70,8 +70,8 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
 
    @Override
    @BeforeClass(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       injector = context.utils().injector();
 
       String instanceName = VIRTUALBOX_IMAGE_PREFIX

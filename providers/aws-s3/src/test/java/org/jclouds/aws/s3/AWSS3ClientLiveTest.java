@@ -60,8 +60,11 @@ import com.google.common.io.InputSupplier;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "AWSS3ClientLiveTest")
+@Test(groups = "live", singleThreaded = true, testName = "AWSS3ClientLiveTest")
 public class AWSS3ClientLiveTest extends S3ClientLiveTest {
+   public AWSS3ClientLiveTest() {
+      provider = "aws-s3";
+   }
    private InputSupplier<InputStream> oneHundredOneConstitutions;
    private byte[] oneHundredOneConstitutionsMD5;
    private static long oneHundredOneConstitutionsLength;

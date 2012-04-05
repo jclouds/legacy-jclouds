@@ -23,10 +23,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
+import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.options.NovaTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -39,7 +42,8 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "TryStackNovaTemplateBuilderLiveTest")
-public class TryStackNovaTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class TryStackNovaTemplateBuilderLiveTest extends
+      BaseTemplateBuilderLiveTest<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>> {
 
    public TryStackNovaTemplateBuilderLiveTest() {
       provider = "trystack-nova";

@@ -22,10 +22,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.BaseRestClientExpectTest;
-import org.jclouds.rest.BaseRestClientExpectTest.RegisterContext;
+import org.jclouds.rest.AnonymousRestApiMetadata;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
@@ -40,9 +41,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "unit", "user" }, testName = "SessionClientExpectTest")
-// only needed as SessionClient is not registered in rest.properties
-@RegisterContext(sync = SessionClient.class, async = SessionAsyncClient.class)
+@Test(groups = "unit", testName = "SessionClientExpectTest")
 public class SessionClientExpectTest extends BaseRestClientExpectTest<SessionClient> {
    public static final String user = "adrian@jclouds.org";
    public static final String org = "JClouds";
@@ -121,5 +120,11 @@ public class SessionClientExpectTest extends BaseRestClientExpectTest<SessionCli
 
       client.logoutSessionWithToken(sessionUrl, token);
 
+   }
+   
+   @Override
+   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return AnonymousRestApiMetadata.forClientMappedToAsyncClient(SessionClient.class, SessionAsyncClient.class)
+            .toBuilder().defaultEndpoint("https://vcloudbeta.bluelock.com/api").build();
    }
 }

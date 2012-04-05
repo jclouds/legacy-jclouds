@@ -19,11 +19,12 @@
 package org.jclouds.s3;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.s3.blobstore.S3BlobStoreContext;
 import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
 import org.jclouds.s3.config.S3RestClientModule;
 
@@ -43,10 +44,15 @@ import com.google.inject.Module;
  * @author Adrian Cole, Andrew Newdigate
  * @see S3Context
  */
-public class S3ContextBuilder extends BlobStoreContextBuilder<S3Client, S3AsyncClient> {
+public class S3ContextBuilder<S extends S3Client, A extends S3AsyncClient, C extends S3BlobStoreContext<S, A>, M extends S3ApiMetadata<S, A, C, M>>
+      extends BlobStoreContextBuilder<S, A, C, M> {
 
-   public S3ContextBuilder(Properties props) {
-      super(S3Client.class, S3AsyncClient.class, props);
+   public S3ContextBuilder(ProviderMetadata<S, A, C, M> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public S3ContextBuilder(M apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

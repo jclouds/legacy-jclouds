@@ -26,7 +26,6 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Properties;
@@ -36,12 +35,14 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
@@ -76,7 +77,6 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -99,7 +99,7 @@ import com.google.inject.Guice;
  */
 @Listeners(FormatApiResultsListener.class)
 @Test(groups = "live")
-public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServiceLiveTest {
+public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTest<VCloudDirectorContext> {
    
    @Resource
    protected Logger logger = Logger.CONSOLE;
@@ -149,7 +149,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
    
    // NOTE Implement as required to populate xxxClient fields, or NOP
-   protected abstract void setupRequiredClients() throws Exception;
+   protected abstract void setupRequiredClients();
 
    @Inject
    protected void initTaskSuccess(TaskSuccess taskSuccess) {
@@ -160,18 +160,23 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    protected void initTaskSuccessLong(TaskSuccess taskSuccess) {
       retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
-   
-   @BeforeSuite(alwaysRun = true)
-   protected void setupTestSession() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      testSession = VCloudDirectorTestSession.builder()
-         .identity(identity)
-         .credential(credential)
-         .provider(provider)
-         .overrides(overrides)
-         .endpoint(endpoint)
-         .build();
+   //temporary until we marry up the test fixtures
+
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+
+   @Override
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      identity = setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
+      credential = setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
+      endpoint = setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
+      setIfTestSystemPropertyPresent(overrides,  provider + ".api-version");
+      setIfTestSystemPropertyPresent(overrides,  provider + ".build-version");
+      return overrides;
    }
    
    @AfterSuite(alwaysRun = true)
@@ -180,8 +185,8 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
 
    @BeforeClass(alwaysRun = true)
-   protected void setupContext() throws Exception {
-      setupCredentials();
+   @Override
+   public void setupContext(){
       
       context = testSession.getUserContext();
       adminContext = testSession.getAdminContext();

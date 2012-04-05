@@ -31,12 +31,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpPortPair;
@@ -54,7 +53,6 @@ import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -67,9 +65,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Module;
 
 /**
  * End to end live test for GoGrid
@@ -79,7 +75,10 @@ import com.google.inject.Module;
  * @author Oleksiy Yarmula
  */
 @Test(enabled = false, groups = "live", singleThreaded = true, testName = "GoGridLiveTestDisabled")
-public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
+public class GoGridLiveTestDisabled
+      extends
+      BaseComputeServiceContextLiveTest<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>> {
+
    public GoGridLiveTestDisabled() {
       provider = "gogrid";
    }
@@ -94,16 +93,15 @@ public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
    private List<String> serversToDeleteAfterTheTests = new ArrayList<String>();
    private List<String> loadBalancersToDeleteAfterTest = new ArrayList<String>();
 
-   private RestContext<GoGridClient, GoGridAsyncClient> context;
+   private RestContext<GoGridClient, GoGridAsyncClient> gocontext;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      gocontext = context.getProviderSpecificContext();
 
-      client = context.getApi();
+      client = gocontext.getApi();
       serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client.getJobServices()),
                800, 20, TimeUnit.SECONDS);
       loadBalancerLatestJobCompleted = new RetryablePredicate<LoadBalancer>(new LoadBalancerLatestJobCompleted(client
@@ -352,7 +350,7 @@ public class GoGridLiveTestDisabled extends BaseVersionedServiceLiveTest {
 
       socketOpen.apply(socket);
 
-      SshClient sshClient = context.utils().injector().getInstance(SshClient.Factory.class).create(socket, instanceCredentials);
+      SshClient sshClient = gocontext.utils().injector().getInstance(SshClient.Factory.class).create(socket, instanceCredentials);
       sshClient.connect();
       String output = sshClient.exec("df").getOutput();
       assertTrue(output.contains("Filesystem"),

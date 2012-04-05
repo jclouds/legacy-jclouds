@@ -22,12 +22,11 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
@@ -37,13 +36,11 @@ import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.predicates.InstanceFinished;
 import org.jclouds.deltacloud.predicates.InstanceRunning;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.jclouds.sshj.config.SshjSshClientModule;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -60,27 +57,24 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ReadOnlyDeltacloudClientLiveTest")
-public class ReadOnlyDeltacloudClientLiveTest extends BaseVersionedServiceLiveTest {
+public class ReadOnlyDeltacloudClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<DeltacloudClient, DeltacloudAsyncClient, ComputeServiceContext<DeltacloudClient, DeltacloudAsyncClient>> {
+
    public ReadOnlyDeltacloudClientLiveTest() {
       provider = "deltacloud";
    }
 
    protected DeltacloudClient client;
-   protected RestContext<DeltacloudClient, DeltacloudAsyncClient> context;
-
 
    protected Predicate<IPSocket> socketTester;
    protected ImmutableMap<State, Predicate<Instance>> stateChanges;
 
-
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
-
-      client = context.getApi();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
       stateChanges = ImmutableMap.<Instance.State, Predicate<Instance>> of(//
                Instance.State.RUNNING, new RetryablePredicate<Instance>(new InstanceRunning(client), 600, 1,
@@ -168,10 +162,9 @@ public class ReadOnlyDeltacloudClientLiveTest extends BaseVersionedServiceLiveTe
       }
    }
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (context != null)
-         context.close();
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
 }

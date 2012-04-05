@@ -19,48 +19,72 @@
 package org.jclouds.openhosting;
 
 import java.net.URI;
+import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
+import org.jclouds.elasticstack.ElasticStackClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts London Peer 1.
- *
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for OpenHosting East1.
+ * 
  * @author Adrian Cole
  */
-public class OpenHostingEast1ProviderMetadata extends BaseProviderMetadata {
+public class OpenHostingEast1ProviderMetadata
+      extends
+      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
 
-   public OpenHostingEast1ProviderMetadata() {
-      this(builder()
-            .id("openhosting-east1")
-            .name("OpenHosting East1")
-            .api(new ElasticStackApiMetadata())
-            .homepage(URI.create("https://east1.openhosting.com"))
-            .console(URI.create("https://east1.openhosting.com/accounts"))
-            .iso3166Codes("US-VA"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected OpenHostingEast1ProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public OpenHostingEast1ProviderMetadata() {
+      super(builder());
+   }
+
+   public OpenHostingEast1ProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+
+      protected Builder() {
+         id("openhosting-east1")
+         .name("OpenHosting East1")
+         .apiMetadata(new ElasticStackApiMetadata())
+         .homepage(URI.create("https://east1.openhosting.com"))
+         .console(URI.create("https://east1.openhosting.com/accounts"))
+         .iso3166Codes("US-VA")
+         .endpoint("https://api.east1.openhosting.com")
+         .defaultProperties(OpenHostingEast1ProviderMetadata.defaultProperties());
+      }
 
       @Override
       public OpenHostingEast1ProviderMetadata build() {
          return new OpenHostingEast1ProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

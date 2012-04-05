@@ -59,8 +59,8 @@ public class MachineUtilsLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @Override
    @BeforeClass(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       instanceName = VIRTUALBOX_IMAGE_PREFIX
                + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 

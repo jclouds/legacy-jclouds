@@ -18,38 +18,31 @@
  */
 package org.jclouds.servermanager.compute;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.StandaloneComputeServiceContextSpec;
-import org.jclouds.servermanager.Datacenter;
-import org.jclouds.servermanager.Hardware;
-import org.jclouds.servermanager.Image;
-import org.jclouds.servermanager.Server;
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.servermanager.ServerManager;
+import org.jclouds.servermanager.ServerManagerApiMetadata;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ServerManagerExperimentLiveTest")
-public class ServerManagerExperimentLiveTest extends BaseVersionedServiceLiveTest {
+public class ServerManagerExperimentLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<ServerManager, ServerManager, ComputeServiceContext<ServerManager, ServerManager>> {
+
    public ServerManagerExperimentLiveTest() {
       provider = "servermanager";
    }
-   
+
    @Test
    public void testAndExperiment() {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<ServerManager, ServerManager> context = null;
       try {
-         context = new ComputeServiceContextFactory()
-                  .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
-                           "servermanager", endpoint, apiVersion, buildVersion, "", identity, credential, ServerManager.class,
-                           ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
+         context = ComputeServiceContextBuilder.newBuilder(new ServerManagerApiMetadata()).build();
 
          context.getComputeService().listNodes();
 

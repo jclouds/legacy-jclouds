@@ -25,9 +25,10 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Server;
@@ -47,7 +48,10 @@ import com.google.inject.Module;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "live", singleThreaded = true, testName = "GoGridComputeServiceLiveTest")
-public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class GoGridComputeServiceLiveTest
+      extends
+      BaseComputeServiceLiveTest<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>> {
+
    public GoGridComputeServiceLiveTest() {
       provider = "gogrid";
    }
@@ -70,7 +74,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testResizeRam() throws Exception {
       String group = this.group + "ram";
-      RestContext<GoGridClient, GoGridAsyncClient> providerContext = client.getContext().getProviderSpecificContext();
+      RestContext<GoGridClient, GoGridAsyncClient> providerContext = context.getProviderSpecificContext();
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {

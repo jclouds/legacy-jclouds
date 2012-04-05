@@ -27,16 +27,16 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
@@ -60,28 +60,24 @@ import org.jclouds.ec2.predicates.VolumeAttached;
 import org.jclouds.ec2.predicates.VolumeAvailable;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.InitScript;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * Adapted from the following sources: {@link http://gist.github.com/249915}, {@link http
@@ -93,7 +89,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = false, singleThreaded = true, testName = "EBSBootEC2ClientLiveTest")
-public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
+public class EBSBootEC2ClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
    public EBSBootEC2ClientLiveTest() {
       provider = "ec2";
    }
@@ -127,12 +123,11 @@ public class EBSBootEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
    private Attachment attachment;
    private String mkEbsBoot;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).buildInjector();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      Injector injector = context.utils().injector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

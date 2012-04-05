@@ -38,8 +38,8 @@ public class ServerClientLiveTest extends BaseNovaClientLiveTest {
 
    @Test
    public void testListServersInDetail() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         ServerClient client = context.getApi().getServerClientForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         ServerClient client = novaContext.getApi().getServerClientForZone(zoneId);
          Set<Resource> response = client.listServers();
          assert null != response;
          assertTrue(response.size() >= 0);

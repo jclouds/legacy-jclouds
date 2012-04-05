@@ -85,7 +85,7 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    private final LoadingCache<String, Boolean> isPublic;
 
    @Inject
-   AtmosAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
+   AtmosAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AtmosAsyncClient async, AtmosClient sync,
             ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,

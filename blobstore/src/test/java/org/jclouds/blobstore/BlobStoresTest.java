@@ -47,7 +47,7 @@ public class BlobStoresTest {
    public void testListAllForUnknownContainerFromTransientBlobStoreEagerly() throws Exception {
       ListContainerOptions containerOptions = ListContainerOptions.NONE;
       ListAllOptions listAllOptions = ListAllOptions.Builder.eager(true);
-      BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummyid", "dummykey");
+      BlobStoreContext<?,?> context = blobStoreContext();
       try {
          BlobStore blobStore = context.getBlobStore();
          BlobStores.listAll(blobStore, "wrongcontainer", containerOptions, listAllOptions);
@@ -62,7 +62,7 @@ public class BlobStoresTest {
    @Test(expectedExceptions = { ContainerNotFoundException.class })
    public void testListAllForUnknownContainerFromTransientBlobStore() throws Exception {
       ListContainerOptions options = ListContainerOptions.NONE;
-      BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummyid", "dummykey");
+      BlobStoreContext<?,?> context = blobStoreContext();
       try {
          BlobStore blobStore = context.getBlobStore();
          Iterable<StorageMetadata> iterable = BlobStores.listAll(blobStore, "wrongcontainer", options);
@@ -70,6 +70,10 @@ public class BlobStoresTest {
       } finally {
          context.close();
       }
+   }
+
+   protected BlobStoreContext<?,?> blobStoreContext() {
+      return BlobStoreContextBuilder.forTests().build();
    }
 
    @Test
@@ -86,7 +90,7 @@ public class BlobStoresTest {
       final int numTimesToIterate = 2;
       final int NUM_BLOBS = 31;
       ListContainerOptions containerOptions = ListContainerOptions.Builder.maxResults(10);
-      BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "dummyid", "dummykey");
+      BlobStoreContext<?,?> context = blobStoreContext();
       BlobStore blobStore = null;
       try {
          blobStore = context.getBlobStore();

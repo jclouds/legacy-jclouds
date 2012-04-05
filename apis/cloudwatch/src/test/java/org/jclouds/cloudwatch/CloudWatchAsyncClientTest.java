@@ -26,11 +26,11 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
@@ -44,9 +44,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Suppliers2;
 import org.testng.annotations.Test;
@@ -64,7 +62,7 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", testName = "CloudWatchAsyncClientTest")
-public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncClient> {
+public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsyncClient> {
 
    public void testRegisterInstancesWithMeasure() throws SecurityException, NoSuchMethodException, IOException {
       Date date = new Date(10000000l);
@@ -125,11 +123,10 @@ public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncCli
       return new TestMonitoringRestClientModule();
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      Properties props = new Properties();
-      props.setProperty("cloudwatch.endpoint", "https://monitoring.us-east-1.amazonaws.com");
-      return new RestContextFactory().createContextSpec("cloudwatch", "identity", "credential", props);
+   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new CloudWatchApiMetadata();
    }
 
    @Override

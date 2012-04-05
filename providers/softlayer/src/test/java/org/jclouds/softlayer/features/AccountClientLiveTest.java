@@ -34,9 +34,9 @@ import org.testng.annotations.Test;
 @Test(groups = "live")
 public class AccountClientLiveTest extends BaseSoftLayerClientLiveTest {
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getAccountClient();
+   public void setupContext() {
+      super.setupContext();
+      client = socontext.getApi().getAccountClient();
    }
 
    private AccountClient client;

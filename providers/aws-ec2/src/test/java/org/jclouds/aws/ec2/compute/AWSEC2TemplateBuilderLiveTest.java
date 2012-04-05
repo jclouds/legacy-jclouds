@@ -28,9 +28,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
@@ -59,7 +60,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
+public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
 
    public AWSEC2TemplateBuilderLiveTest() {
       provider = "aws-ec2";
@@ -96,8 +97,8 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    public void testTemplateBuilderM1MEDIUMWithNegativeLookaroundDoesntMatchTestImages() {
 
       Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_MEDIUM)
-            // need to select versions with double-digits so that lexicographic
-            // doesn't end up prefering 9.x vs 11.x
+      // need to select versions with double-digits so that lexicographic
+      // doesn't end up prefering 9.x vs 11.x
             .osVersionMatches("1[012].[10][04]")
             // negative lookahead for daily and testing, but ensure match
             // ubuntu-images
@@ -238,15 +239,14 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    @Test
    public void testTemplateBuilderWithNoOwnersParsesImageOnDemand() throws IOException {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> context = null;
       try {
          Properties overrides = setupProperties();
          // set owners to nothing
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY, "");
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+         context = createContext(overrides, setupModules());
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 
@@ -273,15 +273,14 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    @Test
    public void testTemplateBuilderWithNoOwnersParsesImageOnDemandDeprecated() throws IOException {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> context = null;
       try {
          Properties overrides = setupProperties();
          // set owners to nothing
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
-         context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+         context = createContext(overrides, setupModules());
 
          assertEquals(context.getComputeService().listImages().size(), 0);
 
@@ -308,7 +307,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    @Test
    public void testTemplateBuilderWithLessRegions() throws IOException, SecurityException, NoSuchMethodException {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> context = null;
       try {
          Properties overrides = setupProperties();
          // set regions to only 1
@@ -318,11 +317,14 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
          overrides.setProperty(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY, "");
 
          final List<HttpCommand> commandsInvoked = Lists.newArrayList();
-         context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-                  new Log4JLoggingModule(), TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)), 
-                  overrides);
+         
+         context = createContext(
+               overrides,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(),
+                     TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)));
 
-         assert context.getComputeService().listAssignableLocations().size() < this.context.getComputeService().listAssignableLocations().size();
+         assert context.getComputeService().listAssignableLocations().size() < this.context.getComputeService()
+               .listAssignableLocations().size();
 
          assertOnlyOneRegionQueriedForAvailabilityZone(commandsInvoked);
 
@@ -346,20 +348,22 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
    }
 
    private static void assertOnlyOneRegionQueriedForAvailabilityZone(List<HttpCommand> commandsInvoked)
-            throws NoSuchMethodException {
+         throws NoSuchMethodException {
       assert commandsInvoked.size() == 2 : commandsInvoked;
-      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 0), AvailabilityZoneAndRegionAsyncClient.class
-               .getMethod("describeRegions", DescribeRegionsOptions[].class));
-      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 1), AvailabilityZoneAndRegionAsyncClient.class
-               .getMethod("describeAvailabilityZonesInRegion", String.class, DescribeAvailabilityZonesOptions[].class));
+      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 0),
+            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeRegions", DescribeRegionsOptions[].class));
+      assertEquals(getJavaMethodForRequestAtIndex(commandsInvoked, 1),
+            AvailabilityZoneAndRegionAsyncClient.class.getMethod("describeAvailabilityZonesInRegion", String.class,
+                  DescribeAvailabilityZonesOptions[].class));
    }
 
    @Test
    public void testTemplateBuilderCanUseImageIdFromNonDefaultOwner() {
-      // This is the id of a public image, not owned by one of the four default owners
+      // This is the id of a public image, not owned by one of the four default
+      // owners
       String imageId = "us-east-1/ami-44d02f2d";
       Template defaultTemplate = context.getComputeService().templateBuilder().imageId(imageId)
-               .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
+            .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getId(), imageId);
    }

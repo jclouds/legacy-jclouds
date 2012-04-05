@@ -22,10 +22,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.atmos.blobstore.functions.BlobToObject;
 import org.jclouds.atmos.config.AtmosRestClientModule;
 import org.jclouds.atmos.domain.AtmosObject;
@@ -47,12 +47,10 @@ import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -68,7 +66,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "AtmosAsyncClientTest")
-public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
+public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> {
 
    private BlobToObject blobToObject;
 
@@ -339,10 +337,8 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    protected String provider = "atmos";
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      Properties props = new Properties();
-      props.setProperty(provider + ".endpoint", "https://accesspoint.atmosonline.com");
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", props);
+   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new AtmosApiMetadata();
    }
 
 }

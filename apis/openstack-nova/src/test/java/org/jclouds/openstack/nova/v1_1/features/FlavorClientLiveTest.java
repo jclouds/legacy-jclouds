@@ -43,8 +43,8 @@ public class FlavorClientLiveTest extends BaseNovaClientLiveTest {
     */
    @Test
    public void testListFlavors() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         FlavorClient client = context.getApi().getFlavorClientForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         FlavorClient client = novaContext.getApi().getFlavorClientForZone(zoneId);
          Set<Resource> response = client.listFlavors();
          assert null != response;
          assertTrue(response.size() >= 0);
@@ -64,8 +64,8 @@ public class FlavorClientLiveTest extends BaseNovaClientLiveTest {
     */
    @Test
    public void testListFlavorsInDetail() throws Exception {
-      for (String zoneId : context.getApi().getConfiguredZones()) {
-         FlavorClient client = context.getApi().getFlavorClientForZone(zoneId);
+      for (String zoneId : novaContext.getApi().getConfiguredZones()) {
+         FlavorClient client = novaContext.getApi().getFlavorClientForZone(zoneId);
          Set<Flavor> response = client.listFlavorsInDetail();
          assert null != response;
          assertTrue(response.size() >= 0);

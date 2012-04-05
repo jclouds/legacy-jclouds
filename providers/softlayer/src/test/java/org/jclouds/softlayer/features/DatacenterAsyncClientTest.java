@@ -57,7 +57,7 @@ public class DatacenterAsyncClientTest extends BaseSoftLayerAsyncClientTest<Data
       // for example, using basic authentication, we should get "only one"
       // header
       assertNonPayloadHeadersEqual(httpRequest,
-            "Accept: application/json\nAuthorization: Basic YXBpS2V5OnNlY3JldEtleQ==\n");
+            "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);

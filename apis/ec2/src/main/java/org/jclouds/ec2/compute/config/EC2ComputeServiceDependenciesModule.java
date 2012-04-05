@@ -93,6 +93,7 @@ public class EC2ComputeServiceDependenciesModule extends AbstractModule {
       return instanceToNodeState;
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
    protected void configure() {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);

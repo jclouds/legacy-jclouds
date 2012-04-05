@@ -18,50 +18,75 @@
  */
 package org.jclouds.atmos;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for EMC's Atmos API.
+ * Implementation of {@link ApiMetadata} for Rackspace Cloud Files API
  * 
  * @author Adrian Cole
  */
-public class AtmosApiMetadata extends BaseApiMetadata {
-
-   public AtmosApiMetadata() {
-      this(builder()
-            .id("atmos")
-            .type(ApiType.BLOBSTORE)
-            .name("EMC's Atmos API")
-            .identityName("Subtenant ID (UID)")
-            .credentialName("Shared Secret")
-            .documentation(URI.create("https://community.emc.com/docs/DOC-10508")));
+public class AtmosApiMetadata
+      extends
+      BaseBlobStoreApiMetadata<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+   private static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AtmosApiMetadata(Builder<?> builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromApiMetadata(this);
+   }
+
+   public AtmosApiMetadata() {
+      this(builder());
+   }
+
+   protected AtmosApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = BaseBlobStoreApiMetadata.Builder.defaultProperties();
+      properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseBlobStoreApiMetadata.Builder<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+      protected Builder() {
+         id("atmos")
+         .name("EMC's Atmos API")
+         .identityName("Subtenant ID (UID)")
+         .credentialName("Shared Secret")
+         .documentation(URI.create("https://community.emc.com/docs/DOC-10508"))
+         .version("1.4.0")
+         .defaultEndpoint("https://accesspoint.atmosonline.com")
+         .contextBuilder(TypeToken.of(AtmosContextBuilder.class))
+         .defaultProperties(AtmosApiMetadata.defaultProperties())
+         .javaApi(AtmosClient.class, AtmosAsyncClient.class);
+      }
 
       @Override
       public AtmosApiMetadata build() {
          return new AtmosApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
+      @Override
+      public Builder fromApiMetadata(AtmosApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 }

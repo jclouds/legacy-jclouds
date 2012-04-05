@@ -19,10 +19,12 @@
 package org.jclouds.servermanager.compute;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.servermanager.ServerManager;
+import org.jclouds.servermanager.ServerManagerApiMetadata;
 import org.jclouds.servermanager.compute.config.ServerManagerComputeServiceContextModule;
 
 import com.google.inject.Module;
@@ -31,10 +33,21 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class ServerManagerComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder<ServerManager> {
+public class ServerManagerComputeServiceContextBuilder
+      extends
+      StandaloneComputeServiceContextBuilder<ServerManager, ComputeServiceContext<ServerManager, ServerManager>, ServerManagerApiMetadata> {
+   
+   public ServerManagerComputeServiceContextBuilder() {
+      super(new ServerManagerApiMetadata());
+   }
 
-   public ServerManagerComputeServiceContextBuilder(Properties props) {
-      super(ServerManager.class, props);
+   public ServerManagerComputeServiceContextBuilder(
+         ProviderMetadata<ServerManager, ServerManager, ComputeServiceContext<ServerManager, ServerManager>, ServerManagerApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public ServerManagerComputeServiceContextBuilder(ServerManagerApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

@@ -22,19 +22,18 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.glesys.GleSYSApiMetadata;
 import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule.PasswordProvider;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -51,9 +50,13 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
    }
 
    @Override
+   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new GleSYSApiMetadata();
+   }
+
+   @Override
    public ComputeService createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-      return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), module), props).getComputeService();
+      return createInjector(fn, module, props).getInstance(ComputeService.class);
    }
 
    protected PasswordProvider passwordGenerator() {
@@ -73,7 +76,7 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
       return computeContextForKnownArgumentsAndConstantPassword(requestsResponses).utils().injector();
    }
 
-   protected ComputeServiceContext computeContextForKnownArgumentsAndConstantPassword(
+   protected ComputeServiceContext<?, ?> computeContextForKnownArgumentsAndConstantPassword(
          Map<HttpRequest, HttpResponse> requestsResponses) {
       return requestsSendResponses(
             ImmutableMap
@@ -106,7 +109,7 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
             }).getContext();
    }
 
-   protected ComputeServiceContext computeContextForKnownArgumentsAndConstantPassword() {
+   protected ComputeServiceContext<?, ?> computeContextForKnownArgumentsAndConstantPassword() {
       return computeContextForKnownArgumentsAndConstantPassword(ImmutableMap.<HttpRequest, HttpResponse> of());
    }
 }

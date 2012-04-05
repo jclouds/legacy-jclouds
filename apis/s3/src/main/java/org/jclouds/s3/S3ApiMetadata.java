@@ -18,58 +18,115 @@
  */
 package org.jclouds.s3;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+import org.jclouds.s3.blobstore.S3BlobStoreContext;
+import org.jclouds.s3.reference.S3Headers;
+
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's S3 api.
  * 
+ * <h3>note</h3>
+ * <p/>
+ * This class allows overriding of types {@code S}(client) and {@code A}
+ * (asyncClient), so that children can add additional methods not declared here,
+ * such as new features from AWS.
+ * <p/>
+ * 
+ * As this is a popular api, we also allow overrides for type {@code C}
+ * (context). This allows subtypes to add in new feature groups or extensions,
+ * not present in the base api. For example, you could make a subtype for
+ * context, that exposes admin operations.
+ * 
  * @author Adrian Cole
  */
-public class S3ApiMetadata extends BaseApiMetadata {
+public class S3ApiMetadata<S extends S3Client, A extends S3AsyncClient, C extends S3BlobStoreContext<S, A>, M extends S3ApiMetadata<S, A, C, M>>
+      extends BaseBlobStoreApiMetadata<S, A, C, M> {
 
-   public S3ApiMetadata() {
-      this(builder()
-            .id("s3")
-            .type(ApiType.BLOBSTORE)
-            .name("Amazon Simple Storage Service (S3) API")
-            .identityName("Access Key ID")
-            .credentialName("Secret Access Key")
-            .documentation(URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API")));
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @Override
+   public Builder<S, A, C, M> toBuilder() {
+      return (Builder<S, A, C, M>) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected S3ApiMetadata(S3ApiMetadataBuilder<?> builder) {
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public S3ApiMetadata() {
+      this(new Builder(S3Client.class, S3AsyncClient.class));
+   }
+
+   protected S3ApiMetadata(Builder<?, ?, ?, ?> builder) {
       super(builder);
    }
+
+   protected static Properties defaultProperties() {
+      Properties properties = BaseBlobStoreApiMetadata.Builder.defaultProperties();
+      properties.setProperty(PROPERTY_API_VERSION, S3AsyncClient.VERSION);
+      properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
+      properties.setProperty(PROPERTY_HEADER_TAG, S3Headers.DEFAULT_AMAZON_HEADERTAG);
+      properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/");
+      properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "true");
+      properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
+      properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, DIRECTORY_SUFFIX_FOLDER);
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-${%s}-meta-", PROPERTY_HEADER_TAG));
+      return properties;
+   }
    
-   public static class S3ApiMetadataBuilder<B extends S3ApiMetadataBuilder<B>> extends Builder<B> {
+   public static class Builder<S extends S3Client, A extends S3AsyncClient, C extends S3BlobStoreContext<S, A>, M extends S3ApiMetadata<S, A, C, M>> extends BaseBlobStoreApiMetadata.Builder<S, A, C, M> {
 
+      protected Builder(Class<S> syncClient, Class<A> asyncClient){
+         id("s3")
+         .name("Amazon Simple Storage Service (S3) API")
+         .identityName("Access Key ID")
+         .credentialName("Secret Access Key")
+         .defaultEndpoint("https://s3.amazonaws.com")
+         .documentation(URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API"))
+         .version(S3AsyncClient.VERSION)
+         .defaultProperties(S3ApiMetadata.defaultProperties())
+         .javaApi(syncClient, asyncClient)
+         .contextBuilder(new TypeToken<S3ContextBuilder<S, A, C, M>>(getClass()){
+            private static final long serialVersionUID = 1L;
+            });
+      }
+      
+      /**
+       * {@inheritDoc}
+       */
       @Override
-      public S3ApiMetadata build() {
-         return new S3ApiMetadata(this);
+      @SuppressWarnings("rawtypes")
+      protected TypeToken contextToken(TypeToken<S> clientToken, TypeToken<A> asyncClientToken) {
+         return new TypeToken<S3BlobStoreContext<S, A>>() {
+            private static final long serialVersionUID = 1L;
+         }.where(new TypeParameter<S>() {
+         }, clientToken).where(new TypeParameter<A>() {
+         }, asyncClientToken);
+      }
+      @SuppressWarnings({ "rawtypes", "unchecked" })
+      @Override
+      public M build() {
+         return (M) new S3ApiMetadata(this);
+      }
+      
+      @Override
+      public Builder<S, A, C, M> fromApiMetadata(M in) {
+         super.fromApiMetadata(in);
+         return this;
       }
    }
 
-   private static class S3ConcreteBuilder extends S3ApiMetadataBuilder<S3ConcreteBuilder> {
-
-      @Override
-      public S3ApiMetadata build() {
-         return new S3ApiMetadata(this);
-      }
-   }
-
-   private static S3ConcreteBuilder builder() {
-      return new S3ConcreteBuilder();
-   }
-
-   @Override
-   public S3ApiMetadataBuilder<?> toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

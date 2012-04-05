@@ -24,15 +24,15 @@ import static org.jclouds.byon.functions.NodeToNodeMetadataTest.zoneCalled;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.Properties;
 
 import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.byon.functions.NodesFromYamlTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
+import org.jclouds.rest.AnonymousProviderMetadata;
+import org.jclouds.rest.internal.ContextBuilder;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -68,13 +68,13 @@ public class BYONComputeServiceTest {
    }
 
    private void assertNodesParse(String endpoint, Iterable<Module> modules) {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<?, ?> context = null;
       try {
          Location providerLocation = expectedProviderLocationFromResource(endpoint);
 
-         Properties props = new Properties();
-         props.setProperty("byon.endpoint", endpoint);
-         context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", modules, props);
+         context = ContextBuilder.newBuilder(
+               AnonymousProviderMetadata.forApiWithEndpoint(new BYONApiMetadata(), endpoint))
+               .modules(modules).build();
 
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 
@@ -96,13 +96,11 @@ public class BYONComputeServiceTest {
    }
 
    public void testNodesWithLocations() {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<?, ?> context = null;
       try {
          String endpoint = "file://" + getClass().getResource("/test_location.yaml").getPath();
-         Properties props = new Properties();
-         props.setProperty("byon.endpoint", endpoint);
-         context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet.<Module> of(),
-               props);
+         context = ContextBuilder.newBuilder(
+               AnonymousProviderMetadata.forApiWithEndpoint(new BYONApiMetadata(), endpoint)).build();
 
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 

@@ -26,20 +26,18 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.predicates.ImagePredicates;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Image.ImageType;
@@ -48,10 +46,8 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.services.AMIClient;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
@@ -60,7 +56,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code AMIClient}
@@ -68,7 +63,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
+public class AMIClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
    public AMIClientLiveTest() {
       provider = "aws-ec2";
       // TODO: parameterize this.
@@ -78,20 +73,15 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
    private AMIClient client;
    private static final String DEFAULT_MANIFEST = "adrianimages/image.manifest.xml";
    private static final String DEFAULT_SNAPSHOT = "TODO";
-   private RestContext<EC2Client, EC2AsyncClient> context;
 
    private Set<String> imagesToDeregister = Sets.newHashSet();
    private Set<String> snapshotsToDelete = Sets.newHashSet();
 
-   private ComputeServiceContext jcloudsContext;
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      jcloudsContext = new ComputeServiceContextFactory().createContext(provider,
-         ImmutableSet.<Module>of(new Log4JLoggingModule()), overrides);
-      context = jcloudsContext.getProviderSpecificContext();
-      client = context.getApi().getAMIServices();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getAMIServices();
    }
 
    public void testDescribeImageNotExists() {
@@ -104,7 +94,7 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    public void testDescribeImages() {
-      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<? extends Image> allResults = client.describeImagesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
@@ -165,7 +155,7 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
 
    @Test
    public void testNewlyRegisteredImageCanBeListed() throws Exception {
-      ComputeService computeService = jcloudsContext.getComputeService();
+      ComputeService computeService = context.getComputeService();
       Snapshot snapshot = createSnapshot(computeService);
 
       // List of images before...
@@ -196,10 +186,10 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
       Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup("jcloudstest", 1, options);
       try {
          String instanceId = Iterables.getOnlyElement(nodes).getProviderId();
-         Reservation<? extends RunningInstance> reservation = Iterables.getOnlyElement(context.getApi().getInstanceServices().describeInstancesInRegion(null, instanceId));
+         Reservation<? extends RunningInstance> reservation = Iterables.getOnlyElement(context.getProviderSpecificContext().getApi().getInstanceServices().describeInstancesInRegion(null, instanceId));
          RunningInstance instance = Iterables.getOnlyElement(reservation);
          BlockDevice device = instance.getEbsBlockDevices().get("/dev/sda1");
-         Snapshot snapshot = context.getApi().getElasticBlockStoreServices().createSnapshotInRegion(null, device.getVolumeId());
+         Snapshot snapshot = context.getProviderSpecificContext().getApi().getElasticBlockStoreServices().createSnapshotInRegion(null, device.getVolumeId());
          snapshotsToDelete.add(snapshot.getId());
          return snapshot;
       } finally {
@@ -281,6 +271,7 @@ public class AMIClientLiveTest extends BaseVersionedServiceLiveTest {
       for (String imageId : imagesToDeregister)
          client.deregisterImageInRegion(null, imageId);
       for (String snapshotId : snapshotsToDelete)
-         context.getApi().getElasticBlockStoreServices().deleteSnapshotInRegion(null, snapshotId);
+         context.getProviderSpecificContext().getApi().getElasticBlockStoreServices().deleteSnapshotInRegion(null, snapshotId);
    }
+
 }

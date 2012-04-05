@@ -128,7 +128,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected final Factory blobFactory;
 
    @Inject
-   protected TransientAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
+   protected TransientAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, DateService dateService, Crypto crypto,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs, Provider<UriBuilder> uriBuilders,
             ConcurrentMap<String, Location> containerToLocation,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,

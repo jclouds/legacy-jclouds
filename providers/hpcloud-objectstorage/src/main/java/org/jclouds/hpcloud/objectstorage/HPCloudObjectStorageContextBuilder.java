@@ -19,35 +19,45 @@
 package org.jclouds.hpcloud.objectstorage;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
-import org.jclouds.hpcloud.objectstorage.blobstore.HPCloudObjectStorageBlobStore;
 import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
 import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link HPCloudObjectStorageBlobStore} or {@link Injector} instances based on the most
- * commonly requested arguments.
+ * Creates {@link HPCloudObjectStorageStoreContext} or {@link Injector} instances based on
+ * the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
- * @see HPCloudObjectStorageBlobStore
+ * @see HPCloudObjectStorageStoreContext
  */
-public class HPCloudObjectStorageContextBuilder extends BlobStoreContextBuilder<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient> {
+public class HPCloudObjectStorageContextBuilder
+      extends
+      BlobStoreContextBuilder<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient, BlobStoreContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>, HPCloudObjectStorageApiMetadata> {
 
-   public HPCloudObjectStorageContextBuilder(Properties props) {
-      super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class, props);
+   public HPCloudObjectStorageContextBuilder(
+         ProviderMetadata<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient, BlobStoreContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>, HPCloudObjectStorageApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public HPCloudObjectStorageContextBuilder(HPCloudObjectStorageApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

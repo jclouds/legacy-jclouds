@@ -18,9 +18,9 @@
  */
 package org.jclouds.softlayer.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
 import org.jclouds.softlayer.SoftLayerClient;
@@ -37,7 +37,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true)
-public class SoftLayerComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class SoftLayerComputeServiceLiveTest
+      extends
+      BaseComputeServiceLiveTest<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>> {
+
    public SoftLayerComputeServiceLiveTest() {
       provider = "softlayer";
       group = "soft-layer";
@@ -50,8 +53,7 @@ public class SoftLayerComputeServiceLiveTest extends BaseComputeServiceLiveTest 
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<SoftLayerClient, SoftLayerAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential).getProviderSpecificContext();
+      RestContext<SoftLayerClient, SoftLayerAsyncClient> tmContext = context.getProviderSpecificContext();
    }
    
    // softlayer does not support metadata

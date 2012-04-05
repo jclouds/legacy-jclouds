@@ -22,9 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.deltacloud.DeltacloudAsyncClient;
 import org.jclouds.deltacloud.DeltacloudClient;
 import org.jclouds.domain.LocationScope;
@@ -41,7 +41,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "DeltacloudComputeServiceLiveTest")
-public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class DeltacloudComputeServiceLiveTest
+      extends
+      BaseComputeServiceLiveTest<DeltacloudClient, DeltacloudAsyncClient, ComputeServiceContext<DeltacloudClient, DeltacloudAsyncClient>> {
+
    public DeltacloudComputeServiceLiveTest() {
       provider = "deltacloud";
    }
@@ -60,8 +63,7 @@ public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<DeltacloudClient, DeltacloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+      RestContext<DeltacloudClient, DeltacloudAsyncClient> tmContext = context.getProviderSpecificContext();
    }
 
    @Override

@@ -53,7 +53,7 @@ public class CloudFilesBlobStore extends SwiftBlobStore {
    private EnableCDNAndCache enableCDNAndCache;
 
    @Inject
-   protected CloudFilesBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+   protected CloudFilesBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, CommonSwiftClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,

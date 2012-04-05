@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -42,15 +41,14 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.Protocol;
@@ -101,7 +99,7 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", singleThreaded = true, testName = "TerremarkVCloudExpressAsyncClientTest")
-public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<TerremarkVCloudExpressAsyncClient> {
+public class TerremarkVCloudExpressAsyncClientTest extends BaseAsyncClientTest<TerremarkVCloudExpressAsyncClient> {
 
    public void testListOrgs() {
       assertEquals(injector.getInstance(TerremarkVCloudExpressAsyncClient.class).listOrgs().toString(), ImmutableMap
@@ -621,11 +619,10 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
    protected Module createModule() {
       return new TerremarkVCloudRestClientModuleExtension();
    }
-
+   
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("trmk-vcloudexpress", "identity", "credential",
-            new Properties());
+   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+      return new TerremarkVCloudExpressProviderMetadata();
    }
 
    protected static final ReferenceTypeImpl ORG_REF = new ReferenceTypeImpl("org", ORG_XML,

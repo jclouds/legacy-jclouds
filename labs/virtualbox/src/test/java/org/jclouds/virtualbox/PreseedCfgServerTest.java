@@ -41,7 +41,7 @@ public class PreseedCfgServerTest {
 
    @Test
    public void testJettyServerServesPreseedFile() throws Exception {
-      Properties props = new VirtualBoxPropertiesBuilder().defaultProperties();
+      Properties props = VirtualBoxApiMetadata.defaultProperties();
 
       String preconfigurationUrl = props.getProperty(VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL);
 

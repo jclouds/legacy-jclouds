@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class ServerImageClientLiveTest extends BaseOpSourceServersClientLiveTest {
 
    public void testGetServerImages() {
-      ServerImagesList serverImagesList = context.getApi().getServerImageClient().getServerImages();
+      ServerImagesList serverImagesList = restContext.getApi().getServerImageClient().getServerImages();
       assert serverImagesList != null;
    }
 

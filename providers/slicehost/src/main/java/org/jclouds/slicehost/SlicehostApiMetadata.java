@@ -19,49 +19,71 @@
 package org.jclouds.slicehost;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for Slicehost API
+ * Implementation of {@link ApiMetadata} for Slicehost 1.0 API
  * 
  * @author Adrian Cole
  */
-public class SlicehostApiMetadata extends BaseApiMetadata {
+public class SlicehostApiMetadata
+      extends
+      BaseComputeServiceApiMetadata<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> {
 
-   public SlicehostApiMetadata() {
-      this(builder()
-            .id("slicehost")
-            .type(ApiType.COMPUTE)
-            .name("Slicehost API")
-            .identityName("API password")
-            .documentation(URI.create("http://articles.slicehost.com/api")));
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected SlicehostApiMetadata(Builder<?> builder) {
+   public SlicehostApiMetadata() {
+      this(new Builder());
+   }
+
+   protected SlicehostApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+      properties.setProperty("jclouds.ssh.max-retries", "8");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseComputeServiceApiMetadata.Builder<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> {
+
+      protected Builder() {
+         id("slicehost")
+         .type(ApiType.COMPUTE)
+         .name("Slicehost API")
+         .identityName("API password")
+         .documentation(URI.create("http://articles.slicehost.com/api"))
+         .version("https://api.slicehost.com")
+         .defaultEndpoint("https://api.slicehost.com")
+         .javaApi(SlicehostClient.class, SlicehostAsyncClient.class)
+         .defaultProperties(SlicehostApiMetadata.defaultProperties())
+         .contextBuilder(TypeToken.of(SlicehostContextBuilder.class));
+      }
 
       @Override
       public SlicehostApiMetadata build() {
          return new SlicehostApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(SlicehostApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

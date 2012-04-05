@@ -33,7 +33,7 @@ public class GleSYSExperimentExpectTest extends BaseGleSYSComputeServiceExpectTe
 
    @Test
    public void testAndExperiment() {
-      ComputeServiceContext context = null;
+      ComputeServiceContext<?, ?> context = null;
       try {
 
          context = computeContextForKnownArgumentsAndConstantPassword();

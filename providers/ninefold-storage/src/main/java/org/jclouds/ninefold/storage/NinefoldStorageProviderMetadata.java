@@ -19,9 +19,14 @@
 package org.jclouds.ninefold.storage;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.atmos.AtmosApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.atmos.AtmosAsyncClient;
+import org.jclouds.atmos.AtmosClient;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Ninefold's
@@ -29,38 +34,53 @@ import org.jclouds.providers.BaseProviderMetadata;
  *
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class NinefoldStorageProviderMetadata extends BaseProviderMetadata {
-
-   public NinefoldStorageProviderMetadata() {
-      this(builder()
-            .id("ninefold-storage")
-            .name("Ninefold Storage")
-            .api(new AtmosApiMetadata())
-            .homepage(URI.create("http://ninefold.com/cloud-storage/"))
-            .console(URI.create("https://ninefold.com/portal/"))
-            .iso3166Codes("AU-NSW"));
+public class NinefoldStorageProviderMetadata extends BaseProviderMetadata<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected NinefoldStorageProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public NinefoldStorageProviderMetadata() {
+      super(builder());
+   }
+
+   public NinefoldStorageProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+
+      protected Builder(){
+          id("ninefold-storage")
+         .name("Ninefold Storage")
+         .apiMetadata(new AtmosApiMetadata())
+         .homepage(URI.create("http://ninefold.com/cloud-storage/"))
+         .console(URI.create("https://ninefold.com/portal/"))
+         .iso3166Codes("AU-NSW")
+         .endpoint("http://onlinestorage.ninefold.com")
+         .defaultProperties(NinefoldStorageProviderMetadata.defaultProperties());
+      }
 
       @Override
       public NinefoldStorageProviderMetadata build() {
          return new NinefoldStorageProviderMetadata(this);
       }
-   }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
 }

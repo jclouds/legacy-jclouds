@@ -24,16 +24,15 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -46,12 +45,16 @@ public abstract class BaseCloudStackRestClientExpectTest<S> extends BaseRestClie
    public BaseCloudStackRestClientExpectTest() {
       provider = "cloudstack";
    }
+   
+   @Override
+   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new CloudStackApiMetadata();
+   }
+
 
    @Override
    public S createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-      return clientFrom(CloudStackContext.class.cast(new ComputeServiceContextFactory(setupRestProperties())
-               .createContext(provider, "identity", "credential", ImmutableSet.<Module> of(new ExpectModule(fn),
-                        new NullLoggingModule(), module), props)));
+      return (S) clientFrom(createInjector(fn, module, props).getInstance(CloudStackContext.class));
    }
 
    protected abstract S clientFrom(CloudStackContext context);

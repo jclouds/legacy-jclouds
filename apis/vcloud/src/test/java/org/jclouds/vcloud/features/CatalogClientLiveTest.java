@@ -46,7 +46,7 @@ public class CatalogClientLiveTest extends BaseVCloudClientLiveTest {
    public void testFindCatalogIsWriteableIfNotVersion1_5() throws Exception {
       // when we are in vCloud 1.0.0 public catalogs don't work, so our default
       // catalog is private
-      if (!buildVersion.startsWith("1.5"))
+      if (!context.getProviderSpecificContext().getApiVersion().startsWith("1.5"))
          assertTrue(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly());
    }
 }

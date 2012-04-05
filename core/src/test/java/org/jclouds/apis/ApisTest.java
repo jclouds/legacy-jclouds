@@ -33,14 +33,14 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "ApisTest")
 public class ApisTest {
 
-   private final ApiMetadata testBlobstoreApi = new JcloudsTestBlobStoreApiMetadata();
-   private final ApiMetadata testComputeApi = new JcloudsTestComputeApiMetadata();
-   private final ApiMetadata testYetAnotherComputeApi = new JcloudsTestYetAnotherComputeApiMetadata();
+   private final JcloudsTestBlobStoreApiMetadata testBlobstoreApi = new JcloudsTestBlobStoreApiMetadata();
+   private final JcloudsTestComputeApiMetadata testComputeApi = new JcloudsTestComputeApiMetadata();
+   private final JcloudsTestYetAnotherComputeApiMetadata testYetAnotherComputeApi = new JcloudsTestYetAnotherComputeApiMetadata();
 
    @Test
    public void testWithId() {
-      ApiMetadata apiMetadata;
 
+      ApiMetadata<?, ?, ?, ?> apiMetadata;
       try {
          apiMetadata = Apis.withId("fake-id");
          fail("Looking for a api with an id that doesn't exist should " + "throw an exceptoin.");
@@ -55,15 +55,15 @@ public class ApisTest {
 
    @Test
    public void testOfType() {
-      Iterable<ApiMetadata> apisMetadata = Apis.ofType(ApiType.BLOBSTORE);
+      Iterable<ApiMetadata<?, ?, ?, ?>> apisMetadata = Apis.ofType(ApiType.BLOBSTORE);
 
-      for (ApiMetadata apiMetadata : apisMetadata) {
+      for (ApiMetadata<?, ?, ?, ?> apiMetadata : apisMetadata) {
          assertEquals(testBlobstoreApi, apiMetadata);
       }
 
       apisMetadata = Apis.ofType(ApiType.COMPUTE);
 
-      for (ApiMetadata apiMetadata : apisMetadata) {
+      for (ApiMetadata<?, ?, ?, ?> apiMetadata : apisMetadata) {
          if (apiMetadata.getName().equals(testComputeApi.getName())) {
             assertEquals(testComputeApi, apiMetadata);
          } else {
@@ -78,9 +78,9 @@ public class ApisTest {
 
    @Test
    public void testAll() {
-      Iterable<ApiMetadata> apisMetadata = Apis.all();
+      Iterable<ApiMetadata<?, ?, ?, ?>> apisMetadata = Apis.all();
 
-      for (ApiMetadata apiMetadata : apisMetadata) {
+      for (ApiMetadata<?, ?, ?, ?> apiMetadata : apisMetadata) {
          if (apiMetadata.getName().equals(testBlobstoreApi.getName())) {
             assertEquals(testBlobstoreApi, apiMetadata);
          } else if (apiMetadata.getName().equals(testComputeApi.getName())) {

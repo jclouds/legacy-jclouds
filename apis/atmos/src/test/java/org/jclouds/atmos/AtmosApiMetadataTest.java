@@ -18,8 +18,7 @@
  */
 package org.jclouds.atmos;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "AtmosApiMetadataTest")
-public class AtmosApiMetadataTest extends BaseApiMetadataTest {
+public class AtmosApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 
    public AtmosApiMetadataTest() {
-      super(new AtmosApiMetadata(), ApiType.BLOBSTORE);
+      super(new AtmosApiMetadata());
    }
 }

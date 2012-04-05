@@ -49,6 +49,7 @@ import com.google.inject.TypeLiteral;
  */
 public class FilesystemBlobStoreContextModule extends AbstractModule {
 
+   @SuppressWarnings("rawtypes")
    @Override
    protected void configure() {
       bind(new TypeLiteral<BlobStoreContext>() {

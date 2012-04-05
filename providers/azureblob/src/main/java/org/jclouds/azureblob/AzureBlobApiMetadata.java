@@ -18,51 +18,72 @@
  */
 package org.jclouds.azureblob;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Microsoft Azure Blob Service API
  * 
  * @author Adrian Cole
  */
-public class AzureBlobApiMetadata extends BaseApiMetadata {
+public class AzureBlobApiMetadata
+      extends
+      BaseBlobStoreApiMetadata<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> {
+   private static Builder builder() {
+      return new Builder();
+   }
+
+   @Override
+   public Builder toBuilder() {
+      return builder().fromApiMetadata(this);
+   }
 
    public AzureBlobApiMetadata() {
-      this(builder()
-            .id("azureblob")
-            .type(ApiType.BLOBSTORE)
+      this(builder());
+   }
+
+   protected AzureBlobApiMetadata(Builder builder) {
+      super(builder);
+   }
+  
+   protected static Properties defaultProperties() {
+      Properties properties = BaseBlobStoreApiMetadata.Builder.defaultProperties();
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
+      return properties;
+   }
+   
+   public static class Builder extends BaseBlobStoreApiMetadata.Builder<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> {
+      protected Builder(){
+            id("azureblob")
             .name("Microsoft Azure Blob Service API")
             .identityName("Account Name")
             .credentialName("Access Key")
-            .documentation(URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx")));
-   }
-
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AzureBlobApiMetadata(Builder<?> builder) {
-      super(builder);
-   }
-
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
-
+            .version("2009-09-19")
+            .defaultEndpoint("https://${jclouds.identity}.blob.core.windows.net")
+            .documentation(URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx"))
+            .contextBuilder(TypeToken.of(AzureBlobContextBuilder.class))
+            .javaApi(AzureBlobClient.class, AzureBlobAsyncClient.class)
+            .defaultProperties(AzureBlobApiMetadata.defaultProperties());
+     }
+      
       @Override
       public AzureBlobApiMetadata build() {
          return new AzureBlobApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
+      @Override
+      public Builder fromApiMetadata(AzureBlobApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 
 }

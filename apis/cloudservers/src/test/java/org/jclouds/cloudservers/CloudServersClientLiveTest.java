@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.SecureRandom;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -45,19 +44,17 @@ import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.cloudservers.domain.SharedIpGroup;
 import org.jclouds.cloudservers.domain.WeeklyBackup;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -66,10 +63,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code CloudServersClient}
@@ -77,7 +72,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudServersClientLiveTest")
-public class CloudServersClientLiveTest extends BaseVersionedServiceLiveTest {
+public class CloudServersClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>> {
+
    public CloudServersClientLiveTest() {
       provider = "cloudservers";
    }
@@ -86,15 +84,11 @@ public class CloudServersClientLiveTest extends BaseVersionedServiceLiveTest {
    protected SshClient.Factory sshFactory;
    protected Predicate<IPSocket> socketTester;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-
-      Injector injector = new RestContextFactory().createContextBuilder(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides)
-               .buildInjector();
-
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      Injector injector = context.utils().injector();
       client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

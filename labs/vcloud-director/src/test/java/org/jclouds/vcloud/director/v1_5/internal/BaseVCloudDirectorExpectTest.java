@@ -25,10 +25,12 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.Constants;
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.testng.annotations.BeforeGroups;
@@ -250,4 +252,10 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
    public URI toAdminUri(URI uri) {
       return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
    }
+   
+   @Override
+   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new VCloudDirectorApiMetadata();
+   }
+   
 }

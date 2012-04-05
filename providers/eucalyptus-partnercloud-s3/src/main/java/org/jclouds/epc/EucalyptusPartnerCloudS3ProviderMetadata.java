@@ -18,51 +18,79 @@
  */
 package org.jclouds.epc;
 
-import java.net.URI;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.blobstore.S3BlobStoreContext;
 import org.jclouds.walrus.WalrusApiMetadata;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Eucalpytus'
- * Partner Cloud S3 provider.
+ * Implementation of {@link org.jclouds.providers.ProviderMetadata} for Eucalyptus Partner Cloud S3.
  * 
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
-public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata {
-
-   public EucalyptusPartnerCloudS3ProviderMetadata() {
-      this(builder()
-            .id("eucalyptus-partnercloud-s3")
-            .name("Eucalyptus Partner Cloud (S3)")
-            .api(new WalrusApiMetadata())
-            .homepage(URI.create("http://www.eucalyptus.com/partners"))
-            .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
-            .linkedServices("eucalyptus-partnercloud-s3", "eucalyptus-partnercloud-s3")
-            .iso3166Codes("US-CA"));
+public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected EucalyptusPartnerCloudS3ProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public EucalyptusPartnerCloudS3ProviderMetadata() {
+      super(builder());
+   }
+
+   public EucalyptusPartnerCloudS3ProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + ".Walrus." + ISO3166_CODES, "US-CA");
+      properties.setProperty(PROPERTY_REGION + "." + "Walrus" + "." + ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Walrus");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> {
+
+      protected Builder(){
+         id("eucalyptus-partnercloud-s3")
+         .name("Eucalyptus Partner Cloud (S3)")
+         .apiMetadata(new WalrusApiMetadata())
+         .homepage(URI.create("http://www.eucalyptus.com/partners"))
+         .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
+         .linkedServices("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3")
+         .iso3166Codes("US-CA")
+         .endpoint("http://partnercloud.eucalyptus.com:8773/services/Walrus")
+         .defaultProperties(EucalyptusPartnerCloudS3ProviderMetadata.defaultProperties());
+      }
 
       @Override
       public EucalyptusPartnerCloudS3ProviderMetadata build() {
          return new EucalyptusPartnerCloudS3ProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

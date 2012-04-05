@@ -26,7 +26,11 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class SwiftClientLiveTest extends CommonSwiftClientLiveTest<SwiftClient> {
-
+   
+   public SwiftClientLiveTest(){
+      provider = "swift";
+   }
+   
    @Override
    public SwiftClient getApi() {
       return (SwiftClient) context.getProviderSpecificContext().getApi();

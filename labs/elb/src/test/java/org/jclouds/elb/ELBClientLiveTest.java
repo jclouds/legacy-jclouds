@@ -21,20 +21,14 @@ package org.jclouds.elb;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.elb.domain.LoadBalancer;
-import org.jclouds.loadbalancer.LoadBalancerServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.BaseRestClientLiveTest;
-import org.jclouds.rest.RestContext;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code ELBClient}
@@ -42,24 +36,20 @@ import com.google.inject.Module;
  * @author Lili Nader
  */
 @Test(groups = "live", singleThreaded = true, testName = "ELBClientLiveTest")
-public class ELBClientLiveTest extends BaseRestClientLiveTest {
+public class ELBClientLiveTest<S extends ELBClient, A extends ELBAsyncClient> extends BaseContextLiveTest<LoadBalancerServiceContext<S, A>>  {
 
    public ELBClientLiveTest() {
       provider = "elb";
    }
 
    private ELBClient client;
-   private RestContext<ELBClient, ELBAsyncClient> context;
-
    protected String name = "TestLoadBalancer";
 
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new LoadBalancerServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi();
    }
 
    @Test

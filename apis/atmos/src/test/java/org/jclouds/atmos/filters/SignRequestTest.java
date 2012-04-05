@@ -24,20 +24,19 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.atmos.config.AtmosRestClientModule;
 import org.jclouds.atmos.reference.AtmosHeaders;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -98,13 +97,12 @@ public class SignRequestTest {
 
    @BeforeClass
    protected void createFilter() {
-      Injector injector = new RestContextFactory()
-            .createContextBuilder(
-                  "atmos",
-                  UID,
-                  KEY,
-                  ImmutableSet.<Module> of(new MockModule(), new TestAtmosRestClientModule(),
-                        new NullLoggingModule()), new Properties()).buildInjector();
+      Injector injector = BlobStoreContextBuilder
+            .newBuilder("atmos")
+            .credentials(UID, KEY)
+            .modules(
+                  ImmutableSet.<Module> of(new MockModule(), new TestAtmosRestClientModule(), new NullLoggingModule()))
+            .buildInjector();
 
       filter = injector.getInstance(SignRequest.class);
 

@@ -21,16 +21,14 @@ package org.jclouds.blobstore;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.inject.Provider;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -44,14 +42,14 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "TransientBlobRequestSignerTest")
-public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyncBlobStore> {
+public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<TransientAsyncBlobStore> {
 
    private BlobRequestSigner signer;
    private Provider<BlobBuilder> blobFactory;
-   private final String endPoint = "http://localhost:8080";
+   private final String endpoint = new TransientApiMetadata().getDefaultEndpoint().get();
    private final String containerName = "container";
    private final String blobName = "blob";
-   private final String fullUrl = String.format("%s/%s/%s", endPoint, containerName, blobName);
+   private final String fullUrl = String.format("%s/%s/%s", endpoint, containerName, blobName);
 
    public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
@@ -124,16 +122,14 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
    }
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      Properties properties = new Properties();
-      properties.setProperty("transient.endpoint", endPoint);
-      return new RestContextFactory().createContextSpec("transient", "identity", "credential", properties);
-   }
-
-   @Override
    protected TypeLiteral<RestAnnotationProcessor<TransientAsyncBlobStore>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<TransientAsyncBlobStore>>() {
       };
+   }
+
+   @Override
+   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+      return new TransientApiMetadata();
    }
 
 }

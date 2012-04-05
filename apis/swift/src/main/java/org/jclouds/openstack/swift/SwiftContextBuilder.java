@@ -19,34 +19,45 @@
 package org.jclouds.openstack.swift;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.openstack.swift.config.SwiftRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link CloudFilesBlobStoreContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
+ * Creates {@link SwiftStoreContext} or {@link Injector} instances based on
+ * the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
- * @see CloudFilesBlobStoreContext
+ * @see SwiftStoreContext
  */
-public class SwiftContextBuilder extends BlobStoreContextBuilder<SwiftClient, SwiftAsyncClient> {
+public class SwiftContextBuilder
+      extends
+      BlobStoreContextBuilder<SwiftClient, SwiftAsyncClient, BlobStoreContext<SwiftClient, SwiftAsyncClient>, SwiftApiMetadata> {
 
-   public SwiftContextBuilder(Properties props) {
-      super(SwiftClient.class, SwiftAsyncClient.class, props);
+   public SwiftContextBuilder(
+         ProviderMetadata<SwiftClient, SwiftAsyncClient, BlobStoreContext<SwiftClient, SwiftAsyncClient>, SwiftApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public SwiftContextBuilder(SwiftApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

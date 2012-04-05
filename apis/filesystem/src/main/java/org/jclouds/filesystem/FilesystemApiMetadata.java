@@ -18,50 +18,70 @@
  */
 package org.jclouds.filesystem;
 
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+
 import java.net.URI;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds Filesystem-based BlobStore
  * 
  * @author Adrian Cole
  */
-public class FilesystemApiMetadata extends BaseApiMetadata {
+public class FilesystemApiMetadata
+      extends
+      BaseBlobStoreApiMetadata<BlobStore, FilesystemAsyncBlobStore, BlobStoreContext<BlobStore, FilesystemAsyncBlobStore>, FilesystemApiMetadata> {
 
-   public FilesystemApiMetadata() {
-      this(builder()
-            .id("filesystem")
-            .type(ApiType.BLOBSTORE)
-            .name("Filesystem-based BlobStore")
-            .identityName("Unused")
-            .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide")));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected FilesystemApiMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromApiMetadata(this));
+   }
+
+   public FilesystemApiMetadata() {
+      super(builder());
+   }
+
+   protected FilesystemApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+public static class Builder extends
+   BaseBlobStoreApiMetadata.Builder<BlobStore, FilesystemAsyncBlobStore, BlobStoreContext<BlobStore, FilesystemAsyncBlobStore>, FilesystemApiMetadata> {
+
+      protected Builder() {
+         id("filesystem")
+         .name("Filesystem-based BlobStore")
+         .identityName("Unused")
+         .contextBuilder(TypeToken.of(FilesystemBlobStoreContextBuilder.class))
+         .javaApi(BlobStore.class, FilesystemAsyncBlobStore.class)
+         .identityName("Unused")
+         .defaultEndpoint("http://localhost/transient")
+         .defaultIdentity(System.getProperty("user.name"))
+         .defaultCredential("bar")
+         .version("1")
+         .defaultProperties(
+               BaseBlobStoreApiMetadata.Builder.defaultPropertiesAnd(ImmutableMap.of(PROPERTY_USER_THREADS, "0",
+                     PROPERTY_IO_WORKER_THREADS, "0")))
+         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"));
+      }
 
       @Override
       public FilesystemApiMetadata build() {
          return new FilesystemApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

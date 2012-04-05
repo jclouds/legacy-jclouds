@@ -63,8 +63,8 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 
    @Override
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       client = restContext.getApi().getVMClient();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);// make
    }
@@ -293,10 +293,10 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   protected void tearDownContext() {
       if (vm != null) {
          assert taskTester.apply(client.removeVMFromVDC(billingSiteId, vpdcId, vm.getId()).getId()) : vm;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }

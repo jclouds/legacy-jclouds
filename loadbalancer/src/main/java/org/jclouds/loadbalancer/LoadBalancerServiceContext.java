@@ -18,8 +18,10 @@
  */
 package org.jclouds.loadbalancer;
 
+import java.io.Closeable;
+
 import org.jclouds.loadbalancer.internal.LoadBalancerServiceContextImpl;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.BackedByRestContext;
 import org.jclouds.rest.Utils;
 
 import com.google.inject.ImplementedBy;
@@ -32,12 +34,9 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(LoadBalancerServiceContextImpl.class)
-public interface LoadBalancerServiceContext {
+public interface LoadBalancerServiceContext<S, A> extends Closeable, BackedByRestContext<S, A> {
 
    LoadBalancerService getLoadBalancerService();
-
-
-   <S, A> RestContext<S, A> getProviderSpecificContext();
 
 
    Utils getUtils();
@@ -47,5 +46,6 @@ public interface LoadBalancerServiceContext {
     */
    Utils utils();
 
+   @Override
    void close();
 }

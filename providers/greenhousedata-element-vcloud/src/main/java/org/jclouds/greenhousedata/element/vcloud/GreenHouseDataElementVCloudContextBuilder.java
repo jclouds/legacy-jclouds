@@ -19,28 +19,34 @@
 package org.jclouds.greenhousedata.element.vcloud;
 
 import java.util.List;
-import java.util.Properties;
 
-import org.jclouds.greenhousedata.element.vcloud.config.GreenHouseDataElementVCloudComputeServiceContextModule;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.greenhousedata.element.vcloud.config.GreenHouseDataElementVCloudRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.vcloud.VCloudApiMetadata;
+import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudContextBuilder;
+import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 
 import com.google.inject.Module;
 
 /**
- * {@inheritDoc} 
- *
  * @author Adrian Cole
  */
 public class GreenHouseDataElementVCloudContextBuilder extends VCloudContextBuilder {
+   public GreenHouseDataElementVCloudContextBuilder(
+         ProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
 
-   public GreenHouseDataElementVCloudContextBuilder(Properties props) {
-      super(props);
+   public GreenHouseDataElementVCloudContextBuilder(VCloudApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new GreenHouseDataElementVCloudComputeServiceContextModule());
+      modules.add(new VCloudComputeServiceContextModule());
    }
 
    @Override

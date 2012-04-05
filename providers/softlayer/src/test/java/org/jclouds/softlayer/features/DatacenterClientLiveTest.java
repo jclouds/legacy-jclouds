@@ -40,9 +40,9 @@ import com.google.common.collect.ImmutableSet.Builder;
 @Test(groups = "live")
 public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getDatacenterClient();
+   public void setupContext() {
+      super.setupContext();
+      client = socontext.getApi().getDatacenterClient();
    }
 
    private DatacenterClient client;

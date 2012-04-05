@@ -18,8 +18,7 @@
  */
 package org.jclouds.byon;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "BYONApiMetadataTest")
-public class BYONApiMetadataTest extends BaseApiMetadataTest {
+public class BYONApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public BYONApiMetadataTest() {
-      super(new BYONApiMetadata(), ApiType.COMPUTE);
+      super(new BYONApiMetadata());
    }
 }

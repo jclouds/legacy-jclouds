@@ -18,13 +18,17 @@
  */
 package org.jclouds.apis;
 
-
+import java.io.Closeable;
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.rest.internal.ContextBuilder;
 
 import com.google.common.annotations.Beta;
-
+import com.google.common.base.Optional;
+import com.google.common.reflect.TypeToken;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * The ApiMetadata interface allows jclouds to provide a plugin framework for
@@ -34,86 +38,225 @@ import com.google.common.annotations.Beta;
  * @since 1.5
  */
 @Beta
-public interface ApiMetadata {
+public interface ApiMetadata<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> {
 
-   public static interface Builder<B extends Builder<B>> {
+   public static interface Builder<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> {
       /**
        * @see ApiMetadata#getId()
        */
-      B id(String id);
+      Builder<S, A, C, M> id(String id);
 
       /**
        * @see ApiMetadata#getName()
        */
-      B name(String name);
+      Builder<S, A, C, M> name(String name);
 
       /**
        * @see ApiMetadata#getType()
        */
-      B type(ApiType type);
+      Builder<S, A, C, M> type(ApiType type);
+      
+      /**
+       * @see ApiMetadata#getEndpointName()
+       */
+      Builder<S, A, C, M> endpointName(String endpointName);
 
       /**
        * @see ApiMetadata#getIdentityName()
        */
-      B identityName(String identityName);
+      Builder<S, A, C, M> identityName(String identityName);
 
       /**
        * @see ApiMetadata#getCredentialName()
        */
-      B credentialName(@Nullable String credentialName);
+      Builder<S, A, C, M> credentialName(@Nullable String credentialName);
+
+      /**
+       * @see ApiMetadata#getVersion()
+       */
+      Builder<S, A, C, M> version(String version);
+
+      /**
+       * @see ApiMetadata#getBuildVersion()
+       */
+      Builder<S, A, C, M> buildVersion(@Nullable String buildVersion);
+
+      /**
+       * @see ApiMetadata#getDefaultEndpoint()
+       */
+      Builder<S, A, C, M> defaultEndpoint(@Nullable String defaultEndpoint);
+
+      /**
+       * @see ApiMetadata#getDefaultIdentity()
+       */
+      Builder<S, A, C, M> defaultIdentity(@Nullable String defaultIdentity);
+
+      /**
+       * @see ApiMetadata#getDefaultCredential()
+       */
+      Builder<S, A, C, M> defaultCredential(@Nullable String defaultCredential);
+
+      /**
+       * @see ApiMetadata#getDefaultProperties()
+       */
+      Builder<S, A, C, M> defaultProperties(Properties defaultProperties);
+
+      /**
+       * @see ApiMetadata#getApi()
+       * @see ApiMetadata#getAsyncApi()
+       */
+      Builder<S, A, C, M> javaApi(Class<S> api, Class<A> asyncApi);
 
       /**
        * @see ApiMetadata#getDocumentation()
        */
-      B documentation(URI documentation);
+      Builder<S, A, C, M> documentation(URI documentation);
 
-      ApiMetadata build();
+      M build();
 
-      B fromApiMetadata(ApiMetadata in);
+      Builder<S, A, C, M> fromApiMetadata(M from);
+      
+      Builder<S, A, C, M> context(TypeToken<C> context);
+
+      Builder<S, A, C, M> contextBuilder(TypeToken<? extends ContextBuilder<S, A, C, M>> contextBuilder);      
+      
    }
 
    /**
     * @see Builder
     */
-   Builder<?> toBuilder();
+   Builder<S, A, C, ? extends ApiMetadata<S, A, C, M>> toBuilder();
 
    /**
     * 
-    * @return the api's unique identifier
+    * @return the api's unique identifier (ex. vcloud, virtualbox)
     */
-   public String getId();
+   String getId();
 
    /**
     * 
-    * @return the name (display name) of the api
+    * @return the name (display name) of the api (ex. EC2 Base API)
     */
-   public String getName();
+   String getName();
 
    /**
     * 
-    * @return the api's type
+    * @return the api's type (ex. COMPUTE or MONITOR)
     */
-   public ApiType getType();
+   ApiType getType();
 
+   /**
+    * 
+    * The {@code endpointName} helps the user supply the correct data when
+    * prompted.
+    * <p/>
+    * For example, on OpenStack APIs, this could be: {@code Keystone url} <br/>
+    * For file-based apis, this could be: {@code Path of byon.yaml}
+    * <p/>
+    * Default: {@code "https endpoint"}
+    * <p/>
+    * 
+    * @return the name (display name) of an endpoint to this api (ex. Keystone
+    *         url, vCloud Director URL).
+    */
+   String getEndpointName();
+   
    /**
     * 
     * @return the name (display name) of an identity on this api (ex. user,
-    *         email, account, apikey)
+    *         email, account, apikey, tenantId:username)
     */
-   public String getIdentityName();
+   String getIdentityName();
 
    /**
+    * Note: if the api doesn't need a credential, this will return absent.
     * 
-    * @return the name (display name) of a credential on this api, or null if
-    *         there is none (ex. password, secret, rsaKey)
+    * @return the name (display name) of a credential on this api, if it is
+    *         required (ex. password, secret, rsaKey)
     */
-   @Nullable
-   public String getCredentialName();
+   Optional<String> getCredentialName();
+
+   /**
+    * Explicitly identifies the version of an api.
+    */
+   String getVersion();
+
+   /**
+    * Explicitly identifies the build that the server jclouds connects to is
+    * running.
+    * 
+    * For example, for virtualbox, the api version may be {@code 4.1.8} while
+    * the build version is {@code 4.1.8r75467}. Or a vcloud endpoint may be api
+    * version {@code 1.0} while the build is {@code 1.5.0.0.124312}
+    */
+   Optional<String> getBuildVersion();
+
+   /**
+    * Explicitly identifies the most top-level endpoint to a service provider.
+    * This helps differentiate two providers of the same api, or a different
+    * environments providing the same api.
+    * 
+    * <h3>note</h3>
+    * 
+    * The type of endpoint is {@code String} as we permit endpoints that require
+    * variable expansion.
+    * 
+    * ex.
+    * 
+    * <pre>
+    * https://${jclouds.identity}.blob.core.windows.net
+    * </pre>
+    * 
+    * @return the api's default endpoint, if known.
+    */
+   Optional<String> getDefaultEndpoint();
+
+   /**
+    * Explicitly identifies the login identity into a provider
+    * 
+    * @return the login identity into a provider, if known.
+    */
+   Optional<String> getDefaultIdentity();
+
+   /**
+    * Explicitly sets the secret, which when combined with the identity, will
+    * create an authenticated subject or session
+    * 
+    * @return the api's default credential, if known.
+    * @see #getDefaultIdentity
+    * @see #getCredentialName
+    */
+   Optional<String> getDefaultCredential();
+
+   /**
+    * Configuration Properties used when creating connections to this api
+    * 
+    * @return properties used to create connections to this api
+    */
+   Properties getDefaultProperties();
 
    /**
     * 
     * @return the url for the API documentation related to this service
     */
-   public URI getDocumentation();
+   URI getDocumentation();
+
+   /**
+    * 
+    * @return the type of the api which blocks on all requests
+    */
+   Class<S> getApi();
+
+   /**
+    * 
+    * @return the type of the api, which is the same as {@link #getApi}, except
+    *         all methods return {@link ListenableFuture}
+    */
+   Class<A> getAsyncApi();
+
+   TypeToken<C> getContext();
+
+   // internal use
+   TypeToken<? extends ContextBuilder<S, A, C, M>> getContextBuilder();
 
 }

@@ -86,7 +86,7 @@ public class NovaComputeService extends BaseComputeService {
    protected final GroupNamingConvention.Factory namingConvention;
 
    @Inject
-   protected NovaComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
+   protected NovaComputeService(@SuppressWarnings("rawtypes") ComputeServiceContext context, Map<String, Credentials> credentialStore,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
          @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
          GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,

@@ -22,15 +22,13 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
@@ -46,7 +44,6 @@ import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.predicates.DriveClaimed;
 import org.jclouds.elasticstack.util.Servers;
 import org.jclouds.io.Payloads;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -65,7 +62,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code ElasticStackClient}
@@ -73,7 +69,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ElasticStackClientLiveTest")
-public class ElasticStackClientLiveTest extends BaseVersionedServiceLiveTest {
+public class ElasticStackClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>> {
+   
    public ElasticStackClientLiveTest() {
       provider = "elasticstack";
    }
@@ -82,28 +81,24 @@ public class ElasticStackClientLiveTest extends BaseVersionedServiceLiveTest {
    protected int maxDriveImageTime = 360;
    protected String vncPassword = "Il0veVNC";
    protected ElasticStackClient client;
-   protected ComputeServiceContext computeContext;
-   protected RestContext<ElasticStackClient, ElasticStackAsyncClient> context;
+   protected RestContext<ElasticStackClient, ElasticStackAsyncClient> cloudStackContext;
    protected Predicate<IPSocket> socketTester;
    protected Predicate<DriveInfo> driveNotClaimed;
 
-
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      computeContext = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
-      context = computeContext.getProviderSpecificContext();
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      cloudStackContext = context.getProviderSpecificContext();
          
-      client = context.getApi();
+      client = cloudStackContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
                1, TimeUnit.SECONDS);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
                TimeUnit.SECONDS);
       
       if (Strings.emptyToNull(imageId) == null) {
-         imageId = computeContext.getComputeService().templateBuilder().build().getImage().getId();
+         imageId = context.getComputeService().templateBuilder().build().getImage().getId();
       }
    }
 
@@ -322,8 +317,8 @@ public class ElasticStackClientLiveTest extends BaseVersionedServiceLiveTest {
       } catch (Exception e) {
 
       }
-      if (context != null)
-         context.close();
+      if (cloudStackContext != null)
+         cloudStackContext.close();
    }
 
    private DriveInfo drive2;

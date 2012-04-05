@@ -20,15 +20,14 @@ package org.jclouds.cloudstack.compute;
 
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -38,7 +37,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class CloudStackComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class CloudStackComputeServiceLiveTest extends
+      BaseComputeServiceLiveTest<CloudStackClient, CloudStackAsyncClient, CloudStackContext> {
    public CloudStackComputeServiceLiveTest() {
       provider = "cloudstack";
    }
@@ -50,9 +50,7 @@ public class CloudStackComputeServiceLiveTest extends BaseComputeServiceLiveTest
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<CloudStackClient, CloudStackAsyncClient> tmContext = new ComputeServiceContextFactory(
-            setupRestProperties()).createContext(provider, identity, credential, ImmutableSet.<Module> of(),
-            setupProperties()).getProviderSpecificContext();
+      RestContext<CloudStackClient, CloudStackAsyncClient> tmContext = context.getProviderSpecificContext();
    }
 
    // cloudstack does not support metadata

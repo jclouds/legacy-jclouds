@@ -18,51 +18,91 @@
  */
 package org.jclouds.aws.cloudwatch;
 
-import java.net.URI;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.aws.domain.Region;
 import org.jclouds.cloudwatch.CloudWatchApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.cloudwatch.CloudWatchAsyncClient;
+import org.jclouds.cloudwatch.CloudWatchClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.rest.RestContext;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's CloudWatch
  * provider.
- * 
- * @author Adrian Cole
- */
-public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata {
-
-   public AWSCloudWatchProviderMetadata() {
-      this(builder()
-            .id("aws-cloudwatch")
-            .name("Amazon CloudWatch")
-            .api(new CloudWatchApiMetadata())
-            .homepage(URI.create("http://aws.amazon.com/cloudwatch"))
-            .console(URI.create("https://console.aws.amazon.com/cloudwatch/home"))
-            .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
-            .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13"));
+*
+* @author Adrian Cole
+*/
+public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata<CloudWatchClient, CloudWatchAsyncClient, RestContext<CloudWatchClient, CloudWatchAsyncClient>, CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>> {
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AWSCloudWatchProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public AWSCloudWatchProviderMetadata() {
+      super(builder());
+   }
+
+   public AWSCloudWatchProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.putAll(Region.regionProperties());
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_EAST_1 + ".endpoint",
+            "https://monitoring.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + ".endpoint",
+            "https://monitoring.us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_2 + ".endpoint",
+            "https://monitoring.us-west-2.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.SA_EAST_1 + ".endpoint",
+            "https://monitoring.sa-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.EU_WEST_1 + ".endpoint",
+            "https://monitoring.eu-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + ".endpoint",
+            "https://monitoring.ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.AP_NORTHEAST_1 + ".endpoint",
+            "https://monitoring.ap-northeast-1.amazonaws.com");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder<CloudWatchClient, CloudWatchAsyncClient, RestContext<CloudWatchClient, CloudWatchAsyncClient>, CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>> {
+
+      protected Builder(){
+         id("aws-cloudwatch")
+         .name("Amazon CloudWatch")
+         .endpoint("https://monitoring.us-east-1.amazonaws.com")
+         .homepage(URI.create("http://aws.amazon.com/cloudwatch"))
+         .console(URI.create("https://console.aws.amazon.com/cloudwatch/home"))
+         .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
+         .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13")
+               .apiMetadata(
+                     new CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>().toBuilder()
+                           .version("2010-08-01").build())
+         .defaultProperties(AWSCloudWatchProviderMetadata.defaultProperties());
+      }
 
       @Override
       public AWSCloudWatchProviderMetadata build() {
          return new AWSCloudWatchProviderMetadata(this);
       }
-   }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<CloudWatchClient, CloudWatchAsyncClient, RestContext<CloudWatchClient, CloudWatchAsyncClient>, CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
    }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

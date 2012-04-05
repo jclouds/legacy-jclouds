@@ -20,20 +20,16 @@ package org.jclouds.softlayer.features;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Properties;
-
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
-import org.jclouds.softlayer.SoftLayerAsyncClient;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.softlayer.SoftLayerProviderMetadata;
 
 /**
  * @author Adrian Cole
  */
-public abstract class BaseSoftLayerAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseSoftLayerAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    @Override
    protected void checkFilters(HttpRequest request) {
@@ -42,9 +38,8 @@ public abstract class BaseSoftLayerAsyncClientTest<T> extends RestClientTest<T> 
    }
 
    @Override
-   public RestContextSpec<SoftLayerClient, SoftLayerAsyncClient> createContextSpec() {
-      Properties props = new Properties();
-      return new RestContextFactory().createContextSpec("softlayer", "apiKey", "secretKey", props);
+   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+      return new SoftLayerProviderMetadata();
    }
 
 }

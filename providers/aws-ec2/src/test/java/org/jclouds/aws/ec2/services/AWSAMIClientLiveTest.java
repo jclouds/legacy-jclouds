@@ -25,27 +25,22 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.RootDeviceType;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code AWSAMIClient}
@@ -53,7 +48,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AWSAMIClientLiveTest")
-public class AWSAMIClientLiveTest extends BaseVersionedServiceLiveTest {
+public class AWSAMIClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
    public AWSAMIClientLiveTest() {
       provider = "aws-ec2";
       // TODO: parameterize this.
@@ -63,17 +58,14 @@ public class AWSAMIClientLiveTest extends BaseVersionedServiceLiveTest {
    private AWSAMIClient client;
    private static final String DEFAULT_MANIFEST = "adrianimages/image.manifest.xml";
    private static final String DEFAULT_SNAPSHOT = "TODO";
-   private RestContext<AWSEC2Client, AWSEC2AsyncClient> context;
 
    private Set<String> imagesToDeregister = Sets.newHashSet();
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi().getAMIServices();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getProviderSpecificContext().getApi().getAMIServices();
    }
 
    public void testDescribeImageNotExists() {
@@ -86,7 +78,7 @@ public class AWSAMIClientLiveTest extends BaseVersionedServiceLiveTest {
    }
 
    public void testDescribeImages() {
-      for (String region : context.getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<Image> allResults = Sets.newLinkedHashSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();

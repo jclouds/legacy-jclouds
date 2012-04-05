@@ -19,33 +19,31 @@
 package org.jclouds.filesystem;
 
 import java.util.List;
-import java.util.Properties;
 
-import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;
 import org.jclouds.filesystem.config.FilesystemBlobStoreModule;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
 /**
- *
+ * 
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public class FilesystemBlobStoreContextBuilder extends
-         BlobStoreContextBuilder<BlobStore, AsyncBlobStore> {
+public class FilesystemBlobStoreContextBuilder
+      extends
+      BlobStoreContextBuilder<BlobStore, FilesystemAsyncBlobStore, BlobStoreContext<BlobStore, FilesystemAsyncBlobStore>, FilesystemApiMetadata> {
 
-   /**
-    * This is only to have the same syntax.
-    *
-    */
-   public FilesystemBlobStoreContextBuilder() {
-      this(new Properties());
+   public FilesystemBlobStoreContextBuilder(
+         ProviderMetadata<BlobStore, FilesystemAsyncBlobStore, BlobStoreContext<BlobStore, FilesystemAsyncBlobStore>, FilesystemApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
 
-   public FilesystemBlobStoreContextBuilder(Properties props) {
-      super(BlobStore.class, AsyncBlobStore.class, props);
+   public FilesystemBlobStoreContextBuilder(FilesystemApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override

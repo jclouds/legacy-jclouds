@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -44,7 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -66,14 +65,13 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.CreationException;
-import com.google.inject.Module;
 
 /**
  * Test class for {@link FilesystemAsyncBlobStore} class
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-@Test(groups = "unit", testName = "filesystem.FilesystemAsyncBlobStoreTest", sequential = true)
+@Test(groups = "unit", testName = "filesystem.FilesystemAsyncBlobStoreTest", singleThreaded = true)
 public class FilesystemAsyncBlobStoreTest {
 
     private static final String CONTAINER_NAME = "fun-blobstore-test";
@@ -87,7 +85,7 @@ public class FilesystemAsyncBlobStoreTest {
         System.setProperty(LOGGING_CONFIG_KEY, LOGGING_CONFIG_VALUE);
     }
 
-    private BlobStoreContext context = null;
+    private BlobStoreContext<?, ?> context = null;
     private BlobStore blobStore = null;
     private Set<File> resourcesToBeDeleted = new HashSet<File>();
 
@@ -96,7 +94,7 @@ public class FilesystemAsyncBlobStoreTest {
         // create context for filesystem container
         Properties prop = new Properties();
         prop.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
-        context = (BlobStoreContext) new BlobStoreContextFactory().createContext(PROVIDER, "identity", "credential", Collections.<Module>emptyList(), prop);
+        context = BlobStoreContextBuilder.newBuilder(PROVIDER).overrides(prop).build();
         // create a container in the default location
         blobStore = context.getBlobStore();
 
@@ -133,7 +131,7 @@ public class FilesystemAsyncBlobStoreTest {
         // no base directory declared in properties
         try {
             Properties props = new Properties();
-            new BlobStoreContextFactory().createContext(PROVIDER, props);
+            context = BlobStoreContextBuilder.newBuilder(PROVIDER).overrides(props).build();
             fail("No error if base directory is not specified");
         } catch (CreationException e) {
         }
@@ -142,7 +140,7 @@ public class FilesystemAsyncBlobStoreTest {
         try {
             Properties props = new Properties();
             props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, null);
-            new BlobStoreContextFactory().createContext(PROVIDER, props);
+            context = BlobStoreContextBuilder.newBuilder(PROVIDER).overrides(props).build();
             fail("No error if base directory is null in the option");
         } catch (NullPointerException e) {
         }

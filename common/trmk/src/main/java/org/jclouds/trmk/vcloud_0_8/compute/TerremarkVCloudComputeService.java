@@ -64,6 +64,7 @@ import com.google.common.base.Supplier;
 public class TerremarkVCloudComputeService extends BaseComputeService {
    private final CleanupOrphanKeys cleanupOrphanKeys;
 
+   @SuppressWarnings("rawtypes")
    @Inject
    protected TerremarkVCloudComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,

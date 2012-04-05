@@ -19,35 +19,30 @@
 package org.jclouds.openstack.nova;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.openstack.nova.compute.config.NovaComputeServiceContextModule;
 import org.jclouds.openstack.nova.config.NovaRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link NovaComputeServiceContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
- * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
- * <p/>
- * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see NovaComputeServiceContext
  */
-public class NovaContextBuilder extends
-         ComputeServiceContextBuilder<NovaClient, NovaAsyncClient> {
+public class NovaContextBuilder
+      extends
+      ComputeServiceContextBuilder<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> {
 
-   public NovaContextBuilder(Properties props) {
-      super(NovaClient.class, NovaAsyncClient.class, props);
+   public NovaContextBuilder(
+         ProviderMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public NovaContextBuilder(NovaApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -55,7 +50,6 @@ public class NovaContextBuilder extends
       modules.add(new NovaComputeServiceContextModule());
    }
 
-   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new NovaRestClientModule());
    }

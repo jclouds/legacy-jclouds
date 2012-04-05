@@ -53,14 +53,14 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
-   protected final BlobStoreContext context;
+   protected final BlobStoreContext<?,?> context;
    protected final BlobUtils blobUtils;
    protected final ExecutorService service;
    protected final Supplier<Location> defaultLocation;
    protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   protected BaseAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
+   protected BaseAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
@@ -71,7 +71,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    }
 
    @Override
-   public BlobStoreContext getContext() {
+   public BlobStoreContext<?,?> getContext() {
       return context;
    }
 

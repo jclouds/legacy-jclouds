@@ -18,33 +18,48 @@
  */
 package org.jclouds.loadbalancer;
 
-import java.util.Properties;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import org.jclouds.loadbalancer.internal.LoadBalancerServiceContextImpl;
-import org.jclouds.rest.RestContextBuilder;
+import java.util.NoSuchElementException;
 
-import com.google.inject.Key;
-import com.google.inject.util.Types;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.ContextBuilder;
 
 /**
  * @author Adrian Cole
  */
-public abstract class LoadBalancerServiceContextBuilder<S, A> extends RestContextBuilder<S, A> {
-
-   public LoadBalancerServiceContextBuilder(Class<S> syncClientType, Class<A> asyncClientType) {
-      this(syncClientType, asyncClientType, new Properties());
+public abstract class LoadBalancerServiceContextBuilder<S, A, C extends LoadBalancerServiceContext<S, A>, M extends LoadBalancerServiceApiMetadata<S, A, C, M>> extends
+      ContextBuilder<S, A, C, M> {
+   
+//   TODO:
+//   public static ContextBuilder<?, ?, LoadBalancerServiceContext, ?> forTests() {
+//      return ContextBuilder.newBuilder(new StubApiMetadata());
+//   }
+   
+   /**
+    * looks up a provider or api with the given id
+    * 
+    * @param providerOrApi
+    *           id of the provider or api
+    * @return means to build a context to that provider
+    * @throws NoSuchElementException
+    *            if the id was not configured.
+    * @throws IllegalArgumentException
+    *            if the api or provider isn't assignable from LoadBalancerServiceContext
+    */
+   public static LoadBalancerServiceContextBuilder<?, ?, ?, ?> newBuilder(String providerOrApi) throws NoSuchElementException {
+      ContextBuilder<?, ?, ?, ?> builder = ContextBuilder.newBuilder(providerOrApi);
+      checkArgument(builder instanceof LoadBalancerServiceContextBuilder,
+            "type of providerOrApi[%s] is not LoadBalancerServiceContextBuilder: %s", providerOrApi, builder);
+      return LoadBalancerServiceContextBuilder.class.cast(builder);
+   }
+   
+   public LoadBalancerServiceContextBuilder(ProviderMetadata<S, A, C, M> providerMetadata) {
+      super(providerMetadata);
    }
 
-   public LoadBalancerServiceContextBuilder(Class<S> syncClientType, Class<A> asyncClientType,
-            Properties properties) {
-      super(syncClientType, asyncClientType, properties);
-
+   public LoadBalancerServiceContextBuilder(M apiMetadata) {
+      super(apiMetadata);
    }
 
-   public LoadBalancerServiceContext buildLoadBalancerServiceContext() {
-      // need the generic type information
-      return (LoadBalancerServiceContext) buildInjector().getInstance(
-               Key.get(Types.newParameterizedType(LoadBalancerServiceContextImpl.class, syncClientType,
-                        asyncClientType)));
-   }
 }

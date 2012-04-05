@@ -19,10 +19,14 @@
 package org.jclouds.hpcloud.compute;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.hpcloud.compute.config.HPCloudComputeServiceContextModule;
+import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
+import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
+import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.NovaContextBuilder;
+import org.jclouds.providers.ProviderMetadata;
 
 import com.google.inject.Module;
 
@@ -32,12 +36,18 @@ import com.google.inject.Module;
  */
 public class HPCloudComputeContextBuilder extends NovaContextBuilder {
 
-   public HPCloudComputeContextBuilder(Properties props) {
-      super(props);
+   public HPCloudComputeContextBuilder(
+         ProviderMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public HPCloudComputeContextBuilder(NovaApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new HPCloudComputeServiceContextModule());
    }
+
 }

@@ -17,32 +17,47 @@
  * under the License.
  */
 package org.jclouds.blobstore;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Properties;
+import java.util.NoSuchElementException;
 
-import org.jclouds.rest.RestContextBuilder;
-
-import com.google.inject.Module;
+import org.jclouds.blobstore.config.TransientBlobStore;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.ContextBuilder;
 
 /**
  * @author Adrian Cole
  */
-public abstract class BlobStoreContextBuilder<S, A> extends RestContextBuilder<S, A> {
-
-   @Override
-   public BlobStoreContextBuilder<S, A> withModules(Iterable<Module> modules) {
-      return (BlobStoreContextBuilder<S, A>) super.withModules(modules);
+public abstract class BlobStoreContextBuilder<S, A, C extends BlobStoreContext<S, A>, M extends BlobStoreApiMetadata<S, A, C, M>>
+      extends ContextBuilder<S, A, C, M> {
+   
+   /**
+    * looks up a provider or api with the given id
+    * 
+    * @param providerOrApi
+    *           id of the provider or api
+    * @return means to build a context to that provider
+    * @throws NoSuchElementException
+    *            if the id was not configured.
+    * @throws IllegalArgumentException
+    *            if the api or provider isn't assignable from BlobStoreContext
+    */
+   public static BlobStoreContextBuilder<?, ?, ?, ?> newBuilder(String providerOrApi) throws NoSuchElementException {
+      ContextBuilder<?, ?, ?, ?> builder = ContextBuilder.newBuilder(providerOrApi);
+      checkArgument(builder instanceof BlobStoreContextBuilder,
+            "type of providerOrApi[%s] is not BlobStoreContextBuilder: %s", providerOrApi, builder);
+      return BlobStoreContextBuilder.class.cast(builder);
+   }
+   
+   public static ContextBuilder<TransientBlobStore, AsyncBlobStore, BlobStoreContext<TransientBlobStore, AsyncBlobStore>, TransientApiMetadata> forTests() {
+      return ContextBuilder.newBuilder(new TransientApiMetadata());
    }
 
-   public BlobStoreContextBuilder(Class<S> syncClientType, Class<A> asyncClientType) {
-      this(syncClientType, asyncClientType, new Properties());
+   public BlobStoreContextBuilder(ProviderMetadata<S, A, C, M> providerMetadata) {
+      super(providerMetadata);
    }
 
-   public BlobStoreContextBuilder(Class<S> syncClientType, Class<A> asyncClientType, Properties properties) {
-      super(syncClientType, asyncClientType, properties);
-   }
-
-   public BlobStoreContext buildBlobStoreContext() {
-      return buildInjector().getInstance(BlobStoreContext.class);
+   public BlobStoreContextBuilder(M apiMetadata) {
+      super(apiMetadata);
    }
 }

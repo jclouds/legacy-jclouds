@@ -18,10 +18,12 @@
  */
 package org.jclouds.blobstore;
 
+import java.io.Closeable;
+
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.BackedByRestContext;
 import org.jclouds.rest.Utils;
 
 import com.google.inject.ImplementedBy;
@@ -34,7 +36,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(BlobStoreContextImpl.class)
-public interface BlobStoreContext {
+public interface BlobStoreContext<S, A> extends Closeable, BackedByRestContext<S, A> {
    /**
     * 
     * Generates signed requests for blobs. useful in other tools such as backup utilities.
@@ -105,12 +107,6 @@ public interface BlobStoreContext {
     */
    ConsistencyModel getConsistencyModel();
 
-   /**
-    * 
-    * @return a context you can use to the access provider or vendor specific api underlying this
-    *         context.
-    */
-   <S, A> RestContext<S, A> getProviderSpecificContext();
 
    Utils getUtils();
 
@@ -123,5 +119,6 @@ public interface BlobStoreContext {
     * closes threads and resources related to this connection.
     * 
     */
+   @Override
    void close();
 }

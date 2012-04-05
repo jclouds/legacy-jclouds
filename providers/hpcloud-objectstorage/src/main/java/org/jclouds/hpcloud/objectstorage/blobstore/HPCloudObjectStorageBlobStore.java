@@ -53,7 +53,7 @@ public class HPCloudObjectStorageBlobStore extends SwiftBlobStore {
    private EnableCDNAndCache enableCDNAndCache;
 
    @Inject
-   protected HPCloudObjectStorageBlobStore(BlobStoreContext context, BlobUtils blobUtils,
+   protected HPCloudObjectStorageBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
             Supplier<Location> defaultLocation, @Memoized Supplier<Set<? extends Location>> locations,
             HPCloudObjectStorageClient sync, ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,

@@ -19,6 +19,8 @@
 package org.jclouds.aws.elb;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.elb.ELBAsyncClient;
+import org.jclouds.elb.ELBClient;
 import org.jclouds.elb.ELBClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -28,7 +30,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AWSELBClientLiveTest")
-public class AWSELBClientLiveTest extends ELBClientLiveTest {
+public class AWSELBClientLiveTest extends ELBClientLiveTest<ELBClient, ELBAsyncClient> {
    public AWSELBClientLiveTest() {
       provider = "aws-elb";
    }

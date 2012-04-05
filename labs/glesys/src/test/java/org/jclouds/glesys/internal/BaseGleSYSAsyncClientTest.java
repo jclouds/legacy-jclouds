@@ -20,20 +20,16 @@ package org.jclouds.glesys.internal;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.Properties;
-
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
+import org.jclouds.glesys.GleSYSProviderMetadata;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 
 /**
  * @author Adrian Cole
  */
-public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseGleSYSAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    @Override
    protected void checkFilters(HttpRequest request) {
@@ -42,8 +38,7 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends RestClientTest<T> {
    }
 
    @Override
-   public RestContextSpec<GleSYSClient, GleSYSAsyncClient> createContextSpec() {
-      Properties props = new Properties();
-      return new RestContextFactory().createContextSpec("glesys", "username", "apiKey", props);
+   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+     return new GleSYSProviderMetadata();   
    }
 }

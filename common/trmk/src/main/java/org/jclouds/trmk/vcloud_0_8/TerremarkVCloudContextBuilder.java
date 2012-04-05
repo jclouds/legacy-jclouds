@@ -19,11 +19,13 @@
 package org.jclouds.trmk.vcloud_0_8;
 
 import java.util.List;
-import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.trmk.vcloud_0_8.compute.config.TerremarkVCloudComputeServiceContextModule;
 import org.jclouds.trmk.vcloud_0_8.config.TerremarkVCloudRestClientModule;
 
@@ -46,11 +48,15 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see VCloudComputeServiceContext
  */
-public class TerremarkVCloudContextBuilder<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
-      extends ComputeServiceContextBuilder<S, A> {
+public class TerremarkVCloudContextBuilder<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient, C extends ComputeServiceContext<S, A>, M extends ComputeServiceApiMetadata<S, A, C, M>>
+      extends ComputeServiceContextBuilder<S, A, C, M> {
 
-   public TerremarkVCloudContextBuilder(Class<S> syncClientType, Class<A> asyncClientType, Properties props) {
-      super(syncClientType, asyncClientType, props);
+   public TerremarkVCloudContextBuilder(ProviderMetadata<S, A, C, M> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public TerremarkVCloudContextBuilder(M apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -60,6 +66,6 @@ public class TerremarkVCloudContextBuilder<S extends TerremarkVCloudClient, A ex
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new TerremarkVCloudRestClientModule<S, A>(syncClientType, asyncClientType));
+      modules.add(new TerremarkVCloudRestClientModule<S, A>(apiMetadata.getApi(), apiMetadata.getAsyncApi()));
    }
 }

@@ -19,38 +19,30 @@
 package org.jclouds.vcloud;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link VCloudComputeServiceContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
- * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
- * <p/>
- * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see VCloudComputeServiceContext
  */
-public class VCloudContextBuilder extends ComputeServiceContextBuilder<VCloudClient, VCloudAsyncClient> {
+public class VCloudContextBuilder
+      extends
+      ComputeServiceContextBuilder<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
 
-   public VCloudContextBuilder(Properties props) {
-      super(VCloudClient.class, VCloudAsyncClient.class, props);
+   public VCloudContextBuilder(
+         ProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> providerMetadata) {
+      super(providerMetadata);
+   }
+
+   public VCloudContextBuilder(VCloudApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -58,16 +50,8 @@ public class VCloudContextBuilder extends ComputeServiceContextBuilder<VCloudCli
       modules.add(new VCloudComputeServiceContextModule());
    }
 
-   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new VCloudRestClientModule());
    }
 
-   @Override
-   public ComputeServiceContext buildComputeServiceContext() {
-      // need the generic type information
-      return (ComputeServiceContext) this.buildInjector().getInstance(
-               Key.get(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
-               }));
-   }
 }

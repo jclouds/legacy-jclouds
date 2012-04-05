@@ -25,7 +25,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Properties;
 
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
@@ -46,10 +45,8 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -64,7 +61,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "AzureBlobAsyncClientTest")
-public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClient> {
+public class AzureBlobAsyncClientTest extends BaseAsyncClientTest<AzureBlobAsyncClient> {
 
    public void testListContainers() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureBlobAsyncClient.class.getMethod("listContainers", ListOptions[].class);
@@ -293,7 +290,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
    }
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("azureblob", "identity", "credential", new Properties());
+   public AzureBlobProviderMetadata createProviderMetadata() {
+      return new AzureBlobProviderMetadata();
    }
 }

@@ -24,6 +24,7 @@ import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Container for api filters (predicates).
@@ -37,8 +38,8 @@ public class ApiPredicates {
     *
     * @return all available apis
     */
-   public static Predicate<ApiMetadata> all() {
-      return Predicates.<ApiMetadata> alwaysTrue();
+   public static Predicate<ApiMetadata<?, ?, ?, ?>> all() {
+      return Predicates.<ApiMetadata<?, ?, ?, ?>> alwaysTrue();
    }
 
    /**
@@ -49,14 +50,14 @@ public class ApiPredicates {
     *
     * @return the apis with the given id
     */
-   public static Predicate<ApiMetadata> id(final String id) {
+   public static Predicate<ApiMetadata<?, ?, ?, ?>> id(final String id) {
       Preconditions2.checkNotEmpty(id, "id must be defined");
-      return new Predicate<ApiMetadata>() {
+      return new Predicate<ApiMetadata<?, ?, ?, ?>>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ApiMetadata apiMetadata) {
+         public boolean apply(ApiMetadata<?, ?, ?, ?> apiMetadata) {
             return apiMetadata.getId().equals(id);
          }
 
@@ -78,14 +79,14 @@ public class ApiPredicates {
     *
     * @return the apis with the given type
     */
-   public static Predicate<ApiMetadata> type(final ApiType type) {
+   public static Predicate<ApiMetadata<?, ?, ?, ?>> type(final ApiType type) {
       checkNotNull(type, "type must be defined");
-      return new Predicate<ApiMetadata>() {
+      return new Predicate<ApiMetadata<?, ?, ?, ?>>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ApiMetadata apiMetadata) {
+         public boolean apply(ApiMetadata<?, ?, ?, ?> apiMetadata) {
             return apiMetadata.getType().equals(type);
          }
 
@@ -99,4 +100,61 @@ public class ApiPredicates {
       };
    }
 
+   /**
+    * Returns all apis with the given type.
+    *
+    * @param type
+    *           the type of the api to return
+    *
+    * @return the apis with the given type
+    */
+   public static <S> Predicate<ApiMetadata<S, ?, ?, ?>> apiAssignableFrom(final TypeToken<S> type) {
+      checkNotNull(type, "type must be defined");
+      return new Predicate<ApiMetadata<S, ?, ?, ?>>() {
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public boolean apply(ApiMetadata<S, ?, ?, ?> apiMetadata) {
+            return type.isAssignableFrom(apiMetadata.getApi());
+         }
+
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public String toString() {
+            return "contextAssignableFrom(" + type + ")";
+         }
+      };
+   }
+
+   /**
+    * Returns all apis who's contexts are assignable from the parameter
+    *
+    * @param type
+    *           the type of the context to search for
+    *           
+    * @return the apis with contexts assignable from given type
+    */
+   public static Predicate<ApiMetadata<?, ?, ?, ?>> contextAssignableFrom(final TypeToken<?> contextType) {
+      checkNotNull(contextType, "context must be defined");
+      return new Predicate<ApiMetadata<?, ?, ?, ?>>() {
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public boolean apply(ApiMetadata<?, ?, ?, ?> apiMetadata) {
+            return contextType.isAssignableFrom(apiMetadata.getContext().getRawType());
+         }
+
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public String toString() {
+            return "contextAssignableFrom(" + contextType + ")";
+         }
+      };
+   }
 }

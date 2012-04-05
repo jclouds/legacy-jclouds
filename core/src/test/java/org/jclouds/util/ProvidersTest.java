@@ -20,7 +20,6 @@ package org.jclouds.util;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.rest.Providers;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -34,8 +33,9 @@ public class ProvidersTest {
 
    @Test
    public void testSupportedProviders() {
-      Iterable<String> providers = Providers.getSupportedProviders();
-      assertEquals(Sets.newLinkedHashSet(providers), ImmutableSet.<String> of());
+      Iterable<String> providers = org.jclouds.rest.Providers.getSupportedProviders();
+      assertEquals(Sets.newLinkedHashSet(providers), ImmutableSet.<String> of("test-blobstore-api", "test-compute-api",
+            "test-yet-another-compute-api", "test-yet-another-compute-provider"));
    }
 
 }

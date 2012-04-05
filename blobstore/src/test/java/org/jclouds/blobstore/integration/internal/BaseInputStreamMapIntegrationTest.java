@@ -330,11 +330,11 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
       return 100;
    }
 
-   protected InputStreamMap createMap(BlobStoreContext context, String bucket) {
+   protected InputStreamMap createMap(BlobStoreContext<?, ?> context, String bucket) {
       return createMap(context, bucket, maxResults(maxResultsForTestListings()));
    }
 
-   protected InputStreamMap createMap(BlobStoreContext context, String bucket, ListContainerOptions options) {
+   protected InputStreamMap createMap(BlobStoreContext<?, ?> context, String bucket, ListContainerOptions options) {
       return context.createInputStreamMap(bucket, options);
    }
 }

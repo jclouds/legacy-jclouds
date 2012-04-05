@@ -18,13 +18,17 @@
  */
 package org.jclouds.providers;
 
+import java.io.Closeable;
+
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.apis.ApiPredicates;
 import org.jclouds.apis.ApiType;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Container for provider filters (predicates).
@@ -33,13 +37,38 @@ import com.google.common.base.Predicates;
  */
 public class ProviderPredicates {
 
+   public static class ContextAssignableFrom<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> implements Predicate<ProviderMetadata<S, A, C, M>> {
+      private final TypeToken<C> contextClass;
+
+      public ContextAssignableFrom(TypeToken<C> contextClass) {
+         Preconditions.checkNotNull(contextClass, "context must be defined");
+         this.contextClass = contextClass;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean apply(ProviderMetadata<S, A, C, M> providerMetadata) {
+         return ApiPredicates.contextAssignableFrom(contextClass).apply(providerMetadata.getApiMetadata());
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public String toString() {
+         return "contextAssignableFrom(" + contextClass + ")";
+      }
+   }
+
    /**
     * Returns all providers available to jclouds regardless of type.
     * 
     * @return all available providers
     */
-   public static Predicate<ProviderMetadata> all() {
-      return Predicates.<ProviderMetadata> alwaysTrue();
+   public static Predicate<ProviderMetadata<?, ?, ?, ?>> all() {
+      return Predicates.<ProviderMetadata<?, ?, ?, ?>> alwaysTrue();
    }
 
    /**
@@ -50,14 +79,14 @@ public class ProviderPredicates {
     * 
     * @return the providers with the given id
     */
-   public static Predicate<ProviderMetadata> id(final String id) {
+   public static Predicate<ProviderMetadata<?, ?, ?, ?>> id(final String id) {
       Preconditions2.checkNotEmpty(id, "id must be defined");
-      return new Predicate<ProviderMetadata>() {
+      return new Predicate<ProviderMetadata<?, ?, ?, ?>>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ProviderMetadata providerMetadata) {
+         public boolean apply(ProviderMetadata<?, ?, ?, ?> providerMetadata) {
             return providerMetadata.getId().equals(id);
          }
 
@@ -79,15 +108,15 @@ public class ProviderPredicates {
     * 
     * @return the providers with the given type
     */
-   public static Predicate<ProviderMetadata> type(final ApiType type) {
+   public static Predicate<ProviderMetadata<?, ?, ?, ?>> type(final ApiType type) {
       Preconditions.checkNotNull(type, "type must be defined");
-      return new Predicate<ProviderMetadata>() {
+      return new Predicate<ProviderMetadata<?, ?, ?, ?>>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ProviderMetadata providerMetadata) {
-            return providerMetadata.getApi().getType().equals(type);
+         public boolean apply(ProviderMetadata<?, ?, ?, ?> providerMetadata) {
+            return providerMetadata.getApiMetadata().getType().equals(type);
          }
 
          /**
@@ -104,7 +133,7 @@ public class ProviderPredicates {
     * @see #type(ApiMetadata)
     */
    @Deprecated
-   public static Predicate<ProviderMetadata> type(final String type) {
+   public static Predicate<ProviderMetadata<?, ?, ?, ?>> type(final String type) {
       return type(ApiType.fromValue(type));
    }
 
@@ -117,15 +146,15 @@ public class ProviderPredicates {
     * 
     * @return the providers with the given ISO 3166 code
     */
-   public static Predicate<ProviderMetadata> boundedByIso3166Code(final String iso3166Code) {
+   public static Predicate<ProviderMetadata<?, ?, ?, ?>> boundedByIso3166Code(final String iso3166Code) {
       Preconditions.checkNotNull(iso3166Code, "iso3166Code must not be null");
 
-      return new Predicate<ProviderMetadata>() {
+      return new Predicate<ProviderMetadata<?, ?, ?, ?>>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ProviderMetadata providerMetadata) {
+         public boolean apply(ProviderMetadata<?, ?, ?, ?> providerMetadata) {
             return providerContainsIso3166Code(providerMetadata, iso3166Code);
          }
 
@@ -148,15 +177,16 @@ public class ProviderPredicates {
     * 
     * @return the providers that have at least one ISO 3166 code in common
     */
-   public static Predicate<ProviderMetadata> intersectingIso3166Code(final ProviderMetadata refProviderMetadata) {
+   public static Predicate<ProviderMetadata<?, ?, ?, ?>> intersectingIso3166Code(
+         final ProviderMetadata<?, ?, ?, ?> refProviderMetadata) {
       Preconditions.checkNotNull(refProviderMetadata, "refProviderMetadata must not be null");
 
-      return new Predicate<ProviderMetadata>() {
+      return new Predicate<ProviderMetadata<?, ?, ?, ?>>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ProviderMetadata providerMetadata) {
+         public boolean apply(ProviderMetadata<?, ?, ?, ?> providerMetadata) {
             for (String refIso3166Code : refProviderMetadata.getIso3166Codes()) {
                // Return only if the potential provider contains the same ISO
                // 3166 code and the provider and
@@ -191,7 +221,7 @@ public class ProviderPredicates {
     * 
     * @return the result
     */
-   private static boolean providerContainsIso3166Code(ProviderMetadata providerMetadata, String iso3166Code) {
+   private static boolean providerContainsIso3166Code(ProviderMetadata<?, ?, ?, ?> providerMetadata, String iso3166Code) {
       for (String availCode : providerMetadata.getIso3166Codes()) {
          if (iso3166Code.indexOf('-') == -1) {
             if (availCode.startsWith(iso3166Code + "-")) {
@@ -206,22 +236,23 @@ public class ProviderPredicates {
    }
 
    /**
-    * Returns all providers with an instance of the given api.
+    * Returns all providers with an apimetadata assignable from the given api.
     * 
     * @param apiClass
     *           the api of the provider to return
     * 
-    * @return the providers with the given api
+    * @return the providers with an apimetadata assignable from the given api.
     */
-   public static Predicate<ProviderMetadata> apiInstanceOf(final Class<? extends ApiMetadata> apiClass) {
+   public static <S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> Predicate<ProviderMetadata<S, A, C, M>> apiMetadataAssignableFrom(
+         final TypeToken<M> apiClass) {
       Preconditions.checkNotNull(apiClass, "api must be defined");
-      return new Predicate<ProviderMetadata>() {
+      return new Predicate<ProviderMetadata<S, A, C, M>>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ProviderMetadata providerMetadata) {
-            return Predicates.instanceOf(apiClass).apply(providerMetadata.getApi());
+         public boolean apply(ProviderMetadata<S, A, C, M> providerMetadata) {
+            return apiClass.isAssignableFrom(providerMetadata.getApiMetadata().getClass());
          }
 
          /**
@@ -229,8 +260,22 @@ public class ProviderPredicates {
           */
          @Override
          public String toString() {
-            return "apiInstanceOf(" + apiClass + ")";
+            return "apiAssignableFrom(" + apiClass + ")";
          }
       };
    }
+   
+   /**
+    * Returns all providers with an context assignable from the given class.
+    * 
+    * @param contextClass
+    *           the context of the provider to return
+    * 
+    * @return the providers with an context assignable from the given class.
+    */
+   public static <S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> Predicate<ProviderMetadata<S, A, C, M>> contextAssignableFrom(
+         final TypeToken<C> contextClass) {
+      return new ContextAssignableFrom<S, A, C, M>(contextClass);
+   }
+   
 }

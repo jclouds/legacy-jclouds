@@ -91,7 +91,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    private byte[] oneHundredOneConstitutionsMD5;
    private static long oneHundredOneConstitutionsLength;
 
-   @BeforeClass(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" }, dependsOnMethods = "setupContext")
    @Override
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       super.setUpResourcesOnThisThread(testContext);

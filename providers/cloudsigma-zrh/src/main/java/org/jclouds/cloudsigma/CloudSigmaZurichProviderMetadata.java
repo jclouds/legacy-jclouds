@@ -19,46 +19,70 @@
 package org.jclouds.cloudsigma;
 
 import java.net.URI;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for CloudSigma Zurich.
- *
+
+ * 
  * @author Adrian Cole
  */
-public class CloudSigmaZurichProviderMetadata extends BaseProviderMetadata {
+public class CloudSigmaZurichProviderMetadata
+      extends
+      BaseProviderMetadata<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> {
 
-   public CloudSigmaZurichProviderMetadata() {
-      this(builder()
-            .id("cloudsigma-zrh")
-            .name("CloudSigma Zurich")
-            .api(new CloudSigmaApiMetadata())
-            .homepage(URI.create("http://www.cloudsigma.com/en/our-cloud/features"))
-            .console(URI.create("https://gui.zrh.cloudsigma.com/"))
-            .iso3166Codes("CH-ZH"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudSigmaZurichProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public CloudSigmaZurichProviderMetadata() {
+      super(builder());
+   }
+
+   public CloudSigmaZurichProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> {
+
+      protected Builder() {
+         id("cloudsigma-zrh")
+         .name("CloudSigma Zurich")
+         .apiMetadata(new CloudSigmaApiMetadata())
+         .homepage(URI.create("http://www.cloudsigma.com/en/our-cloud/features"))
+         .console(URI.create("https://gui.zrh.cloudsigma.com/"))
+         .iso3166Codes("CH-ZH")
+         .endpoint("https://api.zrh.cloudsigma.com")
+         .defaultProperties(CloudSigmaZurichProviderMetadata.defaultProperties());
+      }
 
       @Override
       public CloudSigmaZurichProviderMetadata build() {
          return new CloudSigmaZurichProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
 }

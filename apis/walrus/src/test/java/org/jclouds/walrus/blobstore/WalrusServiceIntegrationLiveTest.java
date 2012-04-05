@@ -26,5 +26,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "WalrusServiceIntegrationLiveTest")
 public class WalrusServiceIntegrationLiveTest extends S3ServiceIntegrationLiveTest {
-
+   
+   public WalrusServiceIntegrationLiveTest() {
+      provider = "walrus";
+   }
+  
 }

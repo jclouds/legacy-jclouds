@@ -265,11 +265,13 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       return 100;
    }
 
-   protected BlobMap createMap(BlobStoreContext context, String bucket) {
+   @Override
+   protected BlobMap createMap(BlobStoreContext<?,?> context, String bucket) {
       return createMap(context, bucket, maxResults(maxResultsForTestListings()));
    }
-
-   protected BlobMap createMap(BlobStoreContext context, String bucket, ListContainerOptions options) {
+   
+   @Override
+   protected BlobMap createMap(BlobStoreContext<?,?> context, String bucket, ListContainerOptions options) {
       return context.createBlobMap(bucket, options);
    }
 

@@ -1,50 +1,69 @@
 package org.jclouds.trmk.ecloud;
 
+import static org.jclouds.trmk.vcloud_0_8.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NAME;
+import static org.jclouds.trmk.vcloud_0_8.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_VERSION;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Terremark eCloud v2.8 API
  * 
  * @author Adrian Cole
  */
-public class TerremarkECloudApiMetadata extends BaseApiMetadata {
+public class TerremarkECloudApiMetadata extends
+      TerremarkVCloudApiMetadata<TerremarkECloudClient, TerremarkECloudAsyncClient, TerremarkECloudApiMetadata> {
 
-   public TerremarkECloudApiMetadata() {
-      this(builder()
-            .id("trmk-ecloud")
-            .type(ApiType.COMPUTE)
-            .name("Terremark Enterprise Cloud v2.8 API")
-            .identityName("Email")
-            .credentialName("Password")
-            .documentation(URI.create("http://support.theenterprisecloud.com/kb/default.asp?id=533&Lang=1&SID=")));
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected TerremarkECloudApiMetadata(Builder<?> builder) {
+   public TerremarkECloudApiMetadata() {
+      this(new Builder());
+   }
+
+   protected TerremarkECloudApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   protected static Properties defaultProperties() {
+      Properties properties = TerremarkVCloudApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "eCloudExtensions");
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.8");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         TerremarkVCloudApiMetadata.Builder<TerremarkECloudClient, TerremarkECloudAsyncClient, TerremarkECloudApiMetadata> {
+
+      protected Builder() {
+         super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class);
+         id("trmk-ecloud")
+         .name("Terremark Enterprise Cloud v2.8 API")
+         .version("0.8b-ext2.8")
+         .defaultProperties(TerremarkECloudApiMetadata.defaultProperties())
+         .defaultEndpoint("https://services.enterprisecloud.terremark.com/api")
+         .contextBuilder(TypeToken.of(TerremarkECloudContextBuilder.class))
+         .documentation(URI.create("http://support.theenterprisecloud.com/kb/default.asp?id=533&Lang=1&SID="));
+      }
 
       @Override
       public TerremarkECloudApiMetadata build() {
          return new TerremarkECloudApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
+      @Override
+      public Builder fromApiMetadata(TerremarkECloudApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 
 }

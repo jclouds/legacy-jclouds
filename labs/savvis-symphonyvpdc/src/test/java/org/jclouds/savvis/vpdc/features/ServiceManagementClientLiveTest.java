@@ -44,8 +44,8 @@ public class ServiceManagementClientLiveTest extends BaseVPDCClientLiveTest {
 
    @Override
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       client = restContext.getApi().getServiceManagementClient();
    }
    

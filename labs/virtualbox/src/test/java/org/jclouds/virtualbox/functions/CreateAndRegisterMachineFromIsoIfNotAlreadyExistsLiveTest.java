@@ -54,8 +54,8 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
    private String vmName = "";
 
    @Override
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       ideControllerName = "IDE Controller";
       mode = CleanupMode.Full;
    }

@@ -18,7 +18,7 @@
  */
 package org.jclouds.carrenza.vcloud.director;
 
-import org.jclouds.vcloud.director.v1_5.NonClientOperationsLiveTest;
+import org.jclouds.vcloud.director.v1_5.HttpClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * @author danikov
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorNonClientOperationsLiveTest")
-public class CarrenzaVCloudDirectorNonClientOperationsLiveTest extends NonClientOperationsLiveTest {
+public class CarrenzaVCloudDirectorNonClientOperationsLiveTest extends HttpClientLiveTest {
 
    public CarrenzaVCloudDirectorNonClientOperationsLiveTest() {
       provider = "carrenza-vcloud-director";

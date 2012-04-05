@@ -19,31 +19,30 @@
 package org.jclouds.gogrid;
 
 import java.util.List;
-import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
+import org.jclouds.providers.ProviderMetadata;
 
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class GoGridContextBuilder extends
-         ComputeServiceContextBuilder<GoGridClient, GoGridAsyncClient> {
+public class GoGridContextBuilder
+      extends
+      ComputeServiceContextBuilder<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> {
 
-   public GoGridContextBuilder(Properties props) {
-      super(GoGridClient.class, GoGridAsyncClient.class, props);
+   public GoGridContextBuilder(
+         ProviderMetadata<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> providerMetadata) {
+      super(providerMetadata);
    }
 
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new GoGridRestClientModule());
+   public GoGridContextBuilder(GoGridApiMetadata apiMetadata) {
+      super(apiMetadata);
    }
 
    @Override
@@ -51,13 +50,8 @@ public class GoGridContextBuilder extends
       modules.add(new GoGridComputeServiceContextModule());
    }
 
-   @Override
-   public ComputeServiceContext buildComputeServiceContext() {
-      return this
-               .buildInjector()
-               .getInstance(
-                        Key
-                                 .get(new TypeLiteral<ComputeServiceContextImpl<GoGridClient, GoGridAsyncClient>>() {
-                                 }));
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new GoGridRestClientModule());
    }
+
 }

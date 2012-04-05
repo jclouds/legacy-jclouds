@@ -27,4 +27,7 @@ import org.testng.annotations.Test;
 @Test(groups =  "live", testName = "NinefoldStorageBlobMapIntegrationLiveTest")
 public class NinefoldStorageBlobMapIntegrationLiveTest extends AtmosMapIntegrationLiveTest {
 
+   public NinefoldStorageBlobMapIntegrationLiveTest() {
+      provider = "ninefold-storage";
+   }
 }

@@ -18,50 +18,68 @@
  */
 package org.jclouds.blobstore;
 
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+
 import java.net.URI;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.apis.internal.BaseApiMetadata;
+import org.jclouds.blobstore.config.TransientBlobStore;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds in-memory (Transient) API
  * 
  * @author Adrian Cole
  */
-public class TransientApiMetadata extends BaseApiMetadata {
+public class TransientApiMetadata extends
+      BaseBlobStoreApiMetadata<TransientBlobStore, AsyncBlobStore, BlobStoreContext<TransientBlobStore, AsyncBlobStore>, TransientApiMetadata> {
 
-   public TransientApiMetadata() {
-      this(builder()
-            .id("transient")
-            .type(ApiType.BLOBSTORE)
-            .name("in-memory (Transient) API")
-            .identityName("Unused")
-            .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide")));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected TransientApiMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromApiMetadata(this));
+   }
+
+   public TransientApiMetadata() {
+      super(builder());
+   }
+
+   protected TransientApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static class Builder extends
+         BaseBlobStoreApiMetadata.Builder<TransientBlobStore, AsyncBlobStore, BlobStoreContext<TransientBlobStore, AsyncBlobStore>, TransientApiMetadata> {
+
+      protected Builder() {
+         id("transient")
+               .name("in-memory (Transient) API")
+               .javaApi(TransientBlobStore.class, AsyncBlobStore.class)
+               .contextBuilder(TypeToken.of(TransientBlobStoreContextBuilder.class))
+               .identityName("Unused")
+               .defaultEndpoint("http://localhost")
+               .defaultIdentity(System.getProperty("user.name"))
+               .defaultCredential("bar")
+               .version("1")
+               .defaultProperties(
+                     BaseBlobStoreApiMetadata.Builder.defaultPropertiesAnd(ImmutableMap.of(PROPERTY_USER_THREADS, "0",
+                           PROPERTY_IO_WORKER_THREADS, "0")))
+               .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"));
+      }
 
       @Override
       public TransientApiMetadata build() {
          return new TransientApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

@@ -39,9 +39,9 @@ import org.testng.annotations.Test;
 public class IpClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @BeforeGroups(groups = {"live"})
-   public void setupClient() {
-      super.setupClient();
-      client = context.getApi().getIpClient();
+   public void setupContext() {
+      super.setupContext();
+      client = gleContext.getApi().getIpClient();
    }
 
    private IpClient client;
