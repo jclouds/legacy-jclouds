@@ -50,6 +50,10 @@ public class NovaEC2PropertiesBuilder extends EC2PropertiesBuilder {
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, "true");
       properties.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS, "true");
+      // auth fail sometimes happens in EC2, as the rc.local script that injects the
+      // authorized key executes after ssh has started.  
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
    }
 
