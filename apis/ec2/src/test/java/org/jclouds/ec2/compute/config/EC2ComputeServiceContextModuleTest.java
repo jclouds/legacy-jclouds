@@ -25,7 +25,7 @@ import static org.testng.Assert.fail;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
+import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 

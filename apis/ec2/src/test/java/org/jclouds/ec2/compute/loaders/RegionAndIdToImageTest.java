@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.compute.functions;
+package org.jclouds.ec2.compute.loaders;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.services.AMIClient;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;

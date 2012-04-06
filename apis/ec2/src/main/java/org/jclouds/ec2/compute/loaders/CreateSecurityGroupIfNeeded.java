@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.compute.functions;
+package org.jclouds.ec2.compute.loaders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -92,13 +92,13 @@ public class CreateSecurityGroupIfNeeded extends CacheLoader<RegionAndName, Stri
       }
    }
 
-   private void createIngressRuleForTCPPort(String region, String name, int port) {
+   protected void createIngressRuleForTCPPort(String region, String name, int port) {
       logger.debug(">> authorizing securityGroup region(%s) name(%s) port(%s)", region, name, port);
       securityClient.authorizeSecurityGroupIngressInRegion(region, name, IpProtocol.TCP, port, port, "0.0.0.0/0");
       logger.debug("<< authorized securityGroup(%s)", name);
    }
 
-   private void authorizeGroupToItself(String region, String name) {
+   protected void authorizeGroupToItself(String region, String name) {
       logger.debug(">> authorizing securityGroup region(%s) name(%s) permission to itself", region, name);
       String myOwnerId = Iterables.get(securityClient.describeSecurityGroupsInRegion(region, name), 0).getOwnerId();
       securityClient.authorizeSecurityGroupIngressInRegion(region, name, new UserIdGroupPair(myOwnerId, name));

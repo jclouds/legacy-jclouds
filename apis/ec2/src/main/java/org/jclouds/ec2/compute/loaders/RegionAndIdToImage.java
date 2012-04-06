@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.compute.functions;
+package org.jclouds.ec2.compute.loaders;
 
 import static org.jclouds.ec2.options.DescribeImagesOptions.Builder.imageIds;
 
@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.logging.Logger;
 
 import com.google.common.cache.CacheLoader;
