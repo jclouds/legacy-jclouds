@@ -106,8 +106,8 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
     *
     * @see BaseVCloudDirectorClientLiveTest#setupRequiredClients()
     */
-   @BeforeClass(alwaysRun = true, description = "Retrieves the required clients from the REST API context")
    @Override
+   @BeforeClass(alwaysRun = true, description = "Retrieves the required clients from the REST API context")
    protected void setupRequiredClients() {
       assertNotNull(context.getApi());
 
@@ -116,6 +116,8 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       vAppClient = context.getApi().getVAppClient();
       vAppTemplateClient = context.getApi().getVAppTemplateClient();
       vdcClient = context.getApi().getVdcClient();
+      
+      setupEnvironment();
    }
 
    /**
@@ -124,7 +126,6 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
     * Retrieves the test {@link Vdc} and {@link VAppTemplate} from their configured {@link URI}s.
     * Instantiates a new test VApp.
     */
-   @BeforeClass(alwaysRun = true, description = "Sets up the environment", dependsOnMethods = { "setupRequiredClients" })
    protected void setupEnvironment() {
       // Get the configured Vdc for the tests
       vdc = vdcClient.getVdc(vdcURI);

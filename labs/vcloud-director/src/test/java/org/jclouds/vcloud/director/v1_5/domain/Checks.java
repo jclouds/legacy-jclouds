@@ -30,6 +30,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_ATTRB_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_0;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_GTE_1;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
@@ -684,6 +685,8 @@ public class Checks {
       // Check optional fields, dependant on IsSharedToEveryone state
       if (params.isSharedToEveryone()) {
          assertNotNull(params.getEveryoneAccessLevel(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "EveryoneAccessLevel"));
+         assertNotNull(params.getAccessSettings(), String.format(OBJ_FIELD_REQ, "ControlAccessParams", "AccessSettings when isSharedToEveryone"));
+         assertTrue(params.getAccessSettings().size() >= 1, String.format(OBJ_FIELD_GTE_1, "ControlAccessParams", "AccessSettings.size", params.getAccessSettings().size()));
       } else {
          for (AccessSetting setting : params.getAccessSettings()) {
             checkAccessSetting(setting);

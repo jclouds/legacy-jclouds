@@ -48,6 +48,8 @@ public class VCloudDirectorLiveTestConstants {
    public static final String OBJ_FIELD_CONTAINS = "ERR-107: %s %s must contain the values \"%s\" (%s)";
 
    public static final String OBJ_FIELD_GTE_0 = "ERR-108: %s field %s must be greater than to equal to 0 (%d)";
+   
+   public static final String OBJ_FIELD_GTE_1 = "ERR-108: %s field %s must be greater than to equal to 0 (%d)";
 
    public static final String GETTER_RETURNS_SAME_OBJ = "ERR-109: %s should return the same %s as %s (%s, %s)";
 
