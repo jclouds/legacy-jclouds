@@ -19,6 +19,7 @@
 package org.jclouds.compute.strategy;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.javax.annotation.Nullable;
 
 /**
  * terminates the node
@@ -31,6 +32,7 @@ public interface DestroyNodeStrategy {
     * 
     * @return null if the node wasn't found
     */
+   @Nullable
    NodeMetadata destroyNode(String id);
 
 }
