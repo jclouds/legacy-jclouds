@@ -32,7 +32,6 @@ import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -82,6 +81,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
+import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -225,9 +225,10 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public void destroyNode(final String id) {
-      NodeMetadata destroyedNode = doDestroyNode(id);
-      cleanUpIncidentalResourcesOfDeadNodes(Collections.singleton(destroyedNode));
+   public void destroyNode(String id) {
+      NodeMetadata destroyedNodeOrNull = doDestroyNode(id);
+      if (destroyedNodeOrNull != null)
+         cleanUpIncidentalResourcesOfDeadNodes(ImmutableSet.of(destroyedNodeOrNull));
    }
 
    /**
@@ -236,7 +237,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> destroying nodes matching(%s)", filter);
-      Set<NodeMetadata> set = newLinkedHashSet(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
+      Set<NodeMetadata> set = newLinkedHashSet(filter(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
             new Function<NodeMetadata, Future<NodeMetadata>>() {
 
                // TODO make an async interface instead of re-wrapping
@@ -244,6 +245,7 @@ public class BaseComputeService implements ComputeService {
                public Future<NodeMetadata> apply(final NodeMetadata from) {
                   return executor.submit(new Callable<NodeMetadata>() {
 
+                     @Nullable
                      @Override
                      public NodeMetadata call() throws Exception {
                         doDestroyNode(from.getId());
@@ -257,13 +259,19 @@ public class BaseComputeService implements ComputeService {
                   });
                }
 
-            }, executor, null, logger, "destroyNodesMatching(" + filter + ")"));
+            }, executor, null, logger, "destroyNodesMatching(" + filter + ")"), notNull()));
       logger.debug("<< destroyed(%d)", set.size());
       
       cleanUpIncidentalResourcesOfDeadNodes(set);
       return set;
    }
 
+   /**
+    * 
+    * @param id
+    * @return node that was deleted or null if it wasn't found
+    */
+   @Nullable
    protected NodeMetadata doDestroyNode(final String id) {
       checkNotNull(id, "id");
       logger.debug(">> destroying node(%s)", id);
