@@ -76,7 +76,7 @@ public class CallForImages implements Callable<Iterable<Image>> {
 
       logger.debug(">> providing images");
 
-      Builder<String, DescribeImagesOptions> builder = ImmutableMap.<String, DescribeImagesOptions> builder();
+      Builder<String, DescribeImagesOptions> builder = ImmutableMap.builder();
       for (String region : regions)
          builder.put(region, filters(filter));
 

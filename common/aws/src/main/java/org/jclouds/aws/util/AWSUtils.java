@@ -113,7 +113,7 @@ public class AWSUtils {
       checkArgument(checkNotNull(input, "input") instanceof String[], "this binder is only valid for String[] : "
             + input.getClass());
       String[] values = (String[]) input;
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       for (int i = 0; i < values.length; i++) {
          builder.put(String.format(format, (i + 1)), checkNotNull(values[i], format.toLowerCase() + "s[" + i + "]"));
       }
@@ -130,7 +130,7 @@ public class AWSUtils {
       checkArgument(checkNotNull(input, "input") instanceof Iterable<?>, "this binder is only valid for Iterable<?>: "
             + input.getClass());
       Iterable<?> values = (Iterable<?>) input;
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       int i = 0;
       for (Object o : values) {
          builder.put(prefix + "." + (i++ + 1), checkNotNull(o.toString(), prefix.toLowerCase() + "s[" + i + "]"));
@@ -143,7 +143,7 @@ public class AWSUtils {
       checkArgument(checkNotNull(input, "input") instanceof String[], "this binder is only valid for String[] : "
             + input.getClass());
       String[] values = (String[]) input;
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       for (int i = 0; i < values.length; i++) {
          builder.put(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase() + "s[" + i + "]"));
       }
@@ -154,7 +154,7 @@ public class AWSUtils {
    public static <R extends HttpRequest> R indexMapToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Map<?, ?>, "this binder is only valid for Map<?,?>: " + input.getClass());
       Map<?, ?> map = (Map<?, ?>) input;
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       int i = 1;
       for (Map.Entry<?, ?> e : map.entrySet()) {
          builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(e.getKey().toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
@@ -171,7 +171,7 @@ public class AWSUtils {
    public static <R extends HttpRequest> R indexMultimapToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Multimap<?, ?>, "this binder is only valid for Multimap<?,?>: " + input.getClass());
       Multimap<Object, Object> map = (Multimap<Object, Object>) input;
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       int i = 1;
       for (Object k : map.keySet()) {
          builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(k.toString(), keySuffix.toLowerCase() + "s[" + i + "]"));
@@ -190,7 +190,7 @@ public class AWSUtils {
    public static <R extends HttpRequest> R indexMapOfIterableToFormValuesWithPrefix(R request, String prefix, String keySuffix, String valueSuffix, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Map<?, ?>, "this binder is only valid for Map<?,Iterable<?>>: " + input.getClass());
       Map<Object, Iterable<Object>> map = (Map<Object, Iterable<Object>>) input;
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       int i = 1;
       for (Object k : map.keySet()) {
          builder.put(prefix + "." + i + "." + keySuffix, checkNotNull(k.toString(), keySuffix.toLowerCase() + "s[" + i + "]"));

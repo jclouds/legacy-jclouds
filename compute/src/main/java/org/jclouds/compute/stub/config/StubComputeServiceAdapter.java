@@ -141,7 +141,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    public Iterable<Image> listImages() {
       // initializing as a List, as ImmutableSet does not allow you to put
       // duplicates
-      Builder<Image> images = ImmutableList.<Image> builder();
+      Builder<Image> images = ImmutableList.builder();
       int id = 1;
       for (boolean is64Bit : new boolean[] { true, false })
          for (Entry<OsFamily, Map<String, String>> osVersions : this.osToVersionMap.entrySet()) {

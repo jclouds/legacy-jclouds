@@ -73,7 +73,7 @@ public class PutObjectOptions extends BaseHttpRequestOptions {
    @Override
    public Multimap<String, String> buildRequestHeaders() {
       checkState(headerTag != null, "headerTag should have been injected!");
-      ImmutableMultimap.Builder<String, String> returnVal = ImmutableMultimap.<String, String> builder();
+      ImmutableMultimap.Builder<String, String> returnVal = ImmutableMultimap.builder();
       for (Entry<String, String> entry : headers.entries()) {
          returnVal.put(entry.getKey().replace(DEFAULT_AMAZON_HEADERTAG, headerTag), entry.getValue());
       }

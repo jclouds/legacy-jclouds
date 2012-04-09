@@ -116,7 +116,7 @@ public class VirtualGuestClientLiveTest extends BaseSoftLayerClientLiveTest {
       ProductItemPrice osPrice = ProductItems.price().apply(
                osToProductItem.get("Ubuntu Linux 8 LTS Hardy Heron - Minimal Install (64 bit)"));
 
-      Builder<ProductItemPrice> prices = ImmutableSet.<ProductItemPrice> builder();
+      Builder<ProductItemPrice> prices = ImmutableSet.builder();
       prices.addAll(Guice.createInjector(module).getInstance(Key.get(new TypeLiteral<Iterable<ProductItemPrice>>() {
       })));
       prices.add(ramPrice);

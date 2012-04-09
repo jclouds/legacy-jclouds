@@ -75,7 +75,7 @@ public class RegionIdToZoneIdsFromConfiguration implements RegionIdToZoneIdsSupp
          logger.debug("no regions configured for provider %s", provider);
          return ImmutableMap.of();
       }
-      Builder<String, Supplier<Set<String>>> regionToZones = ImmutableMap.<String, Supplier<Set<String>>> builder();
+      Builder<String, Supplier<Set<String>>> regionToZones = ImmutableMap.builder();
       for (String region : regions) {
          String configKey = PROPERTY_REGION + "." + region + ".zones";
          String zones = config.apply(configKey);

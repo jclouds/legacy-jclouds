@@ -140,7 +140,7 @@ public class CloudSigmaComputeServiceAdapter implements
 
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
-      Builder<Hardware> hardware = ImmutableSet.<Hardware> builder();
+      Builder<Hardware> hardware = ImmutableSet.builder();
       for (double cpu : new double[] { 1000, 5000, 10000, 20000 })
          for (int ram : new int[] { 512, 1024, 4 * 1024, 16 * 1024, 32 * 1024 }) {
             final float size = (float) cpu / 100;

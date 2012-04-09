@@ -66,7 +66,7 @@ public class ParseAuthenticationResponseFromHeaders implements Function<HttpResp
     */
    public AuthenticationResponse apply(HttpResponse from) {
       releasePayload(from);
-      Builder<String, URI> builder = ImmutableMap.<String, URI> builder();
+      Builder<String, URI> builder = ImmutableMap.builder();
       for (Entry<String, String> entry : from.getHeaders().entries()) {
          if (entry.getKey().endsWith(URL_SUFFIX))
             builder.put(entry.getKey(), getURI(entry.getValue()));

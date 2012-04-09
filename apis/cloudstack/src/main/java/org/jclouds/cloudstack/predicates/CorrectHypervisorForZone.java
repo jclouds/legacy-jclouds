@@ -63,7 +63,7 @@ public class CorrectHypervisorForZone implements Function<Long, Predicate<Templa
       @Override
       public Map<Long, Set<String>> apply(CloudStackClient client) {
          checkNotNull(client, "client");
-         Builder<Long, Set<String>> builder = ImmutableMap.<Long, Set<String>> builder();
+         Builder<Long, Set<String>> builder = ImmutableMap.builder();
          for (Zone zone : client.getZoneClient().listZones()) {
             builder.put(zone.getId(), client.getHypervisorClient().listHypervisorsInZone(zone.getId()));
          }

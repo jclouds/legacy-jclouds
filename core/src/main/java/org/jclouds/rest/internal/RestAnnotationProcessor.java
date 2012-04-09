@@ -243,7 +243,7 @@ public class RestAnnotationProcessor<T> {
          new CacheLoader<Method, Set<Integer>>() {
             @Override
             public Set<Integer> load(Method method) {
-               Builder<Integer> toReturn = ImmutableSet.<Integer> builder();
+               Builder<Integer> toReturn = ImmutableSet.builder();
                for (int index = 0; index < method.getParameterTypes().length; index++) {
                   Class<?> type = method.getParameterTypes()[index];
                   if (HttpRequestOptions.class.isAssignableFrom(type) || optionsVarArgsClass.isAssignableFrom(type))
@@ -922,7 +922,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static Set<String> getHttpMethods(Method method) {
-      Builder<String> methodsBuilder = ImmutableSet.<String> builder();
+      Builder<String> methodsBuilder = ImmutableSet.builder();
       for (Annotation annotation : method.getAnnotations()) {
          HttpMethod http = annotation.annotationType().getAnnotation(HttpMethod.class);
          if (http != null)

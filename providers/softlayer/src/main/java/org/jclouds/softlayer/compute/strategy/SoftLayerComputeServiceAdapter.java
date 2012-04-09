@@ -146,7 +146,7 @@ public class SoftLayerComputeServiceAdapter implements
    }
 
    private Iterable<ProductItemPrice> getPrices(Template template) {
-      Builder<ProductItemPrice> result = ImmutableSet.<ProductItemPrice> builder();
+      Builder<ProductItemPrice> result = ImmutableSet.builder();
 
       int imageId = Integer.parseInt(template.getImage().getId());
       result.add(ProductItemPrice.builder().id(imageId).build());
@@ -167,7 +167,7 @@ public class SoftLayerComputeServiceAdapter implements
    public Iterable<Iterable<ProductItem>> listHardwareProfiles() {
       ProductPackage productPackage = productPackageSupplier.get();
       Set<ProductItem> items = productPackage.getItems();
-      Builder<Iterable<ProductItem>> result = ImmutableSet.<Iterable<ProductItem>> builder();
+      Builder<Iterable<ProductItem>> result = ImmutableSet.builder();
       for (ProductItem cpuItem : filter(items, matches(cpuPattern))) {
          for (ProductItem ramItem : filter(items, categoryCode("ram"))) {
             for (ProductItem sanItem : filter(items, and(matches(disk0Type), categoryCode("guest_disk0")))) {

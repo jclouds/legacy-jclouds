@@ -51,7 +51,7 @@ public class RunScriptData {
    public static String JBOSS_HOME = "/usr/local/jboss";
 
    public static Statement authorizePortsInIpTables(int... ports) {
-      Builder<Statement> builder = ImmutableList.<Statement> builder();
+      Builder<Statement> builder = ImmutableList.builder();
       for (int port : ports)
          builder.add(exec("iptables -I INPUT 1 -p tcp --dport " + port + " -j ACCEPT"));
       builder.add(exec("iptables-save"));

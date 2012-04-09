@@ -361,7 +361,7 @@ public class AdminAccess implements Statement {
       checkNotNull(config.getAdminPrivateKey(), "adminPrivateKey");
       checkNotNull(config.getLoginPassword(), "loginPassword");
       
-      ImmutableList.Builder<Statement> statements = ImmutableList.<Statement> builder();
+      ImmutableList.Builder<Statement> statements = ImmutableList.builder();
       UserAdd.Builder userBuilder = UserAdd.builder();
       userBuilder.login(config.getAdminUsername());
       if (config.shouldAuthorizeAdminPublicKey())

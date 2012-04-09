@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 public class MapToDriveMetrics implements Function<Map<String, String>, Map<String, ? extends DriveMetrics>> {
 
    public Map<String, ? extends DriveMetrics> apply(Map<String, String> from) {
-      Builder<String, DriveMetrics> builder = ImmutableMap.<String, DriveMetrics> builder();
+      Builder<String, DriveMetrics> builder = ImmutableMap.builder();
       addIDEDevices(from, builder);
       addSCSIDevices(from, builder);
       addBlockDevices(from, builder);

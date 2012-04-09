@@ -224,7 +224,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
 
          @Override
          public Map<String, String> apply(Map<String, Org> arg0) {
-            Builder<String, String> returnVal = ImmutableMap.<String, String> builder();
+            Builder<String, String> returnVal = ImmutableMap.builder();
             for (Entry<String, Org> orgr : arg0.entrySet()) {
                for (String vdc : orgr.getValue().getVDCs().keySet()) {
                   returnVal.put(vdc, orgr.getKey());

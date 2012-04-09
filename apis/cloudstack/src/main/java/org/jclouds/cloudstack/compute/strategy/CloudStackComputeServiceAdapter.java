@@ -264,7 +264,7 @@ public class CloudStackComputeServiceAdapter implements
    }
 
    public void disableStaticNATOnIPAddresses(Set<Long> ipAddresses) {
-      Builder<Long> jobsToTrack = ImmutableSet.<Long> builder();
+      Builder<Long> jobsToTrack = ImmutableSet.builder();
       for (Long ipAddress : ipAddresses) {
          Long disableStaticNAT = client.getNATClient().disableStaticNATOnPublicIP(ipAddress);
          if (disableStaticNAT != null) {
@@ -276,7 +276,7 @@ public class CloudStackComputeServiceAdapter implements
    }
 
    public Set<Long> deleteIPForwardingRulesForVMAndReturnDistinctIPs(long virtualMachineId) {
-      Builder<Long> jobsToTrack = ImmutableSet.<Long> builder();
+      Builder<Long> jobsToTrack = ImmutableSet.builder();
 
       // immutable doesn't permit duplicates
       Set<Long> ipAddresses = Sets.newLinkedHashSet();
