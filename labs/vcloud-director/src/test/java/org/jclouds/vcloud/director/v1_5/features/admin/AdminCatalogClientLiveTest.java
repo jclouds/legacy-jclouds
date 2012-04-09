@@ -84,8 +84,8 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    protected void tidyUp() {
       if (catalog != null) {
          catalogClient.deleteCatalog(catalog.getHref());
-         try {
-            catalogClient.getCatalog(catalog.getHref());
+         try { //TODO: predicate to retry for a short while?
+            catalogClient.getCatalog(catalog.getHref()); 
             fail("The Catalog should have been deleted");
          } catch (VCloudDirectorException vcde) {
             checkError(vcde.getError());
