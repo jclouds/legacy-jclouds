@@ -122,7 +122,7 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
       utils.logRequest(signatureLog, request, ">>");
 
       // encode each parameter value first,
-      ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.<String> naturalOrder();
+      ImmutableSortedSet.Builder<String> builder = ImmutableSortedSet.naturalOrder();
       for (Entry<String, String> entry : decodedParams.entries())
          builder.add(entry.getKey() + "=" + Strings2.urlEncode(entry.getValue()));
 

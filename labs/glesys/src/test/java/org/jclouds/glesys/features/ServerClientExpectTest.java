@@ -134,7 +134,7 @@ public class ServerClientExpectTest extends BaseRestClientExpectTest<GleSYSClien
                         .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build(),
             HttpResponse.builder().statusCode(200).payload(payloadFromResource("/server_templates.json")).build()).getServerClient();
 
-      ImmutableSet.Builder<OSTemplate> expectedBuilder = ImmutableSet.<OSTemplate> builder();
+      ImmutableSet.Builder<OSTemplate> expectedBuilder = ImmutableSet.builder();
 
       for (String name : new String[] { "Centos 5", "Centos 5 64-bit", "Centos 6 32-bit", "Centos 6 64-bit",
             "Debian 5.0 32-bit", "Debian 5.0 64-bit", "Debian 6.0 32-bit", "Debian 6.0 64-bit", "Fedora Core 11",

@@ -74,7 +74,7 @@ public class ParseUserMetadataFromHeaders implements Function<HttpResponse, User
 
    // TODO: change to guava
    private Map<String, String> getMetaMap(String meta) {
-      Builder<String, String> metaMap = ImmutableMap.<String, String> builder();
+      Builder<String, String> metaMap = ImmutableMap.builder();
       for (String entry : Splitter.on(", ").split(meta)) {
          String[] entrySplit = entry.split("=");
          metaMap.put(entrySplit[0], entrySplit[1]);

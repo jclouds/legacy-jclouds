@@ -36,7 +36,7 @@ public class SaxUtils {
    }
 
    public static Map<String, String> cleanseAttributes(Attributes in) {
-      Builder<String, String> attrs = ImmutableMap.<String, String> builder();
+      Builder<String, String> attrs = ImmutableMap.builder();
       for (int i = 0; i < in.getLength(); i++) {
          String name = in.getQName(i);
          if (name.indexOf(':') != -1)

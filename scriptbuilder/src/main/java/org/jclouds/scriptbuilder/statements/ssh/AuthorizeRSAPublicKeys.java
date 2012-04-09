@@ -61,7 +61,7 @@ public class AuthorizeRSAPublicKeys implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      Builder<Statement> statements = ImmutableList.<Statement> builder();
+      Builder<Statement> statements = ImmutableList.builder();
       statements.add(exec("mkdir -p " + sshDir));
       String authorizedKeys = sshDir + "{fs}authorized_keys";
       statements.add(appendFile(authorizedKeys, Splitter.on('\n').split(Joiner.on("\n\n").join(publicKeys))));

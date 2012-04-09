@@ -121,7 +121,7 @@ public class CreateRunScript extends StatementList {
 
    private void addUnixRunScript(String runScript, StringBuilder builder) {
       builder.append("# add desired commands from the user\n");
-      Builder<String> userCommands = ImmutableList.<String>builder();
+      Builder<String> userCommands = ImmutableList.builder();
       userCommands.add("cd " + pwd);
       for (Statement statement : statements) {
          if (statement instanceof Call
@@ -137,7 +137,7 @@ public class CreateRunScript extends StatementList {
    private void addUnixRunScriptHeader(String runScript, StringBuilder builder) {
       builder.append("# create runscript header\n");
 
-      Builder<String> beginningOfFile = ImmutableList.<String> builder();
+      Builder<String> beginningOfFile = ImmutableList.builder();
       beginningOfFile.addAll(Splitter.on(ShellToken.LF.to(OsFamily.UNIX)).split(
             ShellToken.BEGIN_SCRIPT.to(OsFamily.UNIX)));
       beginningOfFile.add(format("PROMPT_COMMAND='echo -ne \\\"\\033]0;%s\\007\\\"'", instanceName));

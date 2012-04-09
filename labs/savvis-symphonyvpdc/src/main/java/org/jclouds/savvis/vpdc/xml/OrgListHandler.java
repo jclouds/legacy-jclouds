@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 public class OrgListHandler extends ParseSax.HandlerWithResult<Set<Resource>> {
 
-   private Builder<Resource> org = ImmutableSet.<Resource> builder();
+   private Builder<Resource> org = ImmutableSet.builder();
 
    public Set<Resource> getResult() {
       try {

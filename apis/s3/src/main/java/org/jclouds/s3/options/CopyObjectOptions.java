@@ -254,7 +254,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    public Multimap<String, String> buildRequestHeaders() {
       checkState(headerTag != null, "headerTag should have been injected!");
       checkState(metadataPrefix != null, "metadataPrefix should have been injected!");
-      ImmutableMultimap.Builder<String, String> returnVal = ImmutableMultimap.<String, String> builder();
+      ImmutableMultimap.Builder<String, String> returnVal = ImmutableMultimap.builder();
       for (Entry<String, String> entry : headers.entries()) {
          returnVal.put(entry.getKey().replace(DEFAULT_AMAZON_HEADERTAG, headerTag), entry.getValue());
       }

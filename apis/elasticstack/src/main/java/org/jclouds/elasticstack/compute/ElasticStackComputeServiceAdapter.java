@@ -132,7 +132,7 @@ public class ElasticStackComputeServiceAdapter implements
 
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
-      Builder<Hardware> hardware = ImmutableSet.<Hardware> builder();
+      Builder<Hardware> hardware = ImmutableSet.builder();
       for (double cpu : new double[] { 1000, 5000, 10000, 20000 })
          for (int ram : new int[] { 512, 1024, 2048, 4096, 8192 }) {
             final float size = (float) cpu / 1000;

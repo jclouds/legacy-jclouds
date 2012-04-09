@@ -106,7 +106,7 @@ public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
    public Iterable<Entry<String, DescribeImagesOptions>> getDescribeQueriesForOwnersInRegions(Set<String> regions,
          String[] amiOwners) {
       DescribeImagesOptions options = getOptionsForOwners(amiOwners);
-      Builder<String, DescribeImagesOptions> builder = ImmutableMap.<String, DescribeImagesOptions> builder();
+      Builder<String, DescribeImagesOptions> builder = ImmutableMap.builder();
       for (String region : regions)
          builder.put(region, options);
       return builder.build().entrySet();

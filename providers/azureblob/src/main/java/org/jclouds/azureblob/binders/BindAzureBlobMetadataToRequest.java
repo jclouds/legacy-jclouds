@@ -57,7 +57,7 @@ public class BindAzureBlobMetadataToRequest implements Binder {
       checkArgument(blob.getPayload().getContentMetadata().getContentLength() != null
             && blob.getPayload().getContentMetadata().getContentLength() >= 0, "size must be set");
 
-      Builder<String, String> headers = ImmutableMap.<String, String> builder();
+      Builder<String, String> headers = ImmutableMap.builder();
 
       headers.put("x-ms-blob-type", blob.getProperties().getType().toString());
 

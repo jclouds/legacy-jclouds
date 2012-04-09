@@ -49,7 +49,7 @@ public class BindS3UploadPolicyAndSignature implements Binder {
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       String encodedJson = CryptoStreams.base64(checkNotNull(input, "json").toString().getBytes(Charsets.UTF_8));
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       builder.put("Storage.S3.UploadPolicy", encodedJson);
       String signature = signer.sign(encodedJson);
       builder.put("Storage.S3.UploadPolicySignature", signature);
