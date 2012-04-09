@@ -20,25 +20,43 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
 import com.google.common.base.Objects;
 
 /**
  * Represents vApp/VM undeployment parameters.
  * 
- * <pre>
- * &lt;complexType name="UndeployVAppParamsType" /&gt;
- * </pre>
- *
  * @author grkvlt@apache.org
+ * @see <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/UndeployVAppParamsType.html">
+ *    vCloud REST API - UndeployVAppParamsType</a>
  * @since 0.9
  */
 @XmlRootElement(name = "UndeployVAppParams")
 @XmlType(name = "UndeployVAppParamsType")
 public class UndeployVAppParams {
+
+   public static final String MEDIA_TYPe = VCloudDirectorMediaType.UNDEPLOY_VAPP_PARAMS;
+
+   public static class PowerAction {
+      /** Power off the VMs. This is the default action if this attribute is missing or empty) */
+      public static final String POWER_OFF = "powerOff";
+      /** Suspend the VMs. */
+      public static final String SUSPEND = "suspend";
+      /** Shut down the VMs. */
+      public static final String SHUTDOWN = "shutdown";
+      /** Attempt to power off the VMs. */
+      public static final String FORCE = "force";
+
+      public static final List<String> ALL = Arrays.asList(POWER_OFF, SUSPEND, SHUTDOWN, FORCE);
+   }
 
    public static Builder builder() {
       return new Builder();
@@ -83,15 +101,13 @@ public class UndeployVAppParams {
     *
     * All values other than {@code default} ignore actions, order, and delay specified in the StartupSection. One of:
     * <ul>
-    *    <li>{@code powerOff} (Power off the VMs. This is the default action if this attribute is missing or empty)
-    *    <li>{@code suspend} (Suspend the VMs)
-    *    <li>{@code shutdown} (Shut down the VMs)
-    *    <li>{@code force} (Attempt to power off the VMs.
+    *    <li>{@link PowerAction#POWER_OFF powerOff}
+    *    <li>{@link PowerAction#SUSPEND suspend}
+    *    <li>{@link PowerAction#SHUTDOWN shutdown}
+    *    <li>{@link PowerAction#FORCE force}
     * </ul>
     * Failures in undeploying the VM or associated networks are ignored. All references to the vApp and its VMs are
     * removed from the database), default (Use the actions, order, and delay specified in the StartupSection).
-    *
-    * TODO add an enumeration for these values
     *
     * @since 1.5
     */

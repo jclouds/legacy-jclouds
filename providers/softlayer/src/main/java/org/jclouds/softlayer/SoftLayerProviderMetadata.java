@@ -19,12 +19,8 @@
 package org.jclouds.softlayer;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for SoftLayer.
@@ -32,84 +28,36 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class SoftLayerProviderMetadata extends BaseProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "softlayer";
+   public SoftLayerProviderMetadata() {
+      this(builder()
+            .id("softlayer")
+            .name("SoftLayer")
+            .api(new SoftLayerApiMetadata())
+            .homepage(URI.create("http://www.softlayer.com"))
+            .console(URI.create("https://manage.softlayer.com"))
+            .iso3166Codes("SG","US-CA","US-TX","US-VA","US-WA","US-TX"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected SoftLayerProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "SoftLayer";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public SoftLayerProviderMetadata build() {
+         return new SoftLayerProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "API Username";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "API Key";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.softlayer.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://manage.softlayer.com");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://sldn.softlayer.com/article/REST");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("softlayer");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("SG","US-CA","US-TX","US-VA","US-WA","US-TX");
-   }
-
 }

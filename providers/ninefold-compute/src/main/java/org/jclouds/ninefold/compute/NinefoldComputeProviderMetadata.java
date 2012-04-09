@@ -19,11 +19,9 @@
 package org.jclouds.ninefold.compute;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Ninefold
@@ -33,83 +31,36 @@ import com.google.common.collect.ImmutableSet;
  */
 public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "ninefold-compute";
+   public NinefoldComputeProviderMetadata() {
+      this(builder()
+            .id("ninefold-compute")
+            .name("Ninefold Compute")
+            .api(new CloudStackApiMetadata())
+            .homepage(URI.create("http://ninefold.com/virtual-servers/"))
+            .console(URI.create("https://ninefold.com/portal/portal/login"))
+            .iso3166Codes("AU-NSW"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected NinefoldComputeProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Ninefold Compute";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public NinefoldComputeProviderMetadata build() {
+         return new NinefoldComputeProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "API Key";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://ninefold.com/virtual-servers/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://ninefold.com/portal/portal/login");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://ninefold.com/support/display/SPT/Cloud+Compute");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("AU-NSW");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of(getId(), "ninefold-storage");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 }

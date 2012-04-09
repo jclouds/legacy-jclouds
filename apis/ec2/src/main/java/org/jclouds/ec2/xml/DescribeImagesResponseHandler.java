@@ -110,7 +110,8 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("architecture")) {
          architecture = Architecture.fromValue(currentText.toString().trim());
-      } else if (qName.equals("name")) {
+      // Nova Diablo uses the wrong name for this field
+      } else if (qName.equals("name") || qName.equals("displayName")) {
          this.name = currentText.toString().trim();
       } else if (qName.equals("description")) {
          description = currentText.toString().trim();

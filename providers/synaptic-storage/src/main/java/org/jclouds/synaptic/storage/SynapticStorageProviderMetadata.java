@@ -19,12 +19,9 @@
 package org.jclouds.synaptic.storage;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.atmos.AtmosApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for AT&T's
@@ -34,76 +31,37 @@ import com.google.common.collect.ImmutableSet;
  */
 public class SynapticStorageProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "synaptic-storage";
+   public SynapticStorageProviderMetadata() {
+      this(builder()
+            .id("synaptic-storage")
+            .name("AT&T Synaptic Storage")
+            .api(new AtmosApiMetadata())
+            .homepage(URI.create("https://www.synaptic.att.com/"))
+            .console(URI.create("https://www.synaptic.att.com/clouduser/login.htm"))
+            .iso3166Codes("US-VA", "US-TX"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected SynapticStorageProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "AT&T Synaptic Storage";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public SynapticStorageProviderMetadata build() {
+         return new SynapticStorageProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Subtenant ID (UID)";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Shared Secret";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://www.synaptic.att.com/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://www.synaptic.att.com/clouduser/login.htm");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://www.synaptic.att.com/clouduser/emc_atmos_api.htm");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA", "US-TX");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

@@ -65,6 +65,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -87,14 +88,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
     */
    protected VdcClient vdcClient;
    protected MediaClient mediaClient;
-
-   @Override
-   @BeforeClass(alwaysRun = true)
-   public void setupRequiredClients() {
-      vdcClient = context.getApi().getVdcClient();
-      mediaClient = context.getApi().getMediaClient();
-   }
-
+   
    /*
     * Shared state between dependent tests.
     */
@@ -103,6 +97,23 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    private Metadata metadata;
    private MetadataValue metadataValue;
    private String metadataEntryValue = "value";
+
+   @Override
+   @BeforeClass(alwaysRun = true)
+   public void setupRequiredClients() {
+      vdcClient = context.getApi().getVdcClient();
+      mediaClient = context.getApi().getMediaClient();
+   }
+   
+   @AfterClass(alwaysRun = true)
+   protected void tidyUp() {
+      if (media != null) {
+         assertTaskSucceeds(mediaClient.deleteMedia(media.getHref()));
+      }
+      if (oldMedia != null) {
+         assertTaskSucceeds(mediaClient.deleteMedia(oldMedia.getHref()));
+      }
+   }
    
    @Test(description = "POST /vdc/{id}/media")
    public void testCreateMedia() throws URISyntaxException {
@@ -419,5 +430,8 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       
       deleteMedia = mediaClient.deleteMedia(oldMedia.getHref());
       Checks.checkTask(deleteMedia);
+      assertTrue(retryTaskSuccess.apply(deleteMedia),
+            String.format(TASK_COMPLETE_TIMELY, "deleteMedia"));
+      oldMedia = null;
    }
 }

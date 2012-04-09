@@ -19,12 +19,9 @@
 package org.jclouds.elastichosts;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts Toronto Peer 1.
@@ -33,83 +30,36 @@ import com.google.common.collect.ImmutableSet;
  */
 public class ElasticHostsPeer1TorontoProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "elastichosts-tor-p";
+   public ElasticHostsPeer1TorontoProviderMetadata() {
+      this(builder()
+            .id("elastichosts-tor-p")
+            .name("ElasticHosts Toronto Peer 1")
+            .api(new ElasticStackApiMetadata())
+            .homepage(URI.create("https://tor-p.elastichosts.com"))
+            .console(URI.create("https://tor-p.elastichosts.com/accounts"))
+            .iso3166Codes("CA-ON"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected ElasticHostsPeer1TorontoProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "ElasticHosts Toronto Peer 1";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public ElasticHostsPeer1TorontoProviderMetadata build() {
+         return new ElasticHostsPeer1TorontoProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API key";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://tor-p.elastichosts.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://tor-p.elastichosts.com/accounts");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.elastichosts.com/cloud-hosting/api");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("elastichosts-tor-p");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("CA-ON");
-   }
-
 }

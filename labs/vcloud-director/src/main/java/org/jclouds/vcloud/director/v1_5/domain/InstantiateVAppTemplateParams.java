@@ -34,7 +34,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * </pre>
  */
 @XmlRootElement(name = "InstantiateVAppTemplateParams")
-public class InstantiateVAppTemplateParams extends InstantiateVAppParamsType {
+public class InstantiateVAppTemplateParams extends InstantiateVAppParams {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -47,7 +47,7 @@ public class InstantiateVAppTemplateParams extends InstantiateVAppParamsType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends InstantiateVAppParamsType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends InstantiateVAppParams.Builder<B> {
 
       private Boolean allEULAsAccepted;
 

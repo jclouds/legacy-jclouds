@@ -18,13 +18,9 @@
  */
 package org.jclouds.savvis.vpdc;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Savvis Symphony VPDC services.
@@ -32,110 +28,72 @@ import org.jclouds.providers.ProviderMetadata;
  * @author Kedar Dave
  */
 public class SavvisSymphonyVPDCProviderMetadata extends BaseProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "savvis-symphonyvpdc";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Savvis Symphony VPDC";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "username";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "password";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.savvis.com/en-US/infrastructure-services/Cloud/Pages/SavvisSymphonyVPDC.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://www.savvisstation.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("https://api.savvis.net/doc/spec/api/index.html");
-   }
-
-   /**
+   public SavvisSymphonyVPDCProviderMetadata() {
+      this(builder()
+            .id("savvis-symphonyvpdc")
+            .name("Savvis Symphony VPDC")
+            .api(new SavvisSymphonyVPDCApiMetadata())
+            .homepage(URI.create("https://api.savvis.net/doc/spec/api/index.html"))
+            .console(URI.create("https://www.savvisstation.com"))
+               /**
     * {@inheritDoc}
     * list of data centers from savvisstation colocation guide 
     * https://www.savvisstation.com/DocumentViewer?GUID=a95f0387-cbfe-43eb-b25b-4f2b0f68498f&sessionid=SavvisCCC%3ac9a8984b9655b01916be587e5204b2cf
     * Once we have confirmation from Savvis as to what data centers are used for vpdc deployments,
     * iso codes for those will be entered here
     * 
-    * City								Code
-    * 	Lithia Springs, GA 				AT1
-	*	Waltham, MA 					BO1
-	*	Waltham, MA 					BO2
-	*	Waltham, MA 					B03
-	*	Elk Grove Village, IL 			CH3
-	*	Chicago, IL 					CH4 
-	*	Sterling, VA 					DC2
-	*	Sterling, VA 					DC3
-	*	Sterling, VA 					DC4 Phase I 
-	*   Sterling, VA 					DC4 Phase II
-	*	Fort Worth, TX					DL1 
-	*	Fort Worth, TX 					DL2 
-	*	El Segundo, CA 					LA1 
-	*	Jersey City, NJ 				NJ1
-	*	Weehawken, NJ 					NJ2
-	*	Piscataway, NJ 					NJ3
-	*	Piscataway, NJ 2nd floor 		NJ3
-	*	Weehawken, NJ 					NJ2X
-	*	Irvine, CA 						OC2
-	*	Santa Clara, CA 				SC4
-	*	Santa Clara, CA 				SC5
-	*	Santa Clara, CA 				SC8
-	*	Santa Clara, CA 				SC9
-	*	Tukwila, WA 1st floor 			SE2
-	*	Montreal, Canada 				MR1
-	*	Toronto, Canada 				TR1
-	*	Vancouver, Canada 				VC1
+    * City                       Code
+    *    Lithia Springs, GA            AT1
+   *  Waltham, MA                BO1
+   *  Waltham, MA                BO2
+   *  Waltham, MA                B03
+   *  Elk Grove Village, IL         CH3
+   *  Chicago, IL                CH4 
+   *  Sterling, VA               DC2
+   *  Sterling, VA               DC3
+   *  Sterling, VA               DC4 Phase I 
+   *   Sterling, VA              DC4 Phase II
+   *  Fort Worth, TX             DL1 
+   *  Fort Worth, TX                DL2 
+   *  El Segundo, CA                LA1 
+   *  Jersey City, NJ            NJ1
+   *  Weehawken, NJ              NJ2
+   *  Piscataway, NJ                NJ3
+   *  Piscataway, NJ 2nd floor      NJ3
+   *  Weehawken, NJ              NJ2X
+   *  Irvine, CA                 OC2
+   *  Santa Clara, CA            SC4
+   *  Santa Clara, CA            SC5
+   *  Santa Clara, CA            SC8
+   *  Santa Clara, CA            SC9
+   *  Tukwila, WA 1st floor         SE2
+   *  Montreal, Canada           MR1
+   *  Toronto, Canada            TR1
+   *  Vancouver, Canada             VC1
     */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("");
+            .iso3166Codes("US", "CA"));
    }
 
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected SavvisSymphonyVPDCProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
+   }
+
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public SavvisSymphonyVPDCProviderMetadata build() {
+         return new SavvisSymphonyVPDCProviderMetadata(this);
+      }
+   }
+
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
+   }
+
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
 }

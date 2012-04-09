@@ -127,6 +127,7 @@ public abstract class ResourceEntityType extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromResourceEntityType(this);
    }

@@ -18,8 +18,8 @@
  */
 package org.jclouds.cloudonestorage;
 
+import org.jclouds.atmos.AtmosApiMetadata;
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class CloudOneStorageProviderTest extends BaseProviderMetadataTest {
 
    public CloudOneStorageProviderTest() {
-      super(new CloudOneStorageProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+      super(new CloudOneStorageProviderMetadata(), new AtmosApiMetadata());
    }
 
 }

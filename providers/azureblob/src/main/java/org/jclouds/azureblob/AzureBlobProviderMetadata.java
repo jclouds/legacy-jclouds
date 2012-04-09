@@ -19,12 +19,8 @@
 package org.jclouds.azureblob;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Microsoft Azure Blob Service.
@@ -32,85 +28,37 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class AzureBlobProviderMetadata extends BaseProviderMetadata {
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "azureblob";
+   public AzureBlobProviderMetadata() {
+      this(builder()
+            .id("azureblob")
+            .name("Microsoft Azure Blob Service")
+            .api(new AzureBlobApiMetadata())
+            .homepage(URI.create("http://www.microsoft.com/windowsazure/storage/"))
+            .console(URI.create("https://windows.azure.com/default.aspx"))
+            .linkedServices("azureblob", "azurequeue", "azuretable")
+            .iso3166Codes("US-TX","US-IL","IE-D","SG","NL-NH","HK"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected AzureBlobProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Microsoft Azure Blob Service";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public AzureBlobProviderMetadata build() {
+         return new AzureBlobProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Account Name";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Access Key";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.microsoft.com/windowsazure/storage/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://windows.azure.com/default.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("azureblob", "azurequeue", "azuretable");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-TX","US-IL","IE-D","SG","NL-NH","HK");
-   }
-
 }

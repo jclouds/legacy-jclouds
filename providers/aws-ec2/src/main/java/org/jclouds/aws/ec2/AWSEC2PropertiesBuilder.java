@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
@@ -39,6 +40,7 @@ public class AWSEC2PropertiesBuilder extends org.jclouds.ec2.EC2PropertiesBuilde
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_API_VERSION, AWSEC2AsyncClient.VERSION);
       // sometimes, like in ec2, stop takes a very long time, perhaps
       // due to volume management. one example spent 2 minutes moving
       // from stopping->stopped state on an ec2 micro

@@ -68,6 +68,12 @@ public class ParseAWSErrorFromXmlContentTest {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
                "<Error><Code>LoadBalancerNotFound</Code></Error>", ResourceNotFoundException.class);
    }
+   
+   @Test
+   public void test400WithSecurityGroupNotFoundForProjectSetsResourceNotFoundException() {
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+               "<Error><Code>SecurityGroupNotFoundForProject</Code></Error>", ResourceNotFoundException.class);
+   }
 
    @Test
    public void test400WithUnsupportedCodeMakesUnsupportedOperationException() {

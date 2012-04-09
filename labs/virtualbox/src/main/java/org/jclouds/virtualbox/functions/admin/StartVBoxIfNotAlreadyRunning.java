@@ -59,8 +59,6 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
    private final RetryIfSocketNotYetOpen socketTester;
    private final Supplier<NodeMetadata> host;
    private final Supplier<URI> providerSupplier;
-//   private final String identity;
-//   private final String credential;
    private final Function<Supplier<NodeMetadata>, VirtualBoxManager> managerForNode;
    private transient VirtualBoxManager manager;
 
@@ -75,8 +73,6 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
       this.socketTester.seconds(3L);
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
-//      this.identity = checkNotNull(identity, "identity");
-//      this.credential = checkNotNull(credential, "credential");
       this.managerForNode = checkNotNull(managerForNode, "managerForNode");
    }
 
@@ -89,10 +85,6 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
                   runAsRoot(false).wrapInInitScript(false)).init().call();
          logger.debug(">> starting vboxwebsrv");
          String vboxwebsrv = "vboxwebsrv -t 10000 -v -b";
-         if (host.get().getOperatingSystem() != null
-                  && host.get().getOperatingSystem().getDescription().equals("Mac OS X"))
-            vboxwebsrv = "cd /Applications/VirtualBox.app/Contents/MacOS/ && " + vboxwebsrv;
-
          runScriptOnNodeFactory.create(host.get(), Statements.exec(vboxwebsrv),
                   runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")).init().call();
          

@@ -28,7 +28,7 @@ import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParamsType;
+import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
@@ -144,7 +144,7 @@ public interface VdcClient {
     * @return a VApp resource which will contain a task. The user should should wait for this task to finish to be able
     *         to use the vApp.
     */
-   VApp instantiateVApp(URI vdcUri, InstantiateVAppParamsType params);
+   VApp instantiateVApp(URI vdcUri, InstantiateVAppParams params);
    
    /**
     * Uploading vApp template to a vDC.

@@ -19,7 +19,9 @@
 
 package org.jclouds.virtualbox.config;
 
-import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_PRECONFIGURATION_URL;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_IMAGE_ARCH;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_IMAGE_OS;
+import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_DEFAULT_IMAGE_VERSION;
 
 import java.io.File;
 import java.io.InputStream;
@@ -29,7 +31,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
@@ -46,7 +47,6 @@ import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
@@ -56,7 +56,6 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.Host;
-import org.jclouds.virtualbox.Preconfiguration;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.ExecutionType;
@@ -76,7 +75,7 @@ import org.jclouds.virtualbox.functions.NodeCreator;
 import org.jclouds.virtualbox.functions.YamlImagesFromFileConfig;
 import org.jclouds.virtualbox.functions.admin.FileDownloadFromURI;
 import org.jclouds.virtualbox.functions.admin.ImagesToYamlImagesFromYamlDescriptor;
-import org.jclouds.virtualbox.functions.admin.StartJettyIfNotAlreadyRunning;
+import org.jclouds.virtualbox.functions.admin.PreseedCfgServer;
 import org.jclouds.virtualbox.functions.admin.StartVBoxIfNotAlreadyRunning;
 import org.jclouds.virtualbox.predicates.SshResponds;
 import org.testng.internal.annotations.Sets;
@@ -91,7 +90,6 @@ import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -128,10 +126,10 @@ public class VirtualBoxComputeServiceContextModule extends
       bind(new TypeLiteral<Function<IMachine, Image>>() {
       }).to(IMachineToImage.class);
       bind(new TypeLiteral<CacheLoader<IsoSpec, URI>>() {
-      }).to((Class) StartJettyIfNotAlreadyRunning.class);
+      }).to((Class) PreseedCfgServer.class);
       bind(new TypeLiteral<Function<URI, File>>() {
       }).to((Class) FileDownloadFromURI.class);
-      
+
       bind(new TypeLiteral<Supplier<VirtualBoxManager>>() {
       }).to((Class) StartVBoxIfNotAlreadyRunning.class);
       // the yaml config to image mapper
@@ -139,9 +137,11 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to((Class) ImagesToYamlImagesFromYamlDescriptor.class);
       // the yaml config provider
       bind(YamlImagesFromFileConfig.class);
+
       // the master machines cache
       bind(new TypeLiteral<LoadingCache<Image, Master>>() {
-      }).to((Class) MastersLoadingCache.class);
+      }).to(MastersLoadingCache.class);
+
       // the master creating function
       bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
       }).to((Class) CreateAndInstallVm.class);
@@ -150,6 +150,9 @@ public class VirtualBoxComputeServiceContextModule extends
       }).to((Class) NodeCreator.class);
       bind(new TypeLiteral<Function<CloneSpec, IMachine>>() {
       }).to((Class) CloneAndRegisterMachineFromIMachineIfNotAlreadyExists.class);
+      // the jetty server provider
+      bind(new TypeLiteral<Server>() {
+      }).to((Class) PreseedCfgServer.class).asEagerSingleton();
 
       // for byon
       bind(new TypeLiteral<Function<URI, InputStream>>() {
@@ -163,13 +166,6 @@ public class VirtualBoxComputeServiceContextModule extends
    }
 
    @Provides
-   @Singleton
-   @Preconfiguration
-   protected LoadingCache<IsoSpec, URI> preconfiguration(CacheLoader<IsoSpec, URI> cacheLoader) {
-      return CacheBuilder.newBuilder().build(cacheLoader);
-   }
-
-   @Provides
    @Host
    @Singleton
    protected ComputeServiceContext provideHostController() {
@@ -178,12 +174,6 @@ public class VirtualBoxComputeServiceContextModule extends
       String credential = "";
       return new ComputeServiceContextFactory().createContext(provider, identity, credential,
                ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()));
-   }
-
-   @Provides
-   @Singleton
-   protected Server providesJettyServer(@Named(VIRTUALBOX_PRECONFIGURATION_URL) String preconfigurationUrl) {
-      return new Server(URI.create(preconfigurationUrl).getPort());
    }
 
    @Provides
@@ -230,7 +220,8 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(OsFamily.UBUNTU).osVersionMatches("11.04");
+      return template.osFamily(VIRTUALBOX_DEFAULT_IMAGE_OS).osVersionMatches(VIRTUALBOX_DEFAULT_IMAGE_VERSION)
+               .osArchMatches(VIRTUALBOX_DEFAULT_IMAGE_ARCH);
    }
 
    @Provides
@@ -248,8 +239,7 @@ public class VirtualBoxComputeServiceContextModule extends
 
    @VisibleForTesting
    public static final Map<MachineState, NodeState> machineToNodeState = ImmutableMap
-            .<MachineState, NodeState> builder()
-            .put(MachineState.Running, NodeState.RUNNING)
+            .<MachineState, NodeState> builder().put(MachineState.Running, NodeState.RUNNING)
             .put(MachineState.PoweredOff, NodeState.SUSPENDED)
             .put(MachineState.DeletingSnapshot, NodeState.PENDING)
             .put(MachineState.DeletingSnapshotOnline, NodeState.PENDING)
@@ -261,15 +251,10 @@ public class VirtualBoxComputeServiceContextModule extends
             .put(MachineState.Stopping, NodeState.PENDING)
             .put(MachineState.Restoring, NodeState.PENDING)
             // TODO What to map these states to?
-            .put(MachineState.FirstOnline, NodeState.PENDING)
-            .put(MachineState.FirstTransient, NodeState.PENDING)
-            .put(MachineState.LastOnline, NodeState.PENDING)
-            .put(MachineState.LastTransient, NodeState.PENDING)
-            .put(MachineState.Teleported, NodeState.PENDING)
-            .put(MachineState.TeleportingIn, NodeState.PENDING)
-            .put(MachineState.TeleportingPausedVM, NodeState.PENDING)
-            .put(MachineState.Aborted, NodeState.ERROR)
-            .put(MachineState.Stuck, NodeState.ERROR)
-            .put(MachineState.Null, NodeState.UNRECOGNIZED).build();
+            .put(MachineState.FirstOnline, NodeState.PENDING).put(MachineState.FirstTransient, NodeState.PENDING)
+            .put(MachineState.LastOnline, NodeState.PENDING).put(MachineState.LastTransient, NodeState.PENDING)
+            .put(MachineState.Teleported, NodeState.PENDING).put(MachineState.TeleportingIn, NodeState.PENDING)
+            .put(MachineState.TeleportingPausedVM, NodeState.PENDING).put(MachineState.Aborted, NodeState.ERROR)
+            .put(MachineState.Stuck, NodeState.ERROR).put(MachineState.Null, NodeState.UNRECOGNIZED).build();
 
 }

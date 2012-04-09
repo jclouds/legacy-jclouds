@@ -19,11 +19,11 @@
 package org.jclouds.savvis.vpdc;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
- * The SavvisSymphonyVPDCProviderTest tests the org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderMetadata class.
+ * The SavvisSymphonyVPDCProviderTest tests the
+ * org.jclouds.savvis.vpdc.SavvisSymphonyVPDCProviderMetadata class.
  * 
  * @author Kedar Dave
  */
@@ -31,6 +31,6 @@ import org.testng.annotations.Test;
 public class SavvisSymphonyVPDCProviderTest extends BaseProviderMetadataTest {
 
    public SavvisSymphonyVPDCProviderTest() {
-      super(new SavvisSymphonyVPDCProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new SavvisSymphonyVPDCProviderMetadata(), new SavvisSymphonyVPDCApiMetadata());
    }
 }

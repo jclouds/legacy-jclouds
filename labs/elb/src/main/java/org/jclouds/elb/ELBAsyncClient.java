@@ -19,7 +19,6 @@
 package org.jclouds.elb;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
-import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
@@ -59,7 +58,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Beta
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = ELBAsyncClient.VERSION)
 @VirtualHost
 public interface ELBAsyncClient {
    public static final String VERSION = "2011-11-15";

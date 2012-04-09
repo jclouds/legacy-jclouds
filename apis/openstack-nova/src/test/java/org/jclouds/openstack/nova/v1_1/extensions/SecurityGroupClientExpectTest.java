@@ -142,7 +142,7 @@ public class SecurityGroupClientExpectTest extends BaseNovaClientExpectTest {
       HttpRequest deleteSecurityGroup = HttpRequest.builder().method("DELETE").endpoint(
                URI.create("https://compute.north.host/v1.1/3456/os-security-groups/160"))
                .headers(
-                        ImmutableMultimap.<String, String> builder().put("Accept", "*/*")
+                        ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
                                  .put("X-Auth-Token", authToken).build()).build();
 
       HttpResponse deleteSecurityGroupResponse = HttpResponse.builder().statusCode(202).build();

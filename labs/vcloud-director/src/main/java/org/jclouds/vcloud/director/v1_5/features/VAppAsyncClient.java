@@ -575,7 +575,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionCpu(@EndpointParam URI vAppURI);
+   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionCpu(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSectionCpu(URI, ResourceAllocationSettingData)
@@ -585,7 +585,7 @@ public interface VAppAsyncClient {
    @Produces(OVF_RASD_ITEM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionCpu(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyVirtualHardwareSectionCpu(@EndpointParam URI vmURI,
                                                           @BinderParam(BindToXMLPayload.class) ResourceAllocationSettingData rasd);
 
    /**
@@ -596,7 +596,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<RasdItemsList> getVirtualHardwareSectionDisks(@EndpointParam URI vAppURI);
+   ListenableFuture<RasdItemsList> getVirtualHardwareSectionDisks(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSectionDisks(URI, RasdItemsList)
@@ -606,7 +606,7 @@ public interface VAppAsyncClient {
    @Produces(OVF_RASD_ITEMS_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionDisks(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyVirtualHardwareSectionDisks(@EndpointParam URI vmURI,
                                                             @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
@@ -617,7 +617,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<RasdItemsList> getVirtualHardwareSectionMedia(@EndpointParam URI vAppURI);
+   ListenableFuture<RasdItemsList> getVirtualHardwareSectionMedia(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionMemory(URI)
@@ -627,7 +627,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionMemory(@EndpointParam URI vAppURI);
+   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionMemory(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSectionMemory(URI, ResourceAllocationSettingData)
@@ -637,7 +637,7 @@ public interface VAppAsyncClient {
    @Produces(OVF_RASD_ITEM)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionMemory(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyVirtualHardwareSectionMemory(@EndpointParam URI vmURI,
                                                              @BinderParam(BindToXMLPayload.class) ResourceAllocationSettingData rasd);
 
    /**
@@ -648,7 +648,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<RasdItemsList> getVirtualHardwareSectionNetworkCards(@EndpointParam URI vAppURI);
+   ListenableFuture<RasdItemsList> getVirtualHardwareSectionNetworkCards(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSectionNetworkCards(URI, RasdItemsList)
@@ -658,7 +658,7 @@ public interface VAppAsyncClient {
    @Produces(OVF_RASD_ITEMS_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionNetworkCards(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyVirtualHardwareSectionNetworkCards(@EndpointParam URI vmURI,
                                                                    @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**
@@ -669,7 +669,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<RasdItemsList> getVirtualHardwareSectionSerialPorts(@EndpointParam URI vAppURI);
+   ListenableFuture<RasdItemsList> getVirtualHardwareSectionSerialPorts(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSectionSerialPorts(URI, RasdItemsList)
@@ -679,7 +679,7 @@ public interface VAppAsyncClient {
    @Produces(OVF_RASD_ITEMS_LIST)
    @Consumes(TASK)
    @JAXBResponseParser
-   ListenableFuture<Task> modifyVirtualHardwareSectionSerialPorts(@EndpointParam URI vAppURI,
+   ListenableFuture<Task> modifyVirtualHardwareSectionSerialPorts(@EndpointParam URI vmURI,
                                                                   @BinderParam(BindToXMLPayload.class) RasdItemsList rasdItemsList);
 
    /**

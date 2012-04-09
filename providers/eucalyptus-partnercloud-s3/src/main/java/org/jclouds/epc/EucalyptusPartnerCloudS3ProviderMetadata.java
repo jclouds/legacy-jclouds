@@ -19,11 +19,9 @@
 package org.jclouds.epc;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.walrus.WalrusApiMetadata;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Eucalpytus'
@@ -33,84 +31,38 @@ import com.google.common.collect.ImmutableSet;
  */
 public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "eucalyptus-partnercloud-s3";
+   public EucalyptusPartnerCloudS3ProviderMetadata() {
+      this(builder()
+            .id("eucalyptus-partnercloud-s3")
+            .name("Eucalyptus Partner Cloud (S3)")
+            .api(new WalrusApiMetadata())
+            .homepage(URI.create("http://www.eucalyptus.com/partners"))
+            .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
+            .linkedServices("eucalyptus-partnercloud-s3", "eucalyptus-partnercloud-s3")
+            .iso3166Codes("US-CA"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return BLOBSTORE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected EucalyptusPartnerCloudS3ProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Eucalyptus Partner Cloud (S3)";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public EucalyptusPartnerCloudS3ProviderMetadata build() {
+         return new EucalyptusPartnerCloudS3ProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Username";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.eucalyptus.com/partners");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://partnercloud.eucalyptus.com:8443");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://open.eucalyptus.com/wiki/IntroducingEucalyptus_v2.0");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-CA");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

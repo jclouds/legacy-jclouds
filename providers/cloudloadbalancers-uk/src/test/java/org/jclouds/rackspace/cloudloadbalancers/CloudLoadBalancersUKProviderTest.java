@@ -18,8 +18,8 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers;
 
+import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +30,6 @@ import org.testng.annotations.Test;
 public class CloudLoadBalancersUKProviderTest extends BaseProviderMetadataTest {
 
    public CloudLoadBalancersUKProviderTest() {
-      super(new CloudLoadBalancersUKProviderMetadata(), ProviderMetadata.LOADBALANCER_TYPE);
+      super(new CloudLoadBalancersUKProviderMetadata(), new CloudLoadBalancersApiMetadata());
    }
 }

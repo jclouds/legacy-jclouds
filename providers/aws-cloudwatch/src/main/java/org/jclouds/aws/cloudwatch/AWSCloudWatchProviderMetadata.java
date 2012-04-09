@@ -19,12 +19,9 @@
 package org.jclouds.aws.cloudwatch;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.cloudwatch.CloudWatchApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's CloudWatch
@@ -34,82 +31,38 @@ import com.google.common.collect.ImmutableSet;
  */
 public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "aws-cloudwatch";
+   public AWSCloudWatchProviderMetadata() {
+      this(builder()
+            .id("aws-cloudwatch")
+            .name("Amazon CloudWatch")
+            .api(new CloudWatchApiMetadata())
+            .homepage(URI.create("http://aws.amazon.com/cloudwatch"))
+            .console(URI.create("https://console.aws.amazon.com/cloudwatch/home"))
+            .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
+            .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.MONITOR_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected AWSCloudWatchProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Amazon CloudWatch";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public AWSCloudWatchProviderMetadata build() {
+         return new AWSCloudWatchProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Access Key ID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret Access Key";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://aws.amazon.com/cloudwatch");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://console.aws.amazon.com/cloudwatch/home");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("aws-s3", "aws-ec2", "aws-cloudwatch", "aws-simpledb");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13");
-   }
 }

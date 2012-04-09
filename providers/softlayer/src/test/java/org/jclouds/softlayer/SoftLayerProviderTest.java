@@ -19,7 +19,6 @@
 package org.jclouds.softlayer;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +29,6 @@ import org.testng.annotations.Test;
 public class SoftLayerProviderTest extends BaseProviderMetadataTest {
 
    public SoftLayerProviderTest() {
-      super(new SoftLayerProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new SoftLayerProviderMetadata(), new SoftLayerApiMetadata());
    }
 }

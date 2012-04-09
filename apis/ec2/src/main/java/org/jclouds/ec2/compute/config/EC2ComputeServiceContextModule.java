@@ -35,7 +35,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.functions.RegionAndIdToImage;
+import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.SetAndThrowAuthorizationExceptionSupplier;

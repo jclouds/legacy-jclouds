@@ -20,16 +20,22 @@ package org.jclouds.aws.filters;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
+
+import javax.ws.rs.core.HttpHeaders;
+
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -60,6 +66,19 @@ public class FormSignerTest {
                         }
 
                      }));
+   @Test
+   void testBuildCanonicalizedStringSetsVersion() {
+      FormSigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector().getInstance(
+               FormSigner.class);
+
+      assertEquals(
+               filter.filter(
+                        HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).headers(
+                                 ImmutableMultimap.of(HttpHeaders.HOST, "localhost")).payload(
+                                 Payloads.newStringPayload("Action=DescribeImages&ImageId.1=ami-2bb65342")).build())
+                        .getPayload().getRawContent(),
+               "Action=DescribeImages&ImageId.1=ami-2bb65342&Signature=ugnt4m2eHE7Ka%2FvXTr9EhKZq7bhxOfvW0y4pAEqF97w%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=apiVersion&AWSAccessKeyId=identity");
+   }
 
    @Test
    void testBuildCanonicalizedString() {

@@ -102,7 +102,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                exception = new UnsupportedOperationException(message, exception);
             else if ("AddressLimitExceeded".equals(errorCode))
                exception = new InsufficientResourcesException(message, exception);
-            else if (errorCode != null && (errorCode.endsWith("NotFound") || errorCode.endsWith(".Unknown")))
+            else if (errorCode != null && (errorCode.indexOf("NotFound") != -1 || errorCode.endsWith(".Unknown")))
                exception = new ResourceNotFoundException(message, exception);
             else if ("IncorrectState".equals(errorCode)
                      || (errorCode != null && (error.getCode().endsWith(".Duplicate") | error.getCode().endsWith(

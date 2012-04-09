@@ -674,7 +674,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   ResourceAllocationSettingData getVirtualHardwareSectionCpu(URI vAppURI);
+   ResourceAllocationSettingData getVirtualHardwareSectionCpu(URI vmURI);
 
    /**
     * Modifies the CPU properties in virtual hardware section of a VM.
@@ -685,7 +685,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionCpu(URI vAppURI, ResourceAllocationSettingData rasd);
+   Task modifyVirtualHardwareSectionCpu(URI vmURI, ResourceAllocationSettingData rasd);
 
    /**
     * Retrieves a list of ResourceAllocationSettingData items for disks from virtual hardware section of a VM.
@@ -696,7 +696,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   RasdItemsList getVirtualHardwareSectionDisks(URI vAppURI);
+   RasdItemsList getVirtualHardwareSectionDisks(URI vmURI);
 
    /**
     * Modifies the disks list in virtual hardware section of a VM.
@@ -707,7 +707,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionDisks(URI vAppURI, RasdItemsList rasdItemsList);
+   Task modifyVirtualHardwareSectionDisks(URI vmURI, RasdItemsList rasdItemsList);
 
    /**
     * Retrieves the list of ResourceAllocationSettingData items that represents the floppies and CD/DVD drives in a VM.
@@ -718,7 +718,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   RasdItemsList getVirtualHardwareSectionMedia(URI vAppURI);
+   RasdItemsList getVirtualHardwareSectionMedia(URI vmURI);
 
    /**
     * Retrieves the ResourceAllocationSettingData item that contains memory information from virtual hardware section of a VM.
@@ -729,7 +729,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   ResourceAllocationSettingData getVirtualHardwareSectionMemory(URI vAppURI);
+   ResourceAllocationSettingData getVirtualHardwareSectionMemory(URI vmURI);
 
    /**
     * Modifies the memory properties in virtual hardware section of a VM.
@@ -740,7 +740,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionMemory(URI vAppURI, ResourceAllocationSettingData rasd);
+   Task modifyVirtualHardwareSectionMemory(URI vmURI, ResourceAllocationSettingData rasd);
 
    /**
     * Retrieves a list of ResourceAllocationSettingData items for network cards from virtual hardware section of a VM.
@@ -751,7 +751,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   RasdItemsList getVirtualHardwareSectionNetworkCards(URI vAppURI);
+   RasdItemsList getVirtualHardwareSectionNetworkCards(URI vmURI);
 
    /**
     * Modifies the network cards list in virtual hardware section of a VM.
@@ -762,7 +762,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionNetworkCards(URI vAppURI, RasdItemsList rasdItemsList);
+   Task modifyVirtualHardwareSectionNetworkCards(URI vmURI, RasdItemsList rasdItemsList);
 
    /**
     * Retrieves a list of ResourceAllocationSettingData items for serial ports from virtual hardware section of a VM.
@@ -773,7 +773,7 @@ public interface VAppClient {
     *
     * @since 1.5
     */
-   RasdItemsList getVirtualHardwareSectionSerialPorts(URI vAppURI);
+   RasdItemsList getVirtualHardwareSectionSerialPorts(URI vmURI);
 
    /**
     * Modifies the serial ports list in virtual hardware section of a VM.
@@ -784,7 +784,7 @@ public interface VAppClient {
     *
     * @since 1.5
     */
-   Task modifyVirtualHardwareSectionSerialPorts(URI vAppURI, RasdItemsList rasdItemsList);
+   Task modifyVirtualHardwareSectionSerialPorts(URI vmURI, RasdItemsList rasdItemsList);
 
    /**
     * @return synchronous access to {@link Metadata} features

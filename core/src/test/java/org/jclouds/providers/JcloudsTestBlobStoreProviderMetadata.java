@@ -19,7 +19,8 @@
 package org.jclouds.providers;
 
 import java.net.URI;
-import java.util.Set;
+
+import org.jclouds.apis.JcloudsTestBlobStoreApiMetadata;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -30,76 +31,36 @@ import com.google.common.collect.ImmutableSet;
  */
 public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "test-blobstore-provider";
+   public JcloudsTestBlobStoreProviderMetadata() {
+      this(builder()
+            .api(new JcloudsTestBlobStoreApiMetadata())
+            .id("test-blobstore-api")
+            .name("Test Blobstore Provider")
+            .homepage(URI.create("http://jclouds.org"))
+            .console(URI.create("http://jclouds.org/console"))
+            .iso3166Codes(ImmutableSet.of("US-VA", "US-CA", "US-FL")));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected JcloudsTestBlobStoreProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Test Blobstore Provider";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public JcloudsTestBlobStoreProviderMetadata build() {
+         return new JcloudsTestBlobStoreProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "user";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "password";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://jclouds.org");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("http://jclouds.org/console");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://jclouds.org/documentation");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-VA", "US-CA", "US-FL");
-   }
-
 }

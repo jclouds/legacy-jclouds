@@ -48,7 +48,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
  * @author Andrew Phillips
  */
 public class PlatformServicesInitializer implements ServletContextListener {
-    public static final String PLATFORM_SERVICES_ATTRIBUTE_NAME = PlatformServicesInitializer.class.getName();
+    public static final String PLATFORM_SERVICES_ATTRIBUTE_NAME = PlatformServices.class.getName();
 
     // keep in sync with cloudbees-web.xml
     protected static final String HOST_PARAMETER = "application.host";

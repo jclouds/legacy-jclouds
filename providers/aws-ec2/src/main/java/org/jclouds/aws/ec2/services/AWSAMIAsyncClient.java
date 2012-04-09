@@ -19,7 +19,6 @@
 package org.jclouds.aws.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
-import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
@@ -27,7 +26,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.ec2.binders.BindProductCodesToIndexedFormParams;
@@ -51,7 +49,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values =  AWSEC2AsyncClient.VERSION)
 @VirtualHost
 public interface AWSAMIAsyncClient extends AMIAsyncClient {
    // TODO make AWSImage as it has product codes...

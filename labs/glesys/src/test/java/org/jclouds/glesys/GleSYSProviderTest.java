@@ -19,7 +19,6 @@
 package org.jclouds.glesys;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +29,6 @@ import org.testng.annotations.Test;
 public class GleSYSProviderTest extends BaseProviderMetadataTest {
 
    public GleSYSProviderTest() {
-      super(new GleSYSProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new GleSYSProviderMetadata(), new GleSYSApiMetadata());
    }
 }

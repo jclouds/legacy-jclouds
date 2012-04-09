@@ -617,7 +617,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       Iterable<? extends Image> supportedImages = filter(images, imagePredicate);
       if (size(supportedImages) == 0) {
          if (imagePredicate == idPredicate) {
-            throw new NoSuchElementException(format("%s not found", idPredicate));
+            throwNoSuchElementExceptionAfterLoggingImageIds(format("%s not found", idPredicate), images);
          } else {
             throwNoSuchElementExceptionAfterLoggingImageIds(format("no image matched predicate: %s", imagePredicate),
                      images);

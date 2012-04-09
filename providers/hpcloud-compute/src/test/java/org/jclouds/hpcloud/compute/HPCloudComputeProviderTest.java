@@ -36,7 +36,6 @@
 package org.jclouds.hpcloud.compute;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -47,6 +46,6 @@ import org.testng.annotations.Test;
 public class HPCloudComputeProviderTest extends BaseProviderMetadataTest {
 
    public HPCloudComputeProviderTest() {
-      super(new HPCloudComputeProviderMetadata(), ProviderMetadata.COMPUTE_TYPE);
+      super(new HPCloudComputeProviderMetadata(), new HPCloudComputeApiMetadata());
    }
 }

@@ -19,7 +19,7 @@
 package org.jclouds.epc;
 
 import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.walrus.WalrusApiMetadata;
 import org.testng.annotations.Test;
 
 /**
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class EucalyptusPartnerCloudS3ProviderTest extends BaseProviderMetadataTest {
 
    public EucalyptusPartnerCloudS3ProviderTest() {
-      super(new EucalyptusPartnerCloudS3ProviderMetadata(), ProviderMetadata.BLOBSTORE_TYPE);
+      super(new EucalyptusPartnerCloudS3ProviderMetadata(), new WalrusApiMetadata());
    }
 
 }

@@ -19,12 +19,9 @@
 package org.jclouds.bluelock.vcloud.zone01;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.vcloud.VCloudApiMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Zone 1.
@@ -33,84 +30,37 @@ import com.google.common.collect.ImmutableSet;
  */
 public class BluelockVCloudZone01ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "bluelock-vcloud-zone01";
+   public BluelockVCloudZone01ProviderMetadata() {
+      this(builder()
+            .id("bluelock-vcloud-zone01")
+            .name("Bluelock vCloud Zone 1")
+            .api(new VCloudApiMetadata())
+            .homepage(URI.create("http://www.bluelock.com/bluelock-cloud-hosting"))
+            .console(URI.create("https://zone01.bluelock.com/cloud/org/YOUR_ORG_HERE"))
+            .iso3166Codes("US-IN"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected BluelockVCloudZone01ProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Bluelock vCloud Zone 1";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public BluelockVCloudZone01ProviderMetadata build() {
+         return new BluelockVCloudZone01ProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "User at Organization (user@org)";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Password";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://www.bluelock.com/bluelock-cloud-hosting");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://zone01.bluelock.com/cloud/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("bluelock-vcloud-zone01");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-IN");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

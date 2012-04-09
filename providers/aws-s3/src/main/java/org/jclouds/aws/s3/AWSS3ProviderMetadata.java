@@ -19,12 +19,8 @@
 package org.jclouds.aws.s3;
 
 import java.net.URI;
-import java.util.Set;
 
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Implementation of {@link org.jclouds.providers.ProviderMetadata} for Amazon's Simple Storage Service
@@ -34,84 +30,38 @@ import com.google.common.collect.ImmutableSet;
  */
 public class AWSS3ProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "aws-s3";
+   public AWSS3ProviderMetadata() {
+      this(builder()
+            .id("aws-s3")
+            .name("Amazon Simple Storage Service (S3)")
+            .api(new AWSS3ApiMetadata())
+            .homepage(URI.create("http://aws.amazon.com/s3"))
+            .console(URI.create("https://console.aws.amazon.com/s3/home"))
+            .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
+            .iso3166Codes("US", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.BLOBSTORE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected AWSS3ProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "Amazon Simple Storage Service (S3)";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public AWSS3ProviderMetadata build() {
+         return new AWSS3ProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "Access Key ID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret Access Key";
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("http://aws.amazon.com/s3/");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://console.aws.amazon.com/s3/home");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("aws-s3", "aws-ec2", "aws-elb", "aws-simpledb");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13");
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
 
 }

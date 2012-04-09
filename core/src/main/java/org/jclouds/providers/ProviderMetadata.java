@@ -21,22 +21,118 @@ package org.jclouds.providers;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
 /**
- * The ProviderMetadata interface allows jclouds to provide a plugin framework for gathering cloud
- * provider metadata.
+ * The ProviderMetadata interface allows jclouds to provide a plugin framework
+ * for gathering cloud provider metadata.
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public interface ProviderMetadata {
-
+   /**
+    * @see ApiMetadata#BLOBSTORE_TYPE
+    */
+   @Deprecated
    public static final String BLOBSTORE_TYPE = "blobstore";
+   /**
+    * @see ApiMetadata#COMPUTE_TYPE
+    */
+   @Deprecated
    public static final String COMPUTE_TYPE = "compute";
+   /**
+    * @see ApiMetadata#LOADBALANCER_TYPE
+    */
+   @Deprecated
    public static final String LOADBALANCER_TYPE = "loadbalancer";
+   /**
+    * @see ApiMetadata#TABLE_TYPE
+    */
+   @Deprecated
    public static final String TABLE_TYPE = "table";
+   /**
+    * @see ApiMetadata#QUEUE_TYPE
+    */
+   @Deprecated
    public static final String QUEUE_TYPE = "queue";
+   /**
+    * @see ApiMetadata#MONITOR_TYPE
+    */
+   @Deprecated
    public static final String MONITOR_TYPE = "monitor";
+
+   /**
+    * 
+    * @author Adrian Cole
+    * @since 1.5
+    */
+   public static interface Builder<B extends Builder<B>> {
+      /**
+       * @see ProviderMetadata#getId()
+       */
+      B id(String id);
+
+      /**
+       * @see ProviderMetadata#getName()
+       */
+      B name(String name);
+
+      /**
+       * @see ProviderMetadata#getApi()
+       */
+      B api(ApiMetadata api);
+
+      /**
+       * @see ProviderMetadata#getConsole()
+       */
+      B console(@Nullable URI console);
+
+      /**
+       * @see ProviderMetadata#getHomepage()
+       */
+      B homepage(@Nullable URI homepage);
+
+      /**
+       * @see ProviderMetadata#getLinkedServices()
+       */
+      B linkedServices(Iterable<String> linkedServices);
+
+      /**
+       * @see ProviderMetadata#getLinkedServices()
+       */
+      B linkedServices(String... linkedServices);
+
+      /**
+       * @see ProviderMetadata#getLinkedServices()
+       */
+      B linkedService(String linkedService);
+
+      /**
+       * @see ProviderMetadata#getIso3166Code()
+       */
+      B iso3166Codes(Iterable<String> iso3166Codes);
+
+      /**
+       * @see ProviderMetadata#getIso3166Code()
+       */
+      B iso3166Codes(String... iso3166Codes);
+
+      /**
+       * @see ProviderMetadata#getIso3166Code()
+       */
+      B iso3166Code(String iso3166Code);
+
+      ProviderMetadata build();
+
+      B fromProviderMetadata(ProviderMetadata in);
+   }
+
+   /**
+    * @see Builder
+    * @since 1.5
+    */
+   Builder<?> toBuilder();
 
    /**
     * 
@@ -46,48 +142,61 @@ public interface ProviderMetadata {
 
    /**
     * 
-    * @return the provider's type
-    */
-   public String getType();
-
-   /**
-    * 
     * @return the name (display name) of the provider
     */
    public String getName();
 
    /**
     * 
-    * @return the name (display name) of an identity on this provider (ex. user, email, account,
-    *         apikey)
+    * @see #getApi()
+    * @see ApiMetadata#getType
     */
+   @Deprecated
+   public String getType();
+
+   /**
+    * 
+    * @return the provider's api
+    * @since 1.5
+    */
+   public ApiMetadata getApi();
+
+   /**
+    * 
+    * @see #getApi()
+    * @see ApiMetadata#getIdentityName
+    */
+   @Deprecated
    public String getIdentityName();
 
    /**
     * 
-    * @return the name (display name) of a credential on this provider, or null if there is none
-    *         (ex. password, secret, rsaKey)
+    * @see #getApi()
+    * @see ApiMetadata#getCredentialName
+    */
+   @Deprecated
+   public String getCredentialName();
+
+   /**
+    * 
+    * @see #getApi()
+    * @see ApiMetadata#getDocumentation
+    */
+   @Deprecated
+   public URI getApiDocumentation();
+
+   /**
+    * 
+    * @return the url for the provider's console, or null if one doesn't exist
     */
    @Nullable
-   public String getCredentialName();
+   public URI getConsole();
 
    /**
     * 
     * @return the url for the provider's homepage
     */
    public URI getHomepage();
-
-   /**
-    * 
-    * @return the url for the provider's console
-    */
-   public URI getConsole();
-
-   /**
-    * 
-    * @return the url for the API documentation related to this service
-    */
-   public URI getApiDocumentation();
 
    /**
     * 

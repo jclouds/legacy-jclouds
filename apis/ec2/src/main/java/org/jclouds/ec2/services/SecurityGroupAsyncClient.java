@@ -19,7 +19,6 @@
 package org.jclouds.ec2.services;
 
 import static org.jclouds.aws.reference.FormParameters.ACTION;
-import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 
@@ -28,7 +27,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.binders.BindGroupNamesToIndexedFormParams;
 import org.jclouds.ec2.binders.BindUserIdGroupPairToSourceSecurityGroupFormParams;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -56,7 +54,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
 public interface SecurityGroupAsyncClient {
 

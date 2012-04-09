@@ -19,97 +19,47 @@
 package org.jclouds.elastichosts;
 
 import java.net.URI;
-import java.util.Set;
 
+import org.jclouds.elasticstack.ElasticStackApiMetadata;
 import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts Toronto Peer 1.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts Los Angeles Peer 1.
  *
  * @author Adrian Cole
  */
 public class ElasticHostsPeer1LosAngelesProviderMetadata extends BaseProviderMetadata {
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getId() {
-      return "elastichosts-lax-p";
+   public ElasticHostsPeer1LosAngelesProviderMetadata() {
+      this(builder()
+            .id("elastichosts-lax-p")
+            .name("ElasticHosts Los Angeles Peer 1")
+            .api(new ElasticStackApiMetadata())
+            .homepage(URI.create("https://lax-p.elastichosts.com"))
+            .console(URI.create("https://lax-p.elastichosts.com/accounts"))
+            .iso3166Codes("US-CA"));
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getType() {
-      return ProviderMetadata.COMPUTE_TYPE;
+   // below are so that we can reuse builders, toString, hashCode, etc.
+   // we have to set concrete classes here, as our base class cannot be
+   // concrete due to serviceLoader
+   protected ElasticHostsPeer1LosAngelesProviderMetadata(ConcreteBuilder builder) {
+      super(builder);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getName() {
-      return "ElasticHosts Los Angeles Peer 1";
+   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+
+      @Override
+      public ElasticHostsPeer1LosAngelesProviderMetadata build() {
+         return new ElasticHostsPeer1LosAngelesProviderMetadata(this);
+      }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getIdentityName() {
-      return "UUID";
+   public static ConcreteBuilder builder() {
+      return new ConcreteBuilder();
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getCredentialName() {
-      return "Secret API key";
+   public ConcreteBuilder toBuilder() {
+      return builder().fromProviderMetadata(this);
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getHomepage() {
-      return URI.create("https://lax-p.elastichosts.com");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getConsole() {
-      return URI.create("https://lax-p.elastichosts.com/accounts");
-   }
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public URI getApiDocumentation() {
-      return URI.create("http://www.elastichosts.com/cloud-hosting/api");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getLinkedServices() {
-      return ImmutableSet.of("elastichosts-lax-p");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Set<String> getIso3166Codes() {
-      return ImmutableSet.of("US-CA");
-   }
-
 }

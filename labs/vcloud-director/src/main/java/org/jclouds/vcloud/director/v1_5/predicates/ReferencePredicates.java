@@ -20,7 +20,8 @@ package org.jclouds.vcloud.director.v1_5.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import java.net.URI;
+
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 
 import com.google.common.base.Predicate;
@@ -124,6 +125,30 @@ public class ReferencePredicates {
          @Override
          public String toString() {
             return "typeEquals(" + type + ")";
+         }
+      };
+   }
+
+   /**
+    * Matches {@link Reference}s with the given {@link URI}.
+    * 
+    * @param T type of the reference, for example {@link Link}
+    * @param  href the URI of the reference
+    * @return predicate that will match references with the given URI
+    * @see VCloudDirectorMediaType
+    */
+   public static <T extends Reference> Predicate<T> hrefEquals(final URI href) {
+      checkNotNull(href, "href must be defined");
+
+      return new Predicate<T>() {
+         @Override
+         public boolean apply(T reference) {
+            return href.equals(reference.getHref());
+         }
+
+         @Override
+         public String toString() {
+            return "hrefEquals(" + href.toASCIIString() + ")";
          }
       };
    }
