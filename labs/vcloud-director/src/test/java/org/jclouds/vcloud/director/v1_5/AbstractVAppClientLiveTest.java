@@ -33,7 +33,6 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.List;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
@@ -55,7 +54,6 @@ import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.xml.internal.JAXBParser;
@@ -335,7 +333,6 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       JAXBParser parser = new JAXBParser();
       try {
          String xml = parser.toXML(object);
-
          logger.debug(Strings.padStart(Strings.padEnd(" " + object.getClass().toString() + " ", 70, '-'), 80, '-'));
          logger.debug(xml);
          logger.debug(Strings.repeat("-", 80));

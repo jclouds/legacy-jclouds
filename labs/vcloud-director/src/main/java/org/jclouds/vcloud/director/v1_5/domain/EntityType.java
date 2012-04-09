@@ -114,7 +114,8 @@ public class EntityType extends ResourceType {
       
       public B fromEntityType(EntityType in) {
          return fromResourceType(in)
-               .description(in.getDescription()).tasks(in.getTasks())
+               .description(in.getDescription())
+               .tasks(in.getTasks())
                .id(in.getId()).name(in.getName());
       }
    }
