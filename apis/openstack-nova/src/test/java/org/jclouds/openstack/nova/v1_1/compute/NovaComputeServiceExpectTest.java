@@ -204,6 +204,17 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
    HttpResponse keyPairWithPrivateKey = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/keypair_created_computeservice.json")).build();
 
+   HttpRequest serverDetail = HttpRequest
+         .builder()
+         .method("GET")
+         .endpoint(URI.create("https://nova-api.trystack.org:9774/v1.1/3456/servers/71752"))
+         .headers(
+               ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                     .put("X-Auth-Token", authToken).build()).build();
+
+   HttpResponse serverDetailResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/server_details.json")).build();
+
    @Test
    public void testCreateNodeWithGeneratedKeyPair() throws Exception {
       Builder<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
@@ -217,6 +228,8 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       requestResponseMap.put(getSecurityGroup, securityGroupWithPort22);
 
       requestResponseMap.put(createKeyPair, keyPairWithPrivateKey);
+
+      requestResponseMap.put(serverDetail, serverDetailResponse);
 
       HttpRequest createServerWithGeneratedKeyPair = HttpRequest
             .builder()
@@ -270,6 +283,8 @@ public class NovaComputeServiceExpectTest extends BaseNovaComputeServiceExpectTe
       requestResponseMap.put(createSecurityGroupRuleForDefaultPort22, securityGroupRuleCreated);
 
       requestResponseMap.put(getSecurityGroup, securityGroupWithPort22);
+
+      requestResponseMap.put(serverDetail, serverDetailResponse);
 
       HttpRequest createServerWithSuppliedKeyPair = HttpRequest
             .builder()
