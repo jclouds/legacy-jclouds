@@ -149,7 +149,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
       INSTANCE;
       @Override
       public Multimap<String, String> apply(String arg0) {
-         ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+         ImmutableMultimap.Builder<String, String> builder = ImmutableMultimap.builder();
          for (String pair : Splitter.on(';').split(arg0)) {
             String[] keyValue = pair.split("=");
             if (keyValue.length == 1)

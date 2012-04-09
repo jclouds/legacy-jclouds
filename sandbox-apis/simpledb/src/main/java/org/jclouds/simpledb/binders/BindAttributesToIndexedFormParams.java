@@ -49,7 +49,7 @@ public class BindAttributesToIndexedFormParams implements Binder {
       checkArgument(checkNotNull(input, "input") instanceof Item, "this binder is only valid for AttributeMap");
       Item attributeMap = (Item) input;
 
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMultimap.builder();
       int amazonOneBasedIndex = 1; // according to docs, counters must start with 1
       for (String itemName : attributeMap.getAttributes().keySet()) {
 

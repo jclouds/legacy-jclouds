@@ -57,7 +57,7 @@ public class SoftLayerPropertiesBuilder extends PropertiesBuilder {
       // 10, 100, 1000
       properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "10");
       properties.setProperty(PROPERTY_ISO3166_CODES, "SG,NL,US-CA,US-TX,US-VA,US-WA,US-TX");
-      Builder<String> prices = ImmutableSet.<String> builder();
+      Builder<String> prices = ImmutableSet.builder();
       prices.add("21"); // 1 IP Address
       prices.add("55"); // Host Ping: categoryCode: monitoring, notification
       prices.add("57"); // Email and Ticket: categoryCode: notification

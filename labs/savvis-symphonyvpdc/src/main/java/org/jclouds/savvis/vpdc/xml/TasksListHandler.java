@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 public class TasksListHandler extends ParseSax.HandlerWithResult<Set<Task>> {
 
-   private Builder<Task> tasks = ImmutableSet.<Task> builder();
+   private Builder<Task> tasks = ImmutableSet.builder();
    private final TaskHandler taskHandler;
 
    @Inject

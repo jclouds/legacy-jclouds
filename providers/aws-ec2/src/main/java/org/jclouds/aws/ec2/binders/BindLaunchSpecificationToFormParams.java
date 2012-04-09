@@ -53,7 +53,7 @@ public class BindLaunchSpecificationToFormParams implements Binder, Function<Lau
 
    @Override
    public Map<String, String> apply(LaunchSpecification launchSpec) {
-      Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMap.builder();
       builder.put("LaunchSpecification.ImageId", checkNotNull(launchSpec.getImageId(), "imageId"));
       if (launchSpec.getAvailabilityZone() != null)
          builder.put("LaunchSpecification.Placement.AvailabilityZone", launchSpec.getAvailabilityZone());

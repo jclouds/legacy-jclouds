@@ -37,7 +37,7 @@ public class JoinOnK2<K, K2, V> implements Function<Map<K, Supplier<Set<K2>>>, M
    @Override
    public Map<K2, Supplier<V>> apply(Map<K, Supplier<Set<K2>>> regionToZones) {
       Map<K2, Supplier<V>> regionToEndpoint = regionToEndpointSupplier.get();
-      Builder<K2, Supplier<V>> builder = ImmutableMap.<K2, Supplier<V>> builder();
+      Builder<K2, Supplier<V>> builder = ImmutableMap.builder();
       for (Entry<K, Supplier<Set<K2>>> entry : regionToZones.entrySet()) {
          for (K2 zone : entry.getValue().get()) {
             builder.put(zone, regionToEndpoint.get(entry.getKey()));

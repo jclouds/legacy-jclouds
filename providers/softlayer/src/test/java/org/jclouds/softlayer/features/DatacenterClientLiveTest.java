@@ -61,7 +61,7 @@ public class DatacenterClientLiveTest extends BaseSoftLayerClientLiveTest {
 
    @Test
    public void testListDatacentersContent() {
-      Builder<Datacenter> builder = ImmutableSet.<Datacenter> builder();
+      Builder<Datacenter> builder = ImmutableSet.builder();
       builder.add(Datacenter.builder().id(265592).name("ams01").longName("Amsterdam 1").build());
       builder.add(Datacenter.builder().id(3).name("dal01").longName("Dallas").build());
       builder.add(Datacenter.builder().id(18171).name("sea01").longName("Seattle").build());

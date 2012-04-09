@@ -83,7 +83,7 @@ public class ParseNamesFromHttpResponse implements Function<HttpResponse, Set<St
       checkNotNull(response, "response");
       Set<Name> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      Builder<String> builder = ImmutableSet.<String> builder();
+      Builder<String> builder = ImmutableSet.builder();
       for (Name entry : toParse)
          builder.add(entry.name);
       return builder.build();

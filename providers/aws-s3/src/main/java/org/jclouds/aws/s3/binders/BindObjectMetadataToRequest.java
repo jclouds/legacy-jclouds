@@ -59,7 +59,7 @@ public class BindObjectMetadataToRequest implements Binder {
 
       request = metadataPrefixer.bindToRequest(request, md.getUserMetadata());
 
-      Builder<String, String> headers = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> headers = ImmutableMultimap.builder();
       if (md.getCacheControl() != null) {
          headers.put(HttpHeaders.CACHE_CONTROL, md.getCacheControl());
       }

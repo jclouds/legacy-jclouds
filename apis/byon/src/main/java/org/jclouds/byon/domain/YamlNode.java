@@ -130,7 +130,7 @@ public class YamlNode {
       public InputStream apply(YamlNode in) {
          if (in == null)
             return null;
-         Builder<String, Object> prettier = ImmutableMap.<String, Object> builder();
+         Builder<String, Object> prettier = ImmutableMap.builder();
          if (in.id != null)
             prettier.put("id", in.id);
          if (in.name != null)

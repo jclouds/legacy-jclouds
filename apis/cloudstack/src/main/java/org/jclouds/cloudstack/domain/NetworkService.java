@@ -108,7 +108,7 @@ public class NetworkService implements Comparable<NetworkService> {
 
    public NetworkService(String name, Map<String, String> capabilities) {
       this.name = checkNotNull(name, "name");
-      ImmutableSortedSet.Builder<Capability> internal = ImmutableSortedSet.<Capability> naturalOrder();
+      ImmutableSortedSet.Builder<Capability> internal = ImmutableSortedSet.naturalOrder();
       for (Entry<String, String> capabililty : checkNotNull(capabilities, "capabilities").entrySet())
          internal.add(new Capability(capabililty.getKey(), capabililty.getValue()));
       this.capabilities = internal.build();
@@ -120,7 +120,7 @@ public class NetworkService implements Comparable<NetworkService> {
 
    public Map<String, String> getCapabilities() {
       // so tests and serialization comes out expected
-      Builder<String, String> returnVal = ImmutableSortedMap.<String, String> naturalOrder();
+      Builder<String, String> returnVal = ImmutableSortedMap.naturalOrder();
       for (Capability capability : capabilities) {
          returnVal.put(capability.name, capability.value);
       }

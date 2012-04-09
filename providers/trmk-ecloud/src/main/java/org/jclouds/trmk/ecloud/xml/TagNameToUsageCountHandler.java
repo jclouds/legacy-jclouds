@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 public class TagNameToUsageCountHandler extends ParseSax.HandlerWithResult<Map<String, Integer>> {
    protected StringBuilder currentText = new StringBuilder();
 
-   private Builder<String, Integer> builder = ImmutableMap.<String, Integer> builder();
+   private Builder<String, Integer> builder = ImmutableMap.builder();
    private String name;
 
    public Map<String, Integer> getResult() {

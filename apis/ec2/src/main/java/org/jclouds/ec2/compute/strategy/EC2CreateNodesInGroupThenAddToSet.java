@@ -170,7 +170,7 @@ public class EC2CreateNodesInGroupThenAddToSet implements CreateNodesInGroupThen
 
    protected Iterable<String> allocateElasticIpsInRegion(int count, Template template) {
       
-      Builder<String> ips = ImmutableSet.<String> builder();
+      Builder<String> ips = ImmutableSet.builder();
       if (!autoAllocateElasticIps)
          return ips.build();
 

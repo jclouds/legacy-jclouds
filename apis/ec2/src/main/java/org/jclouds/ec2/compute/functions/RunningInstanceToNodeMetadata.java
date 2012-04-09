@@ -116,7 +116,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       // collect all ip addresses into one bundle in case the api mistakenly put a private address
       // into the public address field
-      Builder<String> addressesBuilder = ImmutableSet.<String> builder();
+      Builder<String> addressesBuilder = ImmutableSet.builder();
       if (Strings.emptyToNull(instance.getIpAddress()) != null)
          addressesBuilder.add(instance.getIpAddress());
       if (Strings.emptyToNull(instance.getPrivateIpAddress()) != null)

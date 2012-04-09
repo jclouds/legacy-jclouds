@@ -71,7 +71,7 @@ public class LocationIdToIso3166CodesFromConfiguration implements LocationIdToIs
          }
 
       });
-      Builder<String, Supplier<Set<String>>> codes = ImmutableMap.<String, Supplier<Set<String>>> builder();
+      Builder<String, Supplier<Set<String>>> codes = ImmutableMap.builder();
       for (String key : ImmutableSet.of(PROPERTY_REGION, PROPERTY_ZONE)) {
          String regionOrZoneString = stringsBoundWithRegionOrZonePrefix.get(key + "s");
          if (regionOrZoneString == null)

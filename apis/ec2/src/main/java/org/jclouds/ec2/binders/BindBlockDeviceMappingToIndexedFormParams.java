@@ -50,7 +50,7 @@ public class BindBlockDeviceMappingToIndexedFormParams implements Binder {
       checkArgument(checkNotNull(input, "input") instanceof Map, "this binder is only valid for Map");
       Map<String, BlockDevice> blockDeviceMapping = (Map<String, BlockDevice>) input;
 
-      com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
       int amazonOneBasedIndex = 1; // according to docs, counters must start with 1
       for (Entry<String, BlockDevice> ebsBlockDeviceName : blockDeviceMapping.entrySet()) {
          // not null by contract

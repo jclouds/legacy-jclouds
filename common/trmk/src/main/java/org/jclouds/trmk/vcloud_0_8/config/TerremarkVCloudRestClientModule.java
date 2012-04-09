@@ -150,7 +150,7 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
 
                @Override
                public Map<String, String> apply(Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org> arg0) {
-                  Builder<String, String> returnVal = ImmutableMap.<String, String> builder();
+                  Builder<String, String> returnVal = ImmutableMap.builder();
                   for (Entry<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org> orgr : arg0.entrySet()) {
                      for (String vdc : orgr.getValue().getVDCs().keySet()) {
                         returnVal.put(vdc, orgr.getKey());

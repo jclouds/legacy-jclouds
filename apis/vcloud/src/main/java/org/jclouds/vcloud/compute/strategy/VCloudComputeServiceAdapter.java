@@ -124,7 +124,7 @@ public class VCloudComputeServiceAdapter implements ComputeServiceAdapter<VApp, 
    @Override
    public Iterable<VApp> listNodes() {
       // TODO: parallel or cache
-      Builder<VApp> nodes = ImmutableSet.<VApp> builder();
+      Builder<VApp> nodes = ImmutableSet.builder();
       for (Org org : nameToOrg.get().values()) {
          for (ReferenceType vdc : org.getVDCs().values()) {
             for (ReferenceType resource : client.getVDCClient().getVDC(vdc.getHref()).getResourceEntities().values()) {

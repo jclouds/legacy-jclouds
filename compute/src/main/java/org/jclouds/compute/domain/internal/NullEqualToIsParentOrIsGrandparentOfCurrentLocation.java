@@ -65,7 +65,7 @@ public class NullEqualToIsParentOrIsGrandparentOfCurrentLocation implements Pred
             "only locations of scope PROVIDER can have a null parent; input: %s",
             input.getLocation());
 
-      Builder<Predicate<Location>> predicates = ImmutableSet.<Predicate<Location>>builder();
+      Builder<Predicate<Location>> predicates = ImmutableSet.builder();
 
       predicates.add(equalTo(current));
       

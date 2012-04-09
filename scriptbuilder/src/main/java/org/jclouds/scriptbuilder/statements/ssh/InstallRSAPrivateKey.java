@@ -59,7 +59,7 @@ public class InstallRSAPrivateKey implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      Builder<Statement> statements = ImmutableList.<Statement> builder();
+      Builder<Statement> statements = ImmutableList.builder();
       statements.add(exec("{md} " + sshDir));
       String idRsa = sshDir + "{fs}id_rsa";
       statements.add(exec("{rm} " + idRsa));

@@ -42,7 +42,7 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
-      ImmutableMap.Builder<String, String> copy = ImmutableMap.<String, String> builder();
+      ImmutableMap.Builder<String, String> copy = ImmutableMap.builder();
       copy.putAll(postParams);
       if (description != null)
          copy.put("description", description);

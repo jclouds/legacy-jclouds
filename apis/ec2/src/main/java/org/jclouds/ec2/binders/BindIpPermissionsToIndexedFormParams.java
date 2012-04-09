@@ -40,7 +40,7 @@ public class BindIpPermissionsToIndexedFormParams implements Binder {
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Iterable,
             "this binder is only valid for Iterable<IpPermission>");
-      Builder<String, String> headers = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> headers = ImmutableMultimap.builder();
       int index = 0;
       for (IpPermission perm : (Iterable<IpPermission>) input)
          headers.putAll(IpPermissions.buildFormParametersForIndex(index++, perm));

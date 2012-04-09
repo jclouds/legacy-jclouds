@@ -153,7 +153,7 @@ public class ScriptBuilder implements Statement, AcceptsStatementVisitor {
    @VisibleForTesting
    public static Map<String, String> resolveFunctionDependenciesForStatements(Map<String, String> knownFunctions,
          Iterable<Statement> statements, final OsFamily osFamily) {
-      Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      Builder<String, String> builder = ImmutableMap.builder();
       builder.putAll(knownFunctions);
       Set<String> dependentFunctions = ImmutableSet.copyOf(Iterables.concat(Iterables.transform(statements,
             new Function<Statement, Iterable<String>>() {
