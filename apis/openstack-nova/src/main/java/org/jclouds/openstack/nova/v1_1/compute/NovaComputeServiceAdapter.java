@@ -119,7 +119,12 @@ public class NovaComputeServiceAdapter implements
       String flavorId = template.getHardware().getProviderId();
 
       logger.debug(">> creating new server zone(%s) name(%s) image(%s) flavor(%s) options(%s)", zoneId, name, imageId, flavorId, options);
-      Server server = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
+      Server lightweightServer = novaClient.getServerClientForZone(zoneId).createServer(name, imageId, flavorId, options);
+      Server heavyweightServer = novaClient.getServerClientForZone(zoneId).getServer(lightweightServer.getId());
+      Server server = Server.builder().fromServer(heavyweightServer)
+                                      .adminPass(lightweightServer.getAdminPass())
+                                      .build();
+
       logger.trace("<< server(%s)", server.getId());
 
       ServerInZone serverInZone = new ServerInZone(server, zoneId);
