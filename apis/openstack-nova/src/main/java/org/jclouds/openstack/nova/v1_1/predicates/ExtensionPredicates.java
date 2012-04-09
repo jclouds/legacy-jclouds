@@ -21,6 +21,7 @@ package org.jclouds.openstack.nova.v1_1.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Collection;
 
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
 
@@ -76,6 +77,32 @@ public class ExtensionPredicates {
          @Override
          public String toString() {
             return "aliasEquals(" + alias + ")";
+         }
+      };
+   }   
+   /**
+    * matches namespace of the given extension
+    * 
+    * @param namespace
+    *           ex {@code http://docs.openstack.org/ext/keypairs/api/v1.1}
+    * @param namespacesAliases
+    *           Collection of ex {@code http://docs.openstack.org/compute/ext/keypairs/api/v1.1}
+    * @return predicate that will match namespace of the given extension
+    */
+   public static Predicate<Extension> namespaceOrAliasEquals(final URI namespace, final Collection<URI> namespaceAliases) {
+      checkNotNull(namespace, "namespace must be defined");
+      checkNotNull(namespaceAliases, "namespace aliases must be defined");
+
+      return new Predicate<Extension>() {
+         @Override
+         public boolean apply(Extension ext) {
+            return namespace.toASCIIString().equals(ext.getNamespace().toASCIIString().replace("https", "http")) ||
+            		namespaceAliases.contains(ext.getNamespace());
+         }
+
+         @Override
+         public String toString() {
+            return "namespaceOrAliasEquals(" + namespace + ")";
          }
       };
    }

@@ -5,6 +5,8 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Set;
 
+import javax.inject.Named;
+
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
@@ -23,6 +25,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Provides;
 
 /**
  * @author Adrian Cole
@@ -93,7 +98,6 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
     * of the authoritative namespace to alternate onces, which could be wired up with guice
     * 
     */
-   @Test(enabled = false)
    public void testPresentWhenAliasForExtensionMapsToNamespace() throws SecurityException, NoSuchMethodException {
       Extension keypairsWithDifferentNamespace = keypairs.toBuilder().namespace(
                URI.create("http://docs.openstack.org/ext/arbitrarilydifferent/keypairs/api/v1.1")).build();
@@ -102,11 +106,11 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
                .getNamespace());
 
       assertEquals(whenExtensionsAndAliasesInclude(ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
-               getFloatingIPExtension()), Optional.of("foo"));
+              getKeyPairExtension()), Optional.of("foo"));
+      assertEquals(whenExtensionsAndAliasesInclude(ImmutableSet.of(keypairsWithDifferentNamespace), aliases).apply(
+              getFloatingIPExtension()), Optional.absent());
 
    }
-
-   //
 
    private PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet whenExtensionsInclude(
             Extension... extensions) {
@@ -114,17 +118,23 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
    }
 
    private PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet whenExtensionsAndAliasesInclude(
-            Set<Extension> extensions, Multimap<URI, URI> aliases) {
-      LoadingCache<String, Set<Extension>> extensionsForZone = CacheBuilder.newBuilder().build(
+            final Set<Extension> extensions, final Multimap<URI, URI> aliases) {
+      final LoadingCache<String, Set<Extension>> extensionsForZone = CacheBuilder.newBuilder().build(
                CacheLoader.from(Functions.forMap(ImmutableMap.of("expectedzone", extensions, "differentzone",
                         ImmutableSet.<Extension> of()))));
 
-      PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet fn = new PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet(
-               extensionsForZone);
-      // TODO: change the constructor to accept aliases, or add an @Inject(optional=true) field inside the class
-      // PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet fn = new
-      // PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet(
-      // extensionsForZone, aliases);
+      PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet fn = Guice.createInjector(new AbstractModule() {
+         @Override
+         protected void configure() {}  
+    	  
+         @Provides 
+    	 LoadingCache<String, Set<Extension>> getExtensions() { return extensionsForZone;}
+
+    	 @Provides 
+    	 @Named("openstack.nova.extensions")
+         Multimap<URI, URI> getAliases() { return aliases;}
+      }).getInstance(PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
+      
       return fn;
    }
 }
