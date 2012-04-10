@@ -180,7 +180,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @ConfiguresRestClient
    protected static class CallerModule extends RestClientModule<Caller, AsyncCaller> {
       CallerModule() {
-         super(Caller.class, AsyncCaller.class, ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class));
+         super(Caller.class, AsyncCaller.class, ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class, Callee2.class, AsyncCallee2.class));
       }
 
       @Override
@@ -199,7 +199,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Path("/{path}")
       ListenableFuture<Void> onePath(@PathParam("path") String path);
    }
-
+ 
+   @Path("/client/{jclouds.api-version}")
+   public static interface AsyncCallee2 {
+      @GET
+      @Path("/{path}/2")
+      ListenableFuture<Void> onePath(@PathParam("path") String path);
+   }
+   
    @Endpoint(Localhost2.class)
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Caller {
@@ -213,6 +220,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       public Callee getCallee();
 
       @Delegate
+      public Callee2 getCallee2();
+      
+      @Delegate
       public Callee getCallee(@EndpointParam URI endpoint);
 
       @Delegate
@@ -224,6 +234,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       void onePath(String path);
    }
+   
+   @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
+   public static interface Callee2 {
+      
+      void onePath(String path);
+   }
 
    public static interface AsyncCaller {
       @Provides
@@ -233,6 +249,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Delegate
       public AsyncCallee getCallee();
 
+      @Delegate
+      public AsyncCallee2 getCallee2();
+      
       @Delegate
       public AsyncCallee getCallee(@EndpointParam URI endpoint);
 
@@ -267,14 +286,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException,
          ExecutionException {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
-
+         int callCounter=0;
          @Override
          public Future<HttpResponse> submit(HttpCommand command) {
-            assertEquals(command.getCurrentRequest().getRequestLine(),
-                  "GET http://localhost:1111/client/1/foo HTTP/1.1");
+            if (callCounter == 1) assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://localhost:1111/client/1/bar/2 HTTP/1.1");
+            else assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://localhost:1111/client/1/foo HTTP/1.1");
+            callCounter++;
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
-
       });
 
       try {
@@ -283,10 +302,13 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       } catch (ConfigurationException e) {
 
       }
-
-      child.getInstance(Caller.class).getCallee().onePath("foo");
-      child.getInstance(Caller.class).getCallee().onePath("foo");
-
+      
+      Caller caller =  child.getInstance(Caller.class);
+      
+      caller.getCallee().onePath("foo");
+      caller.getCallee2().onePath("bar");
+      // Note this used to result in "http://localhost:1111/client/1/foo/2"!
+      caller.getCallee().onePath("foo");
    }
 
    public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException,
