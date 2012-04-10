@@ -137,7 +137,7 @@ public abstract class BaseEnvelope<V extends BaseVirtualSystem, E extends BaseEn
       return virtualSystem;
    }
 
-   public Set<? extends DiskSection> getDiskSections() {
+   public Set<DiskSection> getDiskSections() {
       return diskSections;
    }
    

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
@@ -28,24 +27,26 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.dmtf.ovf.DeploymentOptionSection;
+import org.jclouds.dmtf.ovf.DiskSection;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.OperatingSystemSection;
+import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.dmtf.ovf.SectionType;
+import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-
 /**
  * Represents the parameters for capturing a vApp to a vApp template.
- * <p/>
- * <p/>
- * <p>Java class for CaptureVAppParams complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="CaptureVAppParams">
  *   &lt;complexContent>
@@ -78,11 +79,11 @@ public class CaptureVAppParams extends ParamsType {
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
-   
+
    public static abstract class Builder<B extends Builder<B>> extends ParamsType.Builder<B> {
 
       private Reference source;
-      private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
+      private Set<SectionType> sections = Sets.newLinkedHashSet();
 
       /**
        * @see CaptureVAppParams#getSource()
@@ -94,19 +95,27 @@ public class CaptureVAppParams extends ParamsType {
 
       /**
        * Sets source to a new Reference that uses this URI as the href.
-       * 
+       *
        * @see CaptureVAppParams#getSource()
        */
       public B source(URI source) {
          this.source = Reference.builder().href(source).build();
          return self();
       }
-      
+
       /**
        * @see CaptureVAppParams#getSections()
        */
-      public B sections(Set<? extends SectionType> sections) {
-         this.sections = checkNotNull(sections, "sections");
+      public B section(SectionType section) {
+         this.sections.add(checkNotNull(section, "section"));
+         return self();
+      }
+
+      /**
+       * @see CaptureVAppParams#getSections()
+       */
+      public B sections(Iterable<? extends SectionType> sections) {
+         this.sections = Sets.newLinkedHashSet(checkNotNull(sections, "sections"));
          return self();
       }
 
@@ -125,7 +134,7 @@ public class CaptureVAppParams extends ParamsType {
    private CaptureVAppParams(Builder<?> builder) {
       super(builder);
       this.source = builder.source;
-      this.sections = builder.sections;
+      this.sections = builder.sections.isEmpty() ? null : ImmutableSet.copyOf(builder.sections);
    }
 
    private CaptureVAppParams() {
@@ -138,46 +147,60 @@ public class CaptureVAppParams extends ParamsType {
 
    @XmlElement(name = "Source", required = true)
    protected Reference source;
-   @XmlElementRef
-   protected Set<? extends SectionType> sections = Sets.newLinkedHashSet();
+   @XmlElementRefs({
+      @XmlElementRef(type = VirtualHardwareSection.class),
+      @XmlElementRef(type = LeaseSettingsSection.class),
+//      @XmlElementRef(type = EulaSection.class),
+      @XmlElementRef(type = RuntimeInfoSection.class),
+//      @XmlElementRef(type = AnnotationSection.class),
+      @XmlElementRef(type = DeploymentOptionSection.class),
+      @XmlElementRef(type = StartupSection.class),
+//      @XmlElementRef(type = ResourceAllocationSection.class),
+      @XmlElementRef(type = NetworkConnectionSection.class),
+      @XmlElementRef(type = CustomizationSection.class),
+      @XmlElementRef(type = ProductSection.class),
+      @XmlElementRef(type = GuestCustomizationSection.class),
+      @XmlElementRef(type = OperatingSystemSection.class),
+      @XmlElementRef(type = NetworkConfigSection.class),
+      @XmlElementRef(type = NetworkSection.class),
+//      @XmlElementRef(type = InstallSection.class),
+      @XmlElementRef(type = DiskSection.class)
+   })
+   protected Set<SectionType> sections = Sets.newLinkedHashSet();
 
    /**
     * Gets the value of the source property.
-    *
-    * @return possible object is
-    *         {@link Reference }
     */
    public Reference getSource() {
       return source;
    }
 
    /**
-    * An ovf:Section to configure the captured vAppTemplate.
+    * An {@code ovf:Section} to configure the captured vAppTemplate.
     *
-    *  Gets the value of the section property.
-    *    
-    * Objects of the following type(s) are allowed in the list
-    * {@link SectionType }
-    * {@link VirtualHardwareSection }
-    * {@link LeaseSettingsSection }
-    * {@link EulaSection }
-    * {@link RuntimeInfoSection }
-    * {@link AnnotationSection }
-    * {@link DeploymentOptionSection }
-    * {@link StartupSection }
-    * {@link ResourceAllocationSection }
-    * {@link NetworkConnectionSection }
-    * {@link CustomizationSection }
-    * {@link ProductSection }
-    * {@link GuestCustomizationSection }
-    * {@link OperatingSystemSection }
-    * {@link NetworkConfigSection }
-    * {@link NetworkSection }
-    * {@link DiskSection }
-    * {@link InstallSection }
+    * Objects of the following type(s) are allowed in the list:
+    * <ul>
+    * <li>{@link VirtualHardwareSectionType}
+    * <li>{@link LeaseSettingsSectionType}
+    * <li>{@link EulaSectionType}
+    * <li>{@link RuntimeInfoSectionType}
+    * <li>{@link AnnotationSectionType}
+    * <li>{@link DeploymentOptionSectionType}
+    * <li>{@link StartupSectionType}
+    * <li>{@link ResourceAllocationSectionType}
+    * <li>{@link NetworkConnectionSectionType}
+    * <li>{@link CustomizationSectionType}
+    * <li>{@link ProductSectionType}
+    * <li>{@link GuestCustomizationSectionType}
+    * <li>{@link OperatingSystemSectionType}
+    * <li>{@link NetworkConfigSectionType}
+    * <li>{@link NetworkSectionType}
+    * <li>{@link DiskSectionType}
+    * <li>{@link InstallSectionType}
+    * </ul>
     */
-   public Set<? extends SectionType> getSections() {
-      return Collections.unmodifiableSet(this.sections);
+   public Set<SectionType> getSections() {
+      return sections != null ? ImmutableSet.copyOf(sections) : Collections.<SectionType>emptySet();
    }
 
    @Override
@@ -187,8 +210,8 @@ public class CaptureVAppParams extends ParamsType {
       if (o == null || getClass() != o.getClass())
          return false;
       CaptureVAppParams that = CaptureVAppParams.class.cast(o);
-      return equal(source, that.source) &&
-            equal(sections, that.sections);
+      return equal(source, that.source)
+            && equal(sections, that.sections);
    }
 
    @Override

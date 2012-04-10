@@ -74,7 +74,7 @@ public abstract class BaseVirtualSystem extends SectionType {
       /**
        * @see BaseVirtualSystem#getProductSections()
        */
-      public B productSections(Iterable<? extends ProductSection> productSections) {
+      public B productSections(Iterable<ProductSection> productSections) {
          this.productSections = Sets.newLinkedHashSet(checkNotNull(productSections, "productSections"));
          return self();
       }
@@ -109,9 +109,9 @@ public abstract class BaseVirtualSystem extends SectionType {
    @XmlElement(name = "Name")
    private String name;
    @XmlElement(name = "ProductSection")
-   private Set<? extends ProductSection> productSections;
+   private Set<ProductSection> productSections;
    @XmlElementRef
-   private Set<? extends SectionType> additionalSections;
+   private Set<SectionType> additionalSections;
 
    protected BaseVirtualSystem(Builder<?> builder) {
       super(builder);
@@ -137,11 +137,11 @@ public abstract class BaseVirtualSystem extends SectionType {
     * Specifies product-information for a package, such as product name and version, along with a
     * set of properties that can be configured
     */
-   public Set<? extends ProductSection> getProductSections() {
+   public Set<ProductSection> getProductSections() {
       return productSections;
    }
 
-   public Set<? extends SectionType> getAdditionalSections() {
+   public Set<SectionType> getAdditionalSections() {
       return additionalSections;
    }
 

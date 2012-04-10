@@ -21,19 +21,28 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.dmtf.DMTFConstants;
+import org.jclouds.dmtf.ovf.DeploymentOptionSection;
+import org.jclouds.dmtf.ovf.DiskSection;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.OperatingSystemSection;
+import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.dmtf.ovf.SectionType;
+import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Represents a base type for VAppType and VmType.
@@ -63,7 +72,7 @@ public abstract class AbstractVAppType extends ResourceEntityType {
 
       private Boolean deployed;
       private Reference vAppParent;
-      private List<SectionType> sections = Lists.newArrayList();
+      private Set<SectionType> sections = Sets.newLinkedHashSet();
 
       /**
        * @see AbstractVAppType#isDeployed()
@@ -101,7 +110,7 @@ public abstract class AbstractVAppType extends ResourceEntityType {
        * @see AbstractVAppType#getSections()
        */
       public B sections(Iterable<? extends SectionType> sections) {
-         this.sections = Lists.newArrayList(checkNotNull(sections, "sections"));
+         this.sections = Sets.newLinkedHashSet(checkNotNull(sections, "sections"));
          return self();
       }
 
@@ -109,8 +118,6 @@ public abstract class AbstractVAppType extends ResourceEntityType {
        * @see AbstractVAppType#getSections()
        */
       public B section(SectionType section) {
-         if (this.sections == null)
-            this.sections = Lists.newArrayList();
          this.sections.add(checkNotNull(section, "section"));
          return self();
       }
@@ -122,8 +129,26 @@ public abstract class AbstractVAppType extends ResourceEntityType {
 
    @XmlElement(name = "VAppParent")
    private Reference vAppParent;
-   @XmlElementRef(namespace = DMTFConstants.OVF_NS)
-   private List<? extends SectionType> sections = Lists.newArrayList();
+   @XmlElementRefs({
+      @XmlElementRef(type = VirtualHardwareSection.class),
+      @XmlElementRef(type = LeaseSettingsSection.class),
+//      @XmlElementRef(type = EulaSection.class),
+      @XmlElementRef(type = RuntimeInfoSection.class),
+//      @XmlElementRef(type = AnnotationSection.class),
+      @XmlElementRef(type = DeploymentOptionSection.class),
+      @XmlElementRef(type = StartupSection.class),
+//      @XmlElementRef(type = ResourceAllocationSection.class),
+      @XmlElementRef(type = NetworkConnectionSection.class),
+      @XmlElementRef(type = CustomizationSection.class),
+      @XmlElementRef(type = ProductSection.class),
+      @XmlElementRef(type = GuestCustomizationSection.class),
+      @XmlElementRef(type = OperatingSystemSection.class),
+      @XmlElementRef(type = NetworkConfigSection.class),
+      @XmlElementRef(type = NetworkSection.class),
+//      @XmlElementRef(type = InstallSection.class),
+      @XmlElementRef(type = DiskSection.class)
+   })
+   private Set<SectionType> sections = Sets.newLinkedHashSet();
    @XmlAttribute
    private Boolean deployed;
 
@@ -134,7 +159,7 @@ public abstract class AbstractVAppType extends ResourceEntityType {
    protected AbstractVAppType(Builder<?> builder) {
       super(builder);
       this.vAppParent = builder.vAppParent;
-      this.sections = builder.sections;
+      this.sections = builder.sections.isEmpty() ? null : ImmutableSet.copyOf(builder.sections);
       this.deployed = builder.deployed;
    }
 
@@ -146,32 +171,31 @@ public abstract class AbstractVAppType extends ResourceEntityType {
    }
 
    /**
-    * Specific ovf:Section with additional information for the vApp.
+    * Specific {@code ovf:Section} with additional information for the vApp.
     *
     * Objects of the following type(s) are allowed in the list:
     * <ul>
-    * <li>SectionType
-    * <li>VirtualHardwareSectionType
-    * <li>LeaseSettingsSectionType
-    * <li>EulaSectionType
-    * <li>RuntimeInfoSectionType
-    * <li>AnnotationSectionType
-    * <li>DeploymentOptionSectionType
-    * <li>StartupSectionType
-    * <li>ResourceAllocationSectionType
-    * <li>NetworkConnectionSectionType
-    * <li>CustomizationSectionType
-    * <li>ProductSectionType
-    * <li>GuestCustomizationSectionType
-    * <li>OperatingSystemSectionType
-    * <li>NetworkConfigSectionType
-    * <li>NetworkSectionType
-    * <li>DiskSectionType
-    * <li>InstallSectionType
+    * <li>{@link VirtualHardwareSectionType}
+    * <li>{@link LeaseSettingsSectionType}
+    * <li>{@link EulaSectionType}
+    * <li>{@link RuntimeInfoSectionType}
+    * <li>{@link AnnotationSectionType}
+    * <li>{@link DeploymentOptionSectionType}
+    * <li>{@link StartupSectionType}
+    * <li>{@link ResourceAllocationSectionType}
+    * <li>{@link NetworkConnectionSectionType}
+    * <li>{@link CustomizationSectionType}
+    * <li>{@link ProductSectionType}
+    * <li>{@link GuestCustomizationSectionType}
+    * <li>{@link OperatingSystemSectionType}
+    * <li>{@link NetworkConfigSectionType}
+    * <li>{@link NetworkSectionType}
+    * <li>{@link DiskSectionType}
+    * <li>{@link InstallSectionType}
     * </ul>
     */
-   public List<? extends SectionType> getSections() {
-      return this.sections;
+   public Set<SectionType> getSections() {
+      return sections != null ? ImmutableSet.copyOf(sections) : Collections.<SectionType>emptySet();
    }
 
    /**

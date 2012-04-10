@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.jclouds.dmtf.ovf.DeploymentOptionSection;
 import org.jclouds.dmtf.ovf.DiskSection;
@@ -69,7 +69,7 @@ public class VAppTemplate extends ResourceEntityType {
    public static abstract class Builder<B extends Builder<B>> extends ResourceEntityType.Builder<B> {
       private Owner owner;
       private Set<VAppTemplate> children = Sets.newLinkedHashSet();
-      private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
+      private Set<SectionType> sections = Sets.newLinkedHashSet();
       private String vAppScopedLocalId;
       private Boolean ovfDescriptorUploaded;
       private Boolean goldMaster;
@@ -85,16 +85,16 @@ public class VAppTemplate extends ResourceEntityType {
       /**
        * @see VAppTemplate#getChildren()
        */
-      public B children(Set<VAppTemplate> children) {
-         this.children = checkNotNull(children, "children");
+      public B children(Iterable<VAppTemplate> children) {
+         this.children = Sets.newLinkedHashSet(checkNotNull(children, "children"));
          return self();
       }
 
       /**
        * @see VAppTemplate#getSections()
        */
-      public B sections(Set<? extends SectionType> sections) {
-         this.sections = checkNotNull(sections, "sections");
+      public B sections(Iterable<? extends SectionType> sections) {
+         this.sections = Sets.newLinkedHashSet(checkNotNull(sections, "sections"));
          return self();
       }
 
@@ -140,10 +140,10 @@ public class VAppTemplate extends ResourceEntityType {
 
    @XmlElement(name = "Owner")
    private Owner owner;
-   @XmlElement(name = "Children")
-   private VAppTemplateChildren children = VAppTemplateChildren.builder().build();
+   @XmlElementWrapper(name = "Children")
+   @XmlElement(name = "Vm")
+   private Set<VAppTemplate> children = Sets.newLinkedHashSet();
    @XmlElementRefs({
-      @XmlElementRef(type = SectionType.class),
       @XmlElementRef(type = VirtualHardwareSection.class),
       @XmlElementRef(type = LeaseSettingsSection.class),
 //      @XmlElementRef(type = EulaSection.class),
@@ -162,7 +162,7 @@ public class VAppTemplate extends ResourceEntityType {
 //      @XmlElementRef(type = InstallSection.class),
       @XmlElementRef(type = DiskSection.class)
    })
-   private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
+   private Set<SectionType> sections = Sets.newLinkedHashSet();
    @XmlElement(name = "VAppScopedLocalId")
    private String vAppScopedLocalId;
    @XmlAttribute
@@ -173,8 +173,8 @@ public class VAppTemplate extends ResourceEntityType {
    protected VAppTemplate(Builder<?> builder) {
       super(builder);
       this.owner = builder.owner;
-      this.children = VAppTemplateChildren.builder().vms(builder.children).build();
-      this.sections = ImmutableSet.copyOf(builder.sections);
+      this.children = builder.children.isEmpty() ? Collections.<VAppTemplate>emptySet() : ImmutableSet.copyOf(builder.children);
+      this.sections = builder.sections.isEmpty() ? null : ImmutableSet.copyOf(builder.sections);
       this.vAppScopedLocalId = builder.vAppScopedLocalId;
       this.ovfDescriptorUploaded = builder.ovfDescriptorUploaded;
       this.goldMaster = builder.goldMaster;
@@ -186,9 +186,6 @@ public class VAppTemplate extends ResourceEntityType {
 
    /**
     * Gets the value of the owner property.
-    *
-    * @return possible object is
-    *         {@link Owner }
     */
    public Owner getOwner() {
       return owner;
@@ -196,47 +193,41 @@ public class VAppTemplate extends ResourceEntityType {
 
    /**
     * Gets the value of the children property.
-    *
-    * @return possible object is
-    *         {@link VAppTemplateChildren }
     */
    public Set<VAppTemplate> getChildren() {
-      return children.getVms();
+      return children;
    }
 
    /**
     * Contains ovf sections for vApp template.
-    * Gets the value of the section property.
-    * <p/>
-    * Objects of the following type(s) are allowed in the list
-    * {@link SectionType }
-    * {@link VirtualHardwareSection }
-    * {@link LeaseSettingsSection }
-    * {@link EulaSection }
-    * {@link RuntimeInfoSection }
-    * {@link AnnotationSection }
-    * {@link DeploymentOptionSection }
-    * {@link StartupSection }
-    * {@link ResourceAllocationSection }
-    * {@link NetworkConnectionSection }
-    * {@link CustomizationSection }
-    * {@link ProductSection }
-    * {@link GuestCustomizationSection }
-    * {@link OperatingSystemSection }
-    * {@link NetworkConfigSection }
-    * {@link NetworkSection }
-    * {@link DiskSection }
-    * {@link InstallSection }
+    *
+    * Objects of the following type(s) are allowed in the list:
+    * <ul>
+    * <li>{@link VirtualHardwareSectionType}
+    * <li>{@link LeaseSettingsSectionType}
+    * <li>{@link EulaSectionType}
+    * <li>{@link RuntimeInfoSectionType}
+    * <li>{@link AnnotationSectionType}
+    * <li>{@link DeploymentOptionSectionType}
+    * <li>{@link StartupSectionType}
+    * <li>{@link ResourceAllocationSectionType}
+    * <li>{@link NetworkConnectionSectionType}
+    * <li>{@link CustomizationSectionType}
+    * <li>{@link ProductSectionType}
+    * <li>{@link GuestCustomizationSectionType}
+    * <li>{@link OperatingSystemSectionType}
+    * <li>{@link NetworkConfigSectionType}
+    * <li>{@link NetworkSectionType}
+    * <li>{@link DiskSectionType}
+    * <li>{@link InstallSectionType}
+    * </ul>
     */
-   public Set<? extends SectionType> getSections() {
-      return Collections.unmodifiableSet(this.sections);
+   public Set<SectionType> getSections() {
+      return sections != null ? ImmutableSet.copyOf(sections) : Collections.<SectionType>emptySet();
    }
 
    /**
     * Gets the value of the vAppScopedLocalId property.
-    *
-    * @return possible object is
-    *         {@link String }
     */
    public String getVAppScopedLocalId() {
       return vAppScopedLocalId;
@@ -244,9 +235,6 @@ public class VAppTemplate extends ResourceEntityType {
 
    /**
     * Gets the value of the ovfDescriptorUploaded property.
-    *
-    * @return possible object is
-    *         {@link Boolean }
     */
    public Boolean isOvfDescriptorUploaded() {
       return ovfDescriptorUploaded;
@@ -254,9 +242,6 @@ public class VAppTemplate extends ResourceEntityType {
 
    /**
     * Gets the value of the goldMaster property.
-    *
-    * @return possible object is
-    *         {@link Boolean }
     */
    public boolean isGoldMaster() {
       if (goldMaster == null) {

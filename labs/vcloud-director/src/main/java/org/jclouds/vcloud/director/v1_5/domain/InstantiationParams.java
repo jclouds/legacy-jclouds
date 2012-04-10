@@ -21,21 +21,32 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.dmtf.ovf.DeploymentOptionSection;
+import org.jclouds.dmtf.ovf.DiskSection;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.OperatingSystemSection;
+import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.dmtf.ovf.SectionType;
+import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * Represents a list of ovf:Section to configure for instantiating a VApp.
- * 
+ * Represents a list of {@code ovf:Section} to configure for instantiating a VApp.
+ *
  * @author grkvlt@apache.org
  * @see <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/InstantiationParamsType.html">
  *    vCloud REST API - InstantiationParamsType</a>
@@ -43,7 +54,7 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "InstantiationParams")
 @XmlType(name = "InstantiationParamsType")
-public class InstantiationParams {
+public class InstantiationParams implements Set<SectionType> {
 
    public static Builder builder() {
       return new Builder();
@@ -87,18 +98,35 @@ public class InstantiationParams {
    }
 
    private InstantiationParams(Set<? extends SectionType> sections) {
-      this.sections = ImmutableSet.copyOf(sections);
+      this.sections = sections.isEmpty() ? null : ImmutableSet.copyOf(sections);
    }
 
-   @XmlElementRef
-   protected Set<? extends SectionType> sections = Sets.newLinkedHashSet();
+   @XmlElementRefs({
+      @XmlElementRef(type = VirtualHardwareSection.class),
+      @XmlElementRef(type = LeaseSettingsSection.class),
+//      @XmlElementRef(type = EulaSection.class),
+      @XmlElementRef(type = RuntimeInfoSection.class),
+//      @XmlElementRef(type = AnnotationSection.class),
+      @XmlElementRef(type = DeploymentOptionSection.class),
+      @XmlElementRef(type = StartupSection.class),
+//      @XmlElementRef(type = ResourceAllocationSection.class),
+      @XmlElementRef(type = NetworkConnectionSection.class),
+      @XmlElementRef(type = CustomizationSection.class),
+      @XmlElementRef(type = ProductSection.class),
+      @XmlElementRef(type = GuestCustomizationSection.class),
+      @XmlElementRef(type = OperatingSystemSection.class),
+      @XmlElementRef(type = NetworkConfigSection.class),
+      @XmlElementRef(type = NetworkSection.class),
+//      @XmlElementRef(type = InstallSection.class),
+      @XmlElementRef(type = DiskSection.class)
+   })
+   protected Set<SectionType> sections = Sets.newLinkedHashSet();
 
    /**
     * An {@code ovf:Section} to configure for instantiation.
     *
-    * Objects of the following type(s) are allowed in the list
+    * Objects of the following type(s) are allowed in the list:
     * <ul>
-    * <li>{@link SectionType}
     * <li>{@link VirtualHardwareSection}
     * <li>{@link LeaseSettingsSection}
     * <li>{@link EulaSection}
@@ -118,8 +146,8 @@ public class InstantiationParams {
     * <li>{@link InstallSection}
     * </ul>
     */
-   public Set<? extends SectionType> getSections() {
-      return sections;
+   public Set<SectionType> getSections() {
+      return sections != null ? ImmutableSet.copyOf(sections) : Collections.<SectionType>emptySet();
    }
 
    @Override
@@ -140,5 +168,82 @@ public class InstantiationParams {
    @Override
    public String toString() {
       return Objects.toStringHelper("").add("sections", sections).toString();
+   }
+
+   /**
+    * The delegate always returns a {@link Set} even if {@link #sections} is {@literal null}.
+    *
+    * The delegated {@link Set} is used by the methods implementing its interface.
+    * <p>
+    * NOTE Annoying lack of multiple inheritance for using ForwardingList!
+    */
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   private Set<SectionType> delegate() {
+      return (Set) getSections();
+   }
+
+   @Override
+   public boolean add(SectionType arg0) {
+      return delegate().add(arg0);
+   }
+
+   @Override
+   public boolean addAll(Collection<? extends SectionType> arg0) {
+      return delegate().addAll(arg0);
+   }
+
+   @Override
+   public void clear() {
+      delegate().clear();
+   }
+
+   @Override
+   public boolean contains(Object arg0) {
+      return delegate().contains(arg0);
+   }
+
+   @Override
+   public boolean containsAll(Collection<?> arg0) {
+      return delegate().containsAll(arg0);
+   }
+
+   @Override
+   public boolean isEmpty() {
+      return delegate().isEmpty();
+   }
+
+   @Override
+   public Iterator<SectionType> iterator() {
+      return delegate().iterator();
+   }
+
+   @Override
+   public boolean remove(Object arg0) {
+      return delegate().remove(arg0);
+   }
+
+   @Override
+   public boolean removeAll(Collection<?> arg0) {
+      return delegate().removeAll(arg0);
+   }
+
+   @Override
+   public boolean retainAll(Collection<?> arg0) {
+      return delegate().retainAll(arg0);
+   }
+
+   @Override
+   public int size() {
+      return delegate().size();
+   }
+
+   @Override
+   public Object[] toArray() {
+      return delegate().toArray();
+   }
+
+   @Override
+   public <T> T[] toArray(T[] arg0) {
+      return delegate().toArray(arg0);
    }
 }
