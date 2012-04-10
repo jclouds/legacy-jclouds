@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
+import org.jclouds.dmtf.ovf.environment.EnvironmentType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -45,6 +45,7 @@ public class Vm extends AbstractVAppType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVm(this);
    }

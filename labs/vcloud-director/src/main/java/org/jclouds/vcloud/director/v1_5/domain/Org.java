@@ -50,6 +50,7 @@ public class Org extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromOrg(this);
    }

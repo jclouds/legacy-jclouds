@@ -31,8 +31,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.SectionType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -111,6 +110,7 @@ public class CaptureVAppParams extends ParamsType {
          return self();
       }
 
+      @Override
       public CaptureVAppParams build() {
          return new CaptureVAppParams(this);
       }

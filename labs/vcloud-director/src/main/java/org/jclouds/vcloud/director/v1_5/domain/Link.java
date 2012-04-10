@@ -153,6 +153,7 @@ public class Link extends Reference {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromLink(this);
    }

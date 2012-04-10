@@ -22,12 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
-import org.jclouds.vcloud.director.v1_5.domain.Catalog;
-import org.jclouds.vcloud.director.v1_5.domain.Group;
-import org.jclouds.vcloud.director.v1_5.domain.User;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
@@ -35,7 +29,6 @@ import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.UserClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 /**
@@ -82,6 +75,7 @@ public interface VCloudDirectorAdminClient extends VCloudDirectorClient {
    /**
     * @return synchronous access to {@link AdminVdc} features
     */
+   @Override
    @Delegate
    AdminVdcClient getVdcClient();
    

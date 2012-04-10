@@ -29,7 +29,6 @@ import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRoleRecord;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryClient;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 

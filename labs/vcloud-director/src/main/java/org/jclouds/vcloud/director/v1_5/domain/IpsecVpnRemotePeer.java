@@ -58,7 +58,7 @@ import com.google.common.base.Objects;
       "vcdUsername"
 })
 public class IpsecVpnRemotePeer extends IpsecVpnManagedPeerType<IpsecVpnRemotePeer> {
-   @SuppressWarnings("unchecked")
+
    public static Builder builder() {
       return new Builder();
    }

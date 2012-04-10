@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
+import org.jclouds.dmtf.DMTFConstants;
+import org.jclouds.dmtf.ovf.ProductSection;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -78,8 +78,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
        * @see ProductSectionList#getProductSections()
        */
       public B productSections(Set<ProductSection> productSections) {
-         if (checkNotNull(productSections, "productSections").size() > 0)
-            this.productSections = Sets.newLinkedHashSet(productSections);
+         this.productSections = Sets.newLinkedHashSet(checkNotNull(productSections, "productSections"));
          return self();
       }
 
@@ -87,8 +86,6 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
        * @see ProductSectionList#getProductSections()
        */
       public B productSection(ProductSection productSection) {
-         if (productSections == null)
-            productSections = Sets.newLinkedHashSet();
          this.productSections.add(checkNotNull(productSection, "productSection"));
          return self();
       }
@@ -114,7 +111,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
    }
 
 
-   @XmlElement(name = "ProductSection", namespace = VCloudDirectorConstants.VCLOUD_OVF_NS)
+   @XmlElement(name = "ProductSection", namespace = DMTFConstants.OVF_NS)
    private Set<ProductSection> productSections;
 
    /**
@@ -131,7 +128,8 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
       if (o == null || getClass() != o.getClass())
          return false;
       ProductSectionList that = ProductSectionList.class.cast(o);
-      return super.equals(that) && equal(this.productSections, that.productSections);
+      return super.equals(that)
+            && equal(this.productSections, that.productSections);
    }
 
    @Override

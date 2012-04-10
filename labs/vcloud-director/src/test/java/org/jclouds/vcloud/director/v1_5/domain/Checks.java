@@ -46,24 +46,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
+import org.jclouds.dmtf.cim.VirtualSystemSettingData;
+import org.jclouds.dmtf.ovf.Disk;
+import org.jclouds.dmtf.ovf.DiskSection;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.ProductSection;
+import org.jclouds.dmtf.ovf.SectionType;
+import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.environment.EnvironmentType;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.AuthenticationMechanism;
 import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorType;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.cim.VirtualSystemSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Disk;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.DiskSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualSystem;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.environment.EnvironmentType;
 import org.jclouds.vcloud.director.v1_5.domain.query.ContainerType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 
@@ -713,7 +709,7 @@ public class Checks {
       // NOTE transport cannot be checked
       if (hardware.getItems() != null) {
 	      for (ResourceAllocationSettingData item : hardware.getItems()) {
-	         checkResourceAllocationSettingData(item);
+	         checkResourceAllocationSettingData((RasdItem) item);
 	      }
       }
       
@@ -744,7 +740,7 @@ public class Checks {
 //      assertNotNull(virtualSystem.getVirtualSystemType(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "virtualSystemType"));
    }
 
-   public static void checkResourceAllocationSettingData(ResourceAllocationSettingData item) {
+   public static void checkResourceAllocationSettingData(RasdItem item) {
       // TODO
    }
    
@@ -1101,8 +1097,8 @@ public class Checks {
       
       // Check optional fields
       if (section.getNetworks() != null) {
-	      for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : section.getNetworks()) {
-	         checkNetwork(network);
+	      for (org.jclouds.dmtf.ovf.Network network : section.getNetworks()) {
+	         checkOvfNetwork(network);
 	      }
       }
 
@@ -1110,7 +1106,7 @@ public class Checks {
       checkOvfSectionType(section);
    }
 
-   public static void checkNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network network) {
+   public static void checkOvfNetwork(org.jclouds.dmtf.ovf.Network network) {
       assertNotNull(network, String.format(NOT_NULL_OBJ_FMT, "Network"));
       
       // Check optional fields
@@ -1222,7 +1218,7 @@ public class Checks {
       // Check fields
       // TODO
 
-      for (ResourceAllocationSettingData item : items.getItems()) {
+      for (RasdItem item : items.getItems()) {
          checkResourceAllocationSettingData(item);
       }
    }
@@ -1235,7 +1231,7 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ProductSection"));
 
       if (val.getProperties() != null) {
-         for (org.jclouds.vcloud.director.v1_5.domain.ovf.Property property : val.getProperties()) {
+         for (org.jclouds.dmtf.ovf.Property property : val.getProperties()) {
             checkOvfProperty(property);
          }
       }
@@ -1244,7 +1240,7 @@ public class Checks {
       checkOvfSectionType(val);
    }
 
-   private static void checkOvfProperty(org.jclouds.vcloud.director.v1_5.domain.ovf.Property val) {
+   private static void checkOvfProperty(org.jclouds.dmtf.ovf.Property val) {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "Property"));
    }
 
@@ -1252,16 +1248,12 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "NetworkSection"));
 
       if (val.getNetworks() != null) {
-         for (org.jclouds.vcloud.director.v1_5.domain.ovf.Network network : val.getNetworks()) {
+         for (org.jclouds.dmtf.ovf.Network network : val.getNetworks()) {
             checkOvfNetwork(network);
          }
       }
       
       checkOvfSectionType(val);
-   }
-
-   private static void checkOvfNetwork(org.jclouds.vcloud.director.v1_5.domain.ovf.Network val) {
-      assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "Network"));
    }
 
    public static void checkOvfEnvelope(Envelope val) {
@@ -1329,7 +1321,7 @@ public class Checks {
       
       if (section.getItems() != null) {
          for (ResourceAllocationSettingData item : section.getItems()) {
-            checkCimResourceAllocationSettingData(item);
+            checkCimResourceAllocationSettingData((RasdItem) item);
          }
       }
       if (section.getSystem() != null) {
@@ -1345,7 +1337,7 @@ public class Checks {
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "VirtualSystemSettingData"));
    }
 
-   private static void checkCimResourceAllocationSettingData(ResourceAllocationSettingData val) {
+   private static void checkCimResourceAllocationSettingData(RasdItem val) {
       // TODO Could do more assertions...
       assertNotNull(val, String.format(NOT_NULL_OBJ_FMT, "ResouorceAllocatoinSettingData"));
    }

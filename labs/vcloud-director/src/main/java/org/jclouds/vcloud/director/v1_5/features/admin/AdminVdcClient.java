@@ -28,7 +28,6 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writeable;
 
 /**
  * Provides synchronous access to {@link AdminVdc}.

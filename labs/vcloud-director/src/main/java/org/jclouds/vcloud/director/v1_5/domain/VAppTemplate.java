@@ -27,10 +27,18 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.DeploymentOptionSection;
+import org.jclouds.dmtf.ovf.DiskSection;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.OperatingSystemSection;
+import org.jclouds.dmtf.ovf.ProductSection;
+import org.jclouds.dmtf.ovf.SectionType;
+import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -50,6 +58,7 @@ public class VAppTemplate extends ResourceEntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVAppTemplate(this);
    }
@@ -133,7 +142,26 @@ public class VAppTemplate extends ResourceEntityType {
    private Owner owner;
    @XmlElement(name = "Children")
    private VAppTemplateChildren children = VAppTemplateChildren.builder().build();
-   @XmlElementRef
+   @XmlElementRefs({
+      @XmlElementRef(type = SectionType.class),
+      @XmlElementRef(type = VirtualHardwareSection.class),
+      @XmlElementRef(type = LeaseSettingsSection.class),
+//      @XmlElementRef(type = EulaSection.class),
+      @XmlElementRef(type = RuntimeInfoSection.class),
+//      @XmlElementRef(type = AnnotationSection.class),
+      @XmlElementRef(type = DeploymentOptionSection.class),
+      @XmlElementRef(type = StartupSection.class),
+//      @XmlElementRef(type = ResourceAllocationSection.class),
+      @XmlElementRef(type = NetworkConnectionSection.class),
+      @XmlElementRef(type = CustomizationSection.class),
+      @XmlElementRef(type = ProductSection.class),
+      @XmlElementRef(type = GuestCustomizationSection.class),
+      @XmlElementRef(type = OperatingSystemSection.class),
+      @XmlElementRef(type = NetworkConfigSection.class),
+      @XmlElementRef(type = NetworkSection.class),
+//      @XmlElementRef(type = InstallSection.class),
+      @XmlElementRef(type = DiskSection.class)
+   })
    private Set<? extends SectionType> sections = Sets.newLinkedHashSet();
    @XmlElement(name = "VAppScopedLocalId")
    private String vAppScopedLocalId;

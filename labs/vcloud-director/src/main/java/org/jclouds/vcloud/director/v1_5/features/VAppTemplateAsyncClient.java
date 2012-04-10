@@ -40,6 +40,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -49,6 +50,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
@@ -59,8 +61,6 @@ import org.jclouds.vcloud.director.v1_5.domain.References;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;

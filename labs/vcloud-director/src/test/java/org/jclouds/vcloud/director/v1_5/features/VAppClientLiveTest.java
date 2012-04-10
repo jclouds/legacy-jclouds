@@ -69,6 +69,12 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.io.Payloads;
+import org.jclouds.dmtf.cim.OSType;
+import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
+import org.jclouds.dmtf.ovf.MsgType;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.ProductSection;
+import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -88,8 +94,10 @@ import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
+import org.jclouds.vcloud.director.v1_5.domain.RasdItem;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -100,17 +108,10 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswerChoice;
-import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.MsgType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.testng.annotations.AfterClass;
@@ -966,7 +967,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
       // Copy existing section and update fields
       VirtualHardwareSection oldSection = vAppClient.getVirtualHardwareSection(vm.getHref());
-      Set<ResourceAllocationSettingData> oldItems = oldSection.getItems();
+      Set<? extends ResourceAllocationSettingData> oldItems = oldSection.getItems();
       Set<ResourceAllocationSettingData> newItems = Sets.newLinkedHashSet(oldItems);
       ResourceAllocationSettingData oldMemory = Iterables.find(oldItems, new Predicate<ResourceAllocationSettingData>() {
          @Override
@@ -1010,7 +1011,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionCpu() {
       // Method under test
-      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
 
       // Check the retrieved object is well formed
       checkResourceAllocationSettingData(rasd);
@@ -1019,8 +1020,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
    public void testModifyVirtualHardwareSectionCpu() {
       // Copy existing section and update fields
-      ResourceAllocationSettingData oldItem = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
-      ResourceAllocationSettingData newItem = oldItem.toBuilder()
+      RasdItem oldItem = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem newItem = oldItem.toBuilder()
             .elementName("2 virtual CPU(s)")
             .virtualQuantity(new BigInteger("2"))
             .build();
@@ -1030,7 +1031,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionCpu), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionCpu"));
 
       // Retrieve the modified section
-      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem modified = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
       
       // Check the retrieved object
       checkResourceAllocationSettingData(modified);
@@ -1098,7 +1099,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMemory() {
       // Method under test
-      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
 
       // Check the retrieved object is well formed
       checkResourceAllocationSettingData(rasd);
@@ -1106,8 +1107,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(description = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
    public void testModifyVirtualHardwareSectionMemory() {
-      ResourceAllocationSettingData origItem = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
-      ResourceAllocationSettingData newItem = origItem.toBuilder()
+      RasdItem origItem = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
+      RasdItem newItem = origItem.toBuilder()
             .elementName("1024 MB of memory")
             .virtualQuantity(new BigInteger("1024"))
             .build();
@@ -1117,7 +1118,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionMemory), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionMemory"));
 
       // Retrieve the modified section
-      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
+      RasdItem modified = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
       
       // Check the retrieved object
       checkResourceAllocationSettingData(modified);

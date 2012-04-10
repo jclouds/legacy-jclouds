@@ -43,6 +43,7 @@ public class VAppNetworkConfiguration extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVAppNetworkConfiguration(this);
    }

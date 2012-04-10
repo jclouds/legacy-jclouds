@@ -22,16 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
-import org.jclouds.vcloud.director.v1_5.domain.Catalog;
-import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.MediaClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkClient;

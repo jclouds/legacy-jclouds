@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.dmtf.DMTFConstants;
+import org.jclouds.dmtf.ovf.SectionType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -100,9 +100,8 @@ public abstract class AbstractVAppType extends ResourceEntityType {
       /**
        * @see AbstractVAppType#getSections()
        */
-      public B sections(List<SectionType> sections) {
-         if (checkNotNull(sections, "sections").size() > 0)
-            this.sections = Lists.newArrayList(sections);
+      public B sections(Iterable<? extends SectionType> sections) {
+         this.sections = Lists.newArrayList(checkNotNull(sections, "sections"));
          return self();
       }
 
@@ -123,8 +122,8 @@ public abstract class AbstractVAppType extends ResourceEntityType {
 
    @XmlElement(name = "VAppParent")
    private Reference vAppParent;
-   @XmlElementRef(name = "Section", namespace = VCloudDirectorConstants.VCLOUD_OVF_NS)
-   private List<SectionType> sections = Lists.newArrayList();
+   @XmlElementRef(namespace = DMTFConstants.OVF_NS)
+   private List<? extends SectionType> sections = Lists.newArrayList();
    @XmlAttribute
    private Boolean deployed;
 
@@ -171,7 +170,7 @@ public abstract class AbstractVAppType extends ResourceEntityType {
     * <li>InstallSectionType
     * </ul>
     */
-   public List<SectionType> getSections() {
+   public List<? extends SectionType> getSections() {
       return this.sections;
    }
 
@@ -189,8 +188,10 @@ public abstract class AbstractVAppType extends ResourceEntityType {
       if (o == null || getClass() != o.getClass())
          return false;
       AbstractVAppType that = AbstractVAppType.class.cast(o);
-      return super.equals(that) &&
-            equal(this.vAppParent, that.vAppParent) && equal(this.sections, that.sections) && equal(this.deployed, that.deployed);
+      return super.equals(that)
+            && equal(this.vAppParent, that.vAppParent)
+            && equal(this.sections, that.sections)
+            && equal(this.deployed, that.deployed);
    }
 
    @Override
@@ -200,6 +201,9 @@ public abstract class AbstractVAppType extends ResourceEntityType {
 
    @Override
    public ToStringHelper string() {
-      return super.string().add("vAppParent", vAppParent).add("sections", sections).add("deployed", deployed);
+      return super.string()
+            .add("vAppParent", vAppParent)
+            .add("sections", sections)
+            .add("deployed", deployed);
    }
 }

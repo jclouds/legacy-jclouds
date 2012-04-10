@@ -41,6 +41,7 @@ public class VAppNetwork extends Network {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVAppNetwork(this);
    }

@@ -39,5 +39,6 @@
        <module>elb</module>
        <module>aws-elb</module>
        <module>savvis-symphonyvpdc</module>
+       <module>dmtf</module>
     </modules>
 </project>

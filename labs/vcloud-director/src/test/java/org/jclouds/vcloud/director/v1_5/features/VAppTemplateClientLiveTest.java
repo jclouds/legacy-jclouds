@@ -41,11 +41,13 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
@@ -63,8 +65,6 @@ import org.jclouds.vcloud.director.v1_5.domain.References;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Envelope;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 

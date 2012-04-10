@@ -37,12 +37,13 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "InstantiateOvfParams")
-public class InstantiateOvfParams extends VAppCreationParamsType {
+public class InstantiateOvfParams extends VAppCreationParams {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromInstantiateOvfParams(this);
    }
@@ -50,7 +51,7 @@ public class InstantiateOvfParams extends VAppCreationParamsType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParamsType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParams.Builder<B> {
 
       private Boolean allEULAsAccepted;
       private String transferFormat;

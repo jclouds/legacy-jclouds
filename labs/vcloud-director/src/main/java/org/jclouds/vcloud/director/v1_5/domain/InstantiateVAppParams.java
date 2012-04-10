@@ -42,7 +42,7 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlRootElement(name = "InstantiateVAppParams")
 @XmlType(name = "InstantiateVAppParamsType")
-public class InstantiateVAppParams extends VAppCreationParamsType {
+public class InstantiateVAppParams extends VAppCreationParams {
 
    public static final String MEDIA_TYPe = VCloudDirectorMediaType.INSTANTIATE_VAPP_TEMPLATE_PARAMS;
 
@@ -58,7 +58,7 @@ public class InstantiateVAppParams extends VAppCreationParamsType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParamsType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParams.Builder<B> {
 
       private Reference source;
       private Boolean sourceDelete;
