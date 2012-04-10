@@ -23,13 +23,19 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 
 /**
@@ -70,30 +76,38 @@ import com.google.common.collect.ImmutableList;
 })
 public class NetworkConnection {
    
+   @XmlType
+   @XmlEnum(String.class)
    public static enum IpAddressAllocationMode {
-      POOL("pool"),
-      DHCP("dhcp"),
-      MANUAL("manual"),
-      NONE("none"),
+      @XmlEnumValue("pool") POOL("pool"),
+      @XmlEnumValue("dhcp") DHCP("dhcp"),
+      @XmlEnumValue("manual") MANUAL("manual"),
+      @XmlEnumValue("none") NONE("none"),
       UNRECOGNIZED("unrecognized");
       
       public static final List<IpAddressAllocationMode> ALL = ImmutableList.of(POOL, DHCP, MANUAL, NONE);
-      
-      private final String label;
-      private IpAddressAllocationMode(String label) {
-         this.label = label;
+
+      protected final String label;
+
+      IpAddressAllocationMode(String stringValue) {
+         this.label = stringValue;
       }
-      
-      public String getLabel() {
+
+      public String label() {
          return label;
       }
-      
+
+      protected final static Map<String, IpAddressAllocationMode> IP_ADDRESS_ALLOCATION_MODE_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(IpAddressAllocationMode.values()), new Function<IpAddressAllocationMode, String>() {
+               @Override
+               public String apply(IpAddressAllocationMode input) {
+                  return input.label;
+               }
+            });
+
       public static IpAddressAllocationMode fromValue(String value) {
-         try {
-            return valueOf(checkNotNull(value, "value").toUpperCase());
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
+         IpAddressAllocationMode mode = IP_ADDRESS_ALLOCATION_MODE_BY_ID.get(checkNotNull(value, "stringValue"));
+         return mode == null ? UNRECOGNIZED : mode;
       }
    }
 

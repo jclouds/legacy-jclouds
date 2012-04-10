@@ -19,15 +19,22 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Used when OrgLdapMode=CUSTOM to define connection details for
@@ -76,34 +83,74 @@ import com.google.common.base.Objects.ToStringHelper;
     "groupAttributes"
 })
 public class CustomOrgLdapSettings {
-   public static final class AuthenticationMechanism {
-      public static final String SIMPLE = "simple";
-      public static final String KERBEROS = "kerberos";
-      public static final String MD5DIGEST = "md5digest";
-      public static final String NTLM = "ntlm";
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum AuthenticationMechanism {
+      @XmlEnumValue("simple") SIMPLE("simple"),
+      @XmlEnumValue("kerberos") KERBEROS("kerberos"),
+      @XmlEnumValue("md5digest") MD5DIGEST("md5digest"),
+      @XmlEnumValue("ntlm") NTLM("ntlm"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<AuthenticationMechanism> ALL = ImmutableList.of(
+            SIMPLE, KERBEROS, MD5DIGEST, NTLM);
 
-      /**
-       * All acceptable {@link CustomOrgLdapSettings#getAuthenticationMechanism()} values.
-       * <p/>
-       * This list must be updated whenever a new authentication mechanism is added.
-       */
-      public static final List<String> ALL = Arrays.asList(
-            SIMPLE, KERBEROS, MD5DIGEST, NTLM
-      );
+      protected final String stringValue;
+
+      AuthenticationMechanism(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, AuthenticationMechanism> AUTHENTICATION_MECHANISM_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(AuthenticationMechanism.values()), new Function<AuthenticationMechanism, String>() {
+               @Override
+               public String apply(AuthenticationMechanism input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static AuthenticationMechanism fromValue(String value) {
+         AuthenticationMechanism authMechanism = AUTHENTICATION_MECHANISM_BY_ID.get(checkNotNull(value, "stringValue"));
+         return authMechanism == null ? UNRECOGNIZED : authMechanism;
+      }
    }
    
-   public static final class ConnectorType {
-      public static final String ACTIVE_DIRECTORY = "ACTIVE_DIRECTORY";
-      public static final String OPEN_LDAP = "OPEN_LDAP";
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum ConnectorType {
+      @XmlEnumValue("ACTIVE_DIRECTORY") ACTIVE_DIRECTORY("ACTIVE_DIRECTORY"),
+      @XmlEnumValue("OPEN_LDAP") OPEN_LDAP("OPEN_LDAP"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<ConnectorType> ALL = ImmutableList.of(
+            ACTIVE_DIRECTORY, OPEN_LDAP);
 
-      /**
-       * All acceptable {@link OrgLdapSettings#getLdapMode()} values.
-       * <p/>
-       * This list must be updated whenever a new mode is added.
-       */
-      public static final List<String> ALL = Arrays.asList(
-            ACTIVE_DIRECTORY, OPEN_LDAP
-      );
+      protected final String stringValue;
+
+      ConnectorType(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, ConnectorType> CONNECTOR_TYPE_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(ConnectorType.values()), new Function<ConnectorType, String>() {
+               @Override
+               public String apply(ConnectorType input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static ConnectorType fromValue(String value) {
+         ConnectorType type = CONNECTOR_TYPE_BY_ID.get(checkNotNull(value, "stringValue"));
+         return type == null ? UNRECOGNIZED : type;
+      }
    }
    
    public static Builder<?> builder() {

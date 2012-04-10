@@ -119,7 +119,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
          .password("newPassword")
          // TODO test setting other fields?
 //         .name("new"+oldUser.getName())
-         .role(getRoleReferenceFor(DefaultRoles.AUTHOR))
+         .role(getRoleReferenceFor(DefaultRoles.AUTHOR.value()))
          .build();
       
       userClient.updateUser(user.getHref(), newUser);

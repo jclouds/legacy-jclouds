@@ -124,7 +124,7 @@ public class VCloudDirectorTestSession {
             .name(userIdentity)
             .password(userCredential)
             .description("test user with user-level privileges")
-            .role(BaseVCloudDirectorClientLiveTest.getRoleReferenceFor(DefaultRoles.USER, adminContext))
+            .role(BaseVCloudDirectorClientLiveTest.getRoleReferenceFor(DefaultRoles.USER.value(), adminContext))
             .deployedVmQuota(BaseVCloudDirectorClientLiveTest.REQUIRED_USER_VM_QUOTA)
             .isEnabled(true)
             .build());
