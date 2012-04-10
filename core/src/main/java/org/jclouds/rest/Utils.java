@@ -25,6 +25,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.internal.UtilsImpl;
+import org.jclouds.xml.XMLParser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.eventbus.EventBus;
@@ -110,5 +111,12 @@ public interface Utils {
     */
    @Beta
    Injector injector();
+   
+   XMLParser getXml();
+
+   /**
+    * #see #getXml
+    */
+   XMLParser xml();
 
 }

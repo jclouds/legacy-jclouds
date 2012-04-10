@@ -40,7 +40,7 @@ import com.google.common.collect.Multimap;
  */
 @Test(groups = "unit", testName = "BindToXMLPayloadTest")
 public class BindToXMLPayloadTest {
-   XMLParser xml = new JAXBParser();
+   XMLParser xml = new JAXBParser("true");
 
    @Test
    public void testBindJAXBObject() throws SecurityException, NoSuchMethodException {
