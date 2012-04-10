@@ -43,6 +43,7 @@ public class UploadVAppTemplateParams extends ParamsType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromUploadVAppTemplateParams(this);
    }
@@ -72,6 +73,7 @@ public class UploadVAppTemplateParams extends ParamsType {
       }
 
 
+      @Override
       public UploadVAppTemplateParams build() {
          return new UploadVAppTemplateParams(this);
       }

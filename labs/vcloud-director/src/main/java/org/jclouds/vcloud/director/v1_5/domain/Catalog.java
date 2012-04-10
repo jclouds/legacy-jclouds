@@ -42,6 +42,7 @@ public class Catalog extends CatalogType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromCatalog(this);
    }

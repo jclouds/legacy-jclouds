@@ -59,6 +59,7 @@ public class File extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromFile(this);
    }
@@ -96,12 +97,13 @@ public class File extends EntityType {
          return self();
       }
 
+      @Override
       public File build() {
          return new File(this);
 
       }
 
-      public Builder fromFile(File in) {
+      public B fromFile(File in) {
          return fromEntityType(in)
                .size(in.getSize())
                .bytesTransferred(in.getBytesTransferred())

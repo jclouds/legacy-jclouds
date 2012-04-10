@@ -69,6 +69,7 @@ public class IpsecVpnService extends NetworkServiceType<IpsecVpnService> {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromIpsecVpnService(this);
    }
@@ -103,6 +104,7 @@ public class IpsecVpnService extends NetworkServiceType<IpsecVpnService> {
          return this;
       }
 
+      @Override
       public IpsecVpnService build() {
          return new IpsecVpnService(isEnabled, externalIpAddress, publicIpAddress, ipsecVpnTunnels);
       }

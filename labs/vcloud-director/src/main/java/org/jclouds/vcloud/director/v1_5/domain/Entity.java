@@ -33,6 +33,7 @@ public class Entity extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromEntity(this);
    }

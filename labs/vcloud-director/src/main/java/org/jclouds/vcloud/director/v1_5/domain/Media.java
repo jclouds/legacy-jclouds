@@ -85,6 +85,7 @@ public class Media extends ResourceEntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromMedia(this);
    }

@@ -20,7 +20,6 @@ package org.jclouds.vcloud.director.v1_5;
 
 import java.net.URI;
 
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiType;
 import org.jclouds.apis.BaseApiMetadata;
 

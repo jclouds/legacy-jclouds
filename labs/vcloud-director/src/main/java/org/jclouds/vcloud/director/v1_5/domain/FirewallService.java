@@ -69,6 +69,7 @@ public class FirewallService extends NetworkServiceType<FirewallService> {
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromFirewallService(this);
    }
@@ -102,6 +103,7 @@ public class FirewallService extends NetworkServiceType<FirewallService> {
          return this;
       }
 
+      @Override
       public FirewallService build() {
          return new FirewallService(isEnabled, defaultAction, logDefaultAction, firewallRules);
 

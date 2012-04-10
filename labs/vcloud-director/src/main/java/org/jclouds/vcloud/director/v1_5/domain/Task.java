@@ -100,6 +100,7 @@ public class Task extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromTask(this);
    }

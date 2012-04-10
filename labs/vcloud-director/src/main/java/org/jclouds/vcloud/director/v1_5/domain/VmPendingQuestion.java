@@ -45,6 +45,7 @@ public class VmPendingQuestion extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromVmPendingQuestion(this);
    }

@@ -61,6 +61,7 @@ public class CloneMediaParams extends ParamsType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromCloneMediaParams(this);
    }
@@ -89,6 +90,7 @@ public class CloneMediaParams extends ParamsType {
          return self();
       }
 
+      @Override
       public CloneMediaParams build() {
          return new CloneMediaParams(this);
       }

@@ -47,6 +47,7 @@ public class TasksList extends ResourceType implements Set<Task> {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromTasksList(this);
    }

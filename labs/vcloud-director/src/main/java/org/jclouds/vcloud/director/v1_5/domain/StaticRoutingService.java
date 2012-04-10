@@ -65,6 +65,7 @@ public class StaticRoutingService extends NetworkServiceType<StaticRoutingServic
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromStaticRoutingService(this);
    }
@@ -82,6 +83,7 @@ public class StaticRoutingService extends NetworkServiceType<StaticRoutingServic
       }
 
 
+      @Override
       public StaticRoutingService build() {
          return new StaticRoutingService(isEnabled, staticRoutes);
       }
