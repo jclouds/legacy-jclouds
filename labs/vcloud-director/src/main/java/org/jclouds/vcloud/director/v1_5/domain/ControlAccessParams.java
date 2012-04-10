@@ -129,8 +129,9 @@ public class ControlAccessParams {
 
    public ControlAccessParams(Boolean sharedToEveryone, String everyoneAccessLevel, Iterable<AccessSetting> accessSettings) {
       this.sharedToEveryone = sharedToEveryone;
-      this.everyoneAccessLevel = everyoneAccessLevel;
       if (sharedToEveryone) {
+	      this.everyoneAccessLevel = checkNotNull(everyoneAccessLevel, "everyoneAccessLevel");
+      } else {
          checkNotNull(accessSettings, "accessSettings");
       }
       this.accessSettings = Iterables.isEmpty(accessSettings) ? null : ImmutableList.copyOf(accessSettings);

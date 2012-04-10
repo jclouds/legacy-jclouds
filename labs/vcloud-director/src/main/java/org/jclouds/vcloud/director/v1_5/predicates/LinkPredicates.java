@@ -35,22 +35,28 @@ public class LinkPredicates {
    /**
     * matches links of the given relation
     * 
-    * @param rel
-    *           ex. {@code context.getApi().getCurrentSession().getOrg().getLinks()}
+    * @param rel from {@code context.getApi().getCurrentSession().getOrg().getLinks()}
     * @return predicate that will match links of the given rel
     */
    public static Predicate<Link> relEquals(final String rel) {
       checkNotNull(rel, "rel must be defined");
 
+      return relEquals(Link.Rel.fromValue(rel));
+   }
+
+   /** @see #relEquals(String) */
+   public static Predicate<Link> relEquals(final Link.Rel rel) {
+      checkNotNull(rel, "rel must be defined");
+
       return new Predicate<Link>() {
          @Override
          public boolean apply(Link link) {
-            return rel.equals(link.getRel());
+            return rel == link.getRel();
          }
 
          @Override
          public String toString() {
-            return "relEquals(" + rel + ")";
+            return "relEquals(" + rel.value() + ")";
          }
       };
    }

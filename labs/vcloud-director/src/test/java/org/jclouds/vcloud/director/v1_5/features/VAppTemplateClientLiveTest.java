@@ -35,15 +35,18 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVAppTemplate;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.metadataToMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.net.URI;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppClientLiveTest;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
@@ -51,6 +54,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Envelope;
 import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Link.Rel;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
@@ -69,6 +73,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -404,11 +409,8 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       retryTaskSuccess.apply(task);
 
       // Confirm that can't access post-delete, i.e. template has been deleted
-      try {
-         vAppTemplateClient.getVAppTemplate(clonedVappTemplate.getHref());
-      } catch (VCloudDirectorException e) {
-         // success; should get a 403 because vAppTemplate no longer exists
-      }
+      VAppTemplate deleted = vAppTemplateClient.getVAppTemplate(clonedVappTemplate.getHref());
+      assertNull(deleted);
    }
 
    @Test(description = "POST /vAppTemplate/{id}/action/disableDownload")
@@ -418,11 +420,10 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       // TODO Check that it really is disabled. The only thing I can see for determining this 
       // is the undocumented "download" link in the VAppTemplate. But that is brittle and we
       // don't know what timing guarantees there are for adding/removing the link.
-      //
-      // For example:
-      //    VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
-      //    Set<Link> links = vAppTemplate.getLinks();
-      //    assertFalse(hasLinkMatchingRel(links, "download.*"), "Should not offer download link after disabling download: "+vAppTemplate);
+      VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
+      Set<Link> links = vAppTemplate.getLinks();
+      assertTrue(Iterables.all(Iterables.transform(links, rel), Predicates.not(Predicates.in(EnumSet.of(Link.Rel.DOWNLOAD_DEFAULT, Link.Rel.DOWNLOAD_ALTERNATE)))),
+            "Should not offer download link after disabling download: "+vAppTemplate);
    }
    
    @Test(description = "POST /vAppTemplate/{id}/action/enableDownload")
@@ -435,22 +436,18 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       // TODO Check that it really is enabled. The only thing I can see for determining this 
       // is the undocumented "download" link in the VAppTemplate. But that is brittle and we
       // don't know what timing guarantees there are for adding/removing the link.
-      //
-      // For example:
-      //    VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
-      //    Set<Link> links = vAppTemplate.getLinks();
-      //    assertTrue(hasLinkMatchingRel(links, "download.*"), "Should offer download link after enabling download: "+vAppTemplate);
+      VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
+      Set<Link> links = vAppTemplate.getLinks();
+      assertTrue(Iterables.any(Iterables.transform(links, rel), Predicates.in(EnumSet.of(Link.Rel.DOWNLOAD_DEFAULT, Link.Rel.DOWNLOAD_ALTERNATE))),
+            "Should offer download link after enabling download: "+vAppTemplate);
    }
    
-   @SuppressWarnings("unused")
-   private boolean hasLinkMatchingRel(Set<Link> links, String regex) {
-      for (Link link : links) {
-         if (link.getRel() != null && link.getRel().matches(regex)) {
-            return true;
-         }
+   private Function<Link, Link.Rel> rel = new Function<Link, Link.Rel>() {
+      @Override
+      public Rel apply(Link input) {
+         return input.getRel();
       }
-      return false;
-   }
+   };
    
    @Test(description = "POST /vAppTemplate/{id}/action/consolidate")
    public void testConsolidateVAppTemplate() throws Exception {
@@ -490,11 +487,11 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
       // Ask the VAppTemplate for its tasks, and the status of the matching task if it exists
       VAppTemplate vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
-      Set<Task> tasks = vAppTemplate.getTasks();
+      List<Task> tasks = vAppTemplate.getTasks();
       for (Task contender : tasks) {
          if (task.getId().equals(contender.getId())) {
-            String status = contender.getStatus();
-            if (status.equals(Task.Status.QUEUED) || status.equals(Task.Status.PRE_RUNNING) || status.equals(Task.Status.RUNNING)) {
+            Task.Status status = contender.getStatus();
+            if (EnumSet.of(Task.Status.QUEUED, Task.Status.PRE_RUNNING, Task.Status.RUNNING).contains(status)) {
                fail("Task "+contender+" reported complete, but is included in VAppTemplate in status "+status);
             }
          }

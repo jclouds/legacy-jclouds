@@ -305,8 +305,8 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "name", name, uploadedVAppTemplate.getName()));
       
       ResourceEntityType.Status expectedStatus = ResourceEntityType.Status.NOT_READY;
-      Integer actualStatus = uploadedVAppTemplate.getStatus();
-      assertEquals(actualStatus, expectedStatus.getValue(),
+      ResourceEntityType.Status actualStatus = uploadedVAppTemplate.getStatus();
+      assertEquals(actualStatus, expectedStatus,
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "status", expectedStatus, actualStatus));
       
    }

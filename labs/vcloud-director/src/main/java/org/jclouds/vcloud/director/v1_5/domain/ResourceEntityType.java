@@ -27,6 +27,8 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -49,27 +51,30 @@ import com.google.common.collect.Iterables;
 @XmlType(name = "ResourceEntityType")
 public abstract class ResourceEntityType extends EntityType {
 
+   @XmlType
+   @XmlEnum(Integer.class)
    public static enum Status {
       
-      FAILED_CREATION(-1, "The object could not be created.", true, true, true),
-      NOT_READY(0, "Not ready", true, false, false), // TODO duplicate code, but mentioned in `POST /vdc/{id}/action/uploadVAppTemplate`
-      UNRESOLVED(0, "The object is unresolved.", true, true, true),
-      RESOLVED(1, "The object is resolved.", true, true, true),
-      DEPLOYED(2, "The object is deployed.", false, false, false),
-      SUSPENDED(3, "The object is suspended.", false, true, true),
-      POWERED_ON(4, "The object is powered on.", false, true, true),
-      WAITING_FOR_INPUT(5, "The object is waiting for user input.", false, true, true),
-      UNKNOWN(6, "The object is in an unknown state.", true, true, true),
-      UNRECOGNIZED(7, "The object is in an unrecognized state.", true, true, true),
-      POWERED_OFF(8, "The object is powered off.", true, true, true),
-      INCONSISTENT_STATE(9, "The object is in an inconsistent state.", false, true, true),
-      MIXED(10, "Children do not all have the same status.", true, true, false),
-      UPLOAD_OVF_PENDING(11, "Upload initiated, OVF descriptor pending.", true, false, false),
-      UPLOAD_COPYING(12, "Upload initiated, copying contents.", true, false, false),
-      UPLOAD_DISK_PENDING(13, "Upload initiated , disk contents pending.", true, false, false),
-      UPLOAD_QUARANTINED(14, "Upload has been quarantined.", true, false, false),
-      UPLOAD_QUARANTINE_EXPIRED(15, "Upload quarantine period has expired.", true, false, false),
+      @XmlEnumValue("-1") FAILED_CREATION(-1, "The object could not be created.", true, true, true),
+      @XmlEnumValue("0") UNRESOLVED(0, "The object is unresolved.", true, true, true),
+      @XmlEnumValue("1") RESOLVED(1, "The object is resolved.", true, true, true),
+      @XmlEnumValue("2") DEPLOYED(2, "The object is deployed.", false, false, false),
+      @XmlEnumValue("3") SUSPENDED(3, "The object is suspended.", false, true, true),
+      @XmlEnumValue("4") POWERED_ON(4, "The object is powered on.", false, true, true),
+      @XmlEnumValue("5") WAITING_FOR_INPUT(5, "The object is waiting for user input.", false, true, true),
+      @XmlEnumValue("6") UNKNOWN(6, "The object is in an unknown state.", true, true, true),
+      @XmlEnumValue("7") UNRECOGNIZED(7, "The object is in an unrecognized state.", true, true, true),
+      @XmlEnumValue("8") POWERED_OFF(8, "The object is powered off.", true, true, true),
+      @XmlEnumValue("9") INCONSISTENT_STATE(9, "The object is in an inconsistent state.", false, true, true),
+      @XmlEnumValue("10") MIXED(10, "Children do not all have the same status.", true, true, false),
+      @XmlEnumValue("11") UPLOAD_OVF_PENDING(11, "Upload initiated, OVF descriptor pending.", true, false, false),
+      @XmlEnumValue("12") UPLOAD_COPYING(12, "Upload initiated, copying contents.", true, false, false),
+      @XmlEnumValue("13") UPLOAD_DISK_PENDING(13, "Upload initiated , disk contents pending.", true, false, false),
+      @XmlEnumValue("14") UPLOAD_QUARANTINED(14, "Upload has been quarantined.", true, false, false),
+      @XmlEnumValue("15") UPLOAD_QUARANTINE_EXPIRED(15, "Upload quarantine period has expired.", true, false, false),
       
+      // TODO duplicate code, but mentioned in `POST /vdc/{id}/action/uploadVAppTemplate`
+      NOT_READY(0, "Not ready", true, false, false),
       // Convention is "UNRECOGNIZED", but that is already a valid state name! so using UNRECOGNIZED_VALUE
       UNRECOGNIZED_VALUE(404, "Unrecognized", false, false, false);
       
@@ -137,7 +142,7 @@ public abstract class ResourceEntityType extends EntityType {
    
    public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
       private Set<File> files;
-      private Integer status;
+      private Status status;
 
       /**
        * @see ResourceEntityType#getFiles()
@@ -150,8 +155,16 @@ public abstract class ResourceEntityType extends EntityType {
       /**
        * @see ResourceEntityType#getStatus()
        */
-      public B status(Integer status) {
+      public B status(Status status) {
          this.status = status;
+         return self();
+      }
+
+      /**
+       * @see ResourceEntityType#getStatus()
+       */
+      public B status(Integer status) {
+         this.status = Status.fromValue(status);
          return self();
       }
 
@@ -163,9 +176,8 @@ public abstract class ResourceEntityType extends EntityType {
    @XmlElementWrapper(name = "Files")
    @XmlElement(name = "File")
    private Set<File> files;
-   
    @XmlAttribute
-   private Integer status;
+   private Status status;
 
    public ResourceEntityType(Builder<?> builder) {
       super(builder);
@@ -187,7 +199,7 @@ public abstract class ResourceEntityType extends EntityType {
    /**
     * Gets the value of the status property.
     */
-   public Integer getStatus() {
+   public Status getStatus() {
       return status;
    }
 

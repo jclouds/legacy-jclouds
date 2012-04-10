@@ -21,7 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * Basic entity type in the vCloud object model.
@@ -63,7 +63,7 @@ public class EntityType extends ResourceType {
    public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
       private String description;
-      private Set<Task> tasks = Sets.newLinkedHashSet();
+      private List<Task> tasks = Lists.newArrayList();
       private String name;
       private String id;
 
@@ -95,7 +95,7 @@ public class EntityType extends ResourceType {
        * @see EntityType#getTasks()
        */
       public B tasks(Iterable<Task> tasks) {
-         this.tasks = Sets.newLinkedHashSet(checkNotNull(tasks, "tasks"));
+         this.tasks = Lists.newArrayList(checkNotNull(tasks, "tasks"));
          return self();
       }
 
@@ -124,7 +124,7 @@ public class EntityType extends ResourceType {
    private String description;
    @XmlElementWrapper(name = "Tasks")
    @XmlElement(name = "Task")
-   private Set<Task> tasks;
+   private List<Task> tasks;
    @XmlAttribute
    private String id;
    @XmlAttribute(required = true)
@@ -133,7 +133,7 @@ public class EntityType extends ResourceType {
    protected EntityType(Builder<?> builder) {
       super(builder);
       this.description = builder.description;
-      this.tasks = builder.tasks == null || builder.tasks.isEmpty() ? null : ImmutableSet.copyOf(builder.tasks);
+      this.tasks = builder.tasks == null || builder.tasks.isEmpty() ? null : ImmutableList.copyOf(builder.tasks);
       this.id = builder.id;
       this.name = builder.name;
    }
@@ -156,8 +156,8 @@ public class EntityType extends ResourceType {
    /**
     * A list of queued, running, or recently completed tasks associated with this entity.
     */
-   public Set<Task> getTasks() {
-      return tasks == null ? ImmutableSet.<Task>of() : ImmutableSet.copyOf(tasks);
+   public List<Task> getTasks() {
+      return tasks == null ? ImmutableList.<Task>of() : ImmutableList.copyOf(tasks);
    }
 
    /**

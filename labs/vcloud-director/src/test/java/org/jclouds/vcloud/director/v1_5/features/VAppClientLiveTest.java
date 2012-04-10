@@ -166,7 +166,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
          if (media.getTasks().size() == 1) {
             Task uploadTask = Iterables.getOnlyElement(media.getTasks());
             Checks.checkTask(uploadTask);
-            assertEquals(uploadTask.getStatus(), "running");
+            assertEquals(uploadTask.getStatus(), Task.Status.RUNNING);
             assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
             media = context.getApi().getMediaClient().getMedia(media.getHref());
          }
@@ -184,6 +184,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       }
    }
    
+   @Override
    @AfterClass(alwaysRun = true)
    public void cleanUp() {
       if (adminContext != null && mediaURI != null) {

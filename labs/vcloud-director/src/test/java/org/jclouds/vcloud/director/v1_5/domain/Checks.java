@@ -42,6 +42,7 @@ import static org.testng.Assert.fail;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -96,7 +97,7 @@ public class Checks {
 
       // Check optional fields
       // NOTE description cannot be checked
-      Set<Task> tasks = entity.getTasks();
+      List<Task> tasks = entity.getTasks();
       if (tasks != null && tasks != null && !tasks.isEmpty()) {
          for (Task task : tasks) checkTask(task);
       }
@@ -133,12 +134,28 @@ public class Checks {
       // NOTE name cannot be checked
    }
 
+   /**
+    * Assumes the validTypes to be vcloud-specific types.
+    * 
+    * @see #checkResourceType(ResourceType, Collection)
+    */
    public static void checkResourceType(ResourceType resource) {
+      checkResourceType(resource, VCloudDirectorMediaType.ALL);
+   }
+
+   /**
+    * @see #checkResourceType(ResourceType, Collection)
+    */
+   public static void checkResourceType(ResourceType resource, String type) {
+      checkResourceType(resource, ImmutableSet.of(type));
+   }
+
+   public static void checkResourceType(ResourceType resource, Collection<String> validTypes) {
       // Check optional fields
       URI href = resource.getHref();
       if (href != null) checkHref(href);
       String type = resource.getType();
-      if (type != null) checkType(type);
+      if (type != null) checkType(type, validTypes);
       Set<Link> links = resource.getLinks();
       if (links != null && !links.isEmpty()) {
          for (Link link : links) checkLink(link);
@@ -286,6 +303,7 @@ public class Checks {
    public static void checkAdminOrg(AdminOrg org) {
       // required
       assertNotNull(org.getSettings(), String.format(NOT_NULL_OBJ_FIELD_FMT, "settings", "AdminOrg"));
+      checkResourceType(org, VCloudDirectorMediaType.ADMIN_ORG);
       
       // optional
       for (Reference user : org.getUsers()) {
@@ -298,7 +316,7 @@ public class Checks {
          checkReferenceType(catalog, VCloudDirectorMediaType.ADMIN_CATALOG);
       }
       for (Reference vdc : org.getVdcs()) {
-         checkReferenceType(vdc, VCloudDirectorMediaType.ADMIN_VDC);
+         checkReferenceType(vdc, VCloudDirectorMediaType.VDC);
       }
       for (Reference network : org.getNetworks()) {
          checkReferenceType(network, VCloudDirectorMediaType.ADMIN_NETWORK);
@@ -841,7 +859,7 @@ public class Checks {
       // NOTE customUsersOu cannot be checked
       if (settings.getLdapMode() != null) {
          assertTrue(LdapMode.ALL.contains(settings.getLdapMode()),
-               String.format(REQUIRED_VALUE_OBJECT_FMT, "LdapMode", "OrdLdapSettings", settings.getLdapMode(),
+               String.format(REQUIRED_VALUE_OBJECT_FMT, "LdapMode", "OrgLdapSettings", settings.getLdapMode(),
                      Iterables.toString(OrgLdapSettings.LdapMode.ALL)));
       }
       if (settings.getCustomOrgLdapSettings() != null) {

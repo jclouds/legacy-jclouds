@@ -60,12 +60,19 @@ public class Task extends EntityType {
    @XmlType
    @XmlEnum(String.class)
    public static enum Status {
+      /** The task has been queued for execution. */
       @XmlEnumValue("queued") QUEUED("queued"),
+      /** The task is awaiting preprocessing or, if it is a blocking task, administrative action. */
       @XmlEnumValue("preRunning") PRE_RUNNING("preRunning"),
+      /** The task is runnning.*/
       @XmlEnumValue("running") RUNNING("running"),
+      /** The task completed with a status of success. */
       @XmlEnumValue("success") SUCCESS("success"),
+      /** The task encountered an error while running. */
       @XmlEnumValue("error") ERROR("error"),
+      /** The task was canceled by the owner or an administrator. */
       @XmlEnumValue("canceled") CANCELED("canceled"),
+      /** The task was aborted by an administrative action. */
       @XmlEnumValue("aborted") ABORTED("aborted"),
       UNRECOGNIZED("unrecognized");
       
@@ -116,7 +123,7 @@ public class Task extends EntityType {
       private Reference user;
       private Object params;
       private Integer progress;
-      private String status;
+      private Status status;
       private String operation;
       private String operationName;
       private Date startTime;
@@ -175,6 +182,14 @@ public class Task extends EntityType {
        * @see Task#getStatus()
        */
       public B status(String status) {
+         this.status = Status.fromValue(status);
+         return self();
+      }
+
+      /**
+       * @see Task#getStatus()
+       */
+      public B status(Status status) {
          this.status = status;
          return self();
       }
@@ -274,7 +289,7 @@ public class Task extends EntityType {
    @XmlElement(name = "Params")
    private Object params;
    @XmlAttribute
-   private String status;
+   private Status status;
    @XmlAttribute
    private String operation;
    @XmlAttribute
@@ -333,19 +348,8 @@ public class Task extends EntityType {
 
    /**
     * The execution status of the task.
-    *
-    * One of:
-    * <ul>
-    * <li>queued - The task has been queued for execution.
-    * <li>preRunning - The task is awaiting preprocessing or, if it is a blocking task, administrative action.
-    * <li>running - The task is runnning.
-    * <li>success - The task completed with a status of success.
-    * <li>error - The task encountered an error while running.
-    * <li>canceled - The task was canceled by the owner or an administrator.
-    * <li>aborted - The task was aborted by an administrative action.
-    * </ul>
     */
-   public String getStatus() {
+   public Status getStatus() {
       return status;
    }
 
