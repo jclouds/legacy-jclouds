@@ -302,13 +302,11 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       } catch (ConfigurationException e) {
 
       }
-      
-      Caller caller =  child.getInstance(Caller.class);
-      
-      caller.getCallee().onePath("foo");
-      caller.getCallee2().onePath("bar");
-      // Note this used to result in "http://localhost:1111/client/1/foo/2"!
-      caller.getCallee().onePath("foo");
+
+      child.getInstance(Caller.class).getCallee().onePath("foo");
+      child.getInstance(Caller.class).getCallee2().onePath("bar");
+      // Note if wrong method is picked up, we'll see "http://localhost:1111/client/1/foo/2"!
+      child.getInstance(Caller.class).getCallee().onePath("foo");
    }
 
    public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException,
