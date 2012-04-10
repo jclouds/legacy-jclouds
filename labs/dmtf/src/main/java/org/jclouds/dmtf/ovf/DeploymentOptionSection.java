@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -41,6 +42,7 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "DeploymentOptionSection")
+@XmlType(name = "DeploymentOptionSection_Type")
 public class DeploymentOptionSection extends SectionType {
 
    public static Builder<?> builder() {

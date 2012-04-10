@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
@@ -35,6 +36,7 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  */
 @XmlRootElement(name = "NetworkSection")
+@XmlType(name = "NetworkSection_Type")
 public class NetworkSection extends SectionType {
 
    public static Builder<?> builder() {
