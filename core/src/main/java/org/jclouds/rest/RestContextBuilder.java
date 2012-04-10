@@ -35,6 +35,8 @@ import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.events.config.ConfiguresEventBus;
+import org.jclouds.events.config.EventBusModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -109,6 +111,7 @@ public class RestContextBuilder<S, A> {
       addHttpModuleIfNeededAndNotPresent(modules);
       ifHttpConfigureRestOtherwiseGuiceClientFactory(modules);
       addExecutorServiceIfNotPresent(modules);
+      addEventBusIfNotPresent(modules);
       addCredentialStoreIfNotPresent(modules);
       modules.add(new LifeCycleModule());
       modules.add(new BindPropertiesToAnnotations());
@@ -210,6 +213,19 @@ public class RestContextBuilder<S, A> {
 
    protected void addClientModule(List<Module> modules) {
       modules.add(new RestClientModule<S, A>(syncClientType, asyncClientType));
+   }
+   
+   @VisibleForTesting
+   protected void addEventBusIfNotPresent(List<Module> modules) {
+       if (!any(modules, new Predicate<Module>() {
+           public boolean apply(Module input) {
+              return input.getClass().isAnnotationPresent(ConfiguresEventBus.class);
+           }
+        }
+       
+        )) {
+           modules.add(new EventBusModule());
+       }
    }
 
    @VisibleForTesting

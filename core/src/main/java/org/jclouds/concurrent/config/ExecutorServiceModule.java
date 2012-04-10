@@ -45,8 +45,6 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -321,12 +319,6 @@ public class ExecutorServiceModule extends AbstractModule {
          return description;
       }
 
-   }
-   
-   @Provides
-   @Singleton
-   EventBus provideEventBus(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads){
-      return new AsyncEventBus(userThreads);
    }
    
    @Provides

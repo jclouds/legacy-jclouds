@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.events.config.EventBusModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -74,6 +75,17 @@ public class RestContextBuilderTest {
       modules.add(module);
       new RestContextBuilder<String, String>(String.class, String.class, new Properties())
             .addLoggingModuleIfNotPresent(modules);
+      assertEquals(modules.size(), 1);
+      assertEquals(modules.remove(0), module);
+   }
+   
+   @Test
+   public void testAddEventBusModuleIfNotPresent() {
+      List<Module> modules = new ArrayList<Module>();
+      EventBusModule module = new EventBusModule();
+      modules.add(module);
+      new RestContextBuilder<String, String>(String.class, String.class, new Properties())
+            .addEventBusIfNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
