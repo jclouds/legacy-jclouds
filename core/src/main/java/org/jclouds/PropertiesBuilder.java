@@ -45,6 +45,7 @@ import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+import static org.jclouds.Constants.PROPERTY_PRETTY_PRINT_PAYLOADS;
 
 import java.util.Properties;
 
@@ -204,6 +205,14 @@ public class PropertiesBuilder {
       properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, Integer.toString(connectionLimit));
       return this;
    }
+   
+   /**
+    * @see org.jclouds.Constants.PROPERTY_PRETTY_PRINT_PAYLOADS
+    */
+   public PropertiesBuilder prettyPrintPayloads(boolean prettyPrintPayloads) {
+      properties.setProperty(PROPERTY_PRETTY_PRINT_PAYLOADS, Boolean.toString(prettyPrintPayloads));
+      return this;
+   }
 
    protected final Properties properties;
 
@@ -226,6 +235,7 @@ public class PropertiesBuilder {
       props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");
       props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");
       props.setProperty(PROPERTY_SESSION_INTERVAL, 60 + "");
+      props.setProperty(PROPERTY_PRETTY_PRINT_PAYLOADS, "true");
       return props;
    }
 

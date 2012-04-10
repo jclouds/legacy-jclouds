@@ -74,271 +74,329 @@ import com.google.common.collect.Iterables;
  * 
  * @author grkvlt@apache.org
  */
-public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
+public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClientLiveTest
+{
 
-   public static final String VAPP = "vApp";
-   public static final String VAPP_TEMPLATE = "vAppTemplate";
-   public static final String VDC = "vdc";
+    public static final String VAPP = "vApp";
 
-   /*
-    * Convenience reference to API clients.
-    */
+    public static final String VAPP_TEMPLATE = "vAppTemplate";
 
-   protected CatalogClient catalogClient;
-   protected QueryClient queryClient;
-   protected VAppClient vAppClient;
-   protected VAppTemplateClient vAppTemplateClient;
-   protected VdcClient vdcClient;
-   protected MetadataClient.Writeable metadataClient;
+    public static final String VDC = "vdc";
 
-   /*
-    * Objects shared between tests.
-    */
+    /*
+     * Convenience reference to API clients.
+     */
 
-   protected Vdc vdc;
-   protected Vm vm;
-   protected URI vAppURI;
-   protected VApp vApp;
-   protected VAppTemplate vAppTemplate;
+    protected CatalogClient catalogClient;
 
-   /**
-    * Retrieves the required clients from the REST API context
-    *
-    * @see BaseVCloudDirectorClientLiveTest#setupRequiredClients()
-    */
-   @Override
-   @BeforeClass(alwaysRun = true, description = "Retrieves the required clients from the REST API context")
-   protected void setupRequiredClients() {
-      assertNotNull(context.getApi());
+    protected QueryClient queryClient;
 
-      catalogClient = context.getApi().getCatalogClient();
-      queryClient = context.getApi().getQueryClient();
-      vAppClient = context.getApi().getVAppClient();
-      vAppTemplateClient = context.getApi().getVAppTemplateClient();
-      vdcClient = context.getApi().getVdcClient();
-      
-      setupEnvironment();
-   }
+    protected VAppClient vAppClient;
 
-   /**
-    * Sets up the environment.
-    *
-    * Retrieves the test {@link Vdc} and {@link VAppTemplate} from their configured {@link URI}s.
-    * Instantiates a new test VApp.
-    */
-   protected void setupEnvironment() {
-      // Get the configured Vdc for the tests
-      vdc = vdcClient.getVdc(vdcURI);
-      assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
+    protected VAppTemplateClient vAppTemplateClient;
 
-      // Get the configured VAppTemplate for the tests
-      vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
-      assertNotNull(vAppTemplate, String.format(ENTITY_NON_NULL, VAPP_TEMPLATE));
+    protected VdcClient vdcClient;
 
-      // Instantiate a new VApp
-      VApp vAppInstantiated = instantiateVApp();
-      assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
-      vAppURI = vAppInstantiated.getHref();
+    protected MetadataClient.Writeable metadataClient;
 
-      // Wait for the task to complete
-      Task instantiateTask = Iterables.getOnlyElement(vAppInstantiated.getTasks());
-      assertTrue(retryTaskSuccessLong.apply(instantiateTask), String.format(TASK_COMPLETE_TIMELY, "instantiateTask"));
+    /*
+     * Objects shared between tests.
+     */
 
-      // Get the instantiated VApp
-      vApp = vAppClient.getVApp(vAppURI);
+    protected Vdc vdc;
 
-      // Get the Vm
-      List<Vm> vms = vApp.getChildren().getVms();
-      vm = Iterables.getOnlyElement(vms);
-      assertFalse(vms.isEmpty(), "The VApp must have a Vm");
-   }
+    protected Vm vm;
 
-   protected void getGuestCustomizationSection(Function<URI, GuestCustomizationSection> getGuestCustomizationSection) {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+    protected URI vAppURI;
 
-      // The method under test
-      try {
-         GuestCustomizationSection section = getGuestCustomizationSection.apply(vmURI);
+    protected VApp vApp;
 
-         // Check the retrieved object is well formed
-         checkGuestCustomizationSection(section);
-      } catch (Exception e) {
-         Throwables.propagate(e);
-      }
-   }
+    protected VAppTemplate vAppTemplate;
 
-   protected void getNetworkConnectionSection(Function<URI, NetworkConnectionSection> getNetworkConnectionSection) {
-      // Get URI for child VM
-      URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+    /**
+     * Retrieves the required clients from the REST API context
+     * 
+     * @see BaseVCloudDirectorClientLiveTest#setupRequiredClients()
+     */
+    @Override
+    @BeforeClass(alwaysRun = true, description = "Retrieves the required clients from the REST API context")
+    protected void setupRequiredClients()
+    {
+        assertNotNull(context.getApi());
 
-      // The method under test
-      try {
-         NetworkConnectionSection section = getNetworkConnectionSection.apply(vmURI);
+        catalogClient = context.getApi().getCatalogClient();
+        queryClient = context.getApi().getQueryClient();
+        vAppClient = context.getApi().getVAppClient();
+        vAppTemplateClient = context.getApi().getVAppTemplateClient();
+        vdcClient = context.getApi().getVdcClient();
 
-         // Check the retrieved object is well formed
-         checkNetworkConnectionSection(section);
-      } catch (Exception e) {
-         Throwables.propagate(e);
-      }
-   }
+        setupEnvironment();
+    }
 
-   @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps") 
-   protected void cleanUp() {
-      vdc = vdcClient.getVdc(vdcURI); // Refresh
-      // Find references in the Vdc with the VApp type and in the list of instantiated VApp names
-      Iterable<Reference> vApps = Iterables.filter(
-            vdc.getResourceEntities(),
-            Predicates.and(
-                  ReferencePredicates.<Reference>typeEquals(VCloudDirectorMediaType.VAPP),
-                  ReferencePredicates.<Reference>nameIn(vAppNames)
-            )
-      );
+    /**
+     * Sets up the environment. Retrieves the test {@link Vdc} and {@link VAppTemplate} from their
+     * configured {@link URI}s. Instantiates a new test VApp.
+     */
+    protected void setupEnvironment()
+    {
+        // Get the configured Vdc for the tests
+        vdc = vdcClient.getVdc(vdcURI);
+        assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
 
-      // If we found any references, delete the VApp they point to
-      if (!Iterables.isEmpty(vApps)) {
-         for (Reference ref : vApps) {
-            cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
-         }
-      } else {
-         logger.warn("No VApps in list found in Vdc %s (%s)", vdc.getName(), Iterables.toString(vAppNames));
-      }
-   }
+        // Get the configured VAppTemplate for the tests
+        vAppTemplate = vAppTemplateClient.getVAppTemplate(vAppTemplateURI);
+        assertNotNull(vAppTemplate, String.format(ENTITY_NON_NULL, VAPP_TEMPLATE));
 
-   protected static CimBoolean cimBoolean(boolean val) {
-      CimBoolean result = new CimBoolean();
-      result.setValue(val);
-      return result;
-   }
+        // Instantiate a new VApp
+        VApp vAppInstantiated = instantiateVApp();
+        assertNotNull(vAppInstantiated, String.format(ENTITY_NON_NULL, VAPP));
+        vAppURI = vAppInstantiated.getHref();
 
-   protected static CimUnsignedInt cimUnsignedInt(long val) {
-      CimUnsignedInt result = new CimUnsignedInt();
-      result.setValue(val);
-      return result;
-   }
+        // Wait for the task to complete
+        Task instantiateTask = Iterables.getOnlyElement(vAppInstantiated.getTasks());
+        assertTrue(retryTaskSuccessLong.apply(instantiateTask),
+            String.format(TASK_COMPLETE_TIMELY, "instantiateTask"));
 
-   protected static CimUnsignedLong cimUnsignedLong(BigInteger val) {
-      CimUnsignedLong result = new CimUnsignedLong();
-      result.setValue(val);
-      return result;
-   }
+        // Get the instantiated VApp
+        vApp = vAppClient.getVApp(vAppURI);
 
-   protected static CimString cimString(String value) {
-      return new CimString(value);
-   }
+        // Get the Vm
+        List<Vm> vms = vApp.getChildren().getVms();
+        vm = Iterables.getOnlyElement(vms);
+        assertFalse(vms.isEmpty(), "The VApp must have a Vm");
+    }
 
-   protected void checkHasMatchingItem(final String context, final RasdItemsList items, final String instanceId, final String elementName) {
-      Optional<ResourceAllocationSettingData> found = Iterables.tryFind(items.getItems(), new Predicate<ResourceAllocationSettingData>() {
-         @Override
-         public boolean apply(ResourceAllocationSettingData item) {
-            String itemInstanceId = item.getInstanceID();
-            if (itemInstanceId.equals(instanceId)) {
-               Assert.assertEquals(item.getElementName(), elementName,
-                     String.format(OBJ_FIELD_EQ, VAPP, context + "/" + instanceId + "/elementName", elementName, item.getElementName()));
+    protected void getGuestCustomizationSection(
+        final Function<URI, GuestCustomizationSection> getGuestCustomizationSection)
+    {
+        // Get URI for child VM
+        URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
 
-               return true;
+        // The method under test
+        try
+        {
+            GuestCustomizationSection section = getGuestCustomizationSection.apply(vmURI);
+
+            // Check the retrieved object is well formed
+            checkGuestCustomizationSection(section);
+        }
+        catch (Exception e)
+        {
+            Throwables.propagate(e);
+        }
+    }
+
+    protected void getNetworkConnectionSection(
+        final Function<URI, NetworkConnectionSection> getNetworkConnectionSection)
+    {
+        // Get URI for child VM
+        URI vmURI = Iterables.getOnlyElement(vApp.getChildren().getVms()).getHref();
+
+        // The method under test
+        try
+        {
+            NetworkConnectionSection section = getNetworkConnectionSection.apply(vmURI);
+
+            // Check the retrieved object is well formed
+            checkNetworkConnectionSection(section);
+        }
+        catch (Exception e)
+        {
+            Throwables.propagate(e);
+        }
+    }
+
+    @AfterClass(alwaysRun = true, description = "Cleans up the environment by deleting created VApps")
+    protected void cleanUp()
+    {
+        vdc = vdcClient.getVdc(vdcURI); // Refresh
+        // Find references in the Vdc with the VApp type and in the list of instantiated VApp names
+        Iterable<Reference> vApps =
+            Iterables.filter(vdc.getResourceEntities(), Predicates.and(
+                ReferencePredicates.<Reference> typeEquals(VCloudDirectorMediaType.VAPP),
+                ReferencePredicates.<Reference> nameIn(vAppNames)));
+
+        // If we found any references, delete the VApp they point to
+        if (!Iterables.isEmpty(vApps))
+        {
+            for (Reference ref : vApps)
+            {
+                cleanUpVApp(ref.getHref()); // NOTE may fail, but should continue deleting
             }
-            return false;
-         }
-      });
-      assertTrue(found.isPresent(), "no " + context + " item found with id " + instanceId + "; only found " + items);
-   }
+        }
+        else
+        {
+            logger.warn("No VApps in list found in Vdc %s (%s)", vdc.getName(),
+                Iterables.toString(vAppNames));
+        }
+    }
 
-   /**
-    * Power on a {@link VApp}s {@link Vm}s.
-    *
-    * @see #powerOn(URI)
-    */
-   protected VApp powerOn(VApp testVApp) {
-      return powerOn(testVApp.getHref());
-   }
+    protected static CimBoolean cimBoolean(final boolean val)
+    {
+        CimBoolean result = new CimBoolean();
+        result.setValue(val);
+        return result;
+    }
 
-   /**
-    * Power on a VApp.
-    */
-   protected VApp powerOn(URI testVAppURI) {
-      VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = Status.fromValue(vm.getStatus());
-      if (status != Status.POWERED_ON) {
-         Task powerOn = vAppClient.powerOn(vm.getHref());
-         assertTaskSucceedsLong(powerOn);
-      }
-      assertVAppStatus(testVAppURI, Status.POWERED_ON);
-      return testVApp;
-   }
+    protected static CimUnsignedInt cimUnsignedInt(final long val)
+    {
+        CimUnsignedInt result = new CimUnsignedInt();
+        result.setValue(val);
+        return result;
+    }
 
-   /**
-    * Power off a  {@link VApp}s {@link Vm}s.
-    *
-    * @see #powerOff(URI)
-    */
-   protected VApp powerOff(VApp testVApp) {
-      return powerOff(testVApp.getHref());
-   }
+    protected static CimUnsignedLong cimUnsignedLong(final BigInteger val)
+    {
+        CimUnsignedLong result = new CimUnsignedLong();
+        result.setValue(val);
+        return result;
+    }
 
-   /**
-    * Power off a {@link VApp}s {@link Vm}s.
-    */
-   protected VApp powerOff(URI testVAppURI) {
-      VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = Status.fromValue(vm.getStatus());
-      if (status != Status.POWERED_OFF) {
-         Task powerOff = vAppClient.powerOff(vm.getHref());
-         assertTaskSucceedsLong(powerOff);
-      }
-      assertVAppStatus(testVAppURI, Status.POWERED_OFF);
-      return testVApp;
-   }
+    protected static CimString cimString(final String value)
+    {
+        return new CimString(value);
+    }
 
-   /**
-    * Suspend a {@link VApp}s {@link Vm}s.
-    *
-    * @see #suspend(URI)
-    */
-   protected VApp suspend(VApp testVApp) {
-      return powerOff(testVApp.getHref());
-   }
+    protected void checkHasMatchingItem(final String context, final RasdItemsList items,
+        final String instanceId, final String elementName)
+    {
+        Optional<ResourceAllocationSettingData> found =
+            Iterables.tryFind(items.getItems(), new Predicate<ResourceAllocationSettingData>()
+            {
+                @Override
+                public boolean apply(final ResourceAllocationSettingData item)
+                {
+                    String itemInstanceId = item.getInstanceID();
+                    if (itemInstanceId.equals(instanceId))
+                    {
+                        Assert.assertEquals(
+                            item.getElementName(),
+                            elementName,
+                            String.format(OBJ_FIELD_EQ, VAPP, context + "/" + instanceId
+                                + "/elementName", elementName, item.getElementName()));
 
-   /**
-    * Suspend a {@link VApp}s {@link Vm}s.
-    */
-   protected VApp suspend(URI testVAppURI) {
-      VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = Status.fromValue(vm.getStatus());
-      if (status != Status.SUSPENDED) {
-         Task suspend = vAppClient.suspend(vm.getHref());
-         assertTaskSucceedsLong(suspend);
-      }
-      assertVAppStatus(testVAppURI, Status.SUSPENDED);
-      return testVApp;
-   }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        assertTrue(found.isPresent(), "no " + context + " item found with id " + instanceId
+            + "; only found " + items);
+    }
 
-   /**
-    * Check the {@link VApp}s {@link Vm}s current status.
-    */
-   protected void assertVAppStatus(URI testVAppURI, Status status) {
-      VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      assertEquals(vm.getStatus(), status.getValue(),String.format(OBJ_FIELD_EQ, VAPP, "status", status.toString(), Status.fromValue(vm.getStatus()).toString()));
-   }
+    /**
+     * Power on a {@link VApp}s {@link Vm}s.
+     * 
+     * @see #powerOn(URI)
+     */
+    protected VApp powerOn(final VApp testVApp)
+    {
+        return powerOn(testVApp.getHref());
+    }
 
-   /**
-    * Marshals a JAXB annotated object into XML.
-    *
-    * The XML is output using {@link org.jclouds.logging.Logger#debug(String)}
-    */
-   protected void debug(Object object) {
-      JAXBParser parser = new JAXBParser();
-      try {
-         String xml = parser.toXML(object);
-         logger.debug(Strings.padStart(Strings.padEnd(" " + object.getClass().toString() + " ", 70, '-'), 80, '-'));
-         logger.debug(xml);
-         logger.debug(Strings.repeat("-", 80));
-      } catch (IOException ioe) {
-         Throwables.propagate(ioe);
-      }
-   }
+    /**
+     * Power on a VApp.
+     */
+    protected VApp powerOn(final URI testVAppURI)
+    {
+        VApp testVApp = vAppClient.getVApp(testVAppURI);
+        Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+        Status status = Status.fromValue(vm.getStatus());
+        if (status != Status.POWERED_ON)
+        {
+            Task powerOn = vAppClient.powerOn(vm.getHref());
+            assertTaskSucceedsLong(powerOn);
+        }
+        assertVAppStatus(testVAppURI, Status.POWERED_ON);
+        return testVApp;
+    }
+
+    /**
+     * Power off a {@link VApp}s {@link Vm}s.
+     * 
+     * @see #powerOff(URI)
+     */
+    protected VApp powerOff(final VApp testVApp)
+    {
+        return powerOff(testVApp.getHref());
+    }
+
+    /**
+     * Power off a {@link VApp}s {@link Vm}s.
+     */
+    protected VApp powerOff(final URI testVAppURI)
+    {
+        VApp testVApp = vAppClient.getVApp(testVAppURI);
+        Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+        Status status = Status.fromValue(vm.getStatus());
+        if (status != Status.POWERED_OFF)
+        {
+            Task powerOff = vAppClient.powerOff(vm.getHref());
+            assertTaskSucceedsLong(powerOff);
+        }
+        assertVAppStatus(testVAppURI, Status.POWERED_OFF);
+        return testVApp;
+    }
+
+    /**
+     * Suspend a {@link VApp}s {@link Vm}s.
+     * 
+     * @see #suspend(URI)
+     */
+    protected VApp suspend(final VApp testVApp)
+    {
+        return powerOff(testVApp.getHref());
+    }
+
+    /**
+     * Suspend a {@link VApp}s {@link Vm}s.
+     */
+    protected VApp suspend(final URI testVAppURI)
+    {
+        VApp testVApp = vAppClient.getVApp(testVAppURI);
+        Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+        Status status = Status.fromValue(vm.getStatus());
+        if (status != Status.SUSPENDED)
+        {
+            Task suspend = vAppClient.suspend(vm.getHref());
+            assertTaskSucceedsLong(suspend);
+        }
+        assertVAppStatus(testVAppURI, Status.SUSPENDED);
+        return testVApp;
+    }
+
+    /**
+     * Check the {@link VApp}s {@link Vm}s current status.
+     */
+    protected void assertVAppStatus(final URI testVAppURI, final Status status)
+    {
+        VApp testVApp = vAppClient.getVApp(testVAppURI);
+        Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
+        assertEquals(
+            vm.getStatus(),
+            status.getValue(),
+            String.format(OBJ_FIELD_EQ, VAPP, "status", status.toString(),
+                Status.fromValue(vm.getStatus()).toString()));
+    }
+
+    /**
+     * Marshals a JAXB annotated object into XML. The XML is output using
+     * {@link org.jclouds.logging.Logger#debug(String)}
+     */
+    protected void debug(final Object object)
+    {
+        JAXBParser parser = new JAXBParser("true");
+        try
+        {
+            String xml = parser.toXML(object);
+            logger.debug(Strings.padStart(
+                Strings.padEnd(" " + object.getClass().toString() + " ", 70, '-'), 80, '-'));
+            logger.debug(xml);
+            logger.debug(Strings.repeat("-", 80));
+        }
+        catch (IOException ioe)
+        {
+            Throwables.propagate(ioe);
+        }
+    }
 }
