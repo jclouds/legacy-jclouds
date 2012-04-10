@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.dmtf.ovf.SectionType;
 
@@ -45,6 +46,7 @@ import com.google.common.collect.Sets;
  * </pre>
  */
 @XmlRootElement(name = "NetworkConfigSection")
+@XmlType(name = "NetworkConfigSectionType")
 public class NetworkConfigSection extends SectionType {
 
    public static Builder<?> builder() {

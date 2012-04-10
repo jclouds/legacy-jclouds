@@ -21,9 +21,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
@@ -54,7 +52,7 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "InstantiationParams")
 @XmlType(name = "InstantiationParamsType")
-public class InstantiationParams implements Set<SectionType> {
+public class InstantiationParams {
 
    public static Builder builder() {
       return new Builder();
@@ -169,81 +167,5 @@ public class InstantiationParams implements Set<SectionType> {
    public String toString() {
       return Objects.toStringHelper("").add("sections", sections).toString();
    }
-
-   /**
-    * The delegate always returns a {@link Set} even if {@link #sections} is {@literal null}.
-    *
-    * The delegated {@link Set} is used by the methods implementing its interface.
-    * <p>
-    * NOTE Annoying lack of multiple inheritance for using ForwardingList!
-    */
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   private Set<SectionType> delegate() {
-      return (Set) getSections();
-   }
-
-   @Override
-   public boolean add(SectionType arg0) {
-      return delegate().add(arg0);
-   }
-
-   @Override
-   public boolean addAll(Collection<? extends SectionType> arg0) {
-      return delegate().addAll(arg0);
-   }
-
-   @Override
-   public void clear() {
-      delegate().clear();
-   }
-
-   @Override
-   public boolean contains(Object arg0) {
-      return delegate().contains(arg0);
-   }
-
-   @Override
-   public boolean containsAll(Collection<?> arg0) {
-      return delegate().containsAll(arg0);
-   }
-
-   @Override
-   public boolean isEmpty() {
-      return delegate().isEmpty();
-   }
-
-   @Override
-   public Iterator<SectionType> iterator() {
-      return delegate().iterator();
-   }
-
-   @Override
-   public boolean remove(Object arg0) {
-      return delegate().remove(arg0);
-   }
-
-   @Override
-   public boolean removeAll(Collection<?> arg0) {
-      return delegate().removeAll(arg0);
-   }
-
-   @Override
-   public boolean retainAll(Collection<?> arg0) {
-      return delegate().retainAll(arg0);
-   }
-
-   @Override
-   public int size() {
-      return delegate().size();
-   }
-
-   @Override
-   public Object[] toArray() {
-      return delegate().toArray();
-   }
-
-   @Override
-   public <T> T[] toArray(T[] arg0) {
-      return delegate().toArray(arg0);
-   }
+   
 }
