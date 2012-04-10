@@ -21,15 +21,21 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * A link.
@@ -42,71 +48,70 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlRootElement(name = "Link")
 public class Link extends Reference {
+   
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum Rel {
+      @XmlEnumValue("add") ADD("add"),
+      @XmlEnumValue("alternate") ALTERNATE("alternate"),
+      @XmlEnumValue("catalogItem") CATALOG_ITEM("catalogItem"),
+      @XmlEnumValue("collaboration:abort") COLLABORATION_ABORT("collaboration:abort"),
+      @XmlEnumValue("collaboration:fail") COLLABORATION_FAIL("collaboration:fail"),
+      @XmlEnumValue("collaboration:resume") COLLABORATION_RESUME("collaboration:resume"),
+      @XmlEnumValue("consolidate") CONSOLIDATE("consolidate"),
+      @XmlEnumValue("controlAccess") CONTROL_ACCESS("controlAccess"),
+      @XmlEnumValue("copy") COPY("copy"),
+      @XmlEnumValue("deploy") DEPLOY("deploy"),
+      @XmlEnumValue("disable") DISABLE("disable"),
+      @XmlEnumValue("discardState") DISCARD_STATE("discardState"),
+      @XmlEnumValue("down") DOWN("down"),
+      @XmlEnumValue("download:alternate") DOWNLOAD_ALTERNATE("download:alternate"),
+      @XmlEnumValue("download:default") DOWNLOAD_DEFAULT("download:default"),
+      @XmlEnumValue("edit") EDIT("edit"),
+      @XmlEnumValue("enable") ENABLE("enable"),
+      @XmlEnumValue("firstPage") FIRST_PAGE("firstPage"),
+      @XmlEnumValue("installVmwareTools") INSTALL_VMWARE_TOOLS("installVmwareTools"),
+      @XmlEnumValue("lastPage") LAST_PAGE("lastPage"),
+      @XmlEnumValue("media:ejectMedia") EJECT_MEDIA("media:ejectMedia"),
+      @XmlEnumValue("media:insertMedia") INSERT_MEDIA("media:insertMedia"),
+      @XmlEnumValue("move") MOVE("move"),
+      @XmlEnumValue("nextPage") NEXT_PAGE("nextPage"),
+      @XmlEnumValue("ova") OVA("ova"),
+      @XmlEnumValue("ovf") OVF("ovf"),
+      @XmlEnumValue("power:powerOff") POWER_OFF("power:powerOff"),
+      @XmlEnumValue("power:powerOn") POWER_ON("power:powerOn"),
+      @XmlEnumValue("power:reboot") REBOOT("power:reboot"),
+      @XmlEnumValue("power:reset") RESET("power:reset"),
+      @XmlEnumValue("power:shutdown") SHUTDOWN("power:shutdown"),
+      @XmlEnumValue("power:suspend") SUSPEND("power:suspend"),
+      @XmlEnumValue("previousPage") PREVIOUS_PAGE("previousPage"),
+      @XmlEnumValue("publish") PUBLISH("publish"),
+      @XmlEnumValue("recompose") RECOMPOSE("recompose"),
+      @XmlEnumValue("reconnect") RECONNECT("reconnect"),
+      @XmlEnumValue("register") REGISTER("register"),
+      @XmlEnumValue("reject") REJECT("reject"),
+      @XmlEnumValue("relocate") RELOCATE("relocate"),
+      @XmlEnumValue("remove") REMOVE("remove"),
+      @XmlEnumValue("screen:acquireTicket") SCREEN_ACQUIRE_TICKET("screen:acquireTicket"),
+      @XmlEnumValue("screen:thumbnail") SCREEN_THUMBNAIL("screen:thumbnail"),
+      @XmlEnumValue("task:cancel") TASK_CANCEL("task:cancel"),
+      @XmlEnumValue("blockingTask") BLOCKING_TASK("blockingTask"),
+      @XmlEnumValue("taskOwner") TASK_OWNER("taskOwner"),
+      @XmlEnumValue("taskParams") TASK_PARAMS("taskParams"),
+      @XmlEnumValue("taskRequest") TASK_REQUEST("taskRequest"),
+      @XmlEnumValue("undeploy") UNDEPLOY("undeploy"),
+      @XmlEnumValue("unlock") UNLOCK("unlock"),
+      @XmlEnumValue("unregister") UNREGISTER("unregister"),
+      @XmlEnumValue("up") UP("up"),
+      @XmlEnumValue("updateProgress") UPDATE_PROGRESS("updateProgress"),
+      @XmlEnumValue("upgrade") UPGRADE("upgrade"),
+      @XmlEnumValue("upload:alternate") UPLOAD_ALTERNATE("upload:alternate"),
+      @XmlEnumValue("upload:default") UPLOAD_DEFAULT("upload:default"),
+      @XmlEnumValue("repair") REPAIR("repair"),
 
-   public static final class Rel {
-      public static final String ADD = "add";
-      public static final String ALTERNATE = "alternate";
-      public static final String CATALOG_ITEM = "catalogItem";
-      public static final String COLLABORATION_ABORT = "collaboration:abort";
-      public static final String COLLABORATION_FAIL = "collaboration:fail";
-      public static final String COLLABORATION_RESUME = "collaboration:resume";
-      public static final String CONSOLIDATE = "consolidate";
-      public static final String CONTROL_ACCESS = "controlAccess";
-      public static final String COPY = "copy";
-      public static final String DEPLOY = "deploy";
-      public static final String DISABLE = "disable";
-      public static final String DISCARD_STATE = "discardState";
-      public static final String DOWN = "down";
-      public static final String DOWNLOAD_ALTERNATE = "download:alternate";
-      public static final String DOWNLOAD_DEFAULT = "download:default";
-      public static final String EDIT = "edit";
-      public static final String ENABLE = "enable";
-      public static final String FIRST_PAGE = "firstPage";
-      public static final String INSTALL_VMWARE_TOOLS = "installVmwareTools";
-      public static final String LAST_PAGE = "lastPage";
-      public static final String EJECT_MEDIA = "media:ejectMedia";
-      public static final String INSERT_MEDIA = "media:insertMedia";
-      public static final String MOVE = "move";
-      public static final String NEXT_PAGE = "nextPage";
-      public static final String OVA = "ova";
-      public static final String OVF = "ovf";
-      public static final String POWER_OFF = "power:powerOff";
-      public static final String POWER_ON = "power:powerOn";
-      public static final String REBOOT = "power:reboot";
-      public static final String RESET = "power:reset";
-      public static final String SHUTDOWN = "power:shutdown";
-      public static final String SUSPEND = "power:suspend";
-      public static final String PREVIOUS_PAGE = "previousPage";
-      public static final String PUBLISH = "publish";
-      public static final String RECOMPOSE = "recompose";
-      public static final String RECONNECT = "reconnect";
-      public static final String REGISTER = "register";
-      public static final String REJECT = "reject";
-      public static final String RELOCATE = "relocate";
-      public static final String REMOVE = "remove";
-      public static final String SCREEN_ACQUIRE_TICKET = "screen:acquireTicket";
-      public static final String SCREEN_THUMBNAIL = "screen:thumbnail";
-      public static final String TASK_CANCEL = "task:cancel";
-      public static final String BLOCKING_TASK = "blockingTask";
-      public static final String TASK_OWNER = "taskOwner";
-      public static final String TASK_PARAMS = "taskParams";
-      public static final String TASK_REQUEST = "taskRequest";
-      public static final String UNDEPLOY = "undeploy";
-      public static final String UNLOCK = "unlock";
-      public static final String UNREGISTER = "unregister";
-      public static final String UP = "up";
-      public static final String UPDATE_PROGRESS = "updateProgress";
-      public static final String UPGRADE = "upgrade";
-      public static final String UPLOAD_ALTERNATE = "upload:alternate";
-      public static final String UPLOAD_DEFAULT = "upload:default";
-      public static final String REPAIR = "repair";
-
-      /**
-       * All acceptable {@link Link#getRel()} values.
-       *
-       * This list must be updated whenever a new relationship is added.
-       */
-      public static final List<String> ALL = Arrays.asList(
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<Rel> ALL = ImmutableList.of(
             ADD, ALTERNATE, CATALOG_ITEM, COLLABORATION_ABORT,
             COLLABORATION_FAIL, COLLABORATION_RESUME, CONSOLIDATE,
             CONTROL_ACCESS, COPY, DEPLOY, DISABLE, DISCARD_STATE, DOWN,
@@ -118,8 +123,30 @@ public class Link extends Reference {
             SCREEN_THUMBNAIL, TASK_CANCEL, BLOCKING_TASK, TASK_OWNER,
             TASK_PARAMS, TASK_REQUEST, UNDEPLOY, UNLOCK, UNREGISTER, UP,
             UPDATE_PROGRESS, UPGRADE, UPLOAD_ALTERNATE, UPLOAD_DEFAULT,
-            UPLOAD_DEFAULT
-      );
+            UPLOAD_DEFAULT);
+
+      protected final String stringValue;
+
+      Rel(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, Rel> REL_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(Rel.values()), new Function<Rel, String>() {
+               @Override
+               public String apply(Rel input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static Rel fromValue(String value) {
+         Rel rel = REL_BY_ID.get(checkNotNull(value, "stringValue"));
+         return rel == null ? UNRECOGNIZED : rel;
+      }
    }
 
    public static Builder<?> builder() {

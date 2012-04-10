@@ -345,11 +345,6 @@ public class Checks {
       checkEntityType(catalogItem);
    }
 
-   public static void checkImageType(String imageType) {
-      assertTrue(Media.ImageType.ALL.contains(imageType), 
-            "The Image type of a Media must be one of the allowed list");
-   }
-
    public static void checkNetwork(Network network) {
       // Check optional fields
       NetworkConfiguration config = network.getConfiguration();
@@ -756,7 +751,8 @@ public class Checks {
    public static void checkMediaFor(String client, Media media) {
       // required
       assertNotNull(media.getImageType(), String.format(OBJ_FIELD_REQ, client, "imageType"));
-      checkImageType(media.getImageType());
+      assertTrue(Media.ImageType.ALL.contains(media.getImageType()), 
+            "The Image type of a Media must be one of the allowed list");
       assertNotNull(media.getSize(), String.format(OBJ_FIELD_REQ, client, "size"));
       assertTrue(media.getSize() >= 0, String.format(OBJ_FIELD_GTE_0, client, "size", media.getSize()));
       

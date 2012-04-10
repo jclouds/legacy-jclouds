@@ -19,16 +19,24 @@ f * Licensed to jclouds, Inc. (jclouds) under one or more
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Represents a media.
@@ -39,12 +47,38 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlRootElement(name = "Media")
 public class Media extends ResourceEntityType {
+   
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum ImageType {
+      @XmlEnumValue("iso") ISO("iso"),
+      @XmlEnumValue("floppy") FLOPPY("floppy"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<ImageType> ALL = ImmutableList.of(ISO, FLOPPY);
 
-   public static final class ImageType {
-      public static final String ISO = "iso";
-      public static final String FLOPPY = "floppy";
+      protected final String stringValue;
 
-      public static final List<String> ALL = Arrays.asList(ISO, FLOPPY);
+      ImageType(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, ImageType> STATUS_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(ImageType.values()), new Function<ImageType, String>() {
+               @Override
+               public String apply(ImageType input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static ImageType fromValue(String value) {
+         ImageType type = STATUS_BY_ID.get(checkNotNull(value, "stringValue"));
+         return type == null ? UNRECOGNIZED : type;
+      }
    }
 
    public static Builder<?> builder() {
@@ -61,7 +95,7 @@ public class Media extends ResourceEntityType {
    public static abstract class Builder<B extends Builder<B>> extends ResourceEntityType.Builder<B> {
 
       private Owner owner;
-      private String imageType;
+      private ImageType imageType;
       private long size;
 
       /**
@@ -75,7 +109,7 @@ public class Media extends ResourceEntityType {
       /**
        * @see Media#getImageType()
        */
-      public B imageType(String imageType) {
+      public B imageType(Media.ImageType imageType) {
          this.imageType = imageType;
          return self();
       }
@@ -113,7 +147,7 @@ public class Media extends ResourceEntityType {
    @XmlElement(name = "Owner")
    protected Owner owner;
    @XmlAttribute(required = true)
-   protected String imageType;
+   protected ImageType imageType;
    @XmlAttribute(required = true)
    protected long size;
 
@@ -127,7 +161,7 @@ public class Media extends ResourceEntityType {
    /**
     * Gets the value of the imageType property.
     */
-   public String getImageType() {
+   public ImageType getImageType() {
       return imageType;
    }
 

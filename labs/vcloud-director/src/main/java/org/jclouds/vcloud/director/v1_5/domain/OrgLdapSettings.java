@@ -19,16 +19,23 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 /**
  * Base settings for LDAP connection
  *
@@ -54,20 +61,39 @@ import com.google.common.base.Objects.ToStringHelper;
     "customOrgLdapSettings"
 })
 public class OrgLdapSettings extends ResourceType {
+   
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum LdapMode {
+      @XmlEnumValue("NONE") NONE("NONE"),
+      @XmlEnumValue("SYSTEM") SYSTEM("SYSTEM"),
+      @XmlEnumValue("CUSTOM") CUSTOM("CUSTOM"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<LdapMode> ALL = ImmutableList.of( NONE, SYSTEM, CUSTOM );
 
-   public static final class LdapMode {
-      public static final String NONE = "NONE";
-      public static final String SYSTEM = "SYSTEM";
-      public static final String CUSTOM = "CUSTOM";
+      protected final String stringValue;
 
-      /**
-       * All acceptable {@link #getLdapMode()} values.
-       *
-       * This list must be updated whenever a new mode is added.
-       */
-      public static final List<String> ALL = Arrays.asList(
-            NONE, SYSTEM, CUSTOM
-      );
+      LdapMode(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, LdapMode> LDAP_MODE_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(LdapMode.values()), new Function<LdapMode, String>() {
+               @Override
+               public String apply(LdapMode input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static LdapMode fromValue(String value) {
+         LdapMode mode = LDAP_MODE_BY_ID.get(checkNotNull(value, "stringValue"));
+         return mode == null ? UNRECOGNIZED : mode;
+      }
    }
    
    public static Builder<?> builder() {

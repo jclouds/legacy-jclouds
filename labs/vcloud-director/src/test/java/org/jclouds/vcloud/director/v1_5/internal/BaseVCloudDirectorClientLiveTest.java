@@ -217,7 +217,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    }
    
    public User randomTestUser(String prefix) {
-      return randomTestUser(prefix, getRoleReferenceFor(DefaultRoles.USER));
+      return randomTestUser(prefix, getRoleReferenceFor(DefaultRoles.USER.value()));
    }
    
    public User randomTestUser(String prefix, Reference role) {
@@ -303,11 +303,11 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       assertTrue(retryTaskSuccessLong.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
    }
 
-   protected void assertTaskStatusEventually(Task task, String expectedStatus, Collection<String> failingStatuses) {
+   protected void assertTaskStatusEventually(Task task, org.jclouds.vcloud.director.v1_5.domain.Task.Status running, ImmutableSet<org.jclouds.vcloud.director.v1_5.domain.Task.Status> immutableSet) {
       TaskClient taskClient = context.getApi().getTaskClient();
-      TaskStatusEquals predicate = new TaskStatusEquals(taskClient, expectedStatus, failingStatuses);
+      TaskStatusEquals predicate = new TaskStatusEquals(taskClient, running, immutableSet);
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, TASK_TIMEOUT_SECONDS * 1000L);
-      assertTrue(retryablePredicate.apply(task), "Task must enter status "+expectedStatus);
+      assertTrue(retryablePredicate.apply(task), "Task must enter status "+running);
    }
    
    protected void assertTaskDoneEventually(Task task) {
@@ -315,7 +315,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       TaskStatusEquals predicate = new TaskStatusEquals(
                taskClient, 
                ImmutableSet.of(Task.Status.ABORTED, Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS), 
-               Collections.<String>emptySet());
+               Collections.<Task.Status>emptySet());
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, LONG_TASK_TIMEOUT_SECONDS * 1000L);
       assertTrue(retryablePredicate.apply(task), "Task must be done");
    }
