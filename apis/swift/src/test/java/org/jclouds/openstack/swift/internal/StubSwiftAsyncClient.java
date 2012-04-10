@@ -185,11 +185,6 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
       return objectProvider.create(null);
    }
 
-
-   /*public String putObjectManifest(String container, String name) {
-       return "stub";
-   }                 */
-
    @Override
    public ListenableFuture<Boolean> objectExists(String bucketName, String key) {
       return immediateFuture(containerToBlobs.get(bucketName).containsKey(key));
