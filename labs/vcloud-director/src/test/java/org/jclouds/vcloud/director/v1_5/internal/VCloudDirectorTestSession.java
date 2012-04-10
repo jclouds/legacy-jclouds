@@ -99,7 +99,7 @@ public class VCloudDirectorTestSession {
          
          User user = adminContext.getApi().getUserClient().getUser(userRef.getHref());
          Reference orgAdmin = user.getRole();
-         assertTrue(equal(orgAdmin.getName(), DefaultRoles.ORG_ADMIN), "must give org admin or user-only credentials");
+         assertTrue(equal(orgAdmin.getName(), DefaultRoles.ORG_ADMIN.value()), "must give org admin or user-only credentials");
          
          String adminIdentity = "testAdmin"+BaseVCloudDirectorClientLiveTest.getTestDateTimeStamp();
          String adminCredential = "testAdminPassword";
