@@ -19,19 +19,27 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Represents an asynchronous or long-running task in the vCloud environment.
@@ -48,20 +56,44 @@ import com.google.common.base.Objects.ToStringHelper;
 public class Task extends EntityType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
+   
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum Status {
+      @XmlEnumValue("queued") QUEUED("queued"),
+      @XmlEnumValue("preRunning") PRE_RUNNING("preRunning"),
+      @XmlEnumValue("running") RUNNING("running"),
+      @XmlEnumValue("success") SUCCESS("success"),
+      @XmlEnumValue("error") ERROR("error"),
+      @XmlEnumValue("canceled") CANCELED("canceled"),
+      @XmlEnumValue("aborted") ABORTED("aborted"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<Status> ALL = ImmutableList.of(
+            QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
 
-   public static class Status {
-      public static final String QUEUED = "queued";
-      public static final String PRE_RUNNING = "preRunning";
-      public static final String RUNNING = "running";
-      public static final String SUCCESS = "success";
-      public static final String ERROR = "error";
-      public static final String CANCELED = "canceled";
-      public static final String ABORTED = "aborted";
+      protected final String stringValue;
 
-      public static final List<String> ALL = Arrays.asList(
-            QUEUED, PRE_RUNNING, RUNNING, SUCCESS,
-            ERROR, CANCELED, ABORTED
-      );
+      Status(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, Status> STATUS_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(Status.values()), new Function<Status, String>() {
+               @Override
+               public String apply(Status input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static Status fromValue(String value) {
+         Status status = STATUS_BY_ID.get(checkNotNull(value, "stringValue"));
+         return status == null ? UNRECOGNIZED : status;
+      }
    }
 
    public static Builder<?> builder() {

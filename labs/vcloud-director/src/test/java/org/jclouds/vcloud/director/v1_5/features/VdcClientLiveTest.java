@@ -40,6 +40,7 @@ import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
+import org.jclouds.vcloud.director.v1_5.domain.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
@@ -246,7 +247,7 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
             .parentNetwork(parentNetwork.get())
-            .fenceMode("bridged")
+            .fenceMode(FenceMode.BRIDGED)
             .build();
       
       NetworkConfigSection networkConfigSection = NetworkConfigSection.builder()

@@ -57,6 +57,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.NatOneToOneVmRule;
 import org.jclouds.vcloud.director.v1_5.domain.NatRule;
 import org.jclouds.vcloud.director.v1_5.domain.NatService;
+import org.jclouds.vcloud.director.v1_5.domain.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
@@ -679,7 +680,7 @@ public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpec
                   .ipRanges(IpRanges.builder().ipRange(IpRange.builder().startAddress("10.147.56.1").endAddress("10.147.56.1").build()).build())
                   .build())
             .parentNetwork(Reference.builder().href(URI.create("http://vcloud.example.com/api/v1.0/network/54")).type("application/vnd.vmware.vcloud.network+xml").name("Internet").build())
-            .fenceMode("natRouted")
+            .fenceMode(FenceMode.NAT_ROUTED)
             .features(NetworkFeatures.builder().services(ImmutableSet.of(firewallService, natService)).build())
             .build();
       

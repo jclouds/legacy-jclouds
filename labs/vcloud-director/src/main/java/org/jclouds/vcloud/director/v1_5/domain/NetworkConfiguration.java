@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.vcloud.director.v1_5.domain.Network.FenceMode;
+
 import com.google.common.base.Objects;
 
 /**
@@ -47,7 +49,7 @@ public class NetworkConfiguration {
    public static class Builder {
       private IpScope ipScope;
       private Reference parentNetwork;
-      private String fenceMode;
+      private FenceMode fenceMode;
       private Boolean retainNetInfoAcrossDeployments;
       private NetworkFeatures features;
       private SyslogServerSettings syslogServerSettings;
@@ -72,7 +74,7 @@ public class NetworkConfiguration {
       /**
        * @see NetworkConfiguration#getFenceMode()
        */
-      public Builder fenceMode(String fenceMode) {
+      public Builder fenceMode(FenceMode fenceMode) {
          this.fenceMode = fenceMode;
          return this;
       }
@@ -122,7 +124,7 @@ public class NetworkConfiguration {
       }
    }
 
-   public NetworkConfiguration(IpScope ipScope, Reference parentNetwork, String fenceMode, Boolean retainNetInfoAcrossDeployments,
+   public NetworkConfiguration(IpScope ipScope, Reference parentNetwork, FenceMode fenceMode, Boolean retainNetInfoAcrossDeployments,
                                NetworkFeatures features, SyslogServerSettings syslogServerSettings, RouterInfo routerInfo) {
       this.ipScope = ipScope;
       this.parentNetwork = parentNetwork;
@@ -142,7 +144,7 @@ public class NetworkConfiguration {
    @XmlElement(name = "ParentNetwork")
    private Reference parentNetwork;
    @XmlElement(name = "FenceMode")
-   private String fenceMode;
+   private FenceMode fenceMode;
    @XmlElement(name = "RetainNetInfoAcrossDeployments")
    private Boolean retainNetInfoAcrossDeployments;
    @XmlElement(name = "Features")
@@ -174,7 +176,7 @@ public class NetworkConfiguration {
     *         isolated (not connected to any other network), natRouted (connected to the ParentNetwork via a
     *         NAT service)
     */
-   public String getFenceMode() {
+   public FenceMode getFenceMode() {
       return fenceMode;
    }
 

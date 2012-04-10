@@ -37,6 +37,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Network;
+import org.jclouds.vcloud.director.v1_5.domain.Network.FenceMode;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
@@ -217,7 +218,7 @@ public class NetworkClientExpectTest extends VCloudDirectorAdminClientExpectTest
                            .build())
                      .build())
                .build())
-            .fenceMode("isolated")
+            .fenceMode(FenceMode.ISOLATED)
             .retainNetInfoAcrossDeployments(false)
             .features(NetworkFeatures.builder()
                .service(DhcpService.builder()

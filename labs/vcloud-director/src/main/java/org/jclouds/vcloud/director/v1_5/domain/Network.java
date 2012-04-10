@@ -19,32 +19,60 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 @XmlSeeAlso({ OrgNetwork.class, ExternalNetwork.class })
 public abstract class Network extends EntityType {
-   public static final class FenceMode {
+   
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum FenceMode {
+      @XmlEnumValue("bridged") BRIDGED("bridged"),
+      @XmlEnumValue("isolated") ISOLATED("isolated"),
+      @XmlEnumValue("natRouted") NAT_ROUTED("natRouted"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<FenceMode> ALL = ImmutableList.of(
+            BRIDGED, ISOLATED, NAT_ROUTED);
 
-      public static final String BRIDGED = "bridged";
-      public static final String ISOLATED = "isolated";
-      public static final String NAT_ROUTED = "natRouted";
+      protected final String stringValue;
 
-      /**
-       * All acceptable {@link Network#getFenceMode()} values.
-       * <p/>
-       * This list must be updated whenever a new mode is added.
-       */
-      public static final List<String> ALL = Arrays.asList(
-            BRIDGED, ISOLATED, NAT_ROUTED
-      );
+      FenceMode(String stringValue) {
+         this.stringValue = stringValue;
+      }
+
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, FenceMode> FENCE_MODE_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(FenceMode.values()), new Function<FenceMode, String>() {
+               @Override
+               public String apply(FenceMode input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static FenceMode fromValue(String value) {
+         FenceMode mode = FENCE_MODE_BY_ID.get(checkNotNull(value, "stringValue"));
+         return mode == null ? UNRECOGNIZED : mode;
+      }
    }
    
    public abstract static class Builder<T extends Builder<T>> extends EntityType.Builder<T> {

@@ -19,17 +19,24 @@
 package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
 /**
  * Represents vApp/VM undeployment parameters.
@@ -42,20 +49,42 @@ import com.google.common.base.Objects;
 @XmlRootElement(name = "UndeployVAppParams")
 @XmlType(name = "UndeployVAppParamsType")
 public class UndeployVAppParams {
+   
+   public static final String MEDIA_TYPE = VCloudDirectorMediaType.UNDEPLOY_VAPP_PARAMS;
+   
+   @XmlType
+   @XmlEnum(String.class)
+   public static enum PowerAction {
+      @XmlEnumValue("powerOff") POWER_OFF("powerOff"),
+      @XmlEnumValue("suspend") SUSPEND("suspend"),
+      @XmlEnumValue("shutdown") SHUTDOWN("shutdown"),
+      @XmlEnumValue("force") FORCE("force"),
+      UNRECOGNIZED("unrecognized");
+      
+      public static final List<PowerAction> ALL = ImmutableList.of( POWER_OFF, SUSPEND, SHUTDOWN, FORCE );
 
-   public static final String MEDIA_TYPe = VCloudDirectorMediaType.UNDEPLOY_VAPP_PARAMS;
+      protected final String stringValue;
 
-   public static class PowerAction {
-      /** Power off the VMs. This is the default action if this attribute is missing or empty) */
-      public static final String POWER_OFF = "powerOff";
-      /** Suspend the VMs. */
-      public static final String SUSPEND = "suspend";
-      /** Shut down the VMs. */
-      public static final String SHUTDOWN = "shutdown";
-      /** Attempt to power off the VMs. */
-      public static final String FORCE = "force";
+      PowerAction(String stringValue) {
+         this.stringValue = stringValue;
+      }
 
-      public static final List<String> ALL = Arrays.asList(POWER_OFF, SUSPEND, SHUTDOWN, FORCE);
+      public String value() {
+         return stringValue;
+      }
+
+      protected final static Map<String, PowerAction> POWER_ACTION_BY_ID = Maps.uniqueIndex(
+            ImmutableSet.copyOf(PowerAction.values()), new Function<PowerAction, String>() {
+               @Override
+               public String apply(PowerAction input) {
+                  return input.stringValue;
+               }
+            });
+
+      public static PowerAction fromValue(String value) {
+         PowerAction action = POWER_ACTION_BY_ID.get(checkNotNull(value, "stringValue"));
+         return action == null ? UNRECOGNIZED : action;
+      }
    }
 
    public static Builder builder() {
