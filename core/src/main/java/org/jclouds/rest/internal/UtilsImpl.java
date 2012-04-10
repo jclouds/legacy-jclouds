@@ -31,6 +31,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.Utils;
+import org.jclouds.xml.XMLParser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.eventbus.EventBus;
@@ -53,9 +54,10 @@ public class UtilsImpl implements Utils {
    private final EventBus eventBus;
    private final LoggerFactory loggerFactory;
    private Injector injector;
+   private XMLParser xml;
 
    @Inject
-   protected UtilsImpl(Injector injector, Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+   protected UtilsImpl(Injector injector, Json json, XMLParser xml, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
          Crypto encryption, DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
          @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, EventBus eventBus,
          LoggerFactory loggerFactory) {
@@ -69,6 +71,7 @@ public class UtilsImpl implements Utils {
       this.ioExecutor = ioThreads;
       this.eventBus = eventBus;
       this.loggerFactory = loggerFactory;
+      this.xml = xml;
    }
 
    @Override
@@ -171,6 +174,16 @@ public class UtilsImpl implements Utils {
    @Beta
    public Injector injector() {
       return getInjector();
+   }
+   
+   @Override
+   public XMLParser getXml() {
+      return xml;
+   }
+
+   @Override
+   public XMLParser xml() {
+      return xml;
    }
 
 }
