@@ -169,7 +169,7 @@ public class QueryResultNetworkRecord extends QueryResultRecordType {
    }
 
    private QueryResultNetworkRecord() {
-      // Qfor JAXB
+      // for JAXB
    }
 
    @XmlAttribute

@@ -64,6 +64,7 @@ public class OrgSettings extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromOrgSettings(this);
    }
@@ -128,6 +129,7 @@ public class OrgSettings extends ResourceType {
          return self();
       }
 
+      @Override
       public OrgSettings build() {
          return new OrgSettings(this);
       }

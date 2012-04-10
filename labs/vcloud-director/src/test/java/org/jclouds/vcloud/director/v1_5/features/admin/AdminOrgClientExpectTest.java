@@ -35,7 +35,6 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 

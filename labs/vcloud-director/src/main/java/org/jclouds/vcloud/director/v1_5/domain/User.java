@@ -97,6 +97,7 @@ public class User extends EntityType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromUser(this);
    }
@@ -128,6 +129,7 @@ public class User extends EntityType {
       /**
        * @see EntityType#getName()
        */
+      @Override
       public B name(String name) {
          return super.name(name.toLowerCase());
       }
@@ -284,6 +286,7 @@ public class User extends EntityType {
          return self();
       }
 
+      @Override
       public User build() {
          return new User(this);
       }

@@ -33,7 +33,6 @@ import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataClient.Writeable;
 
 /**
  * Provides synchronous access to {@link Org} objects.

@@ -62,7 +62,7 @@ import com.google.common.base.Objects;
       "vmRule"
 })
 public class NatRule {
-   @SuppressWarnings("unchecked")
+
    public static Builder builder() {
       return new Builder();
    }

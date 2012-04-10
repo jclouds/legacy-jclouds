@@ -61,6 +61,7 @@ public class OrgGeneralSettings extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromOrgGeneralSettings(this);
    }
@@ -116,6 +117,7 @@ public class OrgGeneralSettings extends ResourceType {
          return self();
       }
 
+      @Override
       public OrgGeneralSettings build() {
          return new OrgGeneralSettings(this);
       }

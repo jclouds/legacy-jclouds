@@ -39,7 +39,7 @@ public abstract class IpsecVpnManagedPeerType<T extends IpsecVpnManagedPeerType<
       /**
        * @see IpRange#getStartAddress()
        */
-      public Builder id(String id) {
+      public Builder<T> id(String id) {
          this.id = id;
          return this;
       }
@@ -47,13 +47,14 @@ public abstract class IpsecVpnManagedPeerType<T extends IpsecVpnManagedPeerType<
       /**
        * @see IpRange#getEndAddress()
        */
-      public Builder name(String name) {
+      public Builder<T> name(String name) {
          this.name = name;
          return this;
       }
 
       public Builder<T> fromIpsecVpnManagedPeerType(IpsecVpnManagedPeerType<T> in) {
-         return id(in.getId()).name(in.getName());
+         return id(in.getId())
+               .name(in.getName());
       }
    }
    

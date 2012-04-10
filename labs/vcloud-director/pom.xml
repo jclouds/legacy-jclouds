@@ -58,6 +58,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.jclouds.labs</groupId>
+      <artifactId>dmtf</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jclouds</groupId>
       <artifactId>jclouds-core</artifactId>
       <version>${project.version}</version>

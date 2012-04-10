@@ -22,6 +22,8 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
@@ -30,8 +32,10 @@ import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
+import org.jclouds.vcloud.director.v1_5.domain.RasdItem;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
@@ -40,13 +44,9 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 
 /**
  * Provides synchronous access to {@link VApp} objects.
@@ -674,7 +674,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   ResourceAllocationSettingData getVirtualHardwareSectionCpu(URI vmURI);
+   RasdItem getVirtualHardwareSectionCpu(URI vmURI);
 
    /**
     * Modifies the CPU properties in virtual hardware section of a VM.
@@ -685,7 +685,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionCpu(URI vmURI, ResourceAllocationSettingData rasd);
+   Task modifyVirtualHardwareSectionCpu(URI vmURI, RasdItem rasd);
 
    /**
     * Retrieves a list of ResourceAllocationSettingData items for disks from virtual hardware section of a VM.
@@ -729,7 +729,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   ResourceAllocationSettingData getVirtualHardwareSectionMemory(URI vmURI);
+   RasdItem getVirtualHardwareSectionMemory(URI vmURI);
 
    /**
     * Modifies the memory properties in virtual hardware section of a VM.
@@ -740,7 +740,7 @@ public interface VAppClient {
     *
     * @since 0.9
     */
-   Task modifyVirtualHardwareSectionMemory(URI vmURI, ResourceAllocationSettingData rasd);
+   Task modifyVirtualHardwareSectionMemory(URI vmURI, RasdItem rasd);
 
    /**
     * Retrieves a list of ResourceAllocationSettingData items for network cards from virtual hardware section of a VM.

@@ -50,6 +50,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -66,8 +68,10 @@ import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.OperatingSystemSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
+import org.jclouds.vcloud.director.v1_5.domain.RasdItem;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
@@ -76,13 +80,9 @@ import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 import org.jclouds.vcloud.director.v1_5.functions.ReturnPayloadBytes;
 
@@ -575,7 +575,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionCpu(@EndpointParam URI vmURI);
+   ListenableFuture<RasdItem> getVirtualHardwareSectionCpu(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSectionCpu(URI, ResourceAllocationSettingData)
@@ -586,7 +586,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    ListenableFuture<Task> modifyVirtualHardwareSectionCpu(@EndpointParam URI vmURI,
-                                                          @BinderParam(BindToXMLPayload.class) ResourceAllocationSettingData rasd);
+                                                          @BinderParam(BindToXMLPayload.class) RasdItem rasd);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionDisks(URI)
@@ -627,7 +627,7 @@ public interface VAppAsyncClient {
    @Consumes
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<ResourceAllocationSettingData> getVirtualHardwareSectionMemory(@EndpointParam URI vmURI);
+   ListenableFuture<RasdItem> getVirtualHardwareSectionMemory(@EndpointParam URI vmURI);
 
    /**
     * @see VAppClient#modifyVirtualHardwareSectionMemory(URI, ResourceAllocationSettingData)
@@ -638,7 +638,7 @@ public interface VAppAsyncClient {
    @Consumes(TASK)
    @JAXBResponseParser
    ListenableFuture<Task> modifyVirtualHardwareSectionMemory(@EndpointParam URI vmURI,
-                                                             @BinderParam(BindToXMLPayload.class) ResourceAllocationSettingData rasd);
+                                                             @BinderParam(BindToXMLPayload.class) RasdItem rasd);
 
    /**
     * @see VAppClient#getVirtualHardwareSectionNetworkCards(URI)

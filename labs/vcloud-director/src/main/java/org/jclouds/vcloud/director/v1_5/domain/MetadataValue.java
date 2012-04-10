@@ -51,6 +51,7 @@ public class MetadataValue extends ResourceType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromMetadataValue(this);
    }

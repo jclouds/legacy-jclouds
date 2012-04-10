@@ -21,21 +21,30 @@ package org.jclouds.vcloud.director.v1_5.domain;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.ovf.SectionType;
+import org.jclouds.dmtf.ovf.DeploymentOptionSection;
+import org.jclouds.dmtf.ovf.DiskSection;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.OperatingSystemSection;
+import org.jclouds.dmtf.ovf.ProductSection;
+import org.jclouds.dmtf.ovf.SectionType;
+import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.dmtf.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
- * Represents a list of ovf:Section to configure for instantiating a VApp.
- * 
+ * Represents a list of {@code ovf:Section} to configure for instantiating a VApp.
+ *
  * @author grkvlt@apache.org
  * @see <a href="http://www.vmware.com/support/vcd/doc/rest-api-doc-1.5-html/types/InstantiationParamsType.html">
  *    vCloud REST API - InstantiationParamsType</a>
@@ -87,18 +96,35 @@ public class InstantiationParams {
    }
 
    private InstantiationParams(Set<? extends SectionType> sections) {
-      this.sections = ImmutableSet.copyOf(sections);
+      this.sections = sections.isEmpty() ? null : ImmutableSet.copyOf(sections);
    }
 
-   @XmlElementRef
-   protected Set<? extends SectionType> sections = Sets.newLinkedHashSet();
+   @XmlElementRefs({
+      @XmlElementRef(type = VirtualHardwareSection.class),
+      @XmlElementRef(type = LeaseSettingsSection.class),
+//      @XmlElementRef(type = EulaSection.class),
+      @XmlElementRef(type = RuntimeInfoSection.class),
+//      @XmlElementRef(type = AnnotationSection.class),
+      @XmlElementRef(type = DeploymentOptionSection.class),
+      @XmlElementRef(type = StartupSection.class),
+//      @XmlElementRef(type = ResourceAllocationSection.class),
+      @XmlElementRef(type = NetworkConnectionSection.class),
+      @XmlElementRef(type = CustomizationSection.class),
+      @XmlElementRef(type = ProductSection.class),
+      @XmlElementRef(type = GuestCustomizationSection.class),
+      @XmlElementRef(type = OperatingSystemSection.class),
+      @XmlElementRef(type = NetworkConfigSection.class),
+      @XmlElementRef(type = NetworkSection.class),
+//      @XmlElementRef(type = InstallSection.class),
+      @XmlElementRef(type = DiskSection.class)
+   })
+   protected Set<SectionType> sections = Sets.newLinkedHashSet();
 
    /**
     * An {@code ovf:Section} to configure for instantiation.
     *
-    * Objects of the following type(s) are allowed in the list
+    * Objects of the following type(s) are allowed in the list:
     * <ul>
-    * <li>{@link SectionType}
     * <li>{@link VirtualHardwareSection}
     * <li>{@link LeaseSettingsSection}
     * <li>{@link EulaSection}
@@ -118,8 +144,8 @@ public class InstantiationParams {
     * <li>{@link InstallSection}
     * </ul>
     */
-   public Set<? extends SectionType> getSections() {
-      return sections;
+   public Set<SectionType> getSections() {
+      return sections != null ? ImmutableSet.copyOf(sections) : Collections.<SectionType>emptySet();
    }
 
    @Override
@@ -141,4 +167,5 @@ public class InstantiationParams {
    public String toString() {
       return Objects.toStringHelper("").add("sections", sections).toString();
    }
+   
 }

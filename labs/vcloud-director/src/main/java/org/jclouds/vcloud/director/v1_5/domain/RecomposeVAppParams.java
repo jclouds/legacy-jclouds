@@ -55,6 +55,7 @@ public class RecomposeVAppParams extends ComposeVAppParams {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromRecomposeVAppParams(this);
    }

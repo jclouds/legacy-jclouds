@@ -40,6 +40,7 @@ public class InstantiateVAppTemplateParams extends InstantiateVAppParams {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromInstantiateVAppTemplateParams(this);
    }

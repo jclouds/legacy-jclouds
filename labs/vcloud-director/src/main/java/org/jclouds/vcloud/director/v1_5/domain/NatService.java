@@ -102,6 +102,7 @@ public class NatService extends NetworkServiceType<NatService> {
          return this;
       }
 
+      @Override
       public NatService build() {
          return new NatService(isEnabled, natType, policy, natRules);
       }

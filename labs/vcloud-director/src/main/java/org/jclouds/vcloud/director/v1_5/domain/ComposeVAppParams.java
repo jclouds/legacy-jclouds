@@ -44,12 +44,13 @@ import com.google.common.collect.Lists;
  */
 @XmlRootElement(name = "ComposeVAppParams")
 @XmlType(name = "ComposeVAppParamsType")
-public class ComposeVAppParams extends VAppCreationParamsType {
+public class ComposeVAppParams extends VAppCreationParams {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromComposeVAppParams(this);
    }
@@ -57,7 +58,7 @@ public class ComposeVAppParams extends VAppCreationParamsType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParamsType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends VAppCreationParams.Builder<B> {
 
       private List<SourcedCompositionItemParam> sourcedItems = Lists.newArrayList();
       private Boolean allEULAsAccepted;
