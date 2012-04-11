@@ -110,15 +110,23 @@ public class OrgLdapSettings extends ResourceType {
    
    public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
       
-      private String ldapMode;
+      private LdapMode ldapMode;
       private String customUsersOu;
       private CustomOrgLdapSettings customOrgLdapSettings;
 
       /**
        * @see OrgLdapSettings#getLdapMode()
        */
-      public B ldapMode(String ldapMode) {
+      public B ldapMode(LdapMode ldapMode) {
          this.ldapMode = ldapMode;
+         return self();
+      }
+
+      /**
+       * @see OrgLdapSettings#getLdapMode()
+       */
+      public B ldapMode(String ldapMode) {
+         this.ldapMode = LdapMode.fromValue(ldapMode);
          return self();
       }
 
@@ -162,8 +170,8 @@ public class OrgLdapSettings extends ResourceType {
       this.customOrgLdapSettings = builder.customOrgLdapSettings;
    }
 
-   @XmlElement(name = "OrgLdapMode")
-    private String ldapMode;
+    @XmlElement(name = "OrgLdapMode")
+    private LdapMode ldapMode;
     @XmlElement(name = "CustomUsersOu")
     private String customUsersOu;
     @XmlElement(name = "CustomOrgLdapSettings")
@@ -171,23 +179,13 @@ public class OrgLdapSettings extends ResourceType {
 
     /**
      * Gets the value of the orgLdapMode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getLdapMode() {
+    public LdapMode getLdapMode() {
         return ldapMode;
     }
 
     /**
      * Gets the value of the customUsersOu property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
     public String getCustomUsersOu() {
         return customUsersOu;
@@ -195,11 +193,6 @@ public class OrgLdapSettings extends ResourceType {
 
     /**
      * Gets the value of the customOrgLdapSettings property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CustomOrgLdapSettings }
-     *     
      */
     public CustomOrgLdapSettings getCustomOrgLdapSettings() {
         return customOrgLdapSettings;

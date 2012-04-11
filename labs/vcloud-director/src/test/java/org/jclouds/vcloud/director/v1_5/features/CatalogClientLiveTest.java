@@ -33,6 +33,7 @@ import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEqua
 import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -42,7 +43,6 @@ import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogType;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
@@ -189,16 +189,8 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @Test(description = "DELETE /catalogItem/{id}", dependsOnMethods = "testDeleteCatalogItemMetadataValue")
    public void testDeleteCatalogItem() {
       catalogClient.deleteCatalogItem(catalogItem.getHref());
-      try {
-         catalogClient.getCatalogItem(catalogItem.getHref());
-         fail("The CatalogItem should have been deleted");
-      } catch (VCloudDirectorException vcde) {
-         checkError(vcde.getError());
-         // XXX
-         assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The majorErrorCode should be 403 since the item has been deleted");
-      } finally {
-         catalogItem = null;
-      }
+      catalogItem = catalogClient.getCatalogItem(catalogItem.getHref());
+      assertNull(catalogItem);
    }
 
    @Test(description = "GET /catalog/{id}/metadata")
@@ -283,15 +275,7 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkTask(deleteCatalogItemMetadataValue);
       assertTrue(retryTaskSuccess.apply(deleteCatalogItemMetadataValue), 
             String.format(TASK_COMPLETE_TIMELY, "deleteCatalogItemMetadataValue"));
-      try {
-	      catalogClient.getMetadataClient().getMetadataValue(catalogItem.getHref(), "KEY");
-	      fail("The CatalogItem MetadataValue for KEY should have been deleted");
-      } catch (VCloudDirectorException vcde) {
-         Error error = vcde.getError();
-         checkError(error);
-         Integer majorErrorCode = error.getMajorErrorCode();
-         assertEquals(majorErrorCode, Integer.valueOf(403),
-               String.format(CORRECT_VALUE_OBJECT_FMT, "MajorErrorCode", "Error", "403",Integer.toString(majorErrorCode)));
-      }
+      MetadataValue deleted = catalogClient.getMetadataClient().getMetadataValue(catalogItem.getHref(), "KEY");
+      assertNull(deleted);
    }
 }

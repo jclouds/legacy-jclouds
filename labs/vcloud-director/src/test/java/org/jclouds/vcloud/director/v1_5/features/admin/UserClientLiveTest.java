@@ -20,8 +20,9 @@ package org.jclouds.vcloud.director.v1_5.features.admin;
 
 import static com.google.common.base.Objects.equal;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
-import static org.testng.Assert.assertEquals;
+import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkUser;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 import static org.testng.AssertJUnit.assertFalse;
@@ -30,15 +31,11 @@ import java.net.URI;
 
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.User;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
-import org.jclouds.vcloud.director.v1_5.features.admin.UserClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.login.SessionClient;
 import org.testng.annotations.AfterClass;
@@ -90,7 +87,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testCreateUser() {
       User newUser = randomTestUser("testCreateUser");
       user = userClient.createUser(orgRef.getHref(), newUser);
-      Checks.checkUser(newUser);
+      checkUser(newUser);
    }
    
    @Test(description = "GET /admin/user/{id}",
@@ -98,7 +95,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    public void testGetUser() {
       user = userClient.getUser(user.getHref());
       
-      Checks.checkUser(user);
+      checkUser(user);
    }
  
    @Test(description = "PUT /admin/user/{id}",
@@ -125,7 +122,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       userClient.updateUser(user.getHref(), newUser);
       user = userClient.getUser(user.getHref());
       
-      Checks.checkUser(user);
+      checkUser(user);
       assertTrue(equal(user.getFullName(), newUser.getFullName()), 
             String.format(OBJ_FIELD_UPDATABLE, USER, "fullName"));
       assertTrue(equal(user.getEmailAddress(), newUser.getEmailAddress()), 
@@ -213,8 +210,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
  
-   @Test(description = "DELETE /admin/user/{id}",
-         dependsOnMethods = { "testCreateUser" } )
+   @Test(description = "DELETE /admin/user/{id}", dependsOnMethods = { "testCreateUser" })
    public void testDeleteUser() {
       // Create a user to be deleted (so we remove dependencies on test ordering)
       User newUser = randomTestUser("testDeleteUser"+getTestDateTimeStamp());
@@ -224,18 +220,7 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       userClient.deleteUser(userToBeDeleted.getHref());
 
       // Confirm cannot no longer be accessed 
-      Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.user:"+
-                     userToBeDeleted.getId().substring("urn:vcloud:user:".length())+")\".")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-      
-      try {
-         userClient.getUser(userToBeDeleted.getHref());
-         fail("Should give HTTP 403 error for accessing user after deleting it ("+userToBeDeleted+")");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-      }
+      User deleted = userClient.getUser(userToBeDeleted.getHref());
+      assertNull(deleted);
    }
 }

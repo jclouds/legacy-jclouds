@@ -31,6 +31,7 @@ import org.jclouds.vcloud.director.v1_5.domain.Task.Status;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Test a {@link Task} to see if it has succeeded.
@@ -69,22 +70,17 @@ public class TaskStatusEquals implements Predicate<Task> {
       if (task == null) return false;
       logger.trace("%s: looking for status %s: currently: %s", task, expectedStatuses, task.getStatus());
       
-      for (Status failingStatus : failingStatuses) {
-         if (task.getStatus().equals(failingStatus)) {
-            throw new VCloudDirectorException(task);
-         }
+      if (failingStatuses.contains(task.getStatus())) {
+         throw new VCloudDirectorException(task);
       }
-      
-      for (Status expectedStatus : expectedStatuses) {
-         if (task.getStatus().equals(expectedStatus)) {
-            return true;
-         }
+      if (expectedStatuses.contains(task.getStatus())) {
+         return true;
       }
       return false;
    }
 
    @Override
    public String toString() {
-      return "checkTaskSuccess()";
+      return "taskStatusEquals(" + Iterables.toString(expectedStatuses) + ")";
    }
 }

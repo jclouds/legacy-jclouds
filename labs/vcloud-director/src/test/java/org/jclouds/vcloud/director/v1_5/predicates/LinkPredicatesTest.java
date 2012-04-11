@@ -39,6 +39,11 @@ public class LinkPredicatesTest {
 
    @Test
    public void testRelEqualsWhenEqual() {
+      assert relEquals(Link.Rel.ADD).apply(ref);
+   }
+
+   @Test
+   public void testRelEqualsWhenEqualString() {
       assert relEquals("add").apply(ref);
    }
 

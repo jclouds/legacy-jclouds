@@ -303,7 +303,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       assertTrue(retryTaskSuccessLong.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
    }
 
-   protected void assertTaskStatusEventually(Task task, org.jclouds.vcloud.director.v1_5.domain.Task.Status running, ImmutableSet<org.jclouds.vcloud.director.v1_5.domain.Task.Status> immutableSet) {
+   protected void assertTaskStatusEventually(Task task, Task.Status running, ImmutableSet<Task.Status> immutableSet) {
       TaskClient taskClient = context.getApi().getTaskClient();
       TaskStatusEquals predicate = new TaskStatusEquals(taskClient, running, immutableSet);
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, TASK_TIMEOUT_SECONDS * 1000L);
