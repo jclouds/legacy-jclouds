@@ -95,6 +95,7 @@ public class Link extends Reference {
       @XmlEnumValue("remove") REMOVE("remove"),
       @XmlEnumValue("screen:acquireTicket") SCREEN_ACQUIRE_TICKET("screen:acquireTicket"),
       @XmlEnumValue("screen:thumbnail") SCREEN_THUMBNAIL("screen:thumbnail"),
+      @XmlEnumValue("syncSyslogSettings") SYNC_SYSLOG_SETTINGS("syncSyslogSettings"),
       @XmlEnumValue("task:cancel") TASK_CANCEL("task:cancel"),
       @XmlEnumValue("blockingTask") BLOCKING_TASK("blockingTask"),
       @XmlEnumValue("taskOwner") TASK_OWNER("taskOwner"),
@@ -121,7 +122,7 @@ public class Link extends Reference {
             NEXT_PAGE, OVA, OVF, POWER_OFF, POWER_ON, REBOOT, RESET, SHUTDOWN,
             SUSPEND, PREVIOUS_PAGE, PUBLISH, RECOMPOSE, RECONNECT, REGISTER,
             REJECT, RELOCATE, REMOVE, REPAIR, SCREEN_ACQUIRE_TICKET,
-            SCREEN_THUMBNAIL, TASK_CANCEL, BLOCKING_TASK, TASK_OWNER,
+            SCREEN_THUMBNAIL, SYNC_SYSLOG_SETTINGS, TASK_CANCEL, BLOCKING_TASK, TASK_OWNER,
             TASK_PARAMS, TASK_REQUEST, UNDEPLOY, UNLOCK, UNREGISTER, UP,
             UPDATE_PROGRESS, UPGRADE, UPLOAD_ALTERNATE, UPLOAD_DEFAULT,
             UPLOAD_DEFAULT);

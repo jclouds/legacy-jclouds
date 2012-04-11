@@ -204,7 +204,7 @@ public interface VAppTemplateAsyncClient {
     * @see VAppTemplateClient#getNetworkConnectionSection(URI)
     */
    @GET
-   @Consumes(NETWORK_CONFIG_SECTION)
+   @Consumes(NETWORK_CONNECTION_SECTION)
    @Path("/networkConnectionSection")
    @JAXBResponseParser
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)

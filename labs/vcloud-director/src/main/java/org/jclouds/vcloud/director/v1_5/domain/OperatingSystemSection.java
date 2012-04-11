@@ -20,6 +20,7 @@ package org.jclouds.vcloud.director.v1_5.domain;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.dmtf.DMTFConstants.OVF_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_1_5_NS;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.VCLOUD_VMW_NS;
 
@@ -44,7 +45,7 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  * @author grkvlt@apache.org
  */
-@XmlRootElement(name = "OperatingSystemSection")
+@XmlRootElement(name = "OperatingSystemSection", namespace = OVF_NS)
 @XmlType(name = "OperatingSystemSection_Type")
 @XmlSeeAlso({ org.jclouds.dmtf.ovf.OperatingSystemSection.class })
 public class OperatingSystemSection extends org.jclouds.dmtf.ovf.OperatingSystemSection {
