@@ -50,6 +50,7 @@ import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.logging.Logger;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -81,6 +82,8 @@ import com.google.inject.Module;
 public class SpringServletConfig extends LoggingConfig implements ServletConfigAware {
    public static final String PROPERTY_BLOBSTORE_CONTEXTS = "blobstore.contexts";
 
+   private static final Logger LOGGER = LOGGER_FACTORY.getLogger(SpringServletConfig.class.getName());
+
    private ServletConfig servletConfig;
 
    private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
@@ -93,7 +96,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
 
       Properties props = loadJCloudsProperties();
-      logger.trace("About to initialize members.");
+      LOGGER.trace("About to initialize members.");
 
       Module googleModule = new GoogleAppEngineConfigurationModule();
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
@@ -121,7 +124,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       // get a queue for submitting store tweet requests
       queue = QueueFactory.getQueue("twitter");
 
-      logger.trace("Members initialized. Twitter: '%s', container: '%s', provider types: '%s'", twitterClient,
+      LOGGER.trace("Members initialized. Twitter: '%s', container: '%s', provider types: '%s'", twitterClient,
             container, providerTypeToBlobStoreMap.keySet());
    }
 
@@ -136,7 +139,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
    }
    
    private Properties loadJCloudsProperties() {
-      logger.trace("About to read properties from '%s'", "/WEB-INF/jclouds.properties");
+      LOGGER.trace("About to read properties from '%s'", "/WEB-INF/jclouds.properties");
       Properties props = new Properties();
       InputStream input = servletConfig.getServletContext().getResourceAsStream("/WEB-INF/jclouds.properties");
       try {
@@ -146,7 +149,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       } finally {
          Closeables.closeQuietly(input);
       }
-      logger.trace("Properties successfully read.");
+      LOGGER.trace("Properties successfully read.");
       return props;
    }
 
@@ -171,13 +174,13 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
    }
 
    private void injectServletConfig(Servlet servlet) {
-      logger.trace("About to inject servlet config '%s'", servletConfig);
+      LOGGER.trace("About to inject servlet config '%s'", servletConfig);
       try {
          servlet.init(checkNotNull(servletConfig));
       } catch (ServletException exception) {
          throw new BeanCreationException("Unable to instantiate " + servlet, exception);
       }
-      logger.trace("Successfully injected servlet config.");
+      LOGGER.trace("Successfully injected servlet config.");
    }
 
    @Bean
@@ -208,14 +211,14 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
 
    @PreDestroy
    public void destroy() throws Exception {
-      logger.trace("About to close contexts.");
+      LOGGER.trace("About to close contexts.");
       for (BlobStoreContext context : providerTypeToBlobStoreMap.values()) {
          context.close();
       }
-      logger.trace("Contexts closed.");
-      logger.trace("About to purge request queue.");
+      LOGGER.trace("Contexts closed.");
+      LOGGER.trace("About to purge request queue.");
       queue.purge();
-      logger.trace("Request queue purged.");
+      LOGGER.trace("Request queue purged.");
    }
 
    /*
