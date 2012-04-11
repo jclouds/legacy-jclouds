@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "vdc" }, singleThreaded = true, testName = "AdminVdcClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "AdminVdcClientLiveTest")
 public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "admin vdc";
@@ -75,7 +75,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       if (metadataKey != null) {
          try {
             Task task = metadataClient.deleteMetadataEntry(adminVdcUri, metadataKey);
-            assertTaskSucceeds(task);
+            taskDoneEventually(task);
          } catch (VCloudDirectorException e) {
             logger.warn(e, "Error deleting metadata-value (perhaps it doesn't exist?); continuing...");
          }

@@ -66,7 +66,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "user", "vdc" }, singleThreaded = true, testName = "VdcClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VdcClientLiveTest")
 public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "vdc";
@@ -118,8 +118,12 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
       
       if (metadataSet) {
-         adminContext.getApi().getVdcClient().getMetadataClient()
-            .deleteMetadataEntry(toAdminUri(vdcURI), "key");
+         try {
+	         Task delete = adminContext.getApi().getVdcClient().getMetadataClient().deleteMetadataEntry(toAdminUri(vdcURI), "key");
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error deleting metadata entry");
+         }
       }
    }
    

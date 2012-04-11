@@ -56,7 +56,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "user", "vdc" }, singleThreaded = true, testName = "VdcClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "VdcClientExpectTest")
 public class VdcClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private URI vdcURI;

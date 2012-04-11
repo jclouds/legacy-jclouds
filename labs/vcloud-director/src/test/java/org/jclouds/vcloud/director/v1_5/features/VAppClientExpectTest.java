@@ -64,7 +64,7 @@ import com.google.common.collect.Multimaps;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "unit", "user", "vapp" }, singleThreaded = true, testName = "VAppClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "VAppClientExpectTest")
 public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private String vAppId = "vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be";
