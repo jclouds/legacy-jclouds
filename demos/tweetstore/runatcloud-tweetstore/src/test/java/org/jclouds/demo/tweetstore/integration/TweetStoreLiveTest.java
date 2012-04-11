@@ -44,6 +44,7 @@ import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Strings2;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -176,7 +177,7 @@ public class TweetStoreLiveTest {
       url = new URL(String.format("http://%s:%s", address, port));
 
       server = new RunAtCloudServer();
-      server.writePropertiesAndStartServer(address, port, warfile, "itest", 
+      server.writePropertiesAndStartServer(port, warfile, "itest", 
               serverBaseDirectory, props);
    }
 
@@ -228,5 +229,10 @@ public class TweetStoreLiveTest {
       InputStream i = gurl.openStream();
       String string = Strings2.toStringAndClose(i);
       assert string.indexOf("Tweets in Clouds") >= 0 : string;
+   }
+
+   @AfterTest
+   public void stopDevAppServer() throws Exception {
+       server.stop();
    }
 }
