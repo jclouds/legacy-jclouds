@@ -19,55 +19,18 @@
 package org.jclouds.demo.tweetstore.integration.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
+import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 public class Zips {
-    private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
-    
-    public static File zipFile(String fileToZip, String zipFile,
-            boolean excludeToplevelFolder) throws IOException {
-        ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));
-        try {
-            File srcFile = new File(fileToZip);
-            if (excludeToplevelFolder && srcFile.isDirectory()) {
-                for (String fileName : srcFile.list()) {
-                    addToZip("", fileToZip + "/" + fileName, zipOut);
-                }
-            } else {
-                addToZip("", fileToZip, zipOut);
-            }
-            zipOut.flush();
-        } finally {
-            zipOut.close();
-        }
-        return new File(zipFile);
-    }
 
-    private static void addToZip(String path, String srcFile,
-            ZipOutputStream zipOut) throws IOException {
-        File file = new File(srcFile);
-        String filePath = ("".equals(path) ? file.getName() 
-                                           : path + "/" + file.getName());
-        if (file.isDirectory()) {
-            for (String fileName : file.list()) {
-                addToZip(filePath, srcFile + "/" + fileName, zipOut);
-            }
-        } else {
-            zipOut.putNextEntry(new ZipEntry(filePath));
-            FileInputStream in = new FileInputStream(srcFile);
-            try {
-                byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-                int len;
-                while ((len = in.read(buffer)) != -1) {
-                    zipOut.write(buffer, 0, len);
-                }
-            } finally {
-                in.close();
-            }
-        }
+    public static File zipDir(String dirToZip, String zipFile) throws IOException {
+        ZipArchiver archiver = new ZipArchiver();
+        archiver.addDirectory(new File(dirToZip));
+        File zip = new File(zipFile);
+        archiver.setDestFile(zip);
+        archiver.createArchive();
+        return zip;
     }
 }
