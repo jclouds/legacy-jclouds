@@ -83,13 +83,10 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @AfterClass(alwaysRun = true)
    protected void tidyUp() {
       if (catalog != null) {
-         catalogClient.deleteCatalog(catalog.getHref());
-         try { //TODO: predicate to retry for a short while?
-            catalogClient.getCatalog(catalog.getHref()); 
-            fail("The Catalog should have been deleted");
-         } catch (VCloudDirectorException vcde) {
-            checkError(vcde.getError());
-            assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The majorErrorCode should be 403 since the item has been deleted");
+         try {
+	         catalogClient.deleteCatalog(catalog.getHref());
+         } catch (Exception e) {
+            logger.warn(e, "Error deleting admin catalog '%s'", catalog.getName());
          }
       }
    }

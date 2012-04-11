@@ -18,6 +18,8 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -34,7 +36,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
- * Test a {@link Task} to see if it has succeeded.
+ * Test a {@link Task} status is in a particular set of {@link Task.Status statuses}.
  * 
  * @author grkvlt@apache.org
  */
@@ -61,6 +63,7 @@ public class TaskStatusEquals implements Predicate<Task> {
    /** @see Predicate#apply(Object) */
    @Override
    public boolean apply(Task task) {
+      checkNotNull(task, "task");
       logger.trace("looking for status on task %s", task);
 
       // TODO shouldn't we see if it's already done before getting it from API server?

@@ -118,8 +118,12 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
       
       if (metadataSet) {
-         adminContext.getApi().getVdcClient().getMetadataClient()
-            .deleteMetadataEntry(toAdminUri(vdcURI), "key");
+         try {
+	         Task delete = adminContext.getApi().getVdcClient().getMetadataClient().deleteMetadataEntry(toAdminUri(vdcURI), "key");
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error deleting metadata entry");
+         }
       }
    }
    

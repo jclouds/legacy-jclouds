@@ -582,6 +582,8 @@ public class Checks {
    }
 
    public static void checkVmPendingQuestion(VmPendingQuestion question) {
+      assertNotNull(question, String.format(NOT_NULL_OBJ_FMT, "VmPendingQuestion"));
+
       // Check required fields
       assertNotNull(question.getQuestion(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "Question"));
       assertNotNull(question.getQuestionId(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "QuestionId"));

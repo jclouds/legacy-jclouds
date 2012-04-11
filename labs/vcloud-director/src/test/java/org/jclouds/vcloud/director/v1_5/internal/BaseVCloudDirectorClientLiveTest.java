@@ -303,21 +303,31 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       assertTrue(retryTaskSuccessLong.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
    }
 
-   protected void assertTaskStatusEventually(Task task, Task.Status running, ImmutableSet<Task.Status> immutableSet) {
+   protected boolean taskStatusEventually(Task task, Task.Status running, ImmutableSet<Task.Status> immutableSet) {
       TaskClient taskClient = context.getApi().getTaskClient();
       TaskStatusEquals predicate = new TaskStatusEquals(taskClient, running, immutableSet);
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, TASK_TIMEOUT_SECONDS * 1000L);
-      assertTrue(retryablePredicate.apply(task), "Task must enter status "+running);
+      return retryablePredicate.apply(task);
    }
    
-   protected void assertTaskDoneEventually(Task task) {
+   protected void assertTaskStatusEventually(Task task, Task.Status running, ImmutableSet<Task.Status> immutableSet) {
+      assertTrue(taskStatusEventually(task, running, immutableSet),
+            String.format("Task '%s' must reach status %s", task.getOperationName(), running));
+   }
+   
+   protected boolean taskDoneEventually(Task task) {
       TaskClient taskClient = context.getApi().getTaskClient();
       TaskStatusEquals predicate = new TaskStatusEquals(
                taskClient, 
                ImmutableSet.of(Task.Status.ABORTED, Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS), 
                Collections.<Task.Status>emptySet());
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, LONG_TASK_TIMEOUT_SECONDS * 1000L);
-      assertTrue(retryablePredicate.apply(task), "Task must be done");
+      return retryablePredicate.apply(task);
+   }
+
+   protected void assertTaskDoneEventually(Task task) {
+      assertTrue(taskDoneEventually(task),
+            String.format("Task '%s' must complete", task.getOperationName()));
    }
 
    /**
@@ -407,10 +417,13 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
    
    protected void cleanUpVAppTemplate(VAppTemplate vAppTemplate) {
       VAppTemplateClient vappTemplateClient = context.getApi().getVAppTemplateClient();
-      
-      Task task = vappTemplateClient.deleteVappTemplate(vAppTemplate.getHref());
-      assertTaskSucceeds(task);
-   }
+      try {
+	      Task task = vappTemplateClient.deleteVappTemplate(vAppTemplate.getHref());
+	      taskDoneEventually(task);
+      } catch (Exception e) {
+         logger.warn(e, "Error deleting template '%s'", vAppTemplate.getName());
+      }
+    }
 
    protected void cleanUpVApp(VApp vApp) {
       cleanUpVApp(vApp.getHref());
@@ -434,7 +447,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       // Otherwise, get error on delete "entity is busy completing an operation.
       if (vApp.getTasks() != null) {
          for (Task task : vApp.getTasks()) {
-            assertTaskDoneEventually(task);
+            if (!taskDoneEventually(task)) {
+               logger.warn("Task '%s' did not complete", task.getOperationName());
+            }
          }
       }
       
@@ -442,7 +457,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
          try {
             Task shutdownTask = vAppClient.shutdown(vAppURI);
-            retryTaskSuccess.apply(shutdownTask);
+            taskDoneEventually(shutdownTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible
             logger.warn(e, "Continuing cleanup after error shutting down VApp %s", vApp.getName());
@@ -454,7 +469,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
          try {
             UndeployVAppParams params = UndeployVAppParams.builder().build();
             Task undeployTask = vAppClient.undeploy(vAppURI, params);
-            retryTaskSuccess.apply(undeployTask);
+            taskDoneEventually(undeployTask);
          } catch (Exception e) {
             // keep going; cleanup as much as possible
             logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp.getName());
@@ -463,7 +478,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseVersionedServ
       
       try {
          Task task = vAppClient.deleteVApp(vAppURI);
-         assertTaskSucceeds(task);
+         taskDoneEventually(task);
          vAppNames.remove(vApp.getName());
          logger.info("Deleted VApp %s", vApp.getName());
       } catch (Exception e) {

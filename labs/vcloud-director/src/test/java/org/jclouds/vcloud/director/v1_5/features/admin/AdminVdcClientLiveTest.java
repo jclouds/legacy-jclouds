@@ -75,7 +75,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       if (metadataKey != null) {
          try {
             Task task = metadataClient.deleteMetadataEntry(adminVdcUri, metadataKey);
-            assertTaskSucceeds(task);
+            taskDoneEventually(task);
          } catch (VCloudDirectorException e) {
             logger.warn(e, "Error deleting metadata-value (perhaps it doesn't exist?); continuing...");
          }

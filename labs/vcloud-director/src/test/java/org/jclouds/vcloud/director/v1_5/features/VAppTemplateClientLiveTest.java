@@ -93,7 +93,12 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @AfterClass(alwaysRun = true)
    protected void tidyUp() {
       if (key != null) {
-         assertTaskSucceeds(vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key));
+         try {
+	         Task delete = vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key);
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting metadata entry '%s'", key);
+         }
       }
    }
 

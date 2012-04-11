@@ -30,7 +30,6 @@ import static org.testng.AssertJUnit.assertFalse;
 import java.net.URI;
 
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
@@ -77,8 +76,8 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       if (user != null) {
          try {
             userClient.deleteUser(user.getHref());
-         } catch (VCloudDirectorException e) {
-            // ignore; user probably already deleted
+         } catch (Exception e) {
+            logger.warn(e, "Error deleting user '%s'", user.getName());
          }
       }
    }
@@ -177,11 +176,13 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       assertTrue(settings.isAccountLockoutEnabled());
       
-      for (int i=0; i<settings.getInvalidLoginsBeforeLockout()+1; i++) {
+      for (int i = 0; i < settings.getInvalidLoginsBeforeLockout() + 1; i++) {
          try {
             sessionClient.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "wrongpassword!");
             fail("Managed to login using the wrong password!");
-         } catch(AuthorizationException ex) {            
+         } catch (AuthorizationException e) {
+         } catch (Exception e) {
+            fail("Expected AuthorizationException", e);
          }
       }
       
@@ -191,7 +192,9 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       try {
          sessionClient.loginUserInOrgWithPassword(URI.create(endpoint + "/sessions"), user.getName(), orgRef.getName(), "newPassword");
          fail("Managed to login to locked account!");
-      } catch(AuthorizationException ex) {
+      } catch (AuthorizationException e) {
+      } catch (Exception e) {
+         fail("Expected AuthorizationException", e);
       }
       
       userClient.unlockUser(user.getHref());

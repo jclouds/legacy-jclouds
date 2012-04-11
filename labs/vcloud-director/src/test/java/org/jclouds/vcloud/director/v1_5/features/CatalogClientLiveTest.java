@@ -25,7 +25,6 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkCatalogItem;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkError;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadata;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkMetadataValue;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkTask;
@@ -35,9 +34,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.CatalogItem;
@@ -112,22 +109,29 @@ public class CatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @AfterClass(alwaysRun = true)
    public void tearDown() {
-      if (catalogItem != null)
-         catalogClient.deleteCatalogItem(catalogItem.getHref());
-         
-      if (media != null)
-         context.getApi().getMediaClient().deleteMedia(media.getHref());
-      
-      if (adminCatalog != null) {
-         adminContext.getApi().getCatalogClient().deleteCatalog(adminCatalog.getHref());
+      if (catalogItem != null) {
          try {
-            catalogClient.getCatalog(catalogRef.getHref());
-            fail("The Catalog should have been deleted");
-         } catch (VCloudDirectorException vcde) {
-            checkError(vcde.getError());
-            assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The majorErrorCode should be 403 since the item has been deleted");
+	         catalogClient.deleteCatalogItem(catalogItem.getHref());
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting catalog item '%s'", catalogItem.getName());
          }
       }
+      if (media != null) {
+         try {
+	         Task delete = context.getApi().getMediaClient().deleteMedia(media.getHref());
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting media '%s'", media.getName());
+         }
+      }
+      if (adminContext != null && adminCatalog != null) {
+         try {
+	         adminContext.getApi().getCatalogClient().deleteCatalog(adminCatalog.getHref());
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting catalog '%s'", adminCatalog.getName());
+         }
+      }
+      // TODO wait for tasks
    }
 
    @Test(description = "GET /catalog/{id}")

@@ -40,6 +40,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Org;
 import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -73,11 +74,17 @@ public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
       if (adminMembersSet) {
-         adminContext.getApi().getOrgClient().getMetadataClient()
-            .deleteMetadataEntry(toAdminUri(orgURI), "KEY");
-         
-         adminContext.getApi().getCatalogClient()
-            .deleteCatalog(catalogRef);
+         try {
+	         Task delete = adminContext.getApi().getOrgClient().getMetadataClient().deleteMetadataEntry(toAdminUri(orgURI), "KEY");
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting metadata entry");
+         }
+         try {
+	         adminContext.getApi().getCatalogClient().deleteCatalog(catalogRef);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting catalog'%s': %s", catalogRef);
+         }
       }
    }
 

@@ -42,18 +42,15 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Set;
 
 import org.jclouds.io.Payloads;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
 import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.File;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
@@ -108,10 +105,20 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    @AfterClass(alwaysRun = true)
    protected void tidyUp() {
       if (media != null) {
-         assertTaskSucceeds(mediaClient.deleteMedia(media.getHref()));
+         try {
+	         Task delete = mediaClient.deleteMedia(media.getHref());
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting media '%s': %s", media.getName());
+         }
       }
       if (oldMedia != null) {
-         assertTaskSucceeds(mediaClient.deleteMedia(oldMedia.getHref()));
+         try {
+	         Task delete = mediaClient.deleteMedia(oldMedia.getHref());
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting media '%s': %s", oldMedia.getName());
+         }
       }
    }
    

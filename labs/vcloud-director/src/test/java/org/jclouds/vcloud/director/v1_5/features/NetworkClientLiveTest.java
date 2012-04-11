@@ -36,6 +36,7 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Network;
 import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -67,10 +68,14 @@ public class NetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    }
    
    @AfterClass(alwaysRun = true)
-   public void cleanUp() throws Exception {
+   public void cleanUp() {
       if (metadataSet) {
-         adminContext.getApi().getNetworkClient().getMetadataClient()
-            .deleteMetadataEntry(toAdminUri(networkURI), "key");
+         try {
+	         Task delete = adminContext.getApi().getNetworkClient().getMetadataClient().deleteMetadataEntry(toAdminUri(networkURI), "key");
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting metadata");
+         }
       }
    }
    

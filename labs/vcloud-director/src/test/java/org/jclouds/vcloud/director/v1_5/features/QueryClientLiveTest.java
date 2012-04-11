@@ -76,9 +76,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
-      if (vApp != null) {
-         cleanUpVApp(vApp);
-      }
+      if (vApp != null) cleanUpVApp(vApp);
    }
 
    @Override
