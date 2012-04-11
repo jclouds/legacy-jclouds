@@ -19,6 +19,7 @@
 package org.jclouds.demo.tweetstore.config;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.lang.String.format;
 import static org.jclouds.logging.LoggingModules.firstOrJDKLoggingModule;
 
 import java.util.Set;
@@ -66,16 +67,28 @@ abstract class LoggingConfig implements BeanFactoryAware {
         public Object resolveDependency(DependencyDescriptor descriptor,
                 String beanName, Set<String> autowiredBeanNames,
                 TypeConverter typeConverter) throws BeansException {
-            Object bean;
             if (descriptor.getDependencyType().equals(Logger.class)) {
                 Class<?> requestingType = getType(beanName);
-                LOGGER.trace("About to create logger for bean '%s' of type '%s'", 
+                LOGGER.trace("About to resolve logger for bean '%s' of type '%s'", 
                         beanName, requestingType);
-                bean = LOGGER_FACTORY.getLogger(requestingType.getName());
-                LOGGER.trace("Successfully created logger.");
-                return bean;
+                Logger logger = resolveLogger(requestingType, autowiredBeanNames);
+                LOGGER.trace("Successfully resolved logger.");
+                return logger;
             }
             return super.resolveDependency(descriptor, beanName, autowiredBeanNames, typeConverter);
+        }
+
+        private Logger resolveLogger(Class<?> type, Set<String> autowiredBeanNames) {
+            String loggerBeanName = format("%s#logger", type);
+            if (autowiredBeanNames.contains(loggerBeanName)) {
+                LOGGER.trace("Returning existing bean '%s'", loggerBeanName);
+                return (Logger) getBean(loggerBeanName);
+            }
+
+            LOGGER.trace("About to create logger for type '%s'", type);
+            Logger logger = LOGGER_FACTORY.getLogger(type.getName());
+            LOGGER.trace("Successfully created logger.");
+            return logger;
         }
     }
     
