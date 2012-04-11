@@ -51,6 +51,8 @@ public class VCloudDirectorLiveTestConstants {
    
    public static final String OBJ_FIELD_GTE_1 = "ERR-108: %s field %s must be greater than to equal to 0 (%d)";
 
+   public static final String OBJ_FIELD_GTE = "ERR-108: %s field %s must be greater than to equal to %d (%d)";
+   
    public static final String GETTER_RETURNS_SAME_OBJ = "ERR-109: %s should return the same %s as %s (%s, %s)";
 
    public static final String OBJ_FIELD_UPDATABLE = "ERR-110: %s field %s should be updatable";
@@ -88,7 +90,13 @@ public class VCloudDirectorLiveTestConstants {
    public static final String NOT_EMPTY_STRING_FMT = "ERR-126: The %s field must not be an empty string";
 
    public static final String MATCHES_STRING_FMT = "ERR-127: The %s field must match the pattern \"%s\" (%s)";
+   
+   public static final String OBJ_FIELD_LIST_EMPTY = "ERR-128: %s %s must be empty (%d members)";
 
+   public static final String OBJ_FIELD_LIST_SIZE_EQ = "ERR-129: %s %s must have %d members (%d members)";
+
+   public static final String OBJ_FIELD_LIST_SIZE_GE = "ERR-130: %s %s must have at least %d members (%d members)";
+   
    /* Error codes from 300 to 399 reflect entities and their links and relationship errors. */ 
    
    public static final String ENTITY_NON_NULL = "ERR-301: The %s entity must not be null";

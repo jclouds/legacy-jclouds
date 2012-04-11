@@ -729,7 +729,7 @@ public class Checks {
       // NOTE transport cannot be checked
       if (hardware.getItems() != null) {
 	      for (ResourceAllocationSettingData item : hardware.getItems()) {
-	         checkResourceAllocationSettingData((RasdItem) item);
+	         checkResourceAllocationSettingData(item);
 	      }
       }
       
@@ -760,7 +760,7 @@ public class Checks {
 //      assertNotNull(virtualSystem.getVirtualSystemType(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "virtualSystemType"));
    }
 
-   public static void checkResourceAllocationSettingData(RasdItem item) {
+   public static void checkResourceAllocationSettingData(ResourceAllocationSettingData item) {
       // TODO
    }
    

@@ -32,6 +32,8 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.O
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_LIST_SIZE_EQ;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_LIST_SIZE_GE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.TASK_COMPLETE_TIMELY;
@@ -62,10 +64,12 @@ import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
+import org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -144,29 +148,27 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMediaFor(MEDIA, media);
       
       assertNotNull(media.getFiles(), String.format(OBJ_FIELD_REQ, MEDIA, "files"));
-      assertTrue(media.getFiles().size() == 1, String.format(OBJ_FIELD_EQ, MEDIA, "files.size()", "1", 
-            media.getFiles().size()));
+      assertTrue(media.getFiles().size() == 1, String.format(OBJ_FIELD_LIST_SIZE_EQ, MEDIA, "files", 1, media.getFiles().size()));
       File uploadFile = getFirst(media.getFiles(), null);
       assertNotNull(uploadFile, String.format(OBJ_FIELD_REQ, MEDIA, "files.first"));
       assertEquals(uploadFile.getSize(), new Long(iso.length));
-      assertTrue(equal(uploadFile.getSize(), sourceMedia.getSize()), String.format(OBJ_FIELD_EQ, MEDIA, "uploadFile.size()",
-            sourceMedia.getSize(), uploadFile.getSize()));
+      assertEquals(uploadFile.getSize().longValue(), sourceMedia.getSize(),
+            String.format(OBJ_FIELD_EQ, MEDIA, "uploadFile.size()", sourceMedia.getSize(), uploadFile.getSize()));
       
       Set<Link> links = uploadFile.getLinks();
       assertNotNull(links, String.format(OBJ_FIELD_REQ, MEDIA, "uploadFile.links"));
-      assertTrue(links.size() == 1, String.format(OBJ_FIELD_EQ, MEDIA, "uploadfile.links.size()", "1", 
-            links.size()));
-      Link uploadLink = getFirst(links, null);
-      assertTrue(equal(uploadLink.getRel(), Link.Rel.UPLOAD_DEFAULT), String.format(OBJ_FIELD_REQ, MEDIA, "uploadFile.links.first"));
+      assertTrue(links.size() >= 1, String.format(OBJ_FIELD_LIST_SIZE_GE, MEDIA, "uploadfile.links", 1, links.size()));
+      assertTrue(Iterables.all(links, Predicates.or(LinkPredicates.relEquals(Link.Rel.UPLOAD_DEFAULT), LinkPredicates.relEquals(Link.Rel.UPLOAD_ALTERNATE))),
+            String.format(OBJ_FIELD_REQ, MEDIA, "uploadFile.links.first"));
 
+      Link uploadLink = Iterables.find(links, LinkPredicates.relEquals(Link.Rel.UPLOAD_DEFAULT));
       context.getApi().getUploadClient().upload(uploadLink.getHref(), Payloads.newByteArrayPayload(iso));
       
       media = mediaClient.getMedia(media.getHref());
-      
       if (media.getTasks().size() == 1) {
          Task uploadTask = Iterables.getOnlyElement(media.getTasks());
          Checks.checkTask(uploadTask);
-         assertEquals(uploadTask.getStatus(), "running");
+         assertEquals(uploadTask.getStatus(), Task.Status.RUNNING);
          assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
          media = mediaClient.getMedia(media.getHref());
       }
