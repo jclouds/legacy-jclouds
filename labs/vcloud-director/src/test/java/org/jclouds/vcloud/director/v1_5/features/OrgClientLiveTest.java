@@ -53,7 +53,7 @@ import com.google.common.collect.Iterables;
 * 
 * @author grkvlt@apache.org
 */
-@Test(groups = { "live", "user", "org" }, singleThreaded = true, testName = "OrgClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "OrgClientLiveTest")
 public class OrgClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*

@@ -54,7 +54,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "catalog" }, singleThreaded = true, testName = "CatalogClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "CatalogClientLiveTest")
 public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String CATALOG = "admin catalog";

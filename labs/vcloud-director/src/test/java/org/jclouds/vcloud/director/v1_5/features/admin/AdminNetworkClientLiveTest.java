@@ -51,7 +51,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "network" }, singleThreaded = true, testName = "AdminNetworkLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "AdminNetworkLiveTest")
 public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String NETWORK = "AdminNetwork";

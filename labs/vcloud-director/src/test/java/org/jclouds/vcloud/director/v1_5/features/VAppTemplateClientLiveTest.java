@@ -84,7 +84,7 @@ import com.google.common.collect.Iterables;
  *
  * @author Aled Sage
  */
-@Test(groups = { "live", "user", "vapptemplate" }, singleThreaded = true, testName = "VAppTemplateClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VAppTemplateClientLiveTest")
 public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    private String key;

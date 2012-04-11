@@ -48,7 +48,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Listeners(FormatApiResultsListener.class)
-@Test(groups = { "live", "user", "login" }, testName = "SessionClientLiveTest")
+@Test(groups = { "live", "user" }, testName = "SessionClientLiveTest")
 public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
    public SessionClientLiveTest() {
       provider = "vcloud-director";
@@ -73,7 +73,7 @@ public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
    private SessionClient client;
    private SessionWithToken sessionWithToken;
 
-   @Test(testName = "POST /sessions")
+   @Test(description = "POST /sessions")
    public void testLogin() {
       String user = identity.substring(0, identity.lastIndexOf('@'));
       String org = identity.substring(identity.lastIndexOf('@') + 1);
@@ -86,13 +86,13 @@ public class SessionClientLiveTest extends BaseVersionedServiceLiveTest {
       assertNotNull(sessionWithToken.getToken());
    }
 
-   @Test(testName = "GET /session", dependsOnMethods = "testLogin")
+   @Test(description = "GET /session", dependsOnMethods = "testLogin")
    public void testGetSession() {
       assertEquals(client.getSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken()),
                sessionWithToken.getSession());
    }
 
-   @Test(testName = "DELETE /session", dependsOnMethods = "testGetSession")
+   @Test(description = "DELETE /session", dependsOnMethods = "testGetSession")
    public void testLogout() {
       client.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }

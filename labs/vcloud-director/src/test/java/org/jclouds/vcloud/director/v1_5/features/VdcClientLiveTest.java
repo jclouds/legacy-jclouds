@@ -66,7 +66,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "user", "vdc" }, singleThreaded = true, testName = "VdcClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VdcClientLiveTest")
 public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "vdc";

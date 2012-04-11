@@ -77,7 +77,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Adam Lowe
  */
-@Test(groups = { "unit", "user", "vapptemplate" }, testName = "VAppTemplateClientExpectTest")
+@Test(groups = { "unit", "user" }, testName = "VAppTemplateClientExpectTest")
 public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    public VAppTemplateClientExpectTest() {

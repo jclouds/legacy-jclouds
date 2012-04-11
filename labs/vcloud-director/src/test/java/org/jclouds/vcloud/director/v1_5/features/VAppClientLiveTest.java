@@ -129,7 +129,7 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "user", "vapp" }, singleThreaded = true, testName = "VAppClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VAppClientLiveTest")
 public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    private MetadataValue metadataValue;

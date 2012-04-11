@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "group" }, singleThreaded = true, testName = "GroupClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "GroupClientLiveTest")
 public class GroupClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String GROUP = "admin group";

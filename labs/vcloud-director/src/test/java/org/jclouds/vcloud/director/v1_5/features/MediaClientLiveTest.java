@@ -74,7 +74,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "user", "media" }, singleThreaded = true, testName = "MediaClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "MediaClientLiveTest")
 public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    public static final String MEDIA = "media";

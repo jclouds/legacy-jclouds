@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "vdc" }, singleThreaded = true, testName = "AdminVdcClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "AdminVdcClientLiveTest")
 public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "admin vdc";

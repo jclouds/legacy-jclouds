@@ -48,7 +48,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "adminUser" }, singleThreaded = true, testName = "UserClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "UserClientLiveTest")
 public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String USER = "admin user";
@@ -89,16 +89,14 @@ public class UserClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       checkUser(newUser);
    }
    
-   @Test(description = "GET /admin/user/{id}",
-         dependsOnMethods = { "testCreateUser" })
+   @Test(description = "GET /admin/user/{id}", dependsOnMethods = { "testCreateUser" })
    public void testGetUser() {
       user = userClient.getUser(user.getHref());
       
       checkUser(user);
    }
  
-   @Test(description = "PUT /admin/user/{id}",
-         dependsOnMethods = { "testGetUser" })
+   @Test(description = "PUT /admin/user/{id}", dependsOnMethods = { "testGetUser" })
    public void testUpdateUser() {
       User oldUser = user.toBuilder().build();
       User newUser = user.toBuilder()

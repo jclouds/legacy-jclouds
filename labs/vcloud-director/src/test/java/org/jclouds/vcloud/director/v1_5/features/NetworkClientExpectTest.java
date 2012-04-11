@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "user", "network" }, singleThreaded = true, testName = "NetworkClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "NetworkClientExpectTest")
 public class NetworkClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    @Test
