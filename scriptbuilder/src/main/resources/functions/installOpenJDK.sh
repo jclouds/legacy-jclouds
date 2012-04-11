@@ -19,14 +19,9 @@ END_OF_JCLOUDS_FILE
 
 function installOpenJDK() {
   if hash apt-get 2>/dev/null; then
-    pkg=openjdk-7-jdk
-    (apt-get-install $pkg || ( apt-get-upgrade && apt-get-install $pkg )) &&
-      export JAVA_HOME=`ls -d /usr/lib/jvm/java-7-openjdk*|grep -v common`
-    # ex. lucid where jdk 7 is not present
     export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-6-openjdk}
     test -d $JAVA_HOME || apt-get-install openjdk-6-jdk
   elif hash yum 2>/dev/null; then
-    #TODO: find a jdk7 yum repo
     export pkg=java-1.6.0-openjdk-devel
     yum --nogpgcheck -y install $pkg &&
     export JAVA_HOME=`ls -d /usr/lib/jvm/java-1.6.0-openjdk-*`
