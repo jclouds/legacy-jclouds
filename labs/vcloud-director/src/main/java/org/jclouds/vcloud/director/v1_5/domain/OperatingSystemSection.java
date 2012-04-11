@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -44,6 +45,7 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "OperatingSystemSection")
+@XmlType(name = "OperatingSystemSection_Type")
 @XmlSeeAlso({ org.jclouds.dmtf.ovf.OperatingSystemSection.class })
 public class OperatingSystemSection extends org.jclouds.dmtf.ovf.OperatingSystemSection {
 

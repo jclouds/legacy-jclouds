@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -41,7 +42,8 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@XmlRootElement(name = "VirtualHardwareSection", namespace = VCLOUD_1_5_NS)
+@XmlRootElement(name = "VirtualHardwareSection")
+@XmlType(name = "VirtualHardwareSection_Type")
 @XmlSeeAlso({ org.jclouds.dmtf.ovf.VirtualHardwareSection.class })
 public class VirtualHardwareSection extends org.jclouds.dmtf.ovf.VirtualHardwareSection {
 
