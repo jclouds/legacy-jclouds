@@ -251,7 +251,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    protected VApp powerOn(final URI testVAppURI) {
       VApp testVApp = vAppClient.getVApp(testVAppURI);
       Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = Status.fromValue(vm.getStatus());
+      Status status = vm.getStatus();
       if (status != Status.POWERED_ON) {
          Task powerOn = vAppClient.powerOn(vm.getHref());
          assertTaskSucceedsLong(powerOn);
@@ -275,7 +275,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    protected VApp powerOff(final URI testVAppURI) {
       VApp testVApp = vAppClient.getVApp(testVAppURI);
       Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = Status.fromValue(vm.getStatus());
+      Status status = vm.getStatus();
       if (status != Status.POWERED_OFF) {
          Task powerOff = vAppClient.powerOff(vm.getHref());
          assertTaskSucceedsLong(powerOff);
@@ -299,7 +299,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    protected VApp suspend(final URI testVAppURI) {
       VApp testVApp = vAppClient.getVApp(testVAppURI);
       Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = Status.fromValue(vm.getStatus());
+      Status status = vm.getStatus();
       if (status != Status.SUSPENDED) {
          Task suspend = vAppClient.suspend(vm.getHref());
          assertTaskSucceedsLong(suspend);
@@ -314,7 +314,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    protected void assertVAppStatus(final URI testVAppURI, final Status status) {
       VApp testVApp = vAppClient.getVApp(testVAppURI);
       Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      assertEquals(vm.getStatus(), status.getValue(), String.format(OBJ_FIELD_EQ, VAPP, "status", status.toString(), Status.fromValue(vm.getStatus()).toString()));
+      assertEquals(vm.getStatus(), status, String.format(OBJ_FIELD_EQ, VAPP, "status", status.toString(), vm.getStatus().toString()));
    }
 
    /**

@@ -69,6 +69,7 @@ public class Link extends Reference {
       @XmlEnumValue("download:default") DOWNLOAD_DEFAULT("download:default"),
       @XmlEnumValue("edit") EDIT("edit"),
       @XmlEnumValue("enable") ENABLE("enable"),
+      @XmlEnumValue("entityResolver") ENTITY_RESOLVER("entityResolver"),
       @XmlEnumValue("firstPage") FIRST_PAGE("firstPage"),
       @XmlEnumValue("installVmwareTools") INSTALL_VMWARE_TOOLS("installVmwareTools"),
       @XmlEnumValue("lastPage") LAST_PAGE("lastPage"),
@@ -115,7 +116,7 @@ public class Link extends Reference {
             ADD, ALTERNATE, CATALOG_ITEM, COLLABORATION_ABORT,
             COLLABORATION_FAIL, COLLABORATION_RESUME, CONSOLIDATE,
             CONTROL_ACCESS, COPY, DEPLOY, DISABLE, DISCARD_STATE, DOWN,
-            DOWNLOAD_ALTERNATE, DOWNLOAD_DEFAULT, EDIT, ENABLE, FIRST_PAGE,
+            DOWNLOAD_ALTERNATE, DOWNLOAD_DEFAULT, EDIT, ENABLE, ENTITY_RESOLVER, FIRST_PAGE,
             INSTALL_VMWARE_TOOLS, LAST_PAGE, EJECT_MEDIA, INSERT_MEDIA, MOVE,
             NEXT_PAGE, OVA, OVF, POWER_OFF, POWER_ON, REBOOT, RESET, SHUTDOWN,
             SUSPEND, PREVIOUS_PAGE, PUBLISH, RECOMPOSE, RECONNECT, REGISTER,
@@ -163,12 +164,20 @@ public class Link extends Reference {
    
    public static class Builder<B extends Builder<B>> extends Reference.Builder<B> {
 
-      private String rel;
+      private Rel rel;
 
       /**
        * @see Link#getRel()
        */
       public B rel(String rel) {
+         this.rel = Rel.fromValue(rel);
+         return self();
+      }
+
+      /**
+       * @see Link#getRel()
+       */
+      public B rel(Rel rel) {
          this.rel = rel;
          return self();
       }
@@ -194,7 +203,7 @@ public class Link extends Reference {
    }
 
    @XmlAttribute(required = true)
-   private String rel;
+   private Rel rel;
 
    protected Link(Builder<?> builder) {
       super(builder);
@@ -213,7 +222,7 @@ public class Link extends Reference {
     *
     * @return relationship of the link to the object that contains it.
     */
-   public String getRel() {
+   public Rel getRel() {
       return rel;
    }
 

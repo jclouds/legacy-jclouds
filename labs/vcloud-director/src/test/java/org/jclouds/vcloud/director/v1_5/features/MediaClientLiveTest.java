@@ -177,8 +177,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMediaFor(MEDIA, media);
    }
    
-   @Test(description = "GET /media/{id}/owner",
-         dependsOnMethods = { "testGetMedia" })
+   @Test(description = "GET /media/{id}/owner", dependsOnMethods = { "testGetMedia" })
    public void testGetMediaOwner() {
       Owner directOwner = mediaClient.getOwner(media.getHref());
       assertEquals(owner.toBuilder()
@@ -196,8 +195,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkReferenceType(directOwner.getUser());
    }
    
-   @Test(description = "POST /vdc/{id}/action/cloneMedia",
-         dependsOnMethods = { "testGetMediaOwner" })
+   @Test(description = "POST /vdc/{id}/action/cloneMedia", dependsOnMethods = { "testGetMediaOwner" })
    public void testCloneMedia() {
       oldMedia = media;
       media = vdcClient.cloneMedia(vdcURI, CloneMediaParams.builder()
@@ -246,8 +244,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
             media.toString(), oldMedia.toString()));
    }
    
-   @Test(description = "PUT /media/{id}",
-         dependsOnMethods = { "testCloneMedia" })
+   @Test(description = "PUT /media/{id}", dependsOnMethods = { "testCloneMedia" })
    public void testSetMedia() {
       String oldName = media.getName();
       String newName = "new "+oldName;
@@ -276,8 +273,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       media = mediaClient.getMedia(media.getHref());
    }
    
-   @Test(description = "GET /media/{id}/metadata",
-         dependsOnMethods = { "testSetMetadataValue" })
+   @Test(description = "GET /media/{id}/metadata", dependsOnMethods = { "testSetMetadataValue" })
    public void testGetMetadata() {
       metadata = mediaClient.getMetadataClient().getMetadata(media.getHref());
       // required for testing
@@ -287,8 +283,7 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataFor(MEDIA, metadata);
    }
    
-   @Test(description = "POST /media/{id}/metadata",
-         dependsOnMethods = { "testGetMedia" })
+   @Test(description = "POST /media/{id}/metadata", dependsOnMethods = { "testGetMedia" })
    public void testMergeMetadata() {
       // test new
       Set<MetadataEntry> inputEntries = ImmutableSet.of(MetadataEntry.builder().entry("testKey", "testValue").build());
@@ -340,15 +335,13 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       }
    }
    
-   @Test(description = "GET /media/{id}/metadata/{key}",
-         dependsOnMethods = { "testSetMetadataValue" })
+   @Test(description = "GET /media/{id}/metadata/{key}", dependsOnMethods = { "testSetMetadataValue" })
    public void testGetMetadataValue() {
       metadataValue = mediaClient.getMetadataClient().getMetadataValue(media.getHref(), "key");
       Checks.checkMetadataValueFor(MEDIA, metadataValue);
    }
    
-   @Test(description = "PUT /media/{id}/metadata/{key}",
-         dependsOnMethods = { "testMergeMetadata" })
+   @Test(description = "PUT /media/{id}/metadata/{key}", dependsOnMethods = { "testMergeMetadata" })
    public void testSetMetadataValue() {
       metadataEntryValue = "value";
       MetadataValue newValue = MetadataValue.builder().value(metadataEntryValue).build();
@@ -361,35 +354,17 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMetadataValueFor(MEDIA, metadataValue);
    }
    
-   @Test(description = "DELETE /media/{id}/metadata/{key}",
-         dependsOnMethods = { "testGetMetadata", "testGetMetadataValue" } )
+   @Test(description = "DELETE /media/{id}/metadata/{key}", dependsOnMethods = { "testGetMetadata", "testGetMetadataValue" } )
    public void testDeleteMetadata() {
       Task deleteMetadataEntry = mediaClient.getMetadataClient().deleteMetadataEntry(media.getHref(), "testKey");
       Checks.checkTask(deleteMetadataEntry);
       assertTrue(retryTaskSuccess.apply(deleteMetadataEntry),
             String.format(TASK_COMPLETE_TIMELY, "deleteMetadataEntry"));
       
-      Error expected = Error.builder()
-            .message("The access to the resource metadata_item with id testKey is forbidden")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-      
-      try {
-         metadataValue = mediaClient.getMetadataClient().getMetadataValue(media.getHref(), "testKey");
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-         metadataValue = null;
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
-      
-      if (metadataValue != null) { // guard against NPE on the .toStrings
-         assertNull(metadataValue, String.format(OBJ_FIELD_ATTRB_DEL, MEDIA,
-               "Metadata", metadataValue.toString(),
-               "metadataEntry", metadataValue.toString()));
-      }
+      metadataValue = mediaClient.getMetadataClient().getMetadataValue(media.getHref(), "testKey");
+      assertNull(metadataValue, String.format(OBJ_FIELD_ATTRB_DEL, MEDIA,
+               "Metadata", metadataValue != null ? metadataValue.toString() : "",
+               "MetadataEntry", metadataValue != null ? metadataValue.toString() : ""));
       
       metadataValue = mediaClient.getMetadataClient().getMetadataValue(media.getHref(), "key");
       Checks.checkMetadataValueFor(MEDIA, metadataValue);
@@ -398,40 +373,19 @@ public class MediaClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       Checks.checkMediaFor(MEDIA, media);
    }
    
-   @Test(description = "DELETE /media/{id}",
-         dependsOnMethods = { "testDeleteMetadata" } )
+   @Test(description = "DELETE /media/{id}", dependsOnMethods = { "testDeleteMetadata" } )
    public void testDeleteMedia() {
       Task deleteMedia = mediaClient.deleteMedia(media.getHref());
       Checks.checkTask(deleteMedia);
       assertTrue(retryTaskSuccess.apply(deleteMedia),
             String.format(TASK_COMPLETE_TIMELY, "deleteMedia"));
       
-      Error expected = Error.builder()
-            .message(String.format(
-                  "No access to entity \"(com.vmware.vcloud.entity.media:%s)\".",
-                  media.getId().substring("urn:vcloud:media:".length())))
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-      
-      try {
-         media = mediaClient.getMedia(media.getHref());
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-         media = null;
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
-      
-      if (media != null) { // guard against NPE on the .toStrings
-         assertNull(metadataValue, String.format(OBJ_DEL, MEDIA, media.toString()));
-      }
+      media = mediaClient.getMedia(media.getHref());
+      assertNull(media, String.format(OBJ_DEL, MEDIA, media != null ? media.toString() : ""));
       
       deleteMedia = mediaClient.deleteMedia(oldMedia.getHref());
       Checks.checkTask(deleteMedia);
-      assertTrue(retryTaskSuccess.apply(deleteMedia),
-            String.format(TASK_COMPLETE_TIMELY, "deleteMedia"));
+      assertTrue(retryTaskSuccess.apply(deleteMedia), String.format(TASK_COMPLETE_TIMELY, "deleteMedia"));
       oldMedia = null;
    }
 }

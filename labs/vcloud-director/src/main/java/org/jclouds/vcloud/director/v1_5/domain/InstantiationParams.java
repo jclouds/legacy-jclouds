@@ -32,11 +32,9 @@ import javax.xml.bind.annotation.XmlType;
 import org.jclouds.dmtf.ovf.DeploymentOptionSection;
 import org.jclouds.dmtf.ovf.DiskSection;
 import org.jclouds.dmtf.ovf.NetworkSection;
-import org.jclouds.dmtf.ovf.OperatingSystemSection;
 import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.dmtf.ovf.SectionType;
 import org.jclouds.dmtf.ovf.StartupSection;
-import org.jclouds.dmtf.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;

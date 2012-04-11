@@ -107,23 +107,20 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       // FIXME: documentation suggests we should wait for a task here
    }
 
-   @Test(description = "GET /admin/catalog/{id}",
-         dependsOnMethods = { "testCreateCatalog" })
+   @Test(description = "GET /admin/catalog/{id}", dependsOnMethods = { "testCreateCatalog" })
    public void testGetCatalog() {
       catalog = catalogClient.getCatalog(catalog.getHref());
       
       Checks.checkAdminCatalog(catalog);
    }
    
-   @Test(description = "GET /admin/catalog/{id}/owner",
-         dependsOnMethods = { "testGetCatalog" })
+   @Test(description = "GET /admin/catalog/{id}/owner", dependsOnMethods = { "testGetCatalog" })
    public void testGetCatalogOwner() {
       owner = catalogClient.getOwner(catalog.getHref());
       Checks.checkOwner(owner);
    }
    
-   @Test(description = "PUT /admin/catalog/{id}/owner",
-         dependsOnMethods = { "testGetCatalog" })
+   @Test(description = "PUT /admin/catalog/{id}/owner", dependsOnMethods = { "testGetCatalog" })
    public void updateCatalogOwner() {
       User newOwnerUser = randomTestUser("testUpdateCatalogOwner");
       newOwnerUser = adminContext.getApi().getUserClient().createUser(orgRef.getHref(), newOwnerUser);
@@ -187,8 +184,8 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       }
    }
    
-   @Test(description = "POST /admin/catalog/{id}/action/publish",
-         dependsOnMethods = { "testUpdateCatalog" } ) // FIXME: fails with a 403
+   // FIXME fails with a 403
+   @Test(description = "POST /admin/catalog/{id}/action/publish", dependsOnMethods = { "testUpdateCatalog" } )
    public void testPublishCatalog() {
       assertNotNull(catalog, String.format(NOT_NULL_OBJ_FMT, "Catalog"));
       assertTrue(!catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
@@ -205,8 +202,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
             CATALOG, "isPublished", true, catalog.isPublished()));
    }
    
-   @Test(description = "DELETE /admin/catalog/{id}",
-         dependsOnMethods = { "testCreateCatalog" } )
+   @Test(description = "DELETE /admin/catalog/{id}", dependsOnMethods = { "testCreateCatalog" } )
    public void testDeleteCatalog() {
 //      assertEquals(catalog.getCatalogItems().getCatalogItems().size(), 0, 
 //            String.format(OBJ_FIELD_EMPTY_TO_DELETE, "Catalog", "CatalogItems", 
@@ -218,25 +214,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       deleteCatalog = catalogClient.createCatalog(orgRef.getHref(), deleteCatalog);
       catalogClient.deleteCatalog(deleteCatalog.getHref());
       
-      Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.catalog:"+
-                  deleteCatalog.getId().substring("urn:vcloud:catalog:".length())+")\".")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-      
-      try {
-         deleteCatalog = catalogClient.getCatalog(deleteCatalog.getHref());
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-         deleteCatalog = null;
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
-      
-      if (deleteCatalog != null) { // guard against NPE on the .toStrings
-         assertNull(deleteCatalog, String.format(OBJ_DEL, CATALOG, deleteCatalog.toString()));
-      }
+      deleteCatalog = catalogClient.getCatalog(deleteCatalog.getHref());
+      assertNull(deleteCatalog, String.format(OBJ_DEL, CATALOG, deleteCatalog != null ? deleteCatalog.toString() : ""));
    }
 }
