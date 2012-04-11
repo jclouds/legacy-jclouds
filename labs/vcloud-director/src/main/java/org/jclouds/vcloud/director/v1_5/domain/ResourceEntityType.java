@@ -51,12 +51,12 @@ import com.google.common.collect.Iterables;
 @XmlType(name = "ResourceEntityType")
 public abstract class ResourceEntityType extends EntityType {
 
-   @XmlType
+   @XmlType(name = "ResourceEntityTypeStatus")
    @XmlEnum(Integer.class)
    public static enum Status {
       
       @XmlEnumValue("-1") FAILED_CREATION(-1, "The object could not be created.", true, true, true),
-      @XmlEnumValue("0") UNRESOLVED(0, "The object is unresolved.", true, true, true),
+      @XmlEnumValue("0") UNRESOLVED(0, "The object is unresolved or not ready.", true, true, true),
       @XmlEnumValue("1") RESOLVED(1, "The object is resolved.", true, true, true),
       @XmlEnumValue("2") DEPLOYED(2, "The object is deployed.", false, false, false),
       @XmlEnumValue("3") SUSPENDED(3, "The object is suspended.", false, true, true),
@@ -73,10 +73,8 @@ public abstract class ResourceEntityType extends EntityType {
       @XmlEnumValue("14") UPLOAD_QUARANTINED(14, "Upload has been quarantined.", true, false, false),
       @XmlEnumValue("15") UPLOAD_QUARANTINE_EXPIRED(15, "Upload quarantine period has expired.", true, false, false),
       
-      // TODO duplicate code, but mentioned in `POST /vdc/{id}/action/uploadVAppTemplate`
-      NOT_READY(0, "Not ready", true, false, false),
       // Convention is "UNRECOGNIZED", but that is already a valid state name! so using UNRECOGNIZED_VALUE
-      UNRECOGNIZED_VALUE(404, "Unrecognized", false, false, false);
+      @XmlEnumValue("65535") UNRECOGNIZED_VALUE(65535, "Unrecognized", false, false, false);
       
       private Integer value;
       private String description;

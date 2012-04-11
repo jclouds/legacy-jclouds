@@ -57,14 +57,14 @@ public class Task extends EntityType {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
    
-   @XmlType
+   @XmlType(name = "TaskStatus")
    @XmlEnum(String.class)
    public static enum Status {
       /** The task has been queued for execution. */
       @XmlEnumValue("queued") QUEUED("queued"),
       /** The task is awaiting preprocessing or, if it is a blocking task, administrative action. */
       @XmlEnumValue("preRunning") PRE_RUNNING("preRunning"),
-      /** The task is runnning.*/
+      /** The task is runnning. */
       @XmlEnumValue("running") RUNNING("running"),
       /** The task completed with a status of success. */
       @XmlEnumValue("success") SUCCESS("success"),
@@ -74,10 +74,9 @@ public class Task extends EntityType {
       @XmlEnumValue("canceled") CANCELED("canceled"),
       /** The task was aborted by an administrative action. */
       @XmlEnumValue("aborted") ABORTED("aborted"),
-      UNRECOGNIZED("unrecognized");
+      @XmlEnumValue("") UNRECOGNIZED("unrecognized");
       
-      public static final List<Status> ALL = ImmutableList.of(
-            QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
+      public static final List<Status> ALL = ImmutableList.of(QUEUED, PRE_RUNNING, RUNNING, SUCCESS, ERROR, CANCELED, ABORTED);
 
       protected final String stringValue;
 
