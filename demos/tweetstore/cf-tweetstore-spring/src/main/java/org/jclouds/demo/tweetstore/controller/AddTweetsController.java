@@ -34,8 +34,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cloudfoundry.runtime.env.ApplicationInstanceInfo;
-import org.cloudfoundry.runtime.env.CloudEnvironment;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.demo.tweetstore.domain.StoredTweetStatus;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
@@ -85,9 +83,6 @@ public class AddTweetsController extends HttpServlet implements
    void addMyTweetsToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
       request.setAttribute("tweets", apply(contexts.keySet()));
-      // TODO: remove me!
-      ApplicationInstanceInfo instanceInfo = new CloudEnvironment().getInstanceInfo();
-      request.setAttribute("instanceInfo", instanceInfo);  
    }
 
    public List<StoredTweetStatus> apply(Set<String> in) {
