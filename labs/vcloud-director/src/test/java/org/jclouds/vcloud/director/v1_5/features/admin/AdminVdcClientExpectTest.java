@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "admin", "vdc" }, singleThreaded = true, testName = "AdminVdcClientExpectTest")
+@Test(groups = { "unit", "admin" }, singleThreaded = true, testName = "AdminVdcClientExpectTest")
 public class AdminVdcClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private Reference vdcRef = Reference.builder()

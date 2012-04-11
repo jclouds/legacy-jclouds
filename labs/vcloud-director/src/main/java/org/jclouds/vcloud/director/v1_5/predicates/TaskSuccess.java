@@ -18,6 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.predicates;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.EnumSet;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,7 +34,7 @@ import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import com.google.common.base.Predicate;
 
 /**
- * Test a {@link Task} to see if it has succeeded.
+ * Test a {@link Task} to see if it has {@link Task.Status#SUCCESS succeeded}.
  * 
  * @author grkvlt@apache.org
  */
@@ -50,21 +54,19 @@ public class TaskSuccess implements Predicate<Task> {
    /** @see Predicate#apply(Object) */
    @Override
    public boolean apply(Task task) {
-      logger.trace("looking for status on task %s", task);
+      checkNotNull(task, "task");
+      logger.trace("looking for status on task %s", task.getOperationName());
 
       // TODO shouldn't we see if it's already done before getting it from API server?
       task = taskClient.getTask(task.getHref());
       
       // perhaps task isn't available, yet
       if (task == null) return false;
-      logger.trace("%s: looking for status %s: currently: %s", task, Task.Status.SUCCESS, task.getStatus());
-      if (task.getStatus().equals(Task.Status.ERROR))
+
+      logger.trace("%s: looking for status %s: currently: %s", task.getOperationName(), Task.Status.SUCCESS, task.getStatus());
+      if (EnumSet.of(Task.Status.ERROR, Task.Status.CANCELED, Task.Status.ABORTED).contains(task.getStatus())) {
          throw new VCloudDirectorException(task);
-      if (task.getStatus().equals(Task.Status.CANCELED))
-         throw new VCloudDirectorException(task);
-      if (task.getStatus().equals(Task.Status.ABORTED))
-         throw new VCloudDirectorException(task);
-      return task.getStatus().equals(Task.Status.SUCCESS);
+      } else return task.getStatus().equals(Task.Status.SUCCESS);
    }
 
    @Override

@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "user", "upload" }, singleThreaded = true, testName = "UploadClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "UploadClientLiveTest")
 public class UploadClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String UPLOAD = "upload";

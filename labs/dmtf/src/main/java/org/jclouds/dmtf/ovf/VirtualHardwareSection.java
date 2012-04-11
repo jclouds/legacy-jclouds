@@ -25,7 +25,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
 import org.jclouds.dmtf.cim.VirtualSystemSettingData;
@@ -46,7 +45,6 @@ import com.google.common.collect.Sets;
  * @author Adam Lowe
  * @author grkvlt@apache.org
  */
-@XmlType(name = "VirtualHardwareSection_Type")
 public class VirtualHardwareSection extends SectionType {
 
    public static Builder<?> builder() {

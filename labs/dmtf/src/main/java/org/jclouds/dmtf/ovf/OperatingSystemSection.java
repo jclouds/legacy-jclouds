@@ -23,7 +23,6 @@ import static org.jclouds.dmtf.DMTFConstants.OVF_NS;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
 
@@ -33,7 +32,6 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  * @author Adam Lowe
  */
-@XmlType(name = "OperatingSystemSection_Type")
 public class OperatingSystemSection extends SectionType {
 
    public static Builder<?> builder() {

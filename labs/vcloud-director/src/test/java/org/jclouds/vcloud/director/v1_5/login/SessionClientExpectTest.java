@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "SessionClientExpectTest")
+@Test(groups = { "unit", "user" }, testName = "SessionClientExpectTest")
 // only needed as SessionClient is not registered in rest.properties
 @RegisterContext(sync = SessionClient.class, async = SessionAsyncClient.class)
 public class SessionClientExpectTest extends BaseRestClientExpectTest<SessionClient> {

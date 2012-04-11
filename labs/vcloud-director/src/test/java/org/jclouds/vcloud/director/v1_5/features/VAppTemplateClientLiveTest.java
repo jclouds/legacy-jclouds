@@ -84,7 +84,7 @@ import com.google.common.collect.Iterables;
  *
  * @author Aled Sage
  */
-@Test(groups = { "live", "user", "vapptemplate" }, singleThreaded = true, testName = "VAppTemplateClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VAppTemplateClientLiveTest")
 public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
 
    private String key;
@@ -93,7 +93,12 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    @AfterClass(alwaysRun = true)
    protected void tidyUp() {
       if (key != null) {
-         assertTaskSucceeds(vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key));
+         try {
+	         Task delete = vAppTemplateClient.getMetadataClient().deleteMetadataEntry(vAppTemplateURI, key);
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn(e, "Error when deleting metadata entry '%s'", key);
+         }
       }
    }
 

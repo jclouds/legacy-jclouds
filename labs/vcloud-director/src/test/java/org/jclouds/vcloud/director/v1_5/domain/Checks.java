@@ -582,6 +582,8 @@ public class Checks {
    }
 
    public static void checkVmPendingQuestion(VmPendingQuestion question) {
+      assertNotNull(question, String.format(NOT_NULL_OBJ_FMT, "VmPendingQuestion"));
+
       // Check required fields
       assertNotNull(question.getQuestion(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "Question"));
       assertNotNull(question.getQuestionId(), String.format(OBJ_FIELD_REQ, "VmPendingQuestion", "QuestionId"));
@@ -727,7 +729,7 @@ public class Checks {
       // NOTE transport cannot be checked
       if (hardware.getItems() != null) {
 	      for (ResourceAllocationSettingData item : hardware.getItems()) {
-	         checkResourceAllocationSettingData((RasdItem) item);
+	         checkResourceAllocationSettingData(item);
 	      }
       }
       
@@ -758,7 +760,7 @@ public class Checks {
 //      assertNotNull(virtualSystem.getVirtualSystemType(), String.format(OBJ_FIELD_REQ, "VirtualSystemSettingData", "virtualSystemType"));
    }
 
-   public static void checkResourceAllocationSettingData(RasdItem item) {
+   public static void checkResourceAllocationSettingData(ResourceAllocationSettingData item) {
       // TODO
    }
    
