@@ -30,18 +30,18 @@
     <groupId>org.jclouds.labs</groupId>
     <artifactId>carrenza-vcloud-director</artifactId>
     <name>jclouds Carrenza vCloud Director provider</name>
-    <description>vCloud implementation targeted to Carrenza</description>
+    <description>vCloud Director implementation targeted to Carrenza</description>
     <packaging>bundle</packaging>
 
     <properties>
-        <test.carrenza-vcloud.endpoint>https://myvdc.carrenza.net/api</test.carrenza-vcloud.endpoint>
-        <test.carrenza-vcloud.api-version>1.5</test.carrenza-vcloud.api-version>
-        <test.carrenza-vcloud.build-version>FIXME_VERSION</test.carrenza-vcloud.build-version>
-        <test.carrenza-vcloud.identity>FIXME_IDENTITY</test.carrenza-vcloud.identity>
-        <test.carrenza-vcloud.credential>FIXME_CREDENTIAL</test.carrenza-vcloud.credential>
-        <test.carrenza-vcloud.image-id></test.carrenza-vcloud.image-id>
-        <test.carrenza-vcloud.image.login-user></test.carrenza-vcloud.image.login-user>
-        <test.carrenza-vcloud.image.authenticate-sudo></test.carrenza-vcloud.image.authenticate-sudo>
+        <test.carrenza-vcloud-director.endpoint>https://myvdc.carrenza.net/api</test.carrenza-vcloud-director.endpoint>
+        <test.carrenza-vcloud-director.api-version>1.5</test.carrenza-vcloud-director.api-version>
+        <test.carrenza-vcloud-director.build-version>464915</test.carrenza-vcloud-director.build-version>
+        <test.carrenza-vcloud-director.identity>FIXME_IDENTITY</test.carrenza-vcloud-director.identity>
+        <test.carrenza-vcloud-director.credential>FIXME_CREDENTIAL</test.carrenza-vcloud-director.credential>
+        <test.carrenza-vcloud-director.image-id></test.carrenza-vcloud-director.image-id>
+        <test.carrenza-vcloud-director.image.login-user></test.carrenza-vcloud-director.image.login-user>
+        <test.carrenza-vcloud-director.image.authenticate-sudo></test.carrenza-vcloud-director.image.authenticate-sudo>
     </properties>
 
     <dependencies>
@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.labs</groupId>
-            <artifactId>vcloud-director</artifactId>
+            <artifactId>vcloud-director-director</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -102,14 +102,14 @@
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <test.carrenza-vcloud.endpoint>${test.carrenza-vcloud.endpoint}</test.carrenza-vcloud.endpoint>
-                                        <test.carrenza-vcloud.api-version>${test.carrenza-vcloud.api-version}</test.carrenza-vcloud.api-version>
-                                        <test.carrenza-vcloud.build-version>${test.carrenza-vcloud.build-version}</test.carrenza-vcloud.build-version>
-                                        <test.carrenza-vcloud.identity>${test.carrenza-vcloud.identity}</test.carrenza-vcloud.identity>
-                                        <test.carrenza-vcloud.credential>${test.carrenza-vcloud.credential}</test.carrenza-vcloud.credential>
-                                        <test.carrenza-vcloud.image-id>${test.carrenza-vcloud.image-id}</test.carrenza-vcloud.image-id>
-                                        <test.carrenza-vcloud.image.login-user>${test.carrenza-vcloud.image.login-user}</test.carrenza-vcloud.image.login-user>
-                                        <test.carrenza-vcloud.image.authenticate-sudo>${test.carrenza-vcloud.image.authenticate-sudo}</test.carrenza-vcloud.image.authenticate-sudo>
+                                        <test.carrenza-vcloud-director.endpoint>${test.carrenza-vcloud-director.endpoint}</test.carrenza-vcloud-director.endpoint>
+                                        <test.carrenza-vcloud-director.api-version>${test.carrenza-vcloud-director.api-version}</test.carrenza-vcloud-director.api-version>
+                                        <test.carrenza-vcloud-director.build-version>${test.carrenza-vcloud-director.build-version}</test.carrenza-vcloud-director.build-version>
+                                        <test.carrenza-vcloud-director.identity>${test.carrenza-vcloud-director.identity}</test.carrenza-vcloud-director.identity>
+                                        <test.carrenza-vcloud-director.credential>${test.carrenza-vcloud-director.credential}</test.carrenza-vcloud-director.credential>
+                                        <test.carrenza-vcloud-director.image-id>${test.carrenza-vcloud-director.image-id}</test.carrenza-vcloud-director.image-id>
+                                        <test.carrenza-vcloud-director.image.login-user>${test.carrenza-vcloud-director.image.login-user}</test.carrenza-vcloud-director.image.login-user>
+                                        <test.carrenza-vcloud-director.image.authenticate-sudo>${test.carrenza-vcloud-director.image.authenticate-sudo}</test.carrenza-vcloud-director.image.authenticate-sudo>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
@@ -128,7 +128,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.carrenza.vcloud*;version="${project.version}"</Export-Package>
+                        <Export-Package>org.jclouds.carrenza.vcloud-director*;version="${project.version}"</Export-Package>
                         <Import-Package>
                             org.jclouds.compute.internal;version="${project.version}",
                             org.jclouds.rest.internal;version="${project.version}",
