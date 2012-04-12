@@ -34,7 +34,7 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.AnonymousProviderMetadata;
+import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.testng.annotations.Test;

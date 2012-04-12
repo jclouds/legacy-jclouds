@@ -53,7 +53,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
-import org.jclouds.rest.AnonymousProviderMetadata;
+import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.util.Strings2;

@@ -25,8 +25,8 @@ import org.jclouds.cloudstack.config.CloudStackRestClientModule;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.rest.AnonymousProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 

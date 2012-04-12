@@ -16,15 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest;
+package org.jclouds.providers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Closeable;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.rest.AnonymousRestApiMetadata;
+import org.jclouds.rest.RestContext;
 
 /**
  * Useful in creating arbitrary clients.

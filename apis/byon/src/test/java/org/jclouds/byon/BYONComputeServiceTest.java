@@ -31,7 +31,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.rest.AnonymousProviderMetadata;
+import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.internal.ContextBuilder;
 import org.testng.annotations.Test;
 
