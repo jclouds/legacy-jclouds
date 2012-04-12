@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +46,7 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "Vdc")
 @XmlType(name = "VdcType")
 @XmlSeeAlso({ AdminVdc.class })
-public class Vdc extends EntityType {
+public class Vdc extends Entity {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -59,7 +60,7 @@ public class Vdc extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
       private String allocationModel;
       private CapacityWithUsage storageCapacity;
       private ComputeCapacity computeCapacity;

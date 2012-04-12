@@ -25,13 +25,7 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultReferences;
 
 
 /**
- * 
- *                 Container for ReferenceType elements that reference RoleType objects.
- *             
- * 
- * <p>Java class for RoleReferences complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * Container for ReferenceType elements that reference RoleType objects.
  * 
  * <pre>
  * &lt;complexType name="RoleReferences">
@@ -45,8 +39,6 @@ import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultReferences;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlRootElement(name = "RoleReferences")
 public class RoleReferences extends QueryResultReferences {

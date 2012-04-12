@@ -56,7 +56,7 @@ import com.google.common.collect.Sets;
     "usersList",
     "role"
 })
-public class Group extends EntityType {
+public class Group extends Entity {
    
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -70,7 +70,7 @@ public class Group extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
       
       private String nameInSource;
       private Set<Reference> users = Sets.newLinkedHashSet();

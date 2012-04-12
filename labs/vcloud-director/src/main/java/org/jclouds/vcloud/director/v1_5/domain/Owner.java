@@ -38,7 +38,7 @@ import com.google.common.base.Objects.ToStringHelper;
  */
 @XmlRootElement(name = "Owner")
 @XmlType(name = "OwnerType")
-public class Owner extends ResourceType {
+public class Owner extends Resource {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -52,7 +52,7 @@ public class Owner extends ResourceType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private Reference user;
 
@@ -70,7 +70,7 @@ public class Owner extends ResourceType {
       }
       
       public B fromOwner(Owner in) {
-         return fromResourceType(in)
+         return fromResource(in)
                .user(in.getUser());
       }
    }

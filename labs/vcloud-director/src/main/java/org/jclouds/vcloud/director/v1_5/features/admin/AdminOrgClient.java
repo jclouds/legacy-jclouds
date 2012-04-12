@@ -23,14 +23,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgGeneralSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
 import org.jclouds.vcloud.director.v1_5.features.OrgClient;
 

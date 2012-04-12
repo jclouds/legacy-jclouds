@@ -39,7 +39,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "VmPendingQuestion")
-public class VmPendingQuestion extends ResourceType {
+public class VmPendingQuestion extends Resource {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -53,7 +53,7 @@ public class VmPendingQuestion extends ResourceType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private String question;
       private String questionId;
@@ -90,7 +90,7 @@ public class VmPendingQuestion extends ResourceType {
       }
 
       public B fromVmPendingQuestion(VmPendingQuestion in) {
-         return fromResourceType(in).question(in.getQuestion()).questionId(in.getQuestionId()).choices(in.getChoices());
+         return fromResource(in).question(in.getQuestion()).questionId(in.getQuestionId()).choices(in.getChoices());
       }
    }
 

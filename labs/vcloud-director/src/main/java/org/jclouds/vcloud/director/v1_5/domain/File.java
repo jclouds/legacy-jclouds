@@ -53,7 +53,7 @@ import com.google.common.base.Objects.ToStringHelper;
  * </pre>
  */
 @XmlType(name = "File")
-public class File extends EntityType {
+public class File extends Entity {
    
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -67,7 +67,7 @@ public class File extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private Long size;
       private Long bytesTransferred;

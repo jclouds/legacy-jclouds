@@ -53,7 +53,7 @@ import com.google.common.collect.Maps;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "Task")
-public class Task extends EntityType {
+public class Task extends Entity {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.TASK;
    
@@ -114,7 +114,7 @@ public class Task extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private Error error;
       private Reference org;
