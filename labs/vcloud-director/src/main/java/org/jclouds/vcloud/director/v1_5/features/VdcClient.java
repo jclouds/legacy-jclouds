@@ -23,17 +23,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneMediaParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Media;
-import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.params.CaptureVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.CloneMediaParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
 
 /**
  * Provides synchronous access to a vDC.

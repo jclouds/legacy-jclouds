@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.EntityType;
+import org.jclouds.vcloud.director.v1_5.domain.Entity;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -41,7 +41,7 @@ public class EntityPredicates {
     * @param name value of the name attribute of the entity
     * @return predicate that will match entities of the given name
     */
-   public static <T extends EntityType> Predicate<T> nameEquals(final String name) {
+   public static <T extends Entity> Predicate<T> nameEquals(final String name) {
       checkNotNull(name, "name must be defined");
 
       return new Predicate<T>() {
@@ -64,7 +64,7 @@ public class EntityPredicates {
     * @param name prefix of the name attribute of the entity
     * @return predicate that will match entities with names starting with the given prefix
     */
-   public static <T extends EntityType> Predicate<T> nameStartsWith(final String prefix) {
+   public static <T extends Entity> Predicate<T> nameStartsWith(final String prefix) {
       checkNotNull(prefix, "prefix must be defined");
 
       return new Predicate<T>() {
@@ -88,7 +88,7 @@ public class EntityPredicates {
     * @param names collection of values for the name attribute of the entity
     * @return predicate that will match entities with names starting with the given prefix
     */
-   public static <T extends EntityType> Predicate<T> nameIn(final Iterable<String> names) {
+   public static <T extends Entity> Predicate<T> nameIn(final Iterable<String> names) {
       checkNotNull(names, "names must be defined");
 
       return new Predicate<T>() {
@@ -113,7 +113,7 @@ public class EntityPredicates {
     * @return predicate that will match entities of the given type
     * @see VCloudDirectorMediaType
     */
-   public static <T extends EntityType> Predicate<T> typeEquals(final String type) {
+   public static <T extends Entity> Predicate<T> typeEquals(final String type) {
       checkNotNull(type, "type must be defined");
 
       return new Predicate<T>() {
@@ -137,7 +137,7 @@ public class EntityPredicates {
     * @return predicate that will match entities with the given URI
     * @see VCloudDirectorMediaType
     */
-   public static <T extends EntityType> Predicate<T> hrefEquals(final URI href) {
+   public static <T extends Entity> Predicate<T> hrefEquals(final URI href) {
       checkNotNull(href, "href must be defined");
 
       return new Predicate<T>() {

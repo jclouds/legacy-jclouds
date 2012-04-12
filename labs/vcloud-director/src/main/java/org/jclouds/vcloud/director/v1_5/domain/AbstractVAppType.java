@@ -36,6 +36,14 @@ import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.dmtf.ovf.SectionType;
 import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -52,7 +60,7 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlType(name = "AbstractVAppType")
-public abstract class AbstractVAppType extends ResourceEntityType {
+public abstract class AbstractVAppType extends ResourceEntity {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -66,7 +74,7 @@ public abstract class AbstractVAppType extends ResourceEntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceEntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends ResourceEntity.Builder<B> {
 
       private Boolean deployed;
       private Reference vAppParent;

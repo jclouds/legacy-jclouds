@@ -56,7 +56,7 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "ProductSectionList")
 @XmlType(name = "ProductSectionListType")
-public class ProductSectionList extends ResourceType implements Set<ProductSection> {
+public class ProductSectionList extends Resource implements Set<ProductSection> {
    
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -70,7 +70,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private Set<ProductSection> productSections = Sets.newLinkedHashSet();
 
@@ -96,7 +96,7 @@ public class ProductSectionList extends ResourceType implements Set<ProductSecti
       }
 
       public B fromProductSectionList(ProductSectionList in) {
-         return fromResourceType(in)
+         return fromResource(in)
                .productSections(Sets.newLinkedHashSet(in));
       }
    }

@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Sets;
@@ -44,7 +46,7 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "RasdItemsList")
 @XmlType(name = "RasdItemsList")
-public class RasdItemsList extends ResourceType implements Set<RasdItem> {
+public class RasdItemsList extends Resource implements Set<RasdItem> {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -58,7 +60,7 @@ public class RasdItemsList extends ResourceType implements Set<RasdItem> {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private Set<RasdItem> items = Sets.newLinkedHashSet();
 
@@ -85,7 +87,7 @@ public class RasdItemsList extends ResourceType implements Set<RasdItem> {
       }
 
       public B fromRasdItemsList(RasdItemsList in) {
-         return fromResourceType(in).items(in.getItems());
+         return fromResource(in).items(in.getItems());
       }
    }
 
