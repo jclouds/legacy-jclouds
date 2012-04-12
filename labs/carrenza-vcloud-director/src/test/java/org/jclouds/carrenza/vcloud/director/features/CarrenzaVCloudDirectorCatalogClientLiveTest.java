@@ -22,11 +22,12 @@ import org.jclouds.vcloud.director.v1_5.features.CatalogClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorCatalogClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorCatalogClientLiveTest")
 public class CarrenzaVCloudDirectorCatalogClientLiveTest extends CatalogClientLiveTest {
 
    public CarrenzaVCloudDirectorCatalogClientLiveTest() {

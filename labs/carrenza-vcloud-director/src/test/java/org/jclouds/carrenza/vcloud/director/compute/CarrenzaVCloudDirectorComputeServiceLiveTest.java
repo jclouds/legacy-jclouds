@@ -21,11 +21,12 @@ package org.jclouds.carrenza.vcloud.director.compute;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorComputeServiceLiveTest")
+@Test(groups = { "live", "compute" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorComputeServiceLiveTest")
 public class CarrenzaVCloudDirectorComputeServiceLiveTest { // FIXME: enable when compute service done
 //   extends VCloudDirectorComputeServiceLiveTest {
 //

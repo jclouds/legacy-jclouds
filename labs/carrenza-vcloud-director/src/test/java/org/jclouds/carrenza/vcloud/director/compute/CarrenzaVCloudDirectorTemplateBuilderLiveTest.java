@@ -21,45 +21,16 @@ package org.jclouds.carrenza.vcloud.director.compute;
 import org.testng.annotations.Test;
 
 /**
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", testName = "CarrenzaVCloudDirectorTemplateBuilderLiveTest")
+@Test(groups = { "live", "compute" }, testName = "CarrenzaVCloudDirectorTemplateBuilderLiveTest")
 public class CarrenzaVCloudDirectorTemplateBuilderLiveTest {
 //      BaseTemplateBuilderLiveTest<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext> {
 //
 //   public CarrenzaVCloudDirectorTemplateBuilderLiveTest() {
 //      provider = "carrenza-vcloud-director";
-//   }
-//
-//   @Override
-//   protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
-//      return new Predicate<OsFamilyVersion64Bit>() {
-//
-//         @Override
-//         public boolean apply(OsFamilyVersion64Bit input) {
-//            switch (input.family) {
-//            case UBUNTU:
-//               return !input.version.equals("") || !input.is64Bit;
-//            default:
-//               return true;
-//            }
-//         }
-//
-//      };
-//   }
-//
-//   @Override
-//   public void testDefaultTemplateBuilder() throws IOException { 
-//      Template defaultTemplate = context.getComputeService().templateBuilder().build();
-//      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
-//      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-//      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-//      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-//   }
-//
-//   @Override
-//   protected Set<String> getIso3166Codes() {
-//      return ImmutableSet.<String> of("GB-LND");
 //   }
 }

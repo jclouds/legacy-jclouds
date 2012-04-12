@@ -22,11 +22,12 @@ import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
+ * {@inheritDoc}
  * 
- * 
- * @author Adrian Cole
+ * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorVAppTemplateClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorVAppTemplateClientLiveTest")
 public class CarrenzaVCloudDirectorVAppTemplateClientLiveTest extends VAppTemplateClientLiveTest {
 
    public CarrenzaVCloudDirectorVAppTemplateClientLiveTest() {

@@ -22,14 +22,15 @@ import org.jclouds.vcloud.director.v1_5.HttpClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorNonClientOperationsLiveTest")
-public class CarrenzaVCloudDirectorNonClientOperationsLiveTest extends HttpClientLiveTest {
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorHttpClientLiveTest")
+public class CarrenzaVCloudDirectorHttpClientLiveTest extends HttpClientLiveTest {
 
-   public CarrenzaVCloudDirectorNonClientOperationsLiveTest() {
+   public CarrenzaVCloudDirectorHttpClientLiveTest() {
       provider = "carrenza-vcloud-director";
    }
 }

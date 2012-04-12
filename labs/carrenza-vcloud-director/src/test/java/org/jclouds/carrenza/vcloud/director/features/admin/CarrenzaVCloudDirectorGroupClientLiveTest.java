@@ -22,11 +22,12 @@ import org.jclouds.vcloud.director.v1_5.features.admin.GroupClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorGroupClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorGroupClientLiveTest")
 public class CarrenzaVCloudDirectorGroupClientLiveTest extends GroupClientLiveTest {
 
    public CarrenzaVCloudDirectorGroupClientLiveTest() {

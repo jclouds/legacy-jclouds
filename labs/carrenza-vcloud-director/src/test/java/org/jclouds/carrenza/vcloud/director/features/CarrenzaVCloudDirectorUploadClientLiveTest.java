@@ -22,11 +22,12 @@ import org.jclouds.vcloud.director.v1_5.features.UploadClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorUploadClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorUploadClientLiveTest")
 public class CarrenzaVCloudDirectorUploadClientLiveTest extends UploadClientLiveTest {
 
    public CarrenzaVCloudDirectorUploadClientLiveTest() {

@@ -29,7 +29,7 @@
   </parent>
   <groupId>org.jclouds.labs</groupId>
   <artifactId>vcloud-director</artifactId>
-  <name>jcloud vcloud-director api</name>
+  <name>jclouds vcloud-director api</name>
   <description>jclouds components to access an implementation of VMware vCloud Director 1.5+</description>
   <packaging>bundle</packaging>
 
@@ -42,13 +42,12 @@
     <test.vcloud-director.image-id></test.vcloud-director.image-id>
     <test.vcloud-director.image.login-user></test.vcloud-director.image.login-user>
     <test.vcloud-director.image.authenticate-sudo></test.vcloud-director.image.authenticate-sudo>
-    <test.vcloud-director.catalog-name>Public</test.vcloud-director.catalog-name>
     <test.vcloud-director.catalog-id></test.vcloud-director.catalog-id>
     <test.vcloud-director.media-id></test.vcloud-director.media-id>
     <test.vcloud-director.vapptemplate-id></test.vcloud-director.vapptemplate-id>
-    <test.vcloud-director.network-name></test.vcloud-director.network-name>
     <test.vcloud-director.network-id></test.vcloud-director.network-id>
     <test.vcloud-director.vdc-id></test.vcloud-director.vdc-id>
+    <test.vcloud-director.user-id></test.vcloud-director.user-id>
   </properties>
 
   <dependencies>
@@ -122,12 +121,11 @@
                     <test.vcloud-director.image.login-user>${test.vcloud-director.image.login-user}</test.vcloud-director.image.login-user>
                     <test.vcloud-director.image.authenticate-sudo>${test.vcloud-director.image.authenticate-sudo}</test.vcloud-director.image.authenticate-sudo>
                     <test.vcloud-director.catalog-id>${test.vcloud-director.catalog-id}</test.vcloud-director.catalog-id>
-                    <test.vcloud-director.catalog-name>${test.vcloud-director.catalog-name}</test.vcloud-director.catalog-name>
                     <test.vcloud-director.media-id>${test.vcloud-director.media-id}</test.vcloud-director.media-id>
                     <test.vcloud-director.vapptemplate-id>${test.vcloud-director.vapptemplate-id}</test.vcloud-director.vapptemplate-id>
-                    <test.vcloud-director.network-name>${test.vcloud-director.network-name}</test.vcloud-director.network-name>
                     <test.vcloud-director.network-id>${test.vcloud-director.network-id}</test.vcloud-director.network-id>
                     <test.vcloud-director.vdc-id>${test.vcloud-director.vdc-id}</test.vcloud-director.vdc-id>
+                    <test.vcloud-director.user-id>${test.vcloud-director.user-id}</test.vcloud-director.user-id>
                   </systemPropertyVariables>
                 </configuration>
               </execution>
@@ -151,7 +149,7 @@
                         org.jclouds.compute.internal;version="${project.version}",
                         org.jclouds.rest.internal;version="${project.version}",
                         org.jclouds*;version="${project.version}",
-                                *
+                        *
                         </Import-Package>
           </instructions>
         </configuration>

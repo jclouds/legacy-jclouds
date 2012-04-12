@@ -22,11 +22,12 @@ import org.jclouds.vcloud.director.v1_5.features.MediaClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorMediaClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorMediaClientLiveTest")
 public class CarrenzaVCloudDirectorMediaClientLiveTest extends MediaClientLiveTest {
 
    public CarrenzaVCloudDirectorMediaClientLiveTest() {

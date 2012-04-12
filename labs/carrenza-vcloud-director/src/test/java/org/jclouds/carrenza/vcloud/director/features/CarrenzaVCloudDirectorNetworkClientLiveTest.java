@@ -22,11 +22,12 @@ import org.jclouds.vcloud.director.v1_5.features.NetworkClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * {@inheritDoc}
  * 
  * @author danikov
+ * @author grkvlt
  */
-@Test(groups = "live", enabled = true, singleThreaded = true, testName = "CarrenzaVCloudDirectorNetworkClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "CarrenzaVCloudDirectorNetworkClientLiveTest")
 public class CarrenzaVCloudDirectorNetworkClientLiveTest extends NetworkClientLiveTest {
 
    public CarrenzaVCloudDirectorNetworkClientLiveTest() {

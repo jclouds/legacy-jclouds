@@ -19,6 +19,7 @@
 package org.jclouds.carrenza.vcloud.director;
 
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
 
 import java.net.URI;
 import java.util.Properties;
@@ -33,9 +34,10 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for StratoGen VMware hosting
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Carrenza vCloud hosting
  * 
  * @author Adrian Cole
+ * @author grkvlt@apache.org
  */
 public class CarrenzaVCloudDirectorProviderMetadata
       extends
@@ -60,19 +62,20 @@ public class CarrenzaVCloudDirectorProviderMetadata
 
    protected static Properties defaultProperties() {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_BUILD_VERSION, "???"); //FIXME
-//      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External"); FIXME: needed?
+      properties.setProperty(PROPERTY_BUILD_VERSION, "1.5.0.464915");
+      properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_DEFAULT_NETWORK, "orgNet-.*-External");
       return properties;
    }
    
    public static class Builder extends BaseProviderMetadata.Builder<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
 
-      protected Builder(){
+      protected Builder() {
          id("carrenza-vcloud-director")
          .name("Carrenza vCloud Director")
          .apiMetadata(new VCloudDirectorApiMetadata().toBuilder()
                      .buildVersion("1.5.0.464915")
-                           .contextBuilder(TypeToken.of(CarrenzaVCloudDirectorContextBuilder.class)).build())
+                     .contextBuilder(TypeToken.of(CarrenzaVCloudDirectorContextBuilder.class))
+                     .build())
          .homepage(URI.create("http://carrenza.com/"))
          .console(URI.create("https://myvdc.carrenza.net/cloud/org/YOUR_ORG_HERE"))
          .iso3166Codes("GB-LND")

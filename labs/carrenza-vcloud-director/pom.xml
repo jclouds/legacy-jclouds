@@ -42,6 +42,12 @@
         <test.carrenza-vcloud-director.image-id></test.carrenza-vcloud-director.image-id>
         <test.carrenza-vcloud-director.image.login-user></test.carrenza-vcloud-director.image.login-user>
         <test.carrenza-vcloud-director.image.authenticate-sudo></test.carrenza-vcloud-director.image.authenticate-sudo>
+        <test.carrenza-vcloud-director.catalog-id></test.carrenza-vcloud-director.catalog-id>
+        <test.carrenza-vcloud-director.media-id></test.carrenza-vcloud-director.media-id>
+        <test.carrenza-vcloud-director.vapptemplate-id></test.carrenza-vcloud-director.vapptemplate-id>
+        <test.carrenza-vcloud-director.network-name></test.carrenza-vcloud-director.network-name>
+        <test.carrenza-vcloud-director.network-id></test.carrenza-vcloud-director.network-id>
+        <test.carrenza-vcloud-director.vdc-id></test.carrenza-vcloud-director.vdc-id>
     </properties>
 
     <dependencies>
@@ -52,7 +58,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.labs</groupId>
-            <artifactId>vcloud-director-director</artifactId>
+            <artifactId>vcloud-director</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -110,6 +116,12 @@
                                         <test.carrenza-vcloud-director.image-id>${test.carrenza-vcloud-director.image-id}</test.carrenza-vcloud-director.image-id>
                                         <test.carrenza-vcloud-director.image.login-user>${test.carrenza-vcloud-director.image.login-user}</test.carrenza-vcloud-director.image.login-user>
                                         <test.carrenza-vcloud-director.image.authenticate-sudo>${test.carrenza-vcloud-director.image.authenticate-sudo}</test.carrenza-vcloud-director.image.authenticate-sudo>
+					                    <test.carrenza-vcloud-director.catalog-id>${test.carrenza-vcloud-director.catalog-id}</test.carrenza-vcloud-director.catalog-id>
+					                    <test.carrenza-vcloud-director.media-id>${test.carrenza-vcloud-director.media-id}</test.carrenza-vcloud-director.media-id>
+					                    <test.carrenza-vcloud-director.vapptemplate-id>${test.carrenza-vcloud-director.vapptemplate-id}</test.carrenza-vcloud-director.vapptemplate-id>
+					                    <test.carrenza-vcloud-director.network-id>${test.carrenza-vcloud-director.network-id}</test.carrenza-vcloud-director.network-id>
+					                    <test.carrenza-vcloud-director.vdc-id>${test.carrenza-vcloud-director.vdc-id}</test.carrenza-vcloud-director.vdc-id>
+					                    <test.carrenza-vcloud-director.user-id>${test.carrenza-vcloud-director.user-id}</test.carrenza-vcloud-director.user-id>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
@@ -128,7 +140,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>org.jclouds.carrenza.vcloud-director*;version="${project.version}"</Export-Package>
+                        <Export-Package>org.jclouds.carrenza.vcloud.director*;version="${project.version}"</Export-Package>
                         <Import-Package>
                             org.jclouds.compute.internal;version="${project.version}",
                             org.jclouds.rest.internal;version="${project.version}",
