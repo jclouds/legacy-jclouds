@@ -40,5 +40,6 @@
        <module>aws-elb</module>
        <module>savvis-symphonyvpdc</module>
        <module>dmtf</module>
+       <module>carrenza-vcloud-director</module>
     </modules>
 </project>
