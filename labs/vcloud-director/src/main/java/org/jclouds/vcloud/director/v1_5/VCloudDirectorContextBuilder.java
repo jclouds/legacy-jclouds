@@ -54,6 +54,7 @@ public class VCloudDirectorContextBuilder
    // modules.add(new VCloudDirectorComputeServiceContextModule());
    // }
 
+   @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new VCloudDirectorRestClientModule());
    }
