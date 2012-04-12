@@ -33,8 +33,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.xml.EnvelopeHandlerTest;
+import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.rest.AnonymousProviderMetadata;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
@@ -75,8 +75,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during
-// surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BaseVCloudAsyncClientTest")
 public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
@@ -93,8 +92,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T
    
    @Override
    protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
-      return  AnonymousProviderMetadata.forApiWithEndpoint(new VCloudApiMetadata(),
-            "https://vcenterprise.bluelock.com/api/v1.0");
+      return  AnonymousProviderMetadata.forApiWithEndpoint(new VCloudApiMetadata(), "https://vcenterprise.bluelock.com/api/v1.0");
    }
    
    protected static final ReferenceTypeImpl ORG_REF = new ReferenceTypeImpl("org", VCloudMediaType.ORG_XML,
