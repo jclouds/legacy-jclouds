@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
  * @author grkvlt@apache.org
  */
 @XmlRootElement(name = "CatalogItem")
-public class CatalogItem extends EntityType {
+public class CatalogItem extends Entity {
 
    public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG_ITEM;
 
@@ -57,7 +57,7 @@ public class CatalogItem extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private Reference entity;
       private Set<Property> properties = Sets.newLinkedHashSet();

@@ -31,24 +31,24 @@ import static org.testng.Assert.fail;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.vcloud.director.v1_5.domain.CaptureVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.CloneVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ComposeVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiateVAppTemplateParams;
-import org.jclouds.vcloud.director.v1_5.domain.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.Network.FenceMode;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
+import org.jclouds.vcloud.director.v1_5.domain.params.CaptureVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.CloneVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.ComposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.UploadVAppTemplateParams;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.UploadVAppTemplateParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
@@ -308,8 +308,8 @@ public class VdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       assertEquals(uploadedVAppTemplate.getName(), name, 
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "name", name, uploadedVAppTemplate.getName()));
       
-      ResourceEntityType.Status expectedStatus = ResourceEntityType.Status.UNRESOLVED;
-      ResourceEntityType.Status actualStatus = uploadedVAppTemplate.getStatus();
+      ResourceEntity.Status expectedStatus = ResourceEntity.Status.UNRESOLVED;
+      ResourceEntity.Status actualStatus = uploadedVAppTemplate.getStatus();
       assertEquals(actualStatus, expectedStatus,
                String.format(OBJ_FIELD_EQ, "VAppTemplate", "status", expectedStatus, actualStatus));
       

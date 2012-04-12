@@ -57,12 +57,50 @@ import org.jclouds.dmtf.ovf.SectionType;
 import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.dmtf.ovf.environment.EnvironmentType;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.AuthenticationMechanism;
-import org.jclouds.vcloud.director.v1_5.domain.CustomOrgLdapSettings.ConnectorType;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
-import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings.LdapMode;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.Envelope;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.VirtualSystem;
+import org.jclouds.vcloud.director.v1_5.domain.network.ExternalNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpAddresses;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkServiceType;
+import org.jclouds.vcloud.director.v1_5.domain.network.RouterInfo;
+import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
+import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgGeneralSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapGroupAttributes;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapUserAttributes;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.AuthenticationMechanism;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.ConnectorType;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings.LdapMode;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.query.ContainerType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
+import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
 
 import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Splitter;
@@ -75,11 +113,11 @@ import com.google.common.net.InetAddresses;
  */
 public class Checks {
 
-   public static void checkResourceEntityType(ResourceEntityType resourceEntity) {
+   public static void checkResourceEntityType(ResourceEntity resourceEntity) {
       checkResourceEntityType(resourceEntity, true);
    }
 
-   public static void checkResourceEntityType(ResourceEntityType resourceEntity, boolean ready) {
+   public static void checkResourceEntityType(ResourceEntity resourceEntity, boolean ready) {
       // Check optional fields
       // NOTE status cannot be checked (TODO: doesn't status have a range of valid values?)
       Set<File> files = resourceEntity.getFiles();
@@ -91,7 +129,7 @@ public class Checks {
       checkEntityType(resourceEntity);
    }
    
-   public static void checkEntityType(EntityType entity) {
+   public static void checkEntityType(Entity entity) {
       // Check required fields
       assertNotNull(entity.getName(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Name", "EntityType"));
 
@@ -139,18 +177,18 @@ public class Checks {
     * 
     * @see #checkResourceType(ResourceType, Collection)
     */
-   public static void checkResourceType(ResourceType resource) {
+   public static void checkResourceType(Resource resource) {
       checkResourceType(resource, VCloudDirectorMediaType.ALL);
    }
 
    /**
     * @see #checkResourceType(ResourceType, Collection)
     */
-   public static void checkResourceType(ResourceType resource, String type) {
+   public static void checkResourceType(Resource resource, String type) {
       checkResourceType(resource, ImmutableSet.of(type));
    }
 
-   public static void checkResourceType(ResourceType resource, Collection<String> validTypes) {
+   public static void checkResourceType(Resource resource, Collection<String> validTypes) {
       // Check optional fields
       URI href = resource.getHref();
       if (href != null) checkHref(href);
@@ -331,7 +369,7 @@ public class Checks {
       checkCatalogType(catalog);
    }
 
-   public static void checkCatalogType(CatalogType catalog) {
+   public static void checkCatalogType(Catalog catalog) {
       // Check optional elements/attributes
       Owner owner = catalog.getOwner();
       if (owner != null) checkOwner(owner);

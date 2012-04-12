@@ -18,10 +18,21 @@
  */
 package org.jclouds.vcloud.director.v1_5.domain;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Container for references to {@link VAppTemplate} and {@link Media} objects.
@@ -30,13 +41,12 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
  * &lt;complexType name="CatalogType" /&gt;
  * </pre>
  *
- * @author grkvlt@apache.org
+ * @author danikov
  */
 @XmlSeeAlso({ AdminCatalog.class })
 @XmlRootElement(name = "Catalog")
-public class Catalog extends CatalogType {
-
-   public static final String MEDIA_TYPE = VCloudDirectorMediaType.CATALOG;
+@XmlType(name = "CatalogType")
+public class Catalog extends Entity {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -44,30 +54,131 @@ public class Catalog extends CatalogType {
 
    @Override
    public Builder<?> toBuilder() {
-      return builder().fromCatalog(this);
+      return builder().fromCatalogType(this);
    }
 
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends CatalogType.Builder<B> {
+   public static class Builder<B extends Builder<B>> extends Entity.Builder<B> {
+
+      private Owner owner;
+      private Set<Reference> catalogItems = Sets.newLinkedHashSet();
+      private Boolean isPublished;
+
+      /**
+       * @see CatalogType#getOwner()
+       */
+      public B owner(Owner owner) {
+         this.owner = owner;
+         return self();
+      }
+
+      /**
+       * @see CatalogItems#getCatalogItems()
+       */
+      public B items(Iterable<Reference> catalogItems) {
+         this.catalogItems = Sets.newLinkedHashSet(checkNotNull(catalogItems, "catalogItems"));
+         return self();
+      }
+
+      /**
+       * @see CatalogItems#getCatalogItems()
+       */
+      public B item(Reference catalogItem) {
+         this.catalogItems.add(checkNotNull(catalogItem, "catalogItem"));
+         return self();
+      }
+
+      /**
+       * @see CatalogType#isPublished()
+       */
+      public B isPublished(Boolean isPublished) {
+         this.isPublished = isPublished;
+         return self();
+      }
+
+      /**
+       * @see CatalogType#isPublished()
+       */
+      public B published() {
+         this.isPublished = Boolean.TRUE;
+         return self();
+      }
 
       @Override
       public Catalog build() {
          return new Catalog(this);
       }
-      
-      public B fromCatalog(Catalog in) {
-         return fromCatalogType(in);
+
+      public B fromCatalogType(Catalog in) {
+         return fromEntityType(in).owner(in.getOwner()).items(in.getCatalogItems()).isPublished(in.isPublished());
       }
    }
 
-   public Catalog(Builder<?> builder) {
+   protected Catalog(Builder<?> builder) {
       super(builder);
+      this.owner = builder.owner;
+      this.catalogItems = builder.catalogItems == null || builder.catalogItems.isEmpty() ? null : ImmutableSet.copyOf(builder.catalogItems);
+      this.isPublished = builder.isPublished;
    }
 
-   @SuppressWarnings("unused")
-   private Catalog() {
-      // for JAXB
+   protected Catalog() {
+      // For JAXB
    }
+
+   @XmlElement(name = "Owner")
+   private Owner owner;
+   @XmlElementWrapper(name = "CatalogItems")
+   @XmlElement(name = "CatalogItem")
+   private Set<Reference> catalogItems;
+   @XmlElement(name = "IsPublished")
+   private Boolean isPublished;
+
+   /**
+    * Gets the value of the owner property.
+    */
+   public Owner getOwner() {
+      return owner;
+   }
+
+   /**
+    * Gets the value of the catalogItems property.
+    */
+   public Set<Reference> getCatalogItems() {
+      return catalogItems == null ? ImmutableSet.<Reference>of() : ImmutableSet.copyOf(catalogItems);
+   }
+
+   /**
+    * Gets the value of the isPublished property.
+    */
+   public Boolean isPublished() {
+      return isPublished;
+   }
+   
+   @Override
+   public boolean equals(Object o) {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+      Catalog that = Catalog.class.cast(o);
+      return super.equals(that) &&
+            equal(this.owner, that.owner) && 
+            equal(this.getCatalogItems(), that.getCatalogItems()) &&
+            equal(this.isPublished, that.isPublished);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(super.hashCode(), owner, getCatalogItems(), catalogItems);
+   }
+
+   @Override
+   public ToStringHelper string() {
+      return super.string().add("owner", owner)
+            .add("catalogItems", getCatalogItems())
+            .add("isPublished", isPublished);
+   }
+
 }

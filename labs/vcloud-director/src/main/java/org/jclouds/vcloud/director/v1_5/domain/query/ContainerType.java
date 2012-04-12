@@ -23,7 +23,7 @@ import static com.google.common.base.Objects.equal;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.jclouds.vcloud.director.v1_5.domain.ResourceType;
+import org.jclouds.vcloud.director.v1_5.domain.Resource;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -37,7 +37,7 @@ import com.google.common.base.Objects.ToStringHelper;
  *
  * @author grkvlt@apache.org
  */
-public class ContainerType extends ResourceType {
+public class ContainerType extends Resource {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -48,7 +48,7 @@ public class ContainerType extends ResourceType {
       return builder().fromContainerType(this);
    }
 
-   public static class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
       private String name;
       private Integer page;
@@ -93,7 +93,7 @@ public class ContainerType extends ResourceType {
       }
 
       public B fromContainerType(ContainerType in) {
-         return fromResourceType(in).name(in.getName()).page(in.getPage()).pageSize(in.getPageSize()).total(in.getTotal());
+         return fromResource(in).name(in.getName()).page(in.getPage()).pageSize(in.getPageSize()).total(in.getTotal());
       }
    }
 

@@ -46,7 +46,7 @@ import com.google.common.collect.Maps;
  * </pre>
  */
 @XmlRootElement(name = "Media")
-public class Media extends ResourceEntityType {
+public class Media extends ResourceEntity {
    
    @XmlType
    @XmlEnum(String.class)
@@ -93,7 +93,7 @@ public class Media extends ResourceEntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceEntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends ResourceEntity.Builder<B> {
 
       private Owner owner;
       private ImageType imageType;

@@ -119,7 +119,7 @@ public class Reference {
          return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
       }
 
-      public B fromEntity(EntityType in) {
+      public B fromEntity(Entity in) {
          return href(in.getHref()).id(in.getId()).name(in.getName()).type(in.getType());
       }
       

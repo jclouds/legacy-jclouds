@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.Network;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 
 /**
  * Provides synchronous access to {@link Network}.

@@ -36,7 +36,7 @@ import java.util.Set;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceType;
+import org.jclouds.vcloud.director.v1_5.domain.Resource;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -232,9 +232,9 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       return hrefs;
    }
    
-   private Set<URI> toHrefs(Iterable<? extends ResourceType> resources) {
+   private Set<URI> toHrefs(Iterable<? extends Resource> resources) {
       Set<URI> hrefs = new LinkedHashSet<URI>();
-      for (ResourceType resource : resources) {
+      for (Resource resource : resources) {
          hrefs.add(resource.getHref());
       }
       return hrefs;

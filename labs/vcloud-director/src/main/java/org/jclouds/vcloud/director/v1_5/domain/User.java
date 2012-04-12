@@ -91,7 +91,7 @@ import com.google.common.collect.Lists;
       "password",
       "groups"
 })
-public class User extends EntityType {
+public class User extends Entity {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -105,7 +105,7 @@ public class User extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private String fullName;
       private String emailAddress;

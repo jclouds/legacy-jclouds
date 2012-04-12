@@ -30,9 +30,9 @@ import static org.testng.AssertJUnit.assertFalse;
 import java.net.URI;
 
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
