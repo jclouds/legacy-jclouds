@@ -298,6 +298,7 @@ public class ContextBuilder<S, A, C extends Closeable, M extends ApiMetadata<S, 
       addHttpModuleIfNeededAndNotPresent(modules);
       ifHttpConfigureRestOtherwiseGuiceClientFactory(modules);
       addExecutorServiceIfNotPresent(modules);
+      addEventBusIfNotPresent(modules);
       addCredentialStoreIfNotPresent(modules);
       modules.add(new LifeCycleModule());
       modules.add(new BindPropertiesToAnnotations());
