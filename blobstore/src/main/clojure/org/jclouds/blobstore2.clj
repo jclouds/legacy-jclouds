@@ -26,7 +26,7 @@ Current supported services are:
     eucalyptus-partnercloud-s3, cloudfiles-us, cloudfiles-uk, swift,
     scality-rs2, hosteurope-storage, tiscali-storage]
 
-Here's a quick example of how to viewresources in rackspace
+Here's a quick example of how to view resources in rackspace
 
     (use 'org.jclouds.blobstore2)
 
@@ -46,7 +46,7 @@ See http://code.google.com/p/jclouds for details."
            java.util.Properties
            [org.jclouds.blobstore
             AsyncBlobStore domain.BlobBuilder BlobStore BlobStoreContext
-            BlobStoreContextFactory domain.BlobMetadata domain.StorageMetadata
+            BlobStoreContextBuilder domain.BlobMetadata domain.StorageMetadata
             domain.Blob domain.internal.BlobBuilderImpl options.PutOptions
             options.PutOptions$Builder
             options.CreateContainerOptions options.ListContainerOptions]
@@ -112,13 +112,12 @@ Options can also be specified for extension modules
   (let [module-keys (set (keys module-lookup))
         ext-modules (filter #(module-keys %) options)
         opts (apply hash-map (filter #(not (module-keys %)) options))]
-    (let [context (.. (BlobStoreContextFactory.)
-                      (createContext
-                       provider provider-identity provider-credential
-                       (apply modules
-                              (concat ext-modules (opts :extensions)))
-                       (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
-                               (Properties.) (dissoc opts :extensions))))]
+    (let [context (.. (BlobStoreContextBuilder/newBuilder provider)
+                      (credentials provider-identity provider-credential)
+                      (modules (apply modules (concat ext-modules (opts :extensions))))
+                      (overrides (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
+                        (Properties.) (dissoc opts :extensions)))
+                      (build))]
       (if (some #(= :async %) options)
         (.getAsyncBlobStore context)
         (.getBlobStore context)))))
