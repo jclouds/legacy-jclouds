@@ -25,12 +25,10 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.Constants;
-import org.jclouds.apis.ApiMetadata;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.testng.annotations.BeforeGroups;
@@ -41,7 +39,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
 
 /**
- * Base class for writing KeyStone Rest Client Expect tests
+ * Base class for writing vCloud Director REST client expect tests.
  * 
  * @author Adrian Cole
  */
@@ -71,6 +69,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
    public Properties setupProperties() {
       Properties props = new Properties();
       props.put(Constants.PROPERTY_MAX_RETRIES, 1);
+      props.put(Constants.PROPERTY_ENDPOINT, endpoint);
       return props;
    }
    
@@ -252,10 +251,4 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
    public URI toAdminUri(URI uri) {
       return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
    }
-   
-   @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
-      return new VCloudDirectorApiMetadata();
-   }
-   
 }

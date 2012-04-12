@@ -21,10 +21,8 @@ package org.jclouds.vcloud.director.v1_5.internal;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 /**
- * Base class for writing KeyStone Rest Client Expect tests
- * 
  * @author Adrian Cole
  */
-public abstract class BaseVCloudDirectorRestClientExpectTest extends BaseVCloudDirectorExpectTest<VCloudDirectorClient>  {
+public abstract class BaseVCloudDirectorRestClientExpectTest extends BaseVCloudDirectorExpectTest<VCloudDirectorClient> {
 
 }

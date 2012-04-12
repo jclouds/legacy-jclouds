@@ -17,6 +17,7 @@
  * under the License.
  */
 package org.jclouds.vcloud.director.v1_5;
+
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.PROPERTY_VCLOUD_DIRECTOR_VERSION_SCHEMA;
@@ -36,7 +37,7 @@ import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for VCloudDirector 1.0 API
+ * Implementation of {@link ApiMetadata} for VCloudDirector 1.5 API
  * 
  * @author Adrian Cole
  */
@@ -82,14 +83,13 @@ public class VCloudDirectorApiMetadata
 
       protected Builder() {
          super(VCloudDirectorClient.class, VCloudDirectorAsyncClient.class);
-          id("vcloud")
-         .name("VCloud Director 1.5 API")
+          id("vcloud-director")
+         .name("vCloud Director 1.5 API")
          .type(ApiType.COMPUTE)
          .identityName("User at Organization (user@org)")
          .credentialName("Password")
          .documentation(URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html"))
          .version("1.5")
-         .defaultEndpoint("https://vcloudbeta.bluelock.com/api")
          .defaultProperties(VCloudDirectorApiMetadata.defaultProperties())
          .context(TypeToken.of(VCloudDirectorContext.class))
          .contextBuilder(TypeToken.of(VCloudDirectorContextBuilder.class));
