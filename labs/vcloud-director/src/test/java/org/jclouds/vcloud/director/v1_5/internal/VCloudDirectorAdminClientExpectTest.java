@@ -29,7 +29,6 @@ import com.google.common.base.Function;
 import com.google.inject.Module;
 
 /**
- * 
  * @author Adrian Cole
  */
 public abstract class VCloudDirectorAdminClientExpectTest extends
