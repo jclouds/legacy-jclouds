@@ -51,6 +51,13 @@ import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
+import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
+import org.jclouds.vcloud.director.v1_5.domain.Session;
+import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.User;
+import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
@@ -59,13 +66,6 @@ import org.jclouds.vcloud.director.v1_5.domain.params.InstantiateVAppTemplatePar
 import org.jclouds.vcloud.director.v1_5.domain.params.InstantiationParams;
 import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
-import org.jclouds.vcloud.director.v1_5.domain.Session;
-import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.User;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.features.TaskClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
@@ -75,7 +75,7 @@ import org.jclouds.vcloud.director.v1_5.predicates.TaskStatusEquals;
 import org.jclouds.vcloud.director.v1_5.predicates.TaskSuccess;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
-import org.testng.annotations.AfterSuite;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -89,6 +89,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.io.Closeables;
 import com.google.inject.Guice;
 
 /**
@@ -100,7 +101,7 @@ import com.google.inject.Guice;
 @Listeners(FormatApiResultsListener.class)
 @Test(groups = "live")
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTest<VCloudDirectorContext> {
-   
+
    @Resource
    protected Logger logger = Logger.CONSOLE;
 
@@ -112,7 +113,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
    public static final String VDC = "vdc";
    public static final int REQUIRED_ADMIN_VM_QUOTA = 0;
    public static final int REQUIRED_USER_VM_QUOTA = 0;
-   
+
    public Predicate<Task> retryTaskSuccess;
    public Predicate<Task> retryTaskSuccessLong;
 
@@ -131,24 +132,24 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
 
    protected final Set<String> vAppNames = Sets.newLinkedHashSet();
    protected static final Random random = new Random();
-   
+
    protected BaseVCloudDirectorClientLiveTest() {
       provider = "vcloud-director";
    }
 
    protected DateService dateService;
 
-   private static VCloudDirectorTestSession testSession;
+   protected VCloudDirectorTestSession testSession;
 
-   private static String testStamp;
+   protected static String testStamp;
 
    @BeforeClass(alwaysRun = true)
    protected void setupDateService() {
       dateService = Guice.createInjector().getInstance(DateService.class);
       assertNotNull(dateService);
    }
-   
-   // NOTE Implement as required to populate xxxClient fields, or NOP
+
+   /** Implement as required to populate xxxClient fields, or NOP */
    protected abstract void setupRequiredClients();
 
    @Inject
@@ -160,71 +161,62 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
    protected void initTaskSuccessLong(TaskSuccess taskSuccess) {
       retryTaskSuccessLong = new RetryablePredicate<Task>(taskSuccess, LONG_TASK_TIMEOUT_SECONDS * 1000L);
    }
-   //temporary until we marry up the test fixtures
 
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      identity = setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
-      credential = setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
-      endpoint = setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".api-version");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".build-version");
-      return overrides;
-   }
-   
-   @AfterSuite(alwaysRun = true)
+   @AfterClass(alwaysRun = true)
    protected void tearDownTestSession() {
-      testSession.close();
+      Closeables.closeQuietly(testSession);
    }
 
-   @BeforeClass(alwaysRun = true)
    @Override
-   public void setupContext(){
-      
+   protected void initializeContext() {
+      Properties overrides = setupProperties();
+      testSession = VCloudDirectorTestSession.builder()
+            .provider(provider)
+            .identity(identity)
+            .credential(credential)
+            .endpoint(endpoint)
+            .overrides(overrides)
+            .build();
+
+      System.err.println("*** " + endpoint + " ***");
+
       context = testSession.getUserContext();
       adminContext = testSession.getAdminContext();
-      
-      if(adminContext != null) {
+
+      if (adminContext != null) {
          adminSession = adminContext.getApi().getCurrentSession();
          adminContext.utils().injector().injectMembers(this);
       }
-      
+
       session = context.getApi().getCurrentSession();
       context.utils().injector().injectMembers(this);
-      
+
       initTestParametersFromPropertiesOrLazyDiscover();
       setupRequiredClients();
    }
-   
+
    public static String getTestDateTimeStamp() {
       if (testStamp == null) {
          testStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
       }
-      
+
       return testStamp;
    }
-   
+
    public Reference getRoleReferenceFor(String name) {
       return getRoleReferenceFor(name, adminContext);
    }
-   
+
    public static Reference getRoleReferenceFor(String name, RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext) {
       RoleReferences roles = adminContext.getApi().getQueryClient().roleReferencesQueryAll();
       // wrapped in a builder to strip out unwanted xml cruft that the api chokes on
       return Reference.builder().fromReference(Iterables.find(roles.getReferences(), ReferencePredicates.nameEquals(name))).build();
    }
-   
+
    public User randomTestUser(String prefix) {
       return randomTestUser(prefix, getRoleReferenceFor(DefaultRoles.USER.value()));
    }
-   
+
    public User randomTestUser(String prefix, Reference role) {
       return User.builder()
          .name(name(prefix)+getTestDateTimeStamp())
@@ -291,19 +283,19 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
          }
       }
    }
-   
+
    public URI toAdminUri(Reference ref) {
       return toAdminUri(ref.getHref());
    }
-   
+
    public URI toAdminUri(URI uri) {
       return Reference.builder().href(uri).build().toAdminReference(endpoint).getHref();
    }
-   
+
    protected void assertTaskSucceeds(Task task) {
       assertTrue(retryTaskSuccess.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
    }
-   
+
    protected void assertTaskSucceedsLong(Task task) {
       assertTrue(retryTaskSuccessLong.apply(task), String.format(TASK_COMPLETE_TIMELY, task));
    }
@@ -314,17 +306,17 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, TASK_TIMEOUT_SECONDS * 1000L);
       return retryablePredicate.apply(task);
    }
-   
+
    protected void assertTaskStatusEventually(Task task, Task.Status running, ImmutableSet<Task.Status> immutableSet) {
       assertTrue(taskStatusEventually(task, running, immutableSet),
             String.format("Task '%s' must reach status %s", task.getOperationName(), running));
    }
-   
+
    protected boolean taskDoneEventually(Task task) {
       TaskClient taskClient = context.getApi().getTaskClient();
       TaskStatusEquals predicate = new TaskStatusEquals(
-               taskClient, 
-               ImmutableSet.of(Task.Status.ABORTED, Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS), 
+               taskClient,
+               ImmutableSet.of(Task.Status.ABORTED, Task.Status.CANCELED, Task.Status.ERROR, Task.Status.SUCCESS),
                Collections.<Task.Status>emptySet());
       RetryablePredicate<Task> retryablePredicate = new RetryablePredicate<Task>(predicate, LONG_TASK_TIMEOUT_SECONDS * 1000L);
       return retryablePredicate.apply(task);
@@ -337,13 +329,13 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
 
    /**
     * Instantiate a {@link VApp} in a {@link Vdc} using the {@link VAppTemplate} we have configured for the tests.
-    * 
+    *
     * @return the VApp that is being instantiated
     */
    protected VApp instantiateVApp() {
       return instantiateVApp(name("test-vapp-"));
    }
-   
+
    protected VApp instantiateVApp(String name) {
       InstantiateVAppTemplateParams instantiate = InstantiateVAppTemplateParams.builder()
             .name(name)
@@ -395,7 +387,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
    private NetworkConfiguration networkConfiguration() {
       Vdc vdc = context.getApi().getVdcClient().getVdc(vdcURI);
       assertNotNull(vdc, String.format(ENTITY_NON_NULL, VDC));
-      
+
       Set<Reference> networks = vdc.getAvailableNetworks();
 
       // Look up the network in the Vdc with the id configured for the tests
@@ -419,7 +411,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
 
       return networkConfiguration;
    }
-   
+
    protected void cleanUpVAppTemplate(VAppTemplate vAppTemplate) {
       VAppTemplateClient vappTemplateClient = context.getApi().getVAppTemplateClient();
       try {
@@ -433,7 +425,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
    protected void cleanUpVApp(VApp vApp) {
       cleanUpVApp(vApp.getHref());
    }
-   
+
    // TODO code tidy for cleanUpVApp? Seems extremely verbose!
    protected void cleanUpVApp(URI vAppURI) {
       VAppClient vAppClient = context.getApi().getVAppClient();
@@ -447,7 +439,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
          logger.info("Cannot find VApp at %s", vAppURI.getPath());
          return;
       }
-      
+
       // Wait for busy tasks to complete (don't care if it's failed or successful)
       // Otherwise, get error on delete "entity is busy completing an operation.
       if (vApp.getTasks() != null) {
@@ -457,7 +449,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
             }
          }
       }
-      
+
       // Shutdown and power off the VApp if necessary
       if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
          try {
@@ -480,7 +472,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
             logger.warn(e, "Continuing cleanup after error undeploying VApp %s", vApp.getName());
          }
       }
-      
+
       try {
          Task task = vAppClient.deleteVApp(vAppURI);
          taskDoneEventually(task);
