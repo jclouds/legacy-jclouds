@@ -55,7 +55,6 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -68,7 +67,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.Module;
 
 /**
  * 
@@ -169,7 +167,8 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest<AWSE
 
          RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = ContextBuilder
                .newBuilder(new AWSCloudWatchProviderMetadata())
-               .modules(ImmutableSet.<Module> of(new Log4JLoggingModule())).build();
+               .credentials(identity, credential)
+               .modules(setupModules()).build();
 
          try {
             Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
