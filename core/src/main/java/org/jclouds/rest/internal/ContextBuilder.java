@@ -133,7 +133,6 @@ public class ContextBuilder<S, A, C extends Closeable, M extends ApiMetadata<S, 
       }
    }
 
-   @SuppressWarnings("unchecked")
    public static <S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> ContextBuilder<S, A, C, M> newBuilder(
          ApiMetadata<S, A, C, M> apiMetadata) {
       try {
@@ -149,7 +148,6 @@ public class ContextBuilder<S, A, C extends Closeable, M extends ApiMetadata<S, 
       }
    }
 
-   @SuppressWarnings("unchecked")
    public static <S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> ContextBuilder<S, A, C, M> newBuilder(
          ProviderMetadata<S, A, C, M> providerMetadata) {
       try {
@@ -232,10 +230,8 @@ public class ContextBuilder<S, A, C extends Closeable, M extends ApiMetadata<S, 
    }
 
    /**
-    * 
     * @throws NoSuchElementException
     */
-
    public static String searchPropertiesForProviderScopedProperty(Properties overrides, String prov, String key,
          String defaultVal) {
       try {
