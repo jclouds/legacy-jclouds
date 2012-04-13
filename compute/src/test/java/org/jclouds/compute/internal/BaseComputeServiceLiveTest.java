@@ -878,7 +878,7 @@ public abstract class BaseComputeServiceLiveTest<S, A, C extends ComputeServiceC
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
-         assert exec.getError().indexOf("OpenJDK") != -1 || exec.getOutput().indexOf("1.7") != -1 : exec
+         assert exec.getError().indexOf("OpenJDK") != -1 || exec.getOutput().indexOf("OpenJDK") != -1 : exec
                + "\n"
                + ssh.exec("cat /tmp/" + taskName + "/" + taskName + ".sh /tmp/" + taskName + "/stdout.log /tmp/"
                      + taskName + "/stderr.log");
