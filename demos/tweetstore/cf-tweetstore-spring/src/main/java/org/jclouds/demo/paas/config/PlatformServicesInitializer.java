@@ -19,6 +19,7 @@
 package org.jclouds.demo.paas.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.inject.name.Names.bindProperties;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -83,8 +84,12 @@ public class PlatformServicesInitializer implements ServletContextListener {
 
     protected static String getBaseUrl(ServletContext context) {
         ApplicationInstanceInfo instanceInfo = new CloudEnvironment().getInstanceInfo();
-        return "http://" + checkNotNull(instanceInfo.getHost(), "instanceInfo.getHost()") 
-               + ":" + instanceInfo.getPort() + context.getContextPath();
+        // TODO: use internal address if possible. See http://support.cloudfoundry.com/requests/102117
+//        return "http://" + checkNotNull(instanceInfo.getHost(), "instanceInfo.getHost()") 
+//               + ":" + instanceInfo.getPort() + context.getContextPath();
+        checkState(!instanceInfo.getUris().isEmpty(), "instanceInfo.getUris() is empty");
+        return "http://" + checkNotNull(instanceInfo.getUris().get(0), "instanceInfo.getUris().get(0)") 
+               + context.getContextPath();
     }
 
     // TODO: make the number and names of queues configurable
