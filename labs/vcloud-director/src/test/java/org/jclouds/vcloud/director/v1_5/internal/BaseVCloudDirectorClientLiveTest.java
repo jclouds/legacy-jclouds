@@ -179,8 +179,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
             .overrides(overrides)
             .build();
 
-      System.err.println("*** " + endpoint + " ***");
-
       context = testSession.getUserContext();
       adminContext = testSession.getAdminContext();
 
