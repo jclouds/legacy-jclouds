@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
@@ -370,7 +369,7 @@ public class StubComputeServiceIntegrationTest extends
             client.connect();
 
             expect(client.exec("echo hello")).andReturn(new ExecResponse("hello", "", 0));
-            expect(client.exec("java -version")).andReturn(new ExecResponse("", "1.7", 0));
+            expect(client.exec("java -version")).andReturn(new ExecResponse("", "OpenJDK", 0));
 
             client.disconnect();
          }
@@ -528,11 +527,6 @@ public class StubComputeServiceIntegrationTest extends
    @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
       super.testDestroyNodes();
-   }
-
-   @Override
-   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
-      super.cleanup();
    }
 
 }

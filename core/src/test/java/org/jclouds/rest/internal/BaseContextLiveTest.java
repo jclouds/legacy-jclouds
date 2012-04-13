@@ -96,6 +96,7 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
    /**
     * @see org.jclouds.providers.Providers#withId
     */
+   @SuppressWarnings("unchecked")
    protected ProviderMetadata<?, ?, C, ?> createProviderMetadata() {
       try {
          return (ProviderMetadata<?, ?, C, ?>) Providers.withId(provider);
@@ -107,6 +108,7 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
    /**
     * @see org.jclouds.apis.Apis#withId
     */
+   @SuppressWarnings("unchecked")
    protected ApiMetadata<?, ?, C, ?> createApiMetadata() {
       try {
          return (ApiMetadata<?, ?, C, ?>) Apis.withId(provider);
