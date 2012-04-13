@@ -49,13 +49,17 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
 
    protected volatile C context;
 
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+
    protected Properties setupProperties() {
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
+      identity = setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
+      credential = setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
+      endpoint = setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
       setIfTestSystemPropertyPresent(overrides,  provider + ".api-version");
       setIfTestSystemPropertyPresent(overrides,  provider + ".build-version");
       return overrides;
@@ -65,6 +69,7 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
       if (System.getProperties().containsKey("test." + key)) {
          String val = System.getProperty("test." + key);
          overrides.setProperty(key, val);
+         return val;
       }
       return null;
    }
@@ -91,7 +96,6 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
    /**
     * @see org.jclouds.providers.Providers#withId
     */
-   @SuppressWarnings("unchecked")
    protected ProviderMetadata<?, ?, C, ?> createProviderMetadata() {
       try {
          return (ProviderMetadata<?, ?, C, ?>) Providers.withId(provider);
@@ -103,7 +107,6 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
    /**
     * @see org.jclouds.apis.Apis#withId
     */
-   @SuppressWarnings("unchecked")
    protected ApiMetadata<?, ?, C, ?> createApiMetadata() {
       try {
          return (ApiMetadata<?, ?, C, ?>) Apis.withId(provider);
