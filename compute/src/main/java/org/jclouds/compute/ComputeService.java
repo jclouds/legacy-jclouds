@@ -38,6 +38,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.ImplementedBy;
@@ -345,5 +346,14 @@ public interface ComputeService {
     * @see #runScriptOnNode(String, String, RunScriptOptions)
     */
    ExecResponse runScriptOnNode(String id, String runScript);
+   
+   /**
+    * Returns the {@link ImageExtension} for this provider if it implements it.
+    * 
+    * @return an optional of the {@link ImageExtension} or {@link Optional#absent()} if not
+    *         implemented
+    */
+   @Beta
+   Optional<ImageExtension> getImageExtension();
 
 }

@@ -31,6 +31,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.callables.BlockUntilInitScriptStatusIsZeroThenReturnOutput;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh;
@@ -61,6 +62,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
@@ -299,5 +301,12 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
          }
       };
    }
+   
+   @Provides
+   @Singleton
+   protected Optional<ImageExtension> provideImageExtension(Injector i){
+      return Optional.absent();
+   }
+   
 
 }

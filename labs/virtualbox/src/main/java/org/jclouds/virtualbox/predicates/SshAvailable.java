@@ -41,9 +41,9 @@ public class SshAvailable implements Predicate<String> {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final ComputeServiceContext context;
+   private final ComputeServiceContext<?,?> context;
 
-   public SshAvailable(ComputeServiceContext context) {
+   public SshAvailable(ComputeServiceContext<?,?> context) {
       this.context = context;
    }
 
