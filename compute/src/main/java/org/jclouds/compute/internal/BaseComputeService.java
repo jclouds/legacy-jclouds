@@ -1,5 +1,5 @@
 /**
- * Licensed to jclouds, Inc. (jclouds) under one or more
+s * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -51,6 +51,7 @@ import org.jclouds.Constants;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.callables.RunScriptOnNode;
@@ -90,6 +91,7 @@ import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import org.jclouds.util.Maps2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -134,21 +136,25 @@ public class BaseComputeService implements ComputeService {
    private final PersistNodeCredentials persistNodeCredentials;
    private final RunScriptOnNode.Factory runScriptOnNodeFactory;
    private final ExecutorService executor;
+   private final Optional<ImageExtension> imageExtension;
 
    @Inject
-   protected BaseComputeService(@SuppressWarnings("rawtypes") ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
-         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
-         InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
-         RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
-         Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   protected BaseComputeService(@SuppressWarnings("rawtypes") ComputeServiceContext context,
+            Map<String, Credentials> credentialStore, @Memoized Supplier<Set<? extends Image>> images,
+            @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy,
+            CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
+            DestroyNodeStrategy destroyNodeStrategy, ResumeNodeStrategy resumeNodeStrategy,
+            SuspendNodeStrategy suspendNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider,
+            @Named("NODE_RUNNING") Predicate<AtomicReference<NodeMetadata>> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<AtomicReference<NodeMetadata>> nodeTerminated,
+            @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
+            RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
+            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            Optional<ImageExtension> imageExtension) {
       this.context = checkNotNull(context, "context");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
@@ -172,6 +178,7 @@ public class BaseComputeService implements ComputeService {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.persistNodeCredentials = checkNotNull(persistNodeCredentials, "persistNodeCredentials");
       this.executor = checkNotNull(executor, "executor");
+      this.imageExtension = imageExtension;
    }
 
    /**
@@ -184,12 +191,12 @@ public class BaseComputeService implements ComputeService {
 
    @Override
    public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, Template template)
-         throws RunNodesException {
+            throws RunNodesException {
       checkNotNull(group, "group cannot be null");
       checkNotNull(template.getLocation(), "location");
       logger.debug(">> running %d node%s group(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
-            count > 1 ? "s" : "", group, template.getLocation().getId(), template.getImage().getId(), template
-                  .getHardware().getId(), template.getOptions());
+               count > 1 ? "s" : "", group, template.getLocation().getId(), template.getImage().getId(), template
+                        .getHardware().getId(), template.getOptions());
       Set<NodeMetadata> goodNodes = newLinkedHashSet();
       Map<NodeMetadata, Exception> badNodes = newLinkedHashMap();
       Multimap<NodeMetadata, CustomizationResponse> customizationResponses = LinkedHashMultimap.create();
@@ -198,9 +205,9 @@ public class BaseComputeService implements ComputeService {
          initAdminAccess.visit(template.getOptions().getRunScript());
 
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(group, count, template, goodNodes, badNodes,
-            customizationResponses);
+               customizationResponses);
       Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "createNodesInGroup("
-            + group + ")");
+               + group + ")");
       Function<NodeMetadata, NodeMetadata> fn = persistNodeCredentials.always(template.getOptions().getRunScript());
       badNodes = Maps2.transformKeys(badNodes, fn);
       goodNodes = ImmutableSet.copyOf(Iterables.transform(goodNodes, fn));
@@ -212,7 +219,7 @@ public class BaseComputeService implements ComputeService {
 
    @Override
    public Set<? extends NodeMetadata> createNodesInGroup(String group, int count, TemplateOptions templateOptions)
-         throws RunNodesException {
+            throws RunNodesException {
       return createNodesInGroup(group, count, templateBuilder().any().options(templateOptions).build());
    }
 
@@ -237,31 +244,32 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> destroying nodes matching(%s)", filter);
-      Set<NodeMetadata> set = newLinkedHashSet(filter(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
-            new Function<NodeMetadata, Future<NodeMetadata>>() {
+      Set<NodeMetadata> set = newLinkedHashSet(filter(
+               transformParallel(nodesMatchingFilterAndNotTerminated(filter),
+                        new Function<NodeMetadata, Future<NodeMetadata>>() {
 
-               // TODO make an async interface instead of re-wrapping
-               @Override
-               public Future<NodeMetadata> apply(final NodeMetadata from) {
-                  return executor.submit(new Callable<NodeMetadata>() {
+                           // TODO make an async interface instead of re-wrapping
+                           @Override
+                           public Future<NodeMetadata> apply(final NodeMetadata from) {
+                              return executor.submit(new Callable<NodeMetadata>() {
 
-                     @Nullable
-                     @Override
-                     public NodeMetadata call() throws Exception {
-                        doDestroyNode(from.getId());
-                        return from;
-                     }
+                                 @Nullable
+                                 @Override
+                                 public NodeMetadata call() throws Exception {
+                                    doDestroyNode(from.getId());
+                                    return from;
+                                 }
 
-                     @Override
-                     public String toString() {
-                        return "destroyNode(" + from.getId() + ")";
-                     }
-                  });
-               }
+                                 @Override
+                                 public String toString() {
+                                    return "destroyNode(" + from.getId() + ")";
+                                 }
+                              });
+                           }
 
-            }, executor, null, logger, "destroyNodesMatching(" + filter + ")"), notNull()));
+                        }, executor, null, logger, "destroyNodesMatching(" + filter + ")"), notNull()));
       logger.debug("<< destroyed(%d)", set.size());
-      
+
       cleanUpIncidentalResourcesOfDeadNodes(set);
       return set;
    }
@@ -292,7 +300,7 @@ public class BaseComputeService implements ComputeService {
          }
 
       }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
-      
+
       boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node));
       if (successful)
          credentialStore.remove("node#" + id);
@@ -303,7 +311,7 @@ public class BaseComputeService implements ComputeService {
    protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
       // no-op; to be overridden
    }
-   
+
    Iterable<? extends NodeMetadata> nodesMatchingFilterAndNotTerminated(Predicate<NodeMetadata> filter) {
       return filter(detailsOnAllNodes(), and(checkNotNull(filter, "filter"), not(TERMINATED)));
    }
@@ -313,7 +321,7 @@ public class BaseComputeService implements ComputeService {
     *            if none found
     */
    Iterable<? extends NodeMetadata> nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(
-         Predicate<NodeMetadata> filter) {
+            Predicate<NodeMetadata> filter) {
       Iterable<? extends NodeMetadata> nodes = nodesMatchingFilterAndNotTerminated(filter);
       if (Iterables.size(nodes) == 0)
          throw new NoSuchElementException("no nodes matched filter: " + filter);
@@ -403,15 +411,15 @@ public class BaseComputeService implements ComputeService {
    public void rebootNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> rebooting nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
-               // TODO use native async
-               @Override
-               public Future<Void> apply(NodeMetadata from) {
-                  rebootNode(from.getId());
-                  return immediateFuture(null);
-               }
+               new Function<NodeMetadata, Future<Void>>() {
+                  // TODO use native async
+                  @Override
+                  public Future<Void> apply(NodeMetadata from) {
+                     rebootNode(from.getId());
+                     return immediateFuture(null);
+                  }
 
-            }, executor, null, logger, "rebootNodesMatching(" + filter + ")");
+               }, executor, null, logger, "rebootNodesMatching(" + filter + ")");
       logger.debug("<< rebooted");
    }
 
@@ -434,15 +442,15 @@ public class BaseComputeService implements ComputeService {
    public void resumeNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> resuming nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
-               // TODO use native async
-               @Override
-               public Future<Void> apply(NodeMetadata from) {
-                  resumeNode(from.getId());
-                  return immediateFuture(null);
-               }
+               new Function<NodeMetadata, Future<Void>>() {
+                  // TODO use native async
+                  @Override
+                  public Future<Void> apply(NodeMetadata from) {
+                     resumeNode(from.getId());
+                     return immediateFuture(null);
+                  }
 
-            }, executor, null, logger, "resumeNodesMatching(" + filter + ")");
+               }, executor, null, logger, "resumeNodesMatching(" + filter + ")");
       logger.debug("<< resumed");
    }
 
@@ -465,15 +473,15 @@ public class BaseComputeService implements ComputeService {
    public void suspendNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> suspending nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
-               // TODO use native async
-               @Override
-               public Future<Void> apply(NodeMetadata from) {
-                  suspendNode(from.getId());
-                  return immediateFuture(null);
-               }
+               new Function<NodeMetadata, Future<Void>>() {
+                  // TODO use native async
+                  @Override
+                  public Future<Void> apply(NodeMetadata from) {
+                     suspendNode(from.getId());
+                     return immediateFuture(null);
+                  }
 
-            }, executor, null, logger, "suspendNodesMatching(" + filter + ")");
+               }, executor, null, logger, "suspendNodesMatching(" + filter + ")");
       logger.debug("<< suspended");
    }
 
@@ -482,7 +490,7 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, String runScript)
-         throws RunScriptOnNodesException {
+            throws RunScriptOnNodesException {
       return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")));
    }
 
@@ -491,13 +499,13 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Statement runScript)
-         throws RunScriptOnNodesException {
+            throws RunScriptOnNodesException {
       return runScriptOnNodesMatching(filter, runScript, RunScriptOptions.NONE);
    }
 
    @Override
    public Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-         String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
+            String runScript, RunScriptOptions options) throws RunScriptOnNodesException {
       return runScriptOnNodesMatching(filter, Statements.exec(checkNotNull(runScript, "runScript")), options);
    }
 
@@ -506,7 +514,7 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Statement runScript,
-         RunScriptOptions options) throws RunScriptOnNodesException {
+            RunScriptOptions options) throws RunScriptOnNodesException {
 
       checkNotNull(filter, "filter");
       checkNotNull(runScript, "runScript");
@@ -520,11 +528,11 @@ public class BaseComputeService implements ComputeService {
       initAdminAccess.visit(runScript);
 
       Iterable<? extends RunScriptOnNode> scriptRunners = transformNodesIntoInitializedScriptRunners(
-            nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter), runScript, options, badNodes);
+               nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter), runScript, options, badNodes);
       if (Iterables.size(scriptRunners) > 0) {
          for (RunScriptOnNode runner : scriptRunners) {
             responses.put(runner.getNode(), executor.submit(new RunScriptOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap(
-                  runner, goodNodes, badNodes)));
+                     runner, goodNodes, badNodes)));
          }
          exceptions = awaitCompletion(responses, executor, null, logger, "runScriptOnNodesMatching(" + filter + ")");
       }
@@ -573,7 +581,7 @@ public class BaseComputeService implements ComputeService {
          throw new NoSuchElementException(id);
       if (node.getState() != NodeState.RUNNING)
          throw new IllegalStateException("node " + id
-               + " needs to be running before executing a script on it. current state: " + node.getState());
+                  + " needs to be running before executing a script on it. current state: " + node.getState());
       initAdminAccess.visit(runScript);
       node = updateNodeWithCredentialsIfPresent(node, options);
       ExecResponse response = runScriptOnNodeFactory.create(node, runScript, options).init().call();
@@ -586,13 +594,13 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public ListenableFuture<ExecResponse> submitScriptOnNode(String id, final Statement runScript,
-         RunScriptOptions options) {
+            RunScriptOptions options) {
       NodeMetadata node = this.getNodeMetadata(id);
       if (node == null)
          throw new NoSuchElementException(id);
       if (node.getState() != NodeState.RUNNING)
          throw new IllegalStateException("node " + id
-               + " needs to be running before executing a script on it. current state: " + node.getState());
+                  + " needs to be running before executing a script on it. current state: " + node.getState());
       initAdminAccess.visit(runScript);
       final NodeMetadata node1 = updateNodeWithCredentialsIfPresent(node, options);
       ListenableFuture<ExecResponse> response = runScriptOnNodeFactory.submit(node1, runScript, options);
@@ -608,11 +616,11 @@ public class BaseComputeService implements ComputeService {
    }
 
    private Iterable<? extends RunScriptOnNode> transformNodesIntoInitializedScriptRunners(
-         Iterable<? extends NodeMetadata> nodes, Statement script, RunScriptOptions options,
-         Map<NodeMetadata, Exception> badNodes) {
+            Iterable<? extends NodeMetadata> nodes, Statement script, RunScriptOptions options,
+            Map<NodeMetadata, Exception> badNodes) {
       return filter(
-            transformParallel(nodes, new TransformNodesIntoInitializedScriptRunners(script, options, badNodes),
-                  executor, null, logger, "initialize script runners"), notNull());
+               transformParallel(nodes, new TransformNodesIntoInitializedScriptRunners(script, options, badNodes),
+                        executor, null, logger, "initialize script runners"), notNull());
    }
 
    private Set<? extends NodeMetadata> detailsOnAllNodes() {
@@ -630,18 +638,18 @@ public class BaseComputeService implements ComputeService {
       if (options.getLoginUser() != null)
          builder.user(options.getLoginUser());
       if (options.hasLoginPasswordOption()) {
-          if (options.hasLoginPassword()) {
-             builder.password(options.getLoginPassword());
-          } else {
-             builder.noPassword();
-          }
+         if (options.hasLoginPassword()) {
+            builder.password(options.getLoginPassword());
+         } else {
+            builder.noPassword();
+         }
       }
       if (options.hasLoginPrivateKeyOption()) {
-          if (options.hasLoginPrivateKey()) {
-             builder.privateKey(options.getLoginPrivateKey());
-          } else {
-             builder.noPrivateKey();
-          }
+         if (options.hasLoginPrivateKey()) {
+            builder.privateKey(options.getLoginPrivateKey());
+         } else {
+            builder.noPrivateKey();
+         }
       }
       if (options.shouldAuthenticateSudo() != null)
          builder.authenticateSudo(true);
@@ -649,13 +657,13 @@ public class BaseComputeService implements ComputeService {
    }
 
    private final class TransformNodesIntoInitializedScriptRunners implements
-         Function<NodeMetadata, Future<RunScriptOnNode>> {
+            Function<NodeMetadata, Future<RunScriptOnNode>> {
       private final Map<NodeMetadata, Exception> badNodes;
       private final Statement script;
       private final RunScriptOptions options;
 
       private TransformNodesIntoInitializedScriptRunners(Statement script, RunScriptOptions options,
-            Map<NodeMetadata, Exception> badNodes) {
+               Map<NodeMetadata, Exception> badNodes) {
          this.badNodes = checkNotNull(badNodes, "badNodes");
          this.script = checkNotNull(script, "script");
          this.options = checkNotNull(options, "options");
@@ -667,6 +675,14 @@ public class BaseComputeService implements ComputeService {
          return executor.submit(initScriptRunnerFactory.create(node, script, options, badNodes));
       }
 
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Optional<ImageExtension> getImageExtension() {
+      return imageExtension;
    }
 
 }
