@@ -201,8 +201,7 @@ public class AdminAccess implements Statement {
                      grantSudoToAdminUser, authorizeAdminPublicKey, installAdminPrivateKey, resetLoginPassword,
                      cryptFunction);
          } catch (IOException e) {
-            Throwables.propagate(e);
-            return null;
+            throw Throwables.propagate(e);
          }
       }
    }
