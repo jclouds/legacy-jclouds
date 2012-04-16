@@ -230,7 +230,7 @@ Caused by: java.lang.IllegalStateException: foo
       return io.submit((Runnable)t1, (Object)"shouldn't happen");
    }
    
-   static void checkFutureGetFailsWith(Future<Object> task, String ...requiredPhrases) throws Exception {
+   static void checkFutureGetFailsWith(Future<?> task, String ...requiredPhrases) throws Exception {
       try {
          task.get();
          assert false : "task should have failed";
@@ -242,9 +242,9 @@ Caused by: java.lang.IllegalStateException: foo
       }
    }
 
-   private static class ConfigurableRunner implements Runnable, Callable<Object> {
-      private Object result;
-      private String failMessage;
+   static class ConfigurableRunner implements Runnable, Callable<Object> {
+      Object result;
+      String failMessage;
       
       @Override
       public void run() {
