@@ -1,13 +1,8 @@
 package org.jclouds.vcloud.director.v1_5.internal;
 
-import static com.google.common.base.Objects.equal;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REF_REQ_LIVE;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 import java.io.Closeable;
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
@@ -118,7 +113,7 @@ public class VCloudDirectorTestSession implements Closeable {
       Closeables.closeQuietly(adminContext);
    }
 
-   public RestContext<VCloudDirectorClient, VCloudDirectorAsyncClient> getUserContext() {
+   public VCloudDirectorContext getUserContext() {
       return userContext;
    }
 
