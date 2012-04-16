@@ -43,7 +43,7 @@ public class FutureIterablesTest {
       final AtomicInteger counter = new AtomicInteger();
 
       try {
-         transformParallel(ImmutableSet.of("hello", "goodbye"), new Function<String, Future<String>>() {
+         transformParallel(ImmutableSet.of("hello", "goodbye"), new Function<String, Future<? extends String>>() {
 
             @Override
             public Future<String> apply(String input) {
@@ -63,7 +63,7 @@ public class FutureIterablesTest {
       final AtomicInteger counter = new AtomicInteger();
 
       try {
-         transformParallel(ImmutableSet.of("hello", "goodbye"), new Function<String, Future<String>>() {
+         transformParallel(ImmutableSet.of("hello", "goodbye"), new Function<String, Future<? extends String>>() {
 
             @Override
             public Future<String> apply(String input) {

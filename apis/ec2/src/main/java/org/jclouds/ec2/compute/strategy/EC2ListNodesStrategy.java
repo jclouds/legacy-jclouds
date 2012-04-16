@@ -92,7 +92,7 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
 
    protected Iterable<? extends RunningInstance> pollRunningInstances() {
       Iterable<? extends Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(
-               regions.get(), new Function<String, Future<Set<? extends Reservation<? extends RunningInstance>>>>() {
+               regions.get(), new Function<String, Future<? extends Set<? extends Reservation<? extends RunningInstance>>>>() {
 
                   @Override
                   public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {

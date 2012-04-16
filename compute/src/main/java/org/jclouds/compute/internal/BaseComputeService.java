@@ -238,7 +238,7 @@ public class BaseComputeService implements ComputeService {
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> destroying nodes matching(%s)", filter);
       Set<NodeMetadata> set = newLinkedHashSet(filter(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
-            new Function<NodeMetadata, Future<NodeMetadata>>() {
+            new Function<NodeMetadata, Future<? extends NodeMetadata>>() {
 
                // TODO make an async interface instead of re-wrapping
                @Override
@@ -403,7 +403,7 @@ public class BaseComputeService implements ComputeService {
    public void rebootNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> rebooting nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
+            new Function<NodeMetadata, Future<? extends Void>>() {
                // TODO use native async
                @Override
                public Future<Void> apply(NodeMetadata from) {
@@ -434,7 +434,7 @@ public class BaseComputeService implements ComputeService {
    public void resumeNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> resuming nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
+            new Function<NodeMetadata, Future<? extends Void>>() {
                // TODO use native async
                @Override
                public Future<Void> apply(NodeMetadata from) {
@@ -465,7 +465,7 @@ public class BaseComputeService implements ComputeService {
    public void suspendNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> suspending nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
+            new Function<NodeMetadata, Future<? extends Void>>() {
                // TODO use native async
                @Override
                public Future<Void> apply(NodeMetadata from) {
@@ -649,7 +649,7 @@ public class BaseComputeService implements ComputeService {
    }
 
    private final class TransformNodesIntoInitializedScriptRunners implements
-         Function<NodeMetadata, Future<RunScriptOnNode>> {
+         Function<NodeMetadata, Future<? extends RunScriptOnNode>> {
       private final Map<NodeMetadata, Exception> badNodes;
       private final Statement script;
       private final RunScriptOptions options;

@@ -43,6 +43,7 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudVersionsClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.AllocationModel;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
@@ -257,11 +258,11 @@ public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T
          }
 
          @Override
-         public Map<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>> get() {
-            return ImmutableMap.<String, Map<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>>> of(
+         public Map<String, Map<String, Map<String, CatalogItem>>> get() {
+            return ImmutableMap.<String, Map<String, Map<String, CatalogItem>>> of(
                   ORG_REF.getName(), ImmutableMap
-                        .<String, Map<String, org.jclouds.vcloud.domain.CatalogItem>> of(CATALOG_REF
-                              .getName(), ImmutableMap.<String, org.jclouds.vcloud.domain.CatalogItem> of(
+                        .<String, Map<String, CatalogItem>> of(CATALOG_REF
+                              .getName(), ImmutableMap.<String, CatalogItem> of(
                               "template",
                               new CatalogItemImpl("template", URI
                                     .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"), "description",

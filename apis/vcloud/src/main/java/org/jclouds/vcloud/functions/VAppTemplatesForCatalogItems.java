@@ -36,6 +36,7 @@ import org.jclouds.concurrent.ExceptionParsingListenableFuture;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -78,14 +79,14 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
 
    @Override
    public Iterable<VAppTemplate> apply(Iterable<CatalogItem> from) {
-      return transformParallel(filter(from, new Predicate<CatalogItem>() {
+      return Iterables2.concreteCopy(transformParallel(filter(from, new Predicate<CatalogItem>() {
 
          @Override
          public boolean apply(CatalogItem input) {
             return input.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML);
          }
 
-      }), new Function<CatalogItem, Future<VAppTemplate>>() {
+      }), new Function<CatalogItem, Future<? extends VAppTemplate>>() {
 
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
@@ -94,7 +95,7 @@ public class VAppTemplatesForCatalogItems implements Function<Iterable<CatalogIt
                      returnNullOnAuthorizationException);
          }
 
-      }, executor, null, logger, "vappTemplates in");
+      }, executor, null, logger, "vappTemplates in"));
    }
 
 }

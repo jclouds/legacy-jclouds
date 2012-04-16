@@ -62,6 +62,7 @@ import org.jclouds.glesys.options.DestroyServerOptions;
 import org.jclouds.location.predicates.LocationPredicates;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.util.Iterables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -196,13 +197,13 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
 
    @Override
    public Iterable<ServerDetails> listNodes() {
-      return transformParallel(client.getServerClient().listServers(), new Function<Server, Future<ServerDetails>>() {
+      return Iterables2.concreteCopy(transformParallel(client.getServerClient().listServers(), new Function<Server, Future<? extends ServerDetails>>() {
          @Override
          public Future<ServerDetails> apply(Server from) {
             return aclient.getServerClient().getServerDetails(from.getId());
          }
 
-      }, userThreads, null, logger, "server details");
+      }, userThreads, null, logger, "server details"));
    }
 
    @Override
