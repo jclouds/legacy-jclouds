@@ -353,7 +353,7 @@ public class HttpUtils {
    }
 
    public static String sortAndConcatHeadersIntoString(Multimap<String, String> headers) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       SortedSetMultimap<String, String> sortedMap = TreeMultimap.create();
       sortedMap.putAll(headers);
       for (Entry<String, String> header : sortedMap.entries()) {

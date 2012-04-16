@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 public class WireTest {
 
    class BufferLogger implements Logger {
-      StringBuffer buff = new StringBuffer();
+      StringBuilder buff = new StringBuilder();
 
       public void debug(String message, Object... args) {
          buff.append(message);
