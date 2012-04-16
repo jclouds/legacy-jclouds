@@ -19,7 +19,6 @@
 package org.jclouds.io;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.io.ByteStreams.toByteArray;
 
 import java.io.File;
@@ -141,7 +140,7 @@ public class Payloads {
     * @see #calculateMD5(Payload, MessageDigest)
     */
    public static <T extends PayloadEnclosing> T calculateMD5(T payloadEnclosing, MessageDigest md5) throws IOException {
-      checkState(payloadEnclosing != null, "payloadEnclosing");
+      checkNotNull(payloadEnclosing, "payloadEnclosing");
       Payload newPayload = calculateMD5(payloadEnclosing.getPayload(), md5);
       if (newPayload != payloadEnclosing.getPayload())
          payloadEnclosing.setPayload(newPayload);
