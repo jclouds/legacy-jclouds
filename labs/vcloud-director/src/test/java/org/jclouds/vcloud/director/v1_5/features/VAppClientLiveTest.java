@@ -19,8 +19,8 @@
 package org.jclouds.vcloud.director.v1_5.features;
 
 import static com.google.common.base.Predicates.and;
-import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getFirst;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
@@ -58,8 +58,8 @@ import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEqu
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.math.BigInteger;
 import java.net.URI;
@@ -68,15 +68,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.io.Payloads;
 import org.jclouds.dmtf.cim.OSType;
 import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
 import org.jclouds.dmtf.ovf.MsgType;
 import org.jclouds.dmtf.ovf.NetworkSection;
 import org.jclouds.dmtf.ovf.ProductSection;
 import org.jclouds.dmtf.ovf.StartupSection;
+import org.jclouds.io.Payloads;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppClientLiveTest;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
@@ -1286,11 +1285,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       Task deleteVApp = vAppClient.deleteVApp(temp.getHref());
       assertTrue(retryTaskSuccess.apply(deleteVApp), String.format(TASK_COMPLETE_TIMELY, "deleteVApp"));
 
-      try {
-         vAppClient.getVApp(temp.getHref());
-         fail("The VApp "+temp+" should have been deleted");
-      } catch (VCloudDirectorException vcde) {
-         assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The error code for deleted vApp should have been 'Forbidden' (403)");
-      }
+      VApp deleted = vAppClient.getVApp(temp.getHref());
+      assertNull(deleted, "The VApp "+temp.getName()+" should have been deleted");
    }
 }
