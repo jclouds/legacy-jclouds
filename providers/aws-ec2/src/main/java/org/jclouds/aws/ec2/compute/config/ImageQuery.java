@@ -16,19 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.bluelock.vcloud.zone01.config;
+package org.jclouds.aws.ec2.compute.config;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Related to an Image Query
  * 
  * @author Adrian Cole
+ * 
  */
-@RequiresHttp
-@ConfiguresRestClient
-public class BluelockVCloudZone01RestClientModule extends VCloudRestClientModule {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface ImageQuery {
 
 }

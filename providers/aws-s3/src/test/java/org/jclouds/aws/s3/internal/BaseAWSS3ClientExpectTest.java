@@ -22,7 +22,6 @@ import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.AWSS3ProviderMetadata;
 import org.jclouds.aws.s3.config.AWSS3RestClientModule;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
@@ -45,12 +44,11 @@ public class BaseAWSS3ClientExpectTest extends BaseRestClientExpectTest<AWSS3Cli
    }
    
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new AWSS3ProviderMetadata();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAWSS3RestClientModule extends AWSS3RestClientModule {
       @Override
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {

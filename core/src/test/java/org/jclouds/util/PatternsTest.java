@@ -77,9 +77,9 @@ public class PatternsTest {
 
    public void testREST_CONTEXT_BUILDER() {
       Matcher matcher = Patterns.REST_CONTEXT_BUILDER
-            .matcher("org.jclouds.rest.RestContextBuilder<java.lang.String,java.lang.Integer>");
+            .matcher("org.jclouds.rest.ContextBuilder<java.lang.String,java.lang.Integer>");
       assert (matcher.find());
-      assertEquals(matcher.group(1), "org.jclouds.rest.RestContextBuilder");
+      assertEquals(matcher.group(1), "org.jclouds.rest.ContextBuilder");
       assertEquals(matcher.group(2), "java.lang.String");
       assertEquals(matcher.group(3), "java.lang.Integer");
 
@@ -87,9 +87,9 @@ public class PatternsTest {
 
    public void testREST_CONTEXT_BUILDERwithSpace() {
       Matcher matcher = Patterns.REST_CONTEXT_BUILDER
-            .matcher("org.jclouds.rest.RestContextBuilder<java.lang.String, java.lang.Integer>");
+            .matcher("org.jclouds.rest.ContextBuilder<java.lang.String, java.lang.Integer>");
       assert (matcher.find());
-      assertEquals(matcher.group(1), "org.jclouds.rest.RestContextBuilder");
+      assertEquals(matcher.group(1), "org.jclouds.rest.ContextBuilder");
       assertEquals(matcher.group(2), "java.lang.String");
       assertEquals(matcher.group(3), "java.lang.Integer");
    }

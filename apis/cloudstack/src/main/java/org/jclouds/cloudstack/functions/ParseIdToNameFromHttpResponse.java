@@ -30,8 +30,8 @@ import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 

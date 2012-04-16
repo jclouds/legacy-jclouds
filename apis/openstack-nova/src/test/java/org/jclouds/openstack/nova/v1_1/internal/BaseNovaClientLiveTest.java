@@ -18,10 +18,13 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import org.jclouds.compute.ComputeServiceContext;
+import java.util.Properties;
+
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -33,9 +36,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseNovaClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>> {
+public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public BaseNovaClientLiveTest() {
       provider = "openstack-nova";
@@ -47,9 +48,17 @@ public class BaseNovaClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      novaContext = context.getProviderSpecificContext();
+      novaContext = context.unwrap();
    }
 
+   @Override
+   protected Properties setupProperties() {
+      Properties props = super.setupProperties();
+      setIfTestSystemPropertyPresent(props, KeystoneProperties.CREDENTIAL_TYPE);
+      setIfTestSystemPropertyPresent(props, NovaProperties.AUTO_ALLOCATE_FLOATING_IPS);
+      return props;
+   }
+   
    @AfterGroups(groups = "live")
    protected void tearDown() {
       if (novaContext != null)

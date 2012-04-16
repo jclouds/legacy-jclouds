@@ -23,12 +23,15 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.elb.domain.LoadBalancer;
-import org.jclouds.loadbalancer.LoadBalancerServiceContext;
-import org.jclouds.rest.internal.BaseContextLiveTest;
-import org.testng.annotations.AfterGroups;
+import org.jclouds.rest.RestContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Tests behavior of {@code ELBClient}
@@ -36,20 +39,20 @@ import org.testng.annotations.Test;
  * @author Lili Nader
  */
 @Test(groups = "live", singleThreaded = true, testName = "ELBClientLiveTest")
-public class ELBClientLiveTest<S extends ELBClient, A extends ELBAsyncClient> extends BaseContextLiveTest<LoadBalancerServiceContext<S, A>>  {
+public class ELBClientLiveTest<S extends ELBClient, A extends ELBAsyncClient> extends BaseContextLiveTest<RestContext<S, A>>  {
 
    public ELBClientLiveTest() {
       provider = "elb";
    }
 
-   private ELBClient client;
+   protected S client;
    protected String name = "TestLoadBalancer";
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi();
+      client = context.getApi();
    }
 
    @Test
@@ -84,12 +87,21 @@ public class ELBClientLiveTest<S extends ELBClient, A extends ELBAsyncClient> ex
       client.deleteLoadBalancerInRegion(region, name);
    }
 
-   @AfterGroups(groups = "live")
-   public void shutdown() {
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
       try {
          testDeleteLoadBalancer();
       } finally {
-         context.close();
+         super.tearDownContext();
       }
+   }
+
+   @SuppressWarnings({ "serial", "unchecked" })
+   @Override
+   protected TypeToken<RestContext<S, A>> contextType() {
+      return new TypeToken<RestContext<S, A>>() {
+      }.where(new TypeParameter<S>() {
+      }, (TypeToken) TypeToken.of(ELBClient.class)).where(new TypeParameter<A>() {
+      }, (TypeToken) TypeToken.of(ELBAsyncClient.class));
    }
 }

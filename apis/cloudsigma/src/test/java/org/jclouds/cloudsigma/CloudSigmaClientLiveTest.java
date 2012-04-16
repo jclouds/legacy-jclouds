@@ -43,7 +43,6 @@ import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
@@ -71,9 +70,7 @@ import com.google.inject.Guice;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudSigmaClientLiveTest")
-public class CloudSigmaClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>> {
+public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public CloudSigmaClientLiveTest() {
       provider = "cloudsigma";
@@ -92,7 +89,7 @@ public class CloudSigmaClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      cloudSigmaContext = context.getProviderSpecificContext();
+      cloudSigmaContext = context.unwrap();
 
       client = cloudSigmaContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,

@@ -18,7 +18,6 @@
  */
 package org.jclouds.gogrid.services;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
@@ -32,9 +31,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseGoGridClientLiveTest")
-public class BaseGoGridClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>> {
+public class BaseGoGridClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public BaseGoGridClientLiveTest() {
       provider = "gogrid";
@@ -46,7 +43,7 @@ public class BaseGoGridClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      restContext = context.getProviderSpecificContext();
+      restContext = context.unwrap();
    }
 
 

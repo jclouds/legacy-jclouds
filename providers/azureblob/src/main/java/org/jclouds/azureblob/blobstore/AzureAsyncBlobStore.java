@@ -80,7 +80,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AzureAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
+   AzureAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AzureBlobAsyncClient async,
             ContainerToResourceMetadata container2ResourceMd,

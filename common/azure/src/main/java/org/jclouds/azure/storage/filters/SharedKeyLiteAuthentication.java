@@ -49,8 +49,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * Signs the Azure Storage request.

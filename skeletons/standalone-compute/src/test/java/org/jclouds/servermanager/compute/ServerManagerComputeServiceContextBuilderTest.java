@@ -22,10 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.rest.RestContext;
-import org.jclouds.servermanager.ServerManager;
+import org.jclouds.lifecycle.Closer;
 import org.jclouds.servermanager.ServerManagerApiMetadata;
 import org.testng.annotations.Test;
 
@@ -34,26 +33,20 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  * 
  */
-@Test(groups = "unit", testName = "ServerManagerComputeServiceContextBuilderTest")
+@Test(groups = "unit", testName = "ServerManagerContextBuilderTest")
 public class ServerManagerComputeServiceContextBuilderTest {
 
-   @Test
-   public void testCanBuildDirectly() {
-      ComputeServiceContext<ServerManager, ServerManager> context = new ServerManagerComputeServiceContextBuilder()
-            .build();
-      context.close();
-   }
 
    @Test
    public void testCanBuildWithApiMetadata() {
-      ComputeServiceContext<ServerManager, ServerManager> context = ComputeServiceContextBuilder.newBuilder(
-            new ServerManagerApiMetadata()).build();
+      ComputeServiceContext context = ContextBuilder.newBuilder(
+            new ServerManagerApiMetadata()).build(ComputeServiceContext.class);
       context.close();
    }
 
    @Test
    public void testCanBuildById() {
-      ComputeServiceContext<?, ?> context = ComputeServiceContextBuilder.newBuilder("servermanager").build();
+      ComputeServiceContext context = ContextBuilder.newBuilder("servermanager").build(ComputeServiceContext.class);
       context.close();
    }
 
@@ -63,20 +56,17 @@ public class ServerManagerComputeServiceContextBuilderTest {
       overrides.setProperty("servermanager.endpoint", "http://host");
       overrides.setProperty("servermanager.api-version", "1");
 
-      ComputeServiceContext<ServerManager, ServerManager> context = new ServerManagerComputeServiceContextBuilder()
-            .overrides(overrides).build();
+      ComputeServiceContext context = ContextBuilder.newBuilder("servermanager")
+            .overrides(overrides).build(ComputeServiceContext.class);
 
       context.close();
    }
 
    @Test
-   public void testProviderSpecificContextIsCorrectType() {
-      ComputeServiceContext<ServerManager, ServerManager> context = new ServerManagerComputeServiceContextBuilder()
-            .build();
+   public void testUnwrapIsCorrectType() {
+      ComputeServiceContext context = ContextBuilder.newBuilder("servermanager").build(ComputeServiceContext.class);
 
-      RestContext<ServerManager, ServerManager> providerContext = context.getProviderSpecificContext();
-
-      assertEquals(providerContext.getApi().getClass(), ServerManager.class);
+      assertEquals(context.unwrap().getClass(), Closer.class);
 
       context.close();
    }

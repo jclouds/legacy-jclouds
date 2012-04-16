@@ -47,7 +47,6 @@ import javax.inject.Singleton;
 import org.jclouds.cim.xml.ResourceAllocationSettingDataHandler;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -129,7 +128,6 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class VCloudRestClientModule extends RestClientModule<VCloudClient, VCloudAsyncClient> {
 

@@ -18,12 +18,8 @@
  */
 package org.jclouds.cloudstack.compute;
 
-import org.jclouds.cloudstack.CloudStackAsyncClient;
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -37,8 +33,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class CloudStackComputeServiceLiveTest extends
-      BaseComputeServiceLiveTest<CloudStackClient, CloudStackAsyncClient, CloudStackContext> {
+public class CloudStackComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public CloudStackComputeServiceLiveTest() {
       provider = "cloudstack";
    }
@@ -46,11 +41,6 @@ public class CloudStackComputeServiceLiveTest extends
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<CloudStackClient, CloudStackAsyncClient> tmContext = context.getProviderSpecificContext();
    }
 
    // cloudstack does not support metadata

@@ -30,7 +30,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -73,7 +72,7 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends BaseAsyncCli
    }
 
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new TerremarkECloudProviderMetadata();
    }
 
@@ -127,8 +126,7 @@ public abstract class BaseTerremarkECloudAsyncClientTest<T> extends BaseAsyncCli
                      .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))),
          ImmutableMap.<String, ReferenceType> of(NETWORK_REF.getName(), NETWORK_REF));
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static class TerremarkECloudRestClientModuleExtension extends TerremarkECloudRestClientModule {
 
       @Override

@@ -18,18 +18,22 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.internal.BaseApiMetadataTest;
+import org.jclouds.Wrapper;
+import org.jclouds.rest.internal.BaseRestApiMetadataTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "VCloudDirectorApiMetadataTest")
-public class VCloudDirectorApiMetadataTest extends BaseApiMetadataTest {
+//TODO: BaseComputeServiceApiMetadataTest
+public class VCloudDirectorApiMetadataTest extends BaseRestApiMetadataTest {
 
    public VCloudDirectorApiMetadataTest() {
-      super(new VCloudDirectorApiMetadata(), ApiType.COMPUTE);
+      super(new VCloudDirectorApiMetadata(), ImmutableSet.<TypeToken<? extends Wrapper>>of());
    }
 }

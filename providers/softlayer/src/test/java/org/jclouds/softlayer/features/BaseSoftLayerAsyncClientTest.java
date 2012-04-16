@@ -38,7 +38,7 @@ public abstract class BaseSoftLayerAsyncClientTest<T> extends BaseAsyncClientTes
    }
 
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new SoftLayerProviderMetadata();
    }
 

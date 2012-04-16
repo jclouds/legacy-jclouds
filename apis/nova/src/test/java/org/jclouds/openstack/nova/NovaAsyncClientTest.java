@@ -32,7 +32,6 @@ import java.util.Date;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
@@ -767,8 +766,7 @@ public class NovaAsyncClientTest extends BaseAsyncClientTest<NovaAsyncClient> {
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
-   protected static class TestNovaRestClientModule extends NovaRestClientModule {
+      protected static class TestNovaRestClientModule extends NovaRestClientModule {
       private TestNovaRestClientModule() {
          super(new TestOpenStackAuthenticationModule());
       }
@@ -778,7 +776,7 @@ public class NovaAsyncClientTest extends BaseAsyncClientTest<NovaAsyncClient> {
    protected String provider = "nova";
 
    @Override
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return AnonymousProviderMetadata.forApiWithEndpoint(new NovaApiMetadata(), "http://endpoint");
    }
 }

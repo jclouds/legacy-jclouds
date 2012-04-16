@@ -3,7 +3,6 @@ package org.jclouds.slicehost;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -12,8 +11,11 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class SlicehostProviderMetadata extends BaseProviderMetadata<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> {
+public class SlicehostProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -5260230633956988685L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -31,12 +33,12 @@ public class SlicehostProviderMetadata extends BaseProviderMetadata<SlicehostCli
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
           id("slicehost")
@@ -54,7 +56,7 @@ public class SlicehostProviderMetadata extends BaseProviderMetadata<SlicehostCli
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

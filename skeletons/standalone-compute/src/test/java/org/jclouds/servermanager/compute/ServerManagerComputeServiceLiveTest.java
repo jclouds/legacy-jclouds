@@ -21,12 +21,10 @@ package org.jclouds.servermanager.compute;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.servermanager.ServerManager;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
 
@@ -36,8 +34,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class ServerManagerComputeServiceLiveTest extends
-      BaseComputeServiceLiveTest<ServerManager, ServerManager, ComputeServiceContext<ServerManager, ServerManager>> {
+public class ServerManagerComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public ServerManagerComputeServiceLiveTest() {
       provider = "servermanager";

@@ -33,9 +33,6 @@ import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.elb.ELBApiMetadata;
-import org.jclouds.elb.ELBAsyncClient;
-import org.jclouds.elb.ELBClient;
-import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -45,8 +42,11 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class AWSELBProviderMetadata extends BaseProviderMetadata<ELBClient, ELBAsyncClient, LoadBalancerServiceContext<ELBClient, ELBAsyncClient>, ELBApiMetadata<ELBClient, ELBAsyncClient>> {
+public class AWSELBProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7750012233546655021L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -64,7 +64,7 @@ public class AWSELBProviderMetadata extends BaseProviderMetadata<ELBClient, ELBA
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.putAll(Region.regionProperties());
       properties.setProperty(PROPERTY_REGION + "." + US_EAST_1 + ".endpoint",
@@ -85,7 +85,7 @@ public class AWSELBProviderMetadata extends BaseProviderMetadata<ELBClient, ELBA
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<ELBClient, ELBAsyncClient, LoadBalancerServiceContext<ELBClient, ELBAsyncClient>, ELBApiMetadata<ELBClient, ELBAsyncClient>> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("aws-elb")
@@ -95,13 +95,13 @@ public class AWSELBProviderMetadata extends BaseProviderMetadata<ELBClient, ELBA
          .console(URI.create("https://console.aws.amazon.com/ec2/home"))
          .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
          .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13")
-         .apiMetadata(new ELBApiMetadata<ELBClient, ELBAsyncClient>())
+         .apiMetadata(new ELBApiMetadata())
          .defaultProperties(AWSELBProviderMetadata.defaultProperties());
       }
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<ELBClient, ELBAsyncClient, LoadBalancerServiceContext<ELBClient, ELBAsyncClient>, ELBApiMetadata<ELBClient, ELBAsyncClient>> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

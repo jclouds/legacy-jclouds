@@ -35,9 +35,8 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.compute.ComputeServiceContext;
@@ -61,7 +60,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest {
    public AWSKeyPairClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -72,14 +71,14 @@ public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest<
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getKeyPairServices();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getKeyPairServices();
    }
 
    public void testNoSsh() throws Exception {
 
       Map<String, String> keyPair = ComputeTestUtils.setupKeyPair();
 
-      AWSInstanceClient instanceClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi()).getInstanceServices();
+      AWSInstanceClient instanceClient = AWSEC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getInstanceServices();
 
       String group = PREFIX + "unssh";
       context.getComputeService().destroyNodesMatching(inGroup(group));
@@ -88,7 +87,7 @@ public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest<
 
       options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class);
 
-      ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> noSshContext = null;
+      ComputeServiceContext noSshContext = null;
       try {
          noSshContext = createContext(setupProperties(), ImmutableSet.<Module> of(new Log4JLoggingModule()));
 

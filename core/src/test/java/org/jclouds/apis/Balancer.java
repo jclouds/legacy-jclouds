@@ -16,22 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.http;
+package org.jclouds.apis;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.io.Closeable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.jclouds.internal.BaseWrapper;
+import org.jclouds.location.Provider;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 
 /**
- * designates the cloud has an HTTP API
- * 
- * @author Adrian Cole
- * 
+ * For tests
  */
-@Retention(RUNTIME)
-@Target(TYPE)
-public @interface RequiresHttp {
+public class Balancer extends BaseWrapper {
 
+   @Inject
+   public Balancer(@Provider Closeable ctx, @Provider TypeToken<? extends Closeable> inputType)  {
+      super(ctx, inputType);
+   }
 }

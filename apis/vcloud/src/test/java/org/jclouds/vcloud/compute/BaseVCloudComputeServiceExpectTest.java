@@ -151,7 +151,7 @@ public abstract class BaseVCloudComputeServiceExpectTest extends BaseRestClientE
    }
    
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new VCloudApiMetadata();
    }
 

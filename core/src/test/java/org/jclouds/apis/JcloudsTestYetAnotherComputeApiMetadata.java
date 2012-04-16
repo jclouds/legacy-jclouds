@@ -20,19 +20,19 @@ package org.jclouds.apis;
 
 import java.net.URI;
 
-import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 /**
  * Implementation of @ link org.jclouds.types.ApiMetadata} for testing.
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class JcloudsTestYetAnotherComputeApiMetadata
-      extends
-      BaseApiMetadata<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestYetAnotherComputeApiMetadata> {
+public class JcloudsTestYetAnotherComputeApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3142126601795295510L;
 
    public static Builder builder() {
       return new Builder();
@@ -51,13 +51,13 @@ public class JcloudsTestYetAnotherComputeApiMetadata
       super(builder);
    }
 
-   public static class Builder extends BaseApiMetadata.Builder<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestYetAnotherComputeApiMetadata>  {
+   public static class Builder extends BaseRestApiMetadata.Builder  {
 
       protected Builder(){
+         super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
          id("test-yet-another-compute-api")
-         .type(ApiType.COMPUTE)
+         .wrapper(Compute.class)
          .name("Test Yet Another Compute Api")
-         .javaApi(IntegrationTestClient.class, IntegrationTestAsyncClient.class)
          .identityName("user")
          .credentialName("password")
          .documentation(URI.create("http://jclouds.org/documentation"));

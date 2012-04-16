@@ -25,19 +25,31 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.atmos.blobstore.config.AtmosBlobStoreContextModule;
+import org.jclouds.atmos.config.AtmosRestClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Rackspace Cloud Files API
  * 
  * @author Adrian Cole
  */
-public class AtmosApiMetadata
-      extends
-      BaseBlobStoreApiMetadata<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+public class AtmosApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8067252472547486854L;
+
+   public static final TypeToken<RestContext<AtmosClient, AtmosAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AtmosClient, AtmosAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
+   
    private static Builder builder() {
       return new Builder();
    }
@@ -55,17 +67,16 @@ public class AtmosApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseBlobStoreApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseBlobStoreApiMetadata.Builder<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
       protected Builder() {
+         super(AtmosClient.class, AtmosAsyncClient.class);
          id("atmos")
          .name("EMC's Atmos API")
          .identityName("Subtenant ID (UID)")
@@ -73,9 +84,9 @@ public class AtmosApiMetadata
          .documentation(URI.create("https://community.emc.com/docs/DOC-10508"))
          .version("1.4.0")
          .defaultEndpoint("https://accesspoint.atmosonline.com")
-         .contextBuilder(TypeToken.of(AtmosContextBuilder.class))
          .defaultProperties(AtmosApiMetadata.defaultProperties())
-         .javaApi(AtmosClient.class, AtmosAsyncClient.class);
+         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(AtmosRestClientModule.class, AtmosBlobStoreContextModule.class));
       }
 
       @Override
@@ -84,7 +95,7 @@ public class AtmosApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(AtmosApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

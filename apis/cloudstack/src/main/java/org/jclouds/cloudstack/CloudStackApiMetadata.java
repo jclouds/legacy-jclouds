@@ -22,9 +22,14 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
+import org.jclouds.cloudstack.config.CloudStackRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Citrix/Apache CloudStack api.
@@ -43,9 +48,15 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class CloudStackApiMetadata extends BaseComputeServiceApiMetadata<CloudStackClient, CloudStackAsyncClient, CloudStackContext, CloudStackApiMetadata>
-{
-
+public class CloudStackApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3936131452958663245L;
+   
+   public static final TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -59,17 +70,18 @@ public class CloudStackApiMetadata extends BaseComputeServiceApiMetadata<CloudSt
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "7");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
    }
 
    public static class Builder
-         extends BaseComputeServiceApiMetadata.Builder<CloudStackClient, CloudStackAsyncClient, CloudStackContext, CloudStackApiMetadata> {
+         extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(CloudStackClient.class, CloudStackAsyncClient.class);
          id("cloudstack")
          .name("Citrix CloudStack API")
          .identityName("API Key")
@@ -77,10 +89,9 @@ public class CloudStackApiMetadata extends BaseComputeServiceApiMetadata<CloudSt
          .documentation(URI.create("http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"))
          .defaultEndpoint("http://localhost:8080/client/api")
          .version("2.2")
+         .wrapper(TypeToken.of(CloudStackContext.class))
          .defaultProperties(CloudStackApiMetadata.defaultProperties())
-         .javaApi(CloudStackClient.class, CloudStackAsyncClient.class)
-         .context(TypeToken.of(CloudStackContext.class))
-         .contextBuilder(TypeToken.of(CloudStackContextBuilder.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudStackRestClientModule.class, CloudStackComputeServiceContextModule.class));
       }
       
       @Override
@@ -89,7 +100,7 @@ public class CloudStackApiMetadata extends BaseComputeServiceApiMetadata<CloudSt
       }
       
       @Override
-      public Builder fromApiMetadata(CloudStackApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

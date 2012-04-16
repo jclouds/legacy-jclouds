@@ -25,7 +25,6 @@ import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -38,7 +37,6 @@ import org.jclouds.rest.config.RestClientModule;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
 
    public AWSRestClientModule(Class<S> syncClientType, Class<A> asyncClientType, Map<Class<?>, Class<?>> delegates) {

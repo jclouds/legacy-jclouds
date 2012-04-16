@@ -24,14 +24,14 @@ import static org.testng.Assert.assertTrue;
 import java.io.InputStream;
 
 import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
-import org.jclouds.cloudstack.domain.AsyncJob.Status;
 import org.jclouds.cloudstack.domain.AsyncJobError;
-import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.Template;
 import org.jclouds.cloudstack.domain.TemplateExtraction;
+import org.jclouds.cloudstack.domain.AsyncJob.ResultCode;
+import org.jclouds.cloudstack.domain.AsyncJob.Status;
+import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.http.HttpResponse;

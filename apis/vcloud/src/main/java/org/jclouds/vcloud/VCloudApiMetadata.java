@@ -30,20 +30,30 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.network.FenceMode;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for VCloud 1.0 API
  * 
  * @author Adrian Cole
  */
-public class VCloudApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+public class VCloudApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<VCloudClient, VCloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<VCloudClient, VCloudAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -57,8 +67,8 @@ public class VCloudApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1");
       properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
             String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
@@ -75,20 +85,19 @@ public class VCloudApiMetadata
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseComputeServiceApiMetadata.Builder<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(VCloudClient.class, VCloudAsyncClient.class);
           id("vcloud")
          .name("VCloud 1.0 API")
          .identityName("User at Organization (user@org)")
          .credentialName("Password")
          .documentation(URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html"))
          .version("1.0")
-         .javaApi(VCloudClient.class, VCloudAsyncClient.class)
          .defaultProperties(VCloudApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(VCloudContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, VCloudComputeServiceContextModule.class));
       }
 
       @Override
@@ -97,7 +106,7 @@ public class VCloudApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(VCloudApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

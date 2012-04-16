@@ -33,8 +33,8 @@ import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.ImmutableMap.Builder;
 
 @Singleton
 public class BindAzureBlobMetadataToRequest implements Binder {

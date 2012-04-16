@@ -99,7 +99,7 @@ public class TerremarkVCloudLoginAsyncClientTest extends BaseAsyncClientTest<Ter
    }
 
    @Override
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(TerremarkVCloudLoginClient.class,
             TerremarkVCloudLoginAsyncClient.class, "http://localhost:8080/login");
    }

@@ -25,16 +25,14 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.domain.Location;
-import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.s3.blobstore.S3BlobStore;
+import org.jclouds.s3.blobstore.S3BlobStoreContext;
 import org.jclouds.s3.blobstore.functions.LocationFromBucketLocation;
 import org.jclouds.s3.domain.AccessControlList;
 import org.jclouds.s3.domain.BucketMetadata;
@@ -61,14 +59,8 @@ public class S3BlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
-      bindContext();
       bind(BlobRequestSigner.class).to(S3BlobRequestSigner.class);
       bindBucketLocationStrategy();
-   }
-
-   protected void bindContext() {
-      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
    }
 
    protected void bindBucketLocationStrategy() {

@@ -25,19 +25,29 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
+import org.jclouds.elasticstack.config.ElasticStackRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for the ElasticStack API
  * 
  * @author Adrian Cole
  */
-public class ElasticStackApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+public class ElasticStackApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<ElasticStackClient, ElasticStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<ElasticStackClient, ElasticStackAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -51,8 +61,8 @@ public class ElasticStackApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VNC_PASSWORD, "IL9vs34d");
       // passwords are set post-boot, so auth failures are possible
       // from a race condition applying the password set script
@@ -63,9 +73,10 @@ public class ElasticStackApiMetadata
 
    public static class Builder
          extends
-         BaseComputeServiceApiMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(ElasticStackClient.class, ElasticStackAsyncClient.class);
          id("elasticstack")
          .name("ElasticStack API")
          .identityName("UUID")
@@ -74,8 +85,8 @@ public class ElasticStackApiMetadata
          .version("1.0")
          .defaultEndpoint("https://api.lon-p.elastichosts.com")
          .defaultProperties(ElasticStackApiMetadata.defaultProperties())
-         .javaApi(ElasticStackClient.class, ElasticStackAsyncClient.class)
-         .contextBuilder(TypeToken.of(ElasticStackContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(ElasticStackRestClientModule.class, ElasticStackComputeServiceContextModule.class));
       }
 
       @Override
@@ -84,7 +95,7 @@ public class ElasticStackApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(ElasticStackApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

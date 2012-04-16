@@ -22,9 +22,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
@@ -37,7 +35,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AWSInstanceClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class AWSInstanceClientLiveTest extends BaseComputeServiceContextLiveTest {
    public AWSInstanceClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -50,12 +48,12 @@ public class AWSInstanceClientLiveTest extends BaseComputeServiceContextLiveTest
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getInstanceServices();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getInstanceServices();
    }
 
    @Test
    void testDescribeInstances() {
-      for (String region : context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<? extends Reservation<? extends RunningInstance>> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();

@@ -26,13 +26,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Constants;
+import org.jclouds.ContextBuilder;
 import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.ApiKeyPair;
 import org.jclouds.cloudstack.domain.User;
-import org.jclouds.compute.ComputeServiceContextBuilder;
 
 /**
  * @author Andrei Savu
@@ -62,12 +62,12 @@ public class ApiKeyPairs {
          overrides.put(Constants.PROPERTY_RELAX_HOSTNAME, "true");
          overrides.put("jclouds.cloudstack.credential-type", "passwordCredentials");
          
-         context =  ComputeServiceContextBuilder.newBuilder(new CloudStackApiMetadata())
+         context =  ContextBuilder.newBuilder(new CloudStackApiMetadata())
                .endpoint(checkNotNull(endpoint, "endpoint").toASCIIString())
                .credentials(String.format("%s/%s", checkNotNull(domain, "domain"), checkNotNull(username, "username")), password)
-               .overrides(overrides).build();
+               .overrides(overrides).build(CloudStackContext.class);
 
-         CloudStackClient client = CloudStackClient.class.cast(context.getProviderSpecificContext().getApi());
+         CloudStackClient client = context.getProviderSpecificContext().getApi();
          Set<Account> listOfAccounts = client.getAccountClient().listAccounts();
 
          domain = (domain.equals("") || domain.equals("/")) ? "ROOT" : domain;

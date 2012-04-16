@@ -39,6 +39,7 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.aws.s3.AWSS3ApiMetadata;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
@@ -118,8 +119,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
          latch.countDown();
          return;
       }
-      final AWSS3AsyncClient client = (AWSS3AsyncClient) ablobstore.getContext()
-         .getProviderSpecificContext().getAsyncApi();
+      final AWSS3AsyncClient client = ablobstore.getContext().unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getAsyncApi();
       Payload chunkedPart = slicer.slice(payload, offset, size);
       logger.debug(String.format("async uploading part %s of %s to container %s with uploadId %s", part, key, container, uploadId));
       final long start = System.currentTimeMillis();
@@ -169,7 +169,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                   long remaining = algorithm.getRemaining();
                   if (parts > 0) {
                      AWSS3Client client = (AWSS3Client) ablobstore
-                           .getContext().getProviderSpecificContext().getApi();
+                           .getContext().unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
                      String uploadId = null;
                      final Map<Integer, ListenableFuture<String>> futureParts = 
                         new ConcurrentHashMap<Integer, ListenableFuture<String>>();

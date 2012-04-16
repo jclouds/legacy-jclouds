@@ -36,7 +36,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
@@ -61,8 +60,7 @@ import com.google.inject.Provides;
 @Test(groups = "unit")
 public abstract class BaseAWSEC2AsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static class StubAWSEC2RestClientModule extends AWSEC2RestClientModule {
 
       @Override

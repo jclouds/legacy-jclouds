@@ -18,14 +18,6 @@
  */
 package org.jclouds.dunkel.vcd;
 
-import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
-
-import java.util.Properties;
-
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
 
 /**
  * 

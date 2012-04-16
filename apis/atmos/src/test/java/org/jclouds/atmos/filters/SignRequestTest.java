@@ -28,12 +28,11 @@ import java.security.NoSuchAlgorithmException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.atmos.config.AtmosRestClientModule;
 import org.jclouds.atmos.reference.AtmosHeaders;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
@@ -43,9 +42,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -97,7 +96,7 @@ public class SignRequestTest {
 
    @BeforeClass
    protected void createFilter() {
-      Injector injector = BlobStoreContextBuilder
+      Injector injector = ContextBuilder
             .newBuilder("atmos")
             .credentials(UID, KEY)
             .modules(
@@ -108,8 +107,7 @@ public class SignRequestTest {
 
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAtmosRestClientModule extends AtmosRestClientModule {
 
       @Override

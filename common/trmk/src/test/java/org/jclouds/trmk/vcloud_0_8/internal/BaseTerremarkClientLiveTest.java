@@ -21,11 +21,11 @@ package org.jclouds.trmk.vcloud_0_8.internal;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
@@ -41,9 +41,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
-      extends BaseComputeServiceContextLiveTest<S, A, ComputeServiceContext<S, A>> {
-   
+public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient> extends BaseComputeServiceContextLiveTest {
+
    protected String prefix = System.getProperty("user.name");
 
    protected ComputeService client;
@@ -54,11 +53,9 @@ public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClien
 
    protected RetryablePredicate<IPSocket> socketTester;
    protected Factory sshFactory;
+   protected S connection;
 
-   protected S getApi() {
-      return context.getProviderSpecificContext().getApi();
-   }
-
+   @SuppressWarnings("unchecked")
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
@@ -66,6 +63,7 @@ public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClien
       Injector injector = context.utils().injector();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
       sshFactory = injector.getInstance(Factory.class);
+      connection = (S) RestContext.class.cast(context.unwrap()).getApi();
    }
    
    protected Module getSshModule() {

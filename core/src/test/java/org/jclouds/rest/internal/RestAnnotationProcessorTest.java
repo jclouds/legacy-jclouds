@@ -69,6 +69,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.http.HttpHeaders;
+import org.jclouds.ContextBuilder;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -80,7 +81,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IOExceptionRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
@@ -173,7 +173,6 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 @Test(groups = "unit", testName = "RestAnnotationProcessorTest")
 public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
-   @RequiresHttp
    @ConfiguresRestClient
    protected static class CallerModule extends RestClientModule<Caller, AsyncCaller> {
       CallerModule() {

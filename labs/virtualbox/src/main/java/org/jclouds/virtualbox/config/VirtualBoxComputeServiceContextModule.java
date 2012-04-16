@@ -34,14 +34,14 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Singleton;
 
 import org.eclipse.jetty.server.Server;
+import org.jclouds.ContextBuilder;
 import org.jclouds.byon.BYONApiMetadata;
 import org.jclouds.byon.Node;
 import org.jclouds.byon.functions.NodeToNodeMetadata;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -103,13 +103,9 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Mattias Holmqvist, Andrea Turli
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings("unchecked")
 public class VirtualBoxComputeServiceContextModule extends
-         ComputeServiceAdapterContextModule<Supplier, Supplier, IMachine, IMachine, Image, Location> {
-
-   public VirtualBoxComputeServiceContextModule() {
-      super(Supplier.class, Supplier.class);
-   }
+         ComputeServiceAdapterContextModule<IMachine, IMachine, Image, Location> {
 
    @Override
    protected void configure() {
@@ -170,10 +166,10 @@ public class VirtualBoxComputeServiceContextModule extends
    @Host
    @Singleton
    protected ComputeServiceContext provideHostController() {
-      return ComputeServiceContextBuilder.newBuilder(new BYONApiMetadata())
+      return ContextBuilder.newBuilder(new BYONApiMetadata())
             .credentials("", "")
             .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()))
-            .build();
+            .build(ComputeServiceContext.class);
    }
 
    @Provides

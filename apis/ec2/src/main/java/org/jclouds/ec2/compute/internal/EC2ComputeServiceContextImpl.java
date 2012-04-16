@@ -18,6 +18,7 @@
  */
 package org.jclouds.ec2.compute.internal;
 
+import java.io.Closeable;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -26,22 +27,21 @@ import javax.inject.Singleton;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.domain.Credentials;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.EC2ComputeServiceContext;
-import org.jclouds.rest.RestContext;
+import org.jclouds.location.Provider;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class EC2ComputeServiceContextImpl<S extends EC2Client, A extends EC2AsyncClient> extends
-      ComputeServiceContextImpl<S, A> implements EC2ComputeServiceContext<S, A> {
+public class EC2ComputeServiceContextImpl extends ComputeServiceContextImpl implements EC2ComputeServiceContext {
    @Inject
-   public EC2ComputeServiceContextImpl(EC2ComputeService computeService, Map<String, Credentials> credentialStore,
-         Utils utils, @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
-      super(computeService, credentialStore, utils, providerSpecificContext);
+   public EC2ComputeServiceContextImpl(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType,
+            EC2ComputeService computeService, Map<String, Credentials> credentialStore, Utils utils){
+      super(wrapped, wrappedType, computeService, credentialStore, utils);
    }
 
    @Override

@@ -83,7 +83,7 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   protected SwiftAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
+   protected SwiftAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, CommonSwiftClient sync,
             CommonSwiftAsyncClient async, ContainerToResourceMetadata container2ResourceMd,

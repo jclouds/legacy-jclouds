@@ -22,11 +22,14 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.internal.BaseVCloudClientLiveTest;
 import org.testng.annotations.Test;
+
+import com.google.inject.Key;
 
 /**
  * @author Adrian Cole
@@ -46,7 +49,7 @@ public class CatalogClientLiveTest extends BaseVCloudClientLiveTest {
    public void testFindCatalogIsWriteableIfNotVersion1_5() throws Exception {
       // when we are in vCloud 1.0.0 public catalogs don't work, so our default
       // catalog is private
-      if (!context.getProviderSpecificContext().getApiVersion().startsWith("1.5"))
+      if (!context.utils().injector().getInstance(Key.get(String.class, ApiVersion.class)).startsWith("1.5"))
          assertTrue(getVCloudApi().getCatalogClient().findCatalogInOrgNamed(null, null).isReadOnly());
    }
 }

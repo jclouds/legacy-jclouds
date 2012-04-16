@@ -29,7 +29,6 @@ import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.loadbalancer.BaseLoadBalancerServiceLiveTest;
-import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
@@ -39,7 +38,7 @@ import org.testng.annotations.Test;
  * @author Lili Nadar
  */
 @Test(groups = "live", singleThreaded = true, testName = "ELBLoadBalancerServiceLiveTest")
-public class ELBLoadBalancerServiceLiveTest<S extends ELBClient, A extends ELBAsyncClient> extends BaseLoadBalancerServiceLiveTest<S, A, LoadBalancerServiceContext<S, A>> {
+public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveTest {
 
    public ELBLoadBalancerServiceLiveTest() {
       provider = "elb";
@@ -53,7 +52,7 @@ public class ELBLoadBalancerServiceLiveTest<S extends ELBClient, A extends ELBAs
 
    @Override
    protected void validateNodesInLoadBalancer() {
-      RestContext<S, A> elbContext = context.getProviderSpecificContext();
+      RestContext<ELBClient, ELBAsyncClient> elbContext = context.unwrap();
       // TODO create a LoadBalancer object and an appropriate list method so that this
       // does not have to be EC2 specific code
       ELBClient elbClient = elbContext.getApi();
@@ -69,4 +68,6 @@ public class ELBLoadBalancerServiceLiveTest<S extends ELBClient, A extends ELBAs
             assertEquals(elb.getInstanceIds(), instanceIds);
       }
    }
+
+
 }

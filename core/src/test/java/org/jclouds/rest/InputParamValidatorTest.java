@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
@@ -31,7 +32,6 @@ import org.jclouds.predicates.validators.AllLowerCaseValidator;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.TestException;
 import org.testng.annotations.BeforeClass;

@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
@@ -75,22 +76,21 @@ public abstract class BaseAsyncClientTest<T> extends BaseRestClientTest {
    /**
     * @see org.jclouds.providers.Providers#withId
     */
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return null;
    }
    
    /**
     * @see org.jclouds.apis.Apis#withId
     */
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return null;
    }
    
    protected Injector createInjector() {
-      ProviderMetadata<?, ?, ?, ?> pm = createProviderMetadata();
+      ProviderMetadata pm = createProviderMetadata();
 
-      @SuppressWarnings("unchecked")
-      ContextBuilder<?, ?, ?, ?> builder = pm != null ? ContextBuilder.newBuilder(pm) : ContextBuilder
+      ContextBuilder builder = pm != null ? ContextBuilder.newBuilder(pm) : ContextBuilder
             .newBuilder(ApiMetadata.class.cast(checkNotNull(createApiMetadata(),
                   "either createApiMetadata or createProviderMetadata must be overridden")));
 

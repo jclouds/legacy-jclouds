@@ -33,9 +33,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.io.Closeables;
 
 /**

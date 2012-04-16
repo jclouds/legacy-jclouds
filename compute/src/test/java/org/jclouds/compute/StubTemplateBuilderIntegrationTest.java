@@ -19,7 +19,6 @@
 package org.jclouds.compute;
 
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.testng.annotations.Test;
@@ -31,10 +30,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @Test(groups = { "integration", "live" })
-public class StubTemplateBuilderIntegrationTest extends
-      BaseTemplateBuilderLiveTest<ConcurrentMap, ConcurrentMap, ComputeServiceContext<ConcurrentMap, ConcurrentMap>> {
+public class StubTemplateBuilderIntegrationTest extends BaseTemplateBuilderLiveTest {
 
    public StubTemplateBuilderIntegrationTest() {
       provider = "stub";
@@ -44,5 +41,5 @@ public class StubTemplateBuilderIntegrationTest extends
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of();
    }
-   
+
 }

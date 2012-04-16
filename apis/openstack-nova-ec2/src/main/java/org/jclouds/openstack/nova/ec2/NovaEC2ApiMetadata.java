@@ -31,16 +31,29 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
+import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.openstack.nova.ec2.config.NovaEC2ComputeServiceContextModule;
+import org.jclouds.openstack.nova.ec2.config.NovaEC2RestClientModule;
+import org.jclouds.rest.RestContext;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for the OpenStack Nova's EC2-clone API
  * 
  * @author Adrian Cole
  */
-public class NovaEC2ApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, NovaEC2ApiMetadata> {
+public class NovaEC2ApiMetadata extends EC2ApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -1492951757032303845L;
+   
+   public static final TypeToken<RestContext<EC2Client, EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<EC2Client, EC2AsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    private static Builder builder() {
       return new Builder();
    }
@@ -58,7 +71,7 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncClient
       super(builder);
    }
    
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "nova");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
@@ -75,7 +88,7 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncClient
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, NovaEC2ApiMetadata> {
+   public static class Builder extends EC2ApiMetadata.Builder {
       protected Builder(){
          super(EC2Client.class, EC2AsyncClient.class);
          id("openstack-nova-ec2")
@@ -83,7 +96,7 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncClient
          .version("2009-04-04")
          .defaultEndpoint("http://localhost:8773/services/Cloud")
          .defaultProperties(NovaEC2ApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(NovaEC2ContextBuilder.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaEC2RestClientModule.class, EC2ResolveImagesModule.class, NovaEC2ComputeServiceContextModule.class));
       }
       
       @Override
@@ -92,7 +105,7 @@ public class NovaEC2ApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncClient
       }
 
       @Override
-      public Builder fromApiMetadata(NovaEC2ApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

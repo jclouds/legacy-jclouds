@@ -33,13 +33,12 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class JCloudsNativeComputeServiceAdapterContextModule<S, A> extends
-      ComputeServiceAdapterContextModule<S, A, NodeMetadata, Hardware, Image, Location> {
+public class JCloudsNativeComputeServiceAdapterContextModule extends
+         ComputeServiceAdapterContextModule<NodeMetadata, Hardware, Image, Location> {
    protected final Class<? extends ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>> adapter;
 
-   public JCloudsNativeComputeServiceAdapterContextModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Class<? extends ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>> adapter) {
-      super(syncClientType, asyncClientType);
+   public JCloudsNativeComputeServiceAdapterContextModule(
+            Class<? extends ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>> adapter) {
       this.adapter = adapter;
    }
 

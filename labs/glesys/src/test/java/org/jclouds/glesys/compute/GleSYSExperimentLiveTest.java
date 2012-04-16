@@ -20,11 +20,9 @@ package org.jclouds.glesys.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.GleSYSProviderMetadata;
 import org.testng.annotations.Test;
 
@@ -35,9 +33,7 @@ import com.google.common.io.Closeables;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "GleSYSExperimentLiveTest")
-public class GleSYSExperimentLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>> {
+public class GleSYSExperimentLiveTest extends BaseComputeServiceContextLiveTest {
 
    public GleSYSExperimentLiveTest() {
       provider = "glesys";
@@ -45,13 +41,13 @@ public class GleSYSExperimentLiveTest
 
    @Test
    public void testAndExperiment() {
-      ComputeServiceContext<GleSYSClient, GleSYSAsyncClient> context = null;
+      ComputeServiceContext context = null;
       try {
 
-         context = ComputeServiceContextBuilder
+         context = ContextBuilder
                .newBuilder(new GleSYSProviderMetadata())
                .overrides(setupProperties())
-               .modules(setupModules()).build();
+               .modules(setupModules()).build(ComputeServiceContext.class);
 
          assertEquals(context.getComputeService().listAssignableLocations().size(), 4);
 

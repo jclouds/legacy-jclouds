@@ -453,7 +453,7 @@ public class ElasticStackAsyncClientTest extends BaseAsyncClientTest<ElasticStac
    }
 
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new ElasticStackApiMetadata();
    }
 

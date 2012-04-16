@@ -18,7 +18,6 @@
  */
 package org.jclouds.softlayer.features;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.softlayer.SoftLayerAsyncClient;
@@ -32,9 +31,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BaseSoftLayerClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>> {
+public class BaseSoftLayerClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected RestContext<SoftLayerClient, SoftLayerAsyncClient> socontext;
 
@@ -42,7 +39,7 @@ public class BaseSoftLayerClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      socontext = context.getProviderSpecificContext();
+      socontext = context.unwrap();
    }
 
 }

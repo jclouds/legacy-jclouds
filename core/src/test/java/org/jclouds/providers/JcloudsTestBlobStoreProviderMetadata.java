@@ -21,10 +21,7 @@ package org.jclouds.providers;
 import java.net.URI;
 
 import org.jclouds.apis.JcloudsTestBlobStoreApiMetadata;
-import org.jclouds.http.IntegrationTestAsyncClient;
-import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.providers.internal.BaseProviderMetadata;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -33,9 +30,10 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class JcloudsTestBlobStoreProviderMetadata
-      extends
-      BaseProviderMetadata<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestBlobStoreApiMetadata> {
+public class JcloudsTestBlobStoreProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3444555273226423853L;
 
    public static Builder builder() {
       return new Builder();
@@ -54,9 +52,7 @@ public class JcloudsTestBlobStoreProviderMetadata
       super(builder);
    }
 
-   public static class Builder
-         extends
-         BaseProviderMetadata.Builder<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestBlobStoreApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("test-blobstore-api")

@@ -97,9 +97,9 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       }
    }
 
-   protected abstract Map<String, V> createMap(BlobStoreContext<?, ?> context, String containerName);
+   protected abstract Map<String, V> createMap(BlobStoreContext context, String containerName);
 
-   protected abstract Map<String, V> createMap(BlobStoreContext<?, ?> context, String containerName,
+   protected abstract Map<String, V> createMap(BlobStoreContext context, String containerName,
          ListContainerOptions options);
 
    @Test(groups = { "integration", "live" })

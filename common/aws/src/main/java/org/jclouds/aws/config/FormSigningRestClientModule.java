@@ -28,7 +28,6 @@ import org.jclouds.Constants;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 
@@ -39,7 +38,6 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class FormSigningRestClientModule<S, A> extends AWSRestClientModule<S, A> {
 
    public FormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,

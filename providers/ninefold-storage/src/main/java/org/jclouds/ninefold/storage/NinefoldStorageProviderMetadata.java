@@ -22,9 +22,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.atmos.AtmosApiMetadata;
-import org.jclouds.atmos.AtmosAsyncClient;
-import org.jclouds.atmos.AtmosClient;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -34,8 +31,11 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  *
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class NinefoldStorageProviderMetadata extends BaseProviderMetadata<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+public class NinefoldStorageProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -53,12 +53,12 @@ public class NinefoldStorageProviderMetadata extends BaseProviderMetadata<AtmosC
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
           id("ninefold-storage")
@@ -78,7 +78,7 @@ public class NinefoldStorageProviderMetadata extends BaseProviderMetadata<AtmosC
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<AtmosClient, AtmosAsyncClient, BlobStoreContext<AtmosClient, AtmosAsyncClient>, AtmosApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

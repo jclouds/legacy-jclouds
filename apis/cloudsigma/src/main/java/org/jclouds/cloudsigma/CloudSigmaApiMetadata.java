@@ -24,20 +24,29 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule;
+import org.jclouds.cloudsigma.config.CloudSigmaRestClientModule;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for the Cloud Sigma API
  * 
  * @author Adrian Cole
  */
-public class CloudSigmaApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> {
+public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<CloudSigmaClient, CloudSigmaAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudSigmaClient, CloudSigmaAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -51,8 +60,8 @@ public class CloudSigmaApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VNC_PASSWORD, "IL9vs34d");
       // passwords are set post-boot, so auth failures are possible
       // from a race condition applying the password set script
@@ -61,11 +70,10 @@ public class CloudSigmaApiMetadata
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseComputeServiceApiMetadata.Builder<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(CloudSigmaClient.class, CloudSigmaAsyncClient.class);
          id("cloudsigma")
          .name("CloudSigma API")
          .identityName("Email")
@@ -74,8 +82,8 @@ public class CloudSigmaApiMetadata
          .version("1.0")
          .defaultEndpoint("https://api.cloudsigma.com")
          .defaultProperties(CloudSigmaApiMetadata.defaultProperties())
-         .javaApi(CloudSigmaClient.class, CloudSigmaAsyncClient.class)
-         .contextBuilder(TypeToken.of(CloudSigmaContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudSigmaRestClientModule.class, CloudSigmaComputeServiceContextModule.class));
       }
 
       @Override
@@ -84,7 +92,7 @@ public class CloudSigmaApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(CloudSigmaApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

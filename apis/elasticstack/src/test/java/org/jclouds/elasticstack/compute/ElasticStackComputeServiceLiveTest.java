@@ -18,12 +18,9 @@
  */
 package org.jclouds.elasticstack.compute;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.elasticstack.ElasticStackAsyncClient;
-import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -34,9 +31,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class ElasticStackComputeServiceLiveTest
-      extends
-      BaseComputeServiceLiveTest<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>> {
+public class ElasticStackComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public ElasticStackComputeServiceLiveTest() {
       provider = "elasticstack";

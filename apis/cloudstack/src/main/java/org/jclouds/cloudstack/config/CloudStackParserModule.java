@@ -27,11 +27,11 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.Account.State;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
 import org.jclouds.cloudstack.domain.PortForwardingRule;
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.cloudstack.domain.Account.State;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;

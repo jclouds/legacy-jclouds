@@ -1,5 +1,5 @@
 /**
- * Licensed to jclouds, Inc. (jclouds) under one or more
+s * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 
-import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.testng.annotations.Test;
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 public class BlobNameTest {
    BlobName fn = new BlobName();
    
-   private static final Factory BLOB_FACTORY = BlobStoreContextBuilder.forTests().buildInjector().getInstance(Blob.Factory.class);
+   private static final Factory BLOB_FACTORY = ContextBuilder.newBuilder("transient").buildInjector().getInstance(Blob.Factory.class);
 
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {

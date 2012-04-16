@@ -26,8 +26,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
-import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
 import org.jclouds.cloudstack.filters.AuthenticationFilter;
 import org.jclouds.cloudstack.options.CreateLoadBalancerRuleOptions;
 import org.jclouds.cloudstack.options.ListLoadBalancerRulesOptions;

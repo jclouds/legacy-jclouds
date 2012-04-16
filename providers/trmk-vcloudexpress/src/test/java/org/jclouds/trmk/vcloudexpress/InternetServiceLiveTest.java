@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
 import org.jclouds.trmk.vcloud_0_8.domain.Node;
@@ -42,7 +41,7 @@ import com.google.common.collect.Sets;
 @Test(groups = "live", singleThreaded = true, testName = "InternetServiceLiveTest")
 public class InternetServiceLiveTest
       extends
-      BaseComputeServiceContextLiveTest<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>> {
+      BaseComputeServiceContextLiveTest {
    public InternetServiceLiveTest() {
       provider = "trmk-vcloudexpress";
    }
@@ -89,7 +88,7 @@ public class InternetServiceLiveTest
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      tmClient = context.getProviderSpecificContext().getApi();
+      tmClient = context.unwrap(TerremarkVCloudExpressApiMetadata.CONTEXT_TOKEN).getApi();
 
    }
 

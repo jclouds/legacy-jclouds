@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
@@ -65,9 +64,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "NovaClientLiveTest")
-public class NovaClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>> {
+public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public NovaClientLiveTest() {
       provider = "nova";

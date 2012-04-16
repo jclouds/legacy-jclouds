@@ -30,7 +30,6 @@ import javax.inject.Singleton;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfigured;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
@@ -49,7 +48,6 @@ import com.google.inject.Provides;
  *
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3AsyncClient> {
 

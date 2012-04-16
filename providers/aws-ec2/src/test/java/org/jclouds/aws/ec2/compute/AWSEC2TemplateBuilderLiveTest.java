@@ -28,8 +28,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
@@ -60,7 +58,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    public AWSEC2TemplateBuilderLiveTest() {
       provider = "aws-ec2";
@@ -239,7 +237,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest<AW
 
    @Test
    public void testTemplateBuilderWithNoOwnersParsesImageOnDemand() throws IOException {
-      ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          // set owners to nothing
@@ -273,7 +271,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest<AW
 
    @Test
    public void testTemplateBuilderWithNoOwnersParsesImageOnDemandDeprecated() throws IOException {
-      ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          // set owners to nothing
@@ -307,7 +305,7 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest<AW
 
    @Test
    public void testTemplateBuilderWithLessRegions() throws IOException, SecurityException, NoSuchMethodException {
-      ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          // set regions to only 1

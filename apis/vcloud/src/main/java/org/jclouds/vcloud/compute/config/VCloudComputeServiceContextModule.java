@@ -23,8 +23,6 @@ import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
@@ -36,12 +34,8 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-public class VCloudComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<VCloudClient, VCloudAsyncClient, VApp, VAppTemplate, VAppTemplate, Location> {
-   public VCloudComputeServiceContextModule() {
-      super(VCloudClient.class, VCloudAsyncClient.class);
-   }
+public class VCloudComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<VApp, VAppTemplate, VAppTemplate, Location> {
 
    @Override
    protected void configure() {

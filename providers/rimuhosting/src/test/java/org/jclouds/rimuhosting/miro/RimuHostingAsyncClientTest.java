@@ -94,7 +94,7 @@ public class RimuHostingAsyncClientTest extends BaseAsyncClientTest<RimuHostingA
    }
 
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new RimuHostingProviderMetadata();
    }
 }

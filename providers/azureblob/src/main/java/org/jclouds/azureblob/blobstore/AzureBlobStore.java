@@ -72,7 +72,7 @@ public class AzureBlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AzureBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+   AzureBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AzureBlobClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,

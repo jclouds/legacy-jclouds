@@ -22,21 +22,29 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.slicehost.compute.config.SlicehostComputeServiceContextModule;
+import org.jclouds.slicehost.config.SlicehostRestClientModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Slicehost 1.0 API
  * 
  * @author Adrian Cole
  */
-public class SlicehostApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> {
+public class SlicehostApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<SlicehostClient, SlicehostAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SlicehostClient, SlicehostAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -50,27 +58,27 @@ public class SlicehostApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "8");
       return properties;
    }
 
    public static class Builder
          extends
-         BaseComputeServiceApiMetadata.Builder<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>, SlicehostApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(SlicehostClient.class, SlicehostAsyncClient.class);
          id("slicehost")
-         .type(ApiType.COMPUTE)
          .name("Slicehost API")
          .identityName("API password")
          .documentation(URI.create("http://articles.slicehost.com/api"))
          .version("https://api.slicehost.com")
          .defaultEndpoint("https://api.slicehost.com")
-         .javaApi(SlicehostClient.class, SlicehostAsyncClient.class)
          .defaultProperties(SlicehostApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(SlicehostContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(SlicehostRestClientModule.class, SlicehostComputeServiceContextModule.class));
       }
 
       @Override
@@ -79,7 +87,7 @@ public class SlicehostApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(SlicehostApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

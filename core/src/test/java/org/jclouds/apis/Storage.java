@@ -16,24 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.loadbalancer.internal;
+package org.jclouds.apis;
 
-import org.jclouds.loadbalancer.LoadBalancerServiceApiMetadata;
-import org.jclouds.loadbalancer.LoadBalancerServiceContext;
-import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.rest.internal.ContextBuilder;
+import java.io.Closeable;
+
+import org.jclouds.internal.BaseWrapper;
+import org.jclouds.location.Provider;
+
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 
 /**
- * @author Adrian Cole
+ * For tests
  */
-public abstract class BaseLoadBalancerServiceContextBuilder<S, A, C extends LoadBalancerServiceContext<S, A>, M extends LoadBalancerServiceApiMetadata<S, A, C, M>>
-      extends ContextBuilder<S, A, C, M> {
+public class Storage extends BaseWrapper {
 
-   public BaseLoadBalancerServiceContextBuilder(ProviderMetadata<S, A, C, M> providerMetadata) {
-      super(providerMetadata);
-   }
-   
-   public BaseLoadBalancerServiceContextBuilder(M apiMetadata) {
-      super(apiMetadata);
+   @Inject
+   public Storage(@Provider Closeable ctx, @Provider TypeToken<? extends Closeable> inputType)  {
+      super(ctx, inputType);
    }
 }

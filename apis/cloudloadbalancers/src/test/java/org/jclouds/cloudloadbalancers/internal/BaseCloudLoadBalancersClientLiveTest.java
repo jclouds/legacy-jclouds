@@ -20,6 +20,7 @@ package org.jclouds.cloudloadbalancers.internal;
 
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
@@ -30,11 +31,10 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.BaseContextLiveTest;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Predicate;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -42,9 +42,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudLoadBalancersClientLiveTest 
-      extends
-      BaseContextLiveTest<LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>> {
+public class BaseCloudLoadBalancersClientLiveTest extends BaseContextLiveTest<LoadBalancerServiceContext> {
 
    public BaseCloudLoadBalancersClientLiveTest() {
       provider = "cloudloadbalancers";
@@ -63,7 +61,7 @@ public class BaseCloudLoadBalancersClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      lbContext = context.getProviderSpecificContext();
+      lbContext = context.unwrap();
 
       client = lbContext.getApi();
 
@@ -76,10 +74,9 @@ public class BaseCloudLoadBalancersClientLiveTest
       injector.injectMembers(loadBalancerDeleted);
    }
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (lbContext != null)
-         lbContext.close();
+   @Override
+   protected TypeToken<LoadBalancerServiceContext> contextType() {
+      return TypeToken.of(LoadBalancerServiceContext.class);
    }
 
 }

@@ -22,8 +22,6 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.cloudservers.CloudServersAsyncClient;
-import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToImage;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToOperatingSystem;
 import org.jclouds.cloudservers.compute.functions.FlavorToHardware;
@@ -55,12 +53,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class CloudServersComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<CloudServersClient, CloudServersAsyncClient, Server, Flavor, org.jclouds.cloudservers.domain.Image, Location> {
-   public CloudServersComputeServiceContextModule() {
-      super(CloudServersClient.class, CloudServersAsyncClient.class);
-   }
+public class CloudServersComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<Server, Flavor, org.jclouds.cloudservers.domain.Image, Location> {
 
    @SuppressWarnings("unchecked")
    @Override

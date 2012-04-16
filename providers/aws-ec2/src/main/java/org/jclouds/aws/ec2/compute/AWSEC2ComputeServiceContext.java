@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.ec2.compute;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.compute.internal.AWSEC2ComputeServiceContextImpl;
 import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 
@@ -29,7 +27,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(AWSEC2ComputeServiceContextImpl.class)
-public interface AWSEC2ComputeServiceContext extends EC2ComputeServiceContext<AWSEC2Client, AWSEC2AsyncClient> {
+public interface AWSEC2ComputeServiceContext extends EC2ComputeServiceContext {
    @Override
    AWSEC2ComputeService getComputeService();
 }

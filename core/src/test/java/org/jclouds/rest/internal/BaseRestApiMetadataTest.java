@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.apis.internal;
+package org.jclouds.rest.internal;
 
 import java.util.Set;
 
+import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
 import org.jclouds.apis.Apis;
+import org.jclouds.apis.internal.BaseApiMetadataTest;
 import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.Test;
@@ -37,14 +38,13 @@ import com.google.common.reflect.TypeToken;
 @Test(groups = "unit")
 public abstract class BaseRestApiMetadataTest extends BaseApiMetadataTest {
 
-   @SuppressWarnings("rawtypes")
-   public BaseRestApiMetadataTest(RestApiMetadata toTest, ApiType type) {
-     super(toTest, type);
+   public BaseRestApiMetadataTest(RestApiMetadata toTest, Set<TypeToken<? extends Wrapper>> wrappers) {
+     super(toTest, wrappers);
    }
 
    @Test
    public void testContextAssignableFromRestContext() {
-      Set<ApiMetadata<?, ?, ?, ?>> all = ImmutableSet.copyOf(Apis.contextAssignableFrom(TypeToken.of(RestContext.class)));
+      Set<ApiMetadata> all = ImmutableSet.copyOf(Apis.contextAssignableFrom(TypeToken.of(RestContext.class)));
       assert all.contains(toTest) : String.format("%s not found in %s", toTest, all);
    }
 

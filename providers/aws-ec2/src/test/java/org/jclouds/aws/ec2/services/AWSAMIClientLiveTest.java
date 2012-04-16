@@ -27,13 +27,11 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.RootDeviceType;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -48,7 +46,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AWSAMIClientLiveTest")
-public class AWSAMIClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class AWSAMIClientLiveTest extends BaseComputeServiceContextLiveTest {
    public AWSAMIClientLiveTest() {
       provider = "aws-ec2";
       // TODO: parameterize this.
@@ -65,7 +63,7 @@ public class AWSAMIClientLiveTest extends BaseComputeServiceContextLiveTest<AWSE
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getAMIServices();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAMIServices();
    }
 
    public void testDescribeImageNotExists() {
@@ -78,7 +76,7 @@ public class AWSAMIClientLiveTest extends BaseComputeServiceContextLiveTest<AWSE
    }
 
    public void testDescribeImages() {
-      for (String region : context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<Image> allResults = Sets.newLinkedHashSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();

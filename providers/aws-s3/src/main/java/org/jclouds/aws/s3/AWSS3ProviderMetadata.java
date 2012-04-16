@@ -32,7 +32,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.s3.blobstore.AWSS3BlobStoreContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -42,8 +41,11 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class AWSS3ProviderMetadata extends BaseProviderMetadata<AWSS3Client, AWSS3AsyncClient, AWSS3BlobStoreContext, AWSS3ApiMetadata> {
+public class AWSS3ProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3727028894286338406L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -61,7 +63,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata<AWSS3Client, AWS
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.putAll(Region.regionPropertiesS3());
       properties.setProperty(PROPERTY_ENDPOINT, "https://s3.amazonaws.com");
@@ -77,7 +79,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata<AWSS3Client, AWS
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<AWSS3Client, AWSS3AsyncClient, AWSS3BlobStoreContext, AWSS3ApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("aws-s3")
@@ -97,7 +99,7 @@ public class AWSS3ProviderMetadata extends BaseProviderMetadata<AWSS3Client, AWS
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<AWSS3Client, AWSS3AsyncClient, AWSS3BlobStoreContext, AWSS3ApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

@@ -25,7 +25,6 @@ import org.jclouds.gogrid.GoGridProviderMetadata;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
 import org.jclouds.gogrid.filters.SharedKeyLiteAuthentication;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
@@ -46,8 +45,7 @@ public abstract class BaseGoGridAsyncClientTest<T> extends BaseAsyncClientTest<T
       assertEquals(request.getFilters().get(0).getClass(), SharedKeyLiteAuthentication.class);
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static final class TestGoGridRestClientModule extends GoGridRestClientModule {
       @Override
       protected void configure() {
@@ -66,7 +64,7 @@ public abstract class BaseGoGridAsyncClientTest<T> extends BaseAsyncClientTest<T
    }
 
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new GoGridProviderMetadata();
    }
 

@@ -72,7 +72,7 @@ public class OpenStackAuthAsyncClientTest extends BaseAsyncClientTest<OpenStackA
    }
 
    @Override
-   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   public ApiMetadata createApiMetadata() {
       return AnonymousRestApiMetadata.forClientMappedToAsyncClient(IntegrationTestClient.class, IntegrationTestAsyncClient.class).toBuilder().defaultEndpoint(
             "http://localhost:8080").version("1.0").build();
    }

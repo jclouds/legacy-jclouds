@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -63,10 +62,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @Test(groups = "live", testName="StubComputeServiceIntegrationTest")
-public class StubComputeServiceIntegrationTest extends
-      BaseComputeServiceLiveTest<ConcurrentMap, ConcurrentMap, ComputeServiceContext<ConcurrentMap, ConcurrentMap>> {
+public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTest {
 
    private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
    private static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);

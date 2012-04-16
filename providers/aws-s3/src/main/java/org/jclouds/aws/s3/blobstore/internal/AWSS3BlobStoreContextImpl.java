@@ -18,35 +18,39 @@
  */
 package org.jclouds.aws.s3.blobstore.internal;
 
+import java.io.Closeable;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.s3.AWSS3AsyncClient;
-import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStoreContext;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobRequestSigner;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.rest.RestContext;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.Utils;
 import org.jclouds.s3.blobstore.internal.S3BlobStoreContextImpl;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class AWSS3BlobStoreContextImpl extends S3BlobStoreContextImpl<AWSS3Client, AWSS3AsyncClient> implements
-      AWSS3BlobStoreContext {
+public class AWSS3BlobStoreContextImpl extends S3BlobStoreContextImpl implements AWSS3BlobStoreContext {
 
    @Inject
-   public AWSS3BlobStoreContextImpl(BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
-         InputStreamMap.Factory inputStreamMapFactory, AWSS3AsyncBlobStore ablobStore, AWSS3BlobStore blobStore,
-         @SuppressWarnings("rawtypes") RestContext providerSpecificContext, BlobRequestSigner blobRequestSigner) {
-      super(blobMapFactory, utils, consistencyModel, inputStreamMapFactory, ablobStore, blobStore, providerSpecificContext,
-            blobRequestSigner);
+   public AWSS3BlobStoreContextImpl(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType,
+            BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
+            InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
+            BlobRequestSigner blobRequestSigner) {
+      super(wrapped, wrappedType, blobMapFactory, utils, consistencyModel, inputStreamMapFactory, ablobStore,
+               blobStore, blobRequestSigner);
    }
 
    @Override

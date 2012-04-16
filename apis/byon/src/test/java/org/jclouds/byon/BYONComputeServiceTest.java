@@ -23,16 +23,14 @@ import static org.jclouds.byon.functions.NodeToNodeMetadataTest.expectedProvider
 import static org.jclouds.byon.functions.NodeToNodeMetadataTest.zoneCalled;
 import static org.testng.Assert.assertEquals;
 
-import java.net.URI;
-
+import org.jclouds.ContextBuilder;
+import org.jclouds.byon.config.BYONComputeServiceContextModule;
 import org.jclouds.byon.config.CacheNodeStoreModule;
 import org.jclouds.byon.functions.NodesFromYamlTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.providers.AnonymousProviderMetadata;
-import org.jclouds.rest.internal.ContextBuilder;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -40,7 +38,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -51,36 +51,31 @@ public class BYONComputeServiceTest {
 
    @Test
    public void testNodesParseNodeMap() throws Exception {
-      assertNodesParse(
-            "foo",
-            ImmutableSet.<Module> of(new CacheNodeStoreModule(ImmutableMap.<String, Node> of(
-                  NodesFromYamlTest.TEST1.getId(), NodesFromYamlTest.TEST1))));
+      assertNodesParse("foo", ContextBuilder.newBuilder(
+               new BYONApiMetadata().toBuilder().defaultModule(BYONComputeServiceContextModule.class).build())
+               .endpoint("foo").modules(
+                        ImmutableSet.<Module> of(new CacheNodeStoreModule(ImmutableMap.<String, Node> of(
+                                 NodesFromYamlTest.TEST1.getId(), NodesFromYamlTest.TEST1)))).build(
+                        ComputeServiceContext.class));
    }
 
    @Test
    public void testNodesParseWithFileUrl() throws Exception {
-      assertNodesParse("file://" + getClass().getResource("/test1.yaml").getPath(), ImmutableSet.<Module> of());
+      assertNodesParse("file://" + getClass().getResource("/test1.yaml").getPath(),  ContextBuilder.newBuilder(new BYONApiMetadata()).endpoint(
+               "file://" + getClass().getResource("/test1.yaml").getPath()).build(ComputeServiceContext.class));
    }
 
    @Test
    public void testNodesParseWithClasspathUrl() throws Exception {
-      assertNodesParse("classpath:///test1.yaml", ImmutableSet.<Module> of());
+      assertNodesParse("classpath:///test1.yaml", ContextBuilder.newBuilder(new BYONApiMetadata()).endpoint(
+               "classpath:///test1.yaml").build(ComputeServiceContext.class));
    }
 
-   private void assertNodesParse(String endpoint, Iterable<Module> modules) {
-      ComputeServiceContext<?, ?> context = null;
+   private void assertNodesParse(String endpoint, ComputeServiceContext context) {
       try {
          Location providerLocation = expectedProviderLocationFromResource(endpoint);
 
-         context = ContextBuilder.newBuilder(
-               AnonymousProviderMetadata.forApiWithEndpoint(new BYONApiMetadata(), endpoint))
-               .modules(modules).build();
-
-         assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
-
-         @SuppressWarnings("unchecked")
-         Supplier<LoadingCache<String, Node>> supplier = (Supplier<LoadingCache<String, Node>>) context.getProviderSpecificContext()
-               .getApi();
+         Supplier<LoadingCache<String, Node>> supplier = supplier(context);
 
          assertEquals(supplier.get().size(), context.getComputeService().listNodes().size());
          assertEquals(supplier.get().asMap(),
@@ -96,17 +91,12 @@ public class BYONComputeServiceTest {
    }
 
    public void testNodesWithLocations() {
-      ComputeServiceContext<?, ?> context = null;
+      ComputeServiceContext context = null;
       try {
          String endpoint = "file://" + getClass().getResource("/test_location.yaml").getPath();
-         context = ContextBuilder.newBuilder(
-               AnonymousProviderMetadata.forApiWithEndpoint(new BYONApiMetadata(), endpoint)).build();
+         context = ContextBuilder.newBuilder(new BYONApiMetadata()).endpoint(endpoint).build(ComputeServiceContext.class);
 
-         assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
-
-         @SuppressWarnings("unchecked")
-         Supplier<LoadingCache<String, Node>> supplier = (Supplier<LoadingCache<String, Node>>) context.getProviderSpecificContext()
-               .getApi();
+         Supplier<LoadingCache<String, Node>> supplier = supplier(context);
 
          assertEquals(supplier.get().size(), context.getComputeService().listNodes().size());
          assertEquals(supplier.get().asMap(), ImmutableMap.<String, Node> of(NodesFromYamlTest.TEST2.getId(),
@@ -142,5 +132,12 @@ public class BYONComputeServiceTest {
          if (context != null)
             context.close();
       }
+   }
+
+   private Supplier<LoadingCache<String, Node>> supplier(ComputeServiceContext context) {
+      Supplier<LoadingCache<String, Node>> supplier = context.utils().injector().getInstance(
+               Key.get(new TypeLiteral<Supplier<LoadingCache<String, Node>>>() {
+               }));
+      return supplier;
    }
 }

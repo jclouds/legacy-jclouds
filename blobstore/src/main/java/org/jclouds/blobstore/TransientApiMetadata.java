@@ -18,26 +18,21 @@
  */
 package org.jclouds.blobstore;
 
-import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
-import static org.jclouds.Constants.PROPERTY_USER_THREADS;
-
 import java.net.URI;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadata;
-import org.jclouds.blobstore.config.TransientBlobStore;
-import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
+import org.jclouds.blobstore.config.TransientBlobStoreContextModule;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds in-memory (Transient) API
  * 
  * @author Adrian Cole
  */
-public class TransientApiMetadata extends
-      BaseBlobStoreApiMetadata<TransientBlobStore, AsyncBlobStore, BlobStoreContext<TransientBlobStore, AsyncBlobStore>, TransientApiMetadata> {
+public class TransientApiMetadata extends BaseApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -6541485071006878726L;
 
    public static Builder builder() {
       return new Builder();
@@ -56,23 +51,19 @@ public class TransientApiMetadata extends
       super(builder);
    }
 
-   public static class Builder extends
-         BaseBlobStoreApiMetadata.Builder<TransientBlobStore, AsyncBlobStore, BlobStoreContext<TransientBlobStore, AsyncBlobStore>, TransientApiMetadata> {
+   public static class Builder extends BaseApiMetadata.Builder {
 
       protected Builder() {
          id("transient")
-               .name("in-memory (Transient) API")
-               .javaApi(TransientBlobStore.class, AsyncBlobStore.class)
-               .contextBuilder(TypeToken.of(TransientBlobStoreContextBuilder.class))
-               .identityName("Unused")
-               .defaultEndpoint("http://localhost")
-               .defaultIdentity(System.getProperty("user.name"))
-               .defaultCredential("bar")
-               .version("1")
-               .defaultProperties(
-                     BaseBlobStoreApiMetadata.Builder.defaultPropertiesAnd(ImmutableMap.of(PROPERTY_USER_THREADS, "0",
-                           PROPERTY_IO_WORKER_THREADS, "0")))
-               .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"));
+         .name("in-memory (Transient) API")
+         .identityName("Unused")
+         .defaultEndpoint("http://localhost")
+         .defaultIdentity(System.getProperty("user.name"))
+         .defaultCredential("bar")
+         .version("1")
+         .wrapper(BlobStoreContext.class)
+         .defaultModule(TransientBlobStoreContextModule.class)
+         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"));
       }
 
       @Override

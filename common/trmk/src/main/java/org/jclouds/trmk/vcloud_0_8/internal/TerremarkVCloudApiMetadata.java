@@ -15,36 +15,24 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 /**
- * Implementation of {@link ApiMetadata} for Amazon's TerremarkVCloud api.
- * 
- * <h3>note</h3>
- * <p/>
- * This class allows overriding of types {@code S}(client) and {@code A}
- * (asyncClient), so that children can add additional methods not declared here,
- * such as new features from AWS.
- * <p/>
- * 
- * As this is a popular api, we also allow overrides for type {@code C}
- * (context). This allows subtypes to add in new feature groups or extensions,
- * not present in the base api. For example, you could make a subtype for
- * context, that exposes admin operations.
- * 
+ * Implementation of {@link ApiMetadata} for Terremark's VCloud api.
+
  * @author Adrian Cole
  */
-public abstract class TerremarkVCloudApiMetadata<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient, M extends TerremarkVCloudApiMetadata<S, A, M>>
-      extends BaseComputeServiceApiMetadata<S, A, ComputeServiceContext<S, A>, M> {
+public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
 
-   protected TerremarkVCloudApiMetadata(Builder<?, ?, ?> builder) {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 866164758867358381L;
+
+   protected TerremarkVCloudApiMetadata(Builder builder) {
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
@@ -60,20 +48,19 @@ public abstract class TerremarkVCloudApiMetadata<S extends TerremarkVCloudClient
       return properties;
    }
 
-   public static abstract class Builder<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient, M extends TerremarkVCloudApiMetadata<S, A, M>>
-         extends BaseComputeServiceApiMetadata.Builder<S, A, ComputeServiceContext<S, A>, M> {
+   public static abstract class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<S> syncClient, Class<A> asyncClient) {
-         id("vcloud-common")
-         .identityName("Email")
+      protected Builder(Class<?> syncClient, Class<?> asyncClient) {
+         super(syncClient, asyncClient);
+         identityName("Email")
          .credentialName("Password")
          .version("0.8")
          .defaultProperties(TerremarkVCloudApiMetadata.defaultProperties())
-         .javaApi(syncClient, asyncClient);
+         .wrapper(ComputeServiceContext.class);
       }
 
       @Override
-      public Builder<S, A, M> fromApiMetadata(M in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

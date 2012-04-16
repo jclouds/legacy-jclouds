@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest.internal;
+package org.jclouds;
 
 import static org.testng.Assert.assertEquals;
 
@@ -28,7 +28,6 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.events.config.EventBusModule;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
@@ -60,7 +59,7 @@ public class ContextBuilderTest {
       }
    }
 
-   private ContextBuilder<?, ?, ?, ?> testContextBuilder() {
+   private ContextBuilder testContextBuilder() {
       return ContextBuilder.newBuilder(AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(
             IntegrationTestClient.class, IntegrationTestAsyncClient.class, "http://localhost"));
    }
@@ -122,24 +121,12 @@ public class ContextBuilderTest {
       modules.add(loggingModule);
       HttpModule httpModule = new HttpModule();
       modules.add(httpModule);
-      ContextBuilder<?, ?, ?, ?> builder = testContextBuilder();
+      ContextBuilder builder = testContextBuilder();
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
       assertEquals(modules.remove(0), loggingModule);
       assertEquals(modules.remove(0), httpModule);
-   }
-
-   @Test
-   public void testAddBothWhenDoesntRequireHttp() {
-      List<Module> modules = new ArrayList<Module>();
-      modules.add(new ConfiguresClientModule());
-      ContextBuilder<?, ?, ?, ?> builder = testContextBuilder();
-      builder.addHttpModuleIfNeededAndNotPresent(modules);
-      builder.addLoggingModuleIfNotPresent(modules);
-      assertEquals(modules.size(), 2);
-      assert modules.remove(0) instanceof ConfiguresClientModule;
-      assert modules.remove(0) instanceof JDKLoggingModule;
    }
 
    @ConfiguresRestClient
@@ -153,7 +140,7 @@ public class ContextBuilderTest {
    @Test
    public void testAddBothWhenDefault() {
       List<Module> modules = new ArrayList<Module>();
-      ContextBuilder<?, ?, ?, ?> builder = testContextBuilder();
+      ContextBuilder builder = testContextBuilder();
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
@@ -161,23 +148,13 @@ public class ContextBuilderTest {
       assert modules.remove(0) instanceof JDKLoggingModule;
    }
 
-   @RequiresHttp
-   class RequiresHttpModule implements Module {
-
-      public void configure(Binder arg0) {
-      }
-
-   }
-
    @Test
    public void testAddBothWhenLive() {
       List<Module> modules = new ArrayList<Module>();
-      modules.add(new RequiresHttpModule());
-      ContextBuilder<?, ?, ?, ?> builder = testContextBuilder();
+      ContextBuilder builder = testContextBuilder();
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
-      assertEquals(modules.size(), 3);
-      assert modules.remove(0) instanceof RequiresHttpModule;
+      assertEquals(modules.size(), 2);
       assert modules.remove(0) instanceof JavaUrlHttpCommandExecutorServiceModule;
       assert modules.remove(0) instanceof JDKLoggingModule;
    }
@@ -196,7 +173,7 @@ public class ContextBuilderTest {
          protected void configure() {
          }
       };
-      ContextBuilder<?, ?, ?, ?> builder = testContextBuilder();
+      ContextBuilder builder = testContextBuilder();
       builder.modules(Arrays.asList(module1, module2));
 
    }

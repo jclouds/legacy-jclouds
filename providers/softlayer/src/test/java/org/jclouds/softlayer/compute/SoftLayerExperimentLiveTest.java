@@ -20,11 +20,9 @@ package org.jclouds.softlayer.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.softlayer.SoftLayerAsyncClient;
-import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.SoftLayerProviderMetadata;
 import org.testng.annotations.Test;
 
@@ -35,9 +33,7 @@ import com.google.common.io.Closeables;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "SoftLayerExperimentLiveTest")
-public class SoftLayerExperimentLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>> {
+public class SoftLayerExperimentLiveTest extends BaseComputeServiceContextLiveTest {
 
    public SoftLayerExperimentLiveTest() {
       provider = "glesys";
@@ -45,13 +41,13 @@ public class SoftLayerExperimentLiveTest
 
    @Test
    public void testAndExperiment() {
-      ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient> context = null;
+      ComputeServiceContext context = null;
       try {
 
-         context = ComputeServiceContextBuilder
+         context = ContextBuilder
                .newBuilder(new SoftLayerProviderMetadata())
                .overrides(setupProperties())
-               .modules(setupModules()).build();
+               .modules(setupModules()).build(ComputeServiceContext.class);
 
          assertEquals(context.getComputeService().listAssignableLocations().size(), 6);
 

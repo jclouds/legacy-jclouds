@@ -33,8 +33,8 @@ import org.jclouds.rest.Binder;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * @author Adrian Cole

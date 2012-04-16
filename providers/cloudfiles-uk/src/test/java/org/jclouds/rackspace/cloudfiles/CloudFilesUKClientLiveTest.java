@@ -20,6 +20,7 @@ package org.jclouds.rackspace.cloudfiles;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.cloudfiles.CloudFilesApiMetadata;
 import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.cloudfiles.CloudFilesClientLiveTest;
 import org.jclouds.openstack.swift.domain.SwiftObject;
@@ -40,7 +41,7 @@ public class CloudFilesUKClientLiveTest extends CloudFilesClientLiveTest {
 
    @Override
    public CloudFilesClient getApi() {
-      return (CloudFilesClient) context.getProviderSpecificContext().getApi();
+      return context.unwrap(CloudFilesApiMetadata.CONTEXT_TOKEN).getApi();
    }
    
    @Override

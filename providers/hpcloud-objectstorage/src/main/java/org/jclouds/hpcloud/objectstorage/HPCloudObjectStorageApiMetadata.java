@@ -24,20 +24,32 @@ import static org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties.SERV
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+import org.jclouds.hpcloud.objectstorage.blobstore.config.HPCloudObjectStorageBlobStoreContextModule;
+import org.jclouds.hpcloud.objectstorage.config.HPCloudObjectStorageRestClientModule;
 import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.services.ServiceType;
+import org.jclouds.openstack.swift.SwiftApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 /**
  * Implementation of {@link org.jclouds.providers.ProviderMetadata} for HP Cloud Services Object Storage
  * 
  * @author Jeremy Daggett
  */
-public class HPCloudObjectStorageApiMetadata
-      extends
-      BaseBlobStoreApiMetadata<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient, BlobStoreContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>, HPCloudObjectStorageApiMetadata> {
+public class HPCloudObjectStorageApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 820062881469203616L;
+   
+   public static final TypeToken<RestContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
 
    private static Builder builder() {
       return new Builder();
@@ -56,8 +68,8 @@ public class HPCloudObjectStorageApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseBlobStoreApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = SwiftApiMetadata.defaultProperties();
       properties.setProperty(SERVICE_TYPE, ServiceType.OBJECT_STORE);
       // TODO: this doesn't actually do anything yet.
       properties.setProperty(KeystoneProperties.VERSION, "2.0");
@@ -65,20 +77,19 @@ public class HPCloudObjectStorageApiMetadata
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseBlobStoreApiMetadata.Builder<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient, BlobStoreContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>, HPCloudObjectStorageApiMetadata> {
-      
+   public static class Builder extends BaseRestApiMetadata.Builder {
+
       protected Builder() {
+         super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class);
          id("hpcloud-objectstorage")
          .name("HP Cloud Services Object Storage API")
          .identityName("tenantId:accessKey")
          .credentialName("secretKey")
          .version("1.0")
          .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
-         .javaApi(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class)
-         .contextBuilder(TypeToken.of(HPCloudObjectStorageContextBuilder.class))
-         .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties());
+         .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(HPCloudObjectStorageRestClientModule.class, HPCloudObjectStorageBlobStoreContextModule.class));
       }
 
       @Override
@@ -87,7 +98,7 @@ public class HPCloudObjectStorageApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(HPCloudObjectStorageApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

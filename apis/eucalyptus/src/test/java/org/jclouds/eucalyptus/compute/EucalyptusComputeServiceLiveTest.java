@@ -20,9 +20,6 @@ package org.jclouds.eucalyptus.compute;
 
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
 import org.jclouds.http.HttpResponseException;
 import org.testng.annotations.Test;
@@ -32,8 +29,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "EucalyptusComputeServiceLiveTest")
-public class EucalyptusComputeServiceLiveTest extends
-      EC2ComputeServiceLiveTest<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>> {
+public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    public EucalyptusComputeServiceLiveTest() {
       provider = "eucalyptus";

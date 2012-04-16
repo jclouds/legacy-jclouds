@@ -20,10 +20,11 @@ package org.jclouds.blobstore;
 
 import java.io.Closeable;
 
+import org.jclouds.Wrapper;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.rest.BackedByRestContext;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
 
 import com.google.inject.ImplementedBy;
@@ -36,7 +37,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(BlobStoreContextImpl.class)
-public interface BlobStoreContext<S, A> extends Closeable, BackedByRestContext<S, A> {
+public interface BlobStoreContext extends Closeable, Wrapper {
    /**
     * 
     * Generates signed requests for blobs. useful in other tools such as backup utilities.
@@ -114,6 +115,15 @@ public interface BlobStoreContext<S, A> extends Closeable, BackedByRestContext<S
     * @see #getUtils
     */
    Utils utils();
+
+   /**
+    * will be removed in jclouds 1.6
+    * 
+    * @see Wrapper#getInputType
+    * @see Wrapper#unwrap
+    */
+   @Deprecated
+   <S, A> RestContext<S, A> getProviderSpecificContext();
 
    /**
     * closes threads and resources related to this connection.

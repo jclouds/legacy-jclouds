@@ -26,7 +26,6 @@ import org.jclouds.servermanager.Datacenter;
 import org.jclouds.servermanager.Hardware;
 import org.jclouds.servermanager.Image;
 import org.jclouds.servermanager.Server;
-import org.jclouds.servermanager.ServerManager;
 import org.jclouds.servermanager.compute.functions.DatacenterToLocation;
 import org.jclouds.servermanager.compute.functions.ServerManagerHardwareToHardware;
 import org.jclouds.servermanager.compute.functions.ServerManagerImageToImage;
@@ -41,11 +40,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class ServerManagerComputeServiceContextModule extends
-      ComputeServiceAdapterContextModule<ServerManager, ServerManager, Server, Hardware, Image, Datacenter> {
-
-   public ServerManagerComputeServiceContextModule() {
-      super(ServerManager.class, ServerManager.class);
-   }
+         ComputeServiceAdapterContextModule<Server, Hardware, Image, Datacenter> {
 
    @Override
    protected void configure() {

@@ -21,9 +21,6 @@ package org.jclouds.byon.config;
 import java.io.InputStream;
 import java.net.URI;
 
-import javax.inject.Singleton;
-
-import org.jclouds.byon.Node;
 import org.jclouds.byon.internal.BYONComputeServiceAdapter;
 import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule;
@@ -36,27 +33,17 @@ import org.jclouds.location.Provider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.cache.LoadingCache;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("unchecked")
 @SingleThreaded
-public class BYONComputeServiceContextModule extends
-         JCloudsNativeComputeServiceAdapterContextModule<Supplier, Supplier> {
+public class BYONComputeServiceContextModule extends JCloudsNativeComputeServiceAdapterContextModule {
 
    public BYONComputeServiceContextModule() {
-      super(Supplier.class, Supplier.class, BYONComputeServiceAdapter.class);
-   }
-
-   @Provides
-   @Singleton
-   Supplier provideApi(Supplier<LoadingCache<String, Node>> in) {
-      return in;
+      super(BYONComputeServiceAdapter.class);
    }
 
    @Override
@@ -68,6 +55,7 @@ public class BYONComputeServiceContextModule extends
       }).annotatedWith(Provider.class).to(SupplyFromProviderURIOrNodesProperty.class);
       bind(new TypeLiteral<Function<URI, InputStream>>() {
       }).to(SupplyFromProviderURIOrNodesProperty.class);
-      install(new LocationsFromComputeServiceAdapterModule<NodeMetadata, Hardware, Image, Location>(){});
+      install(new LocationsFromComputeServiceAdapterModule<NodeMetadata, Hardware, Image, Location>() {
+      });
    }
 }

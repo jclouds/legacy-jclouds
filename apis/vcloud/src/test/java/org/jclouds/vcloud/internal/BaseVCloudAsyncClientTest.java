@@ -30,7 +30,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.ovf.Envelope;
 import org.jclouds.ovf.xml.EnvelopeHandlerTest;
 import org.jclouds.providers.AnonymousProviderMetadata;
@@ -91,7 +90,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T
    }
    
    @Override
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return  AnonymousProviderMetadata.forApiWithEndpoint(new VCloudApiMetadata(), "https://vcenterprise.bluelock.com/api/v1.0");
    }
    
@@ -126,8 +125,7 @@ public abstract class BaseVCloudAsyncClientTest<T> extends BaseAsyncClientTest<T
                      .create("https://vcenterprise.bluelock.com/api/v1.0/vdcItem/2"))),
          ImmutableMap.<String, ReferenceType> of(NETWORK_REF.getName(), NETWORK_REF), 0, 0, 0, false);
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    public static class VCloudRestClientModuleExtension extends VCloudRestClientModule {
 
       @Override

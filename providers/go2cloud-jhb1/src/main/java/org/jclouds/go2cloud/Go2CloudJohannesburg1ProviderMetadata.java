@@ -21,22 +21,20 @@ package org.jclouds.go2cloud;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.elasticstack.ElasticStackAsyncClient;
-import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Go2Cloud's
- * Johannesburg1 provider.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Go2Cloud's Johannesburg1
+ * provider.
  * 
  * @author Adrian Cole
  */
-public class Go2CloudJohannesburg1ProviderMetadata
-      extends
-      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+public class Go2CloudJohannesburg1ProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 5737728330686182812L;
 
    public static Builder builder() {
       return new Builder();
@@ -55,14 +53,14 @@ public class Go2CloudJohannesburg1ProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
 
    public static class Builder
          extends
-         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+         BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("go2cloud-jhb1")
@@ -82,7 +80,7 @@ public class Go2CloudJohannesburg1ProviderMetadata
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

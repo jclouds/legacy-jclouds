@@ -70,7 +70,7 @@ public class TerremarkVCloudVersionsAsyncClientTest extends BaseAsyncClientTest<
    }
 
    @Override
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(TerremarkVCloudVersionsClient.class,
             TerremarkVCloudVersionsAsyncClient.class, "http://localhost:8080");
    }

@@ -37,7 +37,7 @@ public class BaseOpSourceServersRestClientExpectTest extends BaseRestClientExpec
    }
 
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new OpSourceServersApiMetadata();
    }
 }

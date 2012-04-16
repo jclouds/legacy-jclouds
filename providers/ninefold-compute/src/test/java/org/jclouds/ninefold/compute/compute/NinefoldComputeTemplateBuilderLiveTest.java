@@ -24,9 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.cloudstack.CloudStackAsyncClient;
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
@@ -42,9 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class NinefoldComputeTemplateBuilderLiveTest
-      extends
-      BaseTemplateBuilderLiveTest<CloudStackClient, CloudStackAsyncClient, CloudStackContext> {
+public class NinefoldComputeTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public NinefoldComputeTemplateBuilderLiveTest() {
       provider = "ninefold-compute";

@@ -23,7 +23,6 @@ import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -32,9 +31,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class HPCloudObjectStorageProviderMetadata
-      extends
-      BaseProviderMetadata<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient, BlobStoreContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>, HPCloudObjectStorageApiMetadata> {
+public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3735142654912867384L;
 
    public static Builder builder() {
       return new Builder();
@@ -53,14 +53,14 @@ public class HPCloudObjectStorageProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_BUILD_VERSION, "???"); //FIXME
 //      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External"); FIXME: needed?
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient, BlobStoreContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>, HPCloudObjectStorageApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("hpcloud-objectstorage")
@@ -80,8 +80,7 @@ public class HPCloudObjectStorageProviderMetadata
       }
       
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient, BlobStoreContext<HPCloudObjectStorageClient, HPCloudObjectStorageAsyncClient>, HPCloudObjectStorageApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

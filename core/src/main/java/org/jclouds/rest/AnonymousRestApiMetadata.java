@@ -20,7 +20,7 @@ package org.jclouds.rest;
 
 import java.net.URI;
 
-import org.jclouds.apis.ApiType;
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.annotations.Beta;
@@ -31,32 +31,33 @@ import com.google.common.annotations.Beta;
  * @author Adrian Cole
  */
 @Beta
-public class AnonymousRestApiMetadata<S, A> extends BaseRestApiMetadata<S, A, RestContext<S, A>, AnonymousRestApiMetadata<S, A>> {
+public class AnonymousRestApiMetadata extends BaseRestApiMetadata {
 
-   public static <S, A> AnonymousRestApiMetadata<S, A> forClientMappedToAsyncClient(Class<S> client, Class<A> asyncClient) {
-      return new AnonymousRestApiMetadata<S, A>(client, asyncClient);
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 5297549599879474202L;
+
+   public static AnonymousRestApiMetadata forClientMappedToAsyncClient(Class<?> client, Class<?> asyncClient) {
+      return new AnonymousRestApiMetadata(client, asyncClient);
    }
 
    @Override
-   public Builder<S, A> toBuilder() {
-      return new Builder<S, A>(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder toBuilder() {
+      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
-   public AnonymousRestApiMetadata(Class<S> client, Class<A> asyncClient) {
-      super(new Builder<S, A>(client, asyncClient));
+   public AnonymousRestApiMetadata(Class<?> client, Class<?> asyncClient) {
+      super(new Builder(client, asyncClient));
    }
 
-   protected AnonymousRestApiMetadata(Builder<S, A> builder) {
+   protected AnonymousRestApiMetadata(Builder builder) {
       super(builder);
    }
 
-   public static class Builder<S, A> extends BaseRestApiMetadata.Builder<S, A,RestContext<S, A>, AnonymousRestApiMetadata<S, A>> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
-      public Builder(Class<S> client, Class<A> asyncClient) {
+      public Builder(Class<?> client, Class<?> asyncClient) {
          super(client, asyncClient);
          id(client.getSimpleName())
-         .type(ApiType.UNRECOGNIZED)
-         .name(String.format("%s->%s", client.getSimpleName(), asyncClient.getSimpleName()))
          .identityName("unused")
          .defaultIdentity("foo")
          .version("1")
@@ -64,12 +65,12 @@ public class AnonymousRestApiMetadata<S, A> extends BaseRestApiMetadata<S, A, Re
       }
 
       @Override
-      public AnonymousRestApiMetadata<S, A> build() {
-         return new AnonymousRestApiMetadata<S, A>(this);
+      public AnonymousRestApiMetadata build() {
+         return new AnonymousRestApiMetadata(this);
       }
       
       @Override
-      public Builder<S, A> fromApiMetadata(AnonymousRestApiMetadata<S, A> in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

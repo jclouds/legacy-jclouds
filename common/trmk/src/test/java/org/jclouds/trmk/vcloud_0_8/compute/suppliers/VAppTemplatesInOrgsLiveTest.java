@@ -22,10 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.functions.AllCatalogItemsInOrg;
@@ -41,8 +39,8 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "VAppTemplatesInOrgsLiveTest")
-public class VAppTemplatesInOrgsLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
-extends BaseComputeServiceContextLiveTest<S, A, ComputeServiceContext<S, A>> {
+public class VAppTemplatesInOrgsLiveTest
+extends BaseComputeServiceContextLiveTest {
    
    public VAppTemplatesInOrgsLiveTest() {
       provider = "trmk-vcloudexpress";

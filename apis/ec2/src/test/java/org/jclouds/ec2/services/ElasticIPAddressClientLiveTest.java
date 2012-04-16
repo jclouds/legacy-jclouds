@@ -25,9 +25,7 @@ import java.util.SortedSet;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -41,7 +39,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ElasticIPAddressClientLiveTest")
-public class ElasticIPAddressClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
+public class ElasticIPAddressClientLiveTest extends BaseComputeServiceContextLiveTest {
    public ElasticIPAddressClientLiveTest() {
       provider = "ec2";
    }
@@ -52,7 +50,7 @@ public class ElasticIPAddressClientLiveTest<S extends EC2Client, A extends EC2As
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getElasticIPAddressServices();
+      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticIPAddressServices();
    }
 
    @Test

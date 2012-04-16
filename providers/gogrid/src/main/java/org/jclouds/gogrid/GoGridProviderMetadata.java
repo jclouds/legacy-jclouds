@@ -27,7 +27,6 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -35,9 +34,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for GoGrid.
  * @author Adrian Cole
  */
-public class GoGridProviderMetadata
-      extends
-      BaseProviderMetadata<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> {
+public class GoGridProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 503149209800711396L;
 
    public static Builder builder() {
       return new Builder();
@@ -56,7 +56,7 @@ public class GoGridProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_ZONES, "1,2,3");
       properties.setProperty(PROPERTY_ZONE + ".1." + ISO3166_CODES, "US-CA");
@@ -67,9 +67,7 @@ public class GoGridProviderMetadata
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseProviderMetadata.Builder<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("gogrid")
@@ -88,8 +86,7 @@ public class GoGridProviderMetadata
       }
 
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

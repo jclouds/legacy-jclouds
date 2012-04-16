@@ -45,6 +45,7 @@
     <test.openstack-nova.image.login-user></test.openstack-nova.image.login-user>
     <test.openstack-nova.image.authenticate-sudo></test.openstack-nova.image.authenticate-sudo>
     <test.jclouds.openstack-nova.auto-allocate-floating-ips>false</test.jclouds.openstack-nova.auto-allocate-floating-ips>
+    <test.jclouds.keystone.credential-type>passwordCredentials</test.jclouds.keystone.credential-type>
   </properties>
 
   <dependencies>
@@ -125,6 +126,7 @@
                     <test.openstack-nova.image.login-user>${test.openstack-nova.image.login-user}</test.openstack-nova.image.login-user>
                     <test.openstack-nova.image.authenticate-sudo>${test.openstack-nova.image.authenticate-sudo}</test.openstack-nova.image.authenticate-sudo>
                     <test.jclouds.openstack-nova.auto-allocate-floating-ips>${test.jclouds.openstack-nova.auto-allocate-floating-ips}</test.jclouds.openstack-nova.auto-allocate-floating-ips>
+                    <test.jclouds.keystone.credential-type>${test.jclouds.keystone.credential-type}</test.jclouds.keystone.credential-type>
                   </systemPropertyVariables>
                 </configuration>
               </execution>

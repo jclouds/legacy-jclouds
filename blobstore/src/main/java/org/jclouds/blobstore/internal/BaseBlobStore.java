@@ -47,13 +47,13 @@ import com.google.common.base.Supplier;
  */
 public abstract class BaseBlobStore implements BlobStore {
 
-   protected final BlobStoreContext<?, ?> context;
+   protected final BlobStoreContext context;
    protected final BlobUtils blobUtils;
    protected final Supplier<Location> defaultLocation;
    protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   protected BaseBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+   protected BaseBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
          @Memoized Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
@@ -62,7 +62,7 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    @Override
-   public BlobStoreContext<?, ?> getContext() {
+   public BlobStoreContext getContext() {
       return context;
    }
 

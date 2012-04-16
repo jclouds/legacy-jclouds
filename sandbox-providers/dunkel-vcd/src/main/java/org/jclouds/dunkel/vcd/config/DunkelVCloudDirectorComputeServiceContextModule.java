@@ -18,15 +18,6 @@
  */
 package org.jclouds.dunkel.vcd.config;
 
-import static org.jclouds.compute.domain.OsFamily.RHEL;
-
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
-import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
-
-import com.google.inject.Injector;
 
 /**
  * 

@@ -19,8 +19,6 @@
 package org.jclouds.aws.cloudwatch;
 
 import org.jclouds.cloudwatch.CloudWatchApiMetadata;
-import org.jclouds.cloudwatch.CloudWatchAsyncClient;
-import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
@@ -33,6 +31,6 @@ import org.testng.annotations.Test;
 public class AWSCloudWatchProviderTest extends BaseProviderMetadataTest {
 
    public AWSCloudWatchProviderTest() {
-      super(new AWSCloudWatchProviderMetadata(), new CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>());
+      super(new AWSCloudWatchProviderMetadata(), new CloudWatchApiMetadata());
    }
 }

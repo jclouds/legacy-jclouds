@@ -38,7 +38,6 @@ import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
 import org.jclouds.cloudloadbalancers.reference.Region;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.openstack.filters.AuthenticateRequest;
@@ -71,7 +70,6 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends BaseAsync
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
    protected static class TestCloudLoadBalancersRestClientModule extends CloudLoadBalancersRestClientModule {
       @Override
       protected void installLocations() {
@@ -127,7 +125,7 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends BaseAsync
    }
 
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new CloudLoadBalancersApiMetadata();
    }
 

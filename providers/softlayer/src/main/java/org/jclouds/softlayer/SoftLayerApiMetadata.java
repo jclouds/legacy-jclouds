@@ -22,21 +22,29 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.softlayer.compute.config.SoftLayerComputeServiceContextModule;
+import org.jclouds.softlayer.config.SoftLayerRestClientModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for  API
+ * Implementation of {@link ApiMetadata} for API
  * 
  * @author Adrian Cole
  */
-public class SoftLayerApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> {
+public class SoftLayerApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<SoftLayerClient, SoftLayerAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<SoftLayerClient, SoftLayerAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -50,8 +58,8 @@ public class SoftLayerApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
@@ -59,11 +67,11 @@ public class SoftLayerApiMetadata
 
    public static class Builder
          extends
-         BaseComputeServiceApiMetadata.Builder<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(SoftLayerClient.class, SoftLayerAsyncClient.class);
          id("softlayer")
-         .type(ApiType.COMPUTE)
          .name("SoftLayer API")
          .identityName("API Username")
          .credentialName("API Key")
@@ -71,8 +79,8 @@ public class SoftLayerApiMetadata
          .version("3")
          .defaultEndpoint("https://api.softlayer.com/rest")
          .defaultProperties(SoftLayerApiMetadata.defaultProperties())
-         .javaApi(SoftLayerClient.class, SoftLayerAsyncClient.class)
-         .contextBuilder(TypeToken.of(SoftLayerContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(SoftLayerRestClientModule.class, SoftLayerComputeServiceContextModule.class));
       }
 
       @Override
@@ -81,7 +89,7 @@ public class SoftLayerApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(SoftLayerApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

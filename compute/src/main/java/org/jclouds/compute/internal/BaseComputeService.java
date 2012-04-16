@@ -110,7 +110,7 @@ public class BaseComputeService implements ComputeService {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final ComputeServiceContext<?, ?> context;
+   protected final ComputeServiceContext context;
    protected final Map<String, Credentials> credentialStore;
 
    private final Supplier<Set<? extends Image>> images;
@@ -136,7 +136,7 @@ public class BaseComputeService implements ComputeService {
    private final ExecutorService executor;
 
    @Inject
-   protected BaseComputeService(@SuppressWarnings("rawtypes") ComputeServiceContext context, Map<String, Credentials> credentialStore,
+   protected BaseComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
          @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
          GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,
@@ -178,7 +178,7 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public ComputeServiceContext<?, ?> getContext() {
+   public ComputeServiceContext getContext() {
       return context;
    }
 

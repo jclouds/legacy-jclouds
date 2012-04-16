@@ -20,50 +20,47 @@ package org.jclouds.providers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Closeable;
-
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.rest.AnonymousRestApiMetadata;
-import org.jclouds.rest.RestContext;
 
 /**
  * Useful in creating arbitrary clients.
  * 
  * @author Adrian Cole
  */
-public class AnonymousProviderMetadata<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> extends
-      BaseProviderMetadata<S, A, C, M> {
+public class AnonymousProviderMetadata extends BaseProviderMetadata {
 
-   public static <S, A> ProviderMetadata<S, A, RestContext<S, A>, AnonymousRestApiMetadata<S, A>> forClientMappedToAsyncClientOnEndpoint(Class<S> client, Class<A> asyncClient,
-         String endpoint) {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3038298137724260273L;
+
+   public static ProviderMetadata forClientMappedToAsyncClientOnEndpoint(Class<?> client, Class<?> asyncClient,
+            String endpoint) {
       return forApiWithEndpoint(AnonymousRestApiMetadata.forClientMappedToAsyncClient(client, asyncClient), endpoint);
    }
-   
-   public static <S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> ProviderMetadata<S, A, C, M> forApiWithEndpoint(M md,
-         String endpoint) {
+
+   public static ProviderMetadata forApiWithEndpoint(ApiMetadata md, String endpoint) {
       checkNotNull(md, "api");
       checkNotNull(endpoint, "endpoint (%s)", md.getEndpointName());
-      return new AnonymousProviderMetadata<S, A, C, M>(md, endpoint);
+      return new AnonymousProviderMetadata(md, endpoint);
    }
 
    @Override
-   public Builder<S, A, C, M> toBuilder() {
-      return (Builder<S, A, C, M>) new Builder<S, A, C, M>(getApiMetadata(), getEndpoint()).fromProviderMetadata(this);
+   public Builder toBuilder() {
+      return (Builder) new Builder(getApiMetadata(), getEndpoint()).fromProviderMetadata(this);
    }
 
-   public AnonymousProviderMetadata(M apiMetadata, String endpoint) {
-      super(new Builder<S, A, C, M>(apiMetadata, endpoint));
+   public AnonymousProviderMetadata(ApiMetadata apiMetadata, String endpoint) {
+      super(new Builder(apiMetadata, endpoint));
    }
 
-   public AnonymousProviderMetadata(Builder<S, A, C, M> builder) {
+   public AnonymousProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   public static class Builder<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> extends
-         BaseProviderMetadata.Builder<S, A, C, M> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
-      public Builder(M apiMetadata, String endpoint) {
+      public Builder(ApiMetadata apiMetadata, String endpoint) {
          id(checkNotNull(apiMetadata, "apiMetadata").getId())
          .name(apiMetadata.getName())
          .apiMetadata(apiMetadata)
@@ -71,8 +68,8 @@ public class AnonymousProviderMetadata<S, A, C extends Closeable, M extends ApiM
       }
 
       @Override
-      public AnonymousProviderMetadata<S, A, C, M> build() {
-         return new AnonymousProviderMetadata<S, A, C, M>(this);
+      public AnonymousProviderMetadata build() {
+         return new AnonymousProviderMetadata(this);
       }
 
    }

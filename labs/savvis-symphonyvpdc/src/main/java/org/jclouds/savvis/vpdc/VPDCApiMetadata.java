@@ -23,21 +23,31 @@ import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIME
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.apis.ApiType;
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.savvis.vpdc.compute.config.VPDCComputeServiceContextModule;
+import org.jclouds.savvis.vpdc.config.VPDCRestClientModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ApiMetadata} for Savvis Symphony VPDC services.
  * 
  * @author Kedar Dave
  */
-public class VPDCApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>, VPDCApiMetadata> {
+public class VPDCApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<VPDCClient, VPDCAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<VPDCClient, VPDCAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -51,19 +61,19 @@ public class VPDCApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED, 600l * 1000l + "");
       return properties;
    }
 
    public static class Builder
          extends
-         BaseComputeServiceApiMetadata.Builder<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>, VPDCApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(VPDCClient.class, VPDCAsyncClient.class);
          id("savvis-symphonyvpdc")
-         .type(ApiType.COMPUTE)
          .name("Savvis Symphony VPDC API")
          .identityName("Username")
          .credentialName("Password")
@@ -72,8 +82,9 @@ public class VPDCApiMetadata
          .buildVersion("2.3")
          .defaultEndpoint("https://api.savvis.net/vpdc")
          .defaultProperties(VPDCApiMetadata.defaultProperties())
-         .javaApi(VPDCClient.class, VPDCAsyncClient.class)
-         .contextBuilder(TypeToken.of(VPDCContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VPDCRestClientModule.class, VPDCComputeServiceContextModule.class));
+
       }
 
       @Override
@@ -82,7 +93,7 @@ public class VPDCApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(VPDCApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

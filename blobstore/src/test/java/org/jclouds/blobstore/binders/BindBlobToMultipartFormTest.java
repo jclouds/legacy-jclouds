@@ -28,7 +28,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
@@ -47,7 +47,7 @@ public class BindBlobToMultipartFormTest {
    public static final Blob TEST_BLOB;
 
    static {
-      blobProvider = BlobStoreContextBuilder.forTests().buildInjector().getInstance(Blob.Factory.class);
+      blobProvider = ContextBuilder.newBuilder("transient").buildInjector().getInstance(Blob.Factory.class);
       StringBuilder builder = new StringBuilder("--");
       addData(BOUNDARY, "hello", builder);
       builder.append("--").append(BOUNDARY).append("--").append("\r\n");

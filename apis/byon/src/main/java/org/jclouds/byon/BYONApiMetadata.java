@@ -19,15 +19,16 @@
 package org.jclouds.byon;
 
 import java.net.URI;
-import java.util.Properties;
 
 import org.jclouds.JcloudsVersion;
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.apis.internal.BaseApiMetadata;
+import org.jclouds.byon.config.BYONComputeServiceContextModule;
+import org.jclouds.byon.config.YamlNodeStoreModule;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
 
-import com.google.common.base.Supplier;
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds BYON API
@@ -39,8 +40,10 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
-public class BYONApiMetadata extends BaseComputeServiceApiMetadata<Supplier, Supplier, ComputeServiceContext<Supplier, Supplier>, BYONApiMetadata> {
+public class BYONApiMetadata extends BaseApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -4059125995177393819L;
 
    @Override
    public Builder toBuilder() {
@@ -55,11 +58,7 @@ public class BYONApiMetadata extends BaseComputeServiceApiMetadata<Supplier, Sup
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      return BaseComputeServiceApiMetadata.Builder.defaultProperties();
-   }
-
-   public static class Builder extends BaseComputeServiceApiMetadata.Builder<Supplier, Supplier, ComputeServiceContext<Supplier, Supplier>, BYONApiMetadata> {
+   public static class Builder extends BaseApiMetadata.Builder {
 
       protected Builder() {
          id("byon")
@@ -71,9 +70,8 @@ public class BYONApiMetadata extends BaseComputeServiceApiMetadata<Supplier, Sup
          .documentation(URI.create("https://github.com/jclouds/jclouds/tree/master/apis/byon"))
          .version(String.format("%s.%s", JcloudsVersion.get().majorVersion, JcloudsVersion.get().minorVersion))
          .buildVersion(JcloudsVersion.get().toString())
-         .defaultProperties(BYONApiMetadata.defaultProperties())
-         .javaApi(Supplier.class, Supplier.class)
-         .contextBuilder(TypeToken.of(BYONComputeServiceContextBuilder.class));
+         .wrapper(ComputeServiceContext.class)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(YamlNodeStoreModule.class, BYONComputeServiceContextModule.class));
       }
 
       @Override
@@ -82,7 +80,7 @@ public class BYONApiMetadata extends BaseComputeServiceApiMetadata<Supplier, Sup
       }
 
       @Override
-      public Builder fromApiMetadata(BYONApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

@@ -32,9 +32,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
-import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -45,7 +42,7 @@ import com.google.common.base.Joiner;
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
+public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
    
    public static Builder builder() {
       return new Builder();
@@ -65,7 +62,7 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata<C
    }
    public static final String[] REGIONS = {ORD, DFW};
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
       properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(REGIONS));
@@ -81,7 +78,7 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata<C
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("cloudloadbalancers-us")
@@ -101,7 +98,7 @@ public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata<C
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

@@ -23,9 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.cloudservers.CloudServersAsyncClient;
-import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
@@ -41,9 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class CloudServersUSTemplateBuilderLiveTest
-      extends
-      BaseTemplateBuilderLiveTest<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>> {
+public class CloudServersUSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public CloudServersUSTemplateBuilderLiveTest() {
       provider = "cloudservers-us";

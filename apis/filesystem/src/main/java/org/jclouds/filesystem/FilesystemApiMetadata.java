@@ -18,27 +18,22 @@
  */
 package org.jclouds.filesystem;
 
-import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
-import static org.jclouds.Constants.PROPERTY_USER_THREADS;
-
 import java.net.URI;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.TypeToken;
+import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds Filesystem-based BlobStore
  * 
  * @author Adrian Cole
  */
-public class FilesystemApiMetadata
-      extends
-      BaseBlobStoreApiMetadata<BlobStore, FilesystemAsyncBlobStore, BlobStoreContext<BlobStore, FilesystemAsyncBlobStore>, FilesystemApiMetadata> {
+public class FilesystemApiMetadata extends BaseApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -2625620001657309404L;
 
    public static Builder builder() {
       return new Builder();
@@ -57,24 +52,19 @@ public class FilesystemApiMetadata
       super(builder);
    }
 
-public static class Builder extends
-   BaseBlobStoreApiMetadata.Builder<BlobStore, FilesystemAsyncBlobStore, BlobStoreContext<BlobStore, FilesystemAsyncBlobStore>, FilesystemApiMetadata> {
+   public static class Builder extends BaseApiMetadata.Builder {
 
       protected Builder() {
          id("filesystem")
          .name("Filesystem-based BlobStore")
          .identityName("Unused")
-         .contextBuilder(TypeToken.of(FilesystemBlobStoreContextBuilder.class))
-         .javaApi(BlobStore.class, FilesystemAsyncBlobStore.class)
-         .identityName("Unused")
          .defaultEndpoint("http://localhost/transient")
          .defaultIdentity(System.getProperty("user.name"))
          .defaultCredential("bar")
          .version("1")
-         .defaultProperties(
-               BaseBlobStoreApiMetadata.Builder.defaultPropertiesAnd(ImmutableMap.of(PROPERTY_USER_THREADS, "0",
-                     PROPERTY_IO_WORKER_THREADS, "0")))
-         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"));
+         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"))
+         .wrapper(BlobStoreContext.class)
+         .defaultModule(FilesystemBlobStoreContextModule.class);
       }
 
       @Override

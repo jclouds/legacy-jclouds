@@ -18,13 +18,6 @@
  */
 package org.jclouds.dunkel.vcd;
 
-import com.google.common.collect.ImmutableSet;
-
-import java.net.URI;
-import java.util.Set;
-
-import org.jclouds.providers.BaseProviderMetadata;
-import org.jclouds.providers.ProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Dunkel vCloud Director

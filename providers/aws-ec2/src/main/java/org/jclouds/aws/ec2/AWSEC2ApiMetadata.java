@@ -24,16 +24,30 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.aws.ec2.compute.config.AWSEC2ComputeServiceContextModule;
+import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.rest.RestContext;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for the Amazon-specific EC2 API
  * 
  * @author Adrian Cole
  */
-public class AWSEC2ApiMetadata extends EC2ApiMetadata<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext, AWSEC2ApiMetadata> {
+public class AWSEC2ApiMetadata extends EC2ApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -1492951757032303845L;
+   
+   public static final TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    private static Builder builder() {
       return new Builder();
    }
@@ -51,7 +65,7 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata<AWSEC2Client, AWSEC2AsyncC
       super(builder);
    }
    
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started.  
@@ -61,15 +75,15 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata<AWSEC2Client, AWSEC2AsyncC
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext, AWSEC2ApiMetadata> {
+   public static class Builder extends EC2ApiMetadata.Builder {
       protected Builder(){
          super(AWSEC2Client.class, AWSEC2AsyncClient.class);
          id("aws-ec2")
          .version(AWSEC2AsyncClient.VERSION)
          .name("Amazon-specific EC2 API")
-         .context(TypeToken.of(AWSEC2ComputeServiceContext.class))
+         .wrapper(AWSEC2ComputeServiceContext.class)
          .defaultProperties(AWSEC2ApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(AWSEC2ContextBuilder.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSEC2RestClientModule.class, EC2ResolveImagesModule.class, AWSEC2ComputeServiceContextModule.class));
       }
       
       @Override
@@ -78,7 +92,7 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata<AWSEC2Client, AWSEC2AsyncC
       }
 
       @Override
-      public Builder fromApiMetadata(AWSEC2ApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

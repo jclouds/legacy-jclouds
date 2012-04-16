@@ -38,7 +38,7 @@ public abstract class BaseGleSYSAsyncClientTest<T> extends BaseAsyncClientTest<T
    }
 
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
      return new GleSYSProviderMetadata();   
    }
 }

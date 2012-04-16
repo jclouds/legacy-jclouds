@@ -18,19 +18,22 @@
  */
 package org.jclouds.cloudwatch;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.internal.BaseRestApiMetadataTest;
+import org.jclouds.Wrapper;
+import org.jclouds.rest.internal.BaseRestApiMetadataTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @Test(groups = "unit", testName = "CloudWatchApiMetadataTest")
 public class CloudWatchApiMetadataTest extends BaseRestApiMetadataTest {
 
+   // no monitoring abstraction, yet
    public CloudWatchApiMetadataTest() {
-      super(new CloudWatchApiMetadata(), ApiType.MONITOR);
+      super(new CloudWatchApiMetadata(), ImmutableSet.<TypeToken<? extends Wrapper>> of());
    }
 }

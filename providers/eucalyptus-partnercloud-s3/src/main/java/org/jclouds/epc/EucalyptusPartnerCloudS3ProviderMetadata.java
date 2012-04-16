@@ -29,9 +29,6 @@ import java.util.Properties;
 
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
-import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3Client;
-import org.jclouds.s3.blobstore.S3BlobStoreContext;
 import org.jclouds.walrus.WalrusApiMetadata;
 
 /**
@@ -39,8 +36,11 @@ import org.jclouds.walrus.WalrusApiMetadata;
  * 
  * @author Adrian Cole
  */
-public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> {
+public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -58,7 +58,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_REGIONS, "Walrus");
       properties.setProperty(PROPERTY_ISO3166_CODES, "US-CA");
@@ -67,7 +67,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("eucalyptus-partnercloud-s3")
@@ -88,7 +88,7 @@ public class EucalyptusPartnerCloudS3ProviderMetadata extends BaseProviderMetada
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

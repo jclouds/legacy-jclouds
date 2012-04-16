@@ -44,9 +44,10 @@ See http://code.google.com/p/jclouds for details."
   (:use [org.jclouds.core])
   (:import [java.io File FileOutputStream OutputStream]
            java.util.Properties
+           [org.jclouds ContextBuilder]
            [org.jclouds.blobstore
             AsyncBlobStore domain.BlobBuilder BlobStore BlobStoreContext
-            BlobStoreContextBuilder domain.BlobMetadata domain.StorageMetadata
+            domain.BlobMetadata domain.StorageMetadata
             domain.Blob domain.internal.BlobBuilderImpl options.PutOptions
             options.PutOptions$Builder
             options.CreateContainerOptions options.ListContainerOptions]
@@ -112,12 +113,12 @@ Options can also be specified for extension modules
   (let [module-keys (set (keys module-lookup))
         ext-modules (filter #(module-keys %) options)
         opts (apply hash-map (filter #(not (module-keys %)) options))]
-    (let [context (.. (BlobStoreContextBuilder/newBuilder provider)
+    (let [context (.. (ContextBuilder/newBuilder provider)
                       (credentials provider-identity provider-credential)
                       (modules (apply modules (concat ext-modules (opts :extensions))))
                       (overrides (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
                         (Properties.) (dissoc opts :extensions)))
-                      (build))]
+                      (build BlobStoreContext))]
       (if (some #(= :async %) options)
         (.getAsyncBlobStore context)
         (.getBlobStore context)))))

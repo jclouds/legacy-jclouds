@@ -19,8 +19,6 @@
 package org.jclouds.aws.elb;
 
 import org.jclouds.elb.ELBApiMetadata;
-import org.jclouds.elb.ELBAsyncClient;
-import org.jclouds.elb.ELBClient;
 import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
@@ -33,6 +31,6 @@ import org.testng.annotations.Test;
 public class AWSELBProviderTest extends BaseProviderMetadataTest {
 
    public AWSELBProviderTest() {
-      super(new AWSELBProviderMetadata(), new ELBApiMetadata<ELBClient, ELBAsyncClient>());
+      super(new AWSELBProviderMetadata(), new ELBApiMetadata());
    }
 }

@@ -28,7 +28,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -38,7 +37,7 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  *
  * @author Adrian Cole
  */
-public class AWSEC2ProviderMetadata extends BaseProviderMetadata<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext, AWSEC2ApiMetadata> {
+public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
    
    public static Builder builder() {
       return new Builder();
@@ -57,7 +56,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata<AWSEC2Client, A
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       // sometimes, like in ec2, stop takes a very long time, perhaps
       // due to volume management. one example spent 2 minutes moving
@@ -77,7 +76,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata<AWSEC2Client, A
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext, AWSEC2ApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("aws-ec2")
@@ -98,7 +97,7 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata<AWSEC2Client, A
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext, AWSEC2ApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

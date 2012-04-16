@@ -16,19 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.stratogen.vcloud.mycloud.config;
+package org.jclouds.apis;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import java.io.Closeable;
+
+import org.jclouds.internal.BaseWrapper;
+import org.jclouds.location.Provider;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
- * 
- * @author Adrian Cole
+ * For tests
  */
-@RequiresHttp
-@ConfiguresRestClient
-public class StratoGenVCloudMyCloudRestClientModule extends VCloudRestClientModule {
+public class Compute extends BaseWrapper {
 
+   public Compute(@Provider Closeable ctx, @Provider TypeToken<? extends Closeable> inputType)  {
+      super(ctx, inputType);
+   }
 }

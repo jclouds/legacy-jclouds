@@ -18,13 +18,20 @@
  */
 package org.jclouds.carrenza.vcloud.director.config;
 
+import com.google.inject.AbstractModule;
+
 
 /**
  * per docs, we are to use pool mode.
  * 
  * @author danikov
  */
-public class CarrenzaVCloudDirectorComputeServiceContextModule { // FIXME: enable when compute serivce done
+public class CarrenzaVCloudDirectorComputeServiceContextModule extends AbstractModule {
+
+   @Override
+   protected void configure() {
+      
+   } // FIXME: enable when compute serivce done
 //extends VCloudDirectorComputeServiceContextModule {
 //
 //   @Override

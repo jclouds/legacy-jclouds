@@ -23,23 +23,19 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAU
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.VCloudApiMetadata;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Bluelock vCloud Zone 1.
  * 
  * @author Adrian Cole
  */
-public class BluelockVCloudZone01ProviderMetadata
-      extends
-      BaseProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+public class BluelockVCloudZone01ProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -2931858111365760610L;
 
    public static Builder builder() {
       return new Builder();
@@ -58,21 +54,19 @@ public class BluelockVCloudZone01ProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "internet01-.*");
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("bluelock-vcloud-zone01")
          .name("Bluelock vCloud Zone 1")
                .apiMetadata(
-                     new VCloudApiMetadata().toBuilder()
-                     .buildVersion("1.5.0.464915")
-                           .contextBuilder(TypeToken.of(BluelockVCloudZone01ContextBuilder.class)).build())
+                     new VCloudApiMetadata().toBuilder().buildVersion("1.5.0.464915").build())
          .homepage(URI.create("http://www.bluelock.com/bluelock-cloud-hosting"))
          .console(URI.create("https://zone01.bluelock.com/cloud/org/YOUR_ORG_HERE"))
          .iso3166Codes("US-IN")
@@ -86,8 +80,7 @@ public class BluelockVCloudZone01ProviderMetadata
       }
       
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

@@ -53,8 +53,8 @@ import org.jclouds.cloudstack.suppliers.GetCurrentUser;
 import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
 import org.jclouds.cloudstack.suppliers.ZoneIdToZoneSupplier;
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeTestUtils;
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
@@ -102,7 +102,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
          @Override
          protected void configure() {
             bindProperties(binder(), setupProperties());
-            bind(String.class).annotatedWith(Identity.class).toInstance(context.getProviderSpecificContext().getIdentity());
+            bind(String.class).annotatedWith(Identity.class).toInstance(identity);
             bind(new TypeLiteral<Supplier<User>>() {
             }).annotatedWith(Memoized.class).to(GetCurrentUser.class).in(Scopes.SINGLETON);
             bind(new TypeLiteral<Supplier<Map<Long, Network>>>() {

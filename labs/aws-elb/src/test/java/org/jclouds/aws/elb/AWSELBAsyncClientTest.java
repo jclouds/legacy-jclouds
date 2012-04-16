@@ -44,7 +44,7 @@ public class AWSELBAsyncClientTest extends ELBAsyncClientTest {
    }
    
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new AWSELBProviderMetadata();
    }
 

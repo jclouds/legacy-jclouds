@@ -34,7 +34,6 @@ import org.jclouds.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.elb.xml.DescribeLoadBalancersResponseHandler;
 import org.jclouds.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -155,7 +154,6 @@ public class ELBAsyncClientTest extends BaseAsyncClientTest<ELBAsyncClient> {
       };
    }
 
-   @RequiresHttp
    @ConfiguresRestClient
    private static final class TestELBRestClientModule extends ELBRestClientModule {
       @Override
@@ -176,8 +174,8 @@ public class ELBAsyncClientTest extends BaseAsyncClientTest<ELBAsyncClient> {
    }
    
    @Override
-   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
-      return new ELBApiMetadata<ELBClient, ELBAsyncClient>();
+   public ApiMetadata createApiMetadata() {
+      return new ELBApiMetadata();
    }
 
    @Override

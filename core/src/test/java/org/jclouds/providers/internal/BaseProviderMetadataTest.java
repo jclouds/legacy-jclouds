@@ -21,16 +21,16 @@ package org.jclouds.providers.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
+import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.Providers;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -38,22 +38,21 @@ import com.google.common.reflect.TypeToken;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 @Test(groups = "unit")
-@SuppressWarnings("rawtypes")
 public abstract class BaseProviderMetadataTest {
 
    private final ProviderMetadata toTest;
-   private final ApiType expectedType;
    private final ApiMetadata expectedApi;
+   private final Set<TypeToken<? extends Wrapper>> wrappers;
 
    public BaseProviderMetadataTest(ProviderMetadata toTest, ApiMetadata expectedApi) {
       this.toTest = checkNotNull(toTest, "toTest must be defined");
       this.expectedApi = checkNotNull(expectedApi, "expectedApi must be defined");
-      this.expectedType = expectedApi.getType();
+      this.wrappers = expectedApi.getWrappers();
    }
 
    @Test
    public void testWithId() {
-      ProviderMetadata<?, ?, ?, ?> providerMetadata = Providers.withId(toTest.getId());
+      ProviderMetadata providerMetadata = Providers.withId(toTest.getId());
 
       assertEquals(toTest, providerMetadata);
       assert providerMetadata.getLinkedServices().contains(toTest.getId());
@@ -63,27 +62,23 @@ public abstract class BaseProviderMetadataTest {
    public void testOfApiContains() {
       if (expectedApi == null)
          Logger.getAnonymousLogger().warning("please update your test class");
-      ImmutableSet<ProviderMetadata<?, ?, ?, ?>> ofApi = ImmutableSet.copyOf(Providers.apiMetadataAssignableFrom(TypeToken.of(expectedApi.getClass())));
+      ImmutableSet<ProviderMetadata> ofApi = ImmutableSet.copyOf(Providers.apiMetadataAssignableFrom(TypeToken.of(expectedApi.getClass())));
       assert ofApi.contains(toTest) : String.format("%s not found in %s", toTest, ofApi);
    }
 
-   // it is ok to have multiple services in the same classpath (ex. ec2 vs elb)
    @Test
-   public void testOfTypeContains() {
-      ImmutableSet<ProviderMetadata<?, ?, ?, ?>> ofType = ImmutableSet.copyOf(Providers.ofType(expectedType));
-      assert ofType.contains(toTest) : String.format("%s not found in %s", toTest, ofType);
+   public void testTransformableToContains() {
+      for (TypeToken<? extends Wrapper> wrapper : wrappers) {
+         ImmutableSet<ProviderMetadata> ofType = ImmutableSet.copyOf(Providers.contextWrappableAs(wrapper));
+         assert ofType.contains(toTest) : String.format("%s not found in %s for %s", toTest, ofType,
+                  wrapper);
+      }
    }
 
    @Test
    public void testAllContains() {
-      ImmutableSet<ProviderMetadata<?, ?, ?, ?>> all = ImmutableSet.copyOf(Providers.all());
+      ImmutableSet<ProviderMetadata> all = ImmutableSet.copyOf(Providers.all());
       assert all.contains(toTest) : String.format("%s not found in %s", toTest, all);
    }
 
-   @Test
-   @Deprecated
-   public void testInRestProperties() {
-      Iterable<String> providers = org.jclouds.rest.Providers.getSupportedProviders();
-      assert Iterables.contains(providers, toTest.getId()) : providers;
-   }
 }

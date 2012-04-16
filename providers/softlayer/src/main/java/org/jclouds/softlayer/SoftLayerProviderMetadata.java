@@ -28,7 +28,6 @@ import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLA
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -39,9 +38,10 @@ import com.google.common.collect.ImmutableSet;
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for SoftLayer.
  * @author Adrian Cole
  */
-public class SoftLayerProviderMetadata
-      extends
-      BaseProviderMetadata<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> {
+public class SoftLayerProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 2196535609684739834L;
 
    public static Builder builder() {
       return new Builder();
@@ -60,7 +60,7 @@ public class SoftLayerProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY, "" + 60 * 60 * 1000);
       properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME, "Cloud Server");
@@ -87,9 +87,7 @@ public class SoftLayerProviderMetadata
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseProviderMetadata.Builder<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("softlayer")
@@ -108,8 +106,7 @@ public class SoftLayerProviderMetadata
       }
 
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>, SoftLayerApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

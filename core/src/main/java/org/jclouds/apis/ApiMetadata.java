@@ -19,16 +19,18 @@
 package org.jclouds.apis;
 
 import java.io.Closeable;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Properties;
+import java.util.Set;
 
+import org.jclouds.Wrapper;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.rest.internal.ContextBuilder;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.reflect.TypeToken;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.Module;
 
 /**
  * The ApiMetadata interface allows jclouds to provide a plugin framework for
@@ -38,94 +40,109 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @since 1.5
  */
 @Beta
-public interface ApiMetadata<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> {
+public interface ApiMetadata extends Serializable {
 
-   public static interface Builder<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> {
+   public static interface Builder {
       /**
        * @see ApiMetadata#getId()
        */
-      Builder<S, A, C, M> id(String id);
+      Builder id(String id);
 
       /**
        * @see ApiMetadata#getName()
        */
-      Builder<S, A, C, M> name(String name);
+      Builder name(String name);
 
       /**
-       * @see ApiMetadata#getType()
+       * @see ApiMetadata#getContext()
        */
-      Builder<S, A, C, M> type(ApiType type);
+      Builder context(TypeToken<? extends Closeable> context);
+
+      /**
+       * @see ApiMetadata#getWrappers()
+       */
+      Builder wrapper(Class<? extends Wrapper> wrapper);
       
+      /**
+       * @see ApiMetadata#getWrappers()
+       */
+      Builder wrapper(TypeToken<? extends Wrapper> wrapper);
+
+      /**
+       * @see ApiMetadata#getWrappers()
+       */
+      Builder wrappers(Set<TypeToken<? extends Wrapper>> wrappers);
+
       /**
        * @see ApiMetadata#getEndpointName()
        */
-      Builder<S, A, C, M> endpointName(String endpointName);
+      Builder endpointName(String endpointName);
 
       /**
        * @see ApiMetadata#getIdentityName()
        */
-      Builder<S, A, C, M> identityName(String identityName);
+      Builder identityName(String identityName);
 
       /**
        * @see ApiMetadata#getCredentialName()
        */
-      Builder<S, A, C, M> credentialName(@Nullable String credentialName);
+      Builder credentialName(@Nullable String credentialName);
 
       /**
        * @see ApiMetadata#getVersion()
        */
-      Builder<S, A, C, M> version(String version);
+      Builder version(String version);
 
       /**
        * @see ApiMetadata#getBuildVersion()
        */
-      Builder<S, A, C, M> buildVersion(@Nullable String buildVersion);
+      Builder buildVersion(@Nullable String buildVersion);
 
       /**
        * @see ApiMetadata#getDefaultEndpoint()
        */
-      Builder<S, A, C, M> defaultEndpoint(@Nullable String defaultEndpoint);
+      Builder defaultEndpoint(@Nullable String defaultEndpoint);
 
       /**
        * @see ApiMetadata#getDefaultIdentity()
        */
-      Builder<S, A, C, M> defaultIdentity(@Nullable String defaultIdentity);
+      Builder defaultIdentity(@Nullable String defaultIdentity);
 
       /**
        * @see ApiMetadata#getDefaultCredential()
        */
-      Builder<S, A, C, M> defaultCredential(@Nullable String defaultCredential);
+      Builder defaultCredential(@Nullable String defaultCredential);
 
       /**
        * @see ApiMetadata#getDefaultProperties()
        */
-      Builder<S, A, C, M> defaultProperties(Properties defaultProperties);
+      Builder defaultProperties(Properties defaultProperties);
+      
+      /**
+       * @see ApiMetadata#getDefaultModules()
+       */
+      Builder defaultModule(Class<? extends Module> defaultModule);
 
       /**
-       * @see ApiMetadata#getApi()
-       * @see ApiMetadata#getAsyncApi()
+       * @see ApiMetadata#getDefaultModules()
        */
-      Builder<S, A, C, M> javaApi(Class<S> api, Class<A> asyncApi);
-
+      Builder defaultModules(Set<Class<? extends Module>> defaultModules);
+      
       /**
        * @see ApiMetadata#getDocumentation()
        */
-      Builder<S, A, C, M> documentation(URI documentation);
+      Builder documentation(URI documentation);
 
-      M build();
+      ApiMetadata build();
 
-      Builder<S, A, C, M> fromApiMetadata(M from);
-      
-      Builder<S, A, C, M> context(TypeToken<C> context);
-
-      Builder<S, A, C, M> contextBuilder(TypeToken<? extends ContextBuilder<S, A, C, M>> contextBuilder);      
+      Builder fromApiMetadata(ApiMetadata from);
       
    }
 
    /**
     * @see Builder
     */
-   Builder<S, A, C, ? extends ApiMetadata<S, A, C, M>> toBuilder();
+   Builder toBuilder();
 
    /**
     * 
@@ -138,12 +155,6 @@ public interface ApiMetadata<S, A, C extends Closeable, M extends ApiMetadata<S,
     * @return the name (display name) of the api (ex. EC2 Base API)
     */
    String getName();
-
-   /**
-    * 
-    * @return the api's type (ex. COMPUTE or MONITOR)
-    */
-   ApiType getType();
 
    /**
     * 
@@ -236,27 +247,26 @@ public interface ApiMetadata<S, A, C extends Closeable, M extends ApiMetadata<S,
    Properties getDefaultProperties();
 
    /**
+    * Modules that configure dependency injection for this context
+    * 
+    * @return modules that configure dependency injection for this context
+    */
+   Set<Class<? extends Module>> getDefaultModules();
+   
+   /**
     * 
     * @return the url for the API documentation related to this service
     */
    URI getDocumentation();
 
    /**
-    * 
-    * @return the type of the api which blocks on all requests
+    * @return the primary context of this api, for example {@code RestContext<EC2Client, EC2AsyncClient>}
     */
-   Class<S> getApi();
-
+   TypeToken<? extends Closeable> getContext();
+   
    /**
-    * 
-    * @return the type of the api, which is the same as {@link #getApi}, except
-    *         all methods return {@link ListenableFuture}
+    * @return types of contexts this can be transformed into, for example {@code BlobStoreContext}
     */
-   Class<A> getAsyncApi();
-
-   TypeToken<C> getContext();
-
-   // internal use
-   TypeToken<? extends ContextBuilder<S, A, C, M>> getContextBuilder();
+   Set<TypeToken<? extends Wrapper>> getWrappers();
 
 }

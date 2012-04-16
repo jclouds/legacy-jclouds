@@ -29,7 +29,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.net.IPSocket;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.domain.Org;
@@ -109,8 +109,8 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
          options.as(VCloudTemplateOptions.class).description(group);
          node = getOnlyElement(client.createNodesInGroup(group, 1, options));
 
-         VApp vapp = ((VCloudClient) client.getContext().getProviderSpecificContext().getApi()).getVAppClient()
-                  .getVApp(node.getUri());
+         VApp vapp = client.getContext().unwrap(VCloudApiMetadata.CONTEXT_TOKEN).getApi().getVAppClient().getVApp(
+                  node.getUri());
          assertEquals(vapp.getDescription(), group);
 
          Vm vm = Iterables.get(vapp.getChildren(), 0);

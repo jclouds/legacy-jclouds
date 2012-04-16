@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.rest.internal;
+package org.jclouds.apis;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.jclouds.Constants;
+import org.jclouds.ContextBuilder;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.Apis;
 import org.jclouds.logging.LoggingModules;
@@ -37,6 +38,7 @@ import org.testng.annotations.BeforeClass;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Closeables;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -96,10 +98,9 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
    /**
     * @see org.jclouds.providers.Providers#withId
     */
-   @SuppressWarnings("unchecked")
-   protected ProviderMetadata<?, ?, C, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       try {
-         return (ProviderMetadata<?, ?, C, ?>) Providers.withId(provider);
+         return Providers.withId(provider);
       } catch (NoSuchElementException e) {
          return null;
       }
@@ -108,24 +109,24 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
    /**
     * @see org.jclouds.apis.Apis#withId
     */
-   @SuppressWarnings("unchecked")
-   protected ApiMetadata<?, ?, C, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       try {
-         return (ApiMetadata<?, ?, C, ?>) Apis.withId(provider);
+         return (ApiMetadata) Apis.withId(provider);
       } catch (NoSuchElementException e) {
          return null;
       }
    }
    
+   protected abstract TypeToken<C> contextType();
+   
    protected C createContext(Properties props, Iterable<Module> modules) {
-      return newBuilder().modules(modules).overrides(props).build();
+      return newBuilder().modules(modules).overrides(props).build(contextType());
    }
 
-   @SuppressWarnings("unchecked")
-   protected ContextBuilder<?, ?, C, ?> newBuilder() {
+   protected ContextBuilder newBuilder() {
       if (provider != null)
          try {
-            return (ContextBuilder<?, ?, C, ?>) ContextBuilder.newBuilder(provider);
+            return (ContextBuilder) ContextBuilder.newBuilder(provider);
          } catch (NoSuchElementException e){
             Logger.getAnonymousLogger()
                   .warning("provider ["
@@ -133,9 +134,9 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
                         + "] is not setup as META-INF/services/org.jclouds.apis.ApiMetadata or META-INF/services/org.jclouds.providers.ProviderMetadata");
          }
 
-      ProviderMetadata<?, ?, C, ?> pm = createProviderMetadata();
+      ProviderMetadata pm = createProviderMetadata();
 
-      ContextBuilder<?, ?, C, ?> builder = pm != null ? ContextBuilder.newBuilder(pm) : ContextBuilder
+      ContextBuilder builder = pm != null ? ContextBuilder.newBuilder(pm) : ContextBuilder
             .newBuilder(ApiMetadata.class.cast(checkNotNull(createApiMetadata(),
                   "either createApiMetadata or createProviderMetadata must be overridden")));
       return builder;

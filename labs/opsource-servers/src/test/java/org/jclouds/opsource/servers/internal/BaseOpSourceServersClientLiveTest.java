@@ -18,24 +18,24 @@
  */
 package org.jclouds.opsource.servers.internal;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.opsource.servers.OpSourceServersApiMetadata;
 import org.jclouds.opsource.servers.OpSourceServersAsyncClient;
 import org.jclouds.opsource.servers.OpSourceServersClient;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.reflect.TypeToken;
+
 /**
- * Tests behavior of {@link OpSourceServersClient} and acts as parent for other
- * client live tests.
+ * Tests behavior of {@link OpSourceServersClient} and acts as parent for other client live tests.
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public abstract class BaseOpSourceServersClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<OpSourceServersClient, OpSourceServersAsyncClient, ComputeServiceContext<OpSourceServersClient, OpSourceServersAsyncClient>> {
+public abstract class BaseOpSourceServersClientLiveTest extends
+         BaseContextLiveTest<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>> {
 
    protected BaseOpSourceServersClientLiveTest() {
       provider = "opsource-servers";
@@ -47,7 +47,12 @@ public abstract class BaseOpSourceServersClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      restContext = context.getProviderSpecificContext();
+      restContext = context;
+   }
+   
+   @Override
+   protected TypeToken<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>> contextType() {
+      return OpSourceServersApiMetadata.CONTEXT_TOKEN;
    }
 
 }

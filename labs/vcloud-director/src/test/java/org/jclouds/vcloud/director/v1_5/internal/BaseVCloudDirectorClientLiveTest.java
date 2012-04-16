@@ -35,13 +35,13 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.Constants;
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.date.DateService;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -49,8 +49,6 @@ import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
-import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -58,6 +56,8 @@ import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
+import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
@@ -90,6 +90,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.io.Closeables;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 
 /**
@@ -492,4 +493,10 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
    public static String name(String prefix) {
       return prefix + Integer.toString(random.nextInt(Integer.MAX_VALUE));
    }
+
+   @Override
+   protected TypeToken<VCloudDirectorContext> contextType() {
+      return VCloudDirectorApiMetadata.CONTEXT_TOKEN;
+   }
+
 }

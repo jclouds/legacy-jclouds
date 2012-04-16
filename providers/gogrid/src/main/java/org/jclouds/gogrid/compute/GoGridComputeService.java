@@ -62,7 +62,7 @@ import com.google.common.base.Supplier;
 @Singleton
 public class GoGridComputeService extends BaseComputeService {
    @Inject
-   protected GoGridComputeService(@SuppressWarnings("rawtypes") ComputeServiceContext context, Map<String, Credentials> credentialStore,
+   protected GoGridComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
          @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
          @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
          GetNodeMetadataStrategy getNodeMetadataStrategy, CreateNodesInGroupThenAddToSet runNodesAndAddToSetStrategy,

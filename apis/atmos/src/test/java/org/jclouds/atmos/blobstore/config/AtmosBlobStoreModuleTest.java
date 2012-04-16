@@ -20,10 +20,10 @@ package org.jclouds.atmos.blobstore.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.atmos.AtmosApiMetadata;
 import org.jclouds.atmos.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.logging.config.NullLoggingModule;
@@ -41,7 +41,7 @@ import com.google.inject.Module;
 public class AtmosBlobStoreModuleTest {
 
    Injector createInjector() {
-      return BlobStoreContextBuilder
+      return ContextBuilder
             .newBuilder(new AtmosApiMetadata())
             .credentials("uid", "key")
             .modules(
@@ -53,7 +53,7 @@ public class AtmosBlobStoreModuleTest {
    void testContextImpl() {
 
       Injector injector = createInjector();
-      BlobStoreContext<?, ?> handler = injector.getInstance(BlobStoreContext.class);
+      BlobStoreContext handler = injector.getInstance(BlobStoreContext.class);
       assertEquals(handler.getClass(), BlobStoreContextImpl.class);
       ContainsValueInListStrategy valueList = injector
                .getInstance(ContainsValueInListStrategy.class);

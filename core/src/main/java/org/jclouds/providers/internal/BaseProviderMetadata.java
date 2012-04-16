@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 
-import java.io.Closeable;
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
@@ -33,32 +32,32 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.providers.ProviderMetadata;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * The BaseProviderMetadata class is an abstraction of {@link ProviderMetadata}
- * to be extended by those implementing ProviderMetadata.
+ * The BaseProviderMetadata class is an abstraction of {@link ProviderMetadata} to be extended by
+ * those implementing ProviderMetadata.
  * 
- * (Note: This class must be abstract to allow {@link java.util.ServiceLoader}
- * to work properly.
+ * (Note: This class must be abstract to allow {@link java.util.ServiceLoader} to work properly.
  * 
  * @author Adrian Cole
  */
-public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>>
-      implements ProviderMetadata<S, A, C, M> {
+public abstract class BaseProviderMetadata implements ProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -6647397371073751922L;
 
    @Override
-   public ProviderMetadata.Builder<S, A, C, M> toBuilder() {
-      return new BaseProviderMetadata.Builder<S, A, C, M>().fromProviderMetadata(this);
+   public ProviderMetadata.Builder toBuilder() {
+      return new BaseProviderMetadata.Builder().fromProviderMetadata(this);
    }
 
-   public static class Builder<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> implements
-         ProviderMetadata.Builder<S, A, C, M> {
+   public static class Builder implements ProviderMetadata.Builder {
       protected String id;
       protected String name;
-      protected M api;
+      protected ApiMetadata api;
       protected String endpoint;
       protected Properties defaultProperties = new Properties();
       protected URI console;
@@ -70,7 +69,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> id(String id) {
+      public Builder id(String id) {
          this.id = checkNotNull(id, "id");
          return linkedService(id);
       }
@@ -79,7 +78,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> name(String name) {
+      public Builder name(String name) {
          this.name = checkNotNull(name, "name");
          return this;
       }
@@ -88,7 +87,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> apiMetadata(M api) {
+      public Builder apiMetadata(ApiMetadata api) {
          this.api = checkNotNull(api, "api");
          if (this.endpoint == null)
             this.endpoint = api.getDefaultEndpoint().orNull();
@@ -99,7 +98,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> endpoint(String endpoint) {
+      public Builder endpoint(String endpoint) {
          this.endpoint = checkNotNull(endpoint, "endpoint");
          return this;
       }
@@ -108,7 +107,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> defaultProperties(Properties defaultProperties) {
+      public Builder defaultProperties(Properties defaultProperties) {
          this.defaultProperties = checkNotNull(defaultProperties, "defaultProperties");
          return this;
       }
@@ -117,7 +116,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> console(@Nullable URI console) {
+      public Builder console(@Nullable URI console) {
          this.console = console;
          return this;
       }
@@ -126,7 +125,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> homepage(URI homepage) {
+      public Builder homepage(URI homepage) {
          this.homepage = homepage;
          return this;
       }
@@ -135,7 +134,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> linkedServices(Iterable<String> linkedServices) {
+      public Builder linkedServices(Iterable<String> linkedServices) {
          addAll(this.linkedServices, checkNotNull(linkedServices, "linkedServices"));
          return this;
       }
@@ -144,7 +143,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> linkedServices(String... linkedServices) {
+      public Builder linkedServices(String... linkedServices) {
          return linkedServices(ImmutableSet.copyOf(checkNotNull(linkedServices, "linkedServices")));
       }
 
@@ -152,7 +151,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> linkedService(String linkedService) {
+      public Builder linkedService(String linkedService) {
          this.linkedServices.add(checkNotNull(linkedService, "linkedService"));
          return this;
       }
@@ -161,7 +160,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> iso3166Codes(Iterable<String> iso3166Codes) {
+      public Builder iso3166Codes(Iterable<String> iso3166Codes) {
          addAll(this.iso3166Codes, checkNotNull(iso3166Codes, "iso3166Codes"));
          return this;
       }
@@ -170,7 +169,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> iso3166Codes(String... iso3166Codes) {
+      public Builder iso3166Codes(String... iso3166Codes) {
          return iso3166Codes(ImmutableSet.copyOf(checkNotNull(iso3166Codes, "iso3166Codes")));
       }
 
@@ -178,7 +177,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> iso3166Code(String iso3166Code) {
+      public Builder iso3166Code(String iso3166Code) {
          this.iso3166Codes.add(checkNotNull(iso3166Code, "iso3166Code"));
          return this;
       }
@@ -187,22 +186,25 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> fromProviderMetadata(ProviderMetadata<S, A, C, M> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          return id(in.getId()).name(in.getName()).apiMetadata(in.getApiMetadata()).endpoint(in.getEndpoint())
-               .defaultProperties(in.getDefaultProperties()).console(in.getConsole().orNull())
-               .homepage(in.getHomepage().orNull()).linkedServices(in.getLinkedServices())
-               .iso3166Codes(in.getIso3166Codes());
+                  .defaultProperties(in.getDefaultProperties()).console(in.getConsole().orNull()).homepage(
+                           in.getHomepage().orNull()).linkedServices(in.getLinkedServices()).iso3166Codes(
+                           in.getIso3166Codes());
       }
 
       @Override
-      public ProviderMetadata<S, A, C, M> build() {
-         return new BaseProviderMetadata<S, A, C, M>(this){};
+      public ProviderMetadata build() {
+         return new BaseProviderMetadata(this) {
+            /** The serialVersionUID */
+            private static final long serialVersionUID = 562451792167711326L;
+         };
       }
    }
 
    protected final String id;
    protected final String name;
-   protected final M api;
+   protected final ApiMetadata api;
    protected final String endpoint;
    protected final Properties defaultProperties;
    protected final Optional<URI> homepage;
@@ -210,14 +212,14 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
    protected final Set<String> linkedServices;
    protected final Set<String> iso3166Codes;
 
-   public BaseProviderMetadata(Builder<S, A, C, M> builder) {
+   public BaseProviderMetadata(Builder builder) {
       this(builder.id, builder.name, builder.api, builder.endpoint, builder.defaultProperties, Optional
-            .fromNullable(builder.homepage), Optional.fromNullable(builder.console), builder.linkedServices,
-            builder.iso3166Codes);
+               .fromNullable(builder.homepage), Optional.fromNullable(builder.console), builder.linkedServices,
+               builder.iso3166Codes);
    }
 
-   public BaseProviderMetadata(String id, String name, M api, String endpoint, Properties defaultProperties,
-         Optional<URI> homepage, Optional<URI> console, Set<String> linkedServices, Set<String> iso3166Codes) {
+   public BaseProviderMetadata(String id, String name, ApiMetadata api, String endpoint, Properties defaultProperties,
+            Optional<URI> homepage, Optional<URI> console, Set<String> linkedServices, Set<String> iso3166Codes) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.api = checkNotNull(api, "api");
@@ -237,9 +239,9 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
       // we'll get things from
       if (o == null || !(o instanceof ProviderMetadata))
          return false;
-      ProviderMetadata<?, ?, ?, ?> that = ProviderMetadata.class.cast(o);
+      ProviderMetadata that = ProviderMetadata.class.cast(o);
       return equal(this.getId(), that.getId()) && equal(this.getName(), that.getName())
-            && equal(this.getApiMetadata(), that.getApiMetadata()) && equal(this.getEndpoint(), that.getEndpoint());
+               && equal(this.getApiMetadata(), that.getApiMetadata()) && equal(this.getEndpoint(), that.getEndpoint());
    }
 
    @Override
@@ -253,9 +255,9 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
    }
 
    public ToStringHelper string() {
-      return Objects.toStringHelper("").add("id", getId()).add("name", getName()).add("api", getApiMetadata())
-            .add("endpoint", getEndpoint()).add("console", getConsole()).add("homepage", getHomepage())
-            .add("linkedServices", getLinkedServices()).add("iso3166Codes", getIso3166Codes());
+      return Objects.toStringHelper("").add("id", getId()).add("name", getName()).add("api", getApiMetadata()).add(
+               "endpoint", getEndpoint()).add("console", getConsole()).add("homepage", getHomepage()).add(
+               "linkedServices", getLinkedServices()).add("iso3166Codes", getIso3166Codes());
    }
 
    /**
@@ -278,7 +280,7 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
     * {@inheritDoc}
     */
    @Override
-   public M getApiMetadata() {
+   public ApiMetadata getApiMetadata() {
       return api;
    }
 
@@ -329,6 +331,5 @@ public abstract class BaseProviderMetadata<S, A, C extends Closeable, M extends 
    public Set<String> getIso3166Codes() {
       return iso3166Codes;
    }
-
 
 }

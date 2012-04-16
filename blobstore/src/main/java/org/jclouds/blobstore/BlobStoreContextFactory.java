@@ -21,11 +21,11 @@ package org.jclouds.blobstore;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.apis.Apis;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.Providers;
-import org.jclouds.rest.internal.ContextBuilder;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -54,21 +54,21 @@ public class BlobStoreContextFactory {
    /**
     * @see #createContext(String, String,String, Iterable, Properties)
     */
-   public BlobStoreContext<?, ?> createContext(String providerOrApi, String identity, String credential) {
+   public BlobStoreContext createContext(String providerOrApi, String identity, String credential) {
       return createContext(providerOrApi, identity, credential, ImmutableSet.<Module> of(), new Properties());
    }
 
    /**
     * @see #createContext(String, String, String, Iterable, Properties)
     */
-   public BlobStoreContext<?, ?> createContext(String providerOrApi, Properties overrides) {
+   public BlobStoreContext createContext(String providerOrApi, Properties overrides) {
       return createContext(providerOrApi, null, null, ImmutableSet.<Module> of(), overrides);
    }
 
    /**
     * @see #createContext(String, String,String, Iterable, Properties)
     */
-   public BlobStoreContext<?, ?> createContext(String providerOrApi, Iterable<? extends Module> wiring,
+   public BlobStoreContext createContext(String providerOrApi, Iterable<? extends Module> wiring,
          Properties overrides) {
       return createContext(providerOrApi, null, null, wiring, overrides);
    }
@@ -76,7 +76,7 @@ public class BlobStoreContextFactory {
    /**
     * @see #createContext(String, String,String, Iterable, Properties)
     */
-   public BlobStoreContext<?, ?> createContext(String providerOrApi, @Nullable String identity,
+   public BlobStoreContext createContext(String providerOrApi, @Nullable String identity,
          @Nullable String credential, Properties overrides) {
       return createContext(providerOrApi, identity, credential, ImmutableSet.<Module> of(), overrides);
    }
@@ -84,7 +84,7 @@ public class BlobStoreContextFactory {
    /**
     * @see createContext(String, String,String, Iterable, Properties)
     */
-   public BlobStoreContext<?, ?> createContext(String providerOrApi, @Nullable String identity,
+   public BlobStoreContext createContext(String providerOrApi, @Nullable String identity,
          @Nullable String credential, Iterable<? extends Module> wiring) {
       return createContext(providerOrApi, identity, credential, wiring, new Properties());
    }
@@ -104,28 +104,20 @@ public class BlobStoreContextFactory {
     *           properties to override defaults with.
     * @return initialized context ready for use
     */
-   @SuppressWarnings("unchecked")
-   public BlobStoreContext<?, ?> createContext(String providerOrApi, @Nullable String identity,
+   public BlobStoreContext createContext(String providerOrApi, @Nullable String identity,
          @Nullable String credential, Iterable<? extends Module> wiring, Properties overrides) {
-      ContextBuilder<?, ?, ?, ?> builder = null;
+      ContextBuilder builder = null;
       try {
-         ProviderMetadata<?, ?, ?, ?> pm = Providers.withId(providerOrApi);
-         builder = BlobStoreContextBuilder.newBuilder(pm);
+         ProviderMetadata pm = Providers.withId(providerOrApi);
+         builder = ContextBuilder.newBuilder(pm);
       } catch (NoSuchElementException e) {
          builder = ContextBuilder.newBuilder(Apis.withId(providerOrApi));
       }
-      builder.modules(Iterable.class.cast(wiring));
+      builder.modules(wiring);
       builder.overrides(overrides);
       if (identity != null)
          builder.credentials(identity, credential);
-      Object context = builder.build();
-      if (context instanceof BlobStoreContext) {
-         return BlobStoreContext.class.cast(context);
-      } else {
-         throw new IllegalArgumentException("provider " + providerOrApi + " contains an unknown context type: "
-               + context.getClass().getSimpleName());
-      }
-
+      return builder.build(BlobStoreContext.class);
    }
 
 }

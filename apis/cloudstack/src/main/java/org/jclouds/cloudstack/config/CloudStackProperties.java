@@ -18,7 +18,6 @@
  */
 package org.jclouds.cloudstack.config;
 
-import org.jclouds.compute.ComputeServiceContextBuilder;
 
 /**
  * Configuration properties and constants used in CloudStack connections.

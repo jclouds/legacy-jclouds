@@ -23,23 +23,24 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAU
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.stratogen.vcloud.mycloud.config.StratoGenVCloudMyCloudComputeServiceContextModule;
 import org.jclouds.vcloud.VCloudApiMetadata;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
 
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for StratoGen VMware hosting
  * 
  * @author Adrian Cole
  */
-public class StratoGenVCloudMyCloudProviderMetadata
-      extends
-      BaseProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+public class StratoGenVCloudMyCloudProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -113107768473491412L;
 
    public static Builder builder() {
       return new Builder();
@@ -58,13 +59,13 @@ public class StratoGenVCloudMyCloudProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "Direct Internet");
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("stratogen-vcloud-mycloud")
@@ -72,7 +73,8 @@ public class StratoGenVCloudMyCloudProviderMetadata
                .apiMetadata(
                      new VCloudApiMetadata().toBuilder()
                      .buildVersion("1.5.0.464915")
-                           .contextBuilder(TypeToken.of(StratoGenVCloudMyCloudContextBuilder.class)).build())
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, StratoGenVCloudMyCloudComputeServiceContextModule.class))
+                     .build())
          .homepage(URI.create("http://www.stratogen.net"))
          .console(URI.create("https://mycloud.stratogen.net/cloud/org/YOUR_ORG_HERE"))
          .iso3166Codes("GB")
@@ -87,7 +89,7 @@ public class StratoGenVCloudMyCloudProviderMetadata
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

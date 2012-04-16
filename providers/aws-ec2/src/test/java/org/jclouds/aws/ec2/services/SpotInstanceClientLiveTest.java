@@ -31,9 +31,8 @@ import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.Spot;
@@ -55,7 +54,7 @@ import com.google.common.collect.ImmutableSortedSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class SpotInstanceClientLiveTest  extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class SpotInstanceClientLiveTest  extends BaseComputeServiceContextLiveTest {
    public SpotInstanceClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -71,7 +70,7 @@ public class SpotInstanceClientLiveTest  extends BaseComputeServiceContextLiveTe
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
       activeTester = new RetryablePredicate<SpotInstanceRequest>(new SpotInstanceRequestActive(client),
                SPOT_DELAY_SECONDS, 1, 1, TimeUnit.SECONDS);
    }

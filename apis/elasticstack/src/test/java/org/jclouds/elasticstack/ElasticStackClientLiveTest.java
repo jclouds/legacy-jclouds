@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
@@ -71,7 +70,7 @@ import com.google.inject.Guice;
 @Test(groups = "live", singleThreaded = true, testName = "ElasticStackClientLiveTest")
 public class ElasticStackClientLiveTest
       extends
-      BaseComputeServiceContextLiveTest<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>> {
+      BaseComputeServiceContextLiveTest {
    
    public ElasticStackClientLiveTest() {
       provider = "elasticstack";
@@ -89,7 +88,7 @@ public class ElasticStackClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      cloudStackContext = context.getProviderSpecificContext();
+      cloudStackContext = context.unwrap();
          
       client = cloudStackContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,

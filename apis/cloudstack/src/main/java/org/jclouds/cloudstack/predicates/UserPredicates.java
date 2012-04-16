@@ -21,8 +21,8 @@ package org.jclouds.cloudstack.predicates;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.cloudstack.domain.Account;
-import org.jclouds.cloudstack.domain.Account.Type;
 import org.jclouds.cloudstack.domain.User;
+import org.jclouds.cloudstack.domain.Account.Type;
 
 import com.google.common.base.Predicate;
 

@@ -26,23 +26,24 @@ import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERAT
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.hpcloud.compute.config.HPCloudComputeServiceContextModule;
 import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
-import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for HP Cloud Compute Services.
  * 
  * @author Adrian Cole
  */
-public class HPCloudComputeProviderMetadata
-      extends
-      BaseProviderMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> {
+public class HPCloudComputeProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -300987074165012648L;
 
    public static Builder builder() {
       return new Builder();
@@ -61,7 +62,7 @@ public class HPCloudComputeProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       // deallocating ip addresses can take a while
       properties.setProperty(TIMEOUT_NODE_TERMINATED, 60 * 1000 + "");
@@ -72,14 +73,16 @@ public class HPCloudComputeProviderMetadata
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("hpcloud-compute")
          .name("HP Cloud Compute Services")
-         .apiMetadata(new NovaApiMetadata().toBuilder().identityName("tenantId:accessKey")
-               .credentialName("secretKey")
-                           .contextBuilder(TypeToken.of(HPCloudComputeContextBuilder.class)).build())
+         .apiMetadata(new NovaApiMetadata().toBuilder()
+                  .identityName("tenantId:accessKey")
+                  .credentialName("secretKey")
+                  .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, HPCloudComputeServiceContextModule.class))
+                  .build())
          .homepage(URI.create("http://hpcloud.com"))
          .console(URI.create("https://manage.hpcloud.com/compute"))
          .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
@@ -92,10 +95,9 @@ public class HPCloudComputeProviderMetadata
       public HPCloudComputeProviderMetadata build() {
          return new HPCloudComputeProviderMetadata(this);
       }
-      
+
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

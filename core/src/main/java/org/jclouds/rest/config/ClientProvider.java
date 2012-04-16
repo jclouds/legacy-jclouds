@@ -47,12 +47,12 @@ import com.google.inject.name.Names;
 public class ClientProvider<S, A> implements Provider<S> {
    @Inject
    Injector injector;
-   private final Class<S> syncClientType;
-   private final Class<A> asyncClientType;
+   private final Class<?> syncClientType;
+   private final Class<?> asyncClientType;
    private final Map<Class<?>, Class<?>> sync2Async;
 
    @Inject
-   ClientProvider(Class<S> syncClientType, Class<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
+   ClientProvider(Class<?> syncClientType, Class<?> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
       this.asyncClientType = asyncClientType;
       this.syncClientType = syncClientType;
       this.sync2Async = sync2Async;

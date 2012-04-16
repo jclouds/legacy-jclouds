@@ -27,14 +27,16 @@ import java.util.Properties;
 
 import org.jclouds.Constants;
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Tests behavior of {@code SessionClient}. Note this class is tested completely independently of
@@ -103,7 +105,15 @@ public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<Sessi
    }
    
    @Override
-   protected ApiMetadata<?, ?, RestContext<SessionClient, SessionAsyncClient>, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return AnonymousRestApiMetadata.forClientMappedToAsyncClient(SessionClient.class, SessionAsyncClient.class);
+   }
+
+   @Override
+   protected TypeToken<RestContext<SessionClient, SessionAsyncClient>> contextType() {
+      return new TypeToken<RestContext<SessionClient, SessionAsyncClient>>(){
+
+         /** The serialVersionUID */
+         private static final long serialVersionUID = -3625362618882122604L;};
    }
 }

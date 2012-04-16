@@ -18,9 +18,6 @@
  */
 package org.jclouds.cloudsigma.compute;
 
-import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
-import org.jclouds.cloudsigma.CloudSigmaClient;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
@@ -34,9 +31,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class CloudSigmaComputeServiceLiveTest
-      extends
-      BaseComputeServiceLiveTest<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>> {
+public class CloudSigmaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public CloudSigmaComputeServiceLiveTest() {
       provider = "cloudsigma";

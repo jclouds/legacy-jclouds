@@ -31,9 +31,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
-import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
-import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -42,7 +39,7 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
+public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata {
    
    public static Builder builder() {
       return new Builder();
@@ -61,7 +58,7 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata<C
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_REGIONS, LON);
       properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
@@ -71,7 +68,7 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata<C
             String.format("https://lon.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
       return properties;
    }
-   public static class Builder extends BaseProviderMetadata.Builder<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("cloudloadbalancers-uk")
@@ -91,7 +88,7 @@ public class CloudLoadBalancersUKProviderMetadata extends BaseProviderMetadata<C
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

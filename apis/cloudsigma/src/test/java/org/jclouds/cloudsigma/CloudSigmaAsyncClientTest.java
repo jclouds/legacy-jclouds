@@ -648,7 +648,7 @@ public class CloudSigmaAsyncClientTest extends BaseAsyncClientTest<CloudSigmaAsy
    }
 
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new CloudSigmaApiMetadata();
    }
 

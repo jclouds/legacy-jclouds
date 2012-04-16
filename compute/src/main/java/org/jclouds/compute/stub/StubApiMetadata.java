@@ -19,22 +19,22 @@
 package org.jclouds.compute.stub;
 
 import java.net.URI;
-import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
-import org.jclouds.compute.stub.internal.StubComputeServiceContextBuilder;
-
-import com.google.common.reflect.TypeToken;
+import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds in-memory (Stub) API
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
-public class StubApiMetadata extends BaseComputeServiceApiMetadata<ConcurrentMap, ConcurrentMap, ComputeServiceContext<ConcurrentMap, ConcurrentMap>, StubApiMetadata> {
+public class StubApiMetadata extends BaseApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -4880642520937391337L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -52,7 +52,7 @@ public class StubApiMetadata extends BaseComputeServiceApiMetadata<ConcurrentMap
       super(builder);
    }
 
-   public static class Builder extends BaseComputeServiceApiMetadata.Builder<ConcurrentMap, ConcurrentMap, ComputeServiceContext<ConcurrentMap, ConcurrentMap>, StubApiMetadata> {
+   public static class Builder extends BaseApiMetadata.Builder {
 
       protected Builder(){
          id("stub")
@@ -61,12 +61,9 @@ public class StubApiMetadata extends BaseComputeServiceApiMetadata<ConcurrentMap
          .defaultIdentity("stub")
          .defaultCredential("stub")
          .defaultEndpoint("stub")
-         .context(new TypeToken<ComputeServiceContext<ConcurrentMap, ConcurrentMap>>(getClass()){
-            private static final long serialVersionUID = 1L;
-            })
-         .javaApi(ConcurrentMap.class, ConcurrentMap.class)
          .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
-         .contextBuilder(TypeToken.of(StubComputeServiceContextBuilder.class));
+         .wrapper(ComputeServiceContext.class)
+         .defaultModule(StubComputeServiceContextModule.class);
       }
 
       @Override

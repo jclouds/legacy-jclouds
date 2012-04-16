@@ -25,73 +25,68 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.internal.BaseApiMetadata;
+import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's CloudWatch api.
  * 
- * <h3>note</h3>
- * <p/>
- * This class allows overriding of types {@code S}(client) and {@code A}(asyncClient), so that
- * children can add additional methods not declared here, such as new features
- * from AWS.
- * <p/>
- * 
- * This class is not setup to allow a different context than {@link RestContext}
- * . By doing so, it reduces the type complexity.
- * 
  * @author Adrian Cole
  */
-public class CloudWatchApiMetadata<S extends CloudWatchClient, A extends CloudWatchAsyncClient> extends
-      BaseRestApiMetadata<S, A, RestContext<S, A>, CloudWatchApiMetadata<S, A>> {
+public class CloudWatchApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3450830053589179249L;
+
+   public static final TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
 
    @Override
-   public Builder<S, A> toBuilder() {
-      return new Builder<S, A>(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder toBuilder() {
+      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
    public CloudWatchApiMetadata() {
-      this(new Builder<CloudWatchClient, CloudWatchAsyncClient>(CloudWatchClient.class, CloudWatchAsyncClient.class));
+      this(new Builder(CloudWatchClient.class, CloudWatchAsyncClient.class));
    }
 
-   @SuppressWarnings("unchecked")
-   protected CloudWatchApiMetadata(Builder<?, ?> builder) {
+   protected CloudWatchApiMetadata(Builder builder) {
       super(Builder.class.cast(builder));
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       return properties;
    }
 
-   public static class Builder<S extends CloudWatchClient, A extends CloudWatchAsyncClient> extends
-         BaseRestApiMetadata.Builder<S, A, RestContext<S, A>, CloudWatchApiMetadata<S, A>> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<S> client, Class<A> asyncClient) {
+      protected Builder(Class<?> client, Class<?> asyncClient) {
          super(client, asyncClient);
          id("cloudwatch")
-         .type(ApiType.MONITOR)
          .name("Amazon CloudWatch Api")
          .identityName("Access Key ID")
          .credentialName("Secret Access Key")
          .version(CloudWatchAsyncClient.VERSION)
-         .defaultProperties(CloudWatchApiMetadata.defaultProperties())
+         .documentation(URI.create("http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/"))
          .defaultEndpoint("https://monitoring.us-east-1.amazonaws.com")
-         .documentation(URI.create("http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/"));
+         .defaultProperties(CloudWatchApiMetadata.defaultProperties())
+         .defaultModule(CloudWatchRestClientModule.class);
       }
 
       @Override
-      public CloudWatchApiMetadata<S, A> build() {
-         return new CloudWatchApiMetadata<S, A>(this);
+      public CloudWatchApiMetadata build() {
+         return new CloudWatchApiMetadata(this);
       }
       
       @Override
-      public Builder<S, A> fromApiMetadata(CloudWatchApiMetadata<S, A> in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

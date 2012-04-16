@@ -20,11 +20,12 @@ package org.jclouds.rest;
 
 import java.io.Closeable;
 
+import org.jclouds.Wrapper;
 import org.jclouds.apis.Apis;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -39,7 +40,7 @@ public class Providers {
     * Gets a set of supported providers. Idea stolen from pallets (supported-clouds).
     */
    public static Iterable<String> getSupportedProviders() {
-      return getSupportedProvidersOfType(TypeToken.of(Closeable.class));
+      return getSupportedProvidersOfType(TypeToken.of(Wrapper.class));
    }
 
    /**
@@ -47,10 +48,10 @@ public class Providers {
     * (supported-clouds).
     * 
     */
-   public static <C extends Closeable> Iterable<String> getSupportedProvidersOfType(TypeToken<C> type) {
+   public static <C extends Closeable> Iterable<String> getSupportedProvidersOfType(TypeToken<? extends Wrapper> type) {
       Builder<String> builder = ImmutableSet.<String> builder();
-      builder.addAll(Iterables.transform(Apis.contextAssignableFrom(type), Apis.idFunction()));
-      builder.addAll(Iterables.transform(org.jclouds.providers.Providers.contextAssignableFrom(type),
+      builder.addAll(Iterables.transform(Apis.contextWrappableAs(type), Apis.idFunction()));
+      builder.addAll(Iterables.transform(org.jclouds.providers.Providers.contextWrappableAs(type),
             org.jclouds.providers.Providers.idFunction()));
       return builder.build();
    }

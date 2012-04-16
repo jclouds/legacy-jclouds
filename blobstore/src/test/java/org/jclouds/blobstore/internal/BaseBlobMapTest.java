@@ -22,8 +22,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.domain.Blob;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -40,13 +40,13 @@ import com.google.inject.util.Types;
 @Test(groups = { "unit" })
 public class BaseBlobMapTest {
 
-   BlobStoreContext<?, ?> context;
+   BlobStoreContext context;
 
    InputStreamMapImpl map;
 
    @BeforeClass
    void addDefaultObjectsSoThatTestsWillPass() {
-      context =  BlobStoreContextBuilder.forTests().build();
+      context =  ContextBuilder.newBuilder("transient").build(BlobStoreContext.class);
       map = (InputStreamMapImpl) context.createInputStreamMap("test");
    }
 

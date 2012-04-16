@@ -16,26 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.compute.config;
+package org.jclouds.virtualbox.config;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import java.net.URI;
 
-@ConfiguresRestClient
-@RequiresHttp
-public class StandaloneComputeServiceClientModule<C> extends RestClientModule<C, C> {
+import org.jclouds.byon.Node;
+import org.jclouds.byon.config.CacheNodeStoreModule;
+import org.jclouds.compute.domain.OsFamily;
 
-   public StandaloneComputeServiceClientModule(Class<C> clazz) {
-      super(clazz, clazz);
-   }
+import com.google.common.collect.ImmutableMap;
 
-   @Override
-   protected void bindAsyncClient() {
-   }
-
-   @Override
-   protected void bindClient() {
-
+public class DefaultCacheNodeStoreModule extends CacheNodeStoreModule {
+   public DefaultCacheNodeStoreModule() {
+      super(ImmutableMap.of("host", Node.builder().id("host").name("host installing virtualbox").hostname("localhost")
+               .osFamily(OsFamily.LINUX.toString()).osDescription(System.getProperty("os.name")).osVersion(
+                        System.getProperty("os.version")).group("ssh").username(System.getProperty("user.name"))
+               .credentialUrl(URI.create("file://" + System.getProperty("user.home") + "/.ssh/id_rsa")).build()));
    }
 }

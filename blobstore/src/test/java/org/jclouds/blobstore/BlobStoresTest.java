@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.easymock.EasyMock;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
@@ -47,7 +48,7 @@ public class BlobStoresTest {
    public void testListAllForUnknownContainerFromTransientBlobStoreEagerly() throws Exception {
       ListContainerOptions containerOptions = ListContainerOptions.NONE;
       ListAllOptions listAllOptions = ListAllOptions.Builder.eager(true);
-      BlobStoreContext<?,?> context = blobStoreContext();
+      BlobStoreContext context = blobStoreContext();
       try {
          BlobStore blobStore = context.getBlobStore();
          BlobStores.listAll(blobStore, "wrongcontainer", containerOptions, listAllOptions);
@@ -62,7 +63,7 @@ public class BlobStoresTest {
    @Test(expectedExceptions = { ContainerNotFoundException.class })
    public void testListAllForUnknownContainerFromTransientBlobStore() throws Exception {
       ListContainerOptions options = ListContainerOptions.NONE;
-      BlobStoreContext<?,?> context = blobStoreContext();
+      BlobStoreContext context = blobStoreContext();
       try {
          BlobStore blobStore = context.getBlobStore();
          Iterable<StorageMetadata> iterable = BlobStores.listAll(blobStore, "wrongcontainer", options);
@@ -72,8 +73,8 @@ public class BlobStoresTest {
       }
    }
 
-   protected BlobStoreContext<?,?> blobStoreContext() {
-      return BlobStoreContextBuilder.forTests().build();
+   protected BlobStoreContext blobStoreContext() {
+      return ContextBuilder.newBuilder("transient").build(BlobStoreContext.class);
    }
 
    @Test
@@ -90,7 +91,7 @@ public class BlobStoresTest {
       final int numTimesToIterate = 2;
       final int NUM_BLOBS = 31;
       ListContainerOptions containerOptions = ListContainerOptions.Builder.maxResults(10);
-      BlobStoreContext<?,?> context = blobStoreContext();
+      BlobStoreContext context = blobStoreContext();
       BlobStore blobStore = null;
       try {
          blobStore = context.getBlobStore();

@@ -34,37 +34,54 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.io.Closeable;
 import java.net.URI;
-import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.ContextBuilder;
+import org.jclouds.lifecycle.Closer;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
-import com.google.common.reflect.TypeParameter;
+import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
- * The BaseApiMetadata class is an abstraction of {@link ApiMetadata} to be
- * extended by those implementing ApiMetadata.
+ * The BaseApiMetadata class is an abstraction of {@link ApiMetadata} to be extended by those
+ * implementing ApiMetadata.
  * 
- * (Note: This class must be abstract to allow {@link java.util.ServiceLoader}
- * to work properly.
+ * (Note: This class must be abstract to allow {@link java.util.ServiceLoader} to work properly.
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
  */
-public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> implements
-      ApiMetadata<S, A, C, M> {
+public abstract class BaseApiMetadata implements ApiMetadata {
 
-   public static class Builder<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> implements
-         ApiMetadata.Builder<S, A, C, M> {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -8080028444066498110L;
+
+   public static Properties defaultProperties() {
+      Properties props = new Properties();
+      // TODO: move this to ApiMetadata
+      props.setProperty(PROPERTY_ISO3166_CODES, "");
+      props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 20 + "");
+      props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 0 + "");
+      props.setProperty(PROPERTY_SO_TIMEOUT, 60000 + "");
+      props.setProperty(PROPERTY_CONNECTION_TIMEOUT, 60000 + "");
+      props.setProperty(PROPERTY_IO_WORKER_THREADS, 20 + "");
+      props.setProperty(PROPERTY_USER_THREADS, 0 + "");
+      props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");
+      props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");
+      props.setProperty(PROPERTY_SESSION_INTERVAL, 60 + "");
+      props.setProperty(PROPERTY_PRETTY_PRINT_PAYLOADS, "true");
+      return props;
+   }
+   
+   public static class Builder implements ApiMetadata.Builder {
       protected String id;
       protected String name;
-      protected ApiType type;
+      protected Set<TypeToken<? extends Wrapper>> wrappers = ImmutableSet.of();
       protected String endpointName = "https endpoint";
       protected String identityName;
       protected Optional<String> credentialName = Optional.absent();
@@ -73,44 +90,17 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
       protected Optional<String> defaultEndpoint = Optional.absent();
       protected Optional<String> defaultIdentity = Optional.absent();
       protected Optional<String> defaultCredential = Optional.absent();
-      protected Properties defaultProperties = defaultProperties();
+      protected Properties defaultProperties = BaseApiMetadata.defaultProperties();
       protected URI documentation;
       //
-      protected Class<S> api;
-      protected Class<A> asyncApi;
-      protected TypeToken<C> context;
-      protected TypeToken<? extends ContextBuilder<S, A, C, M>> contextBuilder = new TypeToken<ContextBuilder<S, A, C, M>>(getClass()) {
-         private static final long serialVersionUID = 1L;
-      };
-
-      public static Properties defaultProperties() {
-         Properties props = new Properties();
-         // TODO: move this to ApiMetadata
-         props.setProperty(PROPERTY_ISO3166_CODES, "");
-         props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 20 + "");
-         props.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 0 + "");
-         props.setProperty(PROPERTY_SO_TIMEOUT, 60000 + "");
-         props.setProperty(PROPERTY_CONNECTION_TIMEOUT, 60000 + "");
-         props.setProperty(PROPERTY_IO_WORKER_THREADS, 20 + "");
-         props.setProperty(PROPERTY_USER_THREADS, 0 + "");
-         props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");
-         props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");
-         props.setProperty(PROPERTY_SESSION_INTERVAL, 60 + "");
-         props.setProperty(PROPERTY_PRETTY_PRINT_PAYLOADS, "true");
-         return props;
-      }
-
-      public static Properties defaultPropertiesAnd(Map<String, String> overrides) {
-         Properties props = defaultProperties();
-         props.putAll(overrides);
-         return props;
-      }
+      protected TypeToken<? extends Closeable> context = TypeToken.of(Closer.class);
+      protected Set<Class<? extends Module>> defaultModules = ImmutableSet.of();
 
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> id(String id) {
+      public Builder id(String id) {
          this.id = checkNotNull(id, "id");
          return this;
       }
@@ -119,17 +109,33 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> name(String name) {
+      public Builder name(String name) {
          this.name = checkNotNull(name, "name");
          return this;
       }
-
+      
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> type(ApiType type) {
-         this.type = checkNotNull(type, "type");
+      public Builder wrapper(Class<? extends Wrapper> wrapper) {
+         return wrapper(TypeToken.of(checkNotNull(wrapper, "wrapper")));
+      }
+      
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder wrapper(TypeToken<? extends Wrapper> wrapper) {
+         return wrappers(ImmutableSet.<TypeToken<? extends Wrapper>>of(checkNotNull(wrapper, "wrapper")));
+      }
+      
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder wrappers(Set<TypeToken<? extends Wrapper>> wrappers) {
+         this.wrappers = ImmutableSet.copyOf(checkNotNull(wrappers, "wrappers"));
          return this;
       }
 
@@ -137,7 +143,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> endpointName(String endpointName) {
+      public Builder endpointName(String endpointName) {
          this.endpointName = checkNotNull(endpointName, "endpointName");
          return this;
       }
@@ -146,7 +152,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> identityName(String identityName) {
+      public Builder identityName(String identityName) {
          this.identityName = checkNotNull(identityName, "identityName");
          return this;
       }
@@ -155,7 +161,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> credentialName(String credentialName) {
+      public Builder credentialName(String credentialName) {
          this.credentialName = Optional.fromNullable(credentialName);
          return this;
       }
@@ -164,7 +170,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> version(String version) {
+      public Builder version(String version) {
          this.version = checkNotNull(version, "version");
          return this;
       }
@@ -173,7 +179,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> buildVersion(String buildVersion) {
+      public Builder buildVersion(String buildVersion) {
          this.buildVersion = Optional.fromNullable(buildVersion);
          return this;
       }
@@ -182,7 +188,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> defaultEndpoint(String defaultEndpoint) {
+      public Builder defaultEndpoint(String defaultEndpoint) {
          this.defaultEndpoint = Optional.fromNullable(defaultEndpoint);
          return this;
       }
@@ -191,7 +197,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> defaultIdentity(String defaultIdentity) {
+      public Builder defaultIdentity(String defaultIdentity) {
          this.defaultIdentity = Optional.fromNullable(defaultIdentity);
          return this;
       }
@@ -200,7 +206,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> defaultCredential(String defaultCredential) {
+      public Builder defaultCredential(String defaultCredential) {
          this.defaultCredential = Optional.fromNullable(defaultCredential);
          return this;
       }
@@ -209,7 +215,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> defaultProperties(Properties defaultProperties) {
+      public Builder defaultProperties(Properties defaultProperties) {
          this.defaultProperties = checkNotNull(defaultProperties, "defaultProperties");
          return this;
       }
@@ -217,30 +223,8 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
       /**
        * {@inheritDoc}
        */
-      @SuppressWarnings("unchecked")
       @Override
-      public Builder<S, A, C, M> javaApi(Class<S> api, Class<A> asyncApi) {
-         this.api = checkNotNull(api, "api");
-         this.asyncApi = checkNotNull(asyncApi, "asyncApi");
-         if (context == null)
-            context(contextToken(TypeToken.of(checkNotNull(api, "api")), TypeToken.of(checkNotNull(asyncApi, "asyncApi"))));
-         return this;
-      }
-      
-      @SuppressWarnings("rawtypes")
-      protected TypeToken contextToken(TypeToken<S> clientToken, TypeToken<A> asyncClientToken) {
-         return new TypeToken<RestContext<S, A>>() {
-            private static final long serialVersionUID = 1L;
-         }.where(new TypeParameter<S>() {
-         }, clientToken).where(new TypeParameter<A>() {
-         }, asyncClientToken);
-      }
-      
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder<S, A, C, M> documentation(URI documentation) {
+      public Builder documentation(URI documentation) {
          this.documentation = checkNotNull(documentation, "documentation");
          return this;
       }
@@ -249,7 +233,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> context(TypeToken<C> context) {
+      public Builder context(TypeToken<? extends Closeable> context) {
          this.context = checkNotNull(context, "context");
          return this;
       }
@@ -258,25 +242,33 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
        * {@inheritDoc}
        */
       @Override
-      public Builder<S, A, C, M> contextBuilder(TypeToken<? extends ContextBuilder<S, A, C, M>> contextBuilder) {
-         this.contextBuilder = checkNotNull(contextBuilder, "contextBuilder");
+      public Builder defaultModule(Class<? extends Module> defaultModule) {
+         return defaultModules(ImmutableSet.<Class<? extends Module>>of(checkNotNull(defaultModule, "defaultModule")));
+      }
+      
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder defaultModules(Set<Class<? extends Module>> defaultModules) {
+         this.defaultModules = ImmutableSet.copyOf(checkNotNull(defaultModules, "defaultModules"));
          return this;
       }
 
-      public Builder<S, A, C, M> fromApiMetadata(M in) {
-         return id(in.getId()).type(in.getType()).name(in.getName()).endpointName(in.getEndpointName())
-               .identityName(in.getIdentityName()).credentialName(in.getCredentialName().orNull())
-               .version(in.getVersion()).buildVersion(in.getBuildVersion().orNull())
-               .defaultEndpoint(in.getDefaultEndpoint().orNull()).defaultIdentity(in.getDefaultIdentity().orNull())
-               .defaultCredential(in.getDefaultCredential().orNull()).defaultProperties(in.getDefaultProperties())
-               .documentation(in.getDocumentation()).javaApi(in.getApi(), in.getAsyncApi()).context(in.getContext())
-               .contextBuilder(in.getContextBuilder());
+      public Builder fromApiMetadata(ApiMetadata in) {
+         return id(in.getId()).wrappers(in.getWrappers()).name(in.getName()).endpointName(in.getEndpointName()).identityName(
+                  in.getIdentityName()).credentialName(in.getCredentialName().orNull()).version(in.getVersion())
+                  .buildVersion(in.getBuildVersion().orNull()).defaultEndpoint(in.getDefaultEndpoint().orNull())
+                  .defaultIdentity(in.getDefaultIdentity().orNull()).defaultCredential(
+                           in.getDefaultCredential().orNull()).defaultProperties(in.getDefaultProperties())
+                  .documentation(in.getDocumentation()).context(in.getContext()).defaultModules(in.getDefaultModules());
       }
 
-      @SuppressWarnings("unchecked")
       @Override
-      public M build() {
-         return (M) new BaseApiMetadata<S, A, C, M>(this) {
+      public ApiMetadata build() {
+         return new BaseApiMetadata(this) {
+            /** The serialVersionUID */
+            private static final long serialVersionUID = 3599854558038790678L;
          };
       }
 
@@ -284,7 +276,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
 
    protected final String id;
    protected final String name;
-   protected final ApiType type;
+   protected final Set<TypeToken<? extends Wrapper>> wrappers;
    protected final String endpointName;
    protected final String identityName;
    protected final Optional<String> credentialName;
@@ -295,29 +287,24 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
    protected final Optional<String> defaultCredential;
    protected final Properties defaultProperties;
    protected final URI documentation;
-   protected final Class<S> api;
-   protected final Class<A> asyncApi;
-   protected final TypeToken<C> context;
-   protected final TypeToken<? extends ContextBuilder<S, A, C, M>> contextBuilder;
+   protected final TypeToken<? extends Closeable> context;
+   protected final Set<Class<? extends Module>> defaultModules;
 
-   @SuppressWarnings("unchecked")
-   protected BaseApiMetadata(Builder<?, ?, ?, ?> builder) {
-      this(builder.id, builder.name, builder.type, builder.endpointName, builder.identityName, builder.credentialName,
-            builder.version, builder.buildVersion, builder.defaultEndpoint, builder.defaultIdentity,
-            builder.defaultCredential, builder.defaultProperties, builder.documentation, Class.class.cast(builder.api),
-            Class.class.cast(builder.asyncApi), TypeToken.class.cast(builder.context), TypeToken.class
-                  .cast(builder.contextBuilder));
+   protected BaseApiMetadata(Builder builder) {
+      this(builder.id, builder.name, builder.wrappers, builder.endpointName, builder.identityName, builder.credentialName,
+               builder.version, builder.buildVersion, builder.defaultEndpoint, builder.defaultIdentity,
+               builder.defaultCredential, builder.defaultProperties, builder.documentation, builder.context,
+               builder.defaultModules);
    }
 
-
-   public BaseApiMetadata(String id, String name, ApiType type, String endpointName, String identityName,
-         Optional<String> credentialName, String version, Optional<String> buildVersion,
-         Optional<String> defaultEndpoint, Optional<String> defaultIdentity, Optional<String> defaultCredential,
-         Properties defaultProperties, URI documentation, Class<S> api, Class<A> asyncApi, TypeToken<C> context,
-         TypeToken<ContextBuilder<S, A, C, M>> contextBuilder) {
+   public BaseApiMetadata(String id, String name, Set<TypeToken<? extends Wrapper>> wrappers, String endpointName, String identityName,
+            Optional<String> credentialName, String version, Optional<String> buildVersion,
+            Optional<String> defaultEndpoint, Optional<String> defaultIdentity, Optional<String> defaultCredential,
+            Properties defaultProperties, URI documentation, TypeToken<? extends Closeable> context,
+            Set<Class<? extends Module>> defaultModules) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
-      this.type = checkNotNull(type, "type");
+      this.wrappers = ImmutableSet.copyOf(checkNotNull(wrappers, "wrappers"));
       this.endpointName = checkNotNull(endpointName, "endpointName");
       this.identityName = checkNotNull(identityName, "identityName");
       this.credentialName = checkNotNull(credentialName, "credentialName");
@@ -328,10 +315,8 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
       this.defaultCredential = checkNotNull(defaultCredential, "defaultCredential");
       this.defaultProperties = checkNotNull(defaultProperties, "defaultProperties");
       this.documentation = checkNotNull(documentation, "documentation");
-      this.api = checkNotNull(api, "api");
-      this.asyncApi = checkNotNull(asyncApi, "asyncApi");
       this.context = checkNotNull(context, "context");
-      this.contextBuilder = checkNotNull(contextBuilder, "contextBuilder");
+      this.defaultModules = ImmutableSet.copyOf(checkNotNull(defaultModules, "defaultModules"));
    }
 
    @Override
@@ -342,14 +327,14 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
       // we'll get things from
       if (o == null || !(o instanceof ApiMetadata))
          return false;
-      ApiMetadata<?, ?, ?, ?> that = ApiMetadata.class.cast(o);
+      ApiMetadata that = ApiMetadata.class.cast(o);
       return equal(this.getId(), that.getId()) && equal(this.getName(), that.getName())
-            && equal(this.getType(), that.getType());
+               && equal(this.getWrappers(), that.getWrappers());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(getId(), getName(), getType());
+      return Objects.hashCode(getId(), getName(), getWrappers());
    }
 
    @Override
@@ -358,10 +343,9 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("id", getId()).add("name", getName()).add("type", getType())
-            .add("endpointName", getEndpointName()).add("identityName", getIdentityName())
-            .add("credentialName", getCredentialName()).add("documentation", getDocumentation()).add("api", getApi())
-            .add("asyncApi", getAsyncApi());
+      return Objects.toStringHelper("").add("id", getId()).add("name", getName()).add("wrappers", getWrappers()).add(
+               "endpointName", getEndpointName()).add("identityName", getIdentityName()).add("credentialName",
+               getCredentialName()).add("documentation", getDocumentation());
    }
 
    /**
@@ -384,8 +368,8 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
     * {@inheritDoc}
     */
    @Override
-   public ApiType getType() {
-      return type;
+   public Set<TypeToken<? extends Wrapper>> getWrappers() {
+      return wrappers;
    }
 
    /**
@@ -472,23 +456,7 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
     * {@inheritDoc}
     */
    @Override
-   public Class<S> getApi() {
-      return api;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Class<A> getAsyncApi() {
-      return asyncApi;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public TypeToken<C> getContext() {
+   public TypeToken<? extends Closeable> getContext() {
       return context;
    }
 
@@ -496,14 +464,13 @@ public abstract class BaseApiMetadata<S, A, C extends Closeable, M extends ApiMe
     * {@inheritDoc}
     */
    @Override
-   public TypeToken<? extends ContextBuilder<S, A, C, M>> getContextBuilder() {
-      return contextBuilder;
+   public Set<Class<? extends Module>> getDefaultModules() {
+      return defaultModules;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
-   public Builder<S, A, C, M> toBuilder() {
-      return new Builder<S, A, C, M>().fromApiMetadata((M) this);
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
 }

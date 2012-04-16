@@ -34,8 +34,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.compute.GleSYSComputeServiceAdapter;
 import org.jclouds.glesys.compute.functions.DatacenterToLocation;
 import org.jclouds.glesys.compute.functions.OSTemplateToImage;
@@ -55,13 +53,8 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-public class GleSYSComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<GleSYSClient, GleSYSAsyncClient, ServerDetails, Hardware, OSTemplate, String> {
-
-   public GleSYSComputeServiceContextModule() {
-      super(GleSYSClient.class, GleSYSAsyncClient.class);
-   }
+public class GleSYSComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<ServerDetails, Hardware, OSTemplate, String> {
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override

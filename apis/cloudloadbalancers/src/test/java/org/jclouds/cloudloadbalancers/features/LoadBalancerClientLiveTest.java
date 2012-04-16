@@ -53,12 +53,12 @@ public class LoadBalancerClientLiveTest extends BaseCloudLoadBalancersClientLive
    }
 
    @Override
-   protected void tearDown() {
+   protected void tearDownContext() {
       for (LoadBalancer lb : lbs) {
          client.getLoadBalancerClient(lb.getRegion()).removeLoadBalancer(lb.getId());
          assert loadBalancerDeleted.apply(lb) : lb;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 
    public void testCreateLoadBalancer() throws Exception {

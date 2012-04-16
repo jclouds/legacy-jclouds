@@ -19,8 +19,6 @@
 package org.jclouds.ec2.compute;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.internal.EC2ComputeServiceContextImpl;
 
 import com.google.inject.ImplementedBy;
@@ -29,7 +27,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(EC2ComputeServiceContextImpl.class)
-public interface EC2ComputeServiceContext<S extends EC2Client, A extends EC2AsyncClient> extends ComputeServiceContext<S, A> {
+public interface EC2ComputeServiceContext extends ComputeServiceContext {
 
    @Override
    EC2ComputeService getComputeService();

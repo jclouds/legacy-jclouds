@@ -31,8 +31,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.aws.cloudwatch.AWSCloudWatchProviderMetadata;
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.MonitoringState;
@@ -56,7 +57,6 @@ import org.jclouds.ec2.domain.SecurityGroup;
 import org.jclouds.ec2.services.InstanceClient;
 import org.jclouds.ec2.services.KeyPairClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 
@@ -73,7 +73,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AWSEC2ComputeServiceLiveTest")
-public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
    public AWSEC2ComputeServiceLiveTest() {
       provider = "aws-ec2";
@@ -93,12 +93,12 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest<AWSE
       String region = "us-west-2";
 
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(
-               context.getProviderSpecificContext().getApi()).getSecurityGroupServices();
+               context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getSecurityGroupServices();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      KeyPairClient keyPairClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getKeyPairServices();
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
       String group = this.group + "o";
@@ -230,13 +230,13 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest<AWSE
    }
    
    private void runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(Function<String,Void> destroyer) throws Exception {
-      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getSecurityGroupServices();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      KeyPairClient keyPairClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getKeyPairServices();
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
       String group = this.group + "incidental";

@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -39,6 +38,7 @@ import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
@@ -76,6 +76,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 
 /**
@@ -84,8 +85,7 @@ import com.google.inject.Module;
  * @author Adrian Cole, David Alves
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
-public class BaseVirtualBoxClientLiveTest extends
-      BaseComputeServiceContextLiveTest<Supplier, Supplier, ComputeServiceContext<Supplier, Supplier>> {
+public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public static final String DONT_DESTROY_MASTER = "jclouds.virtualbox.keep-test-master";
 
@@ -144,7 +144,7 @@ public class BaseVirtualBoxClientLiveTest extends
       masterVmName = VIRTUALBOX_IMAGE_PREFIX + image.id;
       isosDir = workingDir + File.separator + "isos";
 
-      hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
+      hostVersion = Iterables.get(Splitter.on('r').split(context.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, image.name);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
 

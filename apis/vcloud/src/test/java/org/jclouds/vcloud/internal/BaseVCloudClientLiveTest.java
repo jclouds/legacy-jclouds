@@ -19,10 +19,9 @@
 package org.jclouds.vcloud.internal;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.VCloudClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -34,9 +33,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public abstract class BaseVCloudClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>> {
+public abstract class BaseVCloudClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    // username is too long for name constraints
    protected String prefix = "vcd";
@@ -48,7 +45,7 @@ public abstract class BaseVCloudClientLiveTest
    }
 
    protected VCloudClient getVCloudApi() {
-      return VCloudClient.class.cast(context.getProviderSpecificContext().getApi());
+      return VCloudClient.class.cast(context.unwrap(VCloudApiMetadata.CONTEXT_TOKEN).getApi());
    }
 
    @Override
