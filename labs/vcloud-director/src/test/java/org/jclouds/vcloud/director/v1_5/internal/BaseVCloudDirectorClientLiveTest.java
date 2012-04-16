@@ -405,7 +405,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
       // Build the configuration object
       NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
             .parentNetwork(parentNetwork.get())
-            .fenceMode(Network.FenceMode.ISOLATED)
+            .fenceMode(Network.FenceMode.BRIDGED)
             .build();
 
       return networkConfiguration;
