@@ -31,6 +31,7 @@ import static org.jclouds.Constants.PROPERTY_PRETTY_PRINT_PAYLOADS;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
+import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 
 import java.io.Closeable;
 import java.net.URI;
@@ -71,6 +72,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
       props.setProperty(PROPERTY_CONNECTION_TIMEOUT, 60000 + "");
       props.setProperty(PROPERTY_IO_WORKER_THREADS, 20 + "");
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
+      props.setProperty(PROPERTY_SCHEDULER_THREADS, 10 + "");
       props.setProperty(PROPERTY_MAX_CONNECTION_REUSE, 75 + "");
       props.setProperty(PROPERTY_MAX_SESSION_FAILURES, 2 + "");
       props.setProperty(PROPERTY_SESSION_INTERVAL, 60 + "");
