@@ -51,8 +51,14 @@ public interface Wrapper {
     *            if the wrapped context is not assignable from the specified class.
     * @see #getWrappedType()
     */
-   <C extends Closeable> C unwrap(TypeToken<C> type);
-
+   <C extends Closeable> C unwrap(TypeToken<C> type) throws IllegalArgumentException;
+   
+   /**
+    * shortcut for {@code unwrap(TypeToken.of(clazz))}
+    * @see #unwrap(TypeToken)
+    */
+   <C extends Closeable> C unwrap(Class<C> clazz) throws IllegalArgumentException;
+   
    /**
     * shortcut for {@code unwrap(getWrappedType())}
     * 

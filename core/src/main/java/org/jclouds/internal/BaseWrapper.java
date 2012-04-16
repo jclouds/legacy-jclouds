@@ -53,7 +53,12 @@ public abstract class BaseWrapper implements Wrapper {
       checkArgument(checkNotNull(type, "type").isAssignableFrom(wrappedType), "wrapped type: %s not assignable from %s", wrappedType, type);
       return (C) wrapped;
    }
-
+   
+   @Override
+   public <C extends Closeable> C unwrap(Class<C> clazz) {
+      return unwrap (TypeToken.of(checkNotNull(clazz, "clazz")));
+   }
+   
    @Override
    public TypeToken<? extends Closeable> getWrappedType() {
       return wrappedType;
