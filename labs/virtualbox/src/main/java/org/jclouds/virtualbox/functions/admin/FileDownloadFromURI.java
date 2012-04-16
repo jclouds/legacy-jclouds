@@ -84,8 +84,7 @@ public class FileDownloadFromURI implements Function<URI, File> {
             return file;
          }
       } catch (Exception e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 }

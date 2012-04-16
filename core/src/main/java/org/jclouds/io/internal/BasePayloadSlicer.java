@@ -76,8 +76,7 @@ public class BasePayloadSlicer implements PayloadSlicer {
       try {
          return doSlice(new FileInputStream(content), offset, length);
       } catch (FileNotFoundException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

@@ -81,8 +81,7 @@ public class SupplyFromProviderURIOrNodesProperty implements Supplier<InputStrea
          return input.toURL().openStream();
       } catch (IOException e) {
          logger.error(e, "URI could not be read: %s", url);
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

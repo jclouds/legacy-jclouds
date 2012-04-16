@@ -91,8 +91,7 @@ public class SSLModule extends AbstractModule {
             sc.init(null, new TrustManager[] { trustAllCerts }, new SecureRandom());
             return sc;
          } catch (Exception e) {
-            Throwables.propagate(e);
-            return null;
+            throw Throwables.propagate(e);
          }
 
       }

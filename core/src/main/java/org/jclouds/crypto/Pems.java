@@ -169,8 +169,7 @@ public class Pems {
       try {
          return privateKeySpec(InputSuppliers.of(pem));
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

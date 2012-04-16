@@ -550,8 +550,7 @@ public class RestAnnotationProcessor<T> {
          utils.checkRequestHasRequiredProperties(request);
          return request;
       } catch (ExecutionException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
