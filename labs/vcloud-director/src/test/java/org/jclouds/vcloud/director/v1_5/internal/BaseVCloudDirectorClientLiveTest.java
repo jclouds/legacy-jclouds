@@ -450,7 +450,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
       }
 
       // Shutdown and power off the VApp if necessary
-      if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
+      if (vApp.getStatus() == Status.POWERED_ON) {
          try {
             Task shutdownTask = vAppClient.shutdown(vAppURI);
             taskDoneEventually(shutdownTask);
