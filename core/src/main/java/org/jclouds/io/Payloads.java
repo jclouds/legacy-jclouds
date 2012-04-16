@@ -131,8 +131,7 @@ public class Payloads {
       try {
          return calculateMD5(payload, MessageDigest.getInstance("MD5"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -160,8 +159,7 @@ public class Payloads {
       try {
          return calculateMD5(payloadEnclosing, MessageDigest.getInstance("MD5"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 }

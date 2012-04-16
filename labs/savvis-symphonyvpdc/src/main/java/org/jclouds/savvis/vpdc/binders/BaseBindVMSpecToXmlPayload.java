@@ -74,8 +74,7 @@ public abstract class BaseBindVMSpecToXmlPayload<T> extends BindToStringPayload 
          outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
          return rootBuilder.asString(outputProperties);
       } catch (Exception e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

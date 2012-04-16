@@ -176,8 +176,7 @@ public class CryptoStreams {
       try {
          return digest(supplier, MessageDigest.getInstance("SHA1"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -185,8 +184,7 @@ public class CryptoStreams {
       try {
          return sha1(ByteStreams.newInputStreamSupplier(in));
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
    
@@ -207,8 +205,7 @@ public class CryptoStreams {
       try {
          return digest(supplier, MessageDigest.getInstance("MD5"));
       } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 
@@ -216,8 +213,7 @@ public class CryptoStreams {
       try {
          return md5(ByteStreams.newInputStreamSupplier(in));
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

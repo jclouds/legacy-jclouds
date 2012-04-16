@@ -90,8 +90,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
             try {
                return Futures.makeListenable(service.fetchAsync(fetch.toURL()), MoreExecutors.sameThreadExecutor());
             } catch (MalformedURLException e) {
-               Throwables.propagate(e);
-               return null;
+               throw Throwables.propagate(e);
             }
          }
 
