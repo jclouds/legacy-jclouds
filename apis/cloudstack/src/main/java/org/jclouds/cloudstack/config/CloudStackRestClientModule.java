@@ -221,7 +221,7 @@ public class CloudStackRestClientModule extends RestClientModule<CloudStackClien
    }
 
    public CloudStackRestClientModule() {
-      super(CloudStackClient.class, CloudStackAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Override

@@ -31,6 +31,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 
 /**
@@ -38,17 +39,24 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class FormSigningRestClientModule<S, A> extends AWSRestClientModule<S, A> {
+public abstract class FormSigningRestClientModule<S, A> extends AWSRestClientModule<S, A> {
 
-   public FormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegates) {
-      super(syncClientType, asyncClientType, delegates);
+   protected FormSigningRestClientModule(Map<Class<?>, Class<?>> delegates) {
+      super(delegates);
    }
 
-   public FormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
+   protected FormSigningRestClientModule() {
+   }
+
+   protected FormSigningRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }
 
+   protected FormSigningRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
+            Map<Class<?>, Class<?>> sync2Async) {
+      super(syncClientType, asyncClientType, sync2Async);
+   }
+   
    @Provides
    @TimeStamp
    protected String provideTimeStamp(final DateService dateService,

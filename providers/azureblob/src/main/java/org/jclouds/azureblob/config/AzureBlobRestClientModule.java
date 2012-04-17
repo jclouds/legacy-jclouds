@@ -36,10 +36,6 @@ import org.jclouds.rest.ConfiguresRestClient;
 @ConfiguresRestClient
 public class AzureBlobRestClientModule extends AzureStorageRestClientModule<AzureBlobClient, AzureBlobAsyncClient> {
 
-   public AzureBlobRestClientModule() {
-      super(AzureBlobClient.class, AzureBlobAsyncClient.class);
-   }
-
    @Override
    protected void configure() {
       install(new AzureBlobModule());

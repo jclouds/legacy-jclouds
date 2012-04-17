@@ -48,10 +48,6 @@ import com.google.inject.Scopes;
 @ConfiguresRestClient
 public class RimuHostingRestClientModule extends RestClientModule<RimuHostingClient, RimuHostingAsyncClient> {
 
-   public RimuHostingRestClientModule() {
-      super(RimuHostingClient.class, RimuHostingAsyncClient.class);
-   }
-
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(RimuIso8601DateAdapter.class);

@@ -31,22 +31,32 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
+import com.google.common.reflect.TypeToken;
+
 
 /**
  * 
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
+public abstract class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
 
-   public AWSRestClientModule(Class<S> syncClientType, Class<A> asyncClientType, Map<Class<?>, Class<?>> delegates) {
-      super(syncClientType, asyncClientType, delegates);
+   protected AWSRestClientModule(Map<Class<?>, Class<?>> delegates) {
+      super(delegates);
    }
 
-   public AWSRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
+   protected AWSRestClientModule() {
+   }
+
+   protected AWSRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }
 
+   protected AWSRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
+            Map<Class<?>, Class<?>> sync2Async) {
+      super(syncClientType, asyncClientType, sync2Async);
+   }
+   
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseAWSErrorFromXmlContent.class);

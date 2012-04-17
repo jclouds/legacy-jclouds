@@ -54,10 +54,6 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class CloudServersRestClientModule extends RestClientModule<CloudServersClient, CloudServersAsyncClient> {
 
-   public CloudServersRestClientModule() {
-      super(CloudServersClient.class, CloudServersAsyncClient.class);
-   }
-
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(Iso8601DateAdapter.class);

@@ -78,7 +78,7 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
          .put(KeyPairClient.class, KeyPairAsyncClient.class).build();
 
    public NovaRestClientModule() {
-      super(NovaClient.class, NovaAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Override

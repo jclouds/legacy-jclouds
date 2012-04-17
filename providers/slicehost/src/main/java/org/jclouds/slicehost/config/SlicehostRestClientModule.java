@@ -35,10 +35,6 @@ import org.jclouds.slicehost.handlers.ParseSlicehostErrorFromHttpResponse;
 @ConfiguresRestClient
 public class SlicehostRestClientModule extends RestClientModule<SlicehostClient, SlicehostAsyncClient> {
 
-   public SlicehostRestClientModule() {
-      super(SlicehostClient.class, SlicehostAsyncClient.class);
-   }
-
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseSlicehostErrorFromHttpResponse.class);

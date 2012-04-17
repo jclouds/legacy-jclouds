@@ -64,7 +64,7 @@ public class GleSYSRestClientModule extends RestClientModule<GleSYSClient, GleSY
          .build();
 
    public GleSYSRestClientModule() {
-      super(GleSYSClient.class, GleSYSAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Override

@@ -152,7 +152,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
    }
    
    public VCloudDirectorRestClientModule() {
-      super(VCloudDirectorClient.class, VCloudDirectorAsyncClient.class, ADMIN_DELEGATE_MAP);
+      super(ADMIN_DELEGATE_MAP);
    }
    
    @Override

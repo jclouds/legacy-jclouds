@@ -40,10 +40,6 @@ public abstract class BaseS3ClientExpectTest extends BaseRestClientExpectTest<S3
       @ConfiguresRestClient
    private static final class TestS3RestClientModule extends S3RestClientModule<S3Client, S3AsyncClient> {
 
-      public TestS3RestClientModule() {
-         super(S3Client.class, S3AsyncClient.class);
-      }
-
       @Override
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
          return CONSTANT_DATE;

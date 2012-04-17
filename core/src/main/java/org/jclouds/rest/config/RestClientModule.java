@@ -21,13 +21,10 @@ package org.jclouds.rest.config;
 import java.util.Map;
 
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.util.TypeTokens2;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
@@ -35,39 +32,56 @@ import com.google.inject.util.Types;
  */
 @ConfiguresRestClient
 public class RestClientModule<S, A> extends RestModule {
-   protected final Class<A> asyncClientType;
-   protected final Class<S> syncClientType;
-   
-   public RestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> sync2Async) {
+   protected final TypeToken<S> syncClientType;
+   protected final TypeToken<A> asyncClientType;
+
+   /**
+    * Note that this ctor requires that you instantiate w/resolved generic params. For example, via
+    * a subclass of a bound type, or natural instantiation w/resolved type params.
+    */
+   protected RestClientModule(Map<Class<?>, Class<?>> sync2Async) {
       super(sync2Async);
-      this.asyncClientType = asyncClientType;
-      this.syncClientType = syncClientType;
+      this.syncClientType = TypeTokens2.checkBound(new TypeToken<S>(getClass()) {
+         private static final long serialVersionUID = 7519656925453755752L;
+      });
+      this.asyncClientType = TypeTokens2.checkBound(new TypeToken<A>(getClass()) {
+         private static final long serialVersionUID = -4420015967358511548L;
+      });
    }
 
-   public RestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
-      this(syncClientType, asyncClientType, ImmutableMap
-            .<Class<?>, Class<?>> of(syncClientType, asyncClientType));
+   /**
+    * @see #RestClientModule(Map)
+    */
+   protected RestClientModule() {
+      this(ImmutableMap.<Class<?>, Class<?>> of());
    }
-   
-   @SuppressWarnings( { "unchecked", "rawtypes" })
+
+   /**
+    * @see #RestClientModule(TypeToken, TypeToken, Map)
+    */
+   public RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
+      this(syncClientType, asyncClientType, ImmutableMap.<Class<?>, Class<?>> of());
+   }
+
+   /**
+    * only necessary when type params are not resolvable at runtime.
+    */
+   public RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType, Map<Class<?>, Class<?>> sync2Async) {
+      super(sync2Async);
+      this.syncClientType = TypeTokens2.checkBound(syncClientType);
+      this.asyncClientType = TypeTokens2.checkBound(asyncClientType);
+   }
+
    @Override
    protected void configure() {
       super.configure();
-      // Ensures the restcontext can be looked up without generic types.
-      bind(new TypeLiteral<RestContext>() {
-      }).to(
-            (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(
-                  RestContextImpl.class, syncClientType, asyncClientType))).in(
-            Scopes.SINGLETON);
-      bind(TypeLiteral.get(Types.newParameterizedType(RestContext.class, syncClientType, asyncClientType))).to(
-               (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, syncClientType,
-                        asyncClientType))).in(Scopes.SINGLETON);
       bindAsyncClient();
       bindClient();
       bindErrorHandlers();
       bindRetryHandlers();
    }
+
+
 
    /**
     * overrides this to change the default retry handlers for the http engine
@@ -75,10 +89,8 @@ public class RestClientModule<S, A> extends RestModule {
     * ex.
     * 
     * <pre>
-    * bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
-    *       AWSRedirectionRetryHandler.class);
-    * bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-    *       AWSClientErrorRetryHandler.class);
+    * bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(AWSRedirectionRetryHandler.class);
+    * bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AWSClientErrorRetryHandler.class);
     * </pre>
     * 
     */
@@ -91,12 +103,9 @@ public class RestClientModule<S, A> extends RestModule {
     * ex.
     * 
     * <pre>
-    * bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-    *       ParseAWSErrorFromXmlContent.class);
-    * bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-    *       ParseAWSErrorFromXmlContent.class);
-    * bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-    *       ParseAWSErrorFromXmlContent.class);
+    * bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseAWSErrorFromXmlContent.class);
+    * bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseAWSErrorFromXmlContent.class);
+    * bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseAWSErrorFromXmlContent.class);
     * </pre>
     * 
     * 
@@ -105,12 +114,11 @@ public class RestClientModule<S, A> extends RestModule {
    }
 
    protected void bindAsyncClient() {
-      BinderUtils.bindAsyncClient(binder(), asyncClientType);
+      BinderUtils.bindAsyncClient(binder(), asyncClientType.getRawType());
    }
 
    protected void bindClient() {
-      BinderUtils.bindClient(binder(), syncClientType, asyncClientType,
-            sync2Async);
+      BinderUtils.bindClient(binder(), syncClientType.getRawType(), asyncClientType.getRawType(), sync2Async);
    }
 
 }

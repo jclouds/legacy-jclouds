@@ -73,7 +73,7 @@ public class CloudLoadBalancersRestClientModule extends
             .build();
 
    public CloudLoadBalancersRestClientModule() {
-      super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    protected void installLocations() {

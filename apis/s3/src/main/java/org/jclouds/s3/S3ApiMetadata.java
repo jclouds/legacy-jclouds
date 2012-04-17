@@ -65,7 +65,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 820062881469203616L;
    
-   public static final TypeToken<RestContext<S3Client, S3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<S3Client, S3AsyncClient>>() {
+   public static final TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends S3Client,? extends  S3AsyncClient>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -107,6 +107,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API"))
          .version(S3AsyncClient.VERSION)
          .defaultProperties(S3ApiMetadata.defaultProperties())
+         .context(CONTEXT_TOKEN)
          .wrapper(TypeToken.of(S3BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(S3RestClientModule.class, S3BlobStoreContextModule.class));
       }

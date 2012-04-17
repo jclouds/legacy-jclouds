@@ -28,11 +28,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.EC2TemplateBuilderLiveTest;
 import org.jclouds.ec2.compute.predicates.EC2ImagePredicates;
 import org.jclouds.ec2.domain.InstanceType;
@@ -364,6 +366,12 @@ public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
             .imageMatches(EC2ImagePredicates.rootDeviceType(RootDeviceType.INSTANCE_STORE)).build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getId(), imageId);
+   }
+   
+   @Test
+   public void testAssignability() {
+      context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN);
+      context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN);
    }
 
    @Override

@@ -26,6 +26,7 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.walrus.WalrusAsyncClient;
 
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 
 /**
@@ -34,9 +35,8 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 public class WalrusRestClientModule extends S3RestClientModule<S3Client, WalrusAsyncClient> {
-
    public WalrusRestClientModule() {
-      super(S3Client.class, WalrusAsyncClient.class);
+      super(TypeToken.of(S3Client.class), TypeToken.of(WalrusAsyncClient.class));
    }
 
    @Provides

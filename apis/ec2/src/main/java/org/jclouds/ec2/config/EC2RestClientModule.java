@@ -49,6 +49,7 @@ import org.jclouds.location.suppliers.derived.ZoneIdsFromRegionIdToZoneIdsValues
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Scopes;
 
 /**
@@ -59,26 +60,28 @@ import com.google.inject.Scopes;
 @ConfiguresRestClient
 public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> extends
          WithZonesFormSigningRestClientModule<S, A> {
-
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(AMIClient.class, AMIAsyncClient.class)//
-            .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-            .put(InstanceClient.class, InstanceAsyncClient.class)//
-            .put(KeyPairClient.class, KeyPairAsyncClient.class)//
-            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-            .put(WindowsClient.class, WindowsAsyncClient.class)//
-            .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-            .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-            .build();
-
+   .put(AMIClient.class, AMIAsyncClient.class)//
+   .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+   .put(InstanceClient.class, InstanceAsyncClient.class)//
+   .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+   .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+   .put(WindowsClient.class, WindowsAsyncClient.class)//
+   .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+   .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+   .build();
+   
    @SuppressWarnings("unchecked")
    public EC2RestClientModule() {
-      this((Class) EC2Client.class, (Class) EC2AsyncClient.class, DELEGATE_MAP);
+      super((TypeToken) TypeToken.of(EC2Client.class), (TypeToken) TypeToken.of(EC2AsyncClient.class), DELEGATE_MAP);
    }
 
-   public EC2RestClientModule(Class<S> sync, Class<A> async, Map<Class<?>, Class<?>> delegateMap) {
-      super(sync, async, delegateMap);
+   protected EC2RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
+            Map<Class<?>, Class<?>> sync2Async) {
+      super(syncClientType, asyncClientType, sync2Async);
    }
+   
+
 
    @Override
    protected void installLocations() {

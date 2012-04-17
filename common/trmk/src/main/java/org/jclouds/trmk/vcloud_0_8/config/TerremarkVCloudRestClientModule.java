@@ -96,13 +96,11 @@ import com.google.inject.TypeLiteral;
 
 public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A> {
 
-   public TerremarkVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
-      super(syncClientType, asyncClientType);
+   public TerremarkVCloudRestClientModule() {
    }
 
-   public TerremarkVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegateMap) {
-      super(syncClientType, asyncClientType, delegateMap);
+   public TerremarkVCloudRestClientModule(Map<Class<?>, Class<?>> delegateMap) {
+      super(delegateMap);
    }
 
    @Override

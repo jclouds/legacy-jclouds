@@ -61,7 +61,7 @@ public class TerremarkECloudRestClientModule extends
          .build();
 
    public TerremarkECloudRestClientModule() {
-      super(TerremarkECloudClient.class, TerremarkECloudAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Provides

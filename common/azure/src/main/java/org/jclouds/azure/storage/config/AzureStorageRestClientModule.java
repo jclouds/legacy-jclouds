@@ -38,6 +38,7 @@ import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 
 /**
@@ -47,8 +48,11 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
+   protected AzureStorageRestClientModule() {
 
-   public AzureStorageRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
+   }
+
+   public AzureStorageRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }
 

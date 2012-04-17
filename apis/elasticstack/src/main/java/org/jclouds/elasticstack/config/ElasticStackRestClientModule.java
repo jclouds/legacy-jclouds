@@ -57,10 +57,6 @@ import com.google.inject.TypeLiteral;
 @ConfiguresRestClient
 public class ElasticStackRestClientModule extends RestClientModule<ElasticStackClient, ElasticStackAsyncClient> {
 
-   public ElasticStackRestClientModule() {
-      super(ElasticStackClient.class, ElasticStackAsyncClient.class);
-   }
-
    @Override
    protected void configure() {
       super.configure();

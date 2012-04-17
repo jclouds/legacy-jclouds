@@ -50,13 +50,11 @@ public class BaseSwiftRestClientModule<S extends CommonSwiftClient, A extends Co
          RestClientModule<S, A> {
    private final OpenStackAuthenticationModule module;
 
-   public BaseSwiftRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
-      this(new OpenStackAuthenticationModule(), syncClientType, asyncClientType);
+   public BaseSwiftRestClientModule() {
+      this(new OpenStackAuthenticationModule());
    }
 
-   public BaseSwiftRestClientModule(OpenStackAuthenticationModule module, Class<S> syncClientType,
-            Class<A> asyncClientType) {
-      super(syncClientType, asyncClientType);
+   public BaseSwiftRestClientModule(OpenStackAuthenticationModule module) {
       this.module = module;
    }
 

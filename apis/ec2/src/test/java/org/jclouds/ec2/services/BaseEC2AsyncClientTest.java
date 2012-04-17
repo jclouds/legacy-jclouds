@@ -62,12 +62,8 @@ import com.google.inject.Provides;
  */
 @Test(groups = "unit")
 public abstract class BaseEC2AsyncClientTest<T> extends BaseAsyncClientTest<T> {
-      @ConfiguresRestClient
+   @ConfiguresRestClient
    protected static class StubEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
-
-      public StubEC2RestClientModule() {
-         super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
-      }
 
       @Provides
       @Singleton

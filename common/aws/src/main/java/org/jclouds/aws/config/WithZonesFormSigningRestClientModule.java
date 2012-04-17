@@ -23,21 +23,29 @@ import java.util.Map;
 
 import org.jclouds.rest.ConfiguresRestClient;
 
+import com.google.common.reflect.TypeToken;
+
 
 /**
  * 
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-public class WithZonesFormSigningRestClientModule<S, A> extends FormSigningRestClientModule<S, A> {
-
-   public WithZonesFormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-            Map<Class<?>, Class<?>> delegates) {
-      super(syncClientType, asyncClientType, delegates);
+public abstract class WithZonesFormSigningRestClientModule<S, A> extends FormSigningRestClientModule<S, A> {
+   protected WithZonesFormSigningRestClientModule(Map<Class<?>, Class<?>> delegates) {
+      super(delegates);
    }
 
-   public WithZonesFormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
+   protected WithZonesFormSigningRestClientModule() {
+   }
+
+   protected WithZonesFormSigningRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
       super(syncClientType, asyncClientType);
+   }
+
+   protected WithZonesFormSigningRestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType,
+            Map<Class<?>, Class<?>> sync2Async) {
+      super(syncClientType, asyncClientType, sync2Async);
    }
 
 }

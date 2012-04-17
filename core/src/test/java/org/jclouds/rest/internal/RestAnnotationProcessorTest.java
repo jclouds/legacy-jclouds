@@ -176,7 +176,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @ConfiguresRestClient
    protected static class CallerModule extends RestClientModule<Caller, AsyncCaller> {
       CallerModule() {
-         super(Caller.class, AsyncCaller.class, ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class, Callee2.class, AsyncCallee2.class));
+         super(ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class, Callee2.class, AsyncCallee2.class));
       }
 
       @Override

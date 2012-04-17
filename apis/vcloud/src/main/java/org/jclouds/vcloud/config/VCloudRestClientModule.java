@@ -144,7 +144,7 @@ public class VCloudRestClientModule extends RestClientModule<VCloudClient, VClou
             .build();
 
    public VCloudRestClientModule() {
-      super(VCloudClient.class, VCloudAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Provides

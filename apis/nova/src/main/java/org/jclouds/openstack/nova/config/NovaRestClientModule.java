@@ -51,7 +51,6 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
    private final OpenStackAuthenticationModule module;
 
    public NovaRestClientModule(OpenStackAuthenticationModule module) {
-      super(NovaClient.class, NovaAsyncClient.class);
       this.module = module;
    }
 

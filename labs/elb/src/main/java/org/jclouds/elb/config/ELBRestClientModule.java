@@ -30,8 +30,5 @@ import org.jclouds.rest.ConfiguresRestClient;
  */
 @ConfiguresRestClient
 public class ELBRestClientModule extends FormSigningRestClientModule<ELBClient, ELBAsyncClient> {
-   public ELBRestClientModule() {
-      super(ELBClient.class, ELBAsyncClient.class);
-   }
 
 }
