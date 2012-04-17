@@ -99,13 +99,13 @@ public class CloneAndRegisterMachineFromIMachineIfNotAlreadyExists implements Fu
                .getVBox()
                .createMachine(settingsFile, vmSpec.getVmName(), vmSpec.getOsTypeId(), vmSpec.getVmId(),
                         vmSpec.isForceOverwrite());
-      
+
       List<CloneOptions> options = new ArrayList<CloneOptions>();
       if (isLinkedClone)
          options.add(CloneOptions.Link);
 
       // TODO snapshot name
-      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc")
+      ISnapshot currentSnapshot = new TakeSnapshotIfNotAlreadyAttached(manager, "snapshotName", "snapshotDesc", logger)
                .apply(master);
 
       // clone

@@ -24,6 +24,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
+import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IConsole;
 import org.virtualbox_4_1.IMachine;
@@ -66,7 +67,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       session.unlockMachine();
       replay(manager, machine, vBox, session, console, progress);
 
-      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc)
+      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc, Logger.CONSOLE)
             .apply(machine);
 
       verify(machine);
@@ -96,7 +97,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       session.unlockMachine();
       replay(manager, machine, vBox, session, console, progress);
 
-      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc)
+      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc, Logger.CONSOLE)
             .apply(machine);
 
       verify(machine);

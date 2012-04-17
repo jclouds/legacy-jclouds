@@ -42,6 +42,7 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -58,6 +59,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.Host;
 import org.jclouds.virtualbox.compute.VirtualBoxComputeServiceAdapter;
+import org.jclouds.virtualbox.compute.VirtualBoxImageExtension;
 import org.jclouds.virtualbox.domain.CloneSpec;
 import org.jclouds.virtualbox.domain.ExecutionType;
 import org.jclouds.virtualbox.domain.IsoSpec;
@@ -88,6 +90,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -142,6 +145,10 @@ public class VirtualBoxComputeServiceContextModule extends
       // the master machines cache
       bind(new TypeLiteral<LoadingCache<Image, Master>>() {
       }).to(MastersLoadingCache.class);
+      
+      // the vbox image extension
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(VirtualBoxImageExtension.class);
 
       // the master creating function
       bind(new TypeLiteral<Function<MasterSpec, IMachine>>() {
@@ -235,6 +242,11 @@ public class VirtualBoxComputeServiceContextModule extends
             return arg0.apply("host");
          }
       }), nodes);
+   }
+   
+   @Override
+   protected Optional<ImageExtension> provideImageExtension(Injector i) {
+      return Optional.of(i.getInstance(ImageExtension.class));
    }
 
    @VisibleForTesting

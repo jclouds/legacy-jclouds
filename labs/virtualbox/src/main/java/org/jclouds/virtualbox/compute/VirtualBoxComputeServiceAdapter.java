@@ -27,6 +27,7 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_NODE_PREFIX;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -58,6 +59,7 @@ import com.google.common.base.Throwables;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.Singleton;
 
 /**
@@ -72,20 +74,23 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   
+
    private final Supplier<VirtualBoxManager> manager;
-   private final Map<Image, YamlImage> images;
+   private final Map<Image, YamlImage> imagesToYamlImages;
    private final LoadingCache<Image, Master> mastersLoader;
    private final Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator;
+   private final Function<IMachine, Image> imachineToImage;
 
    @Inject
    public VirtualBoxComputeServiceAdapter(Supplier<VirtualBoxManager> manager,
             Supplier<Map<Image, YamlImage>> imagesMapper, LoadingCache<Image, Master> mastersLoader,
-            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator) {
+            Function<NodeSpec, NodeAndInitialCredentials<IMachine>> cloneCreator,
+            Function<IMachine, Image> imachineToImage) {
       this.manager = checkNotNull(manager, "manager");
-      this.images = imagesMapper.get();
+      this.imagesToYamlImages = imagesMapper.get();
       this.mastersLoader = mastersLoader;
       this.cloneCreator = cloneCreator;
+      this.imachineToImage = imachineToImage;
    }
 
    @Override
@@ -97,7 +102,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
          checkState(!name.contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "node names cannot contain \""
                   + VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
          Master master = mastersLoader.get(template.getImage());
-         checkState(master != null, "could not find a master for image: "+template.getClass());
+         checkState(master != null, "could not find a master for image: " + template.getImage());
          NodeSpec nodeSpec = NodeSpec.builder().master(master).name(name).tag(tag).template(template).build();
          return cloneCreator.apply(nodeSpec);
       } catch (Exception e) {
@@ -122,7 +127,28 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    @Override
    public Iterable<Image> listImages() {
-      return images.keySet();
+      // the set of image vm names that were (or could be) built from the yaml file
+      final Set<String> imagesFromYamlNames = Sets.newHashSet(Iterables.transform(imagesToYamlImages.keySet(),
+               new Function<Image, String>() {
+                  @Override
+                  public String apply(Image input) {
+                     return VIRTUALBOX_IMAGE_PREFIX + input.getId();
+                  }
+
+               }));
+
+      // IMachines that were not built from the yaml file transformed to Images
+      Set<Image> imagesFromCloning = Sets.newHashSet(Iterables.transform(
+               Iterables.filter(imageMachines(), new Predicate<IMachine>() {
+                  @Override
+                  public boolean apply(IMachine input) {
+                     return !imagesFromYamlNames.contains(input.getName());
+                  }
+               }), imachineToImage));
+
+      // final set of images are those from yaml and those from vbox that were not a transformation
+      // of the yaml ones
+      return Sets.union(imagesToYamlImages.keySet(), imagesFromCloning);
    }
 
    private Iterable<IMachine> imageMachines() {
@@ -147,7 +173,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
       try {
          return manager.get().getVBox().findMachine(vmName);
       } catch (VBoxException e) {
-         if (e.getMessage().contains("Could not find a registered machine named")){
+         if (e.getMessage().contains("Could not find a registered machine named")) {
             return null;
          }
          throw Throwables.propagate(e);
@@ -202,7 +228,7 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
 
    private void powerDownMachine(IMachine machine) {
       try {
-         if (machine.getState() == MachineState.PoweredOff){
+         if (machine.getState() == MachineState.PoweredOff) {
             logger.debug("vm was already powered down: ", machine.getId());
             return;
          }

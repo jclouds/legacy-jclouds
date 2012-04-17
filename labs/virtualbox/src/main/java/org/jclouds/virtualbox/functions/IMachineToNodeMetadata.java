@@ -95,8 +95,6 @@ public class IMachineToNodeMetadata implements Function<IMachine, NodeMetadata> 
          nodeState = NodeState.UNRECOGNIZED;
       nodeMetadataBuilder.state(nodeState);
 
-      logger.debug("Setting virtualbox node to: " + nodeState + " from machine state: " + vmState);
-
       /*
       // nat adapter
       INetworkAdapter natAdapter = vm.getNetworkAdapter(0l);

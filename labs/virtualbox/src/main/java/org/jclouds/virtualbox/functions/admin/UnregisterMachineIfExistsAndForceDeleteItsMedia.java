@@ -105,8 +105,17 @@ public class UnregisterMachineIfExistsAndForceDeleteItsMedia implements Function
          checkNotNull(medium.getChildren());
          if (medium.getDeviceType().equals(DeviceType.HardDisk)) {
             for (IMedium child : medium.getChildren()) {
-               IProgress deletion = child.deleteStorage();
-               deletion.waitForCompletion(-1);
+               try {
+                  IProgress deletion = child.deleteStorage();
+                  deletion.waitForCompletion(-1);
+               } catch (Exception e) {
+                  // work around media that are still attached to other vm's. this can happen when a
+                  // running node is used to create a new image and then an attempt at deleting it
+                  // is made
+                  if (e.getMessage().contains("is still attached to the following")) {
+                     logger.warn("Media could not be deleted. Ignoring... [Message %s]", e.getMessage());
+                  }
+               }
             }
          }
          return medium;

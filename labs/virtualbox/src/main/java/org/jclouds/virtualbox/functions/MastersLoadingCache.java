@@ -145,7 +145,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
       YamlImage currentImage = imageMapping.get(key.getId());
 
       checkNotNull(currentImage, "could not find yaml image for image: " + key);
-      
+
       checkState(!currentImage.id.contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "master image names cannot contain \""
                + VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
 
@@ -174,11 +174,11 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
                .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", MASTER_PORT , "", 22).build();
+               .tcpRedirectRule("127.0.0.1", MASTER_PORT, "", 22).build();
 
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
                .slot(0L).build();
-      
+
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
       MasterSpec masterSpec = MasterSpec
@@ -190,7 +190,6 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
       IMachine masterMachine;
 
-      
       // ready the preseed file server
       PreseedCfgServer server = new PreseedCfgServer();
       try {
@@ -198,7 +197,7 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
          masterMachine = manager.get().getVBox().findMachine(vmName);
       } catch (VBoxException e) {
          if (machineNotFoundException(e)) {
-            server.start(preconfigurationUrl,currentImage.preseed_cfg);
+            server.start(preconfigurationUrl, currentImage.preseed_cfg);
             // create the master machine if it can't be found
             masterMachine = masterCreatorAndInstaller.apply(masterSpec);
          } else {
@@ -207,7 +206,6 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
       } finally {
          server.stop();
       }
-      
 
       Master master = Master.builder().machine(masterMachine).spec(masterSpec).build();
 
