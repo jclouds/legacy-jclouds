@@ -23,11 +23,13 @@ import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
 import org.jclouds.ec2.xml.CreateVolumeResponseHandler;
+import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromRegionIdToZoneIdsValues;
 import org.jclouds.openstack.nova.ec2.xml.NovaCreateVolumeResponseHandler;
+import org.jclouds.openstack.nova.ec2.xml.NovaDescribeImagesResponseHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.inject.Scopes;
@@ -47,6 +49,7 @@ public class NovaEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2A
    protected void configure() {
       super.configure();
       bind(CreateVolumeResponseHandler.class).to(NovaCreateVolumeResponseHandler.class).in(Scopes.SINGLETON);
+      bind(DescribeImagesResponseHandler.class).to(NovaDescribeImagesResponseHandler.class);
    }
 
    @Override
