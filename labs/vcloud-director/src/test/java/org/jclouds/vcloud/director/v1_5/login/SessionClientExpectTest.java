@@ -123,7 +123,7 @@ public class SessionClientExpectTest extends BaseRestClientExpectTest<SessionCli
    }
    
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return AnonymousRestApiMetadata.forClientMappedToAsyncClient(SessionClient.class, SessionAsyncClient.class)
             .toBuilder().defaultEndpoint("https://vcloudbeta.bluelock.com/api").build();
    }

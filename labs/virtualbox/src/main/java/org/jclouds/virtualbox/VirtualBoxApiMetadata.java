@@ -31,25 +31,23 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
+import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.virtualbox.config.DefaultCacheNodeStoreModule;
+import org.jclouds.virtualbox.config.VirtualBoxComputeServiceContextModule;
 
-import com.google.common.base.Supplier;
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for VirtualBox API
- * 
- * <h3>note</h3>
- * 
- * This class is not setup to allow a subclasses to override the type of api,
- * asyncapi, or context. This is an optimization for simplicity.
- * 
+
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
-public class VirtualBoxApiMetadata extends BaseComputeServiceApiMetadata<Supplier, Supplier, ComputeServiceContext<Supplier, Supplier>, VirtualBoxApiMetadata> {
+public class VirtualBoxApiMetadata extends BaseApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7039233043408808289L;
 
    @Override
    public Builder toBuilder() {
@@ -64,8 +62,8 @@ public class VirtualBoxApiMetadata extends BaseComputeServiceApiMetadata<Supplie
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseApiMetadata.defaultProperties();
       
       properties.put(IMAGE_LOGIN_USER, "toor:password");
       properties.put(IMAGE_AUTHENTICATE_SUDO, "true");
@@ -91,11 +89,10 @@ public class VirtualBoxApiMetadata extends BaseComputeServiceApiMetadata<Supplie
       return properties;
    }
 
-   public static class Builder extends BaseComputeServiceApiMetadata.Builder<Supplier, Supplier, ComputeServiceContext<Supplier, Supplier>, VirtualBoxApiMetadata> {
+   public static class Builder extends BaseApiMetadata.Builder {
 
       protected Builder() {
          id("virtualbox")
-         .type(ApiType.COMPUTE)
          .name("VirtualBox API")
          .identityName("User")
          .credentialName("Password")
@@ -108,8 +105,8 @@ public class VirtualBoxApiMetadata extends BaseComputeServiceApiMetadata<Supplie
          .version("4.1.4")
          .buildVersion("4.1.8r75467")
          .defaultProperties(VirtualBoxApiMetadata.defaultProperties())
-         .javaApi(Supplier.class, Supplier.class)
-         .contextBuilder(TypeToken.of(VirtualBoxContextBuilder.class));
+         .wrapper(ComputeServiceContext.class)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(DefaultCacheNodeStoreModule.class, VirtualBoxComputeServiceContextModule.class));
       }
 
       @Override
@@ -118,7 +115,7 @@ public class VirtualBoxApiMetadata extends BaseComputeServiceApiMetadata<Supplie
       }
 
       @Override
-      public Builder fromApiMetadata(VirtualBoxApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

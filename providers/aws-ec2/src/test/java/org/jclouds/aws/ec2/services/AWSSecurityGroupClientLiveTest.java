@@ -23,9 +23,6 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.ec2.domain.IpPermission;
 import org.jclouds.ec2.domain.IpProtocol;
 import org.jclouds.ec2.domain.SecurityGroup;
@@ -41,7 +38,7 @@ import com.google.common.collect.ImmutableMultimap;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AWSSecurityGroupClientLiveTest extends SecurityGroupClientLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class AWSSecurityGroupClientLiveTest extends SecurityGroupClientLiveTest {
    public AWSSecurityGroupClientLiveTest() {
       provider = "aws-ec2";
    }

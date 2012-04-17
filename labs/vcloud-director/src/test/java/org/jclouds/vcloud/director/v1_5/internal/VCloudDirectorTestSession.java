@@ -9,9 +9,9 @@ import java.io.Closeable;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
@@ -80,7 +80,7 @@ public class VCloudDirectorTestSession implements Closeable {
    private User createdUser;
 
    private VCloudDirectorTestSession(String provider, String identity, String credential, Properties overrides, String endpoint) {
-      ContextBuilder<?, ?, ?, ?> builder = ContextBuilder.newBuilder(provider)
+      ContextBuilder builder = ContextBuilder.newBuilder(provider)
             .credentials(identity, credential)
             .endpoint(endpoint)
             .modules(ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()))

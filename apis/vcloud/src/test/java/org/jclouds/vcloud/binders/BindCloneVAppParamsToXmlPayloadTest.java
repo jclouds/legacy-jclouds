@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.testng.annotations.Test;
 
@@ -52,10 +52,10 @@ public class BindCloneVAppParamsToXmlPayloadTest {
 
       @Override
       protected void configure() {
-         Properties props = new Properties();
+         Properties props = new VCloudApiMetadata().getDefaultProperties();
          props.setProperty("jclouds.vcloud.xml.ns", "http://www.vmware.com/vcloud/v1");
          props.setProperty("jclouds.vcloud.xml.schema", "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-         Names.bindProperties(binder(), new PropertiesBuilder(props).build());
+         Names.bindProperties(binder(), props);
       }
    });
 

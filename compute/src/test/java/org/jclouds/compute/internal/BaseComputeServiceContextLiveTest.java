@@ -22,24 +22,25 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.rest.config.CredentialStoreModule;
-import org.jclouds.rest.internal.BaseContextLiveTest;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.InputSupplier;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
 
 /**
  * @author Jason King, Adrian Cole
  */
-public abstract class BaseComputeServiceContextLiveTest<S, A, C extends ComputeServiceContext<S, A>> extends BaseContextLiveTest<C> {
+public abstract class BaseComputeServiceContextLiveTest extends BaseContextLiveTest<ComputeServiceContext> {
 
    protected String imageId;
    protected String loginUser;
@@ -49,7 +50,12 @@ public abstract class BaseComputeServiceContextLiveTest<S, A, C extends ComputeS
    // isolate tests from eachother, as default credentialStore is static
    protected Module credentialStoreModule = new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
          new ConcurrentHashMap<String, InputSupplier<InputStream>>()));
-
+   
+   @Override
+   protected TypeToken<ComputeServiceContext> contextType() {
+      return TypeToken.of(ComputeServiceContext.class);
+   }
+   
    @Override
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();

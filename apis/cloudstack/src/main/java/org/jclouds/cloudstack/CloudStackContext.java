@@ -31,8 +31,9 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(CloudStackContextImpl.class)
-public interface CloudStackContext extends ComputeServiceContext<CloudStackClient, CloudStackAsyncClient> {
+public interface CloudStackContext extends ComputeServiceContext {
 
+   @SuppressWarnings("unchecked")
    @Override
    RestContext<CloudStackClient, CloudStackAsyncClient> getProviderSpecificContext();
 

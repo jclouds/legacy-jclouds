@@ -18,11 +18,8 @@
  */
 package org.jclouds.glesys.compute;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -36,9 +33,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class GleSYSComputeServiceLiveTest
-      extends
-      BaseComputeServiceLiveTest<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>> {
+public class GleSYSComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public GleSYSComputeServiceLiveTest() {
       provider = "glesys";

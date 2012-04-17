@@ -20,9 +20,9 @@ package org.jclouds.azureblob.blobstore.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.azureblob.AzureBlobProviderMetadata;
 import org.jclouds.azureblob.blobstore.strategy.FindMD5InBlobProperties;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.testng.annotations.Test;
 
@@ -37,7 +37,7 @@ public class AzureBlobStoreModuleTest {
    @Test
    void testContextImpl() {
 
-      Injector injector = BlobStoreContextBuilder.newBuilder(new AzureBlobProviderMetadata()).credentials("foo", "bar")
+      Injector injector = ContextBuilder.newBuilder(new AzureBlobProviderMetadata()).credentials("foo", "bar")
             .buildInjector();
       ContainsValueInListStrategy valueList = injector.getInstance(ContainsValueInListStrategy.class);
 

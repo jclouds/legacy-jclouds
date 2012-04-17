@@ -30,7 +30,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -121,8 +120,7 @@ public class AzureBlobRequestSignerTest extends BaseAsyncClientTest<AzureBlobAsy
       return new TestAzureBlobRestClientModule();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAzureBlobRestClientModule extends AzureBlobRestClientModule {
       @Override
       protected void configure() {

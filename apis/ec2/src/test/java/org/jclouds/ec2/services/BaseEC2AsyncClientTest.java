@@ -39,7 +39,6 @@ import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
@@ -63,8 +62,7 @@ import com.google.inject.Provides;
  */
 @Test(groups = "unit")
 public abstract class BaseEC2AsyncClientTest<T> extends BaseAsyncClientTest<T> {
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static class StubEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
 
       public StubEC2RestClientModule() {
@@ -143,9 +141,8 @@ public abstract class BaseEC2AsyncClientTest<T> extends BaseAsyncClientTest<T> {
       return new StubEC2RestClientModule();
    }
    
-   @SuppressWarnings("rawtypes")
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new EC2ApiMetadata();
    }
 }

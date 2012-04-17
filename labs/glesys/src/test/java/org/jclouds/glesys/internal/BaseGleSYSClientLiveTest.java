@@ -26,7 +26,6 @@ import static org.testng.Assert.assertTrue;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.glesys.GleSYSAsyncClient;
 import org.jclouds.glesys.GleSYSClient;
@@ -50,9 +49,7 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole, Adam Lowe
  */
 @Test(groups = "live")
-public class BaseGleSYSClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>> {
+public class BaseGleSYSClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected RestContext<GleSYSClient, GleSYSAsyncClient> gleContext;
 
@@ -64,7 +61,7 @@ public class BaseGleSYSClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      gleContext = context.getProviderSpecificContext();
+      gleContext = context.unwrap();
    }
 
    protected void createDomain(String domain) {

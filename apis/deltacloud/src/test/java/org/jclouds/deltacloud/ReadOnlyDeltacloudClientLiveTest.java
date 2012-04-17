@@ -25,15 +25,14 @@ import static org.testng.Assert.assertTrue;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
+import org.jclouds.deltacloud.domain.Instance.State;
 import org.jclouds.deltacloud.predicates.InstanceFinished;
 import org.jclouds.deltacloud.predicates.InstanceRunning;
 import org.jclouds.net.IPSocket;
@@ -57,9 +56,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ReadOnlyDeltacloudClientLiveTest")
-public class ReadOnlyDeltacloudClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<DeltacloudClient, DeltacloudAsyncClient, ComputeServiceContext<DeltacloudClient, DeltacloudAsyncClient>> {
+public class ReadOnlyDeltacloudClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public ReadOnlyDeltacloudClientLiveTest() {
       provider = "deltacloud";
@@ -74,7 +71,7 @@ public class ReadOnlyDeltacloudClientLiveTest
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi();
+      client = context.unwrap(DeltacloudApiMetadata.CONTEXT_TOKEN).getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
       stateChanges = ImmutableMap.<Instance.State, Predicate<Instance>> of(//
                Instance.State.RUNNING, new RetryablePredicate<Instance>(new InstanceRunning(client), 600, 1,

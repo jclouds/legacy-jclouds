@@ -18,33 +18,18 @@
  */
 package org.jclouds.compute.stub.config;
 
-import java.util.concurrent.ConcurrentMap;
-
-import javax.inject.Singleton;
-
 import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.concurrent.SingleThreaded;
-
-import com.google.inject.Provides;
 
 /**
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @SingleThreaded
-public class StubComputeServiceContextModule extends
-         JCloudsNativeComputeServiceAdapterContextModule<ConcurrentMap, ConcurrentMap> {
+public class StubComputeServiceContextModule extends JCloudsNativeComputeServiceAdapterContextModule {
 
    public StubComputeServiceContextModule() {
-      super(ConcurrentMap.class, ConcurrentMap.class, StubComputeServiceAdapter.class);
-   }
-
-   @Provides
-   @Singleton
-   ConcurrentMap provideApi(ConcurrentMap<String, NodeMetadata> in) {
-      return in;
+      super(StubComputeServiceAdapter.class);
    }
 
    @Override

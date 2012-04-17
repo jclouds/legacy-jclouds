@@ -50,7 +50,6 @@ import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -890,8 +889,7 @@ public class CloudServersAsyncClientTest extends BaseAsyncClientTest<CloudServer
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
-   protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
+      protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
 
       @Provides
       @Singleton
@@ -909,7 +907,7 @@ public class CloudServersAsyncClientTest extends BaseAsyncClientTest<CloudServer
    protected String provider = "cloudservers";
 
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new CloudServersApiMetadata();
    }
 

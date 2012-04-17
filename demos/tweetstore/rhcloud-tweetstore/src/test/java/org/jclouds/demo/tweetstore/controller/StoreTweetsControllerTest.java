@@ -18,10 +18,10 @@
  */
 package org.jclouds.demo.tweetstore.controller;
 
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.jclouds.util.Strings2.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 
@@ -32,7 +32,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.TransientApiMetadata;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.testng.annotations.Test;
@@ -56,18 +57,19 @@ public class StoreTweetsControllerTest {
       return createMock(Twitter.class);
    }
 
-   Map<String, BlobStoreContext> createBlobStores() throws InterruptedException, ExecutionException {
-      Map<String, BlobStoreContext> contexts = ImmutableMap.<String, BlobStoreContext> of("test1",
-               new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"), "test2",
-               new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"));
-      for (BlobStoreContext blobstore : contexts.values()) {
+   Map<String, BlobStoreContext<?, ?>> createBlobStores() throws InterruptedException, ExecutionException {
+       TransientApiMetadata transientApiMetadata = TransientApiMetadata.builder().build();
+       Map<String, BlobStoreContext<?, ?>> contexts = ImmutableMap.<String, BlobStoreContext<?, ?>>of(
+               "test1", BlobStoreContextBuilder.newBuilder(transientApiMetadata).build(), 
+               "test2", BlobStoreContextBuilder.newBuilder(transientApiMetadata).build());
+      for (BlobStoreContext<?, ?> blobstore : contexts.values()) {
          blobstore.getAsyncBlobStore().createContainerInLocation(null, "favo").get();
       }
       return contexts;
    }
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
-      Map<String, BlobStoreContext> stores = createBlobStores();
+      Map<String, BlobStoreContext<?, ?>> stores = createBlobStores();
       StoreTweetsController function = new StoreTweetsController(stores, "favo", createTwitter());
 
       User frank = createMock(User.class);
@@ -99,7 +101,7 @@ public class StoreTweetsControllerTest {
       verify(jimmy);
       verify(jimmyStatus);
 
-      for (Entry<String, BlobStoreContext> entry : stores.entrySet()) {
+      for (Entry<String, BlobStoreContext<?, ?>> entry : stores.entrySet()) {
          BlobMap map = entry.getValue().createBlobMap("favo");
          Blob frankBlob = map.get("1");
          assertEquals(frankBlob.getMetadata().getName(), "1");

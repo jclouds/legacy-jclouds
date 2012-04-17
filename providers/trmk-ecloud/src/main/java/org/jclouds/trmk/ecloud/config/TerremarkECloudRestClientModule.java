@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.trmk.ecloud.TerremarkECloudAsyncClient;
 import org.jclouds.trmk.ecloud.TerremarkECloudClient;
@@ -52,7 +51,6 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class TerremarkECloudRestClientModule extends
       TerremarkVCloudRestClientModule<TerremarkECloudClient, TerremarkECloudAsyncClient> {

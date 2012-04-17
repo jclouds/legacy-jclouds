@@ -21,10 +21,7 @@ package org.jclouds.providers;
 import java.net.URI;
 
 import org.jclouds.apis.JcloudsTestComputeApiMetadata;
-import org.jclouds.http.IntegrationTestAsyncClient;
-import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.providers.internal.BaseProviderMetadata;
-import org.jclouds.rest.RestContext;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -33,10 +30,11 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class JcloudsTestComputeProviderMetadata
-      extends
-      BaseProviderMetadata<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestComputeApiMetadata> {
+public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 424799830416415960L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -54,9 +52,7 @@ public class JcloudsTestComputeProviderMetadata
       super(builder);
    }
 
-   public static class Builder
-         extends
-         BaseProviderMetadata.Builder<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestComputeApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("test-compute-api")

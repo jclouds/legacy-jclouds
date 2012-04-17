@@ -47,7 +47,7 @@ public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFil
    
    @Override
    public CloudFilesClient getApi() {
-      return (CloudFilesClient) context.getProviderSpecificContext().getApi();
+      return context.unwrap(CloudFilesApiMetadata.CONTEXT_TOKEN).getApi();
    }
    
    @Override

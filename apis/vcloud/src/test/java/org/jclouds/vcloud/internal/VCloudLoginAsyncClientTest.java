@@ -98,7 +98,7 @@ public class VCloudLoginAsyncClientTest extends BaseAsyncClientTest<VCloudLoginA
    }
 
    @Override
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(VCloudLoginClient.class,
             VCloudLoginAsyncClient.class, "http://localhost:8080/login");
    }

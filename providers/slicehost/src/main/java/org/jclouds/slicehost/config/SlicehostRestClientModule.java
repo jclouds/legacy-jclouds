@@ -19,7 +19,6 @@
 package org.jclouds.slicehost.config;
 
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -34,7 +33,6 @@ import org.jclouds.slicehost.handlers.ParseSlicehostErrorFromHttpResponse;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class SlicehostRestClientModule extends RestClientModule<SlicehostClient, SlicehostAsyncClient> {
 
    public SlicehostRestClientModule() {

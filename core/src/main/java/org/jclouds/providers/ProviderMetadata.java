@@ -18,7 +18,7 @@
  */
 package org.jclouds.providers;
 
-import java.io.Closeable;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
@@ -34,82 +34,82 @@ import com.google.common.base.Optional;
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
  */
-public interface ProviderMetadata<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> {
+public interface ProviderMetadata extends Serializable {
   
    /**
     * 
     * @author Adrian Cole
     * @since 1.5
     */
-   public static interface Builder<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> {
+   public static interface Builder {
       /**
        * @see ProviderMetadata#getId()
        */
-      Builder<S, A, C, M> id(String id);
+      Builder id(String id);
 
       /**
        * @see ProviderMetadata#getName()
        */
-      Builder<S, A, C, M> name(String name);
+      Builder name(String name);
 
       /**
        * @see ProviderMetadata#getApiMetadata()
        */
-      Builder<S, A, C, M> apiMetadata(M api);
+      Builder apiMetadata(ApiMetadata api);
 
       /**
        * @see ProviderMetadata#getEndpoint()
        */
-      Builder<S, A, C, M> endpoint(String endpoint);
+      Builder endpoint(String endpoint);
 
       /**
        * @see ProviderMetadata#getDefaultProperties()
        */
-      Builder<S, A, C, M> defaultProperties(Properties defaultProperties);
+      Builder defaultProperties(Properties defaultProperties);
 
       /**
        * @see ProviderMetadata#getConsole()
        */
-      Builder<S, A, C, M> console(@Nullable URI console);
+      Builder console(@Nullable URI console);
 
       /**
        * @see ProviderMetadata#getHomepage()
        */
-      Builder<S, A, C, M> homepage(@Nullable URI homepage);
+      Builder homepage(@Nullable URI homepage);
 
       /**
        * @see ProviderMetadata#getLinkedServices()
        */
-      Builder<S, A, C, M> linkedServices(Iterable<String> linkedServices);
+      Builder linkedServices(Iterable<String> linkedServices);
 
       /**
        * @see ProviderMetadata#getLinkedServices()
        */
-      Builder<S, A, C, M> linkedServices(String... linkedServices);
+      Builder linkedServices(String... linkedServices);
 
       /**
        * @see ProviderMetadata#getLinkedServices()
        */
-      Builder<S, A, C, M> linkedService(String linkedService);
+      Builder linkedService(String linkedService);
 
       /**
        * @see ProviderMetadata#getIso3166Code()
        */
-      Builder<S, A, C, M> iso3166Codes(Iterable<String> iso3166Codes);
+      Builder iso3166Codes(Iterable<String> iso3166Codes);
 
       /**
        * @see ProviderMetadata#getIso3166Code()
        */
-      Builder<S, A, C, M> iso3166Codes(String... iso3166Codes);
+      Builder iso3166Codes(String... iso3166Codes);
 
       /**
        * @see ProviderMetadata#getIso3166Code()
        */
-      Builder<S, A, C, M> iso3166Code(String iso3166Code);
+      Builder iso3166Code(String iso3166Code);
 
-      ProviderMetadata<S, A, C, M> build();
+      ProviderMetadata build();
 
-      Builder<S, A, C, M> fromProviderMetadata(ProviderMetadata<S, A, C, M> in);
+      Builder fromProviderMetadata(ProviderMetadata in);
 
    }
 
@@ -117,7 +117,7 @@ public interface ProviderMetadata<S, A, C extends Closeable, M extends ApiMetada
     * @see Builder
     * @since 1.5
     */
-   Builder<S, A, C, M> toBuilder();
+   Builder toBuilder();
 
    /**
     * 
@@ -136,7 +136,7 @@ public interface ProviderMetadata<S, A, C extends Closeable, M extends ApiMetada
     * @return the provider's api
     * @since 1.5
     */
-   public M getApiMetadata();
+   public ApiMetadata getApiMetadata();
 
    /**
     * @see ApiMetadata#getEndpoint

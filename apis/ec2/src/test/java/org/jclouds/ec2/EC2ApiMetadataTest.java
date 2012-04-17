@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @Test(groups = "unit", testName = "EC2ApiMetadataTest")
 public class EC2ApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 

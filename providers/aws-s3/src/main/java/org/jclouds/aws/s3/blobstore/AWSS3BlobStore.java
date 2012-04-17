@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.jclouds.aws.s3.AWSS3ApiMetadata;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
 import org.jclouds.aws.s3.blobstore.options.AWSS3PutOptions;
@@ -37,7 +38,6 @@ import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.S3BlobStore;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
@@ -65,7 +65,7 @@ public class AWSS3BlobStore extends S3BlobStore {
    private final BlobToObject blob2Object;
 
    @Inject
-   AWSS3BlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+   AWSS3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, AWSS3Client sync,
             BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
@@ -108,7 +108,7 @@ public class AWSS3BlobStore extends S3BlobStore {
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // nulls not permitted from cache loader
       }
-      return S3Client.class.cast(getContext().getProviderSpecificContext().getApi())
-         .putObject(container, blob2Object.apply(blob), options);
+      return getContext().unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi().putObject(container, blob2Object.apply(blob),
+               options);
    }
 }

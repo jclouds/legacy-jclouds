@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.compute.config;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,7 +39,6 @@ import org.jclouds.aws.ec2.compute.strategy.AWSEC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.AWSEC2ReviseParsedImage;
 import org.jclouds.aws.ec2.compute.strategy.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions;
 import org.jclouds.aws.ec2.compute.suppliers.AWSEC2HardwareSupplier;
-import org.jclouds.aws.ec2.reference.AWSEC2Constants;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -72,7 +72,6 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * 
@@ -105,10 +104,8 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    @Override
    protected boolean shouldParseImagesOnDemand(Injector injector) {
       // If no queries defined, then will never lookup all images
-      String amiQuery = injector.getInstance(Key.get(String.class, Names.named(AWSEC2Constants.PROPERTY_EC2_AMI_QUERY)));
-      String amiCcQuery = injector.getInstance(Key.get(String.class, Names.named(AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY)));
-
-      return !(amiQuery.isEmpty() && amiCcQuery.isEmpty());
+      return injector.getInstance(Key.get(new TypeLiteral<Map<String, String>>() {
+      }, ImageQuery.class)).size() > 0;
    }
 
    // duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util

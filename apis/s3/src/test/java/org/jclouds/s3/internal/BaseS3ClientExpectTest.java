@@ -19,7 +19,6 @@
 package org.jclouds.s3.internal;
 
 import org.jclouds.date.TimeStamp;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.jclouds.s3.S3ApiMetadata;
@@ -38,8 +37,7 @@ public abstract class BaseS3ClientExpectTest extends BaseRestClientExpectTest<S3
 
    protected static final String CONSTANT_DATE = "2009-11-08T15:54:08.897Z";
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestS3RestClientModule extends S3RestClientModule<S3Client, S3AsyncClient> {
 
       public TestS3RestClientModule() {
@@ -57,7 +55,6 @@ public abstract class BaseS3ClientExpectTest extends BaseRestClientExpectTest<S3
       return new TestS3RestClientModule();
    }
    
-   @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public S3ApiMetadata createApiMetadata() {
       return new S3ApiMetadata();

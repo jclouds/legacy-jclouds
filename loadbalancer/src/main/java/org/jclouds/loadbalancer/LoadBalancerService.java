@@ -49,7 +49,7 @@ public interface LoadBalancerService {
    /**
     * @return a reference to the context that created this LoadBalancerService.
     */
-   LoadBalancerServiceContext<?, ?> getContext();
+   LoadBalancerServiceContext getContext();
 
    /**
     * @param location

@@ -42,6 +42,13 @@ public interface Constants {
    public static final String PROPERTY_IO_WORKER_THREADS = "jclouds.io-worker-threads";
 
    /**
+    * Integer property. default (10)
+    * <p/>
+    * Amount of threads servicing scheduled tasks.
+    */
+   public static final String PROPERTY_SCHEDULER_THREADS = "jclouds.scheduler-threads";
+
+   /**
     * Integer property. default (20)
     * <p/>
     * Limits the amount of connections per context.

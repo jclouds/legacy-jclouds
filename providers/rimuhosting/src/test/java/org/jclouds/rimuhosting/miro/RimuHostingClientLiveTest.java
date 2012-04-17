@@ -24,7 +24,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rimuhosting.miro.domain.Image;
@@ -44,7 +43,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", singleThreaded = true, testName = "RimuHostingClientLiveTest")
 public class RimuHostingClientLiveTest
       extends
-      BaseComputeServiceContextLiveTest<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>> {
+      BaseComputeServiceContextLiveTest {
 
    public RimuHostingClientLiveTest() {
       provider = "rimuhosting";
@@ -57,7 +56,7 @@ public class RimuHostingClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      restContext = context.getProviderSpecificContext();
+      restContext = context.unwrap();
       this.connection = restContext.getApi();
 
    }

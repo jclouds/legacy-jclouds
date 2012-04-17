@@ -24,7 +24,6 @@ import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.config.CloudStackRestClientModule;
 import org.jclouds.cloudstack.filters.QuerySigner;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -37,8 +36,7 @@ import com.google.inject.Module;
  */
 public abstract class BaseCloudStackAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    public static class CloudStackRestClientModuleExtension extends CloudStackRestClientModule {
 
    }
@@ -55,7 +53,7 @@ public abstract class BaseCloudStackAsyncClientTest<T> extends BaseAsyncClientTe
    }
 
    @Override
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return  AnonymousProviderMetadata.forApiWithEndpoint(new CloudStackApiMetadata(),
             "http://localhost:8080/client/api");
    }

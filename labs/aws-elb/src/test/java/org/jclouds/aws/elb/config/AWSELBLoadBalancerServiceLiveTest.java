@@ -18,8 +18,6 @@
  */
 package org.jclouds.aws.elb.config;
 
-import org.jclouds.elb.ELBAsyncClient;
-import org.jclouds.elb.ELBClient;
 import org.jclouds.elb.loadbalancer.ELBLoadBalancerServiceLiveTest;
 import org.testng.annotations.Test;
 
@@ -28,7 +26,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "AWSELBLoadBalancerServiceLiveTest")
-public class AWSELBLoadBalancerServiceLiveTest extends ELBLoadBalancerServiceLiveTest<ELBClient, ELBAsyncClient> {
+public class AWSELBLoadBalancerServiceLiveTest extends ELBLoadBalancerServiceLiveTest {
 
    public AWSELBLoadBalancerServiceLiveTest() {
       provider = "aws-elb";

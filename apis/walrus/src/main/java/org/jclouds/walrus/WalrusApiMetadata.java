@@ -27,16 +27,21 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.s3.S3ApiMetadata;
 import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.S3Client;
-import org.jclouds.s3.blobstore.S3BlobStoreContext;
+import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
+import org.jclouds.walrus.config.WalrusRestClientModule;
 
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for the Walrus S3 API
  * 
  * @author Adrian Cole
  */
-public class WalrusApiMetadata extends S3ApiMetadata<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> {
+public class WalrusApiMetadata extends S3ApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 820062881469203616L;
+   
    private static Builder builder() {
       return new Builder();
    }
@@ -54,21 +59,21 @@ public class WalrusApiMetadata extends S3ApiMetadata<S3Client, S3AsyncClient, S3
       super(builder);
    }
    
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = S3ApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/services/Walrus");
       properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       return properties;
    }
 
-   public static class Builder extends S3ApiMetadata.Builder<S3Client, S3AsyncClient, S3BlobStoreContext<S3Client, S3AsyncClient>, WalrusApiMetadata> {
+   public static class Builder extends S3ApiMetadata.Builder {
       protected Builder(){
          super(S3Client.class, S3AsyncClient.class);
          id("walrus")
          .name("Walrus (S3 clone) API")
          .version("Walrus-1.6")
          .defaultProperties(WalrusApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(WalrusContextBuilder.class));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(WalrusRestClientModule.class, S3BlobStoreContextModule.class));
       }
       
       @Override
@@ -77,7 +82,7 @@ public class WalrusApiMetadata extends S3ApiMetadata<S3Client, S3AsyncClient, S3
       }
 
       @Override
-      public Builder fromApiMetadata(WalrusApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

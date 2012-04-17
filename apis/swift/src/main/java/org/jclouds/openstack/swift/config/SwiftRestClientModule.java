@@ -20,7 +20,6 @@ package org.jclouds.openstack.swift.config;
 
 import javax.inject.Singleton;
 
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.SwiftAsyncClient;
@@ -34,7 +33,6 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class SwiftRestClientModule extends BaseSwiftRestClientModule<SwiftClient, SwiftAsyncClient> {
 
    public SwiftRestClientModule() {

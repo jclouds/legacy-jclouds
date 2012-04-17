@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
 public class AtmosClientLiveTest extends BaseBlobStoreIntegrationTest {
 
    public AtmosClient getApi() {
-      return (AtmosClient) context.getProviderSpecificContext().getApi();
+      return context.unwrap(AtmosApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    private static final class HeadMatches implements Runnable {

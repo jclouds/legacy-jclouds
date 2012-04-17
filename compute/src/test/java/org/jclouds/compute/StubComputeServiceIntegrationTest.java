@@ -29,10 +29,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.ExecResponse;
@@ -64,10 +62,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @Test(groups = "live", testName="StubComputeServiceIntegrationTest")
-public class StubComputeServiceIntegrationTest extends
-      BaseComputeServiceLiveTest<ConcurrentMap, ConcurrentMap, ComputeServiceContext<ConcurrentMap, ConcurrentMap>> {
+public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTest {
 
    private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
    private static final ExecResponse EXEC_BAD = new ExecResponse("", "", 1);
@@ -370,7 +366,7 @@ public class StubComputeServiceIntegrationTest extends
             client.connect();
 
             expect(client.exec("echo hello")).andReturn(new ExecResponse("hello", "", 0));
-            expect(client.exec("java -version")).andReturn(new ExecResponse("", "1.7", 0));
+            expect(client.exec("java -version")).andReturn(new ExecResponse("", "OpenJDK", 0));
 
             client.disconnect();
          }
@@ -528,11 +524,6 @@ public class StubComputeServiceIntegrationTest extends
    @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
       super.testDestroyNodes();
-   }
-
-   @Override
-   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
-      super.cleanup();
    }
 
 }

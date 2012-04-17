@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
@@ -49,9 +48,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class TerremarkECloudComputeServiceLiveTest
-      extends
-      BaseComputeServiceLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>> {
+public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Override
    protected Properties setupProperties() {
@@ -107,7 +104,7 @@ public class TerremarkECloudComputeServiceLiveTest
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
-         RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient> tmContext = context.getProviderSpecificContext();
+         RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient> tmContext = context.unwrap();
          VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(allData.getLocation().getParent().getDescription(),
                allData.getLocation().getDescription(), allData.getName());
          assertEquals(vApp.getName(), allData.getName());

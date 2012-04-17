@@ -48,10 +48,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -126,7 +126,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    protected final FilesystemStorageStrategy storageStrategy;
 
    @Inject
-   protected FilesystemAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, DateService dateService, Crypto crypto,
+   protected FilesystemAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
          HttpGetOptionsListToGetOptions httpGetOptionsConverter, IfDirectoryReturnNameStrategy ifDirectoryReturnName,
          BlobUtils blobUtils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
          Supplier<Location> defaultLocation, @Memoized Supplier<Set<? extends Location>> locations,

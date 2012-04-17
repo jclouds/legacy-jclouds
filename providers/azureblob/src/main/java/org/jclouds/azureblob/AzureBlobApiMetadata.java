@@ -24,19 +24,29 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.azureblob.blobstore.config.AzureBlobStoreContextModule;
+import org.jclouds.azureblob.config.AzureBlobRestClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Microsoft Azure Blob Service API
  * 
  * @author Adrian Cole
  */
-public class AzureBlobApiMetadata
-      extends
-      BaseBlobStoreApiMetadata<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> {
+public class AzureBlobApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8067252472547486854L;
+
+   public static final TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AzureBlobClient, AzureBlobAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    private static Builder builder() {
       return new Builder();
    }
@@ -54,25 +64,26 @@ public class AzureBlobApiMetadata
       super(builder);
    }
   
-   protected static Properties defaultProperties() {
-      Properties properties = BaseBlobStoreApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       return properties;
    }
    
-   public static class Builder extends BaseBlobStoreApiMetadata.Builder<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
       protected Builder(){
-            id("azureblob")
-            .name("Microsoft Azure Blob Service API")
-            .identityName("Account Name")
-            .credentialName("Access Key")
-            .version("2009-09-19")
-            .defaultEndpoint("https://${jclouds.identity}.blob.core.windows.net")
-            .documentation(URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx"))
-            .contextBuilder(TypeToken.of(AzureBlobContextBuilder.class))
-            .javaApi(AzureBlobClient.class, AzureBlobAsyncClient.class)
-            .defaultProperties(AzureBlobApiMetadata.defaultProperties());
-     }
+         super(AzureBlobClient.class, AzureBlobAsyncClient.class);
+         id("azureblob")
+         .name("Microsoft Azure Blob Service API")
+         .identityName("Account Name")
+         .credentialName("Access Key")
+         .version("2009-09-19")
+         .defaultEndpoint("https://${jclouds.identity}.blob.core.windows.net")
+         .documentation(URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx"))
+         .defaultProperties(AzureBlobApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(AzureBlobRestClientModule.class, AzureBlobStoreContextModule.class));
+      }
       
       @Override
       public AzureBlobApiMetadata build() {
@@ -80,7 +91,7 @@ public class AzureBlobApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(AzureBlobApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

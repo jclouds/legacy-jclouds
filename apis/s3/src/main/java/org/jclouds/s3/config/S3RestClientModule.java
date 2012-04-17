@@ -30,7 +30,6 @@ import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -56,10 +55,11 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> extends AWSRestClientModule<S, A> {
-   public static S3RestClientModule<S3Client, S3AsyncClient> create() {
-      return new S3RestClientModule<S3Client, S3AsyncClient>(S3Client.class, S3AsyncClient.class);
+
+   @SuppressWarnings("unchecked")
+   public S3RestClientModule() {
+      this((Class) S3Client.class, (Class) S3AsyncClient.class);
    }
 
    public S3RestClientModule(Class<S> sync, Class<A> async) {
@@ -100,7 +100,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    protected RequestSigner provideRequestSigner(RequestAuthorizeSignature in) {
       return in;
    }
-   
+
    @Override
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(S3RedirectionRetryHandler.class);
@@ -119,7 +119,7 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
    @TimeStamp
    @Singleton
    protected Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
-         final DateService dateService) {
+            final DateService dateService) {
       return Suppliers.memoizeWithExpiration(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();

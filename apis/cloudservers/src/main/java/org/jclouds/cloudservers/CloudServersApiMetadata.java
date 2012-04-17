@@ -22,20 +22,30 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.cloudservers.compute.config.CloudServersComputeServiceContextModule;
+import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
 import org.jclouds.openstack.OpenStackAuthAsyncClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for CloudServers 1.0 API
  * 
  * @author Adrian Cole
  */
-public class CloudServersApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
+public class CloudServersApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
+
+   public static final TypeToken<RestContext<CloudServersClient, CloudServersAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudServersClient, CloudServersAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
 
    @Override
    public Builder toBuilder() {
@@ -50,16 +60,15 @@ public class CloudServersApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseComputeServiceApiMetadata.Builder<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(CloudServersClient.class, CloudServersAsyncClient.class);
          id("cloudservers")
          .name("Rackspace Cloud Servers API")
          .identityName("Username")
@@ -67,9 +76,9 @@ public class CloudServersApiMetadata
          .documentation(URI.create("http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide/content/ch01.html"))
          .version(OpenStackAuthAsyncClient.VERSION)
          .defaultEndpoint("https://auth.api.rackspacecloud.com")
-         .javaApi(CloudServersClient.class, CloudServersAsyncClient.class)
          .defaultProperties(CloudServersApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(CloudServersContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudServersRestClientModule.class, CloudServersComputeServiceContextModule.class));
       }
 
       @Override
@@ -78,7 +87,7 @@ public class CloudServersApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(CloudServersApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

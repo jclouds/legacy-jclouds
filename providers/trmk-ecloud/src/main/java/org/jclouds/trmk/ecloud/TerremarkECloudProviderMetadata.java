@@ -21,7 +21,6 @@ package org.jclouds.trmk.ecloud;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -30,8 +29,11 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class TerremarkECloudProviderMetadata extends BaseProviderMetadata<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>, TerremarkECloudApiMetadata> {
+public class TerremarkECloudProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -759809591681141530L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -49,12 +51,12 @@ public class TerremarkECloudProviderMetadata extends BaseProviderMetadata<Terrem
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>, TerremarkECloudApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
             id("trmk-ecloud")
@@ -73,7 +75,7 @@ public class TerremarkECloudProviderMetadata extends BaseProviderMetadata<Terrem
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<TerremarkECloudClient, TerremarkECloudAsyncClient, ComputeServiceContext<TerremarkECloudClient, TerremarkECloudAsyncClient>, TerremarkECloudApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

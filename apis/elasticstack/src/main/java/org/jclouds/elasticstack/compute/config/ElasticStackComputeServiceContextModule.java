@@ -34,14 +34,13 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
-import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.compute.ElasticStackComputeServiceAdapter;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata;
+import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.FindImageForId;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.GetImageIdFromServer;
-import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.Server;
@@ -68,13 +67,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class ElasticStackComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<ElasticStackClient, ElasticStackAsyncClient, ServerInfo, Hardware, DriveInfo, Location> {
-
-   public ElasticStackComputeServiceContextModule() {
-      super(ElasticStackClient.class, ElasticStackAsyncClient.class);
-   }
+public class ElasticStackComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<ServerInfo, Hardware, DriveInfo, Location> {
 
    @SuppressWarnings( { "unchecked", "rawtypes" })
    @Override

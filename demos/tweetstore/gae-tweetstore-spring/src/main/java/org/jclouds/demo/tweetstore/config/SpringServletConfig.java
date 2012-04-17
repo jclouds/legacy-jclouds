@@ -43,7 +43,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
@@ -86,15 +86,13 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
 
    private ServletConfig servletConfig;
 
-   private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
+   private Map<String, BlobStoreContext<?, ?>> providerTypeToBlobStoreMap;
    private Twitter twitterClient;
    private String container;
    private Queue queue;
 
    @PostConstruct
    public void initialize() throws IOException {
-      BlobStoreContextFactory blobStoreContextFactory = new BlobStoreContextFactory();
-
       Properties props = loadJCloudsProperties();
       LOGGER.trace("About to initialize members.");
 
@@ -118,7 +116,8 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : getBlobstoreContexts(props)) {
-          providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
+          providerTypeToBlobStoreMap.put(hint, BlobStoreContextBuilder
+                  .newBuilder(hint).modules(modules).overrides(props).build());
       }
 
       // get a queue for submitting store tweet requests
@@ -212,7 +211,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
    @PreDestroy
    public void destroy() throws Exception {
       LOGGER.trace("About to close contexts.");
-      for (BlobStoreContext context : providerTypeToBlobStoreMap.values()) {
+      for (BlobStoreContext<?, ?> context : providerTypeToBlobStoreMap.values()) {
          context.close();
       }
       LOGGER.trace("Contexts closed.");

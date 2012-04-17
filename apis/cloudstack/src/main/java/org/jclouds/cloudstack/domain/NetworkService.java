@@ -21,13 +21,13 @@ package org.jclouds.cloudstack.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.gson.annotations.SerializedName;
 
 /**

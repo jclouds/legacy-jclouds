@@ -21,7 +21,6 @@ package org.jclouds.savvis.vpdc;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -30,9 +29,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Kedar Dave
  */
-public class VPDCProviderMetadata
-      extends
-      BaseProviderMetadata<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>, VPDCApiMetadata> {
+public class VPDCProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3438042651384066520L;
 
    public static Builder builder() {
       return new Builder();
@@ -51,14 +51,12 @@ public class VPDCProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseProviderMetadata.Builder<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>, VPDCApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("savvis-symphonyvpdc")
@@ -113,8 +111,7 @@ public class VPDCProviderMetadata
       }
 
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>, VPDCApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

@@ -22,9 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -36,7 +34,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class MonitoringClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class MonitoringClientLiveTest extends BaseComputeServiceContextLiveTest {
    public MonitoringClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -49,7 +47,7 @@ public class MonitoringClientLiveTest extends BaseComputeServiceContextLiveTest<
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getMonitoringServices();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getMonitoringServices();
    }
 
    @Test(enabled = false)

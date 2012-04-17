@@ -240,14 +240,14 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
       }
 
       File containerFile = openFolder(container);
-      final int containerPathLenght = containerFile.getAbsolutePath().length() + 1;
+      final int containerPathLength = containerFile.getAbsolutePath().length() + 1;
       Set<String> blobNames = new HashSet<String>() {
 
          private static final long serialVersionUID = 3152191346558570795L;
 
          @Override
          public boolean add(String e) {
-            return super.add(e.substring(containerPathLenght));
+            return super.add(e.substring(containerPathLength));
          }
       };
       populateBlobKeysInContainer(containerFile, blobNames);

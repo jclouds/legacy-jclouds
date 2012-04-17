@@ -124,7 +124,7 @@ public class ExecutorServiceModule extends AbstractModule {
 
    static class DescribingExecutorService implements ExecutorService {
 
-      private final ExecutorService delegate;
+      protected final ExecutorService delegate;
 
       public DescribingExecutorService(ExecutorService delegate) {
          this.delegate = checkNotNull(delegate, "delegate");
@@ -216,7 +216,7 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    static class DescribedFuture<T> implements Future<T> {
-      private final Future<T> delegate;
+      protected final Future<T> delegate;
       private final String description;
       private StackTraceElement[] submissionTrace;
 
@@ -340,7 +340,7 @@ public class ExecutorServiceModule extends AbstractModule {
    }
 
    @VisibleForTesting
-   static ExecutorService shutdownOnClose(final ExecutorService service, Closer closer) {
+   static <T extends ExecutorService> T shutdownOnClose(final T service, Closer closer) {
       closer.addToClose(new ShutdownExecutorOnClose(service));
       return service;
    }

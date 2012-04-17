@@ -23,23 +23,24 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAU
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.greenhousedata.element.vcloud.config.GreenHouseDataElementVCloudComputeServiceContextModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.VCloudApiMetadata;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
 
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Green House Data Element vCloud
  * 
  * @author Adrian Cole
  */
-public class GreenHouseDataElementVCloudProviderMetadata
-      extends
-      BaseProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8503534430849704022L;
 
    public static Builder builder() {
       return new Builder();
@@ -58,13 +59,13 @@ public class GreenHouseDataElementVCloudProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External");
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("greenhousedata-element-vcloud")
@@ -72,7 +73,8 @@ public class GreenHouseDataElementVCloudProviderMetadata
                .apiMetadata(
                      new VCloudApiMetadata().toBuilder()
                      .buildVersion("1.5.0.464915")
-                           .contextBuilder(TypeToken.of(GreenHouseDataElementVCloudContextBuilder.class)).build())
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, GreenHouseDataElementVCloudComputeServiceContextModule.class))
+                     .build())
          .homepage(URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/"))
          .console(URI.create("https://mycloud.greenhousedata.com/cloud/org/YOUR_ORG_HERE"))
          .iso3166Codes("US-WY")
@@ -87,7 +89,7 @@ public class GreenHouseDataElementVCloudProviderMetadata
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<VCloudClient, VCloudAsyncClient, ComputeServiceContext<VCloudClient, VCloudAsyncClient>, VCloudApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

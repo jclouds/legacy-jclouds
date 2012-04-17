@@ -60,7 +60,6 @@ public abstract class BaseS3AsyncClientTest<T extends S3AsyncClient> extends Bas
       super();
    }
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public S3ApiMetadata createApiMetadata() {
       return new S3ApiMetadata();

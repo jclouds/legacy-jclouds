@@ -26,6 +26,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
@@ -33,7 +34,6 @@ import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.AnonymousRestApiMetadata;
 import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
-import org.jclouds.rest.internal.ContextBuilder;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

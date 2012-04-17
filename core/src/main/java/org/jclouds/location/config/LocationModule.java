@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
+import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.location.Iso3166;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
@@ -45,11 +46,15 @@ import org.jclouds.location.suppliers.RegionIdsSupplier;
 import org.jclouds.location.suppliers.ZoneIdToURISupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.functions.ImplicitOptionalConverter;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * All of these are memoized as locations do not change often at runtime. Note that we take care to
@@ -61,6 +66,7 @@ public class LocationModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(new TypeLiteral<Function<ClassMethodArgsAndReturnVal, Optional<Object>>>(){}).to(ImplicitOptionalConverter.class);
    }
 
    @Provides

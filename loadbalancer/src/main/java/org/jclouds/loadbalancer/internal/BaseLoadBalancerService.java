@@ -63,7 +63,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
    protected Logger logger = Logger.NULL;
 
    protected final Supplier<Location> defaultLocationSupplier;
-   protected final LoadBalancerServiceContext<?, ?> context;
+   protected final LoadBalancerServiceContext context;
    protected final LoadBalanceNodesStrategy loadBalancerStrategy;
    protected final GetLoadBalancerMetadataStrategy getLoadBalancerMetadataStrategy;
    protected final DestroyLoadBalancerStrategy destroyLoadBalancerStrategy;
@@ -71,7 +71,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
    protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   protected BaseLoadBalancerService(Supplier<Location> defaultLocationSupplier, @SuppressWarnings("rawtypes") LoadBalancerServiceContext context,
+   protected BaseLoadBalancerService(Supplier<Location> defaultLocationSupplier, LoadBalancerServiceContext context,
          LoadBalanceNodesStrategy loadBalancerStrategy,
          GetLoadBalancerMetadataStrategy getLoadBalancerMetadataStrategy,
          DestroyLoadBalancerStrategy destroyLoadBalancerStrategy, ListLoadBalancersStrategy listLoadBalancersStrategy,
@@ -98,7 +98,7 @@ public class BaseLoadBalancerService implements LoadBalancerService {
     * {@inheritDoc}
     */
    @Override
-   public LoadBalancerServiceContext<?, ?> getContext() {
+   public LoadBalancerServiceContext getContext() {
       return context;
    }
 

@@ -21,10 +21,7 @@ package org.jclouds.elastichosts;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.elasticstack.ElasticStackApiMetadata;
-import org.jclouds.elasticstack.ElasticStackAsyncClient;
-import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -34,7 +31,7 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class ElasticHostsBlueSquareLondonProviderMetadata
       extends
-      BaseProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+      BaseProviderMetadata {
 
    public static Builder builder() {
       return new Builder();
@@ -53,14 +50,14 @@ public class ElasticHostsBlueSquareLondonProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
 
    public static class Builder
          extends
-         BaseProviderMetadata.Builder<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> {
+         BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("elastichosts-lon-b")
@@ -80,7 +77,7 @@ public class ElasticHostsBlueSquareLondonProviderMetadata
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>, ElasticStackApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

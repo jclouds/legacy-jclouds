@@ -35,8 +35,8 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 

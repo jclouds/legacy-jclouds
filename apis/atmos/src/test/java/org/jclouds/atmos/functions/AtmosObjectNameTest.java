@@ -23,9 +23,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 
 import org.jclouds.atmos.domain.AtmosObject;
-import org.jclouds.atmos.domain.AtmosObject.Factory;
 import org.jclouds.atmos.domain.SystemMetadata;
 import org.jclouds.atmos.domain.UserMetadata;
+import org.jclouds.atmos.domain.AtmosObject.Factory;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;

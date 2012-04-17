@@ -28,9 +28,8 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
@@ -41,11 +40,13 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class VCloudDirectorApiMetadata
-      extends
-//      BaseComputeServiceApiMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
-    BaseRestApiMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
+public class VCloudDirectorApiMetadata extends BaseRestApiMetadata {
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
+
+   public static final TypeToken<VCloudDirectorContext> CONTEXT_TOKEN = TypeToken.of(VCloudDirectorContext.class);
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -59,8 +60,8 @@ public class VCloudDirectorApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       /** FIXME this should not be the default */
       properties.setProperty(PROPERTY_SESSION_INTERVAL, Integer.toString(30 * 60));
 
@@ -78,21 +79,21 @@ public class VCloudDirectorApiMetadata
 
    public static class Builder
          extends
-//         BaseComputeServiceApiMetadata.Builder<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
-       BaseRestApiMetadata.Builder<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
+       BaseRestApiMetadata.Builder {
 
       protected Builder() {
          super(VCloudDirectorClient.class, VCloudDirectorAsyncClient.class);
           id("vcloud-director")
          .name("vCloud Director 1.5 API")
-         .type(ApiType.COMPUTE)
          .identityName("User at Organization (user@org)")
          .credentialName("Password")
          .documentation(URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html"))
          .version("1.5")
          .defaultProperties(VCloudDirectorApiMetadata.defaultProperties())
          .context(TypeToken.of(VCloudDirectorContext.class))
-         .contextBuilder(TypeToken.of(VCloudDirectorContextBuilder.class));
+         .defaultModule(VCloudDirectorRestClientModule.class);
+//         .wrapper(TypeToken.of(ComputeServiceContext.class))
+//         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudDirectorRestClientModule.class, VCloudDirectorComputeServiceContextModule.class));
       }
 
       @Override
@@ -101,7 +102,7 @@ public class VCloudDirectorApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(VCloudDirectorApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

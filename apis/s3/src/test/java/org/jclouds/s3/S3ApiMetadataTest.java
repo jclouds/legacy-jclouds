@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @Test(groups = "unit", testName = "S3ApiMetadataTest")
 public class S3ApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 

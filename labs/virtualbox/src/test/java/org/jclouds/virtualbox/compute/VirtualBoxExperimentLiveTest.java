@@ -27,8 +27,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -62,8 +62,9 @@ public class VirtualBoxExperimentLiveTest extends BaseVirtualBoxClientLiveTest {
 
    @BeforeClass
    public void setUp() {
-      context = new ComputeServiceContextFactory().createContext("virtualbox", "", "",
-               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()));
+      context = ContextBuilder.newBuilder("virtualbox").modules(
+               ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule())).build(
+               ComputeServiceContext.class);
    }
 
    @Test

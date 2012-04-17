@@ -42,7 +42,6 @@ import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.options.GetOptions;
@@ -320,8 +319,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
       return new TestAtmosRestClientModule();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAtmosRestClientModule extends AtmosRestClientModule {
       @Override
       protected void configure() {
@@ -337,7 +335,7 @@ public class AtmosAsyncClientTest extends BaseAsyncClientTest<AtmosAsyncClient> 
    protected String provider = "atmos";
 
    @Override
-   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   public ApiMetadata createApiMetadata() {
       return new AtmosApiMetadata();
    }
 

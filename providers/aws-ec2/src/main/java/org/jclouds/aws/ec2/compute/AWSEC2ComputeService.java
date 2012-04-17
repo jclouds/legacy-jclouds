@@ -42,6 +42,7 @@ import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
@@ -72,6 +73,7 @@ import org.jclouds.util.Preconditions2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.cache.LoadingCache;
@@ -92,7 +94,7 @@ public class AWSEC2ComputeService extends EC2ComputeService {
    private final boolean generateInstanceNames;
 
    @Inject
-   protected AWSEC2ComputeService(@SuppressWarnings("rawtypes") ComputeServiceContext context, Map<String, Credentials> credentialStore,
+   protected AWSEC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
             @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
             @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
             GetNodeMetadataStrategy getNodeMetadataStrategy,
@@ -111,12 +113,13 @@ public class AWSEC2ComputeService extends EC2ComputeService {
             @Named("SECURITY") LoadingCache<RegionAndName, String> securityGroupMap,
             @Named("PLACEMENT") LoadingCache<RegionAndName, String> placementGroupMap,
             @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted,
-            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames, AWSEC2AsyncClient aclient) {
+            @Named(PROPERTY_EC2_GENERATE_INSTANCE_NAMES) boolean generateInstanceNames, AWSEC2AsyncClient aclient,
+            Optional<ImageExtension> imageExtension) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
                stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
                nodeSuspended, initScriptRunnerFactory, runScriptOnNodeFactory, initAdminAccess, persistNodeCredentials,
-               timeouts, executor, ec2Client, credentialsMap, securityGroupMap);
+               timeouts, executor, ec2Client, credentialsMap, securityGroupMap, imageExtension);
       this.ec2Client = ec2Client;
       this.placementGroupMap = placementGroupMap;
       this.placementGroupDeleted = placementGroupDeleted;

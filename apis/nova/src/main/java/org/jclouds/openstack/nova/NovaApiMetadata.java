@@ -23,18 +23,28 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.openstack.nova.compute.config.NovaComputeServiceContextModule;
+import org.jclouds.openstack.nova.config.NovaRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Nova 1.0 API
  * 
  * @author Adrian Cole
  */
-public class NovaApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> {
+public class NovaApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
+
+   public static final TypeToken<RestContext<NovaClient, NovaAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<NovaClient, NovaAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
 
    @Override
    public Builder toBuilder() {
@@ -49,26 +59,25 @@ public class NovaApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseComputeServiceApiMetadata.Builder<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
-          id("nova")
+         super(NovaClient.class, NovaAsyncClient.class);
+         id("nova")
          .name("OpenStack Nova Pre-Diablo API")
          .identityName("accessKey")
          .credentialName("secretKey")
          .documentation(URI.create("http://api.openstack.org/"))
          .version("1.1")
          .defaultEndpoint("http://localhost:5000")
-         .javaApi(NovaClient.class, NovaAsyncClient.class)
          .defaultProperties(NovaApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(NovaContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, NovaComputeServiceContextModule.class));
       }
 
       @Override
@@ -77,7 +86,7 @@ public class NovaApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(NovaApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

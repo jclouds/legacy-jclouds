@@ -32,9 +32,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -42,7 +42,6 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.cim.CIMPredicates;
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -50,8 +49,8 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.SshException;
+import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.CustomizationParameters;
@@ -84,8 +83,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 
 @Test(groups = "live", singleThreaded = true)
-public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
-      extends BaseComputeServiceContextLiveTest<S, A, ComputeServiceContext<S, A>> {
+public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient> extends BaseComputeServiceContextLiveTest {
 
    protected String expectedOs = "Ubuntu Linux (64-bit)";
    protected String itemName = "Ubuntu JeOS 9.10 (64-bit)";
@@ -103,6 +101,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
    protected VDC vdc;
    protected String serverName;
    protected KeyPair key;
+   protected S connection;
 
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
@@ -436,16 +435,16 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       assert socketTester.apply(socket);
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), socket);
 
-      SshClient connection = getConnectionFor(socket);
+      SshClient ssh = getConnectionFor(socket);
       try {
-         connection.connect();
-         System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), socket);
-         System.out.println(connection.exec("df -h"));
-         System.out.println(connection.exec("ls -al /dev/sd*"));
-         System.out.println(connection.exec("echo '$Ep455l0ud!2'|sudo -S fdisk -l"));
+         ssh.connect();
+         System.out.printf("%d: %s ssh ssh made%n", System.currentTimeMillis(), socket);
+         System.out.println(ssh.exec("df -h"));
+         System.out.println(ssh.exec("ls -al /dev/sd*"));
+         System.out.println(ssh.exec("echo '$Ep455l0ud!2'|sudo -S fdisk -l"));
       } finally {
-         if (connection != null)
-            connection.disconnect();
+         if (ssh != null)
+            ssh.disconnect();
       }
    }
 
@@ -478,6 +477,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
 
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
@@ -492,11 +492,10 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       // default internet
       // service timeout
       successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
-      connection = context.getProviderSpecificContext().getApi();
+      connection = (S) RestContext.class.cast(context.unwrap()).getApi();
       orgs = listOrgs();
    }
 
-   protected S connection;
 
    @Test
    public void testOrg() throws Exception {
@@ -517,7 +516,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
          try {
             newContext = createContext(
                   overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName())),
-                  setupModules()).getProviderSpecificContext();
+                  setupModules()).unwrap();
             assertEquals(newContext.getApi().findOrgNamed(null), org);
          } finally {
             newContext.close();
@@ -553,7 +552,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
                newContext = createContext(
                      overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                            VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CATALOG, cat.getName())), setupModules())
-                     .getProviderSpecificContext();
+                     .unwrap();
                assertEquals(newContext.getApi().findCatalogInOrgNamed(null, null), connection.getCatalog(cat.getHref()));
             } finally {
                newContext.close();
@@ -597,7 +596,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
                         overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                               VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName(),
                               VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, net.getName())), setupModules())
-                        .getProviderSpecificContext();
+                        .unwrap();
                   assertEquals(newContext.getApi().findNetworkInOrgVDCNamed(null, null, net.getName()),
                         connection.getNetwork(net.getHref()));
                } finally {
@@ -675,7 +674,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
                newContext = createContext(
                      overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                            VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName())), setupModules())
-                     .getProviderSpecificContext();
+                     .unwrap();
                assertEquals(newContext.getApi().findVDCInOrgNamed(null, null), connection.getVDC(vdc.getHref()));
             } finally {
                newContext.close();
@@ -707,7 +706,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
                newContext = createContext(
                      overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                            VCloudConstants.PROPERTY_VCLOUD_DEFAULT_TASKSLIST, tasksList.getName())), setupModules())
-                     .getProviderSpecificContext();
+                     .unwrap();
                assertEquals(newContext.getApi().findTasksListInOrgNamed(null, null),
                      connection.getTasksList(tasksList.getHref()));
             } finally {

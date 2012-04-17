@@ -47,8 +47,8 @@ import org.jclouds.glesys.options.ServerStatusOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;

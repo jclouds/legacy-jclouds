@@ -32,6 +32,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
+import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.annotations.Test;
@@ -110,4 +111,5 @@ public class HttpClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
       // TODO: asserting something about the schema
    }
+
 }

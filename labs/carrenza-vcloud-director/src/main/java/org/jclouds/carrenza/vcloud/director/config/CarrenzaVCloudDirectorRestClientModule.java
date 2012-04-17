@@ -18,7 +18,6 @@
  */
 package org.jclouds.carrenza.vcloud.director.config;
 
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
 
@@ -27,7 +26,6 @@ import org.jclouds.vcloud.director.v1_5.config.VCloudDirectorRestClientModule;
  * 
  * @author danikov
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class CarrenzaVCloudDirectorRestClientModule extends VCloudDirectorRestClientModule {
 

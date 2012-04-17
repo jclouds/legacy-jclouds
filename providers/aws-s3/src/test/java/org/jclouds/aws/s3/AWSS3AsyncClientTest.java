@@ -29,7 +29,6 @@ import org.jclouds.aws.s3.functions.UploadIdFromHttpResponseViaRegex;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -40,6 +39,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.S3AsyncClientTest;
 import org.jclouds.s3.domain.ObjectMetadata;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
@@ -61,7 +61,7 @@ import com.google.inject.TypeLiteral;
 // NOTE:without testName, this will not call @Before* and fail w/NPE during
 // surefire
 @Test(groups = "unit", testName = "AWSS3AsyncClientTest")
-public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3AsyncClient> {
+public class AWSS3AsyncClientTest extends S3AsyncClientTest<AWSS3AsyncClient> {
 
    public void testGetBucketLocationEU() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AWSS3AsyncClient.class.getMethod("getBucketLocation", String.class);
@@ -250,8 +250,7 @@ public class AWSS3AsyncClientTest extends org.jclouds.s3.S3AsyncClientTest<AWSS3
       checkFilters(request);
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAWSS3RestClientModule extends AWSS3RestClientModule {
 
       public TestAWSS3RestClientModule() {

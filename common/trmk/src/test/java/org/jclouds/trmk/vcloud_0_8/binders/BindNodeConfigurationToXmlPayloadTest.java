@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
@@ -53,13 +53,12 @@ public class BindNodeConfigurationToXmlPayloadTest {
 
       @Override
       protected void bindConfigurations() {
-         Properties properties = new Properties();
+         Properties properties = TerremarkVCloudApiMetadata.defaultProperties();
          properties.setProperty(PROPERTY_API_VERSION, "0.8a-ext1.6");
          properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "vCloudExpressExtensions");
          properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "1.6");
          properties.setProperty(PROPERTY_ENDPOINT, "https://services.vcloudexpress.terremark.com/api");
          bindProperties(properties);
-         bindProperties(new TerremarkVCloudPropertiesBuilder(properties).build());
       }
    }));
 

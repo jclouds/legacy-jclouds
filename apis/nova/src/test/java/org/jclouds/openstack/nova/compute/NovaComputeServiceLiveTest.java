@@ -22,12 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.openstack.nova.NovaAsyncClient;
-import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -39,8 +36,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "NovaComputeServiceLiveTest")
-public class NovaComputeServiceLiveTest extends
-      BaseComputeServiceLiveTest<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>> {
+public class NovaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public NovaComputeServiceLiveTest() {
       provider = "nova";

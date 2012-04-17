@@ -35,9 +35,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.compute.domain.PasswordDataAndPrivateKey;
 import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedData;
 import org.jclouds.ec2.domain.InstanceType;
@@ -57,7 +55,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "WindowsClientLiveTest")
-public class WindowsClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
+public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
    public WindowsClientLiveTest() {
       provider = "ec2";
    }
@@ -78,7 +76,7 @@ public class WindowsClientLiveTest<S extends EC2Client, A extends EC2AsyncClient
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getWindowsServices();
+      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getWindowsServices();
       computeService = context.getComputeService();
    }
 

@@ -25,11 +25,8 @@ import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.cloudwatch.CloudWatchApiMetadata;
-import org.jclouds.cloudwatch.CloudWatchAsyncClient;
-import org.jclouds.cloudwatch.CloudWatchClient;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
-import org.jclouds.rest.RestContext;
 
 /**
  * Implementation of @ link org.jclouds.types.ProviderMetadata} for Amazon's CloudWatch
@@ -37,8 +34,11 @@ import org.jclouds.rest.RestContext;
 *
 * @author Adrian Cole
 */
-public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata<CloudWatchClient, CloudWatchAsyncClient, RestContext<CloudWatchClient, CloudWatchAsyncClient>, CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>> {
+public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 2394954723306943404L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -56,7 +56,7 @@ public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata<CloudWat
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.putAll(Region.regionProperties());
       properties.setProperty(PROPERTY_REGION + "." + Region.US_EAST_1 + ".endpoint",
@@ -76,7 +76,7 @@ public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata<CloudWat
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<CloudWatchClient, CloudWatchAsyncClient, RestContext<CloudWatchClient, CloudWatchAsyncClient>, CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("aws-cloudwatch")
@@ -87,7 +87,7 @@ public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata<CloudWat
          .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
          .iso3166Codes("US-VA", "US-CA", "BR-SP", "US-OR", "IE", "SG", "JP-13")
                .apiMetadata(
-                     new CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>().toBuilder()
+                     new CloudWatchApiMetadata().toBuilder()
                            .version("2010-08-01").build())
          .defaultProperties(AWSCloudWatchProviderMetadata.defaultProperties());
       }
@@ -98,8 +98,7 @@ public class AWSCloudWatchProviderMetadata extends BaseProviderMetadata<CloudWat
       }
       
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<CloudWatchClient, CloudWatchAsyncClient, RestContext<CloudWatchClient, CloudWatchAsyncClient>, CloudWatchApiMetadata<CloudWatchClient, CloudWatchAsyncClient>> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

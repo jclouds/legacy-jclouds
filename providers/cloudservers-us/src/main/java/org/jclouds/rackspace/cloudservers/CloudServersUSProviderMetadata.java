@@ -24,9 +24,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.cloudservers.CloudServersApiMetadata;
-import org.jclouds.cloudservers.CloudServersAsyncClient;
-import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -35,8 +32,11 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class CloudServersUSProviderMetadata extends BaseProviderMetadata<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
+public class CloudServersUSProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8728307961498165226L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -54,13 +54,13 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata<CloudSe
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_REGIONS, "US");
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("cloudservers-us")
@@ -79,7 +79,7 @@ public class CloudServersUSProviderMetadata extends BaseProviderMetadata<CloudSe
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>, CloudServersApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

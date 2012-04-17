@@ -32,6 +32,7 @@ import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.ISnapshot;
 import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Suppliers;
@@ -56,6 +57,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       IProgress progress = createNiceMock(IProgress.class);
       ISnapshot snapshot = createNiceMock(ISnapshot.class);
       expect(machine.getCurrentSnapshot()).andReturn(snapshot).anyTimes();
+      expect(machine.getState()).andReturn(MachineState.PoweredOff).anyTimes();
 
       expect(manager.openMachineSession(machine)).andReturn(session);
 
@@ -88,6 +90,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       expect(progress.getCompleted()).andReturn(true);
       expect(machine.getCurrentSnapshot()).andReturn(null).anyTimes();
       expect(manager.openMachineSession(machine)).andReturn(session);
+      expect(machine.getState()).andReturn(MachineState.PoweredOff).anyTimes();
 
       expect(machine.getName()).andReturn("machine").anyTimes();
       expect(session.getConsole()).andReturn(console);

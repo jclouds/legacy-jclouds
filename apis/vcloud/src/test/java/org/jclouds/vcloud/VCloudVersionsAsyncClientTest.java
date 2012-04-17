@@ -70,7 +70,7 @@ public class VCloudVersionsAsyncClientTest extends BaseAsyncClientTest<VCloudVer
    }
 
    @Override
-   protected ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   protected ProviderMetadata createProviderMetadata() {
       return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(VCloudVersionsClient.class,
             VCloudVersionsAsyncClient.class, "http://localhost:8080");
    }

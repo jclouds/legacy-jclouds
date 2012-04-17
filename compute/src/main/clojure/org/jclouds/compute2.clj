@@ -64,9 +64,10 @@ Here's an example of creating and running a small linux node in the group webser
     (org.jclouds predicate) [clojure.core.incubator :only (-?>)])
   (:import java.io.File
     java.util.Properties
+    [org.jclouds ContextBuilder]
     [org.jclouds.domain Location]
     [org.jclouds.compute
-     ComputeService ComputeServiceContext ComputeServiceContextBuilder]
+     ComputeService ComputeServiceContext]
     [org.jclouds.compute.domain
      Template TemplateBuilder ComputeMetadata NodeMetadata Hardware
      OsFamily Image]
@@ -84,12 +85,12 @@ Here's an example of creating and running a small linux node in the group webser
     (let [module-keys (set (keys module-lookup))
           ext-modules (filter #(module-keys %) options)
           opts (apply hash-map (filter #(not (module-keys %)) options))]
-      (.. (ComputeServiceContextBuilder/newBuilder provider)
+      (.. (ContextBuilder/newBuilder provider)
           (credentials provider-identity provider-credential)
           (modules (apply modules (concat ext-modules (opts :extensions))))
           (overrides (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
             (Properties.) (dissoc opts :extensions)))
-          (build)
+          (build ComputeServiceContext)
           (getComputeService))))
   ([#^ComputeServiceContext compute-context]
     (.getComputeService compute-context)))

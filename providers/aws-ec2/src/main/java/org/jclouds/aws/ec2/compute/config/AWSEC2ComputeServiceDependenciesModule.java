@@ -18,14 +18,17 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.*;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.compute.AWSEC2ComputeService;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.suppliers.CallForImages;
@@ -36,11 +39,10 @@ import org.jclouds.aws.ec2.functions.ImportOrReturnExistingKeypair;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceDependenciesModule;
 import org.jclouds.ec2.compute.domain.RegionAndName;
@@ -53,17 +55,17 @@ import org.jclouds.ec2.compute.loaders.RegionAndIdToImage;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.name.Names;
@@ -73,7 +75,6 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDependenciesModule {
-   @SuppressWarnings("rawtypes")
    @Override
    protected void configure() {
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
@@ -91,13 +92,35 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
       }).to(ImportOrReturnExistingKeypair.class);
       bind(new TypeLiteral<CacheLoader<RegionAndName, Image>>() {
       }).to(RegionAndIdToImage.class);
-      bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<AWSEC2Client, AWSEC2AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<AWSEC2Client, AWSEC2AsyncClient>>() {
-      }).in(Scopes.SINGLETON);
       install(new FactoryModuleBuilder().build(CallForImages.Factory.class));
+   }
+
+   @Provides
+   @Singleton
+   @ImageQuery
+   protected Map<String, String> imageQuery(ValueOfConfigurationKeyOrNull config) {
+      String amiQuery = Strings.emptyToNull(config.apply(PROPERTY_EC2_AMI_QUERY));
+      if (config.apply(PROPERTY_EC2_AMI_OWNERS) != null) {
+         StringBuilder query = new StringBuilder();
+         String owners = config.apply(PROPERTY_EC2_AMI_OWNERS).toString();
+         if ("*".equals(owners))
+            query.append("state=available;image-type=machine");
+         else if (!"".equals(owners))
+            query.append("owner-id=").append(owners).append(";state=available;image-type=machine");
+         else if ("".equals(owners))
+            query = new StringBuilder();
+         Logger.getAnonymousLogger().warning(
+                  String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
+                           PROPERTY_EC2_AMI_QUERY, query.toString()));
+         amiQuery = query.toString();
+      }
+      Builder<String, String> builder = ImmutableMap.<String, String> builder();
+      if (amiQuery != null)
+         builder.put(PROPERTY_EC2_AMI_QUERY, amiQuery);
+      String ccQuery = Strings.emptyToNull(config.apply(PROPERTY_EC2_CC_AMI_QUERY));
+      if (ccQuery != null)
+         builder.put(PROPERTY_EC2_CC_AMI_QUERY, ccQuery);
+      return builder.build();
    }
 
    @Provides

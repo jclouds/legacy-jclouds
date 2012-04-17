@@ -25,8 +25,8 @@ import java.io.Closeable;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
+import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -40,41 +40,39 @@ import com.google.common.reflect.TypeToken;
  */
 public class Providers {
 
-   public static enum IdFunction implements Function<ProviderMetadata<?, ?, ?, ?>, String> {
+   public static enum IdFunction implements Function<ProviderMetadata, String> {
       INSTANCE;
 
       @Override
-      public String apply(ProviderMetadata<?, ?, ?, ?> input) {
+      public String apply(ProviderMetadata input) {
          return input.getId();
       }
 
    }
 
-   public static Function<ProviderMetadata<?, ?, ?, ?>, String> idFunction() {
+   public static Function<ProviderMetadata, String> idFunction() {
       return IdFunction.INSTANCE;
    }
-   
-   public static class ApiMetadataFunction<S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> implements
-         Function<ProviderMetadata<S, A, C, M>, ApiMetadata<S, A, C, M>> {
+
+   public static class ApiMetadataFunction implements Function<ProviderMetadata, ApiMetadata> {
       @Override
-      public ApiMetadata<S, A, C, M> apply(ProviderMetadata<S, A, C, M> input) {
+      public ApiMetadata apply(ProviderMetadata input) {
          return input.getApiMetadata();
       }
 
    }
 
-   public static <S, A, C extends Closeable, M extends ApiMetadata<S, A, C, M>> Function<ProviderMetadata<S, A, C, M>, ApiMetadata<S, A, C, M>> apiMetadataFunction() {
-      return new ApiMetadataFunction<S, A, C, M>();
+   public static Function<ProviderMetadata, ApiMetadata> apiMetadataFunction() {
+      return new ApiMetadataFunction();
    }
 
    /**
-    * Returns the providers located on the classpath via
-    * {@link java.util.ServiceLoader}.
+    * Returns the providers located on the classpath via {@link java.util.ServiceLoader}.
     * 
     * @return all available providers loaded from classpath via ServiceLoader
     */
    @SuppressWarnings("unchecked")
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> fromServiceLoader() {
+   public static Iterable<ProviderMetadata> fromServiceLoader() {
       return Iterable.class.cast(ServiceLoader.load(ProviderMetadata.class));
    }
 
@@ -83,7 +81,7 @@ public class Providers {
     * 
     * @return all available providers
     */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> all() {
+   public static Iterable<ProviderMetadata> all() {
       return fromServiceLoader();
    }
 
@@ -98,70 +96,24 @@ public class Providers {
     * @throws NoSuchElementException
     *            whenever there are no providers with the provided id
     */
-   public static ProviderMetadata<?, ?, ?, ?> withId(String id) throws NoSuchElementException {
+   public static ProviderMetadata withId(String id) throws NoSuchElementException {
       return find(all(), ProviderPredicates.id(id));
    }
 
    /**
-    * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#BLOBSTORE}.
+    * Returns the providers that are of the provided contextWrappableAs.
     * 
-    * @return the blobstore providers
+    * @param contextWrappableAs
+    *           the contextWrappableAs to providers to return
+    * 
+    * @return the providers of the provided contextWrappableAs
     */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> allBlobStore() {
-      return filter(all(), ProviderPredicates.type(ApiType.BLOBSTORE));
+   public static Iterable<ProviderMetadata> contextWrappableAs(TypeToken<? extends Wrapper> contextWrappableAs) {
+      return filter(all(), ProviderPredicates.contextWrappableAs(contextWrappableAs));
    }
 
-   /**
-    * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#COMPUTE}.
-    * 
-    * @return the compute service providers
-    */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> allCompute() {
-      return filter(all(), ProviderPredicates.type(ApiType.COMPUTE));
-   }
-
-   /**
-    * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#QUEUE}.
-    * 
-    * @return the queue service providers
-    */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> allQueue() {
-      return filter(all(), ProviderPredicates.type(ApiType.QUEUE));
-   }
-
-   /**
-    * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#TABLE}.
-    * 
-    * @return the table service providers
-    */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> allTable() {
-      return filter(all(), ProviderPredicates.type(ApiType.TABLE));
-   }
-
-   /**
-    * Returns the providers that are of type
-    * {@link org.jclouds.providers.ProviderMetadata#LOADBALANCER}.
-    * 
-    * @return the load balancer service providers
-    */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> allLoadBalancer() {
-      return filter(all(), ProviderPredicates.type(ApiType.LOADBALANCER));
-   }
-
-   /**
-    * Returns the providers that are of the provided type.
-    * 
-    * @param type
-    *           the type to providers to return
-    * 
-    * @return the providers of the provided type
-    */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> ofType(ApiType type) {
-      return filter(all(), ProviderPredicates.type(type));
+   public static Iterable<ProviderMetadata> contextWrappableAs(Class<? extends Wrapper> contextWrappableAs) {
+      return filter(all(), ProviderPredicates.contextWrappableAs(TypeToken.of(contextWrappableAs)));
    }
 
    /**
@@ -172,7 +124,7 @@ public class Providers {
     * 
     * @return the providers of the provided api
     */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> apiMetadataAssignableFrom(TypeToken<? extends ApiMetadata> api) {
+   public static Iterable<ProviderMetadata> apiMetadataAssignableFrom(TypeToken<? extends ApiMetadata> api) {
       Preconditions.checkNotNull(api, "api must be defined");
       return filter(all(), ProviderPredicates.apiMetadataAssignableFrom(api));
    }
@@ -185,71 +137,80 @@ public class Providers {
     * 
     * @return the providers of the provided context
     */
-   public static <C extends Closeable> Iterable<ProviderMetadata<?, C, ?, ?>> contextAssignableFrom(TypeToken<C> context) {
+   public static <C extends Closeable> Iterable<ProviderMetadata> contextAssignableFrom(
+            TypeToken<? extends Closeable> context) {
       Preconditions.checkNotNull(context, "context must be defined");
       return filter(all(), new ProviderPredicates.ContextAssignableFrom(context));
    }
 
-
    /**
-    * Returns the providers that are bound to the same location as the given ISO
-    * 3166 code regardless of type.
+    * Returns the providers that are bound to the same location as the given ISO 3166 code
+    * regardless of contextWrappableAs.
     * 
     * @param isoCode
     *           the ISO 3166 code to filter providers by
     * 
     * @return the providers bound by the given ISO 3166 code
     */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> boundedByIso3166Code(String iso3166Code) {
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code) {
       return filter(all(), ProviderPredicates.boundedByIso3166Code(iso3166Code));
    }
 
    /**
-    * Returns the providers that are bound to the same location as the given ISO
-    * 3166 code and of the given type.
+    * Returns the providers that are bound to the same location as the given ISO 3166 code and of
+    * the given contextWrappableAs.
     * 
     * @param iso3166Code
     *           the ISO 3166 code to filter providers by
-    * @param type
-    *           the type to filter providers by
+    * @param contextWrappableAs
+    *           the contextWrappableAs to filter providers by
     * 
-    * @return the providers bound by the given ISO 3166 code and of the proper
-    *         type
+    * @return the providers bound by the given ISO 3166 code and of the proper contextWrappableAs
     */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> boundedByIso3166Code(String iso3166Code, ApiType type) {
-      return filter(all(),
-            Predicates.and(ProviderPredicates.boundedByIso3166Code(iso3166Code), ProviderPredicates.type(type)));
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code,
+            TypeToken<? extends Wrapper> contextWrappableAs) {
+      return filter(all(), Predicates.and(ProviderPredicates.boundedByIso3166Code(iso3166Code), ProviderPredicates
+               .contextWrappableAs(contextWrappableAs)));
+   }
+
+   public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code,
+            Class<? extends Wrapper> contextWrappableAs) {
+      return boundedByIso3166Code(iso3166Code, TypeToken.of(contextWrappableAs));
    }
 
    /**
-    * Returns the providers that have at least one common ISO 3166 code in
-    * common regardless of type.
+    * Returns the providers that have at least one common ISO 3166 code in common regardless of
+    * contextWrappableAs.
     * 
     * @param providerMetadata
     *           the provider metadata to use to filter providers by
     * 
     * @return the providers that share at least one common ISO 3166 code
     */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> collocatedWith(ProviderMetadata<?, ?, ?, ?> providerMetadata) {
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata) {
       return filter(all(), ProviderPredicates.intersectingIso3166Code(providerMetadata));
    }
 
    /**
-    * Returns the providers that have at least one common ISO 3166 code and are
-    * of the given type.
+    * Returns the providers that have at least one common ISO 3166 code and are of the given
+    * contextWrappableAs.
     * 
     * @param providerMetadata
     *           the provider metadata to use to filter providers by
-    * @param type
-    *           the type to filter providers by
+    * @param contextWrappableAs
+    *           the contextWrappableAs to filter providers by
     * 
-    * @return the providers that share at least one common ISO 3166 code and of
-    *         the given type
+    * @return the providers that share at least one common ISO 3166 code and of the given
+    *         contextWrappableAs
     */
-   public static Iterable<ProviderMetadata<?, ?, ?, ?>> collocatedWith(ProviderMetadata<?, ?, ?, ?> providerMetadata,
-         ApiType type) {
-      return filter(all(),
-            Predicates.and(ProviderPredicates.intersectingIso3166Code(providerMetadata), ProviderPredicates.type(type)));
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata,
+            TypeToken<? extends Wrapper> contextWrappableAs) {
+      return filter(all(), Predicates.and(ProviderPredicates.intersectingIso3166Code(providerMetadata),
+               ProviderPredicates.contextWrappableAs(contextWrappableAs)));
    }
 
+   public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata,
+            Class<? extends Wrapper> contextWrappableAs) {
+      return collocatedWith(providerMetadata, TypeToken.of(contextWrappableAs));
+   }
 }

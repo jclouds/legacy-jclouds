@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -40,9 +39,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVPDCClientLiveTest")
-public class BaseVPDCClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<VPDCClient, VPDCAsyncClient, ComputeServiceContext<VPDCClient, VPDCAsyncClient>> {
+public class BaseVPDCClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public BaseVPDCClientLiveTest() {
       provider = "savvis-symphonyvpdc";

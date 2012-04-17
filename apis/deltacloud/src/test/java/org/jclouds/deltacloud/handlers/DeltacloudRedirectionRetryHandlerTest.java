@@ -25,7 +25,7 @@ import static org.easymock.EasyMock.verify;
 
 import java.net.URI;
 
-import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -40,7 +40,7 @@ import com.google.inject.Injector;
  */
 @Test(groups = "unit")
 public class DeltacloudRedirectionRetryHandlerTest {
-   Injector injector = ComputeServiceContextBuilder.forTests().buildInjector();
+   Injector injector = ContextBuilder.newBuilder("stub").buildInjector();
 
    @Test
    public void test302DoesNotRetryOnDelete() {

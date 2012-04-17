@@ -20,7 +20,6 @@ package org.jclouds.trmk.vcloudexpress.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
@@ -45,9 +44,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class TerremarkVCloudExpressComputeServiceLiveTest
-      extends
-      BaseComputeServiceLiveTest<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>> {
+public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public TerremarkVCloudExpressComputeServiceLiveTest() {
       provider = "trmk-vcloudexpress";
@@ -99,7 +96,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
-         RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = context.getProviderSpecificContext();
+         RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = context.unwrap();
          VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

@@ -21,7 +21,6 @@ package org.jclouds.aws.config;
 
 import java.util.Map;
 
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 
 
@@ -30,7 +29,6 @@ import org.jclouds.rest.ConfiguresRestClient;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class WithZonesFormSigningRestClientModule<S, A> extends FormSigningRestClientModule<S, A> {
 
    public WithZonesFormSigningRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,

@@ -29,11 +29,16 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
 import org.jclouds.ec2.compute.EC2ComputeServiceContext;
+import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
+import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.ec2.config.EC2RestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
-import com.google.common.reflect.TypeParameter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's EC2 api.
@@ -52,26 +57,30 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class EC2ApiMetadata<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>, M extends EC2ApiMetadata<S, A, C, M>>
-      extends BaseComputeServiceApiMetadata<S, A, C, M> {
+public class EC2ApiMetadata extends BaseRestApiMetadata {
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 4424763314988423886L;
+   
+   public static final TypeToken<RestContext<EC2Client, EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<EC2Client, EC2AsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+
    @Override
-   public Builder<S, A, C, M> toBuilder() {
-      return (Builder<S, A, C, M>) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder toBuilder() {
+      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    public EC2ApiMetadata() {
       this(new Builder(EC2Client.class, EC2AsyncClient.class));
    }
 
-   protected EC2ApiMetadata(Builder<?, ?, ?, ?> builder) {
+   protected EC2ApiMetadata(Builder builder) {
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");
@@ -81,10 +90,11 @@ public class EC2ApiMetadata<S extends EC2Client, A extends EC2AsyncClient, C ext
       return properties;
    }
 
-   public static class Builder<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>, M extends EC2ApiMetadata<S, A, C, M>>
-         extends BaseComputeServiceApiMetadata.Builder<S, A, C, M> {
+   public static class Builder
+         extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<S> syncClient, Class<A> asyncClient) {
+      protected Builder(Class<?> syncClient, Class<?> asyncClient) {
+         super(syncClient, asyncClient);
          id("ec2")
          .name("Amazon Elastic Compute Cloud (EC2) API")
          .identityName("Access Key ID")
@@ -93,32 +103,17 @@ public class EC2ApiMetadata<S extends EC2Client, A extends EC2AsyncClient, C ext
          .documentation(URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference"))
          .version(EC2AsyncClient.VERSION)
          .defaultProperties(EC2ApiMetadata.defaultProperties())
-         .javaApi(syncClient, asyncClient)
-         .contextBuilder(new TypeToken<EC2ContextBuilder<S, A, C, M>>(getClass()) {
-                  private static final long serialVersionUID = 1L;
-               });
+         .wrapper(EC2ComputeServiceContext.class)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(EC2RestClientModule.class, EC2ResolveImagesModule.class, EC2ComputeServiceContextModule.class));
       }
-      
-      /**
-       * {@inheritDoc}
-       */
+
       @Override
-      @SuppressWarnings("rawtypes")
-      protected TypeToken contextToken(TypeToken<S> clientToken, TypeToken<A> asyncClientToken) {
-         return new TypeToken<EC2ComputeServiceContext<S, A>>() {
-            private static final long serialVersionUID = 1L;
-         }.where(new TypeParameter<S>() {
-         }, clientToken).where(new TypeParameter<A>() {
-         }, asyncClientToken);
+      public ApiMetadata build() {
+         return new EC2ApiMetadata(this);
       }
-      @SuppressWarnings({ "rawtypes", "unchecked" })
+
       @Override
-      public M build() {
-         return (M) new EC2ApiMetadata(this);
-      }
-      
-      @Override
-      public Builder<S, A, C, M> fromApiMetadata(M in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

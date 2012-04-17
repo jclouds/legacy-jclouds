@@ -22,21 +22,24 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
+import org.jclouds.opsource.servers.config.OpSourceServersRestClientModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 import com.google.common.reflect.TypeToken;
 
 /**
- * Implementation of {@link ApiMetadata} for  API
+ * Implementation of {@link ApiMetadata} for API
  * 
  * @author Adrian Cole
  */
-public class OpSourceServersApiMetadata
-      extends
-      BaseRestApiMetadata<OpSourceServersClient, OpSourceServersAsyncClient, RestContext<OpSourceServersClient, OpSourceServersAsyncClient>, OpSourceServersApiMetadata> {
+public class OpSourceServersApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -50,14 +53,14 @@ public class OpSourceServersApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseRestApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       return properties;
    }
 
    public static class Builder
          extends
-         BaseRestApiMetadata.Builder<OpSourceServersClient, OpSourceServersAsyncClient, RestContext<OpSourceServersClient, OpSourceServersAsyncClient>, OpSourceServersApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder() {
          super(OpSourceServersClient.class, OpSourceServersAsyncClient.class);
@@ -68,8 +71,10 @@ public class OpSourceServersApiMetadata
          .documentation(URI.create("http://www.opsource.net/Services/Cloud-Hosting/Open-API"))
          .version("0.9")
          .defaultEndpoint("https://api.opsourcecloud.net/oec/${jclouds.api-version}")
-         .type(ApiType.COMPUTE)
-         .contextBuilder(TypeToken.of(OpSourceServersContextBuilder.class));
+         .defaultProperties(OpSourceServersApiMetadata.defaultProperties())
+         .defaultModule(OpSourceServersRestClientModule.class);
+//         .wrapper(TypeToken.of(ComputeServiceContext.class))
+//         .defaultModules(ImmutableSet.<Class<? extends Module>>of(OpSourceServersRestClientModule.class, OpSourceServersComputeServiceContextModule.class));
       }
 
       @Override
@@ -78,7 +83,7 @@ public class OpSourceServersApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(OpSourceServersApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

@@ -28,7 +28,8 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public class BaseTerremarkECloudClientLiveTest extends BaseTerremarkClientLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient> {
+public class BaseTerremarkECloudClientLiveTest extends
+         BaseTerremarkClientLiveTest<TerremarkECloudClient, TerremarkECloudAsyncClient> {
    @Override
    protected Properties setupProperties() {
       Properties props = super.setupProperties();

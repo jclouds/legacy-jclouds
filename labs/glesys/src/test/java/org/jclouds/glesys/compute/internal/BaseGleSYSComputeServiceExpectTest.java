@@ -50,7 +50,7 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
    }
 
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new GleSYSApiMetadata();
    }
 
@@ -76,7 +76,7 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
       return computeContextForKnownArgumentsAndConstantPassword(requestsResponses).utils().injector();
    }
 
-   protected ComputeServiceContext<?, ?> computeContextForKnownArgumentsAndConstantPassword(
+   protected ComputeServiceContext computeContextForKnownArgumentsAndConstantPassword(
          Map<HttpRequest, HttpResponse> requestsResponses) {
       return requestsSendResponses(
             ImmutableMap
@@ -109,7 +109,7 @@ public abstract class BaseGleSYSComputeServiceExpectTest extends BaseRestClientE
             }).getContext();
    }
 
-   protected ComputeServiceContext<?, ?> computeContextForKnownArgumentsAndConstantPassword() {
+   protected ComputeServiceContext computeContextForKnownArgumentsAndConstantPassword() {
       return computeContextForKnownArgumentsAndConstantPassword(ImmutableMap.<HttpRequest, HttpResponse> of());
    }
 }

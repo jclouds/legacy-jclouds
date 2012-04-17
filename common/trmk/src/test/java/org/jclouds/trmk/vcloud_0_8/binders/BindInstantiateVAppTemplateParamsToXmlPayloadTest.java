@@ -25,15 +25,14 @@ import static org.easymock.EasyMock.replay;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.inject.Singleton;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
 import org.jclouds.trmk.vcloud_0_8.endpoints.Network;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions;
 import org.jclouds.trmk.vcloud_0_8.options.InstantiateVAppTemplateOptions.NetworkConfig;
 import org.jclouds.util.Strings2;
@@ -63,7 +62,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       @Override
       protected void bindConfigurations() {
-         bindProperties(new TerremarkVCloudPropertiesBuilder(new Properties()).build());
+         bindProperties(TerremarkVCloudApiMetadata.defaultProperties());
       }
 
       @SuppressWarnings("unused")

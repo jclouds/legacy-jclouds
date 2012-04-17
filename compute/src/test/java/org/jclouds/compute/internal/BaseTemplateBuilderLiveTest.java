@@ -24,10 +24,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.compute.ComputeServiceContext;
@@ -63,8 +63,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "integration,live")
-public abstract class BaseTemplateBuilderLiveTest<S, A, C extends ComputeServiceContext<S, A>> extends
-      BaseComputeServiceContextLiveTest<S, A, C> {
+public abstract class BaseTemplateBuilderLiveTest extends
+      BaseComputeServiceContextLiveTest {
 
    public void testCompareSizes() throws Exception {
       Hardware defaultSize = context.getComputeService().templateBuilder().build().getHardware();
@@ -180,7 +180,8 @@ public abstract class BaseTemplateBuilderLiveTest<S, A, C extends ComputeService
 
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
-      assertProvider(context.getProviderSpecificContext());
+      if (context.unwrap() instanceof Location)
+         assertProvider(Location.class.cast(context.unwrap()));
       for (Location location : context.getComputeService().listAssignableLocations()) {
          System.err.printf("location %s%n", location);
          assert location.getId() != null : location;
@@ -221,7 +222,7 @@ public abstract class BaseTemplateBuilderLiveTest<S, A, C extends ComputeService
    public void testTemplateBuilderWithImageIdSpecified() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
 
-      ComputeServiceContext<S, A> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          overrides.setProperty("jclouds.image-id", defaultTemplate.getImage().getId());
@@ -259,7 +260,7 @@ public abstract class BaseTemplateBuilderLiveTest<S, A, C extends ComputeService
       Module credentialStoreModule = new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
             new ConcurrentHashMap<String, InputSupplier<InputStream>>()));
 
-      ComputeServiceContext<S, A> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          String login = loginUser != null ? loginUser : "foo:bar";

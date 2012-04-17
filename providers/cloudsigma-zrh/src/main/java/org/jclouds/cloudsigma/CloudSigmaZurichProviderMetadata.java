@@ -21,7 +21,6 @@ package org.jclouds.cloudsigma;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -33,7 +32,7 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  */
 public class CloudSigmaZurichProviderMetadata
       extends
-      BaseProviderMetadata<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> {
+      BaseProviderMetadata {
 
    public static Builder builder() {
       return new Builder();
@@ -52,14 +51,14 @@ public class CloudSigmaZurichProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
 
    public static class Builder
          extends
-         BaseProviderMetadata.Builder<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> {
+         BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("cloudsigma-zrh")
@@ -79,7 +78,7 @@ public class CloudSigmaZurichProviderMetadata
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>, CloudSigmaApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

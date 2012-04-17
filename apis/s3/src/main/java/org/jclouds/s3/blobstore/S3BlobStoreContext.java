@@ -19,8 +19,6 @@
 package org.jclouds.s3.blobstore;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3Client;
 import org.jclouds.s3.blobstore.internal.S3BlobStoreContextImpl;
 
 import com.google.inject.ImplementedBy;
@@ -29,7 +27,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(S3BlobStoreContextImpl.class)
-public interface S3BlobStoreContext<S extends S3Client, A extends S3AsyncClient> extends BlobStoreContext<S, A> {
+public interface S3BlobStoreContext extends BlobStoreContext {
 
    @Override
    S3BlobStore getBlobStore();

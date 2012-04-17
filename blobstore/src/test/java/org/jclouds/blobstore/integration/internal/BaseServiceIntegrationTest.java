@@ -79,7 +79,8 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
-      assertProvider(context.getProviderSpecificContext());
+      if (context.unwrap() instanceof Location)
+         assertProvider(Location.class.cast(context.unwrap()));
       for (Location location : context.getBlobStore().listAssignableLocations()) {
          System.err.printf("location %s%n", location);
          assert location.getId() != null : location;

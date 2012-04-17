@@ -22,7 +22,6 @@ import static com.google.common.base.Functions.compose;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.inject.util.Types.newParameterizedType;
 
 import java.util.Set;
 
@@ -31,11 +30,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.TransformingSetSupplier;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.CreateNodeWithGroupEncodedIntoName;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -54,33 +51,13 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseComputeServiceContextModule {
+public class ComputeServiceAdapterContextModule<N, H, I, L> extends BaseComputeServiceContextModule {
 
-   private Class<A> asyncClientType;
-   private Class<S> syncClientType;
-
-   public ComputeServiceAdapterContextModule(Class<S> syncClientType, Class<A> asyncClientType) {
-      this.syncClientType = syncClientType;
-      this.asyncClientType = asyncClientType;
-   }
-
-   @SuppressWarnings( { "unchecked", "rawtypes" })
-   @Override
-   protected void configure() {
-      super.configure();
-      bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(
-               (TypeLiteral) TypeLiteral.get(newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
-                        asyncClientType))).in(Scopes.SINGLETON);
-   }
-   
    /**
     * install this, if you want to use your computeservice adapter to handle locations. Note that if
     * you do this, you'll want to instantiate a subclass to prevent type erasure.

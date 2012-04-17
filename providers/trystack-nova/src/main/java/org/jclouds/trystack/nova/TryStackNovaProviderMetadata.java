@@ -25,23 +25,24 @@ import static org.jclouds.openstack.nova.v1_1.config.NovaProperties.AUTO_GENERAT
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
-import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.config.NovaRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
+import org.jclouds.trystack.nova.config.TryStackNovaServiceContextModule;
 
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for TryStack Nova
  * 
  * @author Adrian Cole
  */
-public class TryStackNovaProviderMetadata
-      extends
-      BaseProviderMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> {
+public class TryStackNovaProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -8567407993297259224L;
 
    public static Builder builder() {
       return new Builder();
@@ -60,7 +61,7 @@ public class TryStackNovaProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(CREDENTIAL_TYPE, "passwordCredentials");
@@ -68,14 +69,15 @@ public class TryStackNovaProviderMetadata
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("trystack-nova")
          .name("TryStack.org (Nova)")
                .apiMetadata(
-                     new NovaApiMetadata().toBuilder().contextBuilder(TypeToken.of(TryStackNovaContextBuilder.class))
-                           .build())         
+                     new NovaApiMetadata().toBuilder()
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, TryStackNovaServiceContextModule.class))
+                     .build())         
          .homepage(URI.create("https://trystack.org"))
          .console(URI.create("https://trystack.org/dash"))
          .iso3166Codes("US-CA")
@@ -90,7 +92,7 @@ public class TryStackNovaProviderMetadata
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<NovaClient, NovaAsyncClient, ComputeServiceContext<NovaClient, NovaAsyncClient>, NovaApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

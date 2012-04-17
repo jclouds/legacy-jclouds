@@ -22,9 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.cloudservers.CloudServersAsyncClient;
-import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.LocationScope;
@@ -40,9 +37,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "CloudServersComputeServiceLiveTest")
-public class CloudServersComputeServiceLiveTest
-      extends
-      BaseComputeServiceLiveTest<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>> {
+public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public CloudServersComputeServiceLiveTest() {
       provider = "cloudservers";

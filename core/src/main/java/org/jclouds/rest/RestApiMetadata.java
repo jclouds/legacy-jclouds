@@ -21,6 +21,7 @@ package org.jclouds.rest;
 import org.jclouds.apis.ApiMetadata;
 
 import com.google.common.annotations.Beta;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
@@ -28,11 +29,27 @@ import com.google.common.annotations.Beta;
  * @since 1.5
  */
 @Beta
-public interface RestApiMetadata<S, A, C extends RestContext<S, A>, M extends RestApiMetadata<S, A, C, M>> extends
-      ApiMetadata<S, A, C, M> {
+public interface RestApiMetadata extends ApiMetadata {
 
-   public static interface Builder<S, A, C extends RestContext<S, A>, M extends RestApiMetadata<S, A, C, M>> extends
-         ApiMetadata.Builder<S, A, C, M> {
+   public static interface Builder extends ApiMetadata.Builder {
+
+      /**
+       * @see ApiMetadata#getApi()
+       * @see ApiMetadata#getAsyncApi()
+       */
+      Builder javaApi(Class<?> api, Class<?> asyncApi);
    }
 
+   /**
+    * 
+    * @return the type of the api which blocks on all requests
+    */
+   Class<?> getApi();
+
+   /**
+    * 
+    * @return the type of the api, which is the same as {@link #getApi}, except
+    *         all methods return {@link ListenableFuture}
+    */
+   Class<?> getAsyncApi();
 }

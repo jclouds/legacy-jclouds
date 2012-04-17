@@ -28,7 +28,6 @@ import org.jclouds.cloudservers.CloudServersApiMetadata;
 import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.openstack.filters.AddTimestampQuery;
 import org.jclouds.openstack.keystone.v1_1.config.AuthenticationServiceModule;
 import org.jclouds.openstack.keystone.v1_1.internal.BaseKeystoneRestClientExpectTest;
@@ -49,7 +48,7 @@ public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClient
    }
    
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new CloudServersApiMetadata();
    }
 
@@ -81,8 +80,7 @@ public class BaseCloudServersRestClientExpectTest extends BaseKeystoneRestClient
    }
 
    @ConfiguresRestClient
-   @RequiresHttp
-   protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
+      protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
 
       @Override
       public Supplier<Date> provideCacheBusterDate() {

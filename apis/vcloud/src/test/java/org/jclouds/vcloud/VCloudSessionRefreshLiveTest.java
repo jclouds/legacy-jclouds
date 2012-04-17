@@ -33,7 +33,8 @@ public class VCloudSessionRefreshLiveTest extends BaseVCloudClientLiveTest {
 
    @Test
    public void testSessionRefresh() throws Exception {
-      VCloudClient connection = VCloudClient.class.cast(client.getContext().getProviderSpecificContext().getApi());
+      VCloudClient connection = VCloudClient.class.cast(client.getContext().unwrap(VCloudApiMetadata.CONTEXT_TOKEN)
+               .getApi());
 
       connection.getOrgClient().findOrgNamed(null);
       Thread.sleep(timeOut * 1000);

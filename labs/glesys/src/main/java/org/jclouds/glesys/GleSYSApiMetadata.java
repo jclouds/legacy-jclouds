@@ -23,19 +23,29 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.glesys.compute.config.GleSYSComputeServiceContextModule;
+import org.jclouds.glesys.config.GleSYSRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for  API
  * 
  * @author Adrian Cole
  */
-public class GleSYSApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> {
+public class GleSYSApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<GleSYSClient, GleSYSAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<GleSYSClient, GleSYSAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -49,8 +59,8 @@ public class GleSYSApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
@@ -58,9 +68,10 @@ public class GleSYSApiMetadata
 
    public static class Builder
          extends
-         BaseComputeServiceApiMetadata.Builder<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(GleSYSClient.class, GleSYSAsyncClient.class);
          id("glesys")
          .name("GleSYS API")
          .identityName("Username")
@@ -69,8 +80,8 @@ public class GleSYSApiMetadata
          .version("1")
          .defaultEndpoint("https://api.glesys.com")
          .defaultProperties(GleSYSApiMetadata.defaultProperties())
-         .javaApi(GleSYSClient.class, GleSYSAsyncClient.class)
-         .contextBuilder(TypeToken.of(GleSYSContextBuilder.class));
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(GleSYSComputeServiceContextModule.class, GleSYSRestClientModule.class));
       }
 
       @Override
@@ -79,7 +90,7 @@ public class GleSYSApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(GleSYSApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

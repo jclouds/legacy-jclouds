@@ -22,8 +22,6 @@ import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
@@ -33,7 +31,7 @@ import com.google.common.base.Throwables;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName="TestCanRecreateGroupLiveTest")
-public class TestCanRecreateGroupLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
+public class TestCanRecreateGroupLiveTest extends BaseComputeServiceContextLiveTest {
    public TestCanRecreateGroupLiveTest() {
       provider = "ec2";
    }

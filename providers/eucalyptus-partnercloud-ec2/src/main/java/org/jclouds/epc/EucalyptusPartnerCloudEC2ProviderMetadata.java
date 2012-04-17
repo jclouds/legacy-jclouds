@@ -25,22 +25,26 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
+import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.ec2.config.EC2RestClientModule;
+import org.jclouds.epc.config.EucalyptusPartnerCloudComputeServiceContextModule;
 import org.jclouds.eucalyptus.EucalyptusApiMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.providers.ProviderMetadata} for Eucalyptus Partner Cloud EC2.
  * 
  * @author Adrian Cole
  */
-public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> {
+public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7625722444851538962L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -58,7 +62,7 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
       properties.setProperty(PROPERTY_REGION + ".Eucalyptus." + ISO3166_CODES, "US-CA");
@@ -66,14 +70,15 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("eucalyptus-partnercloud-ec2")
          .name("Eucalyptus Partner Cloud (EC2)")
                .apiMetadata(
                      new EucalyptusApiMetadata().toBuilder()
-                           .contextBuilder(TypeToken.of(EucalyptusPartnerCloudContextBuilder.class)).build())
+                            .defaultModules(ImmutableSet.<Class<? extends Module>>of(EC2RestClientModule.class, EC2ResolveImagesModule.class, EucalyptusPartnerCloudComputeServiceContextModule.class))
+                            .build())
          .homepage(URI.create("http://www.eucalyptus.com/partners"))
          .console(URI.create("https://partnercloud.eucalyptus.com:8443"))
          .linkedServices("eucalyptus-partnercloud-ec2", "eucalyptus-partnercloud-s3")
@@ -89,7 +94,7 @@ public class EucalyptusPartnerCloudEC2ProviderMetadata extends BaseProviderMetad
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

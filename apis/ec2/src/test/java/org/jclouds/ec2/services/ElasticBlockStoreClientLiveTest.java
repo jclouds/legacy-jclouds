@@ -28,9 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
 import org.jclouds.ec2.predicates.SnapshotCompleted;
@@ -50,7 +48,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ElasticBlockStoreClientLiveTest")
-public class ElasticBlockStoreClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
+public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLiveTest {
    public ElasticBlockStoreClientLiveTest() {
       provider = "ec2";
    }
@@ -63,12 +61,12 @@ public class ElasticBlockStoreClientLiveTest<S extends EC2Client, A extends EC2A
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getElasticBlockStoreServices();
+      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices();
    }
 
    @Test
    void testDescribeVolumes() {
-      for (String region : context.getProviderSpecificContext().getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {

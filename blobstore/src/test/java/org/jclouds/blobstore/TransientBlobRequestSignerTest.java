@@ -128,7 +128,7 @@ public class TransientBlobRequestSignerTest extends BaseAsyncClientTest<Transien
    }
 
    @Override
-   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   public ApiMetadata createApiMetadata() {
       return new TransientApiMetadata();
    }
 

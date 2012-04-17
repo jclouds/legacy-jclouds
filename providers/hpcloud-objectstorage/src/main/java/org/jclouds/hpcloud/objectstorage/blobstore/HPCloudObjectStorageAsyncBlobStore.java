@@ -59,7 +59,7 @@ public class HPCloudObjectStorageAsyncBlobStore extends SwiftAsyncBlobStore {
    private final EnableCDNAndCache enableCDNAndCache;
 
    @Inject
-   protected HPCloudObjectStorageAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
+   protected HPCloudObjectStorageAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, HPCloudObjectStorageClient sync, HPCloudObjectStorageAsyncClient async,
             ContainerToResourceMetadata container2ResourceMd,

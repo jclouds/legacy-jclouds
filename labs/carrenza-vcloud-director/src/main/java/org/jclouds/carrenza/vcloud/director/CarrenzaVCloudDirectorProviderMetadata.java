@@ -19,19 +19,19 @@
 package org.jclouds.carrenza.vcloud.director;
 
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
-import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.*;
+import static org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants.PROPERTY_VCLOUD_DIRECTOR_DEFAULT_NETWORK;
 
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.carrenza.vcloud.director.config.CarrenzaVCloudDirectorComputeServiceContextModule;
+import org.jclouds.carrenza.vcloud.director.config.CarrenzaVCloudDirectorRestClientModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
-import com.google.common.reflect.TypeToken;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Carrenza vCloud hosting
@@ -39,9 +39,8 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  * @author grkvlt@apache.org
  */
-public class CarrenzaVCloudDirectorProviderMetadata
-      extends
-      BaseProviderMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
+@SuppressWarnings("serial")
+public class CarrenzaVCloudDirectorProviderMetadata extends BaseProviderMetadata {
 
    public static Builder builder() {
       return new Builder();
@@ -60,21 +59,21 @@ public class CarrenzaVCloudDirectorProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_BUILD_VERSION, "1.5.0.464915");
       properties.setProperty(PROPERTY_VCLOUD_DIRECTOR_DEFAULT_NETWORK, "orgNet-.*-External");
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("carrenza-vcloud-director")
          .name("Carrenza vCloud Director")
          .apiMetadata(new VCloudDirectorApiMetadata().toBuilder()
                      .buildVersion("1.5.0.464915")
-                     .contextBuilder(TypeToken.of(CarrenzaVCloudDirectorContextBuilder.class))
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(CarrenzaVCloudDirectorRestClientModule.class, CarrenzaVCloudDirectorComputeServiceContextModule.class))
                      .build())
          .homepage(URI.create("http://carrenza.com/"))
          .console(URI.create("https://myvdc.carrenza.net/cloud/org/YOUR_ORG_HERE"))
@@ -90,7 +89,7 @@ public class CarrenzaVCloudDirectorProviderMetadata
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<VCloudDirectorClient, VCloudDirectorAsyncClient, VCloudDirectorContext, VCloudDirectorApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

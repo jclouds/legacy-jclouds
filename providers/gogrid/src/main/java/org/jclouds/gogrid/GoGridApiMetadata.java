@@ -23,19 +23,28 @@ import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
+import org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule;
+import org.jclouds.gogrid.config.GoGridRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for  API
  * 
  * @author Adrian Cole
  */
-public class GoGridApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> {
+public class GoGridApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
+   public static final TypeToken<RestContext<GoGridClient, GoGridAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<GoGridClient, GoGridAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -49,18 +58,17 @@ public class GoGridApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty("jclouds.ssh.max-retries", "5");
       properties.setProperty("jclouds.ssh.retry-auth", "true");
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseComputeServiceApiMetadata.Builder<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>, GoGridApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(GoGridClient.class, GoGridAsyncClient.class);
          id("gogrid")
          .name("GoGrid API")
          .identityName("API Key")
@@ -68,8 +76,9 @@ public class GoGridApiMetadata
          .documentation(URI.create("https://wiki.gogrid.com/wiki/index.php/API"))
          .version(GoGridAsyncClient.VERSION)
          .defaultEndpoint("https://api.gogrid.com/api")
-         .javaApi(GoGridClient.class, GoGridAsyncClient.class)
-         .contextBuilder(TypeToken.of(GoGridContextBuilder.class));
+         .defaultProperties(GoGridApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(GoGridRestClientModule.class, GoGridComputeServiceContextModule.class));
       }
 
       @Override
@@ -78,7 +87,7 @@ public class GoGridApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(GoGridApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

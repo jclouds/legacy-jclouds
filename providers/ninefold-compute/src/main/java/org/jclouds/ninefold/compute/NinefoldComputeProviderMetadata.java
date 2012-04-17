@@ -4,9 +4,6 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.cloudstack.CloudStackApiMetadata;
-import org.jclouds.cloudstack.CloudStackAsyncClient;
-import org.jclouds.cloudstack.CloudStackClient;
-import org.jclouds.cloudstack.CloudStackContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -15,9 +12,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * Compute. 
  * @author Adrian Cole
  */
-public class NinefoldComputeProviderMetadata
-      extends
-      BaseProviderMetadata<CloudStackClient, CloudStackAsyncClient, CloudStackContext, CloudStackApiMetadata> {
+public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -4496340915519024L;
 
    public static Builder builder() {
       return new Builder();
@@ -36,7 +34,7 @@ public class NinefoldComputeProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty("ninefold-compute.image-id", "1215");
       properties.setProperty("ninefold-compute.image.login-user", "user:Password01");
@@ -46,7 +44,7 @@ public class NinefoldComputeProviderMetadata
 
    public static class Builder
          extends
-         BaseProviderMetadata.Builder<CloudStackClient, CloudStackAsyncClient, CloudStackContext, CloudStackApiMetadata> {
+         BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("ninefold-compute")
@@ -66,7 +64,7 @@ public class NinefoldComputeProviderMetadata
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<CloudStackClient, CloudStackAsyncClient, CloudStackContext, CloudStackApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

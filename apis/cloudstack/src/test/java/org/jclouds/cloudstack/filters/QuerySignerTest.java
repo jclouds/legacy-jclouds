@@ -22,13 +22,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
-import org.jclouds.rest.internal.ContextBuilder;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

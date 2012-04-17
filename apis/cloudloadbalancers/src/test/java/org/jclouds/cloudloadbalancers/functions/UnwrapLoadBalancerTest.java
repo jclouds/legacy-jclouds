@@ -19,9 +19,9 @@
 package org.jclouds.cloudloadbalancers.functions;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP;
+import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP.IPVersion;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpResponse;

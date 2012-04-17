@@ -27,9 +27,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.jclouds.deltacloud.domain.Instance;
-import org.jclouds.deltacloud.domain.Instance.Authentication;
 import org.jclouds.deltacloud.domain.KeyAuthentication;
 import org.jclouds.deltacloud.domain.PasswordAuthentication;
+import org.jclouds.deltacloud.domain.Instance.Authentication;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.http.HttpRequest;

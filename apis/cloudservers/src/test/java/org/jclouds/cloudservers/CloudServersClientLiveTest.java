@@ -44,7 +44,6 @@ import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.cloudservers.domain.SharedIpGroup;
 import org.jclouds.cloudservers.domain.WeeklyBackup;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
@@ -72,9 +71,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudServersClientLiveTest")
-public class CloudServersClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<CloudServersClient, CloudServersAsyncClient, ComputeServiceContext<CloudServersClient, CloudServersAsyncClient>> {
+public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public CloudServersClientLiveTest() {
       provider = "cloudservers";

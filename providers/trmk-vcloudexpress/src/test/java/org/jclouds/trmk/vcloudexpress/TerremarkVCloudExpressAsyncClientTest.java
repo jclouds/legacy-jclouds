@@ -38,7 +38,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.providers.ProviderMetadata;
@@ -621,7 +620,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends BaseAsyncClientTest<T
    }
    
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new TerremarkVCloudExpressProviderMetadata();
    }
 
@@ -667,8 +666,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends BaseAsyncClientTest<T
                      .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))),
          ImmutableMap.<String, ReferenceType> of(NETWORK_REF.getName(), NETWORK_REF));
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static class TerremarkVCloudRestClientModuleExtension extends TerremarkVCloudExpressRestClientModule {
 
       @Override

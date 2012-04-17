@@ -35,8 +35,6 @@ import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
-import org.jclouds.softlayer.SoftLayerAsyncClient;
-import org.jclouds.softlayer.SoftLayerClient;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -49,10 +47,8 @@ import com.google.common.collect.ImmutableSet;
  * @author Jason King
  */
 @Test(groups = "live")
-public class SoftLayerTemplateBuilderLiveTest
-      extends
-      BaseTemplateBuilderLiveTest<SoftLayerClient, SoftLayerAsyncClient, ComputeServiceContext<SoftLayerClient, SoftLayerAsyncClient>> {
-   
+public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+
    public SoftLayerTemplateBuilderLiveTest() {
       provider = "softlayer";
    }
@@ -102,7 +98,7 @@ public class SoftLayerTemplateBuilderLiveTest
 
    @Test
    public void testTemplateBuilderFindsGigabitUplink() throws IOException {
-      ComputeServiceContext<?, ?> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "1000");
@@ -120,7 +116,7 @@ public class SoftLayerTemplateBuilderLiveTest
 
    @Test
    public void testTemplateBuilderFindsMegabitUplink() throws IOException {
-      ComputeServiceContext<?, ?> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "100");
@@ -138,7 +134,7 @@ public class SoftLayerTemplateBuilderLiveTest
 
    @Test
    public void testBiggestTemplateBuilderWhenBootIsSAN() throws IOException {
-      ComputeServiceContext<?, ?> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE, "SAN");
@@ -158,7 +154,7 @@ public class SoftLayerTemplateBuilderLiveTest
 
    @Test
    public void testDefaultTemplateBuilderWhenPrivateNetwork() throws IOException {
-      ComputeServiceContext<?, ?> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "Private [0-9]+ x ([.0-9]+) GHz Core[s]?");
@@ -178,7 +174,7 @@ public class SoftLayerTemplateBuilderLiveTest
 
    @Test
    public void testBiggestTemplateBuilderWhenPrivateNetwork() throws IOException {
-      ComputeServiceContext<?, ?> context = null;
+      ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "Private [0-9]+ x ([.0-9]+) GHz Core[s]?");

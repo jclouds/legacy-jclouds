@@ -59,7 +59,7 @@ public class CloudFilesAsyncBlobStore extends SwiftAsyncBlobStore {
    private final EnableCDNAndCache enableCDNAndCache;
 
    @Inject
-   protected CloudFilesAsyncBlobStore(@SuppressWarnings("rawtypes") BlobStoreContext context, BlobUtils blobUtils,
+   protected CloudFilesAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
             @Memoized Supplier<Set<? extends Location>> locations, CloudFilesClient sync, CloudFilesAsyncClient async,
             ContainerToResourceMetadata container2ResourceMd,

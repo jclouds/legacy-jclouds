@@ -24,9 +24,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.Tag;
 import org.jclouds.aws.ec2.util.TagFilters;
@@ -46,7 +44,7 @@ import com.google.common.collect.Iterables;
  * @author grkvlt@apache.org
  */
 @Test(groups = "live", singleThreaded = true)
-public class TagClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class TagClientLiveTest extends BaseComputeServiceContextLiveTest {
    public TagClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -58,22 +56,22 @@ public class TagClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2C
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getTagServices();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getTagServices();
       
       try {
-         testGroup = context.getProviderSpecificContext().getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null,
+         testGroup = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null,
                   "test-group", "test-group");
       } catch (IllegalStateException e) {
          // already exists
          testGroup = Iterables.get(
-                  context.getProviderSpecificContext().getApi().getSecurityGroupServices().describeSecurityGroupsInRegion(null, "test-group"), 0)
+                  context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().describeSecurityGroupsInRegion(null, "test-group"), 0)
                   .getId();
       }
    }
 
    @AfterGroups(groups = { "live" })
    public void deleteSecurityGroup() {
-       context.getProviderSpecificContext().getApi().getSecurityGroupServices().deleteSecurityGroupInRegionById(null, testGroup);
+       context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().deleteSecurityGroupInRegionById(null, testGroup);
    }
 
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";

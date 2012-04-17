@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "live")
 public class ElasticHostsPeer1LondonTemplateBuilderLiveTest
       extends
-      BaseTemplateBuilderLiveTest<ElasticStackClient, ElasticStackAsyncClient, ComputeServiceContext<ElasticStackClient, ElasticStackAsyncClient>> {
+      BaseTemplateBuilderLiveTest {
 
    public ElasticHostsPeer1LondonTemplateBuilderLiveTest() {
       provider = "elastichosts-lon-p";

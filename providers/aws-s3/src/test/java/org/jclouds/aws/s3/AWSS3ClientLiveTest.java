@@ -44,9 +44,9 @@ import org.jclouds.s3.S3Client;
 import org.jclouds.s3.S3ClientLiveTest;
 import org.jclouds.s3.domain.ListBucketResponse;
 import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.s3.domain.ObjectMetadataBuilder;
 import org.jclouds.s3.domain.S3Object;
+import org.jclouds.s3.domain.ObjectMetadata.StorageClass;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -71,7 +71,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
 
    @Override
    public AWSS3Client getApi() {
-      return (AWSS3Client) context.getProviderSpecificContext().getApi();
+      return (AWSS3Client) context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    @BeforeClass(groups = { "integration", "live" })
@@ -172,7 +172,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
          blobStore.putBlob(containerName, blob,
             storageClass(StorageClass.REDUCED_REDUNDANCY));
 
-         S3Client s3Client = S3Client.class.cast(context.getProviderSpecificContext().getApi());
+         S3Client s3Client = S3Client.class.cast(context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi());
          ListBucketResponse response = s3Client.listBucket(containerName, withPrefix(blobName));
 
          ObjectMetadata metadata = response.iterator().next();

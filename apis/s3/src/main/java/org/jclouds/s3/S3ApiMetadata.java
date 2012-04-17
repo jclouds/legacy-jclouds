@@ -32,12 +32,16 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadata;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.jclouds.s3.blobstore.S3BlobStoreContext;
+import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
+import org.jclouds.s3.config.S3RestClientModule;
 import org.jclouds.s3.reference.S3Headers;
 
-import com.google.common.reflect.TypeParameter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's S3 api.
@@ -56,26 +60,30 @@ import com.google.common.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class S3ApiMetadata<S extends S3Client, A extends S3AsyncClient, C extends S3BlobStoreContext<S, A>, M extends S3ApiMetadata<S, A, C, M>>
-      extends BaseBlobStoreApiMetadata<S, A, C, M> {
+public class S3ApiMetadata extends BaseRestApiMetadata {
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 820062881469203616L;
+   
+   public static final TypeToken<RestContext<S3Client, S3AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<S3Client, S3AsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+
    @Override
-   public Builder<S, A, C, M> toBuilder() {
-      return (Builder<S, A, C, M>) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   public Builder toBuilder() {
+      return (Builder) new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    public S3ApiMetadata() {
       this(new Builder(S3Client.class, S3AsyncClient.class));
    }
 
-   protected S3ApiMetadata(Builder<?, ?, ?, ?> builder) {
+   protected S3ApiMetadata(Builder builder) {
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseBlobStoreApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, S3AsyncClient.VERSION);
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, S3Headers.DEFAULT_AMAZON_HEADERTAG);
@@ -87,9 +95,10 @@ public class S3ApiMetadata<S extends S3Client, A extends S3AsyncClient, C extend
       return properties;
    }
    
-   public static class Builder<S extends S3Client, A extends S3AsyncClient, C extends S3BlobStoreContext<S, A>, M extends S3ApiMetadata<S, A, C, M>> extends BaseBlobStoreApiMetadata.Builder<S, A, C, M> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
-      protected Builder(Class<S> syncClient, Class<A> asyncClient){
+      protected Builder(Class<?> syncClient, Class<?> asyncClient){
+         super(syncClient, asyncClient);
          id("s3")
          .name("Amazon Simple Storage Service (S3) API")
          .identityName("Access Key ID")
@@ -98,32 +107,17 @@ public class S3ApiMetadata<S extends S3Client, A extends S3AsyncClient, C extend
          .documentation(URI.create("http://docs.amazonwebservices.com/AmazonS3/latest/API"))
          .version(S3AsyncClient.VERSION)
          .defaultProperties(S3ApiMetadata.defaultProperties())
-         .javaApi(syncClient, asyncClient)
-         .contextBuilder(new TypeToken<S3ContextBuilder<S, A, C, M>>(getClass()){
-            private static final long serialVersionUID = 1L;
-            });
+         .wrapper(TypeToken.of(S3BlobStoreContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(S3RestClientModule.class, S3BlobStoreContextModule.class));
       }
-      
-      /**
-       * {@inheritDoc}
-       */
+
       @Override
-      @SuppressWarnings("rawtypes")
-      protected TypeToken contextToken(TypeToken<S> clientToken, TypeToken<A> asyncClientToken) {
-         return new TypeToken<S3BlobStoreContext<S, A>>() {
-            private static final long serialVersionUID = 1L;
-         }.where(new TypeParameter<S>() {
-         }, clientToken).where(new TypeParameter<A>() {
-         }, asyncClientToken);
+      public ApiMetadata build() {
+         return new S3ApiMetadata(this);
       }
-      @SuppressWarnings({ "rawtypes", "unchecked" })
+
       @Override
-      public M build() {
-         return (M) new S3ApiMetadata(this);
-      }
-      
-      @Override
-      public Builder<S, A, C, M> fromApiMetadata(M in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

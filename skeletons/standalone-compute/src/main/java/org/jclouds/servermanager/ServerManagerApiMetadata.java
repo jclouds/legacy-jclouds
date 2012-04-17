@@ -3,18 +3,20 @@ package org.jclouds.servermanager;
 import java.net.URI;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
-import org.jclouds.servermanager.compute.ServerManagerComputeServiceContextBuilder;
-
-import com.google.common.reflect.TypeToken;
+import org.jclouds.servermanager.compute.config.ServerManagerComputeServiceContextModule;
 
 /**
  * Implementation of {@link ApiMetadata} for an example of library integration (ServerManager)
  * 
  * @author Adrian Cole
  */
-public class ServerManagerApiMetadata extends BaseComputeServiceApiMetadata<ServerManager, ServerManager, ComputeServiceContext<ServerManager, ServerManager>, ServerManagerApiMetadata> {
+public class ServerManagerApiMetadata extends BaseApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3606170564482119304L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -32,7 +34,7 @@ public class ServerManagerApiMetadata extends BaseComputeServiceApiMetadata<Serv
       super(builder);
    }
 
-   public static class Builder extends BaseComputeServiceApiMetadata.Builder<ServerManager, ServerManager, ComputeServiceContext<ServerManager, ServerManager>, ServerManagerApiMetadata> {
+   public static class Builder extends BaseApiMetadata.Builder {
 
       protected Builder(){
          id("servermanager")
@@ -41,12 +43,9 @@ public class ServerManagerApiMetadata extends BaseComputeServiceApiMetadata<Serv
          .defaultIdentity("foo")
          .defaultCredential("bar")
          .defaultEndpoint("http://demo")
-         .context(new TypeToken<ComputeServiceContext<ServerManager, ServerManager>>(getClass()){
-            private static final long serialVersionUID = 1L;
-            })
-         .javaApi(ServerManager.class, ServerManager.class)
          .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
-         .contextBuilder(TypeToken.of(ServerManagerComputeServiceContextBuilder.class));
+         .wrapper(ComputeServiceContext.class)
+         .defaultModule(ServerManagerComputeServiceContextModule.class);
       }
 
       @Override

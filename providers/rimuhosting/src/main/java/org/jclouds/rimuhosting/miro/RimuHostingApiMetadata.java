@@ -25,23 +25,32 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.ComputeServiceProperties;
-import org.jclouds.compute.internal.BaseComputeServiceApiMetadata;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rimuhosting.miro.compute.config.RimuHostingComputeServiceContextModule;
+import org.jclouds.rimuhosting.miro.config.RimuHostingRestClientModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for RimuHosting API
  * 
  * @author Adrian Cole
  */
-public class RimuHostingApiMetadata
-      extends
-      BaseComputeServiceApiMetadata<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> {
+public class RimuHostingApiMetadata extends BaseRestApiMetadata {
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
+
+   public static final TypeToken<RestContext<RimuHostingClient, RimuHostingAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<RimuHostingClient, RimuHostingAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -55,8 +64,8 @@ public class RimuHostingApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseComputeServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       Timeout timeout = RimuHostingClient.class.getAnnotation(Timeout.class);
       long timeoutMillis = timeout.timeUnit().toMillis(timeout.duration());
       properties.setProperty(PROPERTY_SO_TIMEOUT, timeoutMillis + "");
@@ -67,18 +76,20 @@ public class RimuHostingApiMetadata
 
    public static class Builder
          extends
-         BaseComputeServiceApiMetadata.Builder<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(RimuHostingClient.class, RimuHostingAsyncClient.class);
          id("rimuhosting")
-         .type(ApiType.COMPUTE)
          .name("RimuHosting API")
          .identityName("API Key")
          .documentation(URI.create("http://apidocs.rimuhosting.com"))
          .version("1")
          .defaultEndpoint("https://api.rimuhosting.com/r")
-         .javaApi(RimuHostingClient.class, RimuHostingAsyncClient.class)
-         .contextBuilder(TypeToken.of(RimuHostingContextBuilder.class));
+         .defaultProperties(RimuHostingApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(RimuHostingRestClientModule.class, RimuHostingComputeServiceContextModule.class));
+
       }
 
       @Override
@@ -87,7 +98,7 @@ public class RimuHostingApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(RimuHostingApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

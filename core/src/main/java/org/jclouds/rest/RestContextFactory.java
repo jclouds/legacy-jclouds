@@ -21,13 +21,15 @@ package org.jclouds.rest;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
+import org.jclouds.ContextBuilder;
+import org.jclouds.Wrapper;
 import org.jclouds.apis.Apis;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.Providers;
-import org.jclouds.rest.internal.ContextBuilder;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
 /**
@@ -106,9 +108,9 @@ public class RestContextFactory {
    @SuppressWarnings("unchecked")
    public <S, A> RestContext<S, A> createContext(String providerOrApi, @Nullable String identity,
          @Nullable String credential, Iterable<? extends Module> wiring, Properties overrides) {
-      ContextBuilder<?, ?, ?, ?> builder = null;
+      ContextBuilder builder = null;
       try {
-         ProviderMetadata<?, ?, ?, ?> pm = Providers.withId(providerOrApi);
+         ProviderMetadata pm = Providers.withId(providerOrApi);
          builder = ContextBuilder.newBuilder(pm);
       } catch (NoSuchElementException e) {
          builder = ContextBuilder.newBuilder(Apis.withId(providerOrApi));
@@ -120,8 +122,9 @@ public class RestContextFactory {
       Object context = builder.build();
       if (context instanceof RestContext) {
          return RestContext.class.cast(context);
-      } else if (context instanceof BackedByRestContext) {
-         return BackedByRestContext.class.cast(context).getProviderSpecificContext();
+      } else if (context instanceof Wrapper) {
+         Wrapper tctx = Wrapper.class.cast(context);
+         return (RestContext<S, A>) tctx.unwrap(TypeToken.of(RestContext.class));
       } else {
          throw new IllegalArgumentException("provider " + providerOrApi + " contains an unknown context type: "
                + context.getClass().getSimpleName());

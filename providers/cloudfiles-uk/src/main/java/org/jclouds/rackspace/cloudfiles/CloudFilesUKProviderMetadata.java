@@ -23,10 +23,7 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.cloudfiles.CloudFilesApiMetadata;
-import org.jclouds.cloudfiles.CloudFilesAsyncClient;
-import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -35,7 +32,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class CloudFilesUKProviderMetadata extends BaseProviderMetadata<CloudFilesClient, CloudFilesAsyncClient, BlobStoreContext<CloudFilesClient, CloudFilesAsyncClient>, CloudFilesApiMetadata> {
+public class CloudFilesUKProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7285715683919401020L;
    
    public static Builder builder() {
       return new Builder();
@@ -54,12 +54,12 @@ public class CloudFilesUKProviderMetadata extends BaseProviderMetadata<CloudFile
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_REGIONS, "UK");
       return properties;
    }
-   public static class Builder extends BaseProviderMetadata.Builder<CloudFilesClient, CloudFilesAsyncClient, BlobStoreContext<CloudFilesClient, CloudFilesAsyncClient>, CloudFilesApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
          id("cloudfiles-uk")
@@ -79,7 +79,7 @@ public class CloudFilesUKProviderMetadata extends BaseProviderMetadata<CloudFile
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<CloudFilesClient, CloudFilesAsyncClient, BlobStoreContext<CloudFilesClient, CloudFilesAsyncClient>, CloudFilesApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

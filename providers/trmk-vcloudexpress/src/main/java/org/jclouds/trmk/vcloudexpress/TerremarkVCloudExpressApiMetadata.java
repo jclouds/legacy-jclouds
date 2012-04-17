@@ -25,18 +25,28 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.rest.RestContext;
 import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
+import org.jclouds.trmk.vcloudexpress.compute.TerremarkVCloudExpressComputeServiceContextModule;
+import org.jclouds.trmk.vcloudexpress.config.TerremarkVCloudExpressRestClientModule;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for the Terremark vCloud Express API
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudExpressApiMetadata extends
-      TerremarkVCloudApiMetadata<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, TerremarkVCloudExpressApiMetadata> {
+public class TerremarkVCloudExpressApiMetadata extends TerremarkVCloudApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -6212626084139698761L;
 
+   public static final TypeToken<RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
    @Override
    public Builder toBuilder() {
       return new Builder().fromApiMetadata(this);
@@ -50,7 +60,7 @@ public class TerremarkVCloudExpressApiMetadata extends
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = TerremarkVCloudApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "vCloudExpressExtensions");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "1.6");
@@ -59,7 +69,7 @@ public class TerremarkVCloudExpressApiMetadata extends
 
    public static class Builder
          extends
-         TerremarkVCloudApiMetadata.Builder<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, TerremarkVCloudExpressApiMetadata> {
+         TerremarkVCloudApiMetadata.Builder {
 
       protected Builder() {
          super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class);
@@ -67,11 +77,11 @@ public class TerremarkVCloudExpressApiMetadata extends
          .name("Terremark vCloud Express API")
          .identityName("Email")
          .credentialName("Password")
-         .defaultProperties(TerremarkVCloudExpressApiMetadata.defaultProperties())
+         .version("0.8a-ext1.6")
          .defaultEndpoint("https://services.vcloudexpress.terremark.com/api")
+         .documentation(URI.create("https://community.vcloudexpress.terremark.com/en-us/product_docs/m/vcefiles/2342.aspx"))
          .defaultProperties(TerremarkVCloudExpressApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(TerremarkVCloudExpressContextBuilder.class))
-         .documentation(URI.create("https://community.vcloudexpress.terremark.com/en-us/product_docs/m/vcefiles/2342.aspx"));
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(TerremarkVCloudExpressRestClientModule.class, TerremarkVCloudExpressComputeServiceContextModule.class));
       }
 
       @Override
@@ -80,7 +90,7 @@ public class TerremarkVCloudExpressApiMetadata extends
       }
 
       @Override
-      public Builder fromApiMetadata(TerremarkVCloudExpressApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

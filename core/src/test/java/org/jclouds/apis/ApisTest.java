@@ -40,7 +40,7 @@ public class ApisTest {
    @Test
    public void testWithId() {
 
-      ApiMetadata<?, ?, ?, ?> apiMetadata;
+      ApiMetadata apiMetadata;
       try {
          apiMetadata = Apis.withId("fake-id");
          fail("Looking for a api with an id that doesn't exist should " + "throw an exceptoin.");
@@ -54,16 +54,16 @@ public class ApisTest {
    }
 
    @Test
-   public void testOfType() {
-      Iterable<ApiMetadata<?, ?, ?, ?>> apisMetadata = Apis.ofType(ApiType.BLOBSTORE);
+   public void testTransformableTo() {
+      Iterable<ApiMetadata> apisMetadata = Apis.contextWrappableAs(Storage.class);
 
-      for (ApiMetadata<?, ?, ?, ?> apiMetadata : apisMetadata) {
+      for (ApiMetadata apiMetadata : apisMetadata) {
          assertEquals(testBlobstoreApi, apiMetadata);
       }
 
-      apisMetadata = Apis.ofType(ApiType.COMPUTE);
+      apisMetadata = Apis.contextWrappableAs(Compute.class);
 
-      for (ApiMetadata<?, ?, ?, ?> apiMetadata : apisMetadata) {
+      for (ApiMetadata apiMetadata : apisMetadata) {
          if (apiMetadata.getName().equals(testComputeApi.getName())) {
             assertEquals(testComputeApi, apiMetadata);
          } else {
@@ -71,16 +71,16 @@ public class ApisTest {
          }
       }
 
-      apisMetadata = Apis.ofType(ApiType.UNRECOGNIZED);
+      apisMetadata = Apis.contextWrappableAs(Balancer.class);
 
       assertEquals(false, apisMetadata.iterator().hasNext());
    }
 
    @Test
    public void testAll() {
-      Iterable<ApiMetadata<?, ?, ?, ?>> apisMetadata = Apis.all();
+      Iterable<ApiMetadata> apisMetadata = Apis.all();
 
-      for (ApiMetadata<?, ?, ?, ?> apiMetadata : apisMetadata) {
+      for (ApiMetadata apiMetadata : apisMetadata) {
          if (apiMetadata.getName().equals(testBlobstoreApi.getName())) {
             assertEquals(testBlobstoreApi, apiMetadata);
          } else if (apiMetadata.getName().equals(testComputeApi.getName())) {

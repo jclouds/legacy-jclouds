@@ -26,7 +26,6 @@ import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -34,9 +33,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for GleSYS.
  * @author Adrian Cole
  */
-public class GleSYSProviderMetadata
-      extends
-      BaseProviderMetadata<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> {
+public class GleSYSProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 539076518401969165L;
 
    public static Builder builder() {
       return new Builder();
@@ -55,7 +55,7 @@ public class GleSYSProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_ZONES, "Amsterdam,Falkenberg,New York City,Stockholm");
       properties.setProperty(PROPERTY_ZONE + ".Amsterdam." + ISO3166_CODES, "NL-NH");
@@ -66,9 +66,7 @@ public class GleSYSProviderMetadata
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseProviderMetadata.Builder<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("glesys")
@@ -87,8 +85,7 @@ public class GleSYSProviderMetadata
       }
 
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>, GleSYSApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

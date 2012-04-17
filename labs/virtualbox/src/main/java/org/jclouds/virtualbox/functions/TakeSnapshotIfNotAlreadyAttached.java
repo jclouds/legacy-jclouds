@@ -81,8 +81,7 @@ public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISna
                      session.getConsole().resume();
                   }
 
-                  snap = machine.findSnapshot(snapshotName);
-                  snap.setDescription(snapshotDesc);
+                  snap = machine.getCurrentSnapshot();
                   logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc,
                            machine.getName());
                   break;

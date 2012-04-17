@@ -21,7 +21,6 @@ package org.jclouds.azureblob;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -30,7 +29,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobProviderMetadata extends BaseProviderMetadata<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> {
+public class AzureBlobProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8271570736207734777L;
    
    public static Builder builder() {
       return new Builder();
@@ -49,11 +51,11 @@ public class AzureBlobProviderMetadata extends BaseProviderMetadata<AzureBlobCli
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
-   public static class Builder extends BaseProviderMetadata.Builder<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
             id("azureblob")
@@ -74,7 +76,7 @@ public class AzureBlobProviderMetadata extends BaseProviderMetadata<AzureBlobCli
       
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<AzureBlobClient, AzureBlobAsyncClient, BlobStoreContext<AzureBlobClient, AzureBlobAsyncClient>, AzureBlobApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

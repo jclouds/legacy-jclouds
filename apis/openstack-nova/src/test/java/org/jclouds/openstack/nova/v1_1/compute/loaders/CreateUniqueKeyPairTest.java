@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 import java.net.UnknownHostException;
 
 import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.compute.loaders.CreateUniqueKeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndName;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;

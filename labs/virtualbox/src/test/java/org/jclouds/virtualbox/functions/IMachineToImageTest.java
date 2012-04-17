@@ -34,6 +34,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
@@ -48,7 +49,7 @@ public class IMachineToImageTest {
 
    Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
    }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
-         .getInstance(Json.class));
+            .getInstance(Json.class));
 
    @Test
    public void testConvert() throws Exception {
@@ -61,6 +62,7 @@ public class IMachineToImageTest {
       expect(vbm.getVBox()).andReturn(vBox).anyTimes();
 
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
+      expect(vm.getName()).andReturn(VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX + "my-vm-id").anyTimes();
       expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
       expect(vm.getDescription()).andReturn("my-ubuntu-machine").anyTimes();
       expect(guestOsType.getDescription()).andReturn(linuxDescription).anyTimes();
@@ -77,6 +79,7 @@ public class IMachineToImageTest {
       assertTrue(image.getOperatingSystem().is64Bit());
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(image.getOperatingSystem().getVersion(), "10.04");
+      assertEquals(image.getId(), "my-vm-id");
 
    }
 
@@ -91,6 +94,7 @@ public class IMachineToImageTest {
       String vmDescription = "ubuntu-11.04-server-i386";
       expect(vbm.getVBox()).andReturn(vBox).anyTimes();
 
+      expect(vm.getName()).andReturn(VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX + "my-vm-id").anyTimes();
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
       expect(vBox.getGuestOSType(eq("os-type"))).andReturn(guestOsType);
       expect(vm.getDescription()).andReturn(vmDescription).anyTimes();
@@ -108,6 +112,7 @@ public class IMachineToImageTest {
       assertTrue(image.getOperatingSystem().is64Bit());
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(image.getOperatingSystem().getVersion(), "11.04");
+      assertEquals(image.getId(), "my-vm-id");
 
    }
 
@@ -121,6 +126,7 @@ public class IMachineToImageTest {
 
       expect(vbm.getVBox()).andReturn(vBox).anyTimes();
 
+      expect(vm.getName()).andReturn(VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX + "my-vm-id").anyTimes();
       String unknownOsDescription = "SomeOtherOs 2.04";
       expect(vm.getOSTypeId()).andReturn("os-type").anyTimes();
       expect(vm.getDescription()).andReturn("my-unknown-machine").anyTimes();
@@ -136,6 +142,7 @@ public class IMachineToImageTest {
 
       assertEquals(image.getOperatingSystem().getDescription(), "SomeOtherOs 2.04");
       assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getId(), "my-vm-id");
 
    }
 

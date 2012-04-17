@@ -22,38 +22,50 @@ import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUE
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.ContextBuilder;
+import org.jclouds.aws.ec2.compute.config.ImageQuery;
 import org.testng.annotations.Test;
+
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "AWSEC2ContextBuilderTest")
 public class AWSEC2ContextBuilderTest {
+   private Map<String, String> queriesForProperties(Properties input) {
+      return ContextBuilder.newBuilder(new AWSEC2ProviderMetadata()).overrides(input).credentials("foo", "bar")
+               .buildInjector().getInstance(Key.get(new TypeLiteral<Map<String, String>>() {
+               }, ImageQuery.class));
+   }
 
    public void testConvertImageSyntax() {
       Properties input = new Properties();
       input.setProperty(PROPERTY_EC2_AMI_OWNERS, "137112412989,063491364108,099720109477,411009282317");
-      Properties props = new AWSEC2ContextBuilder().overrides(input).getOverrides();
-      assertEquals(props.getProperty(PROPERTY_EC2_AMI_OWNERS), null);
-      assertEquals(props.getProperty(PROPERTY_EC2_AMI_QUERY),
+      Map<String, String> queries = queriesForProperties(input);
+      assertEquals(queries.get(PROPERTY_EC2_AMI_OWNERS), null);
+      assertEquals(queries.get(PROPERTY_EC2_AMI_QUERY),
                "owner-id=137112412989,063491364108,099720109477,411009282317;state=available;image-type=machine");
    }
 
    public void testConvertImageSyntaxWhenStar() {
       Properties input = new Properties();
       input.setProperty(PROPERTY_EC2_AMI_OWNERS, "*");
-      Properties props = new AWSEC2ContextBuilder().overrides(input).getOverrides();
-      assertEquals(props.getProperty(PROPERTY_EC2_AMI_OWNERS), null);
-      assertEquals(props.getProperty(PROPERTY_EC2_AMI_QUERY), "state=available;image-type=machine");
+      Map<String, String> queries = queriesForProperties(input);
+      assertEquals(queries.get(PROPERTY_EC2_AMI_OWNERS), null);
+      assertEquals(queries.get(PROPERTY_EC2_AMI_QUERY), "state=available;image-type=machine");
    }
 
-   public void testConvertImageSyntaxWhenBlank() {
+   public void testStaysPutWhenBlank() {
       Properties input = new Properties();
       input.setProperty(PROPERTY_EC2_AMI_OWNERS, "");
-      Properties props = new AWSEC2ContextBuilder().overrides(input).getOverrides();
-      assertEquals(props.getProperty(PROPERTY_EC2_AMI_OWNERS), null);
-      assertEquals(props.getProperty(PROPERTY_EC2_AMI_QUERY), "");
+      Map<String, String> queries = queriesForProperties(input);
+      assertEquals(queries.get(PROPERTY_EC2_AMI_OWNERS), null);
+      assertEquals(queries.get(PROPERTY_EC2_AMI_QUERY), new AWSEC2ProviderMetadata().getDefaultProperties()
+               .getProperty(PROPERTY_EC2_AMI_QUERY));
    }
 }

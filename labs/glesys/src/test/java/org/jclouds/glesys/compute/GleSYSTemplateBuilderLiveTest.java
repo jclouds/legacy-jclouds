@@ -25,14 +25,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
 import org.jclouds.glesys.compute.options.GleSYSTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -45,9 +42,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "GleSYSTemplateBuilderLiveTest")
-public class GleSYSTemplateBuilderLiveTest
-      extends
-      BaseTemplateBuilderLiveTest<GleSYSClient, GleSYSAsyncClient, ComputeServiceContext<GleSYSClient, GleSYSAsyncClient>> {
+public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public GleSYSTemplateBuilderLiveTest() {
       provider = "glesys";

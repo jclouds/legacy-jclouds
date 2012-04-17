@@ -53,10 +53,10 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -98,7 +98,7 @@ import org.jclouds.scriptbuilder.statements.login.AdminAccess;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Strings2;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -119,7 +119,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, singleThreaded = true)
-public abstract class BaseComputeServiceLiveTest<S, A, C extends ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
+public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected String group;
 
@@ -174,12 +174,12 @@ public abstract class BaseComputeServiceLiveTest<S, A, C extends ComputeServiceC
    // wait up to 5 seconds for an auth exception
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
-      ComputeServiceContext<S, A> context = null;
+      ComputeServiceContext context = null;
       try {
          context = newBuilder()
                .credentials("MOMMA", "MIA")
                .modules(ImmutableSet.of(getLoggingModule(), credentialStoreModule))
-               .overrides(setupProperties()).build();
+               .overrides(setupProperties()).build(ComputeServiceContext.class);
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
@@ -878,7 +878,7 @@ public abstract class BaseComputeServiceLiveTest<S, A, C extends ComputeServiceC
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
-         assert exec.getError().indexOf("1.7") != -1 || exec.getOutput().indexOf("1.7") != -1 : exec
+         assert exec.getError().indexOf("OpenJDK") != -1 || exec.getOutput().indexOf("OpenJDK") != -1 : exec
                + "\n"
                + ssh.exec("cat /tmp/" + taskName + "/" + taskName + ".sh /tmp/" + taskName + "/stdout.log /tmp/"
                      + taskName + "/stderr.log");
@@ -888,11 +888,13 @@ public abstract class BaseComputeServiceLiveTest<S, A, C extends ComputeServiceC
       }
    }
 
-   @AfterTest
-   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   protected void tearDownContext() {
       if (nodes != null) {
          testDestroyNodes();
       }
+      super.tearDownContext();
    }
 
    @Override

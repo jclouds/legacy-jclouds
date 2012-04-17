@@ -20,13 +20,10 @@ package org.jclouds.virtualbox.functions;
 
 import static org.jclouds.virtualbox.functions.RetrieveActiveBridgedInterfaces.retrieveBridgedInterfaceNames;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 
 import java.util.List;
 
-import org.jclouds.virtualbox.BaseVirtualBoxClientLiveTest;
 import org.jclouds.virtualbox.domain.BridgedIf;
-import org.jclouds.virtualbox.domain.BridgedIf.Builder;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

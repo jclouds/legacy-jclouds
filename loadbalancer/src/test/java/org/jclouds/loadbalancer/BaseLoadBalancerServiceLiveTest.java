@@ -29,8 +29,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
+import org.jclouds.ContextBuilder;
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -41,7 +42,6 @@ import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.jclouds.ssh.SshClient;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -49,6 +49,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -57,7 +58,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public abstract class BaseLoadBalancerServiceLiveTest<S, A, C extends LoadBalancerServiceContext<S, A>> extends BaseContextLiveTest<C> {
+public abstract class BaseLoadBalancerServiceLiveTest extends BaseContextLiveTest<LoadBalancerServiceContext> {
 
    protected String imageId;
    protected String loginUser;
@@ -100,7 +101,7 @@ public abstract class BaseLoadBalancerServiceLiveTest<S, A, C extends LoadBalanc
    protected Map<String, String> keyPair;
    protected LoadBalancerMetadata loadbalancer;
 
-   protected LoadBalancerServiceContext<S, A> context;
+   protected LoadBalancerServiceContext context;
 
    protected String computeProvider;
    protected String computeIdentity;
@@ -108,7 +109,7 @@ public abstract class BaseLoadBalancerServiceLiveTest<S, A, C extends LoadBalanc
    protected String computeEndpoint;
    protected String computeApiversion;
    protected String computeBuildversion;
-   protected ComputeServiceContext<?, ?> computeContext;
+   protected ComputeServiceContext computeContext;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
@@ -132,8 +133,8 @@ public abstract class BaseLoadBalancerServiceLiveTest<S, A, C extends LoadBalanc
    protected void initializeComputeContext() {
       if (computeContext != null)
          computeContext.close();
-      computeContext = new ComputeServiceContextFactory().createContext(computeProvider, setupModules(),
-            setupComputeProperties());
+      computeContext = ContextBuilder.newBuilder(computeProvider).modules(setupModules()).overrides(
+            setupComputeProperties()).build(ComputeServiceContext.class);
    }
 
    protected void buildSocketTester() {
@@ -182,5 +183,9 @@ public abstract class BaseLoadBalancerServiceLiveTest<S, A, C extends LoadBalanc
       computeContext.close();
       context.close();
    }
-
+   
+   @Override
+   protected TypeToken<LoadBalancerServiceContext> contextType() {
+      return TypeToken.of(LoadBalancerServiceContext.class);
+   }
 }

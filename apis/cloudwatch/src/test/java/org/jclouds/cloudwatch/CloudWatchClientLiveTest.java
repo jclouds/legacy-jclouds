@@ -24,14 +24,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.BaseContextLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Tests behavior of {@code CloudWatchClient}
@@ -66,5 +68,10 @@ public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<Cl
             cal.getTime(), new Date(), 180, Statistics.AVERAGE, GetMetricStatisticsOptions.Builder.unit(Unit.PERCENT));
 
       return checkNotNull(datapoints, "Got null response for EC2 datapoints in region ");
+   }
+
+   @Override
+   protected TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> contextType() {
+      return CloudWatchApiMetadata.CONTEXT_TOKEN;
    }
 }

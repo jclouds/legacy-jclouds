@@ -33,7 +33,6 @@ import org.jclouds.rest.config.CredentialStoreModule;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.InputSupplier;
 import com.google.inject.Module;
 
@@ -88,7 +87,7 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
    }
    
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new NovaApiMetadata();
    }
 

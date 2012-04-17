@@ -251,7 +251,7 @@ public class SlicehostAsyncClientTest extends BaseAsyncClientTest<SlicehostAsync
    }
 
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new SlicehostProviderMetadata();
    }
 

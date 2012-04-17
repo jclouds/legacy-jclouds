@@ -21,9 +21,10 @@ package org.jclouds.compute;
 import java.io.Closeable;
 import java.util.Map;
 
+import org.jclouds.Wrapper;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.domain.Credentials;
-import org.jclouds.rest.BackedByRestContext;
+import org.jclouds.rest.RestContext;
 
 import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
@@ -36,7 +37,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(ComputeServiceContextImpl.class)
-public interface ComputeServiceContext<S, A> extends Closeable, BackedByRestContext<S, A> {
+public interface ComputeServiceContext extends Closeable, Wrapper {
 
    ComputeService getComputeService();
 
@@ -71,6 +72,15 @@ public interface ComputeServiceContext<S, A> extends Closeable, BackedByRestCont
     * @see #getUtils
     */
    Utils utils();
+   
+   /**
+    * will be removed in jclouds 1.6
+    * 
+    * @see Wrapper#getInputType
+    * @see Wrapper#unwrap
+    */
+   @Deprecated
+   <S, A> RestContext<S, A> getProviderSpecificContext();
 
    @Override
    void close();

@@ -73,8 +73,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudStackClientLiveTest extends
-      BaseComputeServiceContextLiveTest<CloudStackClient, CloudStackAsyncClient, CloudStackContext> {
+public class BaseCloudStackClientLiveTest extends BaseComputeServiceContextLiveTest {
    protected String domainAdminIdentity;
    protected String domainAdminCredential;
    protected String globalAdminIdentity;
@@ -195,13 +194,13 @@ public class BaseCloudStackClientLiveTest extends
    public void setupContext() {
       super.setupContext();
       computeClient = context.getComputeService();
-      cloudStackContext = context.getProviderSpecificContext();
+      cloudStackContext = context.unwrap();
       client = cloudStackContext.getApi();
       user = verifyCurrentUserIsOfType(cloudStackContext, Account.Type.USER);
 
       domainAdminEnabled = setupDomainAdminProperties() != null;
       if (domainAdminEnabled) {
-         domainAdminComputeContext = createContext(setupDomainAdminProperties(), setupModules());
+         domainAdminComputeContext = createContext(setupDomainAdminProperties(), setupModules()).unwrap();
          domainAdminContext = domainAdminComputeContext.getDomainContext();
          domainAdminClient = domainAdminContext.getApi();
          domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
@@ -210,7 +209,7 @@ public class BaseCloudStackClientLiveTest extends
 
       globalAdminEnabled = setupGlobalAdminProperties() != null;
       if (globalAdminEnabled) {
-         globalAdminComputeContext = createContext(setupGlobalAdminProperties(), setupModules());
+         globalAdminComputeContext = createContext(setupGlobalAdminProperties(), setupModules()).unwrap();
          globalAdminContext = globalAdminComputeContext.getGlobalContext();
          globalAdminClient = globalAdminContext.getApi();
          globalAdminUser = verifyCurrentUserIsOfType(globalAdminContext, Account.Type.ADMIN);

@@ -21,7 +21,6 @@ package org.jclouds.trmk.vcloudexpress;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -30,8 +29,11 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> {
+public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7993337019540975194L;
+
    public static Builder builder() {
       return new Builder();
    }
@@ -49,12 +51,12 @@ public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       return properties;
    }
    
-   public static class Builder extends BaseProviderMetadata.Builder<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder(){
             id("trmk-vcloudexpress")
@@ -74,7 +76,7 @@ public class TerremarkVCloudExpressProviderMetadata extends BaseProviderMetadata
 
       @Override
       public Builder fromProviderMetadata(
-            ProviderMetadata<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient, ComputeServiceContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient>, TerremarkVCloudExpressApiMetadata> in) {
+            ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

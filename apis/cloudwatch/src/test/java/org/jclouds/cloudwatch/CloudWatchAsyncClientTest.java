@@ -39,7 +39,6 @@ import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
@@ -91,8 +90,7 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
       };
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
 
       @Override
@@ -123,9 +121,8 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
       return new TestMonitoringRestClientModule();
    }
 
-   @SuppressWarnings("rawtypes")
    @Override
-   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   public ApiMetadata createApiMetadata() {
       return new CloudWatchApiMetadata();
    }
 

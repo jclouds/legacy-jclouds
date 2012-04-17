@@ -18,6 +18,10 @@
  */
 package org.jclouds.rest.config;
 
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
@@ -31,7 +35,9 @@ import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.location.config.LocationModule;
 import org.jclouds.rest.AsyncClientFactory;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.binders.BindToJsonPayloadWrappedWith;
@@ -40,6 +46,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.SeedAnnotationCache;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -56,11 +63,24 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
-/**
- * 
- * @author Adrian Cole
- */
 public class RestModule extends AbstractModule {
+
+   public static final TypeLiteral<Supplier<URI>> URI_SUPPLIER_TYPE = new TypeLiteral<Supplier<URI>>() {
+   };
+   protected final Map<Class<?>, Class<?>> sync2Async;
+   protected final AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
+   
+   public RestModule() {
+      this(ImmutableMap.<Class<?>, Class<?>> of());
+   }
+   
+   public RestModule(Map<Class<?>, Class<?>> sync2Async) {
+      this.sync2Async = sync2Async;
+   }
+
+   protected void installLocations() {
+      install(new LocationModule());
+   }
 
    @Override
    protected void configure() {
@@ -73,6 +93,10 @@ public class RestModule extends AbstractModule {
       BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
       BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap.<Class<?>, Class<?>> of(
                HttpClient.class, HttpAsyncClient.class));
+      // this will help short circuit scenarios that can otherwise lock out users
+      bind(new TypeLiteral<AtomicReference<AuthorizationException>>() {
+      }).toInstance(authException);
+      installLocations();
    }
 
    @Provides
@@ -127,6 +151,14 @@ public class RestModule extends AbstractModule {
          return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
 
+   }
+
+   @Provides
+   @Singleton
+   @Named("sync")
+   LoadingCache<ClassMethodArgs, Object> provideSyncDelegateMap(CreateClientForCaller createClientForCaller) {
+      createClientForCaller.sync2Async = sync2Async;
+      return CacheBuilder.newBuilder().build(createClientForCaller);
    }
 
 }

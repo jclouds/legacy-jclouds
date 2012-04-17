@@ -29,9 +29,8 @@ import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Client;
-import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
@@ -59,7 +58,7 @@ import com.google.common.base.Throwables;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "PlacementGroupClientLiveTest")
-public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveTest<AWSEC2Client, AWSEC2AsyncClient, AWSEC2ComputeServiceContext> {
+public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveTest {
    public PlacementGroupClientLiveTest() {
       provider = "aws-ec2";
    }
@@ -73,7 +72,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
             TimeUnit.SECONDS);

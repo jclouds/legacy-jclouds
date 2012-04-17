@@ -51,11 +51,11 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jclouds.Constants;
+import org.jclouds.ContextBuilder;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.ContextBuilder;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -280,12 +280,10 @@ public abstract class BaseJettyTest {
       return temp;
    }
 
-   public static ContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, ?> newBuilder(
-         int testPort, Properties properties, Module... connectionModules) {
+   public static ContextBuilder newBuilder(int testPort, Properties properties, Module... connectionModules) {
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      return ContextBuilder
-            .newBuilder(
+      return ContextBuilder.newBuilder(
                   AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
                         "http://localhost:" + testPort))
             .modules(ImmutableSet.<Module> copyOf(connectionModules))

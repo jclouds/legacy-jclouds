@@ -26,7 +26,6 @@ import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPER
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -34,9 +33,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for RimuHosting.
  * @author Adrian Cole
  */
-public class RimuHostingProviderMetadata
-      extends
-      BaseProviderMetadata<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> {
+public class RimuHostingProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8802226645589501365L;
 
    public static Builder builder() {
       return new Builder();
@@ -55,7 +55,7 @@ public class RimuHostingProviderMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_ZONES, "DCAUCKLAND,DCLONDON,DCDALLAS,DCSYDNEY");
       properties.setProperty(PROPERTY_ZONE + ".DCAUCKLAND." + ISO3166_CODES, "NZ-AUK");
@@ -66,9 +66,7 @@ public class RimuHostingProviderMetadata
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseProviderMetadata.Builder<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> {
+   public static class Builder extends BaseProviderMetadata.Builder {
 
       protected Builder() {
          id("rimuhosting")
@@ -87,8 +85,7 @@ public class RimuHostingProviderMetadata
       }
 
       @Override
-      public Builder fromProviderMetadata(
-            ProviderMetadata<RimuHostingClient, RimuHostingAsyncClient, ComputeServiceContext<RimuHostingClient, RimuHostingAsyncClient>, RimuHostingApiMetadata> in) {
+      public Builder fromProviderMetadata(ProviderMetadata in) {
          super.fromProviderMetadata(in);
          return this;
       }

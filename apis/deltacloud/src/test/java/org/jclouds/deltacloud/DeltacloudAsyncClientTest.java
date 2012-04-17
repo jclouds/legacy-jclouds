@@ -41,7 +41,6 @@ import org.jclouds.deltacloud.xml.InstancesHandler;
 import org.jclouds.deltacloud.xml.RealmHandler;
 import org.jclouds.deltacloud.xml.RealmsHandler;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -298,8 +297,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
       return new DeltacloudRestClientModuleExtension();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    public static class DeltacloudRestClientModuleExtension extends DeltacloudRestClientModule {
 
       @Override
@@ -335,7 +333,7 @@ public class DeltacloudAsyncClientTest extends BaseAsyncClientTest<DeltacloudAsy
       }
    }
 
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new DeltacloudApiMetadata();
    }
 }

@@ -48,8 +48,7 @@ public class InputStreamSupplierPayload extends BasePayload<InputSupplier<? exte
          toClose.add(returnVal);
          return returnVal;
       } catch (IOException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

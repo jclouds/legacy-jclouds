@@ -89,7 +89,7 @@ public class IntegrationTestClientExpectTest extends BaseRestClientExpectTest<In
    }
 
    @Override
-   public ProviderMetadata<?, ?, ?, ?> createProviderMetadata() {
+   public ProviderMetadata createProviderMetadata() {
       return new JcloudsTestBlobStoreProviderMetadata();
    }
 }

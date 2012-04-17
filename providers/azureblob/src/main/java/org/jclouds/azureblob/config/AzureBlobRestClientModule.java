@@ -23,7 +23,6 @@ import org.jclouds.azureblob.AzureBlobAsyncClient;
 import org.jclouds.azureblob.AzureBlobClient;
 import org.jclouds.azureblob.handlers.ParseAzureBlobErrorFromXmlContent;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -35,7 +34,6 @@ import org.jclouds.rest.ConfiguresRestClient;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class AzureBlobRestClientModule extends AzureStorageRestClientModule<AzureBlobClient, AzureBlobAsyncClient> {
 
    public AzureBlobRestClientModule() {

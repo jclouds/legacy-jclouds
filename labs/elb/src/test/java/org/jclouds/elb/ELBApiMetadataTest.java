@@ -28,7 +28,6 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "ELBApiMetadataTest")
 public class ELBApiMetadataTest extends BaseLoadBalancerServiceApiMetadataTest {
 
-   @SuppressWarnings("rawtypes")
    public ELBApiMetadataTest() {
       super(new ELBApiMetadata());
    }

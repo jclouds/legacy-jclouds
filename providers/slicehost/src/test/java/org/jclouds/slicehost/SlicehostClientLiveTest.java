@@ -28,7 +28,6 @@ import java.security.SecureRandom;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
@@ -55,9 +54,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "SlicehostClientLiveTest")
-public class SlicehostClientLiveTest
-      extends
-      BaseComputeServiceContextLiveTest<SlicehostClient, SlicehostAsyncClient, ComputeServiceContext<SlicehostClient, SlicehostAsyncClient>> {
+public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public SlicehostClientLiveTest() {
       provider = "slicehost";

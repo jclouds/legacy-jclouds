@@ -28,14 +28,16 @@ import org.jclouds.apis.ApiMetadata;
 import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 
 /**
  * Implementation of {@link ApiMetadata} for the Eucalyptus (EC2 clone) api.
  * 
  * @author Adrian Cole
  */
-public class EucalyptusApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> {
+public class EucalyptusApiMetadata extends EC2ApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3060225665040763827L;
+
    private static Builder builder() {
       return new Builder();
    }
@@ -53,7 +55,7 @@ public class EucalyptusApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncCli
       super(builder);
    }
    
-   protected static Properties defaultProperties() {
+   public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
@@ -61,7 +63,7 @@ public class EucalyptusApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncCli
       return properties;
    }
 
-   public static class Builder extends EC2ApiMetadata.Builder<EC2Client, EC2AsyncClient, EC2ComputeServiceContext<EC2Client, EC2AsyncClient>, EucalyptusApiMetadata> {
+   public static class Builder extends EC2ApiMetadata.Builder {
       protected Builder(){
          super(EC2Client.class, EC2AsyncClient.class);
          id("eucalyptus")
@@ -76,7 +78,7 @@ public class EucalyptusApiMetadata extends EC2ApiMetadata<EC2Client, EC2AsyncCli
       }
 
       @Override
-      public Builder fromApiMetadata(EucalyptusApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "live", singleThreaded = true, testName = "CloudSigmaZurichTemplateBuilderLiveTest")
 public class CloudSigmaZurichTemplateBuilderLiveTest
       extends
-      BaseTemplateBuilderLiveTest<CloudSigmaClient, CloudSigmaAsyncClient, ComputeServiceContext<CloudSigmaClient, CloudSigmaAsyncClient>> {
+      BaseTemplateBuilderLiveTest {
 
    public CloudSigmaZurichTemplateBuilderLiveTest() {
       provider = "cloudsigma-zrh";

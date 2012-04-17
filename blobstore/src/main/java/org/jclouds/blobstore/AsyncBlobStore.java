@@ -43,7 +43,7 @@ public interface AsyncBlobStore {
    /**
     * @see BlobStore#getContext
     */
-   BlobStoreContext<?, ?> getContext();
+   BlobStoreContext getContext();
 
    /**
     * @see BlobStore#blobBuilder

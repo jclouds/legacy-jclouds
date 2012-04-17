@@ -24,9 +24,7 @@ import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.testng.annotations.BeforeClass;
@@ -40,7 +38,7 @@ import com.google.common.collect.Lists;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "InstanceClientLiveTest")
-public class InstanceClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
+public class InstanceClientLiveTest extends BaseComputeServiceContextLiveTest {
    public InstanceClientLiveTest() {
       provider = "ec2";
    }
@@ -51,7 +49,7 @@ public class InstanceClientLiveTest<S extends EC2Client, A extends EC2AsyncClien
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.getProviderSpecificContext().getApi().getInstanceServices();
+      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getInstanceServices();
    }
 
    @Test

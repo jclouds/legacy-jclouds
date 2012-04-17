@@ -20,46 +20,51 @@ package org.jclouds.apis.internal;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Set;
+
+import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
 import org.jclouds.apis.Apis;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
 @Test(groups = "unit")
 public abstract class BaseApiMetadataTest {
 
    protected final ApiMetadata toTest;
-   protected final ApiType expectedType;
+   protected final Set<TypeToken<? extends Wrapper>> wrappers;
 
-   public BaseApiMetadataTest(ApiMetadata toTest, ApiType expectedType) {
+   public BaseApiMetadataTest(ApiMetadata toTest, Set<TypeToken<? extends Wrapper>> wrappers) {
       this.toTest = toTest;
-      this.expectedType = expectedType;
+      this.wrappers = wrappers;
    }
 
    @Test
    public void testWithId() {
-      ApiMetadata<?, ?, ?, ?> apiMetadata = Apis.withId(toTest.getId());
+      ApiMetadata apiMetadata = Apis.withId(toTest.getId());
 
       assertEquals(toTest, apiMetadata);
    }
 
    // it is ok to have multiple services in the same classpath (ex. ec2 vs elb)
    @Test
-   public void testOfTypeContains() {
-      ImmutableSet<ApiMetadata<?, ?, ?, ?>> ofType = ImmutableSet.copyOf(Apis.ofType(expectedType));
-      assert ofType.contains(toTest) : String.format("%s not found in %s", toTest, ofType);
+   public void testTransformableToContains() {
+      for (TypeToken<? extends Wrapper> wrapper : wrappers) {
+         ImmutableSet<ApiMetadata> ofType = ImmutableSet.copyOf(Apis.contextWrappableAs(wrapper));
+         assert ofType.contains(toTest) : String.format("%s not found in %s for %s", toTest, ofType,
+                  wrapper);
+      }
    }
 
    @Test
    public void testAllContains() {
-      ImmutableSet<ApiMetadata<?, ?, ?, ?>> all = ImmutableSet.copyOf(Apis.all());
+      ImmutableSet<ApiMetadata> all = ImmutableSet.copyOf(Apis.all());
       assert all.contains(toTest) : String.format("%s not found in %s", toTest, all);
    }
 

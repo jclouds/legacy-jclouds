@@ -32,7 +32,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -128,8 +127,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
       return new TestAtmosRestClientModule();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAtmosRestClientModule extends AtmosRestClientModule {
       @Override
       protected void configure() {
@@ -143,7 +141,7 @@ public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncCl
    }
 
    @Override
-   public ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   public ApiMetadata createApiMetadata() {
       return new AtmosApiMetadata();
    }
 

@@ -36,12 +36,9 @@ import org.jclouds.aws.AWSResponseException;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
-import org.jclouds.ec2.domain.Image.Architecture;
-import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -51,6 +48,8 @@ import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Snapshot;
 import org.jclouds.ec2.domain.Volume;
+import org.jclouds.ec2.domain.Image.Architecture;
+import org.jclouds.ec2.domain.Image.ImageType;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
 import org.jclouds.ec2.predicates.InstanceStateStopped;
@@ -89,7 +88,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = false, singleThreaded = true, testName = "EBSBootEC2ClientLiveTest")
-public class EBSBootEC2ClientLiveTest<S extends EC2Client, A extends EC2AsyncClient, C extends EC2ComputeServiceContext<S, A>> extends BaseComputeServiceContextLiveTest<S, A, C> {
+public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest {
    public EBSBootEC2ClientLiveTest() {
       provider = "ec2";
    }

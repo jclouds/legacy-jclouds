@@ -18,8 +18,6 @@
  */
 package org.jclouds.dunkel.vcd.compute;
 
-import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
-import org.testng.annotations.Test;
 
 /**
  * 

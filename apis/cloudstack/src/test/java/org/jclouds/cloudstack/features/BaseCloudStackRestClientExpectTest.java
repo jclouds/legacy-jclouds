@@ -47,7 +47,7 @@ public abstract class BaseCloudStackRestClientExpectTest<S> extends BaseRestClie
    }
    
    @Override
-   protected ApiMetadata<?, ?, ?, ?> createApiMetadata() {
+   protected ApiMetadata createApiMetadata() {
       return new CloudStackApiMetadata();
    }
 

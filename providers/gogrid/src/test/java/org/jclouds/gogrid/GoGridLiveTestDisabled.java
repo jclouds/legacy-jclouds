@@ -34,9 +34,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.gogrid.domain.Job;
@@ -70,14 +70,12 @@ import com.google.common.collect.Iterables;
 /**
  * End to end live test for GoGrid
  * <p/>
- * Takes too long to execute.  Please split into multiple tests
+ * Takes too long to execute. Please split into multiple tests
  * 
  * @author Oleksiy Yarmula
  */
 @Test(enabled = false, groups = "live", singleThreaded = true, testName = "GoGridLiveTestDisabled")
-public class GoGridLiveTestDisabled
-      extends
-      BaseComputeServiceContextLiveTest<GoGridClient, GoGridAsyncClient, ComputeServiceContext<GoGridClient, GoGridAsyncClient>> {
+public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
 
    public GoGridLiveTestDisabled() {
       provider = "gogrid";
@@ -99,7 +97,7 @@ public class GoGridLiveTestDisabled
    @Override
    public void setupContext() {
       super.setupContext();
-      gocontext = context.getProviderSpecificContext();
+      gocontext = context.unwrap();
 
       client = gocontext.getApi();
       serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client.getJobServices()),
@@ -340,7 +338,7 @@ public class GoGridLiveTestDisabled
       createdServer = Iterables.getOnlyElement(response);
 
       Map<String, Credentials> credsMap = client.getServerServices().getServerCredentialsList();
-      Credentials instanceCredentials = credsMap.get(createdServer.getName());
+      LoginCredentials instanceCredentials = LoginCredentials.fromCredentials(credsMap.get(createdServer.getName()));
       assertNotNull(instanceCredentials);
 
       IPSocket socket = new IPSocket(createdServer.getIp().getIp(), 22);

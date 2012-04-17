@@ -20,19 +20,19 @@ package org.jclouds.apis;
 
 import java.net.URI;
 
-import org.jclouds.apis.internal.BaseApiMetadata;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
 /**
  * Implementation of @ link org.jclouds.types.ApiMetadata} for testing.
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
  */
-public class JcloudsTestBlobStoreApiMetadata
-      extends
-      BaseApiMetadata<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestBlobStoreApiMetadata> {
+public class JcloudsTestBlobStoreApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -1178177610797635012L;
 
    public static Builder builder() {
       return new Builder();
@@ -53,13 +53,13 @@ public class JcloudsTestBlobStoreApiMetadata
 
    public static class Builder
          extends
-         BaseApiMetadata.Builder<IntegrationTestClient, IntegrationTestAsyncClient, RestContext<IntegrationTestClient, IntegrationTestAsyncClient>, JcloudsTestBlobStoreApiMetadata> {
+         BaseRestApiMetadata.Builder {
 
       protected Builder(){
+         super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
          id("test-blobstore-api")
-         .type(ApiType.BLOBSTORE)
+         .wrapper(Storage.class)
          .name("Test Blobstore Api")
-         .javaApi(IntegrationTestClient.class, IntegrationTestAsyncClient.class)
          .identityName("user")
          .credentialName("password")
          .documentation(URI.create("http://jclouds.org/documentation"));

@@ -22,21 +22,31 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
+import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
+import org.jclouds.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
-import org.jclouds.loadbalancer.internal.BaseLoadBalancerServiceApiMetadata;
 import org.jclouds.openstack.OpenStackAuthAsyncClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for CloudLoadBalancers 1.0 API
  * 
  * @author Adrian Cole
  */
-public class CloudLoadBalancersApiMetadata
-      extends
-      BaseLoadBalancerServiceApiMetadata<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
+public class CloudLoadBalancersApiMetadata  extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
+
+   public static final TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+
 
    @Override
    public Builder toBuilder() {
@@ -51,16 +61,15 @@ public class CloudLoadBalancersApiMetadata
       super(builder);
    }
 
-   protected static Properties defaultProperties() {
-      Properties properties = BaseLoadBalancerServiceApiMetadata.Builder.defaultProperties();
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
       return properties;
    }
 
-   public static class Builder
-         extends
-         BaseLoadBalancerServiceApiMetadata.Builder<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient, LoadBalancerServiceContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>, CloudLoadBalancersApiMetadata> {
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
       protected Builder() {
+         super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class);
          id("cloudloadbalancers")
          .name("Rackspace Cloud Load Balancers API")
          .identityName("Username")
@@ -68,9 +77,9 @@ public class CloudLoadBalancersApiMetadata
          .documentation(URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html"))
          .version(OpenStackAuthAsyncClient.VERSION)
          .defaultEndpoint("https://auth.api.rackspacecloud.com")
-         .javaApi(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class)
          .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
-         .contextBuilder(TypeToken.of(CloudLoadBalancersContextBuilder.class));
+         .wrapper(TypeToken.of(LoadBalancerServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudLoadBalancersRestClientModule.class, CloudLoadBalancersLoadBalancerContextModule.class));
       }
 
       @Override
@@ -79,7 +88,7 @@ public class CloudLoadBalancersApiMetadata
       }
 
       @Override
-      public Builder fromApiMetadata(CloudLoadBalancersApiMetadata in) {
+      public Builder fromApiMetadata(ApiMetadata in) {
          super.fromApiMetadata(in);
          return this;
       }

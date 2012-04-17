@@ -18,8 +18,7 @@
  */
 package org.jclouds.virtualbox;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.internal.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "VirtualBoxApiMetadataTest")
-public class VirtualBoxApiMetadataTest extends BaseApiMetadataTest {
+public class VirtualBoxApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public VirtualBoxApiMetadataTest() {
-      super(new VirtualBoxApiMetadata(), ApiType.COMPUTE);
+      super(new VirtualBoxApiMetadata());
    }
 }
