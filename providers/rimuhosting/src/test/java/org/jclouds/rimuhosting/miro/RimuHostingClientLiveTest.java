@@ -22,13 +22,10 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rimuhosting.miro.domain.Image;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
@@ -38,31 +35,29 @@ import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
-
 /**
  * Tests behavior of {@code RimuHostingClient}
  * 
  * @author Ivan Meredith
  */
 @Test(groups = "live", singleThreaded = true, testName = "RimuHostingClientLiveTest")
-public class RimuHostingClientLiveTest extends BaseVersionedServiceLiveTest {
+public class RimuHostingClientLiveTest
+      extends
+      BaseComputeServiceContextLiveTest {
+
    public RimuHostingClientLiveTest() {
       provider = "rimuhosting";
    }
    
    private RimuHostingClient connection;
-   private RestContext<RimuHostingClient, RimuHostingAsyncClient> context;
+   private RestContext<RimuHostingClient, RimuHostingAsyncClient> restContext;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-
-      this.context = new RestContextFactory().createContext(provider, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), overrides);
-      this.connection = context.getApi();
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      restContext = context.unwrap();
+      this.connection = restContext.getApi();
 
    }
 

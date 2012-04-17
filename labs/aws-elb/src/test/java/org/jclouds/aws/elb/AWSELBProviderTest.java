@@ -19,7 +19,7 @@
 package org.jclouds.aws.elb;
 
 import org.jclouds.elb.ELBApiMetadata;
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**

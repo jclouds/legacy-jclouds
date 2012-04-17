@@ -25,6 +25,6 @@
 <body>
 <h2>Welcome!</h2>
 <p>Click <a href="/tweets/get">here</a> to see tweets about jclouds.</p>
-<p><img src="images/openshift-logo.png" alt="Powered by OpenShift Express" /></p>
+<p><img src="/images/openshift-logo.png" alt="Powered by OpenShift Express" /></p>
 </body>
 </html>

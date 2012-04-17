@@ -72,7 +72,7 @@ public abstract class NullHackJsonLiteralAdapter<L> extends TypeAdapter<L> {
       try {
          // we are using an implementation hack which depends on replacing null with the raw json
          // supplied as a parameter. In this case, we must ensure we indeed serialize nulls.
-         NullReplacingWriter nullReplacingWriter = new NullReplacingWriter(writer, value.toString());
+         NullReplacingWriter nullReplacingWriter = new NullReplacingWriter(writer, toString(value));
          setWriter(jsonWriter, nullReplacingWriter);
          jsonWriter.setSerializeNulls(true);
          jsonWriter.nullValue();
@@ -83,7 +83,11 @@ public abstract class NullHackJsonLiteralAdapter<L> extends TypeAdapter<L> {
 
    }
 
-   private Writer getWriter(JsonWriter arg0) {
+   protected String toString(L value) {
+      return value.toString();
+   }
+
+   protected Writer getWriter(JsonWriter arg0) {
       try {
          return Writer.class.cast(outField.get(arg0));
       } catch (IllegalAccessException e) {
@@ -99,7 +103,7 @@ public abstract class NullHackJsonLiteralAdapter<L> extends TypeAdapter<L> {
       }
    }
 
-   private final class NullReplacingWriter extends Writer {
+   public final class NullReplacingWriter extends Writer {
       private final Writer delegate;
       private final String nullReplacement;
 

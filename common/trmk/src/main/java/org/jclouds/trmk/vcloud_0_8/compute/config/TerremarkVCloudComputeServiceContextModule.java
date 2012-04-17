@@ -25,17 +25,13 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.compute.TerremarkVCloudComputeService;
 import org.jclouds.trmk.vcloud_0_8.compute.domain.OrgAndName;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.ImagesInVCloudExpressOrg;
@@ -53,7 +49,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -91,9 +86,6 @@ public class TerremarkVCloudComputeServiceContextModule extends BaseComputeServi
       install(new TerremarkBindComputeStrategiesByClass());
       install(new TerremarkBindComputeSuppliersByClass());
       bindVAppConverter();
-      bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<TerremarkVCloudClient, TerremarkVCloudAsyncClient>>() {
-      }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
       });

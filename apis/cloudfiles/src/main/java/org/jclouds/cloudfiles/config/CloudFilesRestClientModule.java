@@ -28,7 +28,6 @@ import org.jclouds.cloudfiles.CDNManagement;
 import org.jclouds.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -53,7 +52,6 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class CloudFilesRestClientModule extends RestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
 
    public CloudFilesRestClientModule() {

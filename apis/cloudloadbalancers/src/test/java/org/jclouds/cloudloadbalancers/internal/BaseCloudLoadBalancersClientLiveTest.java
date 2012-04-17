@@ -18,40 +18,38 @@
  */
 package org.jclouds.cloudloadbalancers.internal;
 
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
 import org.jclouds.cloudloadbalancers.predicates.LoadBalancerActive;
 import org.jclouds.cloudloadbalancers.predicates.LoadBalancerDeleted;
-import org.jclouds.loadbalancer.LoadBalancerServiceContextFactory;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.BaseRestClientLiveTest;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class BaseCloudLoadBalancersClientLiveTest extends BaseRestClientLiveTest {
+public class BaseCloudLoadBalancersClientLiveTest extends BaseContextLiveTest<LoadBalancerServiceContext> {
+
    public BaseCloudLoadBalancersClientLiveTest() {
       provider = "cloudloadbalancers";
    }
 
    protected CloudLoadBalancersClient client;
-   protected RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> context;
+   protected RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient> lbContext;
    protected String[] regions = {};
    protected Predicate<IPSocket> socketTester;
    protected RetryablePredicate<LoadBalancer> loadBalancerActive;
@@ -59,15 +57,13 @@ public class BaseCloudLoadBalancersClientLiveTest extends BaseRestClientLiveTest
 
    protected Injector injector;
 
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      lbContext = context.unwrap();
 
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new LoadBalancerServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
-
-      client = context.getApi();
+      client = lbContext.getApi();
 
       injector = Guice.createInjector(new Log4JLoggingModule());
       loadBalancerActive = new RetryablePredicate<LoadBalancer>(new LoadBalancerActive(client), 300, 1, 1,
@@ -78,10 +74,9 @@ public class BaseCloudLoadBalancersClientLiveTest extends BaseRestClientLiveTest
       injector.injectMembers(loadBalancerDeleted);
    }
 
-   @AfterGroups(groups = "live")
-   protected void tearDown() {
-      if (context != null)
-         context.close();
+   @Override
+   protected TypeToken<LoadBalancerServiceContext> contextType() {
+      return TypeToken.of(LoadBalancerServiceContext.class);
    }
 
 }

@@ -18,10 +18,7 @@
  */
 package org.jclouds.dunkel.vcd;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
-import org.jclouds.providers.ProviderMetadata;
-import org.jclouds.dunkel.vcd.DunkelVCloudDirectorProviderMetadata;
-import org.testng.annotations.Test;
+import src.main.java.org.jclouds.dunkel.vcd.DunkelVCloudDirectorProviderMetadata;
 
 /**
  * 

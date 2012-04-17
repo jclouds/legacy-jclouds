@@ -31,7 +31,7 @@ public class ServerSpecToHardwareTest extends BaseGleSYSComputeServiceExpectTest
    @Test
    public void testHardwareRequest() {
       
-      ServerSpecToHardware toTest = injectorForKnownArgumentsAndConstantPassword().getInstance(ServerSpecToHardware.class);
+      injectorForKnownArgumentsAndConstantPassword().getInstance(ServerSpecToHardware.class);
 
    }
 

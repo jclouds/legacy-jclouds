@@ -31,7 +31,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AtmosContainerIntegrationLiveTest extends BaseContainerIntegrationTest {
-
+   public AtmosContainerIntegrationLiveTest() {
+      provider = "atmos";
+   }
    @Override
    public void testListContainerMaxResults() throws InterruptedException {
       // Not currently working

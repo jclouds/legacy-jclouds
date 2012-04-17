@@ -148,6 +148,10 @@
                             <directory>src/main/platform</directory>
                             <targetPath>WEB-INF</targetPath>
                             <filtering>true</filtering>
+                            <excludes>
+                                <!-- present in TweetStore instances with no platform files to ensure the directory is stored in git -->
+                                <exclude>.gitignore</exclude>
+                            </excludes>
                         </resource>
                         <resource>
                             <directory>${remoteResourcesDirectory}/META-INF</directory>
@@ -196,6 +200,10 @@
                                     <directory>src/main/platform</directory>
                                     <targetPath>WEB-INF</targetPath>
                                     <filtering>true</filtering>
+                                    <excludes>
+                                        <!-- present in TweetStore instances with no platform files to ensure the directory is stored in git -->
+                                        <exclude>.gitignore</exclude>
+                                    </excludes>
                                 </resource>
                                 <resource>
                                     <directory>${remoteResourcesDirectory}/META-INF</directory>

@@ -22,8 +22,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -156,7 +156,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
       Set<? extends Location> locationsSet = locations.get();
-      ImmutableSet.Builder<Hardware> hardwareToReturn = ImmutableSet.<Hardware> builder();
+      ImmutableSet.Builder<Hardware> hardwareToReturn = ImmutableSet.builder();
 
       // do this loop after dupes are filtered, else OOM
       Set<OSTemplate> images = listImages();
@@ -167,7 +167,7 @@ public class GleSYSComputeServiceAdapter implements ComputeServiceAdapter<Server
             for (int diskSizeGB : platformToArgs.getValue().getDiskSizesInGB())
                for (int cpuCores : platformToArgs.getValue().getCpuCoreOptions())
                   for (int memorySizeMB : platformToArgs.getValue().getMemorySizesInMB()) {
-                     ImmutableSet.Builder<String> templatesSupportedBuilder = ImmutableSet.<String> builder();
+                     ImmutableSet.Builder<String> templatesSupportedBuilder = ImmutableSet.builder();
                      for (OSTemplate template : images) {
                         if (template.getPlatform().equals(platformToArgs.getKey())
                               && diskSizeGB >= template.getMinDiskSize() && memorySizeMB >= template.getMinMemSize())

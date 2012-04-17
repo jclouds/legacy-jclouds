@@ -18,8 +18,21 @@
  */
 package org.jclouds.aws.ec2;
 
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+
+import java.util.Properties;
+
 import org.jclouds.apis.ApiMetadata;
+import org.jclouds.aws.ec2.compute.AWSEC2ComputeServiceContext;
+import org.jclouds.aws.ec2.compute.config.AWSEC2ComputeServiceContextModule;
+import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.compute.config.EC2ResolveImagesModule;
+import org.jclouds.rest.RestContext;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for the Amazon-specific EC2 API
@@ -28,33 +41,61 @@ import org.jclouds.ec2.EC2ApiMetadata;
  */
 public class AWSEC2ApiMetadata extends EC2ApiMetadata {
 
-   public AWSEC2ApiMetadata() {
-      this(builder().fromApiMetadata(new EC2ApiMetadata())
-            .id("aws-ec2")
-            .name("Amazon-specific EC2 API"));
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -1492951757032303845L;
+   
+   public static final TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AWSEC2Client, AWSEC2AsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
+   private static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AWSEC2ApiMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromApiMetadata(this);
+   }
+
+   public AWSEC2ApiMetadata() {
+      this(builder());
+   }
+
+   protected AWSEC2ApiMetadata(Builder builder) {
       super(builder);
    }
+   
+   public static Properties defaultProperties() {
+      Properties properties = EC2ApiMetadata.defaultProperties();
+      // auth fail sometimes happens in EC2, as the rc.local script that injects the
+      // authorized key executes after ssh has started.  
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
+      properties.setProperty(PROPERTY_EC2_GENERATE_INSTANCE_NAMES, "true");
+      return properties;
+   }
 
-   private static class ConcreteBuilder extends EC2ApiMetadataBuilder<ConcreteBuilder> {
-
+   public static class Builder extends EC2ApiMetadata.Builder {
+      protected Builder(){
+         super(AWSEC2Client.class, AWSEC2AsyncClient.class);
+         id("aws-ec2")
+         .version(AWSEC2AsyncClient.VERSION)
+         .name("Amazon-specific EC2 API")
+         .wrapper(AWSEC2ComputeServiceContext.class)
+         .defaultProperties(AWSEC2ApiMetadata.defaultProperties())
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSEC2RestClientModule.class, EC2ResolveImagesModule.class, AWSEC2ComputeServiceContextModule.class));
+      }
+      
       @Override
       public AWSEC2ApiMetadata build() {
          return new AWSEC2ApiMetadata(this);
       }
+
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 
-   private static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

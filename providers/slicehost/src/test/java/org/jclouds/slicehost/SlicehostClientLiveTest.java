@@ -25,34 +25,28 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.SecureRandom;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.slicehost.domain.Flavor;
 import org.jclouds.slicehost.domain.Image;
 import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SlicehostClient}
@@ -60,7 +54,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "SlicehostClientLiveTest")
-public class SlicehostClientLiveTest extends BaseVersionedServiceLiveTest {
+public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
+
    public SlicehostClientLiveTest() {
       provider = "slicehost";
    }
@@ -69,14 +64,12 @@ public class SlicehostClientLiveTest extends BaseVersionedServiceLiveTest {
    protected SshClient.Factory sshFactory;
    private Predicate<IPSocket> socketTester;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-
-      Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides).buildInjector();
-
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      Injector injector = context.utils().injector();
+      
       client = injector.getInstance(SlicehostClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

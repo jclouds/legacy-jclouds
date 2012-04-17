@@ -34,10 +34,10 @@ import com.google.inject.Provider;
 public class AsyncClientProvider<A> implements Provider<A> {
    @Inject
    Injector injector;
-   private final Class<A> asyncClientType;
+   private final Class<?> asyncClientType;
 
    @Inject
-   AsyncClientProvider(Class<A> asyncClientType) {
+   AsyncClientProvider(Class<?> asyncClientType) {
       this.asyncClientType = asyncClientType;
    }
 

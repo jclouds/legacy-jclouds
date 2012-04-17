@@ -18,6 +18,7 @@
  */
 package org.jclouds.s3.blobstore.integration;
 
+import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
 import org.testng.annotations.Test;
 
@@ -25,7 +26,11 @@ import org.testng.annotations.Test;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = "live", testName = "S3ContainerLiveTest")
 public class S3ContainerLiveTest extends BaseContainerLiveTest {
 
+   public S3ContainerLiveTest() {
+      provider = "s3";
+      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
 }

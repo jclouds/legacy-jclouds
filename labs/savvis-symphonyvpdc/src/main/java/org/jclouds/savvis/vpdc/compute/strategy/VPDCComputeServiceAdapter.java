@@ -126,7 +126,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
 
    @Override
    public Iterable<VM> listNodes() {
-      Builder<VM> builder = ImmutableSet.<VM> builder();
+      Builder<VM> builder = ImmutableSet.builder();
       for (Resource org1 : client.listOrgs()) {
          Org org = client.getBrowsingClient().getOrg(org1.getId());
          for (Resource vdc : org.getVDCs()) {
@@ -149,7 +149,7 @@ public class VPDCComputeServiceAdapter implements ComputeServiceAdapter<VM, VMSp
 
    @Override
    public Iterable<Network> listLocations() {
-      Builder<Network> builder = ImmutableSet.<Network> builder();
+      Builder<Network> builder = ImmutableSet.builder();
       for (Resource org1 : client.listOrgs()) {
          Org org = client.getBrowsingClient().getOrg(org1.getId());
          for (Resource vdc : org.getVDCs()) {

@@ -27,4 +27,7 @@ import org.testng.annotations.Test;
 @Test(groups =  "live", testName = "SynapticStorageInputStreamMapIntegrationLiveTest")
 public class SynapticStorageInputStreamMapIntegrationLiveTest extends AtmosInputStreamMapIntegrationLiveTest {
 
+   public SynapticStorageInputStreamMapIntegrationLiveTest() {
+      provider = "synaptic-storage";
+   }
 }

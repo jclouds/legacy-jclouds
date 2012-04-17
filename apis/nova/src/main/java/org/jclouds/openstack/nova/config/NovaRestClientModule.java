@@ -23,7 +23,6 @@ import java.net.URI;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -47,7 +46,6 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @ConfiguresRestClient
-@RequiresHttp
 public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsyncClient> {
 
    private final OpenStackAuthenticationModule module;

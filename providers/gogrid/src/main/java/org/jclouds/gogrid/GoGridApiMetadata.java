@@ -19,50 +19,79 @@
 package org.jclouds.gogrid;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.gogrid.compute.config.GoGridComputeServiceContextModule;
+import org.jclouds.gogrid.config.GoGridRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for the GoGrid API
+ * Implementation of {@link ApiMetadata} for  API
  * 
  * @author Adrian Cole
  */
-public class GoGridApiMetadata extends BaseApiMetadata {
+public class GoGridApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
-   public GoGridApiMetadata() {
-      this(builder()
-            .id("gogrid")
-            .type(ApiType.COMPUTE)
-            .name("GoGrid API")
-            .identityName("API Key")
-            .credentialName("Shared Secret")
-            .documentation(URI.create("https://wiki.gogrid.com/wiki/index.php/API")));
+   public static final TypeToken<RestContext<GoGridClient, GoGridAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<GoGridClient, GoGridAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected GoGridApiMetadata(Builder<?> builder) {
+   public GoGridApiMetadata() {
+      this(new Builder());
+   }
+
+   protected GoGridApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty("jclouds.ssh.max-retries", "5");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
+      return properties;
+   }
+
+   public static class Builder extends BaseRestApiMetadata.Builder {
+
+      protected Builder() {
+         super(GoGridClient.class, GoGridAsyncClient.class);
+         id("gogrid")
+         .name("GoGrid API")
+         .identityName("API Key")
+         .credentialName("Shared Secret")
+         .documentation(URI.create("https://wiki.gogrid.com/wiki/index.php/API"))
+         .version(GoGridAsyncClient.VERSION)
+         .defaultEndpoint("https://api.gogrid.com/api")
+         .defaultProperties(GoGridApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(GoGridRestClientModule.class, GoGridComputeServiceContextModule.class));
+      }
 
       @Override
       public GoGridApiMetadata build() {
          return new GoGridApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

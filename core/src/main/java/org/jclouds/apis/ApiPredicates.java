@@ -20,21 +20,24 @@ package org.jclouds.apis;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.Wrapper;
+import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Container for api filters (predicates).
- *
+ * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class ApiPredicates {
 
    /**
     * Returns all apis available to jclouds regardless of type.
-    *
+    * 
     * @return all available apis
     */
    public static Predicate<ApiMetadata> all() {
@@ -43,10 +46,10 @@ public class ApiPredicates {
 
    /**
     * Returns all apis with the given id.
-    *
+    * 
     * @param id
     *           the id of the api to return
-    *
+    * 
     * @return the apis with the given id
     */
    public static Predicate<ApiMetadata> id(final String id) {
@@ -72,21 +75,21 @@ public class ApiPredicates {
 
    /**
     * Returns all apis with the given type.
-    *
+    * 
     * @param type
     *           the type of the api to return
-    *
+    * 
     * @return the apis with the given type
     */
-   public static Predicate<ApiMetadata> type(final ApiType type) {
+   public static Predicate<RestApiMetadata> apiAssignableFrom(final TypeToken<?> type) {
       checkNotNull(type, "type must be defined");
-      return new Predicate<ApiMetadata>() {
+      return new Predicate<RestApiMetadata>() {
          /**
           * {@inheritDoc}
           */
          @Override
-         public boolean apply(ApiMetadata apiMetadata) {
-            return apiMetadata.getType().equals(type);
+         public boolean apply(RestApiMetadata apiMetadata) {
+            return type.isAssignableFrom(apiMetadata.getApi());
          }
 
          /**
@@ -94,9 +97,69 @@ public class ApiPredicates {
           */
          @Override
          public String toString() {
-            return "type(" + type + ")";
+            return "contextAssignableFrom(" + type + ")";
          }
       };
    }
 
+   /**
+    * Returns all apis who's contexts are assignable from the parameter
+    * 
+    * @param type
+    *           the type of the context to search for
+    * 
+    * @return the apis with contexts assignable from given type
+    */
+   public static Predicate<ApiMetadata> contextAssignableFrom(final TypeToken<?> type) {
+      checkNotNull(type, "context must be defined");
+      return new Predicate<ApiMetadata>() {
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public boolean apply(ApiMetadata apiMetadata) {
+            return type.isAssignableFrom(apiMetadata.getContext());
+         }
+
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public String toString() {
+            return "contextAssignableFrom(" + type + ")";
+         }
+      };
+   }
+
+   /**
+    * Returns all apis who's contexts are transformable to the parameter
+    * 
+    * @param type
+    *           the type of the context to search for
+    * 
+    * @return the apis with contexts transformable to the given type
+    */
+   public static Predicate<ApiMetadata> contextWrappableAs(final TypeToken<?> type) {
+      checkNotNull(type, "context must be defined");
+      return new Predicate<ApiMetadata>() {
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public boolean apply(ApiMetadata apiMetadata) {
+            for (TypeToken<? extends Wrapper> to : apiMetadata.getWrappers())
+               if (type.isAssignableFrom(to))
+                  return true;
+            return false;
+         }
+
+         /**
+          * {@inheritDoc}
+          */
+         @Override
+         public String toString() {
+            return "contextWrappableAs(" + type + ")";
+         }
+      };
+   }
 }

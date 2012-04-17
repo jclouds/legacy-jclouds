@@ -28,6 +28,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.jclouds.Constants;
+import org.jclouds.aws.s3.AWSS3ApiMetadata;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.options.AWSS3PutObjectOptions;
@@ -41,7 +42,6 @@ import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.s3.S3AsyncClient;
 import org.jclouds.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.blobstore.functions.BucketToResourceList;
@@ -112,8 +112,8 @@ public class AWSS3AsyncBlobStore extends S3AsyncBlobStore {
       } catch (CacheLoader.InvalidCacheLoadException e) {
          // nulls not permitted from cache loader
       }
-      return S3AsyncClient.class.cast(getContext().getProviderSpecificContext().getApi())
-         .putObject(container, blob2Object.apply(blob), options);
-   }
+      return getContext().unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getAsyncApi().putObject(container,
+               blob2Object.apply(blob), options);
+  }
 
 }

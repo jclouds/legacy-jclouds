@@ -22,20 +22,17 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.PropertiesBuilder;
+import org.jclouds.ContextBuilder;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
-import org.jclouds.rest.RequestSigner;
-import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.rest.internal.BaseRestClientTest.MockModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -47,22 +44,18 @@ import com.google.inject.Module;
 // surefire
 @Test(groups = "unit", testName = "QuerySignerTest")
 public class QuerySignerTest {
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   public static final RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> DUMMY_SPEC = new RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient>("cloudstack",
-         "http://localhost:8080/client/api", "2.2", "", "", "apiKey", "secretKey", IntegrationTestClient.class, IntegrationTestAsyncClient.class,
-         PropertiesBuilder.class, (Class) RestContextBuilder.class, ImmutableList.<Module> of(new MockModule(),
-               new NullLoggingModule(), new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bind(RequestSigner.class).to(QuerySigner.class);
-                  }
+   public static final Injector INJECTOR = ContextBuilder
+         .newBuilder(
+               AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(IntegrationTestClient.class, IntegrationTestAsyncClient.class,
+                     "http://localhost:8080/client/api"))
+         .credentials("apiKey", "secretKey")
+         .apiVersion("2.2")
+         .modules(ImmutableList.<Module> of(new MockModule(), new NullLoggingModule())).buildInjector();
 
-               }));
 
    @Test
    void testCreateStringToSign() {
-      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector()
-            .getInstance(QuerySigner.class);
+      QuerySigner filter = INJECTOR.getInstance(QuerySigner.class);
 
       assertEquals(
             filter.createStringToSign(HttpRequest.builder().method("GET")
@@ -72,8 +65,7 @@ public class QuerySignerTest {
 
    @Test
    void testFilter() {
-      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector()
-            .getInstance(QuerySigner.class);
+      QuerySigner filter = INJECTOR.getInstance(QuerySigner.class);
 
       assertEquals(
             filter.filter(
@@ -85,8 +77,7 @@ public class QuerySignerTest {
 
    @Test
    void testFilterTwice() {
-      QuerySigner filter = RestContextFactory.createContextBuilder(DUMMY_SPEC).buildInjector()
-            .getInstance(QuerySigner.class);
+      QuerySigner filter = INJECTOR.getInstance(QuerySigner.class);
       HttpRequest request = HttpRequest.builder().method("GET")
             .endpoint(URI.create("http://localhost:8080/client/api?command=listZones")).build();
       for (int i = 0; i < 2; i++) {

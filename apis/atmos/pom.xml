@@ -34,8 +34,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.initializer>org.jclouds.atmos.blobstore.integration.AtmosStorageTestInitializer</test.initializer>
-    <test.atmos.endpoint>https://accesspoint.atmos.com</test.atmos.endpoint>
+    <test.atmos.endpoint>https://accesspoint.atmosonline.com</test.atmos.endpoint>
     <test.atmos.api-version>1.3.0</test.atmos.api-version>
     <test.atmos.build-version />
     <test.atmos.identity>FIXME</test.atmos.identity>

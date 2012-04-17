@@ -44,6 +44,7 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test
    public void testCreateContextUsingUserAndPasswordAuthentication() {
+      String endpoint = cloudStackContext.getEndpoint().toASCIIString();
       assert globalAdminEnabled;
 
       Account testAccount = null;
@@ -74,6 +75,7 @@ public class SessionClientLiveTest extends BaseCloudStackClientLiveTest {
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testTryToGetApiKeypairWithWrongCredentials() {
+      String endpoint = cloudStackContext.getEndpoint().toASCIIString();
       ApiKeyPairs.loginToEndpointAsUsernameInDomainWithPasswordAndReturnApiKeyPair(
          URI.create(endpoint), "dummy-missing-user", "with-a-wrong-password", "");
    }

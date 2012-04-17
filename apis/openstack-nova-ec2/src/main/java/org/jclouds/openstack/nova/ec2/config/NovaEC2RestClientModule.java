@@ -22,7 +22,6 @@ import org.jclouds.ec2.EC2AsyncClient;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.config.EC2RestClientModule;
 import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
 import org.jclouds.location.suppliers.ZoneIdsSupplier;
@@ -35,7 +34,6 @@ import com.google.inject.Scopes;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class NovaEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
 

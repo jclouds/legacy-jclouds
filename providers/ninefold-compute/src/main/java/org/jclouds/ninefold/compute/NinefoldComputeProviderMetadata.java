@@ -1,66 +1,73 @@
-/**
- * Licensed to jclouds, Inc. (jclouds) under one or more
- * contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  jclouds licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jclouds.ninefold.compute;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.cloudstack.CloudStackApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Ninefold
- * Compute.
- * 
+ * Compute. 
  * @author Adrian Cole
  */
 public class NinefoldComputeProviderMetadata extends BaseProviderMetadata {
 
-   public NinefoldComputeProviderMetadata() {
-      this(builder()
-            .id("ninefold-compute")
-            .name("Ninefold Compute")
-            .api(new CloudStackApiMetadata())
-            .homepage(URI.create("http://ninefold.com/virtual-servers/"))
-            .console(URI.create("https://ninefold.com/portal/portal/login"))
-            .iso3166Codes("AU-NSW"));
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -4496340915519024L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected NinefoldComputeProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public NinefoldComputeProviderMetadata() {
+      super(builder());
+   }
+
+   public NinefoldComputeProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty("ninefold-compute.image-id", "1215");
+      properties.setProperty("ninefold-compute.image.login-user", "user:Password01");
+      properties.setProperty("ninefold-compute.image.authenticate-sudo", "true");
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
+
+      protected Builder() {
+         id("ninefold-compute")
+         .name("Ninefold Compute")
+         .apiMetadata(new CloudStackApiMetadata().toBuilder().version("2.2.12").build())
+         .homepage(URI.create("http://ninefold.com/virtual-servers/"))
+         .console(URI.create("https://ninefold.com/portal/portal/login"))
+         .iso3166Codes("AU-NSW")
+         .endpoint("https://api.ninefold.com/compute/v1.0/")
+         .defaultProperties(NinefoldComputeProviderMetadata.defaultProperties());
+      }
 
       @Override
       public NinefoldComputeProviderMetadata build() {
          return new NinefoldComputeProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
 }

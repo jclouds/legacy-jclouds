@@ -18,11 +18,19 @@
  */
 package org.jclouds.apis;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
+
+import org.jclouds.Wrapper;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The Apis class provides static methods for accessing apis.
@@ -31,14 +39,28 @@ import java.util.ServiceLoader;
  */
 public class Apis {
 
+   public static enum IdFunction implements Function<ApiMetadata, String> {
+      INSTANCE;
+
+      @Override
+      public String apply(ApiMetadata input) {
+         return input.getId();
+      }
+
+   }
+
+   public static Function<ApiMetadata, String> idFunction() {
+      return IdFunction.INSTANCE;
+   }
+
    /**
-    * Returns the apis located on the classpath via
-    * {@link java.util.ServiceLoader}.
+    * Returns the apis located on the classpath via {@link java.util.ServiceLoader}.
     * 
     * @return all available apis loaded from classpath via ServiceLoader
     */
+   @SuppressWarnings("unchecked")
    private static Iterable<ApiMetadata> fromServiceLoader() {
-      return ServiceLoader.load(ApiMetadata.class);
+      return Iterable.class.cast(ServiceLoader.load(ApiMetadata.class));
    }
 
    /**
@@ -64,76 +86,54 @@ public class Apis {
    public static ApiMetadata withId(String id) throws NoSuchElementException {
       return find(all(), ApiPredicates.id(id));
    }
-
+   
    /**
-    * Returns the apis that are of type
-    * {@link org.jclouds.apis.ApiMetadata#BLOBSTORE}.
-    * 
-    * @return the blobstore apis
-    */
-   public static Iterable<ApiMetadata> allBlobStore() {
-      return filter(all(), ApiPredicates.type(ApiType.BLOBSTORE));
-   }
-
-   /**
-    * Returns the apis that are of type
-    * {@link org.jclouds.apis.ApiMetadata#COMPUTE}.
-    * 
-    * @return the compute service apis
-    */
-   public static Iterable<ApiMetadata> allCompute() {
-      return filter(all(), ApiPredicates.type(ApiType.COMPUTE));
-   }
-
-   /**
-    * Returns the apis that are of type
-    * {@link org.jclouds.apis.ApiMetadata#QUEUE}.
-    * 
-    * @return the queue service apis
-    */
-   public static Iterable<ApiMetadata> allQueue() {
-      return filter(all(), ApiPredicates.type(ApiType.QUEUE));
-   }
-
-   /**
-    * Returns the apis that are of type
-    * {@link org.jclouds.apis.ApiMetadata#TABLE}.
-    * 
-    * @return the table service apis
-    */
-   public static Iterable<ApiMetadata> allTable() {
-      return filter(all(), ApiPredicates.type(ApiType.TABLE));
-   }
-
-   /**
-    * Returns the apis that are of type
-    * {@link org.jclouds.apis.ApiMetadata#LOADBALANCER}.
-    * 
-    * @return the load balancer service apis
-    */
-   public static Iterable<ApiMetadata> allLoadBalancer() {
-      return filter(all(), ApiPredicates.type(ApiType.LOADBALANCER));
-   }
-
-   /**
-    * Returns the apis that are of type
-    * {@link org.jclouds.apis.ApiMetadata#MONITOR}.
-    * 
-    * @return the load balancer service apis
-    */
-   public static Iterable<ApiMetadata> allMonitor() {
-      return filter(all(), ApiPredicates.type(ApiType.MONITOR));
-   }
-
-   /**
-    * Returns the apis that are of the provided type.
+    * Returns all apis who's contexts are assignable from the parameter
     * 
     * @param type
-    *           the type to apis to return
+    *           the type of the context to search for
     * 
-    * @return the apis of the provided type
+    * @return the apis with contexts assignable from given type
     */
-   public static Iterable<ApiMetadata> ofType(ApiType type) {
-      return filter(all(), ApiPredicates.type(type));
+   public static Iterable<ApiMetadata> contextAssignableFrom(TypeToken<?> type) {
+      return filter(all(), ApiPredicates.contextAssignableFrom(type));
+   }
+   
+   /**
+    * Returns all apis who's contexts are assignable from the parameter
+    * 
+    * @param type
+    *           the type of the context to search for
+    * 
+    * @return the apis with contexts assignable from given type
+    */
+   public static Iterable<ApiMetadata> contextWrappableAs(TypeToken<? extends Wrapper> type) {
+      return filter(all(), ApiPredicates.contextWrappableAs(type));
+   }
+   
+   public static Iterable<ApiMetadata> contextWrappableAs(Class<? extends Wrapper> type) {
+      return filter(all(), ApiPredicates.contextWrappableAs(TypeToken.of(type)));
+   }
+
+   /**
+    * Returns the type of context
+    * 
+    * @param type
+    *           the type of the context to search for
+    * 
+    * @return the apis with contexts transformable to the given type
+    */
+   public static TypeToken<?> findWrapper(final ApiMetadata apiMetadata, final TypeToken<?> wrapper)
+            throws NoSuchElementException {
+      checkNotNull(apiMetadata, "apiMetadata must be defined");
+      checkNotNull(wrapper, "context must be defined");
+      return Iterables.find(apiMetadata.getWrappers(), new Predicate<TypeToken<?>>() {
+
+         @Override
+         public boolean apply(TypeToken<?> input) {
+            return wrapper.isAssignableFrom(input);
+         }
+
+      });
    }
 }

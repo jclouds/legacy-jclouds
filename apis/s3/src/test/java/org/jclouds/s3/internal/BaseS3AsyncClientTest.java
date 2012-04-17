@@ -23,27 +23,20 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.s3.S3ApiMetadata;
 import org.jclouds.s3.S3AsyncClient;
-import org.jclouds.s3.S3Client;
-import org.jclouds.s3.S3ContextBuilder;
-import org.jclouds.s3.S3PropertiesBuilder;
 import org.jclouds.s3.blobstore.functions.BlobToObject;
 import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public abstract class BaseS3AsyncClientTest<T extends S3AsyncClient> extends RestClientTest<T> {
+public abstract class BaseS3AsyncClientTest<T extends S3AsyncClient> extends BaseAsyncClientTest<T> {
 
    protected BlobToObject blobToS3Object;
    protected RequestAuthorizeSignature filter;
@@ -67,18 +60,9 @@ public abstract class BaseS3AsyncClientTest<T extends S3AsyncClient> extends Res
       super();
    }
 
-   protected String provider = "s3";
-   protected String endpoint = "https://s3.amazonaws.com";
-
-   /**
-    * this is only here as "s3" is not in rest.properties
-    */
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return RestContextFactory.<S3Client, S3AsyncClient> contextSpec(provider, endpoint,
-            S3AsyncClient.VERSION, "", "", "identity", "credential", S3Client.class, S3AsyncClient.class,
-            (Class) S3PropertiesBuilder.class, (Class) S3ContextBuilder.class, ImmutableSet.<Module> of());
+   public S3ApiMetadata createApiMetadata() {
+      return new S3ApiMetadata();
    }
 
 }

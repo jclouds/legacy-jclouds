@@ -22,7 +22,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -44,12 +43,9 @@ import org.jclouds.cloudsigma.domain.VLANInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -67,7 +63,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code CloudSigmaClient}
@@ -75,37 +70,35 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudSigmaClientLiveTest")
-public class CloudSigmaClientLiveTest extends BaseVersionedServiceLiveTest {
+public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest {
+
    public CloudSigmaClientLiveTest() {
       provider = "cloudsigma";
    }
-   
+
    protected long driveSize = 8 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 300;
    protected String vncPassword = "Il0veVNC";
    protected CloudSigmaClient client;
-   protected RestContext<CloudSigmaClient, CloudSigmaAsyncClient> context;
+   protected RestContext<CloudSigmaClient, CloudSigmaAsyncClient> cloudSigmaContext;
    protected Predicate<IPSocket> socketTester;
 
    protected Predicate<DriveInfo> driveNotClaimed;
-   protected ComputeServiceContext computeContext;
+   
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
+   public void setupContext() {
+      super.setupContext();
+      cloudSigmaContext = context.unwrap();
 
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      computeContext = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
-      context = computeContext.getProviderSpecificContext();
-      
-      client = context.getApi();
+      client = cloudSigmaContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
             1, TimeUnit.SECONDS);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
             TimeUnit.SECONDS);
-      
+
       if (Strings.emptyToNull(imageId) == null) {
-         imageId = computeContext.getComputeService().templateBuilder().build().getImage().getId();
+         imageId = context.getComputeService().templateBuilder().build().getImage().getId();
       }
    }
 
@@ -259,7 +252,7 @@ public class CloudSigmaClientLiveTest extends BaseVersionedServiceLiveTest {
 
          String prefix2 = prefix + "2";
          vlan = client.renameVLAN(vlan.getUuid(), prefix2);
-         assertEquals(vlan.getName(),prefix2);
+         assertEquals(vlan.getName(), prefix2);
       } finally {
          client.destroyVLAN(id);
       }
@@ -354,7 +347,8 @@ public class CloudSigmaClientLiveTest extends BaseVersionedServiceLiveTest {
       assertEquals(client.getServerInfo(server.getUuid()).getStatus(), ServerStatus.ACTIVE);
 
       client.shutdownServer(server.getUuid());
-      // behavior on shutdown depends on how your server OS is set up to respond to an ACPI power
+      // behavior on shutdown depends on how your server OS is set up to respond
+      // to an ACPI power
       // button signal
       assert (client.getServerInfo(server.getUuid()).getStatus() == ServerStatus.ACTIVE || client.getServerInfo(
             server.getUuid()).getStatus() == ServerStatus.STOPPED);
@@ -415,8 +409,8 @@ public class CloudSigmaClientLiveTest extends BaseVersionedServiceLiveTest {
          client.destroyServer(server.getUuid());
       if (server != null)
          client.destroyDrive(drive.getUuid());
-      if (context != null)
-         context.close();
+      if (cloudSigmaContext != null)
+         cloudSigmaContext.close();
    }
 
    @Test
@@ -444,13 +438,10 @@ public class CloudSigmaClientLiveTest extends BaseVersionedServiceLiveTest {
    protected void prepareDrive() {
       client.destroyDrive(drive.getUuid());
       drive = client.cloneDrive(imageId, drive.getName(),
-            new CloneDriveOptions()
-            .size(driveSize)
-            .tags("cat:mouse", "monkey:banana")
-      );
+            new CloneDriveOptions().size(driveSize).tags("cat:mouse", "monkey:banana"));
       // Block until the async clone operation has completed.
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
-      
+
       DriveInfo clonedDrive = client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + clonedDrive);
       assertEquals(clonedDrive.getTags(), ImmutableSet.of("cat:mouse", "monkey:banana"));

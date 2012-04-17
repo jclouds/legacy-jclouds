@@ -21,8 +21,9 @@ package org.jclouds.atmos.blobstore;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Properties;
 
+import org.jclouds.apis.ApiMetadata;
+import org.jclouds.atmos.AtmosApiMetadata;
 import org.jclouds.atmos.AtmosAsyncClient;
 import org.jclouds.atmos.config.AtmosRestClientModule;
 import org.jclouds.atmos.filters.SignRequest;
@@ -31,11 +32,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -51,7 +49,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "AtmosBlobRequestSignerTest")
-public class AtmosBlobRequestSignerTest extends RestClientTest<AtmosAsyncClient> {
+public class AtmosBlobRequestSignerTest extends BaseAsyncClientTest<AtmosAsyncClient> {
 
    private BlobRequestSigner signer;
    private Factory blobFactory;
@@ -129,8 +127,7 @@ public class AtmosBlobRequestSignerTest extends RestClientTest<AtmosAsyncClient>
       return new TestAtmosRestClientModule();
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    private static final class TestAtmosRestClientModule extends AtmosRestClientModule {
       @Override
       protected void configure() {
@@ -144,8 +141,8 @@ public class AtmosBlobRequestSignerTest extends RestClientTest<AtmosAsyncClient>
    }
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("atmos", "identity", "credential", new Properties());
+   public ApiMetadata createApiMetadata() {
+      return new AtmosApiMetadata();
    }
 
 }

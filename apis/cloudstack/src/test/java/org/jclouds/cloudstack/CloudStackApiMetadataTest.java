@@ -18,8 +18,7 @@
  */
 package org.jclouds.cloudstack;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "CloudStackApiMetadataTest")
-public class CloudStackApiMetadataTest extends BaseApiMetadataTest {
+public class CloudStackApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public CloudStackApiMetadataTest() {
-      super(new CloudStackApiMetadata(), ApiType.COMPUTE);
+      super(new CloudStackApiMetadata());
    }
 }

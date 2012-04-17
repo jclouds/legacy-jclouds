@@ -32,20 +32,18 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.inject.Injector;
 
 /**
  * Tests parsing of S3 responses
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, groups = { "unit" })
+@Test(singleThreaded = true, groups = { "unit" })
 public class AWSUtilsTest {
    AWSUtils utils = null;
    private HttpCommand command;
@@ -53,9 +51,7 @@ public class AWSUtilsTest {
    @BeforeTest
    protected void setUpInjector() throws IOException {
 
-      Injector injector = RestContextFactory.createContextBuilder(FormSignerTest.DUMMY_SPEC).buildInjector();
-
-      utils = injector.getInstance(AWSUtils.class);
+      utils = FormSignerTest.INJECTOR.getInstance(AWSUtils.class);
 
       command = createMock(HttpCommand.class);
       expect(command.getCurrentRequest()).andReturn(createMock(HttpRequest.class)).atLeastOnce();

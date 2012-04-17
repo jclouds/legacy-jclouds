@@ -21,19 +21,14 @@ package org.jclouds.openstack.swift.blobstore.config;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
-import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobRequestSigner;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link CloudFilesBlobStoreContext}; requires {@link SwiftAsyncBlobStore}
@@ -49,8 +44,6 @@ public class SwiftBlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(SwiftAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(SwiftBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<CommonSwiftClient, CommonSwiftAsyncClient>>() {
-      }).in(Scopes.SINGLETON);
       bind(BlobRequestSigner.class).to(SwiftBlobRequestSigner.class);
    }
 

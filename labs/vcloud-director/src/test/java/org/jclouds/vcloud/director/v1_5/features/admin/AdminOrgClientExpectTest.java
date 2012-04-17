@@ -24,18 +24,17 @@ import java.net.URI;
 
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
-import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.OrgEmailSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgGeneralSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgLdapSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgLeaseSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgPasswordPolicySettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgSettings;
-import org.jclouds.vcloud.director.v1_5.domain.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.SmtpServerSettings;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgClient;
+import org.jclouds.vcloud.director.v1_5.domain.network.SmtpServerSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgGeneralSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLeaseSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -44,7 +43,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "user", "org"}, singleThreaded = true, testName = "AdminOrgClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "AdminOrgClientExpectTest")
 public class AdminOrgClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private Reference orgRef = Reference.builder()

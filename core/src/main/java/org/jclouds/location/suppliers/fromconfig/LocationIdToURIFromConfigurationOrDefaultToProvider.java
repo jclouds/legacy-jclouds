@@ -60,7 +60,7 @@ public class LocationIdToURIFromConfigurationOrDefaultToProvider implements Supp
 
    @Override
    public Map<String, Supplier<URI>> get() {
-      Builder<String, Supplier<URI>> locations = ImmutableMap.<String, Supplier<URI>> builder();
+      Builder<String, Supplier<URI>> locations = ImmutableMap.builder();
       for (String location : locationIds.get()) {
          String configKey = configPrefix + "." + location + "." + ENDPOINT;
          String locationUri = config.apply(configKey);

@@ -22,31 +22,21 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
-import org.jclouds.aws.ec2.AWSEC2Client;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.Tag;
 import org.jclouds.aws.ec2.util.TagFilters;
 import org.jclouds.aws.ec2.util.TagFilters.ResourceType;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.inject.Module;
 
 /**
  * Tests live behavior of {@code TagClient}
@@ -54,40 +44,34 @@ import com.google.inject.Module;
  * @author grkvlt@apache.org
  */
 @Test(groups = "live", singleThreaded = true)
-public class TagClientLiveTest extends BaseVersionedServiceLiveTest {
+public class TagClientLiveTest extends BaseComputeServiceContextLiveTest {
    public TagClientLiveTest() {
       provider = "aws-ec2";
    }
 
    private TagClient client;
-   private RestContext<AWSEC2Client, AWSEC2AsyncClient> context;
-
    protected String testGroup;
-   private ComputeServiceContext computeContext;
 
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClientAndSecurityGroup() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      computeContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-      context = computeContext.getProviderSpecificContext();
-      client = context.getApi().getTagServices();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getTagServices();
+      
       try {
-         testGroup = context.getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null,
+         testGroup = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null,
                   "test-group", "test-group");
       } catch (IllegalStateException e) {
          // already exists
          testGroup = Iterables.get(
-                  context.getApi().getSecurityGroupServices().describeSecurityGroupsInRegion(null, "test-group"), 0)
+                  context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().describeSecurityGroupsInRegion(null, "test-group"), 0)
                   .getId();
       }
    }
 
    @AfterGroups(groups = { "live" })
    public void deleteSecurityGroup() {
-       context.getApi().getSecurityGroupServices().deleteSecurityGroupInRegionById(null, testGroup);
+       context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().deleteSecurityGroupInRegionById(null, testGroup);
    }
 
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";
@@ -128,10 +112,5 @@ public class TagClientLiveTest extends BaseVersionedServiceLiveTest {
 
    protected AWSRunningInstance getInstance(AWSInstanceClient instanceClient, String id) {
       return getOnlyElement(getOnlyElement(instanceClient.describeInstancesInRegion(null, id)));
-   }
-
-   @AfterTest
-   public void shutdown() {
-      context.close();
    }
 }

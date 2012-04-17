@@ -33,9 +33,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.io.Closeables;
 
 /**
@@ -130,7 +130,7 @@ public class YamlNode {
       public InputStream apply(YamlNode in) {
          if (in == null)
             return null;
-         Builder<String, Object> prettier = ImmutableMap.<String, Object> builder();
+         Builder<String, Object> prettier = ImmutableMap.builder();
          if (in.id != null)
             prettier.put("id", in.id);
          if (in.name != null)

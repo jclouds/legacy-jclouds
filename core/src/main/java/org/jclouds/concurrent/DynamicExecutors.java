@@ -157,7 +157,7 @@ public class DynamicExecutors {
 
             /*
              * Thread name: owner-pool-N-thread-M, where N is the sequence number of this factory,
-             * and M is the sequence number of the thread created by this factory.
+             * and ApiMetadata is the sequence number of the thread created by this factory.
              */
             t.setName(o + t.getName());
 

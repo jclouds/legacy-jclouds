@@ -36,7 +36,7 @@ import java.util.Set;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Entity;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceType;
+import org.jclouds.vcloud.director.v1_5.domain.Resource;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
@@ -61,7 +61,7 @@ import com.google.common.collect.Iterables;
 * 
 * @author grkvlt@apache.org
 */
-@Test(groups = { "live", "user", "query" }, singleThreaded = true, testName = "QueryClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "QueryClientLiveTest")
 public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*
@@ -76,9 +76,7 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    @AfterClass(alwaysRun = true)
    public void cleanUp() throws Exception {
-      if (vApp != null) {
-         cleanUpVApp(vApp);
-      }
+      if (vApp != null) cleanUpVApp(vApp);
    }
 
    @Override
@@ -234,9 +232,9 @@ public class QueryClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       return hrefs;
    }
    
-   private Set<URI> toHrefs(Iterable<? extends ResourceType> resources) {
+   private Set<URI> toHrefs(Iterable<? extends Resource> resources) {
       Set<URI> hrefs = new LinkedHashSet<URI>();
-      for (ResourceType resource : resources) {
+      for (Resource resource : resources) {
          hrefs.add(resource.getHref());
       }
       return hrefs;

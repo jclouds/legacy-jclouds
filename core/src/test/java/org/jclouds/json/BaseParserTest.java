@@ -58,8 +58,7 @@ public abstract class BaseParserTest<T, G> {
          return (Function<HttpResponse, T>) RestAnnotationProcessor.getTransformerForMethod(getClass()
                   .getMethod("expected"), i);
       } catch (Exception e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

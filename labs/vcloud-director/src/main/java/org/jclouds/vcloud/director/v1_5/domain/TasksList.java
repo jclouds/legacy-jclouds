@@ -42,11 +42,12 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @XmlRootElement(name = "TasksList")
-public class TasksList extends ResourceType implements Set<Task> {
+public class TasksList extends Resource implements Set<Task> {
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromTasksList(this);
    }
@@ -54,7 +55,7 @@ public class TasksList extends ResourceType implements Set<Task> {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
       private String name;
       private Set<Task> tasks;
 
@@ -91,7 +92,7 @@ public class TasksList extends ResourceType implements Set<Task> {
       }
 
       public B fromTasksList(TasksList in) {
-         return fromResourceType(in).tasks(in);
+         return fromResource(in).tasks(in);
       }
    }
 

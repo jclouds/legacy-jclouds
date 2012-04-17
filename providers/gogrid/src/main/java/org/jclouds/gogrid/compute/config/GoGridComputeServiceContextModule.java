@@ -36,8 +36,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.gogrid.GoGridAsyncClient;
-import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.compute.functions.OptionToLocation;
 import org.jclouds.gogrid.compute.functions.ServerImageToImage;
 import org.jclouds.gogrid.compute.functions.ServerToNodeMetadata;
@@ -61,10 +59,7 @@ import com.google.inject.TypeLiteral;
  * @author Andrew Kennedy
  */
 public class GoGridComputeServiceContextModule extends
-         ComputeServiceAdapterContextModule<GoGridClient, GoGridAsyncClient, Server, Hardware, ServerImage, Option> {
-   public GoGridComputeServiceContextModule() {
-      super(GoGridClient.class, GoGridAsyncClient.class);
-   }
+         ComputeServiceAdapterContextModule<Server, Hardware, ServerImage, Option> {
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {

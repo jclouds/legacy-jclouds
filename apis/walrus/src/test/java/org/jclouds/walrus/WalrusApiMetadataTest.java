@@ -18,8 +18,7 @@
  */
 package org.jclouds.walrus;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "WalrusApiMetadataTest")
-public class WalrusApiMetadataTest extends BaseApiMetadataTest {
+public class WalrusApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 
    public WalrusApiMetadataTest() {
-      super(new WalrusApiMetadata(), ApiType.BLOBSTORE);
+      super(new WalrusApiMetadata());
    }
 }

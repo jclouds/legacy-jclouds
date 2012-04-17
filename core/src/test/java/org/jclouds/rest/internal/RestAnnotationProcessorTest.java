@@ -23,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.io.Payloads.calculateMD5;
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.io.Payloads.newStringPayload;
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
@@ -71,6 +69,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.http.HttpHeaders;
+import org.jclouds.ContextBuilder;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -82,7 +81,6 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IOExceptionRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseFirstJsonValueNamed;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
@@ -102,12 +100,11 @@ import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Endpoint;
@@ -176,11 +173,10 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 @Test(groups = "unit", testName = "RestAnnotationProcessorTest")
 public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
-   @RequiresHttp
    @ConfiguresRestClient
    protected static class CallerModule extends RestClientModule<Caller, AsyncCaller> {
       CallerModule() {
-         super(Caller.class, AsyncCaller.class, ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class));
+         super(Caller.class, AsyncCaller.class, ImmutableMap.<Class<?>, Class<?>> of(Callee.class, AsyncCallee.class, Callee2.class, AsyncCallee2.class));
       }
 
       @Override
@@ -199,7 +195,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Path("/{path}")
       ListenableFuture<Void> onePath(@PathParam("path") String path);
    }
-
+ 
+   @Path("/client/{jclouds.api-version}")
+   public static interface AsyncCallee2 {
+      @GET
+      @Path("/{path}/2")
+      ListenableFuture<Void> onePath(@PathParam("path") String path);
+   }
+   
    @Endpoint(Localhost2.class)
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Caller {
@@ -213,6 +216,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       public Callee getCallee();
 
       @Delegate
+      public Callee2 getCallee2();
+      
+      @Delegate
       public Callee getCallee(@EndpointParam URI endpoint);
 
       @Delegate
@@ -224,6 +230,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       void onePath(String path);
    }
+   
+   @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
+   public static interface Callee2 {
+      
+      void onePath(String path);
+   }
 
    public static interface AsyncCaller {
       @Provides
@@ -233,6 +245,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Delegate
       public AsyncCallee getCallee();
 
+      @Delegate
+      public AsyncCallee2 getCallee2();
+      
       @Delegate
       public AsyncCallee getCallee(@EndpointParam URI endpoint);
 
@@ -267,14 +282,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testDelegateIsLazyLoadedAndRequestIncludesVersionAndPath() throws InterruptedException,
          ExecutionException {
       Injector child = injectorForCaller(new HttpCommandExecutorService() {
-
+         int callCounter=0;
          @Override
          public Future<HttpResponse> submit(HttpCommand command) {
-            assertEquals(command.getCurrentRequest().getRequestLine(),
-                  "GET http://localhost:1111/client/1/foo HTTP/1.1");
+            if (callCounter == 1) assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://localhost:1111/client/1/bar/2 HTTP/1.1");
+            else assertEquals(command.getCurrentRequest().getRequestLine(), "GET http://localhost:1111/client/1/foo HTTP/1.1");
+            callCounter++;
             return Futures.immediateFuture(HttpResponse.builder().build());
          }
-
       });
 
       try {
@@ -285,8 +300,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       child.getInstance(Caller.class).getCallee().onePath("foo");
+      child.getInstance(Caller.class).getCallee2().onePath("bar");
+      // Note if wrong method is picked up, we'll see "http://localhost:1111/client/1/foo/2"!
       child.getInstance(Caller.class).getCallee().onePath("foo");
-
    }
 
    public void testAsyncDelegateIsLazyLoadedAndRequestIncludesEndpointVersionAndPath() throws InterruptedException,
@@ -402,21 +418,13 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    private Injector injectorForCaller(HttpCommandExecutorService service, Module... modules) {
-
-      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec(
-            "test",
-            "http://localhost:9999",
-            "1",
-            "",
-            "",
-            "userfoo",
-            null,
-            Caller.class,
-            AsyncCaller.class,
-            ImmutableSet.<Module> builder().add(new MockModule(service)).add(new NullLoggingModule())
-                  .add(new CallerModule()).addAll(ImmutableSet.<Module> copyOf(modules)).build());
-
-      return createContextBuilder(contextSpec).buildInjector();
+      return ContextBuilder
+            .newBuilder(
+                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(Caller.class, AsyncCaller.class,
+                        "http://localhost:9999"))
+            .modules(
+                  ImmutableSet.<Module> builder().add(new MockModule(service)).add(new NullLoggingModule())
+                        .add(new CallerModule()).addAll(ImmutableSet.<Module> copyOf(modules)).build()).buildInjector();
 
    }
 
@@ -2523,9 +2531,11 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
-      RestContextSpec<Callee, AsyncCallee> contextSpec = contextSpec("test", "http://localhost:9999", "1", "", "",
-            "userfoo", null, Callee.class, AsyncCallee.class,
-            ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
+      injector =  ContextBuilder
+            .newBuilder(
+                  AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(Callee.class, AsyncCallee.class,
+                        "http://localhost:9999"))
+            .modules(ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
 
                @Override
                protected void configure() {
@@ -2545,9 +2555,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                   throw new AuthorizationException();
                }
 
-            }));
-
-      injector = createContextBuilder(contextSpec).buildInjector();
+            })).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       crypto = injector.getInstance(Crypto.class);
    }

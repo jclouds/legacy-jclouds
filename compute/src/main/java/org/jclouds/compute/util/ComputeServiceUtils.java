@@ -30,11 +30,11 @@ import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash
 import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -44,13 +44,13 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.net.IPSocket;
-import org.jclouds.rest.Providers;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.TypeToken;
 
 /**
  * 
@@ -160,8 +160,9 @@ public class ComputeServiceUtils {
       });
    }
 
+   @Deprecated
    public static Iterable<String> getSupportedProviders() {
-      return Providers.getSupportedProvidersOfType(ComputeServiceContextBuilder.class);
+      return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(ComputeServiceContext.class));
    }
 
    public static IPSocket findReachableSocketOnNode(RetryIfSocketNotYetOpen socketTester, final NodeMetadata node,

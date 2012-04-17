@@ -27,4 +27,7 @@ import org.testng.annotations.Test;
 @Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusContainerLiveTest")
 public class EucalyptusPartnerCloudWalrusContainerLiveTest extends WalrusContainerLiveTest {
 
+   public EucalyptusPartnerCloudWalrusContainerLiveTest() {
+      provider = "eucalyptus-partnercloud-s3";
+   }
 }

@@ -18,12 +18,8 @@
  */
 package org.jclouds.softlayer.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.rest.RestContext;
-import org.jclouds.softlayer.SoftLayerAsyncClient;
-import org.jclouds.softlayer.SoftLayerClient;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -38,6 +34,7 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", enabled = true, sequential = true)
 public class SoftLayerComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
    public SoftLayerComputeServiceLiveTest() {
       provider = "softlayer";
       group = "soft-layer";
@@ -46,12 +43,6 @@ public class SoftLayerComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<SoftLayerClient, SoftLayerAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential).getProviderSpecificContext();
    }
    
    // softlayer does not support metadata

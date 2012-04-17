@@ -25,7 +25,10 @@ import java.util.Arrays;
 
 import javax.annotation.Resource;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
@@ -50,21 +53,22 @@ public class Error {
    @Resource
    protected static Logger logger = Logger.NULL;
 
+   @XmlType
+   @XmlEnum(Integer.class)
    public static enum Code {
-
-      OK(200),
-      CREATED(201),
-      ACCEPTED(202),
-      NO_CONTENT(204),
-      SEE_OTHER(303),
-      BAD_REQUEST(400),
-      UNAUTHORIZED(401),
-      FORBIDDEN(403), // NOTE also means 'not found' for entities
-      NOT_FOUND(404),
-      NOT_ALLOWED(405),
-      INTERNAL_ERROR(500),
-      NOT_IMPLEMENTED(501),
-      UNAVAILABLE(503),
+      @XmlEnumValue("200") OK(200),
+      @XmlEnumValue("201") CREATED(201),
+      @XmlEnumValue("202") ACCEPTED(202),
+      @XmlEnumValue("204") NO_CONTENT(204),
+      @XmlEnumValue("303") SEE_OTHER(303),
+      @XmlEnumValue("400") BAD_REQUEST(400),
+      @XmlEnumValue("401") UNAUTHORIZED(401),
+      @XmlEnumValue("403") FORBIDDEN(403), // NOTE also means 'not found' for entities
+      @XmlEnumValue("404") NOT_FOUND(404),
+      @XmlEnumValue("405") NOT_ALLOWED(405),
+      @XmlEnumValue("500") INTERNAL_ERROR(500),
+      @XmlEnumValue("501") NOT_IMPLEMENTED(501),
+      @XmlEnumValue("503") UNAVAILABLE(503),
       UNRECOGNIZED(-1);
 
       private Integer majorErrorCode;

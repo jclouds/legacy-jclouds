@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "AWSS3BlobSignerLiveTest")
 public class AWSS3BlobSignerLiveTest extends S3BlobSignerLiveTest {
-
+   public AWSS3BlobSignerLiveTest() {
+      provider = "aws-s3";
+   }
 }

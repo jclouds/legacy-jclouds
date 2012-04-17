@@ -29,6 +29,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" })
 public class HPCloudObjectStorageContainerLiveTest extends BaseContainerLiveTest {
+   public HPCloudObjectStorageContainerLiveTest() {
+      provider = "hpcloud-objectstorage";
+   }
 
 	@Test(enabled = false)
    //@Test(expectedExceptions=UnsupportedOperationException.class)

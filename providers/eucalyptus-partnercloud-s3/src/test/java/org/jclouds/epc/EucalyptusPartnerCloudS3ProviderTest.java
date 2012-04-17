@@ -18,7 +18,7 @@
  */
 package org.jclouds.epc;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.jclouds.walrus.WalrusApiMetadata;
 import org.testng.annotations.Test;
 

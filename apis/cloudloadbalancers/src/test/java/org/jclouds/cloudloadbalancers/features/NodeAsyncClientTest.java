@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
-import org.jclouds.cloudloadbalancers.domain.NodeAttributes.Builder;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
+import org.jclouds.cloudloadbalancers.domain.NodeAttributes.Builder;
 import org.jclouds.cloudloadbalancers.domain.internal.BaseNode.Condition;
 import org.jclouds.cloudloadbalancers.internal.BaseCloudLoadBalancersAsyncClientTest;
 import org.jclouds.http.HttpRequest;

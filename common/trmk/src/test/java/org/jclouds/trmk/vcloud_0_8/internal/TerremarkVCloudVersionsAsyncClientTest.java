@@ -18,7 +18,6 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -26,8 +25,9 @@ import java.lang.reflect.Method;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.vcloud_0_8.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
@@ -41,7 +41,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "VCloudVersionsAsyncClientTest")
-public class TerremarkVCloudVersionsAsyncClientTest extends RestClientTest<TerremarkVCloudVersionsAsyncClient> {
+public class TerremarkVCloudVersionsAsyncClientTest extends BaseAsyncClientTest<TerremarkVCloudVersionsAsyncClient> {
 
    public void testVersions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkVCloudVersionsAsyncClient.class.getMethod("getSupportedVersions");
@@ -70,9 +70,9 @@ public class TerremarkVCloudVersionsAsyncClientTest extends RestClientTest<Terre
    }
 
    @Override
-   public RestContextSpec<TerremarkVCloudVersionsClient, TerremarkVCloudVersionsAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "", "", "identity", "credential",
-               TerremarkVCloudVersionsClient.class, TerremarkVCloudVersionsAsyncClient.class);
+   protected ProviderMetadata createProviderMetadata() {
+      return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(TerremarkVCloudVersionsClient.class,
+            TerremarkVCloudVersionsAsyncClient.class, "http://localhost:8080");
    }
 
 }

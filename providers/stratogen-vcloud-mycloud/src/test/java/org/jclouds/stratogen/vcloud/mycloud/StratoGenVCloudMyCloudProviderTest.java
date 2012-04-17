@@ -18,7 +18,7 @@
  */
 package org.jclouds.stratogen.vcloud.mycloud;
 
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.jclouds.vcloud.VCloudApiMetadata;
 import org.testng.annotations.Test;
 

@@ -19,9 +19,11 @@
 package org.jclouds.cloudonestorage;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.atmos.AtmosApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for PEER1's
@@ -30,37 +32,52 @@ import org.jclouds.providers.BaseProviderMetadata;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class CloudOneStorageProviderMetadata extends BaseProviderMetadata {
-
-   public CloudOneStorageProviderMetadata() {
-      this(builder()
-            .id("cloudonestorage")
-            .name("PEER1 CloudOne Storage")
-            .api(new AtmosApiMetadata())
-            .homepage(URI.create("http://www.peer1.com/hosting/cloudone-storage.php"))
-            .console(URI.create("https://mypeer1.com/"))
-            .iso3166Codes("US-GA", "US-TX"));
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudOneStorageProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CloudOneStorageProviderMetadata() {
+      super(builder());
+   }
+
+   public CloudOneStorageProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("cloudonestorage")
+         .name("PEER1 CloudOne Storage")
+         .apiMetadata(new AtmosApiMetadata())
+         .homepage(URI.create("http://www.peer1.com/hosting/cloudone-storage.php"))
+         .console(URI.create("https://mypeer1.com/"))
+         .iso3166Codes("US-GA", "US-TX")
+         .endpoint("https://cloudonestorage.peer1.com")
+         .defaultProperties(CloudOneStorageProviderMetadata.defaultProperties());
+      }
 
       @Override
       public CloudOneStorageProviderMetadata build() {
          return new CloudOneStorageProviderMetadata(this);
       }
-   }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
 }

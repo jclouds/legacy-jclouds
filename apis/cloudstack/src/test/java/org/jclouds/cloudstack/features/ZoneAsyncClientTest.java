@@ -58,7 +58,7 @@ public class ZoneAsyncClientTest extends BaseCloudStackAsyncClientTest<ZoneAsync
 
       assertRequestLineEquals(
             httpRequest,
-            "GET http://localhost:8080/client/api?response=json&command=listZones&apiKey=apiKey&signature=hNz838u4Z1ofz9vRaqYo9GDv1Io%3D HTTP/1.1");
+            "GET http://localhost:8080/client/api?response=json&command=listZones&apiKey=identity&signature=wLSqVlxuiLXZcHi9IoSAwXNRGFs%3D HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

@@ -30,7 +30,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
-
+   public SwiftBlobIntegrationLiveTest() {
+      provider = "swift";
+   }
    @Override
    @Test(enabled = false)
    public void testGetTwoRanges() {

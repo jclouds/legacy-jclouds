@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  */
 public class SpotInstancesHandler extends ParseSax.HandlerWithResult<Set<SpotInstanceRequest>> {
 
-   private final Builder<SpotInstanceRequest> spotRequests = ImmutableSet.<SpotInstanceRequest> builder();
+   private final Builder<SpotInstanceRequest> spotRequests = ImmutableSet.builder();
    private final SpotInstanceHandler spotRequestHandler;
    private int itemDepth;
 

@@ -41,6 +41,7 @@ import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.savvis.vpdc.VPDCAsyncClient;
@@ -78,6 +79,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * 
  */
+@ConfiguresRestClient
 public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsyncClient> {
    @Override
    protected void configure() {

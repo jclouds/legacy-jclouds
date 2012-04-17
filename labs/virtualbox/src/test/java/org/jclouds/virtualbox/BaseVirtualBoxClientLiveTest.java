@@ -25,24 +25,20 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTA
 
 import java.io.File;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
-import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
@@ -80,6 +76,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 
 /**
@@ -88,15 +85,13 @@ import com.google.inject.Module;
  * @author Adrian Cole, David Alves
  */
 @Test(groups = "live", singleThreaded = true, testName = "BaseVirtualBoxClientLiveTest")
-public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
+public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    public static final String DONT_DESTROY_MASTER = "jclouds.virtualbox.keep-test-master";
 
    public BaseVirtualBoxClientLiveTest() {
       provider = "virtualbox";
    }
-
-   protected ComputeServiceContext context;
 
    @Inject
    protected MachineController machineController;
@@ -129,30 +124,18 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
 
    private final ExecutorService singleThreadExec = MoreExecutors.sameThreadExecutor();
    private String masterVmName;
+   
 
    @Override
-   protected void setupCredentials() {
-      // default behavior is to bomb when no user is configured, but we know the
-      // default user of
-      // vbox
-      ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults();
-      super.setupCredentials();
+   protected Iterable<Module> setupModules() {
+      return ImmutableSet.<Module> of(getLoggingModule(), credentialStoreModule, getSshModule(),  new ExecutorServiceModule(
+            singleThreadExec, singleThreadExec));
    }
-
-   protected void ensureIdentityPropertyIsSpecifiedOrTakeFromDefaults() {
-      if (!System.getProperties().containsKey("test." + provider + ".identity"))
-         System.setProperty("test." + provider + ".identity", "administrator");
-   }
-
-   @BeforeClass(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = new VirtualBoxPropertiesBuilder(setupProperties()).build();
-
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
-               .<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule(), new ExecutorServiceModule(
-                        singleThreadExec, singleThreadExec)), overrides);
-
+   
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
       context.utils().injector().injectMembers(this);
 
       YamlImage image = getDefaultImage();
@@ -161,7 +144,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseVersionedServiceLiveTest {
       masterVmName = VIRTUALBOX_IMAGE_PREFIX + image.id;
       isosDir = workingDir + File.separator + "isos";
 
-      hostVersion = Iterables.get(Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
+      hostVersion = Iterables.get(Splitter.on('r').split(context.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, image.name);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
 

@@ -41,30 +41,31 @@ import java.util.TimeZone;
 
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
-import org.jclouds.vcloud.director.v1_5.domain.CustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.FirewallRule;
-import org.jclouds.vcloud.director.v1_5.domain.FirewallRuleProtocols;
-import org.jclouds.vcloud.director.v1_5.domain.FirewallService;
-import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.IpRange;
-import org.jclouds.vcloud.director.v1_5.domain.IpRanges;
-import org.jclouds.vcloud.director.v1_5.domain.IpScope;
-import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.NatOneToOneVmRule;
-import org.jclouds.vcloud.director.v1_5.domain.NatRule;
-import org.jclouds.vcloud.director.v1_5.domain.NatService;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRule;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallRuleProtocols;
+import org.jclouds.vcloud.director.v1_5.domain.network.FirewallService;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRange;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpRanges;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatOneToOneVmRule;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatRule;
+import org.jclouds.vcloud.director.v1_5.domain.network.NatService;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network.FenceMode;
+import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
+import org.jclouds.vcloud.director.v1_5.domain.section.CustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.VAppNetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
@@ -76,7 +77,7 @@ import com.google.common.collect.ImmutableSet;
  *
  * @author Adam Lowe
  */
-@Test(groups = { "unit", "user", "vapptemplate" }, testName = "VAppTemplateClientExpectTest")
+@Test(groups = { "unit", "user" }, testName = "VAppTemplateClientExpectTest")
 public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    public VAppTemplateClientExpectTest() {
@@ -679,7 +680,7 @@ public class VAppTemplateClientExpectTest extends VCloudDirectorAdminClientExpec
                   .ipRanges(IpRanges.builder().ipRange(IpRange.builder().startAddress("10.147.56.1").endAddress("10.147.56.1").build()).build())
                   .build())
             .parentNetwork(Reference.builder().href(URI.create("http://vcloud.example.com/api/v1.0/network/54")).type("application/vnd.vmware.vcloud.network+xml").name("Internet").build())
-            .fenceMode("natRouted")
+            .fenceMode(FenceMode.NAT_ROUTED)
             .features(NetworkFeatures.builder().services(ImmutableSet.of(firewallService, natService)).build())
             .build();
       

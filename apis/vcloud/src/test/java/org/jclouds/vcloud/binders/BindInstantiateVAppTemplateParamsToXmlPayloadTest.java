@@ -28,14 +28,13 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAU
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
@@ -90,7 +89,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
          @Override
          protected void bindConfigurations() {
-            bindProperties(new VCloudPropertiesBuilder(new Properties()).build());
+            bindProperties(new VCloudApiMetadata().getDefaultProperties());
          }
 
          @SuppressWarnings("unused")

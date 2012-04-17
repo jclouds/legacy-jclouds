@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AtmosServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
-
+   public AtmosServiceIntegrationLiveTest() {
+      provider = "atmos";
+   }
 }

@@ -91,12 +91,13 @@ import com.google.common.collect.Lists;
       "password",
       "groups"
 })
-public class User extends EntityType {
+public class User extends Entity {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromUser(this);
    }
@@ -104,7 +105,7 @@ public class User extends EntityType {
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends EntityType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Entity.Builder<B> {
 
       private String fullName;
       private String emailAddress;
@@ -128,6 +129,7 @@ public class User extends EntityType {
       /**
        * @see EntityType#getName()
        */
+      @Override
       public B name(String name) {
          return super.name(name.toLowerCase());
       }
@@ -284,6 +286,7 @@ public class User extends EntityType {
          return self();
       }
 
+      @Override
       public User build() {
          return new User(this);
       }

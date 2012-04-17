@@ -38,8 +38,8 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * 
@@ -76,14 +76,14 @@ public class CreatePortForwardingRulesForIP {
             "ip %s should be static NATed to a virtual machine before applying rules", ip);
       if (Iterables.size(ports) == 0)
          return ImmutableSet.<IPForwardingRule> of();
-      Builder<AsyncCreateResponse> responses = ImmutableSet.<AsyncCreateResponse> builder();
+      Builder<AsyncCreateResponse> responses = ImmutableSet.builder();
       for (int port : ports) {
          AsyncCreateResponse response = client.getNATClient().createIPForwardingRule(ip.getId(), protocol, port);
          logger.debug(">> creating IP forwarding rule IPAddress(%s) for protocol(%s), port(%s); response(%s)",
                ip.getId(), protocol, port, response);
          responses.add(response);
       }
-      Builder<IPForwardingRule> rules = ImmutableSet.<IPForwardingRule> builder();
+      Builder<IPForwardingRule> rules = ImmutableSet.builder();
       for (AsyncCreateResponse response : responses.build()) {
          IPForwardingRule rule = blockUntilJobCompletesAndReturnResult.<IPForwardingRule> apply(response);
          rules.add(rule);

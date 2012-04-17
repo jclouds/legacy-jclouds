@@ -28,13 +28,10 @@ import java.util.Set;
 import javax.inject.Named;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
-import org.jclouds.savvis.vpdc.VPDCAsyncClient;
-import org.jclouds.savvis.vpdc.VPDCClient;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
+import org.jclouds.savvis.vpdc.VPDCProviderMetadata;
 import org.jclouds.savvis.vpdc.config.VPDCRestClientModule;
 import org.jclouds.savvis.vpdc.domain.Resource;
 import org.jclouds.savvis.vpdc.domain.ResourceImpl;
@@ -52,12 +49,11 @@ import com.google.inject.Module;
 /**
  * @author Adrian Cole
  */
-public abstract class BaseVPDCAsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseVPDCAsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
    @Override
-   public RestContextSpec<VPDCClient, VPDCAsyncClient> createContextSpec() {
-      Properties props = new Properties();
-      return new RestContextFactory().createContextSpec("savvis-symphonyvpdc", "apiKey", "secretKey", props);
+   public ProviderMetadata createProviderMetadata() {
+      return new VPDCProviderMetadata();
    }
 
    @Override
@@ -71,7 +67,6 @@ public abstract class BaseVPDCAsyncClientTest<T> extends RestClientTest<T> {
       return new VPDCRestClientModuleExtension();
    }
 
-   @RequiresHttp
    @ConfiguresRestClient
    public static class VPDCRestClientModuleExtension extends VPDCRestClientModule {
 

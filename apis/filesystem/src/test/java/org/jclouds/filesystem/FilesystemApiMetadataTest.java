@@ -18,8 +18,7 @@
  */
 package org.jclouds.filesystem;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.blobstore.internal.BaseBlobStoreApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "FilesystemApiMetadataTest")
-public class FilesystemApiMetadataTest extends BaseApiMetadataTest {
+public class FilesystemApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 
    public FilesystemApiMetadataTest() {
-      super(new FilesystemApiMetadata(), ApiType.BLOBSTORE);
+      super(new FilesystemApiMetadata());
    }
 }

@@ -24,11 +24,11 @@ import java.util.concurrent.ExecutorService;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -46,7 +46,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
 public class GoogleAppEngineConfigurationModuleTest {
 
    public void testConfigureBindsClient() {
-      final Properties properties = new PropertiesBuilder().build();
+      final Properties properties = BaseRestApiMetadata.defaultProperties();
 
       Injector i = Guice.createInjector(new GoogleAppEngineConfigurationModule() {
          @Override

@@ -53,13 +53,14 @@ public class VCloudDirectorErrorHandler implements HttpErrorHandler {
       String message = data != null
             ? new String(data)
             : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(), response.getStatusLine());
-      Exception exception = new HttpResponseException(command, response, response.getPayload().getContentMetadata().getContentType());
+      Exception exception = new HttpResponseException(command, response, message);
       
-      // Try to create a VCloudDirectorException from XML payload
-      if (response.getPayload().getContentMetadata().getContentType().startsWith(VCloudDirectorMediaType.ERROR)) {
+      // Try to create a VCloudDirectorException from XML payload, if it exists
+      if (response.getPayload() != null && response.getPayload().getContentMetadata().getContentType().startsWith(VCloudDirectorMediaType.ERROR)) {
 	      try {
 	         Error error = JAXB.unmarshal(InputSuppliers.of(data).getInput(), Error.class);
 	         exception = new VCloudDirectorException(error);
+	         message = error.getMessage();
 	      } catch (Exception e) {
 	         Throwables.propagate(e);
 	      }

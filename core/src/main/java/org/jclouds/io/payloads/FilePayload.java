@@ -47,8 +47,7 @@ public class FilePayload extends BasePayload<File> {
       try {
          return new FileInputStream(content);
       } catch (FileNotFoundException e) {
-         Throwables.propagate(e);
-         return null;
+         throw Throwables.propagate(e);
       }
    }
 

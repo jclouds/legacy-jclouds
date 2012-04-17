@@ -22,8 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jclouds.ovf.Envelope;
-import org.jclouds.ovf.Envelope.Builder;
 import org.jclouds.ovf.VirtualSystem;
+import org.jclouds.ovf.Envelope.Builder;
 import org.jclouds.ovf.xml.internal.BaseEnvelopeHandler;
 
 /**

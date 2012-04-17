@@ -18,8 +18,7 @@
  */
 package org.jclouds.deltacloud;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "DeltacloudApiMetadataTest")
-public class DeltacloudApiMetadataTest extends BaseApiMetadataTest {
+public class DeltacloudApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public DeltacloudApiMetadataTest() {
-      super(new DeltacloudApiMetadata(), ApiType.COMPUTE);
+      super(new DeltacloudApiMetadata());
    }
 }

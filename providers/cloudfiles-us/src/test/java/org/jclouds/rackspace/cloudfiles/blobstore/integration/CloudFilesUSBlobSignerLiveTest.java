@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "CloudFilesUSBlobSignerLiveTest")
 public class CloudFilesUSBlobSignerLiveTest extends CloudFilesBlobSignerLiveTest {
-
+   public CloudFilesUSBlobSignerLiveTest() {
+      provider = "cloudfiles-us";
+   }
 }

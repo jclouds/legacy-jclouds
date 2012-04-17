@@ -30,7 +30,6 @@ import javax.inject.Singleton;
 import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.binders.AssignCorrectHostnameAndBindAsHostPrefixIfConfigured;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
@@ -49,7 +48,6 @@ import com.google.inject.Provides;
  *
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3AsyncClient> {
 
@@ -90,11 +88,10 @@ public class AWSS3RestClientModule extends S3RestClientModule<AWSS3Client, AWSS3
    /**
     * so that we can inject RestContext<S3Client, S3AsyncClient>
     */
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Singleton
    @Provides
-   RestContext<S3Client, S3AsyncClient>
-   provideBaseContext(RestContext<AWSS3Client, AWSS3AsyncClient> in) {
+   RestContext<S3Client, S3AsyncClient> provideBaseContext(RestContext<AWSS3Client, AWSS3AsyncClient> in) {
       return (RestContext) in;
    }
 

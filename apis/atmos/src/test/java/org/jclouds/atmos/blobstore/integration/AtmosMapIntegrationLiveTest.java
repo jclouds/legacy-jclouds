@@ -30,7 +30,9 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class AtmosMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
-
+   public AtmosMapIntegrationLiveTest() {
+      provider = "atmos";
+   }
    @Override
    // NO support for Content-MD5, so contains cannot work
    public void testContains() throws InterruptedException, ExecutionException, TimeoutException, IOException {

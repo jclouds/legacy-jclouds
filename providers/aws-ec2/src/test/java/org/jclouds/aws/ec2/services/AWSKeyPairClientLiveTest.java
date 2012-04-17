@@ -31,29 +31,24 @@ import static org.testng.Assert.assertNotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.AWSEC2AsyncClient;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.sshj.config.SshjSshClientModule;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -65,43 +60,36 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class AWSKeyPairClientLiveTest extends BaseVersionedServiceLiveTest {
+public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest {
    public AWSKeyPairClientLiveTest() {
       provider = "aws-ec2";
    }
 
    private AWSKeyPairClient client;
-   private RestContext<AWSEC2Client, AWSEC2AsyncClient> context;
-
-   private ComputeServiceContext computeContext;
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      computeContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-      context = computeContext.getProviderSpecificContext();
-      client = context.getApi().getKeyPairServices();
+   
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getKeyPairServices();
    }
 
    public void testNoSsh() throws Exception {
 
       Map<String, String> keyPair = ComputeTestUtils.setupKeyPair();
 
-      AWSInstanceClient instanceClient = AWSEC2Client.class.cast(context.getApi()).getInstanceServices();
+      AWSInstanceClient instanceClient = AWSEC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getInstanceServices();
 
       String group = PREFIX + "unssh";
-      computeContext.getComputeService().destroyNodesMatching(inGroup(group));
+      context.getComputeService().destroyNodesMatching(inGroup(group));
 
-      TemplateOptions options = computeContext.getComputeService().templateOptions();
+      TemplateOptions options = context.getComputeService().templateOptions();
 
       options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class);
 
       ComputeServiceContext noSshContext = null;
       try {
-         noSshContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-                  .of(new Log4JLoggingModule()), setupProperties());
+         noSshContext = createContext(setupProperties(), ImmutableSet.<Module> of(new Log4JLoggingModule()));
 
          Set<? extends NodeMetadata> nodes = noSshContext.getComputeService().createNodesInGroup(group, 1, options);
 
@@ -116,7 +104,7 @@ public class AWSKeyPairClientLiveTest extends BaseVersionedServiceLiveTest {
 
          assertEquals(instance.getKeyName(), "jclouds#" + group);
 
-         Map<? extends NodeMetadata, ExecResponse> responses = computeContext.getComputeService()
+         Map<? extends NodeMetadata, ExecResponse> responses = context.getComputeService()
                .runScriptOnNodesMatching(
                      runningInGroup(group),
                      exec("echo hello"),
@@ -129,7 +117,7 @@ public class AWSKeyPairClientLiveTest extends BaseVersionedServiceLiveTest {
 
       } finally {
          noSshContext.close();
-         computeContext.getComputeService().destroyNodesMatching(inGroup(group));
+         context.getComputeService().destroyNodesMatching(inGroup(group));
       }
    }
 
@@ -213,9 +201,5 @@ public class AWSKeyPairClientLiveTest extends BaseVersionedServiceLiveTest {
    protected AWSRunningInstance getInstance(AWSInstanceClient instanceClient, String id) {
       return getOnlyElement(getOnlyElement(instanceClient.describeInstancesInRegion(null, id)));
    }
-
-   @AfterTest
-   public void shutdown() {
-      context.close();
-   }
+   
 }

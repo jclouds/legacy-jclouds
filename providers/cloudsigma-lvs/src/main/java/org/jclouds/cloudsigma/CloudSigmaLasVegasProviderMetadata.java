@@ -19,46 +19,69 @@
 package org.jclouds.cloudsigma;
 
 import java.net.URI;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for CloudSigma Las Vegas.
- *
+
+ * 
  * @author Adrian Cole
  */
-public class CloudSigmaLasVegasProviderMetadata extends BaseProviderMetadata {
+public class CloudSigmaLasVegasProviderMetadata
+      extends
+      BaseProviderMetadata {
 
-   public CloudSigmaLasVegasProviderMetadata() {
-      this(builder()
-            .id("cloudsigma-lvs")
-            .name("CloudSigma Las Vegas")
-            .api(new CloudSigmaApiMetadata())
-            .homepage(URI.create("http://www.cloudsigma.com/en/our-cloud/features"))
-            .console(URI.create("https://gui.lvs.cloudsigma.com/"))
-            .iso3166Codes("US-NV"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudSigmaLasVegasProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public CloudSigmaLasVegasProviderMetadata() {
+      super(builder());
+   }
+
+   public CloudSigmaLasVegasProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+
+   public static class Builder
+         extends
+         BaseProviderMetadata.Builder {
+
+      protected Builder() {
+         id("cloudsigma-lvs")
+         .name("CloudSigma Las Vegas")
+         .apiMetadata(new CloudSigmaApiMetadata())
+         .homepage(URI.create("http://www.cloudsigma.com/en/our-cloud/features"))
+         .console(URI.create("https://gui.lvs.cloudsigma.com/"))
+         .iso3166Codes("US-NV")
+         .endpoint("https://api.lvs.cloudsigma.com")
+         .defaultProperties(CloudSigmaLasVegasProviderMetadata.defaultProperties());
+      }
 
       @Override
       public CloudSigmaLasVegasProviderMetadata build() {
          return new CloudSigmaLasVegasProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
 }

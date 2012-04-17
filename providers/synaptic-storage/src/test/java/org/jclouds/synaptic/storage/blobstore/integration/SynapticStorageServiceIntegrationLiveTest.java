@@ -30,6 +30,11 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", testName = "SynapticStorageServiceIntegrationLiveTest")
 public class SynapticStorageServiceIntegrationLiveTest extends AtmosServiceIntegrationLiveTest {
+
+   public SynapticStorageServiceIntegrationLiveTest() {
+      provider = "synaptic-storage";
+   }
+   
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US-VA", "US-TX");

@@ -18,14 +18,8 @@
  */
 package org.jclouds.dunkel.vcd;
 
-import java.util.List;
-import java.util.Properties;
-
-import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.dunkel.vcd.config.DunkelVCloudDirectorComputeServiceContextModule;
-import org.jclouds.dunkel.vcd.config.DunkelVCloudDirectorRestClientModule;
-
-import com.google.inject.Module;
+import src.main.java.org.jclouds.dunkel.vcd.config.DunkelVCloudDirectorComputeServiceContextModule;
+import src.main.java.org.jclouds.dunkel.vcd.config.DunkelVCloudDirectorRestClientModule;
 
 /**
  * 

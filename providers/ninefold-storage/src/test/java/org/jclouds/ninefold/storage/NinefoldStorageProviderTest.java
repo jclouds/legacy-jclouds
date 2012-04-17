@@ -19,7 +19,7 @@
 package org.jclouds.ninefold.storage;
 
 import org.jclouds.atmos.AtmosApiMetadata;
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**

@@ -18,51 +18,84 @@
  */
 package org.jclouds.cloudfiles;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
+import org.jclouds.cloudfiles.config.CloudFilesRestClientModule;
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Rackspace Cloud Files API
  * 
- * @author Dan Lo Bianco
+ * @author Adrian Cole
  */
-public class CloudFilesApiMetadata extends BaseApiMetadata {
-
-   public CloudFilesApiMetadata() {
-      this(builder()
-            .id("cloudfiles")
-            .type(ApiType.BLOBSTORE)
-            .name("Rackspace Cloud Files API")
-            .identityName("Username")
-            .credentialName("API Key")
-            .documentation(URI.create("http://docs.rackspacecloud.com/files/api/v1/cfdevguide_d5/content/ch01.html")));
+public class CloudFilesApiMetadata extends BaseRestApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 820062881469203616L;
+   
+   public static final TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudFilesClient, CloudFilesAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
+   private static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudFilesApiMetadata(Builder<?> builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromApiMetadata(this);
+   }
+
+   public CloudFilesApiMetadata() {
+      this(builder());
+   }
+
+   protected CloudFilesApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
+      return properties;
+   }
+
+   public static class Builder extends BaseRestApiMetadata.Builder {
+      protected Builder() {
+         super(CloudFilesClient.class, CloudFilesAsyncClient.class);
+         id("cloudfiles")
+         .name("Rackspace Cloud Files API")
+         .identityName("Username")
+         .credentialName("API Key")
+         .documentation(URI.create("http://docs.rackspacecloud.com/files/api/v1/cfdevguide_d5/content/ch01.html"))
+         .version(OpenStackAuthAsyncClient.VERSION)
+         .defaultProperties(CloudFilesApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudFilesRestClientModule.class, CloudFilesBlobStoreContextModule.class));
+      }
 
       @Override
       public CloudFilesApiMetadata build() {
          return new CloudFilesApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
-
 }

@@ -26,10 +26,9 @@ import static org.easymock.EasyMock.verify;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 import org.testng.annotations.Test;
@@ -49,7 +48,7 @@ public class BindUndeployVAppParamsToXmlPayloadTest {
 
       @Override
       protected void bindConfigurations() {
-         bindProperties(new VCloudPropertiesBuilder(new Properties()).build());
+         bindProperties(new VCloudApiMetadata().getDefaultProperties());
       }
    }));
    

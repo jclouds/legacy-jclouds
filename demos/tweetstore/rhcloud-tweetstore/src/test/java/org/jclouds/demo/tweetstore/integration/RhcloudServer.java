@@ -21,7 +21,7 @@ package org.jclouds.demo.tweetstore.integration;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.io.Closeables.closeQuietly;
 import static java.lang.String.format;
-import static org.jclouds.demo.tweetstore.integration.util.Zips.zipFile;
+import static org.jclouds.demo.tweetstore.integration.util.Zips.zipDir;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -88,7 +88,7 @@ public class RhcloudServer {
 
     protected ServerDeploymentActionResult deploy(String explodedWar)
             throws IOException, InterruptedException, ExecutionException {
-        File war = zipFile(explodedWar, format("%s-rhcloud.war", explodedWar), true);
+        File war = zipDir(explodedWar, format("%s-rhcloud.war", explodedWar));
         final String deploymentName = war.getName();
         
         DeploymentPlan plan = 

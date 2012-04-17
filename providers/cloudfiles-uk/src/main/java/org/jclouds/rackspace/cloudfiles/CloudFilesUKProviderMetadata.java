@@ -18,50 +18,70 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.cloudfiles.CloudFilesApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Files in UK.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Files UK.
  * 
  * @author Adrian Cole
  */
 public class CloudFilesUKProviderMetadata extends BaseProviderMetadata {
-
-   public CloudFilesUKProviderMetadata() {
-      this(builder()
-            .id("cloudfiles-uk")
-            .name("Rackspace Cloud Files UK")
-            .api(new CloudFilesApiMetadata())
-            .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-files"))
-            .console(URI.create("https://lon.manage.rackspacecloud.com"))
-            .linkedServices("cloudfiles-uk", "cloudservers-uk", "cloudloadbalancers-uk")
-            .iso3166Codes("GB-SLG"));
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7285715683919401020L;
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudFilesUKProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CloudFilesUKProviderMetadata() {
+      super(builder());
+   }
+
+   public CloudFilesUKProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "UK");
+      return properties;
+   }
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("cloudfiles-uk")
+         .name("Rackspace Cloud Files UK")
+         .apiMetadata(new CloudFilesApiMetadata())
+         .endpoint("https://lon.auth.api.rackspacecloud.com")
+         .homepage(URI.create("http://www.rackspace.co.uk/cloud-hosting/cloud-products/cloud-files"))
+         .console(URI.create("https://lon.manage.rackspacecloud.com"))
+         .linkedServices("cloudfiles-uk", "cloudservers-uk", "cloudloadbalancers-uk")
+         .iso3166Codes("GB-SLG");
+      }
 
       @Override
       public CloudFilesUKProviderMetadata build() {
          return new CloudFilesUKProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

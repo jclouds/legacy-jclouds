@@ -22,9 +22,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP;
+import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.internal.BaseLoadBalancer;
 
 import com.google.common.collect.Maps;

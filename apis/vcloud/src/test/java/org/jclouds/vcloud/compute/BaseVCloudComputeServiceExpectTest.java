@@ -23,17 +23,16 @@ import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientExpectTest;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.VCloudMediaType;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.net.HttpHeaders;
 import com.google.inject.Module;
 
@@ -57,7 +56,7 @@ public abstract class BaseVCloudComputeServiceExpectTest extends BaseRestClientE
             URI.create(ENDPOINT + "/v1.0/login"))
             .headers(ImmutableMultimap.<String, String> builder()
             .put(HttpHeaders.ACCEPT, VCloudMediaType.ORGLIST_XML)
-            .put(HttpHeaders.AUTHORIZATION, "Basic dXNlckBvcmc6cGFzc3dvcmQ=").build()).build();
+            .put(HttpHeaders.AUTHORIZATION, "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build()).build();
 
    protected String sessionToken = "AtatAgvJMrwOc9pDQq4RRCRLazThpnTKJDxSVH9oB2I=";
    
@@ -148,14 +147,18 @@ public abstract class BaseVCloudComputeServiceExpectTest extends BaseRestClientE
 
    @Override
    public ComputeService createClient(Function<HttpRequest, HttpResponse> fn, Module module, Properties props) {
-      return new ComputeServiceContextFactory(setupRestProperties())
-               .createContext(provider, "user@org", "password", ImmutableSet.<Module> of(new ExpectModule(fn),
-                        new NullLoggingModule(), module), props).getComputeService();
+      return createInjector(fn, module, props).getInstance(ComputeService.class);
    }
+   
+   @Override
+   protected ApiMetadata createApiMetadata() {
+      return new VCloudApiMetadata();
+   }
+
    @Override
    protected Properties setupProperties() {
       Properties props = super.setupProperties();
-      props.setProperty(provider+".endpoint", ENDPOINT);
+      props.setProperty(provider + ".endpoint", ENDPOINT);
       return props;
    }
 }

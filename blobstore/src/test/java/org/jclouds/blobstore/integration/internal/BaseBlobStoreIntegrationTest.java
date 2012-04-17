@@ -18,15 +18,14 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Throwables.propagateIfPossible;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
@@ -37,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
@@ -56,9 +56,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
-public class BaseBlobStoreIntegrationTest {
+public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreContext> {
    protected static final String LOCAL_ENCODING = System.getProperty("file.encoding");
    protected static final String XML_STRING_FORMAT = "<apples><apple name=\"%s\"></apple> </apples>";
    protected static final String TEST_STRING = String.format(XML_STRING_FORMAT, "apple");
@@ -75,7 +76,6 @@ public class BaseBlobStoreIntegrationTest {
    public static long INCONSISTENCY_WINDOW = 10000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
 
-   protected volatile BlobStoreContext context;
    protected static volatile int containerCount = Integer.parseInt(System.getProperty("test.blobstore.container-count",
          "10"));
    public static final String CONTAINER_PREFIX = System.getProperty("user.name") + "-blobstore";
@@ -89,17 +89,14 @@ public class BaseBlobStoreIntegrationTest {
     */
    @BeforeSuite
    public void setUpResourcesForAllThreads(ITestContext testContext) throws Exception {
-      // TODO: close this context
-      createContainersSharedByAllThreads(getCloudResources(testContext), testContext);
+      setupContext();
+      createContainersSharedByAllThreads(context, testContext);
+      context.close();
+      context = null;
    }
-
-   @SuppressWarnings("unchecked")
-   private BlobStoreContext getCloudResources(ITestContext testContext) throws ClassNotFoundException,
-         InstantiationException, IllegalAccessException, Exception {
-      String initializerClass = checkNotNull(System.getProperty("test.initializer"), "test.initializer");
-      Class<BaseTestInitializer> clazz = (Class<BaseTestInitializer>) Class.forName(initializerClass);
-      BaseTestInitializer initializer = clazz.newInstance();
-      return initializer.init(createHttpModule(), testContext);
+   
+   protected Iterable<Module> setupModules() {
+      return ImmutableSet.<Module> of(getLoggingModule(), createHttpModule());
    }
 
    protected ExecutorService exec;
@@ -110,17 +107,17 @@ public class BaseBlobStoreIntegrationTest {
     * want to have a different implementation of context.getBlobStore(). For example, one class may
     * want non-blocking i/o and another class google appengine.
     */
-   @BeforeClass(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" }, dependsOnMethods = "setupContext")
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
-      context = getCloudResources(testContext);
       exec = Executors.newCachedThreadPool();
    }
 
+   
    @AfterClass(groups = { "integration", "live" })
-   protected void tearDownClient() throws Exception {
+   @Override
+   protected void tearDownContext() {
       if (exec != null) {
-         exec.shutdown();
-         exec.awaitTermination(60, TimeUnit.SECONDS);
+         exec.shutdownNow();
       }
       context.close();
    }
@@ -429,6 +426,11 @@ public class BaseBlobStoreIntegrationTest {
 
    protected Module createHttpModule() {
       return new JavaUrlHttpCommandExecutorServiceModule();
+   }
+
+   @Override
+   protected TypeToken<BlobStoreContext> contextType() {
+      return TypeToken.of(BlobStoreContext.class);
    }
 
 }

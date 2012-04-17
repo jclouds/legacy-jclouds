@@ -22,13 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.deltacloud.DeltacloudAsyncClient;
-import org.jclouds.deltacloud.DeltacloudClient;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.rest.RestContext;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -42,6 +38,7 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true, testName = "DeltacloudComputeServiceLiveTest")
 public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
    public DeltacloudComputeServiceLiveTest() {
       provider = "deltacloud";
    }
@@ -56,12 +53,6 @@ public class DeltacloudComputeServiceLiveTest extends BaseComputeServiceLiveTest
    protected void checkUserMetadataInNodeEquals(NodeMetadata node, ImmutableMap<String, String> userMetadata) {
       assert node.getUserMetadata().equals(ImmutableMap.<String, String> of()) : String.format(
                "node userMetadata did not match %s %s", userMetadata, node);
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<DeltacloudClient, DeltacloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override

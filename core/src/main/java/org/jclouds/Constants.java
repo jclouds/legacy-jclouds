@@ -42,6 +42,13 @@ public interface Constants {
    public static final String PROPERTY_IO_WORKER_THREADS = "jclouds.io-worker-threads";
 
    /**
+    * Integer property. default (10)
+    * <p/>
+    * Amount of threads servicing scheduled tasks.
+    */
+   public static final String PROPERTY_SCHEDULER_THREADS = "jclouds.scheduler-threads";
+
+   /**
     * Integer property. default (20)
     * <p/>
     * Limits the amount of connections per context.
@@ -259,5 +266,12 @@ public interface Constants {
     * </code>
     */
    public static final String PROPERTY_TIMEOUTS_PREFIX = "jclouds.timeouts.";
+   
+   /**
+    * Boolean property. Default (true).
+    * <p/>
+    * Configures the response parsers to pretty print the payload when possible. 
+    */
+   public static final String PROPERTY_PRETTY_PRINT_PAYLOADS = "jclouds.payloads.pretty-print";
 
 }

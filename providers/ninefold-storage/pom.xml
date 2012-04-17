@@ -34,7 +34,6 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.initializer>org.jclouds.ninefold.storage.blobstore.integration.NinefoldStorageTestInitializer</test.initializer>
         <test.ninefold-storage.endpoint>http://onlinestorage.ninefold.com</test.ninefold-storage.endpoint>
         <test.ninefold-storage.api-version>1.4.0</test.ninefold-storage.api-version>
         <test.ninefold-storage.build-version />
@@ -106,7 +105,6 @@
                                         <test.ninefold-storage.build-version>${test.ninefold-storage.build-version}</test.ninefold-storage.build-version>
                                         <test.ninefold-storage.identity>${test.ninefold-storage.identity}</test.ninefold-storage.identity>
                                         <test.ninefold-storage.credential>${test.ninefold-storage.credential}</test.ninefold-storage.credential>
-                                        <test.initializer>${test.initializer}</test.initializer>
                                         <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                                         <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                                     </systemPropertyVariables>

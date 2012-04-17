@@ -24,8 +24,8 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.LoginCredentials;
@@ -66,17 +66,27 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
                   "{\"server\":{\"name\":\"test-e92\",\"imageRef\":\"1241\",\"flavorRef\":\"100\",\"security_groups\":[{\"name\":\"group2\"},{\"name\":\"group1\"}]}}","application/json"))
          .build();
 
-  
       HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
          .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
-         
+      HttpRequest serverDetail = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/71752"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
+
+      HttpResponse serverDetailResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/server_details.json")).build();
+
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
                .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
                .put(extensionsOfNovaRequest, extensionsOfNovaResponse)
                .put(listImagesDetail, listImagesDetailResponse)
                .put(listFlavorsDetail, listFlavorsDetailResponse)
-               .put(createServer, createServerResponse).build();
+               .put(createServer, createServerResponse)
+               .put(serverDetail, serverDetailResponse).build();
 
       Injector forSecurityGroups = requestsSendResponses(requestResponseMap);
 
@@ -113,13 +123,24 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       HttpResponse createServerResponse = HttpResponse.builder().statusCode(202).message("HTTP/1.1 202 Accepted")
          .payload(payloadFromResourceWithContentType("/new_server.json","application/json; charset=UTF-8")).build();
 
-         
+      HttpRequest serverDetail = HttpRequest
+            .builder()
+            .method("GET")
+            .endpoint(URI.create("https://compute.north.host/v1.1/3456/servers/71752"))
+            .headers(
+                  ImmutableMultimap.<String, String> builder().put("Accept", "application/json")
+                        .put("X-Auth-Token", authToken).build()).build();
+
+      HttpResponse serverDetailResponse = HttpResponse.builder().statusCode(200)
+            .payload(payloadFromResource("/server_details.json")).build();
+
       Map<HttpRequest, HttpResponse> requestResponseMap = ImmutableMap.<HttpRequest, HttpResponse> builder()
                .put(keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess)
                .put(extensionsOfNovaRequest, extensionsOfNovaResponse)
                .put(listImagesDetail, listImagesDetailResponse)
                .put(listFlavorsDetail, listFlavorsDetailResponse)
-               .put(createServer, createServerResponse).build();
+               .put(createServer, createServerResponse)
+               .put(serverDetail, serverDetailResponse).build();
 
       Injector forSecurityGroups = requestsSendResponses(requestResponseMap);
 
@@ -140,6 +161,7 @@ public class NovaComputeServiceAdapterExpectTest extends BaseNovaComputeServiceC
       assertNotNull(server);
       assertEquals(server.getCredentials(), LoginCredentials.builder().privateKey("privateKey").build());
    }
+   
    @Override
    public Injector apply(ComputeServiceContext input) {
       return input.utils().injector();

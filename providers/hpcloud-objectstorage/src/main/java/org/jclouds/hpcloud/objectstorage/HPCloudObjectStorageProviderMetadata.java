@@ -18,49 +18,71 @@
  */
 package org.jclouds.hpcloud.objectstorage;
 
-import java.net.URI;
+import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.providers.ProviderMetadata} for HP Cloud Services Object Storage
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for StratoGen VMware hosting
  * 
- * @author Jeremy Daggett
+ * @author Adrian Cole
  */
 public class HPCloudObjectStorageProviderMetadata extends BaseProviderMetadata {
 
-   public HPCloudObjectStorageProviderMetadata() {
-      this(builder()
-            .id("hpcloud-objectstorage")
-            .name("HP Cloud Services Object Storage")
-            .api(new HPCloudObjectStorageApiMetadata())
-            .homepage(URI.create("http://hpcloud.com"))
-            .console(URI.create("https://manage.hpcloud.com/objects/us-west"))
-            .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
-            .iso3166Codes("US-NV"));
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3735142654912867384L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected HPCloudObjectStorageProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public HPCloudObjectStorageProviderMetadata() {
+      super(builder());
+   }
+
+   public HPCloudObjectStorageProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_BUILD_VERSION, "???"); //FIXME
+//      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External"); FIXME: needed?
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("hpcloud-objectstorage")
+         .name("HP Cloud Services Object Storage")
+         .apiMetadata(new HPCloudObjectStorageApiMetadata())
+         .homepage(URI.create("http://hpcloud.com"))
+         .console(URI.create("https://manage.hpcloud.com/objects/us-west"))
+         .linkedServices("hpcloud-compute", "hpcloud-objectstorage")
+         .iso3166Codes("US-NV")
+         .endpoint("https://region-a.geo-1.identity.hpcloudsvc.com:35357")
+         .defaultProperties(HPCloudObjectStorageProviderMetadata.defaultProperties());
+      }
 
       @Override
       public HPCloudObjectStorageProviderMetadata build() {
          return new HPCloudObjectStorageProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

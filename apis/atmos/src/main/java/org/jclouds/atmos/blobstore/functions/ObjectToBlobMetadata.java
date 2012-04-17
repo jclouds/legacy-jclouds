@@ -19,8 +19,8 @@
 package org.jclouds.atmos.blobstore.functions;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

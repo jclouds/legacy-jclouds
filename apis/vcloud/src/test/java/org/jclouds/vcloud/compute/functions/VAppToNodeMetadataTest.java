@@ -18,13 +18,11 @@
  */
 package org.jclouds.vcloud.compute.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -41,7 +39,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceDependenciesModule;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
@@ -75,8 +73,7 @@ public class VAppToNodeMetadataTest {
 
          @Override
          protected void configure() {
-            Properties props = new Properties();
-            Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
+            Names.bindProperties(binder(), new VCloudApiMetadata().getDefaultProperties());
             bind(new TypeLiteral<Function<ReferenceType, Location>>() {
             }).to(new TypeLiteral<FindLocationForResource>() {
             });

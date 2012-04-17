@@ -26,8 +26,8 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -40,8 +40,8 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Optional;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;

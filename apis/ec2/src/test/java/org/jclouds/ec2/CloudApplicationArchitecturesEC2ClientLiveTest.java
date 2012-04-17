@@ -27,18 +27,16 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.BlockDevice;
-import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -46,29 +44,26 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceHasIpAddress;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * Follows the book Cloud Application Architectures ISBN: 978-0-596-15636-7
@@ -80,7 +75,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = false, singleThreaded = true, testName = "CloudApplicationArchitecturesEC2ClientLiveTest")
-public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseVersionedServiceLiveTest {
+public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeServiceContextLiveTest {
    public CloudApplicationArchitecturesEC2ClientLiveTest() {
       provider = "ec2";
    }
@@ -97,12 +92,10 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseVersione
    private RetryablePredicate<RunningInstance> hasIpTester;
    private RetryablePredicate<RunningInstance> runningTester;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      Injector injector = new RestContextFactory().createContextBuilder(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).buildInjector();
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      Injector injector = context.utils().injector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client), 180, 5,

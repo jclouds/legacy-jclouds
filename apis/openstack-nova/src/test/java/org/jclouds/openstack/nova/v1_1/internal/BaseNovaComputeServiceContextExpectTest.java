@@ -23,17 +23,16 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.CopyInputStreamInputSupplierMap;
-import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
 import org.jclouds.rest.config.CredentialStoreModule;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.InputSupplier;
 import com.google.inject.Module;
 
@@ -84,10 +83,20 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
 
    private ComputeServiceContext createComputeServiceContext(Function<HttpRequest, HttpResponse> fn, Module module,
          Properties props) {
-      // the following will wipe out credential store between tests
-      return new ComputeServiceContextFactory(setupRestProperties()).createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new ExpectModule(fn), new NullLoggingModule(), new CredentialStoreModule(
-                  new CopyInputStreamInputSupplierMap(new ConcurrentHashMap<String, InputSupplier<InputStream>>())),
-                  module), props);
+      return createInjector(fn, module, props).getInstance(ComputeServiceContext.class);
+   }
+   
+   @Override
+   protected ApiMetadata createApiMetadata() {
+      return new NovaApiMetadata();
+   }
+
+   // isolate tests from eachother, as default credentialStore is static
+   protected Module credentialStoreModule = new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
+         new ConcurrentHashMap<String, InputSupplier<InputStream>>()));
+
+   @Override
+   protected Module createModule() {
+      return credentialStoreModule;
    }
 }

@@ -31,7 +31,6 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
@@ -56,7 +55,6 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 public class AuthenticationServiceModule extends AbstractModule {
 
    @Override

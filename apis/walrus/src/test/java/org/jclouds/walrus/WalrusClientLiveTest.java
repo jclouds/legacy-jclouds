@@ -36,8 +36,7 @@ public class WalrusClientLiveTest extends S3ClientLiveTest {
    // path based, not virtual host
    @Override
    protected URL getObjectURL(String containerName, String key) throws Exception {
-      URL url = new URL(String.format(context.getProviderSpecificContext().getEndpoint().toASCIIString()
-               + "/services/Walrus/%s/%s", containerName, key));
+      URL url = new URL(String.format(endpoint + "/services/Walrus/%s/%s", containerName, key));
       return url;
    }
 

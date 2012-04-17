@@ -25,7 +25,10 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusBlobSignerLiveTest")
+@Test(groups = "live", testName = "EucalyptusPartnerCloudWalrusBlobSignerLiveTest")
 public class EucalyptusPartnerCloudWalrusBlobSignerLiveTest extends WalrusBlobSignerLiveTest {
 
+   public EucalyptusPartnerCloudWalrusBlobSignerLiveTest() {
+      provider = "eucalyptus-partnercloud-s3";
+   }
 }

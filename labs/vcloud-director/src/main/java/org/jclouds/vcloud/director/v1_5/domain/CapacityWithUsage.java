@@ -61,6 +61,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
       return new Builder();
    }
 
+   @Override
    public Builder toBuilder() {
       return new Builder().fromCapacityWithUsage(this);
    }
@@ -87,6 +88,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
       }
 
 
+      @Override
       public CapacityWithUsage build() {
          return new CapacityWithUsage(units, allocated, limit, used, overhead);
       }
@@ -94,6 +96,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
       /**
        * @see CapacityType#getUnits()
        */
+      @Override
       public Builder units(String units) {
          this.units = units;
          return this;
@@ -102,6 +105,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
       /**
        * @see CapacityType#getAllocated()
        */
+      @Override
       public Builder allocated(Long allocated) {
          this.allocated = allocated;
          return this;
@@ -110,6 +114,7 @@ public class CapacityWithUsage extends CapacityType<CapacityWithUsage>
       /**
        * @see CapacityType#getLimit()
        */
+      @Override
       public Builder limit(Long limit) {
          this.limit = limit;
          return this;

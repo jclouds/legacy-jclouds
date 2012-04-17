@@ -204,7 +204,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
-         ImmutableMap.Builder<String, Blob> newMap = ImmutableMap.<String, Blob> builder();
+         ImmutableMap.Builder<String, Blob> newMap = ImmutableMap.builder();
          for (String key : fiveInputs.keySet()) {
             newMap.put(
                   key,
@@ -227,7 +227,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       String bucketName = getContainerName();
       try {
          BlobMap map = createMap(context, bucketName);
-         Builder<String> keySet = ImmutableSet.<String> builder();
+         Builder<String> keySet = ImmutableSet.builder();
          for (int i = 0; i < maxResultsForTestListings() + 1; i++) {
             keySet.add(i + "");
          }
@@ -265,10 +265,12 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       return 100;
    }
 
+   @Override
    protected BlobMap createMap(BlobStoreContext context, String bucket) {
       return createMap(context, bucket, maxResults(maxResultsForTestListings()));
    }
-
+   
+   @Override
    protected BlobMap createMap(BlobStoreContext context, String bucket, ListContainerOptions options) {
       return context.createBlobMap(bucket, options);
    }

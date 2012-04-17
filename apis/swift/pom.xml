@@ -34,7 +34,6 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <test.initializer>org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer</test.initializer>
     <test.swift.endpoint>http://localhost:11000</test.swift.endpoint>
     <test.swift.api-version>1.0</test.swift.api-version>
     <test.swift.build-version />
@@ -105,7 +104,6 @@
                 </goals>
                 <configuration>
                   <systemPropertyVariables>
-                    <test.initializer>${test.initializer}</test.initializer>
                     <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                     <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                     <test.swift.endpoint>${test.swift.endpoint}</test.swift.endpoint>

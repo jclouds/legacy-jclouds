@@ -24,26 +24,23 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.AWSEC2ProviderMetadata;
 import org.jclouds.aws.ec2.config.AWSEC2RestClientModule;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.date.DateService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.util.Suppliers2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -61,10 +58,9 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
+public abstract class BaseAWSEC2AsyncClientTest<T> extends BaseAsyncClientTest<T> {
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static class StubAWSEC2RestClientModule extends AWSEC2RestClientModule {
 
       @Override
@@ -134,8 +130,8 @@ public abstract class BaseAWSEC2AsyncClientTest<T> extends RestClientTest<T> {
    protected String provider = "aws-ec2";
 
    @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
+   public AWSEC2ProviderMetadata createProviderMetadata(){
+      return new AWSEC2ProviderMetadata();
    }
 
 }

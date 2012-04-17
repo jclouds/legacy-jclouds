@@ -18,43 +18,74 @@
  */
 package org.jclouds.walrus;
 
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
+
+import java.util.Properties;
+
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.s3.S3ApiMetadata;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
+import org.jclouds.s3.blobstore.config.S3BlobStoreContextModule;
+import org.jclouds.walrus.config.WalrusRestClientModule;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for the Walrus (S3 clone) api.
+ * Implementation of {@link ApiMetadata} for the Walrus S3 API
  * 
  * @author Adrian Cole
  */
 public class WalrusApiMetadata extends S3ApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 820062881469203616L;
+   
+   private static Builder builder() {
+      return new Builder();
+   }
+
+   @Override
+   public Builder toBuilder() {
+      return builder().fromApiMetadata(this);
+   }
 
    public WalrusApiMetadata() {
-      this(builder().fromApiMetadata(new S3ApiMetadata())
-            .id("walrus")
-            .name("Walrus (S3 clone) API"));
+      this(builder());
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected WalrusApiMetadata(ConcreteBuilder builder) {
+   protected WalrusApiMetadata(Builder builder) {
       super(builder);
    }
+   
+   public static Properties defaultProperties() {
+      Properties properties = S3ApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/services/Walrus");
+      properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
+      return properties;
+   }
 
-   private static class ConcreteBuilder extends S3ApiMetadataBuilder<ConcreteBuilder> {
-
+   public static class Builder extends S3ApiMetadata.Builder {
+      protected Builder(){
+         super(S3Client.class, S3AsyncClient.class);
+         id("walrus")
+         .name("Walrus (S3 clone) API")
+         .version("Walrus-1.6")
+         .defaultProperties(WalrusApiMetadata.defaultProperties())
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(WalrusRestClientModule.class, S3BlobStoreContextModule.class));
+      }
+      
       @Override
       public WalrusApiMetadata build() {
          return new WalrusApiMetadata(this);
       }
+
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 
-   private static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

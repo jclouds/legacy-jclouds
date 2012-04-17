@@ -41,6 +41,7 @@ public class QueryList extends ContainerType {
       return new ConcreteBuilder();
    }
 
+   @Override
    public Builder<?> toBuilder() {
       return builder().fromQueryList(this);
    }

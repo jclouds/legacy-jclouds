@@ -38,10 +38,6 @@
         <url>http://jclouds.googlecode.com/svn/trunk/blobstore</url>
     </scm>
 
-    <properties>
-       <test.initializer>org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer</test.initializer>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -77,7 +73,6 @@
                                 <include>**/*IntegrationTest.java</include>
                             </includes>
                             <systemPropertyVariables>
-                                <test.initializer>${test.initializer}</test.initializer>
                                 <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                                 <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                             </systemPropertyVariables>

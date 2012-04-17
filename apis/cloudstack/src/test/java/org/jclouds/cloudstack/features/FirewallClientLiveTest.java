@@ -61,8 +61,8 @@ public class FirewallClientLiveTest extends BaseCloudStackClientLiveTest {
    private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       prefix += "rule";
       try {
          network = find(client.getNetworkClient().listNetworks(), Predicates.and(supportsPortForwarding(),

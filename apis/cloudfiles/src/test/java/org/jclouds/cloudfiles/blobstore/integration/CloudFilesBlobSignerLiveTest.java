@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" })
 public class CloudFilesBlobSignerLiveTest extends SwiftBlobSignerLiveTest {
-
+   public CloudFilesBlobSignerLiveTest(){
+      provider = "cloudfiles";
+   }
 }

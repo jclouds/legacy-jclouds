@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.options.CloneVAppTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -55,7 +55,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
          Properties props = new Properties();
          props.setProperty("jclouds.vcloud.xml.ns", "http://www.vmware.com/vcloud/v1");
          props.setProperty("jclouds.vcloud.xml.schema", "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
-         Names.bindProperties(binder(), new PropertiesBuilder(props).build());
+         Names.bindProperties(binder(), new VCloudApiMetadata().getDefaultProperties());
       }
    });
 
@@ -73,7 +73,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
       BindCloneVAppTemplateParamsToXmlPayload binder = injector
                .getInstance(BindCloneVAppTemplateParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.<String, String> builder();
+      Builder<String, String> map = ImmutableMap.builder();
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/201");
       binder.bindToRequest(request, map.build());
@@ -94,7 +94,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
       BindCloneVAppTemplateParamsToXmlPayload binder = injector
                .getInstance(BindCloneVAppTemplateParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.<String, String> builder();
+      Builder<String, String> map = ImmutableMap.builder();
       map.put("name", "new-linux-server");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/201");
       map.put("IsSourceDelete", "true");
@@ -114,7 +114,7 @@ public class BindCloneVAppTemplateParamsToXmlPayloadTest {
       BindCloneVAppTemplateParamsToXmlPayload binder = injector
                .getInstance(BindCloneVAppTemplateParamsToXmlPayload.class);
 
-      Builder<String, String> map = ImmutableMap.<String, String> builder();
+      Builder<String, String> map = ImmutableMap.builder();
       map.put("name", "my-vapptemplate");
       map.put("Source", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/4181");
       binder.bindToRequest(request, map.build());

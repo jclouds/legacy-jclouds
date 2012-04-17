@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
@@ -42,6 +41,7 @@ import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
+import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.trmk.vcloud_0_8.domain.Status;
@@ -68,7 +68,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    protected final String apiVersion;
 
    @Inject
-   public BindVAppConfigurationToXmlPayload(@Named(PROPERTY_API_VERSION) String apiVersion,
+   public BindVAppConfigurationToXmlPayload(@ApiVersion String apiVersion,
             BindToStringPayload stringBinder, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
             @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
       this.apiVersion = apiVersion;

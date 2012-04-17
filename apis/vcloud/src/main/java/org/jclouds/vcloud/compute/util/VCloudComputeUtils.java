@@ -86,7 +86,7 @@ public class VCloudComputeUtils {
       // TODO make this work with composite vApps
       if (vApp.getChildren().size() == 0)
          return ImmutableSet.of();
-      Builder<String> ips = ImmutableSet.<String> builder();
+      Builder<String> ips = ImmutableSet.builder();
       Vm vm = Iterables.get(vApp.getChildren(), 0);
       // TODO: figure out how to differentiate public from private ip addresses
       // assumption is that we'll do this from the network object, which may

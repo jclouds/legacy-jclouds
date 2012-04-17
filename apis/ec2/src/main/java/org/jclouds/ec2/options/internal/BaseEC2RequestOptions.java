@@ -51,7 +51,7 @@ public class BaseEC2RequestOptions extends BaseHttpRequestOptions {
    }
 
    protected Set<String> getFormValuesWithKeysPrefixedBy(final String prefix) {
-      Builder<String> values = ImmutableSet.<String> builder();
+      Builder<String> values = ImmutableSet.builder();
       for (String key : Iterables.filter(formParameters.keySet(), new Predicate<String>() {
 
          public boolean apply(String input) {

@@ -18,50 +18,83 @@
  */
 package org.jclouds.elb;
 
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.elb.config.ELBRestClientModule;
+import org.jclouds.elb.loadbalancer.config.ELBLoadBalancerContextModule;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's Elastic Load Balancing api.
  * 
  * @author Adrian Cole
  */
-public class ELBApiMetadata extends BaseApiMetadata {
+public class ELBApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7077953935392202824L;
+   
+   public static final TypeToken<RestContext<ELBClient, ELBAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<ELBClient, ELBAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+
+   @Override
+   public Builder toBuilder() {
+      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   }
 
    public ELBApiMetadata() {
-      this(builder()
-            .id("elb")
-            .type(ApiType.LOADBALANCER)
-            .name("Amazon Elastic Load Balancing Api")
-            .identityName("Access Key ID")
-            .credentialName("Secret Access Key")
-            .documentation(URI.create("http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference")));
+      this(new Builder(ELBClient.class, ELBAsyncClient.class));
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected ELBApiMetadata(ConcreteBuilder builder) {
+   protected ELBApiMetadata(Builder builder) {
       super(builder);
    }
+   
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
+      properties.setProperty(PROPERTY_HEADER_TAG, "amz");
+      return properties;
+   }
+   
+   public static class Builder extends BaseRestApiMetadata.Builder {
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+      protected Builder(Class<?> client, Class<?> asyncClient) {
+         super(client, asyncClient);
+         id("elb")
+         .name("Amazon Elastic Load Balancing Api")
+         .identityName("Access Key ID")
+         .credentialName("Secret Access Key")
+         .version(ELBAsyncClient.VERSION)
+         .defaultProperties(ELBApiMetadata.defaultProperties())
+         .defaultEndpoint("https://elasticloadbalancing.us-east-1.amazonaws.com")
+         .documentation(URI.create("http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference"))
+         .wrapper(LoadBalancerServiceContext.class)
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(ELBRestClientModule.class, ELBLoadBalancerContextModule.class));
+      }
 
       @Override
       public ELBApiMetadata build() {
          return new ELBApiMetadata(this);
       }
+      
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

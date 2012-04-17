@@ -27,6 +27,10 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class HPCloudObjectStorageBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveTest {
+   public HPCloudObjectStorageBlobIntegrationLiveTest() {
+      provider = "hpcloud-objectstorage";
+   }
+
    @Override
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
       assert blob.getPayload().getContentMetadata().getContentDisposition().startsWith(contentDisposition) : blob

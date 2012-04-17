@@ -19,12 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.admin;
 
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.vcloud.director.v1_5.domain.AdminOrg;
-import org.jclouds.vcloud.director.v1_5.domain.AdminVdc;
-import org.jclouds.vcloud.director.v1_5.domain.Catalog;
-import org.jclouds.vcloud.director.v1_5.domain.Group;
-import org.jclouds.vcloud.director.v1_5.domain.User;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.Network;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminOrgAsyncClient;

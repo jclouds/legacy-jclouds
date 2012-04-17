@@ -24,10 +24,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -51,14 +51,14 @@ public class BluelockVCloudZone01TemplateBuilderLiveTest extends BaseTemplateBui
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             switch (input.family) {
-               case UBUNTU:
-                  return !input.version.equals("") || !input.is64Bit;
-               case RHEL:
-                  return !input.version.equals("");
-               case WINDOWS:
-                  return !input.version.equals("");
-               default:
-                  return true;
+            case UBUNTU:
+               return !input.version.equals("") || !input.is64Bit;
+            case RHEL:
+               return !input.version.equals("");
+            case WINDOWS:
+               return !input.version.equals("");
+            default:
+               return true;
             }
          }
 

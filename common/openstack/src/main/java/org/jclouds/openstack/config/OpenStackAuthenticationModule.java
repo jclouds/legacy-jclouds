@@ -33,7 +33,6 @@ import org.jclouds.concurrent.RetryOnTimeOutExceptionFunction;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.openstack.Authentication;
@@ -58,7 +57,6 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 public class OpenStackAuthenticationModule extends AbstractModule {
 
    @Override

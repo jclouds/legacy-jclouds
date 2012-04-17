@@ -30,6 +30,10 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live")
 public class HPCloudObjectStorageServiceIntegrationLiveTest extends SwiftServiceIntegrationLiveTest {
+   public HPCloudObjectStorageServiceIntegrationLiveTest() {
+      provider = "hpcloud-objectstorage";
+   }
+
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US-NV");

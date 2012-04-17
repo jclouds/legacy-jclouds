@@ -27,4 +27,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest")
 public class EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest extends WalrusBlobIntegrationLiveTest {
 
+   public EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest() {
+      provider = "eucalyptus-partnercloud-s3";
+   }
 }

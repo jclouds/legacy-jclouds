@@ -30,16 +30,6 @@ public class VCloudDirectorConstants {
 
    public static final String VCLOUD_VMW_NS = "http://www.vmware.com/schema/ovf";
 
-   public static final String VCLOUD_OVF_NS = "http://schemas.dmtf.org/ovf/envelope/1";
-
-   public static final String VCLOUD_OVF_ENV_NS = "http://schemas.dmtf.org/ovf/environment/1";
-
-   public static final String VCLOUD_CIM_NS = "http://schemas.dmtf.org/wbem/wscim/1/common";
-   
-   public static final String VCLOUD_CIM_VSSD_NS = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData";
-   
-   public static final String VCLOUD_CIM_RASD_NS = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData";
-
    /** The property used to configure the timeout for task completion. */
    public static final String PROPERTY_VCLOUD_DIRECTOR_TIMEOUT_TASK_COMPLETED = "jclouds.vcloud-director.timeout.task-complete";
 

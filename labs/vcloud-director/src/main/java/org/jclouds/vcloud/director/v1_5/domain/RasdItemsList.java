@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
  */
 @XmlRootElement(name = "RasdItemsList")
 @XmlType(name = "RasdItemsList")
-public class RasdItemsList extends ResourceType implements Set<ResourceAllocationSettingData> {
+public class RasdItemsList extends Resource implements Set<RasdItem> {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -60,14 +60,14 @@ public class RasdItemsList extends ResourceType implements Set<ResourceAllocatio
    private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
    }
    
-   public static abstract class Builder<B extends Builder<B>> extends ResourceType.Builder<B> {
+   public static abstract class Builder<B extends Builder<B>> extends Resource.Builder<B> {
 
-      private Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+      private Set<RasdItem> items = Sets.newLinkedHashSet();
 
       /**
        * @see RasdItemsList#getItems()
        */
-      public B items(Set<ResourceAllocationSettingData> items) {
+      public B items(Set<RasdItem> items) {
          this.items = checkNotNull(items, "items");
          return self();
       }
@@ -75,7 +75,7 @@ public class RasdItemsList extends ResourceType implements Set<ResourceAllocatio
       /**
        * @see RasdItemsList#getItems()
        */
-      public B item(ResourceAllocationSettingData item) {
+      public B item(RasdItem item) {
          this.items.add(checkNotNull(item, "item"));
          return self();
       }
@@ -87,7 +87,7 @@ public class RasdItemsList extends ResourceType implements Set<ResourceAllocatio
       }
 
       public B fromRasdItemsList(RasdItemsList in) {
-         return fromResourceType(in).items(in.getItems());
+         return fromResource(in).items(in.getItems());
       }
    }
 
@@ -101,12 +101,12 @@ public class RasdItemsList extends ResourceType implements Set<ResourceAllocatio
    }
 
    @XmlElement(name = "Item")
-   protected Set<ResourceAllocationSettingData> items = Sets.newLinkedHashSet();
+   protected Set<RasdItem> items = Sets.newLinkedHashSet();
 
    /**
     * A RASD item content.
     */
-   public Set<ResourceAllocationSettingData> getItems() {
+   public Set<RasdItem> getItems() {
       return items;
    }
 
@@ -137,17 +137,17 @@ public class RasdItemsList extends ResourceType implements Set<ResourceAllocatio
     * <p>
     * NOTE Annoying lack of multiple inheritance for using ForwardingList!
     */
-   private Set<ResourceAllocationSettingData> delegate() {
+   private Set<RasdItem> delegate() {
       return getItems();
    }
 
    @Override
-   public boolean add(ResourceAllocationSettingData arg0) {
+   public boolean add(RasdItem arg0) {
       return delegate().add(arg0);
    }
 
    @Override
-   public boolean addAll(Collection<? extends ResourceAllocationSettingData> arg0) {
+   public boolean addAll(Collection<? extends RasdItem> arg0) {
       return delegate().addAll(arg0);
    }
 
@@ -172,7 +172,7 @@ public class RasdItemsList extends ResourceType implements Set<ResourceAllocatio
    }
 
    @Override
-   public Iterator<ResourceAllocationSettingData> iterator() {
+   public Iterator<RasdItem> iterator() {
       return delegate().iterator();
    }
 

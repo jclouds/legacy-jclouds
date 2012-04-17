@@ -26,10 +26,10 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.savvis.vpdc.reference.VPDCConstants;
 import org.testng.annotations.Test;

@@ -24,41 +24,33 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code PlacementGroupClient}
@@ -66,25 +58,21 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "PlacementGroupClientLiveTest")
-public class PlacementGroupClientLiveTest extends BaseVersionedServiceLiveTest {
+public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveTest {
    public PlacementGroupClientLiveTest() {
       provider = "aws-ec2";
    }
 
    private AWSEC2Client client;
-   private ComputeServiceContext context;
    private RetryablePredicate<PlacementGroup> availableTester;
    private RetryablePredicate<PlacementGroup> deletedTester;
    private PlacementGroup group;
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() throws FileNotFoundException, IOException {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-
-      client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());
+   
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
             TimeUnit.SECONDS);
@@ -179,6 +167,5 @@ public class PlacementGroupClientLiveTest extends BaseVersionedServiceLiveTest {
          client.getPlacementGroupServices().deletePlacementGroupInRegion(group.getRegion(), group.getName());
          assert deletedTester.apply(group) : group;
       }
-      context.close();
    }
 }

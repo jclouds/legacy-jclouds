@@ -24,9 +24,8 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
-import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
-import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
 

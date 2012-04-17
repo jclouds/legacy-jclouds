@@ -18,9 +18,22 @@
  */
 package org.jclouds.aws.s3;
 
-import java.net.URI;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.aws.domain.Region.AP_NORTHEAST_1;
+import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
+import static org.jclouds.aws.domain.Region.SA_EAST_1;
+import static org.jclouds.aws.domain.Region.US_STANDARD;
+import static org.jclouds.aws.domain.Region.US_WEST_1;
+import static org.jclouds.aws.domain.Region.US_WEST_2;
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.aws.domain.Region;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.providers.ProviderMetadata} for Amazon's Simple Storage Service
@@ -29,39 +42,66 @@ import org.jclouds.providers.BaseProviderMetadata;
  * @author Adrian Cole
  */
 public class AWSS3ProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3727028894286338406L;
 
-   public AWSS3ProviderMetadata() {
-      this(builder()
-            .id("aws-s3")
-            .name("Amazon Simple Storage Service (S3)")
-            .api(new AWSS3ApiMetadata())
-            .homepage(URI.create("http://aws.amazon.com/s3"))
-            .console(URI.create("https://console.aws.amazon.com/s3/home"))
-            .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
-            .iso3166Codes("US", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AWSS3ProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public AWSS3ProviderMetadata() {
+      super(builder());
+   }
+
+   public AWSS3ProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.putAll(Region.regionPropertiesS3());
+      properties.setProperty(PROPERTY_ENDPOINT, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_STANDARD + "." + ENDPOINT, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_1 + "." + ENDPOINT, "https://s3-us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + US_WEST_2 + "." + ENDPOINT, "https://s3-us-west-2.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + SA_EAST_1 + "." + ENDPOINT, "https://s3-sa-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + "EU" + "." + ENDPOINT, "https://s3-eu-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_SOUTHEAST_1 + "." + ENDPOINT,
+            "https://s3-ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + AP_NORTHEAST_1 + "." + ENDPOINT,
+            "https://s3-ap-northeast-1.amazonaws.com");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("aws-s3")
+         .name("Amazon Simple Storage Service (S3)")
+         .apiMetadata(new AWSS3ApiMetadata())
+         .homepage(URI.create("http://aws.amazon.com/s3"))
+         .console(URI.create("https://console.aws.amazon.com/s3/home"))
+         .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
+         .iso3166Codes("US", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13")
+         .defaultProperties(AWSS3ProviderMetadata.defaultProperties());
+      }
 
       @Override
       public AWSS3ProviderMetadata build() {
          return new AWSS3ProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

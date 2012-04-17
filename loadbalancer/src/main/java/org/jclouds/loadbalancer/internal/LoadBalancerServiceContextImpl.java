@@ -20,41 +20,35 @@ package org.jclouds.loadbalancer.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.Closeable;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.internal.BaseWrapper;
 import org.jclouds.loadbalancer.LoadBalancerService;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
+
+import com.google.common.io.Closeables;
+import com.google.common.reflect.TypeToken;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerServiceContext {
+public class LoadBalancerServiceContextImpl extends BaseWrapper implements LoadBalancerServiceContext {
    private final LoadBalancerService loadBalancerService;
-   private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
 
-   @SuppressWarnings({ "unchecked" })
    @Inject
-   public LoadBalancerServiceContextImpl(LoadBalancerService loadBalancerService, Utils utils,
-         @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
+   public LoadBalancerServiceContextImpl(@Provider Closeable wrapped,
+            @Provider TypeToken<? extends Closeable> wrappedType, LoadBalancerService loadBalancerService, Utils utils) {
+      super(wrapped, wrappedType);
       this.utils = utils;
-      this.providerSpecificContext = providerSpecificContext;
       this.loadBalancerService = checkNotNull(loadBalancerService, "loadBalancerService");
-   }
-
-   @SuppressWarnings({ "unchecked", "hiding" })
-   @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) providerSpecificContext;
-   }
-
-   @Override
-   public void close() {
-      providerSpecificContext.close();
    }
 
    @Override
@@ -72,18 +66,29 @@ public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerService
       return utils;
    }
 
+   @SuppressWarnings("unchecked")
+   @Override
+   public <S, A> RestContext<S, A> getProviderSpecificContext() {
+      return (RestContext<S, A>) getWrapped();
+   }
+
+   @Override
+   public void close() {
+      Closeables.closeQuietly(getWrapped());
+   }
+
    public int hashCode() {
-      return providerSpecificContext.hashCode();
+      return getWrapped().hashCode();
    }
 
    @Override
    public String toString() {
-      return providerSpecificContext.toString();
+      return getWrapped().toString();
    }
 
    @Override
    public boolean equals(Object obj) {
-      return providerSpecificContext.equals(obj);
+      return getWrapped().equals(obj);
    }
 
 }

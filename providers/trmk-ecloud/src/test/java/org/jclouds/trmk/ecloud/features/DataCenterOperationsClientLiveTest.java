@@ -33,12 +33,12 @@ import org.testng.annotations.Test;
 public class DataCenterOperationsClientLiveTest extends BaseTerremarkECloudClientLiveTest {
    @Test
    public void testListDataCentersInOrg() throws Exception {
-      for (ReferenceType response : getApi().listOrgs().values()) {
-         ECloudOrg org = getApi().getOrg(response.getHref());
+      for (ReferenceType response : connection.listOrgs().values()) {
+         ECloudOrg org = connection.getOrg(response.getHref());
          assertNotNull(response);
          assertNotNull(response.getName());
          assertNotNull(response.getHref());
-         assertEquals(getApi().getDataCenterOperationsClient().listDataCentersInOrg(org.getHref()), getApi()
+         assertEquals(connection.getDataCenterOperationsClient().listDataCentersInOrg(org.getHref()), connection
                .getDataCenterOperationsClient().listDataCenters(org.getDataCenters().getHref()));
       }
    }

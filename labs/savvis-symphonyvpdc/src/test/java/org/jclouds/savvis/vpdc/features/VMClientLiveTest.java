@@ -63,8 +63,8 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 
    @Override
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       client = restContext.getApi().getVMClient();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 130, 10, TimeUnit.SECONDS);// make
    }
@@ -170,7 +170,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
       System.out.printf("Creating vm's - vpdcId %s, vpdcName %s, networkName %s, name %s, os %s%n", vpdcId, vpdc.getName(), networkTier
                .getName().replace("-", " "), name, os);
 
-      Builder<VMSpec> vmSpecs = ImmutableSet.<VMSpec> builder();
+      Builder<VMSpec> vmSpecs = ImmutableSet.builder();
       int noOfVms = 2;
       for (int i = 0; i < noOfVms; i++) {
          // TODO: determine the sizes available in the VDC, for example there's
@@ -293,10 +293,10 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   protected void tearDownContext() {
       if (vm != null) {
          assert taskTester.apply(client.removeVMFromVDC(billingSiteId, vpdcId, vm.getId()).getId()) : vm;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }

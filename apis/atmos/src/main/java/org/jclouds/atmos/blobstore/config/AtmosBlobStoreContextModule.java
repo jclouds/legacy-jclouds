@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
-import org.jclouds.atmos.AtmosAsyncClient;
 import org.jclouds.atmos.AtmosClient;
 import org.jclouds.atmos.blobstore.AtmosAsyncBlobStore;
 import org.jclouds.atmos.blobstore.AtmosBlobRequestSigner;
@@ -31,10 +30,8 @@ import org.jclouds.atmos.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
-import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 
 import com.google.common.cache.CacheBuilder;
@@ -43,7 +40,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link AtmosBlobStoreContext}; requires {@link AtmosAsyncBlobStore} bound.
@@ -58,8 +54,6 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(AtmosBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<AtmosClient, AtmosAsyncClient>>() {
-      }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
       bind(BlobRequestSigner.class).to(AtmosBlobRequestSigner.class);
    }

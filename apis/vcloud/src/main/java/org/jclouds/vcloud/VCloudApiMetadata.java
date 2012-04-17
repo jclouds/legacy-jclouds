@@ -18,50 +18,99 @@
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION_SCHEMA;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.domain.network.FenceMode;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for VCloud 1.0 API
  * 
  * @author Adrian Cole
  */
-public class VCloudApiMetadata extends BaseApiMetadata {
+public class VCloudApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
-   public VCloudApiMetadata() {
-      this(builder()
-            .id("vcloud")
-            .type(ApiType.COMPUTE)
-            .name("VCloud 1.0 API")
-            .identityName("User at Organization (user@org)")
-            .credentialName("Password")
-            .documentation(URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html")));
+   public static final TypeToken<RestContext<VCloudClient, VCloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<VCloudClient, VCloudAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected VCloudApiMetadata(ConcreteBuilder builder) {
+   public VCloudApiMetadata() {
+      this(new Builder());
+   }
+
+   protected VCloudApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1");
+      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE,
+            String.format("http://www.vmware.com/vcloud/v${%s}", PROPERTY_VCLOUD_VERSION_SCHEMA));
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
+      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+      properties.setProperty("jclouds.dns_name_length_min", "1");
+      properties.setProperty("jclouds.dns_name_length_max", "80");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED.toString());
+      // TODO integrate this with the {@link ComputeTimeouts} instead of having
+      // a single timeout for
+      // everything.
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 1200l * 1000l + "");
+      properties.setProperty(PROPERTY_SESSION_INTERVAL, 300 + "");
+      return properties;
+   }
+
+   public static class Builder extends BaseRestApiMetadata.Builder {
+
+      protected Builder() {
+         super(VCloudClient.class, VCloudAsyncClient.class);
+          id("vcloud")
+         .name("VCloud 1.0 API")
+         .identityName("User at Organization (user@org)")
+         .credentialName("Password")
+         .documentation(URI.create("http://www.vmware.com/support/pubs/vcd_pubs.html"))
+         .version("1.0")
+         .defaultProperties(VCloudApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, VCloudComputeServiceContextModule.class));
+      }
 
       @Override
       public VCloudApiMetadata build() {
          return new VCloudApiMetadata(this);
       }
+
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
+
    }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

@@ -53,7 +53,7 @@ public class StatementList extends ForwardingList<Statement> implements Statemen
 
    @Override
    public Iterable<String> functionDependencies(OsFamily family) {
-      Builder<String> functions = ImmutableList.<String> builder();
+      Builder<String> functions = ImmutableList.builder();
       for (Statement statement : delegate()) {
          functions.addAll(statement.functionDependencies(family));
       }

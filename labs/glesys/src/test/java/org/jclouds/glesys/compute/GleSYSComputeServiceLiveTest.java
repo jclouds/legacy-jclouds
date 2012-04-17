@@ -18,12 +18,8 @@
  */
 package org.jclouds.glesys.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.glesys.GleSYSAsyncClient;
-import org.jclouds.glesys.GleSYSClient;
-import org.jclouds.rest.RestContext;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
@@ -38,6 +34,7 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
 public class GleSYSComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+
    public GleSYSComputeServiceLiveTest() {
       provider = "glesys";
       // ensure hyphens work
@@ -47,12 +44,6 @@ public class GleSYSComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
-   }
-
-   public void testAssignability() throws Exception {
-      @SuppressWarnings("unused")
-      RestContext<GleSYSClient, GleSYSAsyncClient> tmContext = new ComputeServiceContextFactory().createContext(
-            provider, identity, credential).getProviderSpecificContext();
    }
 
    // GleSYS does not support metadata

@@ -26,5 +26,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "CloudFilesUKBlobMapIntegrationLiveTest")
 public class CloudFilesUKBlobMapIntegrationLiveTest extends CloudFilesBlobMapIntegrationLiveTest {
+   public CloudFilesUKBlobMapIntegrationLiveTest() {
+      provider = "cloudfiles-uk";
+   }
 
 }

@@ -18,8 +18,10 @@
  */
 package org.jclouds.compute;
 
+import java.io.Closeable;
 import java.util.Map;
 
+import org.jclouds.Wrapper;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.rest.RestContext;
@@ -35,11 +37,9 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(ComputeServiceContextImpl.class)
-public interface ComputeServiceContext {
+public interface ComputeServiceContext extends Closeable, Wrapper {
 
    ComputeService getComputeService();
-
-   <S, A> RestContext<S, A> getProviderSpecificContext();
 
    /**
     * retrieves a list of credentials for resources created within this context, keyed on {@code id}
@@ -72,6 +72,16 @@ public interface ComputeServiceContext {
     * @see #getUtils
     */
    Utils utils();
+   
+   /**
+    * will be removed in jclouds 1.6
+    * 
+    * @see Wrapper#getInputType
+    * @see Wrapper#unwrap
+    */
+   @Deprecated
+   <S, A> RestContext<S, A> getProviderSpecificContext();
 
+   @Override
    void close();
 }

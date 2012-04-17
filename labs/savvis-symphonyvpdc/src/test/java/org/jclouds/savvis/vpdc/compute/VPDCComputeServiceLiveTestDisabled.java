@@ -21,8 +21,8 @@ package org.jclouds.savvis.vpdc.compute;
 import java.util.Properties;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 

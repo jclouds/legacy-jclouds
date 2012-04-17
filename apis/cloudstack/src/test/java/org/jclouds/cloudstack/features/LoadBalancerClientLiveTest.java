@@ -35,11 +35,11 @@ import javax.annotation.Nullable;
 import org.jclouds.cloudstack.domain.AsyncJob;
 import org.jclouds.cloudstack.domain.JobResult;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
-import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
-import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
 import org.jclouds.cloudstack.domain.Network;
 import org.jclouds.cloudstack.domain.PublicIPAddress;
 import org.jclouds.cloudstack.domain.VirtualMachine;
+import org.jclouds.cloudstack.domain.LoadBalancerRule.Algorithm;
+import org.jclouds.cloudstack.domain.LoadBalancerRule.State;
 import org.jclouds.cloudstack.predicates.LoadBalancerRuleActive;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -66,8 +66,8 @@ public class LoadBalancerClientLiveTest extends BaseCloudStackClientLiveTest {
    private boolean networksDisabled;
 
    @BeforeGroups(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
 
       loadBalancerRuleActive = new RetryablePredicate<LoadBalancerRule>(new LoadBalancerRuleActive(client), 60, 1, 1,
             TimeUnit.SECONDS);

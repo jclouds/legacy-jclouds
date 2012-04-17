@@ -166,7 +166,7 @@ public class CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions {
 
    @VisibleForTesting
    public Set<String> getSecurityGroupsForTagAndOptions(String region, @Nullable String group, TemplateOptions options) {
-      Builder<String> groups = ImmutableSet.<String> builder();
+      Builder<String> groups = ImmutableSet.builder();
 
       if (group != null) {
          String markerGroup = String.format("jclouds#%s#%s", group, region).replace('#', delimiter);

@@ -191,7 +191,7 @@ public class EC2ComputeService extends BaseComputeService {
     */
    @Override
    protected void cleanUpIncidentalResourcesOfDeadNodes(Set<? extends NodeMetadata> deadNodes) {
-      Builder<String, String> regionGroups = ImmutableMultimap.<String, String> builder();
+      Builder<String, String> regionGroups = ImmutableMultimap.builder();
       for (NodeMetadata nodeMetadata : deadNodes) {
          if (nodeMetadata.getGroup() != null)
             regionGroups.put(AWSUtils.parseHandle(nodeMetadata.getId())[0], nodeMetadata.getGroup());

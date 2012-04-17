@@ -32,8 +32,6 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.openstack.nova.NovaAsyncClient;
-import org.jclouds.openstack.nova.NovaClient;
 import org.jclouds.openstack.nova.compute.functions.FlavorToHardware;
 import org.jclouds.openstack.nova.compute.functions.NovaImageToImage;
 import org.jclouds.openstack.nova.compute.functions.NovaImageToOperatingSystem;
@@ -54,12 +52,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class NovaComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<NovaClient, NovaAsyncClient, Server, Flavor, org.jclouds.openstack.nova.domain.Image, Location> {
-   public NovaComputeServiceContextModule() {
-      super(NovaClient.class, NovaAsyncClient.class);
-   }
+public class NovaComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<Server, Flavor, org.jclouds.openstack.nova.domain.Image, Location> {
 
    @SuppressWarnings("unchecked")
    @Override

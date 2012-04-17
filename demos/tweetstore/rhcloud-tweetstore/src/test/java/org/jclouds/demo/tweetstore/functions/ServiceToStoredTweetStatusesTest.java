@@ -25,7 +25,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.TransientApiMetadata;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.domain.StoredTweetStatus;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
@@ -42,12 +43,12 @@ import com.google.common.collect.Iterables;
 @Test(groups = "unit")
 public class ServiceToStoredTweetStatusesTest {
 
-   Map<String, BlobStoreContext> createServices(String container) throws InterruptedException,
+   Map<String, BlobStoreContext<?, ?>> createServices(String container) throws InterruptedException,
             ExecutionException {
-      Map<String, BlobStoreContext> services = Maps.newHashMap();
+      Map<String, BlobStoreContext<?, ?>> services = Maps.newHashMap();
+      TransientApiMetadata transientApiMetadata = TransientApiMetadata.builder().build();
       for (String name : new String[] { "1", "2" }) {
-         BlobStoreContext context = new BlobStoreContextFactory().createContext("transient",
-                  "dummy", "dummy");
+         BlobStoreContext<?, ?> context = BlobStoreContextBuilder.newBuilder(transientApiMetadata).build();
          context.getAsyncBlobStore().createContainerInLocation(null, container).get();
          Blob blob = context.getAsyncBlobStore().blobBuilder("1").build();
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
@@ -60,7 +61,7 @@ public class ServiceToStoredTweetStatusesTest {
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
       String container = "container";
-      Map<String, BlobStoreContext> contexts = createServices(container);
+      Map<String, BlobStoreContext<?, ?>> contexts = createServices(container);
 
       ServiceToStoredTweetStatuses function = new ServiceToStoredTweetStatuses(contexts, container);
 

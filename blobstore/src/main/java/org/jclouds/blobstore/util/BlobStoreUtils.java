@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
@@ -38,11 +38,11 @@ import org.jclouds.functions.ExceptionToValueOrPropagate;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.rest.Providers;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Strings2;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -159,7 +159,8 @@ public class BlobStoreUtils {
       }
    }
 
+   @Deprecated
    public static Iterable<String> getSupportedProviders() {
-      return Providers.getSupportedProvidersOfType(BlobStoreContextBuilder.class);
+      return org.jclouds.rest.Providers.getSupportedProvidersOfType(TypeToken.of(BlobStoreContext.class));
    }
 }

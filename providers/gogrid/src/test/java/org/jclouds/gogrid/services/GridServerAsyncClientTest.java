@@ -61,7 +61,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/list?"
-               + "v=1.6&isSandbox=true&sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+               + "v=1.6&isSandbox=true&sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -82,7 +82,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/get?" + "v=1.6&name=server1&"
-               + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+               + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -103,7 +103,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/get?" + "v=1.6&id=123&"
-               + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+               + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -127,7 +127,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/power?v=1.6&"
-               + "server=PowerServer&power=restart&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+               + "server=PowerServer&power=restart&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -149,7 +149,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/delete?v=1.6&"
-               + "name=PowerServer&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+               + "name=PowerServer&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -172,7 +172,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/common/lookup/list?v=1.6&lookup=server.ram&"
-               + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+               + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -224,7 +224,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/edit?v=1.6&"
-            + "id=2&description=newDesc&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+            + "id=2&description=newDesc&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -246,7 +246,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/edit?v=1.6&"
-            + "id=2&server.ram=1GB&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+            + "id=2&server.ram=1GB&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }
@@ -268,7 +268,7 @@ public class GridServerAsyncClientTest extends BaseGoGridAsyncClientTest<GridSer
       httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/server/edit?v=1.6&"
-            + "id=2&server.type=web&" + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
+            + "id=2&server.type=web&" + "sig=e9aafd0a5d4c69bb24536be4bce8a528&api_key=identity " + "HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
    }

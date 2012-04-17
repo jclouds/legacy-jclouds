@@ -21,7 +21,6 @@ package org.jclouds.loadbalancer;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,15 +29,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.ContextBuilder;
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
+import org.jclouds.domain.LoginCredentials;
+import org.jclouds.domain.LoginCredentials.Builder;
 import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
@@ -47,7 +47,9 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -56,7 +58,39 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServiceLiveTest {
+public abstract class BaseLoadBalancerServiceLiveTest extends BaseContextLiveTest<LoadBalancerServiceContext> {
+
+   protected String imageId;
+   protected String loginUser;
+   protected String authenticateSudo;
+   protected LoginCredentials loginCredentials = LoginCredentials.builder().user("root").build();
+   
+    protected Properties setupComputeProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      computeProvider = setIfTestSystemPropertyPresent(overrides, provider + ".compute.provider");
+      computeIdentity = setIfTestSystemPropertyPresent(overrides, provider + ".compute.identity");
+      computeCredential = setIfTestSystemPropertyPresent(overrides, provider + ".compute.credential");
+      computeEndpoint = setIfTestSystemPropertyPresent(overrides, provider + ".compute.endpoint");
+      computeApiversion = setIfTestSystemPropertyPresent(overrides, provider + ".compute.api-version");
+      computeBuildversion = setIfTestSystemPropertyPresent(overrides, provider + ".compute.build-version");
+      imageId = setIfTestSystemPropertyPresent(overrides, provider + ".compute.image-id");
+      loginUser = setIfTestSystemPropertyPresent(overrides, provider + ".compute.image.login-user");
+      authenticateSudo = setIfTestSystemPropertyPresent(overrides, provider + ".compute.image.authenticate-sudo");
+
+      if (loginUser != null) {
+         Iterable<String> userPass = Splitter.on(':').split(loginUser);
+         Builder loginCredentialsBuilder = LoginCredentials.builder();
+         loginCredentialsBuilder.user(Iterables.get(userPass, 0));
+         if (Iterables.size(userPass) == 2)
+            loginCredentialsBuilder.password(Iterables.get(userPass, 1));
+         if (authenticateSudo != null)
+            loginCredentialsBuilder.authenticateSudo(Boolean.valueOf(authenticateSudo));
+         loginCredentials = loginCredentialsBuilder.build();
+      }
+      return overrides;
+   }
 
    protected SshClient.Factory sshFactory;
    protected String group;
@@ -77,42 +111,17 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
    protected String computeBuildversion;
    protected ComputeServiceContext computeContext;
 
-   @Override
-   protected void setupCredentials() {
-      super.setupCredentials();
-      computeProvider = checkNotNull(System.getProperty("test." + provider + ".compute.provider"), "test." + provider
-            + ".compute.provider");
-      computeIdentity = checkNotNull(System.getProperty("test." + provider + ".compute.identity"), "test." + provider
-            + ".compute.identity");
-      computeCredential = System.getProperty("test." + provider + ".compute.credential");
-      computeEndpoint = System.getProperty("test." + provider + ".compute.endpoint");
-      computeApiversion = System.getProperty("test." + provider + ".compute.api-version");
-      computeBuildversion = System.getProperty("test." + provider + ".compute.build-version");
-   }
-
-   protected Properties setupComputeProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(computeProvider + ".identity", computeIdentity);
-      if (computeCredential != null)
-         overrides.setProperty(computeProvider + ".credential", computeCredential);
-      if (computeEndpoint != null)
-         overrides.setProperty(computeProvider + ".endpoint", computeEndpoint);
-      if (computeApiversion != null)
-         overrides.setProperty(computeProvider + ".api-version", computeApiversion);
-      if (computeBuildversion != null)
-         overrides.setProperty(computeProvider + ".build-version", computeBuildversion);
-      return overrides;
-   }
-
    @BeforeGroups(groups = { "integration", "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+   @Override
+   public void setupContext() {
       setServiceDefaults();
       if (group == null)
          group = checkNotNull(provider, "provider");
-      setupCredentials();
-      initializeContext();
+      // groups need to work with hyphens in them, so let's make sure there is
+      // one!
+      if (group.indexOf('-') == -1)
+         group = group + "-";
+      super.setupContext();
       initializeComputeContext();
       buildSocketTester();
    }
@@ -120,19 +129,12 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
    public void setServiceDefaults() {
 
    }
-
-   private void initializeContext() throws IOException {
-      if (context != null)
-         context.close();
-      context = new LoadBalancerServiceContextFactory(setupRestProperties()).createContext(provider,
-            ImmutableSet.of(new Log4JLoggingModule()), setupProperties());
-   }
-
-   private void initializeComputeContext() throws IOException {
+   
+   protected void initializeComputeContext() {
       if (computeContext != null)
          computeContext.close();
-      computeContext = new ComputeServiceContextFactory(setupRestProperties()).createContext(computeProvider,
-            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), setupComputeProperties());
+      computeContext = ContextBuilder.newBuilder(computeProvider).modules(setupModules()).overrides(
+            setupComputeProperties()).build(ComputeServiceContext.class);
    }
 
    protected void buildSocketTester() {
@@ -181,5 +183,9 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseVersionedServi
       computeContext.close();
       context.close();
    }
-
+   
+   @Override
+   protected TypeToken<LoadBalancerServiceContext> contextType() {
+      return TypeToken.of(LoadBalancerServiceContext.class);
+   }
 }

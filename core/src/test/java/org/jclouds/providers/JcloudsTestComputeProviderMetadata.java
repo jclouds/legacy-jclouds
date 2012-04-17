@@ -21,6 +21,7 @@ package org.jclouds.providers;
 import java.net.URI;
 
 import org.jclouds.apis.JcloudsTestComputeApiMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -30,37 +31,44 @@ import com.google.common.collect.ImmutableSet;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class JcloudsTestComputeProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 424799830416415960L;
 
-   public JcloudsTestComputeProviderMetadata() {
-      this(builder()
-            .api(new JcloudsTestComputeApiMetadata())
-            .id("test-compute-api")
-            .name("Test Compute Provider")
-            .homepage(URI.create("http://jclouds.org"))
-            .console(URI.create("http://jclouds.org/console"))
-            .iso3166Codes(ImmutableSet.of("US-VA", "US-CA")));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected JcloudsTestComputeProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromProviderMetadata(this));
+   }
+   
+   public JcloudsTestComputeProviderMetadata() {
+      super(builder());
+   }
+
+   public JcloudsTestComputeProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("test-compute-api")
+         .name("Test Compute Provider")
+         .endpoint("mem2")
+         .homepage(URI.create("http://jclouds.org"))
+         .console(URI.create("http://jclouds.org/console"))
+         .iso3166Codes(ImmutableSet.of("US-VA", "US-CA"))
+         .apiMetadata(new JcloudsTestComputeApiMetadata());
+      }
 
       @Override
       public JcloudsTestComputeProviderMetadata build() {
          return new JcloudsTestComputeProviderMetadata(this);
       }
+
    }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
 }

@@ -29,9 +29,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.cloudstack.domain.Account;
 import org.jclouds.cloudstack.domain.AsyncJob;
-import org.jclouds.cloudstack.domain.AsyncJob.Builder;
 import org.jclouds.cloudstack.domain.AsyncJobError;
-import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.cloudstack.domain.FirewallRule;
 import org.jclouds.cloudstack.domain.IPForwardingRule;
 import org.jclouds.cloudstack.domain.LoadBalancerRule;
@@ -45,6 +43,8 @@ import org.jclouds.cloudstack.domain.TemplateExtraction;
 import org.jclouds.cloudstack.domain.User;
 import org.jclouds.cloudstack.domain.VirtualMachine;
 import org.jclouds.cloudstack.domain.Volume;
+import org.jclouds.cloudstack.domain.AsyncJob.Builder;
+import org.jclouds.cloudstack.domain.AsyncJobError.ErrorCode;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;

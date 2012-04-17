@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" })
 public class SwiftBlobSignerLiveTest extends BaseBlobSignerLiveTest {
-
+   public SwiftBlobSignerLiveTest() {
+      provider = "swift";
+   }
 }

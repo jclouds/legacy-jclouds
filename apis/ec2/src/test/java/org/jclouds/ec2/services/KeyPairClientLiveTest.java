@@ -21,26 +21,18 @@ package org.jclouds.ec2.services;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.ec2.EC2AsyncClient;
-import org.jclouds.ec2.EC2Client;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.ec2.EC2ApiMetadata;
 import org.jclouds.ec2.domain.KeyPair;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code KeyPairClient}
@@ -48,22 +40,18 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "KeyPairClientLiveTest")
-public class KeyPairClientLiveTest extends BaseVersionedServiceLiveTest {
+public class KeyPairClientLiveTest extends BaseComputeServiceContextLiveTest {
    public KeyPairClientLiveTest() {
       provider = "ec2";
    }
 
    private KeyPairClient client;
-   private RestContext<EC2Client, EC2AsyncClient> context;
-
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
-      client = context.getApi().getKeyPairServices();
+   
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getKeyPairServices();
    }
 
    @Test
@@ -109,8 +97,4 @@ public class KeyPairClientLiveTest extends BaseVersionedServiceLiveTest {
       assertEquals(listPair.getSha1OfPrivateKey(), result.getSha1OfPrivateKey());
    }
 
-   @AfterTest
-   public void shutdown() {
-      context.close();
-   }
 }

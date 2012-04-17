@@ -26,7 +26,6 @@ import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Group;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.features.admin.GroupClient;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -35,7 +34,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "unit", "admin", "group"}, singleThreaded = true, testName = "GroupClientExpectTest")
+@Test(groups = { "unit", "admin" }, singleThreaded = true, testName = "GroupClientExpectTest")
 public class GroupClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private Reference groupRef = Reference.builder()

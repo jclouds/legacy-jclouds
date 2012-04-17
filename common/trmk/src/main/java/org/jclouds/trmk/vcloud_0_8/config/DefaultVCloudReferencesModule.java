@@ -106,7 +106,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
 
                      @Override
                      public Map<URI, ? extends Catalog> apply(Map<String, Map<String, ? extends Catalog>> arg0) {
-                        Builder<URI, Catalog> builder = ImmutableMap.<URI, Catalog> builder();
+                        Builder<URI, Catalog> builder = ImmutableMap.builder();
                         for (Map<String, ? extends Catalog> v1 : arg0.values()) {
                            for (Catalog v2 : v1.values()) {
                               builder.put(v2.getHref(), v2);

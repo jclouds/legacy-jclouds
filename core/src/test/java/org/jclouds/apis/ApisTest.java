@@ -33,14 +33,14 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "ApisTest")
 public class ApisTest {
 
-   private final ApiMetadata testBlobstoreApi = new JcloudsTestBlobStoreApiMetadata();
-   private final ApiMetadata testComputeApi = new JcloudsTestComputeApiMetadata();
-   private final ApiMetadata testYetAnotherComputeApi = new JcloudsTestYetAnotherComputeApiMetadata();
+   private final JcloudsTestBlobStoreApiMetadata testBlobstoreApi = new JcloudsTestBlobStoreApiMetadata();
+   private final JcloudsTestComputeApiMetadata testComputeApi = new JcloudsTestComputeApiMetadata();
+   private final JcloudsTestYetAnotherComputeApiMetadata testYetAnotherComputeApi = new JcloudsTestYetAnotherComputeApiMetadata();
 
    @Test
    public void testWithId() {
-      ApiMetadata apiMetadata;
 
+      ApiMetadata apiMetadata;
       try {
          apiMetadata = Apis.withId("fake-id");
          fail("Looking for a api with an id that doesn't exist should " + "throw an exceptoin.");
@@ -54,14 +54,14 @@ public class ApisTest {
    }
 
    @Test
-   public void testOfType() {
-      Iterable<ApiMetadata> apisMetadata = Apis.ofType(ApiType.BLOBSTORE);
+   public void testTransformableTo() {
+      Iterable<ApiMetadata> apisMetadata = Apis.contextWrappableAs(Storage.class);
 
       for (ApiMetadata apiMetadata : apisMetadata) {
          assertEquals(testBlobstoreApi, apiMetadata);
       }
 
-      apisMetadata = Apis.ofType(ApiType.COMPUTE);
+      apisMetadata = Apis.contextWrappableAs(Compute.class);
 
       for (ApiMetadata apiMetadata : apisMetadata) {
          if (apiMetadata.getName().equals(testComputeApi.getName())) {
@@ -71,7 +71,7 @@ public class ApisTest {
          }
       }
 
-      apisMetadata = Apis.ofType(ApiType.UNRECOGNIZED);
+      apisMetadata = Apis.contextWrappableAs(Balancer.class);
 
       assertEquals(false, apisMetadata.iterator().hasNext());
    }

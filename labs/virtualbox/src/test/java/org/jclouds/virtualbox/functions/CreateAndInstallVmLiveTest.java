@@ -27,7 +27,6 @@ import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTA
 import java.util.Map;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
@@ -119,8 +118,8 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
    
    @Override
    @BeforeClass(groups = "live")
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       instanceName = VIRTUALBOX_IMAGE_PREFIX
                + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
 

@@ -18,195 +18,164 @@
  */
 package org.jclouds.providers;
 
+import java.io.Serializable;
 import java.net.URI;
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.javax.annotation.Nullable;
 
+import com.google.common.base.Optional;
+
 /**
  * The ProviderMetadata interface allows jclouds to provide a plugin framework
  * for gathering cloud provider metadata.
  * 
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
  */
-public interface ProviderMetadata {
-   /**
-    * @see ApiMetadata#BLOBSTORE_TYPE
-    */
-   @Deprecated
-   public static final String BLOBSTORE_TYPE = "blobstore";
-   /**
-    * @see ApiMetadata#COMPUTE_TYPE
-    */
-   @Deprecated
-   public static final String COMPUTE_TYPE = "compute";
-   /**
-    * @see ApiMetadata#LOADBALANCER_TYPE
-    */
-   @Deprecated
-   public static final String LOADBALANCER_TYPE = "loadbalancer";
-   /**
-    * @see ApiMetadata#TABLE_TYPE
-    */
-   @Deprecated
-   public static final String TABLE_TYPE = "table";
-   /**
-    * @see ApiMetadata#QUEUE_TYPE
-    */
-   @Deprecated
-   public static final String QUEUE_TYPE = "queue";
-   /**
-    * @see ApiMetadata#MONITOR_TYPE
-    */
-   @Deprecated
-   public static final String MONITOR_TYPE = "monitor";
-
+public interface ProviderMetadata extends Serializable {
+  
    /**
     * 
     * @author Adrian Cole
     * @since 1.5
     */
-   public static interface Builder<B extends Builder<B>> {
+   public static interface Builder {
       /**
        * @see ProviderMetadata#getId()
        */
-      B id(String id);
+      Builder id(String id);
 
       /**
        * @see ProviderMetadata#getName()
        */
-      B name(String name);
+      Builder name(String name);
 
       /**
-       * @see ProviderMetadata#getApi()
+       * @see ProviderMetadata#getApiMetadata()
        */
-      B api(ApiMetadata api);
+      Builder apiMetadata(ApiMetadata api);
+
+      /**
+       * @see ProviderMetadata#getEndpoint()
+       */
+      Builder endpoint(String endpoint);
+
+      /**
+       * @see ProviderMetadata#getDefaultProperties()
+       */
+      Builder defaultProperties(Properties defaultProperties);
 
       /**
        * @see ProviderMetadata#getConsole()
        */
-      B console(@Nullable URI console);
+      Builder console(@Nullable URI console);
 
       /**
        * @see ProviderMetadata#getHomepage()
        */
-      B homepage(@Nullable URI homepage);
+      Builder homepage(@Nullable URI homepage);
 
       /**
        * @see ProviderMetadata#getLinkedServices()
        */
-      B linkedServices(Iterable<String> linkedServices);
+      Builder linkedServices(Iterable<String> linkedServices);
 
       /**
        * @see ProviderMetadata#getLinkedServices()
        */
-      B linkedServices(String... linkedServices);
+      Builder linkedServices(String... linkedServices);
 
       /**
        * @see ProviderMetadata#getLinkedServices()
        */
-      B linkedService(String linkedService);
+      Builder linkedService(String linkedService);
 
       /**
        * @see ProviderMetadata#getIso3166Code()
        */
-      B iso3166Codes(Iterable<String> iso3166Codes);
+      Builder iso3166Codes(Iterable<String> iso3166Codes);
 
       /**
        * @see ProviderMetadata#getIso3166Code()
        */
-      B iso3166Codes(String... iso3166Codes);
+      Builder iso3166Codes(String... iso3166Codes);
 
       /**
        * @see ProviderMetadata#getIso3166Code()
        */
-      B iso3166Code(String iso3166Code);
+      Builder iso3166Code(String iso3166Code);
 
       ProviderMetadata build();
 
-      B fromProviderMetadata(ProviderMetadata in);
+      Builder fromProviderMetadata(ProviderMetadata in);
+
    }
 
    /**
     * @see Builder
     * @since 1.5
     */
-   Builder<?> toBuilder();
+   Builder toBuilder();
 
    /**
     * 
-    * @return the provider's unique identifier
+    * @return the provider's unique identifier (ex. aws-ec2, trystack-nova)
     */
    public String getId();
 
    /**
     * 
-    * @return the name (display name) of the provider
+    * @return the name (display name) of the provider (ex. GoGrid)
     */
    public String getName();
-
-   /**
-    * 
-    * @see #getApi()
-    * @see ApiMetadata#getType
-    */
-   @Deprecated
-   public String getType();
 
    /**
     * 
     * @return the provider's api
     * @since 1.5
     */
-   public ApiMetadata getApi();
+   public ApiMetadata getApiMetadata();
+
+   /**
+    * @see ApiMetadata#getEndpoint
+    * @return the url for the provider's api
+    */
+   public String getEndpoint();
+
+   /**
+    * Configuration Properties used when creating connections to this provider.
+    * For example, location information, or default networking configuration.
+    * 
+    * @return properties used to create connections to this provider
+    * @see ApiMetadata#getDefaultProperties
+    */
+   Properties getDefaultProperties();
 
    /**
     * 
-    * @see #getApi()
-    * @see ApiMetadata#getIdentityName
+    * @return the url for the provider's console, or absent if one doesn't exist
     */
-   @Deprecated
-   public String getIdentityName();
+   Optional<URI> getConsole();
 
    /**
     * 
-    * @see #getApi()
-    * @see ApiMetadata#getCredentialName
+    * @return the url for the provider's homepage, or absent if unknown
     */
-   @Deprecated
-   public String getCredentialName();
+   Optional<URI> getHomepage();
 
    /**
     * 
-    * @see #getApi()
-    * @see ApiMetadata#getDocumentation
+    * @return ids of all known {@link ProviderMetadata providers} which have the
+    *         same account as this.
     */
-   @Deprecated
-   public URI getApiDocumentation();
+   Set<String> getLinkedServices();
 
    /**
-    * 
-    * @return the url for the provider's console, or null if one doesn't exist
-    */
-   @Nullable
-   public URI getConsole();
-
-   /**
-    * 
-    * @return the url for the provider's homepage
-    */
-   public URI getHomepage();
-
-   /**
-    * 
-    * @return all known services linked to the same account on this provider
-    */
-   public Set<String> getLinkedServices();
-
-   /**
+    * iso 3166 codes; ex. US-CA,US
     * 
     * @return all known region/location ISO 3166 codes
     */
-   public Set<String> getIso3166Codes();
+   Set<String> getIso3166Codes();
 }

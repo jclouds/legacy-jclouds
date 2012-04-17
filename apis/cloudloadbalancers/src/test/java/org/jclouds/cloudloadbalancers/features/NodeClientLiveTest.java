@@ -26,16 +26,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
-import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancerRequest;
 import org.jclouds.cloudloadbalancers.domain.Node;
 import org.jclouds.cloudloadbalancers.domain.NodeAttributes;
 import org.jclouds.cloudloadbalancers.domain.NodeRequest;
+import org.jclouds.cloudloadbalancers.domain.LoadBalancer.Status;
 import org.jclouds.cloudloadbalancers.domain.VirtualIP.Type;
 import org.jclouds.cloudloadbalancers.internal.BaseCloudLoadBalancersClientLiveTest;
 import org.testng.annotations.AfterGroups;
@@ -137,7 +137,7 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
 
    @Override
    @AfterGroups(groups = "live")
-   protected void tearDown() {
+   protected void tearDownContext() {
       for (Entry<LoadBalancer, Set<Node>> entry : nodes.entrySet()) {
          LoadBalancer lb = entry.getKey();
          LoadBalancerClient lbClient = client.getLoadBalancerClient(lb.getRegion());
@@ -147,6 +147,6 @@ public class NodeClientLiveTest extends BaseCloudLoadBalancersClientLiveTest {
          }
          assert loadBalancerDeleted.apply(lb) : lb;
       }
-      super.tearDown();
+      super.tearDownContext();
    }
 }

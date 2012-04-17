@@ -18,50 +18,71 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.cloudfiles.CloudFilesApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
-
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Files in US.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud Files US.
  * 
  * @author Adrian Cole
  */
 public class CloudFilesUSProviderMetadata extends BaseProviderMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -106955085607133771L;
 
-   public CloudFilesUSProviderMetadata() {
-      this(builder()
-            .id("cloudfiles-us")
-            .name("Rackspace Cloud Files US")
-            .api(new CloudFilesApiMetadata())
-            .homepage(URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/files"))
-            .console(URI.create("https://manage.rackspacecloud.com"))
-            .linkedServices("cloudfiles-us", "cloudservers-us", "cloudloadbalancers-us")
-            .iso3166Codes("US-IL","US-TX"));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudFilesUSProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CloudFilesUSProviderMetadata() {
+      super(builder());
+   }
+
+   public CloudFilesUSProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "US");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("cloudfiles-us")
+         .name("Rackspace Cloud Files US")
+         .apiMetadata(new CloudFilesApiMetadata())
+         .endpoint("https://auth.api.rackspacecloud.com")
+         .homepage(URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/files"))
+         .console(URI.create("https://manage.rackspacecloud.com"))
+         .linkedServices("cloudfiles-us", "cloudservers-us", "cloudloadbalancers-us")
+         .iso3166Codes("US-IL","US-TX");
+      }
 
       @Override
       public CloudFilesUSProviderMetadata build() {
          return new CloudFilesUSProviderMetadata(this);
       }
-   }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
 }

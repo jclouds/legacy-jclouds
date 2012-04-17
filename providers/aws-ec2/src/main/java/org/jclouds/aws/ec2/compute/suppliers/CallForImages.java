@@ -39,9 +39,9 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -76,7 +76,7 @@ public class CallForImages implements Callable<Iterable<Image>> {
 
       logger.debug(">> providing images");
 
-      Builder<String, DescribeImagesOptions> builder = ImmutableMap.<String, DescribeImagesOptions> builder();
+      Builder<String, DescribeImagesOptions> builder = ImmutableMap.builder();
       for (String region : regions)
          builder.put(region, filters(filter));
 

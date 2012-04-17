@@ -28,7 +28,7 @@ import org.jclouds.glesys.domain.ArchiveAllowedArguments;
 import org.jclouds.glesys.domain.ArchiveDetails;
 import org.jclouds.glesys.internal.BaseGleSYSClientLiveTest;
 import org.jclouds.predicates.RetryablePredicate;
-import org.testng.annotations.AfterGroups;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -43,11 +43,11 @@ import com.google.common.base.Predicate;
 public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
 
    @BeforeGroups(groups = {"live"})
-   public void setupClient() {
-      super.setupClient();
+   public void setupContext() {
+      super.setupContext();
       
-      client = context.getApi().getArchiveClient();
-      archiveUser = context.getIdentity().toLowerCase() + "_jcloudstest9";
+      client = gleContext.getApi().getArchiveClient();
+      archiveUser = gleContext.getIdentity().toLowerCase() + "_jcloudstest9";
       archiveCounter = new RetryablePredicate<Integer>(
             new Predicate<Integer>() {
                public boolean apply(Integer value){
@@ -56,13 +56,13 @@ public class ArchiveClientLiveTest extends BaseGleSYSClientLiveTest {
             }, 30, 1, TimeUnit.SECONDS);
    }
    
-   @AfterGroups(groups={"live"})
-   public void tearDown() {
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
       int before = client.listArchives().size();
       client.deleteArchive(archiveUser);
       assertTrue(archiveCounter.apply(before - 1));
 
-      super.tearDown();
+      super.tearDownContext();
    }
 
    private ArchiveClient client;

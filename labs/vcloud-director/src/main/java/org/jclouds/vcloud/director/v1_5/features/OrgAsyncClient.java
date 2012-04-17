@@ -37,9 +37,9 @@ import org.jclouds.rest.annotations.JAXBResponseParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
-import org.jclouds.vcloud.director.v1_5.domain.Org;
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
+import org.jclouds.vcloud.director.v1_5.domain.org.Org;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;

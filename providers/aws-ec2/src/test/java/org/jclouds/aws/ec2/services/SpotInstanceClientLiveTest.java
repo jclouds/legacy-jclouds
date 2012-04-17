@@ -25,35 +25,28 @@ import static org.jclouds.aws.ec2.options.RequestSpotInstancesOptions.Builder.la
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.domain.Region;
+import org.jclouds.aws.ec2.AWSEC2ApiMetadata;
 import org.jclouds.aws.ec2.AWSEC2Client;
 import org.jclouds.aws.ec2.domain.AWSRunningInstance;
 import org.jclouds.aws.ec2.domain.LaunchSpecification;
 import org.jclouds.aws.ec2.domain.Spot;
 import org.jclouds.aws.ec2.domain.SpotInstanceRequest;
 import org.jclouds.aws.ec2.predicates.SpotInstanceRequestActive;
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code SpotInstanceClient}
@@ -61,27 +54,23 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class SpotInstanceClientLiveTest  extends BaseVersionedServiceLiveTest {
+public class SpotInstanceClientLiveTest  extends BaseComputeServiceContextLiveTest {
    public SpotInstanceClientLiveTest() {
       provider = "aws-ec2";
    }
 
    private static final int SPOT_DELAY_SECONDS = 600;
    private AWSEC2Client client;
-   private ComputeServiceContext context;
    private RetryablePredicate<SpotInstanceRequest> activeTester;
    private Set<SpotInstanceRequest> requests;
    private AWSRunningInstance instance;
    private long start;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() throws FileNotFoundException, IOException {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(
-               new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
-
-      client = AWSEC2Client.class.cast(context.getProviderSpecificContext().getApi());
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
       activeTester = new RetryablePredicate<SpotInstanceRequest>(new SpotInstanceRequestActive(client),
                SPOT_DELAY_SECONDS, 1, 1, TimeUnit.SECONDS);
    }
@@ -181,6 +170,5 @@ public class SpotInstanceClientLiveTest  extends BaseVersionedServiceLiveTest {
       if (instance != null) {
          client.getInstanceServices().terminateInstancesInRegion(instance.getRegion(), instance.getId());
       }
-      context.close();
    }
 }

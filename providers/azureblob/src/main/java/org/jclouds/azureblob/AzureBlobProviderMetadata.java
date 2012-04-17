@@ -19,8 +19,10 @@
 package org.jclouds.azureblob;
 
 import java.net.URI;
+import java.util.Properties;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Microsoft Azure Blob Service.
@@ -28,37 +30,55 @@ import org.jclouds.providers.BaseProviderMetadata;
  * @author Adrian Cole
  */
 public class AzureBlobProviderMetadata extends BaseProviderMetadata {
-   public AzureBlobProviderMetadata() {
-      this(builder()
-            .id("azureblob")
-            .name("Microsoft Azure Blob Service")
-            .api(new AzureBlobApiMetadata())
-            .homepage(URI.create("http://www.microsoft.com/windowsazure/storage/"))
-            .console(URI.create("https://windows.azure.com/default.aspx"))
-            .linkedServices("azureblob", "azurequeue", "azuretable")
-            .iso3166Codes("US-TX","US-IL","IE-D","SG","NL-NH","HK"));
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8271570736207734777L;
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AzureBlobProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public AzureBlobProviderMetadata() {
+      super(builder());
+   }
+
+   public AzureBlobProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      return properties;
+   }
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+            id("azureblob")
+            .name("Microsoft Azure Blob Service")
+            .apiMetadata(new AzureBlobApiMetadata())
+            .endpoint("https://${jclouds.identity}.blob.core.windows.net")
+            .homepage(URI.create("http://www.microsoft.com/windowsazure/storage/"))
+            .console(URI.create("https://windows.azure.com/default.aspx"))
+            .linkedServices("azureblob", "azurequeue", "azuretable")
+            .iso3166Codes("US-TX","US-IL","IE-D","SG","NL-NH","HK")
+            .defaultProperties(AzureBlobProviderMetadata.defaultProperties());
+      }
 
       @Override
       public AzureBlobProviderMetadata build() {
          return new AzureBlobProviderMetadata(this);
       }
-   }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
 }

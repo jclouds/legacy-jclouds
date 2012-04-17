@@ -199,7 +199,7 @@ public class Base64
     
     
     
-/* ********  E N C O D I N G   M E T H O D S  ******** */    
+/* ********  E N C O D I N G   ApiMetadata E T H O D S  ******** */    
     
     
     /**
@@ -568,7 +568,7 @@ public class Base64
     
     
     
-/* ********  D E C O D I N G   M E T H O D S  ******** */
+/* ********  D E C O D I N G   ApiMetadata E T H O D S  ******** */
     
     
     /**
@@ -1011,7 +1011,7 @@ public class Base64
     
     
     
-    /* ********  I N N E R   C L A S S   I N P U T S T R E A M  ******** */
+    /* ********  I N N E R   C L A S S   I N P U T S T R E A ApiMetadata  ******** */
     
     
     
@@ -1241,7 +1241,7 @@ public class Base64
     
     
     
-    /* ********  I N N E R   C L A S S   O U T P U T S T R E A M  ******** */
+    /* ********  I N N E R   C L A S S   O U T P U T S T R E A ApiMetadata  ******** */
     
     
     

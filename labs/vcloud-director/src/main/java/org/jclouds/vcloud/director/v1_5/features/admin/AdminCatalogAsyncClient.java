@@ -39,10 +39,9 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
-import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.features.CatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;

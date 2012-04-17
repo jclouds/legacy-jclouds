@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 public class DescribeSpotPriceHistoryResponseHandler extends
          ParseSax.HandlerWithResult<Set<Spot>> {
 
-   private Builder<Spot> spots = ImmutableSet.<Spot>builder();
+   private Builder<Spot> spots = ImmutableSet.builder();
    private final SpotHandler spotHandler;
 
    @Inject

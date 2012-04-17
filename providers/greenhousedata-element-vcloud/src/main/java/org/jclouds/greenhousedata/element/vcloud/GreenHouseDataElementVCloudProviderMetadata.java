@@ -18,10 +18,19 @@
  */
 package org.jclouds.greenhousedata.element.vcloud;
 
-import java.net.URI;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.greenhousedata.element.vcloud.config.GreenHouseDataElementVCloudComputeServiceContextModule;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 import org.jclouds.vcloud.VCloudApiMetadata;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for Green House Data Element vCloud
@@ -30,37 +39,59 @@ import org.jclouds.vcloud.VCloudApiMetadata;
  */
 public class GreenHouseDataElementVCloudProviderMetadata extends BaseProviderMetadata {
 
-   public GreenHouseDataElementVCloudProviderMetadata() {
-      this(builder()
-            .id("greenhousedata-element-vcloud")
-            .name("Green House Data Element vCloud")
-            .api(new VCloudApiMetadata())
-            .homepage(URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/"))
-            .console(URI.create("https://mycloud.greenhousedata.com/cloud/org/YOUR_ORG_HERE"))
-            .iso3166Codes("US-WY"));
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8503534430849704022L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected GreenHouseDataElementVCloudProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public GreenHouseDataElementVCloudProviderMetadata() {
+      super(builder());
+   }
+
+   public GreenHouseDataElementVCloudProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_NETWORK, "orgNet-.*-External");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("greenhousedata-element-vcloud")
+         .name("Green House Data Element vCloud")
+               .apiMetadata(
+                     new VCloudApiMetadata().toBuilder()
+                     .buildVersion("1.5.0.464915")
+                     .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudRestClientModule.class, GreenHouseDataElementVCloudComputeServiceContextModule.class))
+                     .build())
+         .homepage(URI.create("http://www.greenhousedata.com/element-cloud-hosting/vcloud-services/"))
+         .console(URI.create("https://mycloud.greenhousedata.com/cloud/org/YOUR_ORG_HERE"))
+         .iso3166Codes("US-WY")
+         .endpoint("https://mycloud.greenhousedata.com/api")
+         .defaultProperties(GreenHouseDataElementVCloudProviderMetadata.defaultProperties());
+      }
 
       @Override
       public GreenHouseDataElementVCloudProviderMetadata build() {
          return new GreenHouseDataElementVCloudProviderMetadata(this);
       }
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
-
 }

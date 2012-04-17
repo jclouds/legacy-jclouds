@@ -33,8 +33,8 @@ import static org.jclouds.trmk.vcloud_0_8.reference.VCloudConstants.PROPERTY_VCL
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -52,7 +52,6 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.jclouds.trmk.vcloud_0_8.VCloudToken;
 import org.jclouds.trmk.vcloud_0_8.compute.functions.FindLocationForResource;
@@ -88,15 +87,14 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
-public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
-      extends RestClientModule<S, A> {
+public class TerremarkVCloudRestClientModule<S, A> extends RestClientModule<S, A> {
 
    public TerremarkVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
@@ -150,7 +148,7 @@ public class TerremarkVCloudRestClientModule<S extends TerremarkVCloudClient, A 
 
                @Override
                public Map<String, String> apply(Map<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org> arg0) {
-                  Builder<String, String> returnVal = ImmutableMap.<String, String> builder();
+                  Builder<String, String> returnVal = ImmutableMap.builder();
                   for (Entry<String, ? extends org.jclouds.trmk.vcloud_0_8.domain.Org> orgr : arg0.entrySet()) {
                      for (String vdc : orgr.getValue().getVDCs().keySet()) {
                         returnVal.put(vdc, orgr.getKey());

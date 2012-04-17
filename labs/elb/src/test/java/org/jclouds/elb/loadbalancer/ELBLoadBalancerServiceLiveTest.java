@@ -52,7 +52,7 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
 
    @Override
    protected void validateNodesInLoadBalancer() {
-      RestContext<ELBClient, ELBAsyncClient> elbContext = context.getProviderSpecificContext();
+      RestContext<ELBClient, ELBAsyncClient> elbContext = context.unwrap();
       // TODO create a LoadBalancer object and an appropriate list method so that this
       // does not have to be EC2 specific code
       ELBClient elbClient = elbContext.getApi();
@@ -68,4 +68,6 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
             assertEquals(elb.getInstanceIds(), instanceIds);
       }
    }
+
+
 }

@@ -73,7 +73,7 @@ public class BindAuthToJsonPayload extends BindToJsonPayload implements MapBinde
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
-      Builder<String, Object> builder = ImmutableMap.<String, Object> builder();
+      Builder<String, Object> builder = ImmutableMap.builder();
       addCredentialsInArgsOrNull(gRequest, builder);
       // TODO: is tenantName permanent? or should we switch to tenantId at some point. seems most tools
       // still use tenantName

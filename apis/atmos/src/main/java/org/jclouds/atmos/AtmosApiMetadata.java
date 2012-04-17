@@ -18,50 +18,86 @@
  */
 package org.jclouds.atmos;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.atmos.blobstore.config.AtmosBlobStoreContextModule;
+import org.jclouds.atmos.config.AtmosRestClientModule;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for EMC's Atmos API.
+ * Implementation of {@link ApiMetadata} for Rackspace Cloud Files API
  * 
  * @author Adrian Cole
  */
-public class AtmosApiMetadata extends BaseApiMetadata {
+public class AtmosApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8067252472547486854L;
 
-   public AtmosApiMetadata() {
-      this(builder()
-            .id("atmos")
-            .type(ApiType.BLOBSTORE)
-            .name("EMC's Atmos API")
-            .identityName("Subtenant ID (UID)")
-            .credentialName("Shared Secret")
-            .documentation(URI.create("https://community.emc.com/docs/DOC-10508")));
+   public static final TypeToken<RestContext<AtmosClient, AtmosAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<AtmosClient, AtmosAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
+   
+   private static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AtmosApiMetadata(Builder<?> builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromApiMetadata(this);
+   }
+
+   public AtmosApiMetadata() {
+      this(builder());
+   }
+
+   protected AtmosApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
+      return properties;
+   }
+
+   public static class Builder extends BaseRestApiMetadata.Builder {
+      protected Builder() {
+         super(AtmosClient.class, AtmosAsyncClient.class);
+         id("atmos")
+         .name("EMC's Atmos API")
+         .identityName("Subtenant ID (UID)")
+         .credentialName("Shared Secret")
+         .documentation(URI.create("https://community.emc.com/docs/DOC-10508"))
+         .version("1.4.0")
+         .defaultEndpoint("https://accesspoint.atmosonline.com")
+         .defaultProperties(AtmosApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(AtmosRestClientModule.class, AtmosBlobStoreContextModule.class));
+      }
 
       @Override
       public AtmosApiMetadata build() {
          return new AtmosApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 }

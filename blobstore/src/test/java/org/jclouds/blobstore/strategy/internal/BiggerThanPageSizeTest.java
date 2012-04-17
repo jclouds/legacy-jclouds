@@ -22,8 +22,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -38,7 +39,7 @@ public class BiggerThanPageSizeTest {
 
    @BeforeTest
    void setupBlobStore() {
-      blobstore = new BlobStoreContextFactory().createContext("transient", "foo", "bar").getBlobStore();
+      blobstore =  ContextBuilder.newBuilder("transient").build(BlobStoreContext.class).getBlobStore();
    }
 
    public void test() throws IOException {

@@ -28,6 +28,8 @@ import static org.testng.Assert.fail;
 import java.util.SortedMap;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.aws.s3.AWSS3ApiMetadata;
+import org.jclouds.aws.s3.AWSS3AsyncClient;
 import org.jclouds.aws.s3.AWSS3Client;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -54,6 +56,7 @@ import com.google.common.collect.Maps;
 @Test(groups = "unit")
 public class SequentialMultipartUploadStrategyTest {
    
+   @SuppressWarnings("unchecked")
    @Test
    public void testWithTwoParts() {
       AWSS3BlobStore ablobStore = createMock(AWSS3BlobStore.class);      
@@ -65,8 +68,7 @@ public class SequentialMultipartUploadStrategyTest {
       Payload payload = createMock(Payload.class);
       MutableContentMetadata contentMeta = createMock(MutableContentMetadata.class);
       BlobStoreContext context = createMock(BlobStoreContext.class);
-      @SuppressWarnings("unchecked")
-      RestContext<Object, Object> psc = createMock(RestContextImpl.class);
+      RestContext<AWSS3Client, AWSS3AsyncClient> psc = createMock(RestContextImpl.class);
       AWSS3Client client = createMock(AWSS3Client.class);
       ObjectMetadata ometa = createMock(ObjectMetadata.class);
       String uploadId = "uploadId";
@@ -82,7 +84,7 @@ public class SequentialMultipartUploadStrategyTest {
       expect(payload.getContentMetadata()).andReturn(contentMeta).atLeastOnce();
       expect(contentMeta.getContentLength()).andReturn(new Long(chunkSize + remaining));
       expect(ablobStore.getContext()).andReturn(context).atLeastOnce();
-      expect(context.getProviderSpecificContext()).andReturn(psc).atLeastOnce();
+      expect(context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN)).andReturn(psc).atLeastOnce();
       expect(psc.getApi()).andReturn(client).atLeastOnce();
       expect(client.initiateMultipartUpload(container, new ObjectMetadataBuilder().key(key).build())).andReturn("uploadId").atLeastOnce();
       expect(slicer.slice(payload, 0, chunkSize)).andReturn(payload).atLeastOnce();
@@ -117,6 +119,7 @@ public class SequentialMultipartUploadStrategyTest {
       verify(ometa);
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testWithTimeout() {
       AWSS3BlobStore ablobStore = createMock(AWSS3BlobStore.class);      
@@ -128,8 +131,7 @@ public class SequentialMultipartUploadStrategyTest {
       Payload payload = createMock(Payload.class);
       MutableContentMetadata contentMeta = createMock(MutableContentMetadata.class);
       BlobStoreContext context = createMock(BlobStoreContext.class);
-      @SuppressWarnings("unchecked")
-      RestContext<Object, Object> psc = createMock(RestContextImpl.class);
+      RestContext<AWSS3Client, AWSS3AsyncClient> psc = createMock(RestContextImpl.class);
       AWSS3Client client = createMock(AWSS3Client.class);
       ObjectMetadata ometa = createMock(ObjectMetadata.class);
       String uploadId = "uploadId";
@@ -145,7 +147,7 @@ public class SequentialMultipartUploadStrategyTest {
       expect(payload.getContentMetadata()).andReturn(contentMeta).atLeastOnce();
       expect(contentMeta.getContentLength()).andReturn(new Long(chunkSize + remaining));
       expect(ablobStore.getContext()).andReturn(context).atLeastOnce();
-      expect(context.getProviderSpecificContext()).andReturn(psc).atLeastOnce();
+      expect(context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN)).andReturn(psc).atLeastOnce();
       expect(psc.getApi()).andReturn(client).atLeastOnce();
       expect(client.initiateMultipartUpload(container, new ObjectMetadataBuilder().key(key).build())).andReturn("uploadId").atLeastOnce();
       expect(slicer.slice(payload, 0, chunkSize)).andReturn(payload).atLeastOnce();

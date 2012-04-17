@@ -26,5 +26,8 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "CloudFilesUKInputStreamMapIntegrationLiveTest")
 public class CloudFilesUKInputStreamMapIntegrationLiveTest extends CloudFilesInputStreamMapIntegrationLiveTest {
+   public CloudFilesUKInputStreamMapIntegrationLiveTest() {
+      provider = "cloudfiles-uk";
+   }
 
 }

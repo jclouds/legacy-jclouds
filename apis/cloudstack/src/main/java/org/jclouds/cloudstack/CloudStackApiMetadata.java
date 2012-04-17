@@ -19,50 +19,92 @@
 package org.jclouds.cloudstack;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.cloudstack.compute.config.CloudStackComputeServiceContextModule;
+import org.jclouds.cloudstack.config.CloudStackRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for Citrix CloudStack API
+ * Implementation of {@link ApiMetadata} for Citrix/Apache CloudStack api.
+ * 
+ * <h3>note</h3>
+ * <p/>
+ * This class allows overriding of types {@code S}(client) and {@code A}
+ * (asyncClient), so that children can add additional methods not declared here,
+ * such as new features from AWS.
+ * <p/>
+ * 
+ * As this is a popular api, we also allow overrides for type {@code C}
+ * (context). This allows subtypes to add in new feature groups or extensions,
+ * not present in the base api. For example, you could make a subtype for
+ * context, that exposes admin operations.
  * 
  * @author Adrian Cole
  */
-public class CloudStackApiMetadata extends BaseApiMetadata {
-
-   public CloudStackApiMetadata() {
-      this(builder()
-            .id("cloudstack")
-            .type(ApiType.COMPUTE)
-            .name("Citrix CloudStack API")
-            .identityName("API Key")
-            .credentialName("Secret Key")
-            .documentation(URI.create("http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html")));
+public class CloudStackApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -3936131452958663245L;
+   
+   public static final TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudStackClient, CloudStackAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+   
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudStackApiMetadata(Builder<?> builder) {
+   public CloudStackApiMetadata() {
+      this(new Builder());
+   }
+
+   protected CloudStackApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty("jclouds.ssh.max-retries", "7");
+      properties.setProperty("jclouds.ssh.retry-auth", "true");
+      return properties;
+   }
 
+   public static class Builder
+         extends BaseRestApiMetadata.Builder {
+
+      protected Builder() {
+         super(CloudStackClient.class, CloudStackAsyncClient.class);
+         id("cloudstack")
+         .name("Citrix CloudStack API")
+         .identityName("API Key")
+         .credentialName("Secret Key")
+         .documentation(URI.create("http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"))
+         .defaultEndpoint("http://localhost:8080/client/api")
+         .version("2.2")
+         .wrapper(TypeToken.of(CloudStackContext.class))
+         .defaultProperties(CloudStackApiMetadata.defaultProperties())
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudStackRestClientModule.class, CloudStackComputeServiceContextModule.class));
+      }
+      
       @Override
       public CloudStackApiMetadata build() {
          return new CloudStackApiMetadata(this);
       }
-   }
+      
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

@@ -34,7 +34,6 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.initializer>org.jclouds.synaptic.storage.blobstore.integration.SynapticStorageTestInitializer</test.initializer>
         <test.synaptic-storage.endpoint>https://storage.synaptic.att.com</test.synaptic-storage.endpoint>
         <test.synaptic-storage.api-version>1.3.0</test.synaptic-storage.api-version>
         <test.synaptic-storage.build-version />
@@ -106,7 +105,6 @@
                                         <test.synaptic-storage.build-version>${test.synaptic-storage.build-version}</test.synaptic-storage.build-version>
                                         <test.synaptic-storage.identity>${test.synaptic-storage.identity}</test.synaptic-storage.identity>
                                         <test.synaptic-storage.credential>${test.synaptic-storage.credential}</test.synaptic-storage.credential>
-                                        <test.initializer>${test.initializer}</test.initializer>
                                         <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                                         <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                                     </systemPropertyVariables>

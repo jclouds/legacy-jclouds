@@ -20,7 +20,6 @@ package org.jclouds.opsource.servers.config;
 import java.util.Map;
 
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -46,7 +45,6 @@ import com.google.inject.Scopes;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class OpSourceServersRestClientModule extends
       RestClientModule<OpSourceServersClient, OpSourceServersAsyncClient> {

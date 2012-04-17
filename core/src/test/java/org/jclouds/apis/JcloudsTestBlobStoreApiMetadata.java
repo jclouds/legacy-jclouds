@@ -20,44 +20,56 @@ package org.jclouds.apis;
 
 import java.net.URI;
 
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
 /**
  * Implementation of @ link org.jclouds.types.ApiMetadata} for testing.
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>, Adrian Cole
  */
-public class JcloudsTestBlobStoreApiMetadata extends BaseApiMetadata {
-   
-   public JcloudsTestBlobStoreApiMetadata() {
-      this(builder()
-            .id("test-blobstore-api")
-            .type(ApiType.BLOBSTORE)
-            .name("Test Blobstore Api")
-            .identityName("user")
-            .credentialName("password")
-            .documentation(URI.create("http://jclouds.org/documentation")));
+public class JcloudsTestBlobStoreApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -1178177610797635012L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected JcloudsTestBlobStoreApiMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromApiMetadata(this));
+   }
+
+   public JcloudsTestBlobStoreApiMetadata() {
+      super(builder());
+   }
+
+   protected JcloudsTestBlobStoreApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static class Builder
+         extends
+         BaseRestApiMetadata.Builder {
+
+      protected Builder(){
+         super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
+         id("test-blobstore-api")
+         .wrapper(Storage.class)
+         .name("Test Blobstore Api")
+         .identityName("user")
+         .credentialName("password")
+         .documentation(URI.create("http://jclouds.org/documentation"));
+      }
 
       @Override
       public JcloudsTestBlobStoreApiMetadata build() {
          return new JcloudsTestBlobStoreApiMetadata(this);
       }
+
    }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

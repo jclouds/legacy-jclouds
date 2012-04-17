@@ -19,15 +19,16 @@
 package org.jclouds.demo.tweetstore.controller;
 
 import static com.google.appengine.api.taskqueue.TaskOptions.Builder.withUrl;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 import java.util.Map;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.TransientApiMetadata;
 import org.testng.annotations.Test;
 
 import com.google.appengine.api.taskqueue.Queue;
@@ -42,15 +43,16 @@ import com.google.common.collect.ImmutableMap;
 @Test(groups = "unit")
 public class EnqueueStoresControllerTest {
 
-    Map<String, BlobStoreContext> createBlobStores() {
-        Map<String, BlobStoreContext> contexts = ImmutableMap.of(
-                "test1", new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"), 
-                "test2", new BlobStoreContextFactory().createContext("transient", "dummy", "dummy"));
+    Map<String, BlobStoreContext<?, ?>> createBlobStores() {
+        TransientApiMetadata transientApiMetadata = TransientApiMetadata.builder().build();
+        Map<String, BlobStoreContext<?, ?>> contexts = ImmutableMap.<String, BlobStoreContext<?, ?>>of(
+                "test1", BlobStoreContextBuilder.newBuilder(transientApiMetadata).build(), 
+                "test2", BlobStoreContextBuilder.newBuilder(transientApiMetadata).build());
         return contexts;
     }
 
     public void testEnqueueStores() {
-        Map<String, BlobStoreContext> stores = createBlobStores();
+        Map<String, BlobStoreContext<?, ?>> stores = createBlobStores();
         Queue taskQueue = createMock(Queue.class);
         EnqueueStoresController function = new EnqueueStoresController(stores, taskQueue);
 

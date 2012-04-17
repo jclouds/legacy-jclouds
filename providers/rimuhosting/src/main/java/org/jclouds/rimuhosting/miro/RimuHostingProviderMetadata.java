@@ -18,47 +18,77 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import java.net.URI;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONE;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_ZONES;
+import static org.jclouds.rimuhosting.miro.reference.RimuHostingConstants.PROPERTY_RIMUHOSTING_DEFAULT_DC;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for RimuHosting.
- *
  * @author Adrian Cole
  */
 public class RimuHostingProviderMetadata extends BaseProviderMetadata {
-   public RimuHostingProviderMetadata() {
-      this(builder()
-            .id("rimuhosting")
-            .name("RimuHosting")
-            .api(new RimuHostingApiMetadata())
-            .homepage(URI.create("http://www.rimuhosting.com"))
-            .console(URI.create("https://rimuhosting.com/cp"))
-            .iso3166Codes("NZ-AUK", "US-TX", "AU-NSW", "GB-LND"));
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8802226645589501365L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected RimuHostingProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public RimuHostingProviderMetadata() {
+      super(builder());
+   }
+
+   public RimuHostingProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_ZONES, "DCAUCKLAND,DCLONDON,DCDALLAS,DCSYDNEY");
+      properties.setProperty(PROPERTY_ZONE + ".DCAUCKLAND." + ISO3166_CODES, "NZ-AUK");
+      properties.setProperty(PROPERTY_ZONE + ".DCLONDON." + ISO3166_CODES, "GB-LND");
+      properties.setProperty(PROPERTY_ZONE + ".DCDALLAS." + ISO3166_CODES, "US-TX");
+      properties.setProperty(PROPERTY_ZONE + ".DCSYDNEY." + ISO3166_CODES, "AU-NSW");
+      properties.setProperty(PROPERTY_RIMUHOSTING_DEFAULT_DC, "DCDALLAS");
+      return properties;
+   }
+
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder() {
+         id("rimuhosting")
+         .name("RimuHosting")
+         .apiMetadata(new RimuHostingApiMetadata())
+         .homepage(URI.create("http://www.rimuhosting.com"))
+         .console(URI.create("https://rimuhosting.com/cp"))
+         .iso3166Codes("NZ-AUK", "US-TX", "AU-NSW", "GB-LND")
+         .endpoint("https://api.rimuhosting.com/r")
+         .defaultProperties(RimuHostingProviderMetadata.defaultProperties());
+      }
 
       @Override
       public RimuHostingProviderMetadata build() {
          return new RimuHostingProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

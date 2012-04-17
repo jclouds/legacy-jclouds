@@ -22,23 +22,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.BaseRestClientLiveTest;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Tests behavior of {@code CloudWatchClient}
@@ -46,21 +41,17 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public class CloudWatchClientLiveTest extends BaseRestClientLiveTest {
+public class CloudWatchClientLiveTest extends BaseContextLiveTest<RestContext<CloudWatchClient, CloudWatchAsyncClient>> {
    public CloudWatchClientLiveTest() {
       provider = "cloudwatch";
    }
 
    private CloudWatchClient client;
-   private RestContext<CloudWatchClient, CloudWatchAsyncClient> context;
 
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
       client = context.getApi();
    }
 
@@ -73,15 +64,14 @@ public class CloudWatchClientLiveTest extends BaseRestClientLiveTest {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.MINUTE, -60 * 24 * 3); // 3 days
 
-      Set<Datapoint> datapoints = client.getMetricStatisticsInRegion(
-         region, "CPUUtilization", "AWS/EC2", cal.getTime(), new Date(), 180, Statistics.AVERAGE,
-         GetMetricStatisticsOptions.Builder.unit(Unit.PERCENT));
+      Set<Datapoint> datapoints = client.getMetricStatisticsInRegion(region, "CPUUtilization", "AWS/EC2",
+            cal.getTime(), new Date(), 180, Statistics.AVERAGE, GetMetricStatisticsOptions.Builder.unit(Unit.PERCENT));
 
       return checkNotNull(datapoints, "Got null response for EC2 datapoints in region ");
    }
 
-   @AfterTest
-   public void shutdown() {
-      context.close();
+   @Override
+   protected TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> contextType() {
+      return CloudWatchApiMetadata.CONTEXT_TOKEN;
    }
 }

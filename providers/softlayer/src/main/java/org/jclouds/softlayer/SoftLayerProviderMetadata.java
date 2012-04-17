@@ -18,46 +18,98 @@
  */
 package org.jclouds.softlayer;
 
-import java.net.URI;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED;
+import static org.jclouds.softlayer.reference.SoftLayerConstants.PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Implementation of {@ link org.jclouds.types.ProviderMetadata} for SoftLayer.
- *
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for SoftLayer.
  * @author Adrian Cole
  */
 public class SoftLayerProviderMetadata extends BaseProviderMetadata {
-   public SoftLayerProviderMetadata() {
-      this(builder()
-            .id("softlayer")
-            .name("SoftLayer")
-            .api(new SoftLayerApiMetadata())
-            .homepage(URI.create("http://www.softlayer.com"))
-            .console(URI.create("https://manage.softlayer.com"))
-            .iso3166Codes("SG","US-CA","US-TX","US-VA","US-WA","US-TX"));
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 2196535609684739834L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected SoftLayerProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+
+   public SoftLayerProviderMetadata() {
+      super(builder());
+   }
+
+   public SoftLayerProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_LOGIN_DETAILS_DELAY, "" + 60 * 60 * 1000);
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PACKAGE_NAME, "Cloud Server");
+      // ex: for private (ex. don't share hardware) use "Private [0-9]+ x ([.0-9]+) GHz Core[s]?"
+      // ex: for private and public use ".*[0-9]+ x ([.0-9]+) GHz Core[s]?"
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "[0-9]+ x ([0-9.]+) GHz Core[s]?");
+      // SAN or LOCAL
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE, "LOCAL");
+      // 10, 100, 1000
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "10");
+      ImmutableSet.Builder<String> prices = ImmutableSet.builder();
+      prices.add("21"); // 1 IP Address
+      prices.add("55"); // Host Ping: categoryCode: monitoring, notification
+      prices.add("57"); // Email and Ticket: categoryCode: notification
+      prices.add("58"); // Automated Notification: categoryCode: response
+      prices.add("1800"); // 0 GB Bandwidth: categoryCode: bandwidth
+      prices.add("905"); // Reboot / Remote Console: categoryCode: remote_management
+      prices.add("418"); // Nessus Vulnerability Assessment & Reporting: categoryCode:
+                         // vulnerability_scanner
+      prices.add("420"); // Unlimited SSL VPN Users & 1 PPTP VPN User per account: categoryCode:
+                         // vpn_management
+      properties.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PRICES, Joiner.on(',').join(prices.build()));
+
+      return properties;
+   }
+
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder() {
+         id("softlayer")
+         .name("SoftLayer")
+         .apiMetadata(new SoftLayerApiMetadata())
+         .homepage(URI.create("http://www.softlayer.com"))
+         .console(URI.create("https://manage.softlayer.com"))
+         .iso3166Codes("SG","US-CA","US-TX","US-VA","US-WA","US-TX")
+         .endpoint("https://api.softlayer.com/rest")
+         .defaultProperties(SoftLayerProviderMetadata.defaultProperties());
+      }
 
       @Override
       public SoftLayerProviderMetadata build() {
          return new SoftLayerProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
 }

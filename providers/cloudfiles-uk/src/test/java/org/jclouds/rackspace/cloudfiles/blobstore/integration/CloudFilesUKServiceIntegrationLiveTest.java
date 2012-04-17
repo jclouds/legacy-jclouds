@@ -30,6 +30,10 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups =  "live", testName = "CloudFilesUKServiceIntegrationLiveTest")
 public class CloudFilesUKServiceIntegrationLiveTest extends CloudFilesServiceIntegrationLiveTest {
+   public CloudFilesUKServiceIntegrationLiveTest() {
+      provider = "cloudfiles-uk";
+   }
+
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("GB-SLG");

@@ -21,20 +21,17 @@ package org.jclouds.elb;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.apis.BaseContextLiveTest;
 import org.jclouds.elb.domain.LoadBalancer;
-import org.jclouds.loadbalancer.LoadBalancerServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.BaseRestClientLiveTest;
 import org.jclouds.rest.RestContext;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.reflect.TypeParameter;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Tests behavior of {@code ELBClient}
@@ -42,23 +39,19 @@ import com.google.inject.Module;
  * @author Lili Nader
  */
 @Test(groups = "live", singleThreaded = true, testName = "ELBClientLiveTest")
-public class ELBClientLiveTest extends BaseRestClientLiveTest {
+public class ELBClientLiveTest<S extends ELBClient, A extends ELBAsyncClient> extends BaseContextLiveTest<RestContext<S, A>>  {
 
    public ELBClientLiveTest() {
       provider = "elb";
    }
 
-   private ELBClient client;
-   private RestContext<ELBClient, ELBAsyncClient> context;
-
+   protected S client;
    protected String name = "TestLoadBalancer";
 
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new LoadBalancerServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
       client = context.getApi();
    }
 
@@ -94,12 +87,21 @@ public class ELBClientLiveTest extends BaseRestClientLiveTest {
       client.deleteLoadBalancerInRegion(region, name);
    }
 
-   @AfterGroups(groups = "live")
-   public void shutdown() {
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
       try {
          testDeleteLoadBalancer();
       } finally {
-         context.close();
+         super.tearDownContext();
       }
+   }
+
+   @SuppressWarnings({ "serial", "unchecked" })
+   @Override
+   protected TypeToken<RestContext<S, A>> contextType() {
+      return new TypeToken<RestContext<S, A>>() {
+      }.where(new TypeParameter<S>() {
+      }, (TypeToken) TypeToken.of(ELBClient.class)).where(new TypeParameter<A>() {
+      }, (TypeToken) TypeToken.of(ELBAsyncClient.class));
    }
 }

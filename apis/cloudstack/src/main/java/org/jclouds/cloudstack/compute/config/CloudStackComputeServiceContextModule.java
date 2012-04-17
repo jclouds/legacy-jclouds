@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.compute.functions.ServiceOfferingToHardware;
 import org.jclouds.cloudstack.compute.functions.TemplateToImage;
@@ -87,13 +86,8 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * 
  * @author Adrian Cole
  */
-public class CloudStackComputeServiceContextModule
-      extends
-      ComputeServiceAdapterContextModule<CloudStackClient, CloudStackAsyncClient, VirtualMachine, ServiceOffering, Template, Zone> {
-
-   public CloudStackComputeServiceContextModule() {
-      super(CloudStackClient.class, CloudStackAsyncClient.class);
-   }
+public class CloudStackComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<VirtualMachine, ServiceOffering, Template, Zone> {
 
    @Override
    protected void configure() {

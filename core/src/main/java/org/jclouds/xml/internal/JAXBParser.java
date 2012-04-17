@@ -22,14 +22,18 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.jclouds.Constants;
 import org.jclouds.http.functions.ParseXMLWithJAXB;
 import org.jclouds.xml.XMLParser;
+
+import com.google.inject.name.Named;
 
 /**
  * Parses XML documents using JAXB.
@@ -39,6 +43,16 @@ import org.jclouds.xml.XMLParser;
  */
 @Singleton
 public class JAXBParser implements XMLParser {
+    
+   /** Boolean indicating if the output must be pretty printed. */
+   private Boolean prettyPrint;
+   
+   @Inject
+   public JAXBParser(@Named(Constants.PROPERTY_PRETTY_PRINT_PAYLOADS) String prettyPrint) {
+       super();
+       this.prettyPrint = Boolean.valueOf(prettyPrint);
+   }
+
    @Override
    public String toXML(final Object src) throws IOException {
       return toXML(src, src.getClass());
@@ -49,7 +63,7 @@ public class JAXBParser implements XMLParser {
       try {
          JAXBContext context = JAXBContext.newInstance(type);
          Marshaller marshaller = context.createMarshaller();
-         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, prettyPrint);
          StringWriter writer = new StringWriter();
          marshaller.marshal(src, writer);
          return writer.toString();
@@ -58,6 +72,7 @@ public class JAXBParser implements XMLParser {
       }
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public <T> T fromXML(final String xml, final Class<T> type) throws IOException {
       try {

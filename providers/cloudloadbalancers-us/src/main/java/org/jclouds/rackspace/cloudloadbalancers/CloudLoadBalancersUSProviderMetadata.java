@@ -18,49 +18,89 @@
  */
 package org.jclouds.rackspace.cloudloadbalancers;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
+import static org.jclouds.cloudloadbalancers.reference.Region.DFW;
+import static org.jclouds.cloudloadbalancers.reference.Region.ORD;
+import static org.jclouds.location.reference.LocationConstants.ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.ISO3166_CODES;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersApiMetadata;
-import org.jclouds.providers.BaseProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
+
+import com.google.common.base.Joiner;
 
 /**
- * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers in US.
+ * Implementation of {@link org.jclouds.types.ProviderMetadata} for Rackspace Cloud LoadBalancers US.
  * 
  * @author Adrian Cole
  */
 public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
-
-   public CloudLoadBalancersUSProviderMetadata() {
-      this(builder()
-            .id("cloudloadbalancers-us")
-            .name("Rackspace Cloud Load Balancers US")
-            .api(new CloudLoadBalancersApiMetadata())
-            .homepage(URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers"))
-            .console(URI.create("https://manage.rackspacecloud.com"))
-            .linkedServices("cloudloadbalancers-us", "cloudservers-us", "cloudfiles-us")
-            .iso3166Codes("US-IL","US-TX"));
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudLoadBalancersUSProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public CloudLoadBalancersUSProviderMetadata() {
+      super(builder());
+   }
+
+   public CloudLoadBalancersUSProviderMetadata(Builder builder) {
       super(builder);
    }
+   public static final String[] REGIONS = {ORD, DFW};
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
+      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(REGIONS));
+      properties.setProperty(PROPERTY_ISO3166_CODES, "US-IL,US-TX");
+      
+      properties.setProperty(PROPERTY_REGION + "." + ORD + "." + ISO3166_CODES, "US-IL");
+      properties.setProperty(PROPERTY_REGION + "." + ORD + "." + ENDPOINT, String
+               .format("https://ord.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
+      
+      properties.setProperty(PROPERTY_REGION + "." + DFW + "." + ISO3166_CODES, "US-TX");
+      properties.setProperty(PROPERTY_REGION + "." + DFW + "." + ENDPOINT, String
+               .format("https://dfw.loadbalancers.api.rackspacecloud.com/v${%s}", PROPERTY_API_VERSION));
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("cloudloadbalancers-us")
+         .name("Rackspace Cloud Load Balancers US")
+         .apiMetadata(new CloudLoadBalancersApiMetadata())
+         .homepage(URI.create("http://www.rackspace.com/cloud/cloud_hosting_products/loadbalancers"))
+         .console(URI.create("https://manage.rackspacecloud.com"))
+         .linkedServices("cloudloadbalancers-us", "cloudservers-us", "cloudfiles-us")
+         .iso3166Codes("US-IL","US-TX")
+         .endpoint("https://auth.api.rackspacecloud.com");
+      }
 
       @Override
       public CloudLoadBalancersUSProviderMetadata build() {
          return new CloudLoadBalancersUSProviderMetadata(this);
       }
-   }
-
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
+      
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
    }
 }

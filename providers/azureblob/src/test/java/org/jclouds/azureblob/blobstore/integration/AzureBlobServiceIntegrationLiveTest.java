@@ -30,6 +30,9 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live")
 public class AzureBlobServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
+   public AzureBlobServiceIntegrationLiveTest() {
+      provider = "azureblob";
+   }
    @Override
    protected Set<String> getIso3166Codes() {
       return ImmutableSet.<String> of("US-TX", "US-IL", "IE-D", "SG", "NL-NH", "HK");

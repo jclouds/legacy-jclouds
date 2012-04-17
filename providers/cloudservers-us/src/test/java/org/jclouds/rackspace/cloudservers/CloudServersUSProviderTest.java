@@ -36,7 +36,7 @@
 package org.jclouds.rackspace.cloudservers;
 
 import org.jclouds.cloudservers.CloudServersApiMetadata;
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**

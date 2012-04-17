@@ -18,38 +18,28 @@
  */
 package org.jclouds.servermanager.compute;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.StandaloneComputeServiceContextSpec;
-import org.jclouds.servermanager.Datacenter;
-import org.jclouds.servermanager.Hardware;
-import org.jclouds.servermanager.Image;
-import org.jclouds.servermanager.Server;
-import org.jclouds.servermanager.ServerManager;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.servermanager.ServerManagerApiMetadata;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "ServerManagerExperimentLiveTest")
-public class ServerManagerExperimentLiveTest extends BaseVersionedServiceLiveTest {
+public class ServerManagerExperimentLiveTest extends BaseComputeServiceContextLiveTest {
+
    public ServerManagerExperimentLiveTest() {
       provider = "servermanager";
    }
-   
+
    @Test
    public void testAndExperiment() {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory()
-                  .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
-                           "servermanager", endpoint, apiVersion, buildVersion, "", identity, credential, ServerManager.class,
-                           ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
+         context = ContextBuilder.newBuilder(new ServerManagerApiMetadata()).build(ComputeServiceContext.class);
 
          context.getComputeService().listNodes();
 

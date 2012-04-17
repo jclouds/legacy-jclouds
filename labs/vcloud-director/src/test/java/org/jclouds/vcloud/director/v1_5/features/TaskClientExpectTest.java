@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "unit", "user", "task" }, singleThreaded = true, testName = "TaskClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "TaskClientExpectTest")
 public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    @Test
@@ -82,11 +82,11 @@ public class TaskClientExpectTest extends VCloudDirectorAdminClientExpectTest {
               .name("Tasks Lists")
               .type("application/vnd.vmware.vcloud.tasksList+xml")
               .href(URI.create("https://vcloudbeta.bluelock.com/api/tasksList/6f312e42-cd2b-488d-a2bb-97519cd57ed0"))
-              .task(taskTwo())
               .task(taskOne())
+              .task(taskTwo())
               .build();
 
-      assertEquals(client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")).toString(), expected.toString());
+      assertEquals(client.getTaskClient().getTaskList(URI.create("https://vcloudbeta.bluelock.com/api/org/6f312e42-cd2b-488d-a2bb-97519cd57ed0")), expected);
    }
 
    @Test

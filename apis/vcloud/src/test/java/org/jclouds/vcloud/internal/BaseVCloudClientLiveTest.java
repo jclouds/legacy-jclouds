@@ -18,22 +18,14 @@
  */
 package org.jclouds.vcloud.internal;
 
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContextFactory;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.VCloudClient;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -41,38 +33,30 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public abstract class BaseVCloudClientLiveTest extends BaseVersionedServiceLiveTest {
+public abstract class BaseVCloudClientLiveTest extends BaseComputeServiceContextLiveTest {
+
    // username is too long for name constraints
    protected String prefix = "vcd";
 
    protected ComputeService client;
 
    public BaseVCloudClientLiveTest() {
-        provider = "vcloud";
+      provider = "vcloud";
    }
 
    protected VCloudClient getVCloudApi() {
-      return VCloudClient.class.cast(client.getContext().getProviderSpecificContext().getApi());
+      return VCloudClient.class.cast(context.unwrap(VCloudApiMetadata.CONTEXT_TOKEN).getApi());
    }
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      client = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides).getComputeService();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      client = context.getComputeService();
    }
 
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
-   }
-
+   @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
-   }
-
-   @AfterGroups(groups = { "live" })
-   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
-      client.getContext().close();
    }
 }

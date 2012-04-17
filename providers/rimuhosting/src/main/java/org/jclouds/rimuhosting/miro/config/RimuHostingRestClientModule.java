@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.date.DateService;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.PropertiesAdapter;
@@ -46,7 +45,6 @@ import com.google.inject.Scopes;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class RimuHostingRestClientModule extends RestClientModule<RimuHostingClient, RimuHostingAsyncClient> {
 

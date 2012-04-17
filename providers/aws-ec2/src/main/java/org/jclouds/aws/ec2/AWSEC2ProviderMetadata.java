@@ -18,50 +18,89 @@
  */
 package org.jclouds.aws.ec2;
 
-import java.net.URI;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
-import org.jclouds.providers.BaseProviderMetadata;
+import java.net.URI;
+import java.util.Properties;
+
+import org.jclouds.aws.domain.Region;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@ link org.jclouds.types.ProviderMetadata} for Amazon's
  * Elastic Compute Cloud (EC2) provider.
  *
- * @author Jeremy Whitlock <jwhitlock@apache.org>
+ * @author Adrian Cole
  */
 public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
-
-   public AWSEC2ProviderMetadata() {
-      this(builder()
-            .id("aws-ec2")
-            .name("Amazon Elastic Compute Cloud (EC2)")
-            .api(new AWSEC2ApiMetadata())
-            .homepage(URI.create("http://aws.amazon.com/ec2"))
-            .console(URI.create("https://console.aws.amazon.com/ec2/home"))
-            .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
-            .iso3166Codes("US-VA", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13"));
+   
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected AWSEC2ProviderMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return builder().fromProviderMetadata(this);
+   }
+   
+   public AWSEC2ProviderMetadata() {
+      super(builder());
+   }
+
+   public AWSEC2ProviderMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = new Properties();
+      // sometimes, like in ec2, stop takes a very long time, perhaps
+      // due to volume management. one example spent 2 minutes moving
+      // from stopping->stopped state on an ec2 micro
+      properties.setProperty(TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
+      properties.putAll(Region.regionProperties());
+      properties.remove(PROPERTY_EC2_AMI_OWNERS);
+      // amazon, alestic, canonical, and rightscale
+      properties.setProperty(PROPERTY_EC2_AMI_QUERY,
+               "owner-id=137112412989,063491364108,099720109477,411009282317;state=available;image-type=machine");
+      // amis that work with the cluster instances
+      properties.setProperty(PROPERTY_EC2_CC_REGIONS, Region.US_EAST_1);
+      properties
+               .setProperty(
+                        PROPERTY_EC2_CC_AMI_QUERY,
+                        "virtualization-type=hvm;architecture=x86_64;owner-id=137112412989,099720109477;hypervisor=xen;state=available;image-type=machine;root-device-type=ebs");
+      return properties;
+   }
+   
+   public static class Builder extends BaseProviderMetadata.Builder {
+
+      protected Builder(){
+         id("aws-ec2")
+         .name("Amazon Elastic Compute Cloud (EC2)")
+         .apiMetadata(new AWSEC2ApiMetadata())
+         .endpoint("https://ec2.us-east-1.amazonaws.com")
+         .homepage(URI.create("http://aws.amazon.com/ec2"))
+         .console(URI.create("https://console.aws.amazon.com/ec2/home"))
+         .defaultProperties(AWSEC2ProviderMetadata.defaultProperties())
+         .linkedServices("aws-ec2","aws-elb", "aws-cloudwatch", "aws-s3", "aws-simpledb")
+         .iso3166Codes("US-VA", "US-CA", "US-OR", "BR-SP", "IE", "SG", "JP-13");
+      }
 
       @Override
       public AWSEC2ProviderMetadata build() {
          return new AWSEC2ProviderMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromProviderMetadata(
+            ProviderMetadata in) {
+         super.fromProviderMetadata(in);
+         return this;
+      }
 
-   public ConcreteBuilder toBuilder() {
-      return builder().fromProviderMetadata(this);
    }
-
 }

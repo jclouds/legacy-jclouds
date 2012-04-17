@@ -36,12 +36,11 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToXMLPayload;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.network.ExternalNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.NetworkAsyncClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataAsyncClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.filters.AddVCloudAuthorizationToRequest;
 
 import com.google.common.util.concurrent.ListenableFuture;

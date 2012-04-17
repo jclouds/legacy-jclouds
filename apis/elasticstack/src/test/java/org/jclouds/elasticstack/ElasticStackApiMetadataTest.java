@@ -18,8 +18,7 @@
  */
 package org.jclouds.elasticstack;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ElasticStackApiMetadataTest")
-public class ElasticStackApiMetadataTest extends BaseApiMetadataTest {
+public class ElasticStackApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public ElasticStackApiMetadataTest() {
-      super(new ElasticStackApiMetadata(), ApiType.COMPUTE);
+      super(new ElasticStackApiMetadata());
    }
 }

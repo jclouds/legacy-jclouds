@@ -25,11 +25,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
 import org.jclouds.glesys.compute.options.GleSYSTemplateOptions;
 import org.testng.annotations.Test;
 

@@ -21,8 +21,9 @@ package org.jclouds.compute.stub;
 import java.net.URI;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.apis.internal.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds in-memory (Stub) API
@@ -30,38 +31,45 @@ import org.jclouds.apis.BaseApiMetadata;
  * @author Adrian Cole
  */
 public class StubApiMetadata extends BaseApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -4880642520937391337L;
 
-   public StubApiMetadata() {
-      this(builder()
-            .id("stub")
-            .type(ApiType.COMPUTE)
-            .name("in-memory (Stub) API")
-            .identityName("Unused")
-            .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute")));
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected StubApiMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromApiMetadata(this));
+   }
+
+   public StubApiMetadata() {
+      super(builder());
+   }
+
+   protected StubApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static class Builder extends BaseApiMetadata.Builder {
+
+      protected Builder(){
+         id("stub")
+         .name("in-memory (Stub) API")
+         .identityName("Unused")
+         .defaultIdentity("stub")
+         .defaultCredential("stub")
+         .defaultEndpoint("stub")
+         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
+         .wrapper(ComputeServiceContext.class)
+         .defaultModule(StubComputeServiceContextModule.class);
+      }
 
       @Override
       public StubApiMetadata build() {
          return new StubApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
    }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
-
 }

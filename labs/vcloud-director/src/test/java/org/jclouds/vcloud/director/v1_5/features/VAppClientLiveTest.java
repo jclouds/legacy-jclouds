@@ -18,6 +18,10 @@
  */
 package org.jclouds.vcloud.director.v1_5.features;
 
+import static com.google.common.base.Predicates.and;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.getFirst;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CONDITION_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.CORRECT_VALUE_OBJECT_FMT;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.ENTITY_EQUAL;
@@ -49,6 +53,8 @@ import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkStartupSection
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVApp;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVirtualHardwareSection;
 import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkVmPendingQuestion;
+import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.relEquals;
+import static org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates.typeEquals;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -62,47 +68,54 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.io.Payloads;
+import org.jclouds.dmtf.cim.OSType;
+import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
+import org.jclouds.dmtf.ovf.MsgType;
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.ProductSection;
+import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.AbstractVAppClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.AccessSetting;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
-import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
-import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
-import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
+import org.jclouds.vcloud.director.v1_5.domain.Link;
+import org.jclouds.vcloud.director.v1_5.domain.Media;
 import org.jclouds.vcloud.director.v1_5.domain.Metadata;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConnection.IpAddressAllocationMode;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
-import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntityType.Status;
-import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswerChoice;
-import org.jclouds.vcloud.director.v1_5.domain.cim.OSType;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.MsgType;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.ProductSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.MediaInsertOrEjectParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -116,11 +129,80 @@ import com.google.common.collect.Sets;
  *
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "user", "vapp" }, singleThreaded = true, testName = "VAppClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "VAppClientLiveTest")
 public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    private MetadataValue metadataValue;
    private String key;
+   private URI testUserURI;
+   private boolean mediaCreated = false;
+   private boolean testUserCreated = false;
+   
+   @BeforeClass(alwaysRun = true, dependsOnMethods = { "setupRequiredClients" })
+   protected void setupRequiredEntities() {
+      Set<Link> links = vdcClient.getVdc(vdcURI).getLinks();
+
+      if (mediaURI == null) {
+         Predicate<Link> addMediaLink = and(relEquals(Link.Rel.ADD), typeEquals(VCloudDirectorMediaType.MEDIA));
+         
+         if (contains(links, addMediaLink)) {
+            Link addMedia = find(links, addMediaLink);
+            byte[] iso = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+            
+            Media sourceMedia = Media.builder()
+                  .type(VCloudDirectorMediaType.MEDIA)
+                  .name("Test media "+random.nextInt())
+                  .size(iso.length)
+                  .imageType(Media.ImageType.ISO)
+                  .description("Test media generated by vAppClientLiveTest")
+                  .build();
+            Media media = context.getApi().getMediaClient().createMedia(addMedia.getHref(), sourceMedia);
+            
+            Link uploadLink = getFirst(getFirst(media.getFiles(), null).getLinks(), null);
+            context.getApi().getUploadClient().upload(uploadLink.getHref(), Payloads.newByteArrayPayload(iso));
+            
+            media = context.getApi().getMediaClient().getMedia(media.getHref());
+            
+            if (media.getTasks().size() == 1) {
+               Task uploadTask = Iterables.getOnlyElement(media.getTasks());
+               Checks.checkTask(uploadTask);
+               assertEquals(uploadTask.getStatus(), Task.Status.RUNNING);
+               assertTrue(retryTaskSuccess.apply(uploadTask), String.format(TASK_COMPLETE_TIMELY, "uploadTask"));
+               media = context.getApi().getMediaClient().getMedia(media.getHref());
+            }
+            
+            mediaURI = media.getHref();
+            mediaCreated = true;
+         }
+      }
+      
+      if (adminContext != null) {
+         Link orgLink = find(links, and(relEquals("up"), typeEquals(VCloudDirectorMediaType.ORG)));
+         testUserURI = adminContext.getApi().getUserClient().createUser(toAdminUri(orgLink), randomTestUser("VAppAccessTest")).getHref();
+      } else {
+         testUserURI = userURI;
+      }
+   }
+   
+   @Override
+   @AfterClass(alwaysRun = true)
+   public void cleanUp() {
+      if (adminContext != null && mediaCreated && mediaURI != null) {
+         try {
+	         Task delete = context.getApi().getMediaClient().deleteMedia(mediaURI);
+	         taskDoneEventually(delete);
+         } catch (Exception e) {
+            logger.warn("Error when deleting media: %s", e.getMessage());
+         }
+      }
+      if (adminContext != null && testUserCreated && testUserURI != null) {
+         try {
+	         adminContext.getApi().getUserClient().deleteUser(testUserURI);
+         } catch (Exception e) {
+            logger.warn("Error when deleting user: %s", e.getMessage());
+         }
+      }
+   }
 
    /**
     * @see VAppClient#getVApp(URI)
@@ -326,7 +408,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       ControlAccessParams params = ControlAccessParams.builder()
             .notSharedToEveryone()
             .accessSetting(AccessSetting.builder()
-                  .subject(Reference.builder().href(userURI).type(ADMIN_USER).build())
+                  .subject(Reference.builder().href(testUserURI).type(ADMIN_USER).build())
                   .accessLevel("ReadOnly")
                   .build())
             .build();
@@ -725,7 +807,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(description = "PUT /vApp/{id}/owner", dependsOnMethods = { "testGetOwner" })
    public void testModifyOwner() {
-      Owner newOwner = Owner.builder().user(Reference.builder().href(userURI).type(ADMIN_USER).build()).build();
+      Owner newOwner = Owner.builder().user(Reference.builder().href(testUserURI).type(ADMIN_USER).build()).build();
 
       // The method under test
       vAppClient.modifyOwner(vApp.getHref(), newOwner);
@@ -898,7 +980,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
       // Copy existing section and update fields
       VirtualHardwareSection oldSection = vAppClient.getVirtualHardwareSection(vm.getHref());
-      Set<ResourceAllocationSettingData> oldItems = oldSection.getItems();
+      Set<? extends ResourceAllocationSettingData> oldItems = oldSection.getItems();
       Set<ResourceAllocationSettingData> newItems = Sets.newLinkedHashSet(oldItems);
       ResourceAllocationSettingData oldMemory = Iterables.find(oldItems, new Predicate<ResourceAllocationSettingData>() {
          @Override
@@ -942,7 +1024,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "GET /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionCpu() {
       // Method under test
-      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
 
       // Check the retrieved object is well formed
       checkResourceAllocationSettingData(rasd);
@@ -951,8 +1033,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "PUT /vApp/{id}/virtualHardwareSection/cpu", dependsOnMethods = { "testGetVirtualHardwareSectionCpu" })
    public void testModifyVirtualHardwareSectionCpu() {
       // Copy existing section and update fields
-      ResourceAllocationSettingData oldItem = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
-      ResourceAllocationSettingData newItem = oldItem.toBuilder()
+      RasdItem oldItem = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem newItem = oldItem.toBuilder()
             .elementName("2 virtual CPU(s)")
             .virtualQuantity(new BigInteger("2"))
             .build();
@@ -962,7 +1044,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionCpu), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionCpu"));
 
       // Retrieve the modified section
-      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem modified = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
       
       // Check the retrieved object
       checkResourceAllocationSettingData(modified);
@@ -1030,7 +1112,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
    @Test(description = "GET /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSection" })
    public void testGetVirtualHardwareSectionMemory() {
       // Method under test
-      ResourceAllocationSettingData rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
+      RasdItem rasd = vAppClient.getVirtualHardwareSectionCpu(vm.getHref());
 
       // Check the retrieved object is well formed
       checkResourceAllocationSettingData(rasd);
@@ -1038,8 +1120,8 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
 
    @Test(description = "PUT /vApp/{id}/virtualHardwareSection/memory", dependsOnMethods = { "testGetVirtualHardwareSectionMemory" })
    public void testModifyVirtualHardwareSectionMemory() {
-      ResourceAllocationSettingData origItem = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
-      ResourceAllocationSettingData newItem = origItem.toBuilder()
+      RasdItem origItem = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
+      RasdItem newItem = origItem.toBuilder()
             .elementName("1024 MB of memory")
             .virtualQuantity(new BigInteger("1024"))
             .build();
@@ -1049,7 +1131,7 @@ public class VAppClientLiveTest extends AbstractVAppClientLiveTest {
       assertTrue(retryTaskSuccess.apply(modifyVirtualHardwareSectionMemory), String.format(TASK_COMPLETE_TIMELY, "modifyVirtualHardwareSectionMemory"));
 
       // Retrieve the modified section
-      ResourceAllocationSettingData modified = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
+      RasdItem modified = vAppClient.getVirtualHardwareSectionMemory(vm.getHref());
       
       // Check the retrieved object
       checkResourceAllocationSettingData(modified);

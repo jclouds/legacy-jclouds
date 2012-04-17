@@ -18,28 +18,22 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContextFactory;
+import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudAsyncClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
-import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -47,7 +41,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, singleThreaded = true)
-public abstract class BaseTerremarkClientLiveTest <T extends TerremarkVCloudClient> extends BaseVersionedServiceLiveTest {
+public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient> extends BaseComputeServiceContextLiveTest {
+
    protected String prefix = System.getProperty("user.name");
 
    protected ComputeService client;
@@ -58,32 +53,21 @@ public abstract class BaseTerremarkClientLiveTest <T extends TerremarkVCloudClie
 
    protected RetryablePredicate<IPSocket> socketTester;
    protected Factory sshFactory;
+   protected S connection;
 
    @SuppressWarnings("unchecked")
-   protected T getApi() {
-      return (T) client.getContext().getProviderSpecificContext().getApi();
-   }
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      client = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getComputeService();
+   @Override
+   @BeforeClass(groups = { "integration", "live" })
+   public void setupContext() {
+      super.setupContext();
+      Injector injector = context.utils().injector();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
-      sshFactory = Guice.createInjector(getSshModule()).getInstance(Factory.class);
+      sshFactory = injector.getInstance(Factory.class);
+      connection = (S) RestContext.class.cast(context.unwrap()).getApi();
    }
-
-   protected Properties setupRestProperties() {
-      return RestContextFactory.getPropertiesFromResource("/rest.properties");
-   }
-
+   
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
 
-   @AfterGroups(groups = { "live" })
-   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
-      client.getContext().close();
-   }
 }

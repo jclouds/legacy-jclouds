@@ -23,25 +23,19 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.N
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_DEL;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_EQ;
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.OBJ_FIELD_UPDATABLE;
-import static org.jclouds.vcloud.director.v1_5.domain.Checks.checkError;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.util.Collections;
 
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.domain.AdminCatalog;
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.Error;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
-import org.jclouds.vcloud.director.v1_5.domain.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.User;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
+import org.jclouds.vcloud.director.v1_5.domain.params.PublishCatalogParams;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -54,7 +48,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "catalog" }, singleThreaded = true, testName = "CatalogClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "CatalogClientLiveTest")
 public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String CATALOG = "admin catalog";
@@ -83,13 +77,10 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
    @AfterClass(alwaysRun = true)
    protected void tidyUp() {
       if (catalog != null) {
-         catalogClient.deleteCatalog(catalog.getHref());
          try {
-            catalogClient.getCatalog(catalog.getHref());
-            fail("The Catalog should have been deleted");
-         } catch (VCloudDirectorException vcde) {
-            checkError(vcde.getError());
-            assertEquals(vcde.getError().getMajorErrorCode(), Integer.valueOf(403), "The majorErrorCode should be 403 since the item has been deleted");
+	         catalogClient.deleteCatalog(catalog.getHref());
+         } catch (Exception e) {
+            logger.warn(e, "Error deleting admin catalog '%s'", catalog.getName());
          }
       }
    }
@@ -107,23 +98,20 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       // FIXME: documentation suggests we should wait for a task here
    }
 
-   @Test(description = "GET /admin/catalog/{id}",
-         dependsOnMethods = { "testCreateCatalog" })
+   @Test(description = "GET /admin/catalog/{id}", dependsOnMethods = { "testCreateCatalog" })
    public void testGetCatalog() {
       catalog = catalogClient.getCatalog(catalog.getHref());
       
       Checks.checkAdminCatalog(catalog);
    }
    
-   @Test(description = "GET /admin/catalog/{id}/owner",
-         dependsOnMethods = { "testGetCatalog" })
+   @Test(description = "GET /admin/catalog/{id}/owner", dependsOnMethods = { "testGetCatalog" })
    public void testGetCatalogOwner() {
       owner = catalogClient.getOwner(catalog.getHref());
       Checks.checkOwner(owner);
    }
    
-   @Test(description = "PUT /admin/catalog/{id}/owner",
-         dependsOnMethods = { "testGetCatalog" })
+   @Test(description = "PUT /admin/catalog/{id}/owner", dependsOnMethods = { "testGetCatalog" })
    public void updateCatalogOwner() {
       User newOwnerUser = randomTestUser("testUpdateCatalogOwner");
       newOwnerUser = adminContext.getApi().getUserClient().createUser(orgRef.getHref(), newOwnerUser);
@@ -187,8 +175,8 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       }
    }
    
-   @Test(description = "POST /admin/catalog/{id}/action/publish",
-         dependsOnMethods = { "testUpdateCatalog" } ) // FIXME: fails with a 403
+   // FIXME fails with a 403
+   @Test(description = "POST /admin/catalog/{id}/action/publish", dependsOnMethods = { "testUpdateCatalog" } )
    public void testPublishCatalog() {
       assertNotNull(catalog, String.format(NOT_NULL_OBJ_FMT, "Catalog"));
       assertTrue(!catalog.isPublished(), String.format(OBJ_FIELD_EQ, 
@@ -205,8 +193,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
             CATALOG, "isPublished", true, catalog.isPublished()));
    }
    
-   @Test(description = "DELETE /admin/catalog/{id}",
-         dependsOnMethods = { "testCreateCatalog" } )
+   @Test(description = "DELETE /admin/catalog/{id}", dependsOnMethods = { "testCreateCatalog" } )
    public void testDeleteCatalog() {
 //      assertEquals(catalog.getCatalogItems().getCatalogItems().size(), 0, 
 //            String.format(OBJ_FIELD_EMPTY_TO_DELETE, "Catalog", "CatalogItems", 
@@ -218,25 +205,7 @@ public class AdminCatalogClientLiveTest extends BaseVCloudDirectorClientLiveTest
       deleteCatalog = catalogClient.createCatalog(orgRef.getHref(), deleteCatalog);
       catalogClient.deleteCatalog(deleteCatalog.getHref());
       
-      Error expected = Error.builder()
-            .message("No access to entity \"(com.vmware.vcloud.entity.catalog:"+
-                  deleteCatalog.getId().substring("urn:vcloud:catalog:".length())+")\".")
-            .majorErrorCode(403)
-            .minorErrorCode("ACCESS_TO_RESOURCE_IS_FORBIDDEN")
-            .build();
-      
-      try {
-         deleteCatalog = catalogClient.getCatalog(deleteCatalog.getHref());
-         fail("Should give HTTP 403 error");
-      } catch (VCloudDirectorException vde) {
-         assertEquals(vde.getError(), expected);
-         deleteCatalog = null;
-      } catch (Exception e) {
-         fail("Should have thrown a VCloudDirectorException");
-      }
-      
-      if (deleteCatalog != null) { // guard against NPE on the .toStrings
-         assertNull(deleteCatalog, String.format(OBJ_DEL, CATALOG, deleteCatalog.toString()));
-      }
+      deleteCatalog = catalogClient.getCatalog(deleteCatalog.getHref());
+      assertNull(deleteCatalog, String.format(OBJ_DEL, CATALOG, deleteCatalog != null ? deleteCatalog.toString() : ""));
    }
 }

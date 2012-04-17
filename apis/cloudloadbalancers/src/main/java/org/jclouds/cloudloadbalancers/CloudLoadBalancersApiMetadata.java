@@ -19,50 +19,80 @@
 package org.jclouds.cloudloadbalancers;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.cloudloadbalancers.config.CloudLoadBalancersRestClientModule;
+import org.jclouds.cloudloadbalancers.loadbalancer.config.CloudLoadBalancersLoadBalancerContextModule;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
- * Implementation of {@link ApiMetadata} for Rackspace Cloud Load Balancers API
+ * Implementation of {@link ApiMetadata} for CloudLoadBalancers 1.0 API
  * 
- * @author Dan Lo Bianco
+ * @author Adrian Cole
  */
-public class CloudLoadBalancersApiMetadata extends BaseApiMetadata {
+public class CloudLoadBalancersApiMetadata  extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
-   public CloudLoadBalancersApiMetadata() {
-      this(builder()
-            .id("cloudloadbalancers")
-            .type(ApiType.LOADBALANCER)
-            .name("Rackspace Cloud Load Balancers API")
-            .identityName("Username")
-            .credentialName("API Key")
-            .documentation(URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html")));
+   public static final TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudLoadBalancersClient, CloudLoadBalancersAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+
+
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudLoadBalancersApiMetadata(Builder<?> builder) {
+   public CloudLoadBalancersApiMetadata() {
+      this(new Builder());
+   }
+
+   protected CloudLoadBalancersApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      return properties;
+   }
+
+   public static class Builder extends BaseRestApiMetadata.Builder {
+
+      protected Builder() {
+         super(CloudLoadBalancersClient.class, CloudLoadBalancersAsyncClient.class);
+         id("cloudloadbalancers")
+         .name("Rackspace Cloud Load Balancers API")
+         .identityName("Username")
+         .credentialName("API Key")
+         .documentation(URI.create("http://docs.rackspacecloud.com/loadbalancers/api/v1.0/clb-devguide/content/ch01.html"))
+         .version(OpenStackAuthAsyncClient.VERSION)
+         .defaultEndpoint("https://auth.api.rackspacecloud.com")
+         .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
+         .wrapper(TypeToken.of(LoadBalancerServiceContext.class))
+         .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudLoadBalancersRestClientModule.class, CloudLoadBalancersLoadBalancerContextModule.class));
+      }
 
       @Override
       public CloudLoadBalancersApiMetadata build() {
          return new CloudLoadBalancersApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

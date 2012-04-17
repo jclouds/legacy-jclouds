@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud.internal;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,8 +29,9 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
@@ -50,7 +50,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "VCloudLoginAsyncClientTest")
-public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncClient> {
+public class VCloudLoginAsyncClientTest extends BaseAsyncClientTest<VCloudLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudLoginAsyncClient.class.getMethod("login");
@@ -97,10 +97,10 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
       };
    }
 
-
    @Override
-   public RestContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080/login", "1", "", "", "identity", "credential",
-               VCloudLoginClient.class, VCloudLoginAsyncClient.class);
+   protected ProviderMetadata createProviderMetadata() {
+      return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(VCloudLoginClient.class,
+            VCloudLoginAsyncClient.class, "http://localhost:8080/login");
    }
+
 }

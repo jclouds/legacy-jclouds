@@ -29,7 +29,6 @@ import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecords;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRoleRecord;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminQueryClient;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.testng.annotations.Test;
 
@@ -40,7 +39,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Aled Sage
  */
-@Test(groups = { "unit", "admin", "query" }, singleThreaded = true, testName = "AdminQueryClientExpectTest")
+@Test(groups = { "unit", "admin" }, singleThreaded = true, testName = "AdminQueryClientExpectTest")
 public class AdminQueryClientExpectTest extends VCloudDirectorAdminClientExpectTest {
 
    // TODO Write expect tests for all other admin-query operations

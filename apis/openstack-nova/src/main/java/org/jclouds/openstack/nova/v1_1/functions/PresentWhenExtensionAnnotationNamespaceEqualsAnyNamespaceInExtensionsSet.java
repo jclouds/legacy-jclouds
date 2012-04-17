@@ -25,16 +25,20 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.internal.ClassMethodArgsAndReturnVal;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
+import org.jclouds.openstack.nova.v1_1.extensions.ExtensionNamespaces;
 import org.jclouds.openstack.nova.v1_1.predicates.ExtensionPredicates;
 import org.jclouds.rest.functions.ImplicitOptionalConverter;
 
 import com.google.common.base.Optional;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 /**
  * We use the annotation {@link org.jclouds.openstack.services.Extension} to
@@ -49,6 +53,17 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
       ImplicitOptionalConverter {
    private final LoadingCache<String, Set<Extension>> extensions;
 
+   @com.google.inject.Inject(optional=true)
+   @Named("openstack.nova.extensions")
+   Multimap<URI, URI> aliases = ImmutableMultimap.<URI, URI>builder()
+      .put(URI.create(ExtensionNamespaces.SECURITY_GROUPS),
+           URI.create("http://docs.openstack.org/compute/ext/securitygroups/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.FLOATING_IPS),
+           URI.create("http://docs.openstack.org/compute/ext/floating_ips/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.KEYPAIRS),
+           URI.create("http://docs.openstack.org/compute/ext/keypairs/api/v1.1"))
+      .build();
+   
    @Inject
    public PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet(
          LoadingCache<String, Set<Extension>> extensions) {
@@ -63,7 +78,7 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
          checkState(input.getArgs() != null && input.getArgs().length == 1, "expecting an arg %s", input);
          URI namespace = URI.create(ext.get().namespace());
          if (Iterables.any(extensions.getUnchecked(checkNotNull(input.getArgs()[0], "arg[0] in %s", input).toString()),
-               ExtensionPredicates.namespaceEquals(namespace)))
+               ExtensionPredicates.namespaceOrAliasEquals(namespace, aliases.get(namespace))))
             return Optional.of(input.getReturnVal());
       }
       return Optional.absent();

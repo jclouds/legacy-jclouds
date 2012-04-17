@@ -18,7 +18,6 @@
  */
 package org.jclouds.trmk.vcloud_0_8.internal;
 
-import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,8 +29,9 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.location.Provider;
-import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextSpec;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.trmk.vcloud_0_8.endpoints.VCloudLogin;
 import org.jclouds.trmk.vcloud_0_8.functions.ParseLoginResponseFromHeaders;
@@ -48,9 +48,10 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+// NOTE:without testName, this will not call @Before* and fail w/NPE during
+// surefire
 @Test(groups = "unit", testName = "VCloudLoginAsyncClientTest")
-public class TerremarkVCloudLoginAsyncClientTest extends RestClientTest<TerremarkVCloudLoginAsyncClient> {
+public class TerremarkVCloudLoginAsyncClientTest extends BaseAsyncClientTest<TerremarkVCloudLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkVCloudLoginAsyncClient.class.getMethod("login");
@@ -97,10 +98,10 @@ public class TerremarkVCloudLoginAsyncClientTest extends RestClientTest<Terremar
       };
    }
 
-
    @Override
-   public RestContextSpec<TerremarkVCloudLoginClient, TerremarkVCloudLoginAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080/login", "1", "", "", "identity", "credential",
-               TerremarkVCloudLoginClient.class, TerremarkVCloudLoginAsyncClient.class);
+   protected ProviderMetadata createProviderMetadata() {
+      return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(TerremarkVCloudLoginClient.class,
+            TerremarkVCloudLoginAsyncClient.class, "http://localhost:8080/login");
    }
+
 }

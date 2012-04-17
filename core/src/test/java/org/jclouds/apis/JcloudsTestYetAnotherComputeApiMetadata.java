@@ -20,45 +20,54 @@ package org.jclouds.apis;
 
 import java.net.URI;
 
+import org.jclouds.http.IntegrationTestAsyncClient;
+import org.jclouds.http.IntegrationTestClient;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
 /**
  * Implementation of @ link org.jclouds.types.ApiMetadata} for testing.
  * 
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
-public class JcloudsTestYetAnotherComputeApiMetadata extends BaseApiMetadata {
-   
-   public JcloudsTestYetAnotherComputeApiMetadata() {
-      this(builder()
-            .id("test-yet-another-compute-api")
-            .type(ApiType.COMPUTE)
-            .name("Test Yet Another Compute Api")
-            .identityName("user")
-            .credentialName("password")
-            .documentation(URI.create("http://jclouds.org/documentation")));
+public class JcloudsTestYetAnotherComputeApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3142126601795295510L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected JcloudsTestYetAnotherComputeApiMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromApiMetadata(this));
+   }
+
+   public JcloudsTestYetAnotherComputeApiMetadata() {
+      super(builder());
+   }
+
+   protected JcloudsTestYetAnotherComputeApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static class Builder extends BaseRestApiMetadata.Builder  {
+
+      protected Builder(){
+         super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
+         id("test-yet-another-compute-api")
+         .wrapper(Compute.class)
+         .name("Test Yet Another Compute Api")
+         .identityName("user")
+         .credentialName("password")
+         .documentation(URI.create("http://jclouds.org/documentation"));
+      }
 
       @Override
       public JcloudsTestYetAnotherComputeApiMetadata build() {
          return new JcloudsTestYetAnotherComputeApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

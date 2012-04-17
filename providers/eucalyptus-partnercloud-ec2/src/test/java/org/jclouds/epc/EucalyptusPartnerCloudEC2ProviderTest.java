@@ -19,7 +19,7 @@
 package org.jclouds.epc;
 
 import org.jclouds.eucalyptus.EucalyptusApiMetadata;
-import org.jclouds.providers.BaseProviderMetadataTest;
+import org.jclouds.providers.internal.BaseProviderMetadataTest;
 import org.testng.annotations.Test;
 
 /**

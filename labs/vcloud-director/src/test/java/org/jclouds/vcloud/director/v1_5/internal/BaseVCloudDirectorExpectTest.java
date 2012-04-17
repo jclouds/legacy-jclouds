@@ -19,7 +19,6 @@
 package org.jclouds.vcloud.director.v1_5.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.rest.RestContextFactory.createContext;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
@@ -29,25 +28,18 @@ import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.BaseRestClientExpectTest;
-import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.BaseRestClientExpectTest.ExpectModule;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeGroups;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
-import com.google.inject.Module;
 
 /**
- * Base class for writing KeyStone Rest Client Expect tests
+ * Base class for writing vCloud Director REST client expect tests.
  * 
  * @author Adrian Cole
  */
@@ -77,6 +69,7 @@ public abstract class BaseVCloudDirectorExpectTest<T> extends BaseRestClientExpe
    public Properties setupProperties() {
       Properties props = new Properties();
       props.put(Constants.PROPERTY_MAX_RETRIES, 1);
+      props.put(Constants.PROPERTY_ENDPOINT, endpoint);
       return props;
    }
    

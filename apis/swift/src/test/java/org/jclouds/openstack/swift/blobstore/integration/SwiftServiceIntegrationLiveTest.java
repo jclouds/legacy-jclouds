@@ -26,5 +26,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live")
 public class SwiftServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
-
+   public SwiftServiceIntegrationLiveTest() {
+      provider = "swift";
+   }
 }

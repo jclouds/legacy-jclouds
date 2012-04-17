@@ -18,8 +18,16 @@
  */
 package org.jclouds.eucalyptus;
 
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_PORT_OPEN;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+
+import java.util.Properties;
+
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.ec2.EC2ApiMetadata;
+import org.jclouds.ec2.EC2AsyncClient;
+import org.jclouds.ec2.EC2Client;
 
 /**
  * Implementation of {@link ApiMetadata} for the Eucalyptus (EC2 clone) api.
@@ -27,34 +35,53 @@ import org.jclouds.ec2.EC2ApiMetadata;
  * @author Adrian Cole
  */
 public class EucalyptusApiMetadata extends EC2ApiMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3060225665040763827L;
+
+   private static Builder builder() {
+      return new Builder();
+   }
+
+   @Override
+   public Builder toBuilder() {
+      return builder().fromApiMetadata(this);
+   }
 
    public EucalyptusApiMetadata() {
-      this(builder().fromApiMetadata(new EC2ApiMetadata())
-            .id("eucalyptus")
-            .name("Eucalyptus (EC2 clone) API"));
+      this(builder());
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected EucalyptusApiMetadata(ConcreteBuilder builder) {
+   protected EucalyptusApiMetadata(Builder builder) {
       super(builder);
    }
+   
+   public static Properties defaultProperties() {
+      Properties properties = EC2ApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_REGIONS, "Eucalyptus");
+      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
+      properties.setProperty(TIMEOUT_PORT_OPEN, 5 * 60 * 1000 + "");
+      return properties;
+   }
 
-   private static class ConcreteBuilder extends EC2ApiMetadataBuilder<ConcreteBuilder> {
-
+   public static class Builder extends EC2ApiMetadata.Builder {
+      protected Builder(){
+         super(EC2Client.class, EC2AsyncClient.class);
+         id("eucalyptus")
+         .defaultEndpoint("http://173.205.188.130:8773/services/Eucalyptus")
+         .name("Eucalyptus (EC2 clone) API")
+         .defaultProperties(EucalyptusApiMetadata.defaultProperties());
+      }
+      
       @Override
       public EucalyptusApiMetadata build() {
          return new EucalyptusApiMetadata(this);
       }
+
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 
-   private static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

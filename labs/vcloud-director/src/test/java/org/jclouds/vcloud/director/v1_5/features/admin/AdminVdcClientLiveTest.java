@@ -34,8 +34,6 @@ import org.jclouds.vcloud.director.v1_5.domain.MetadataEntry;
 import org.jclouds.vcloud.director.v1_5.domain.MetadataValue;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
-import org.jclouds.vcloud.director.v1_5.features.VdcClient;
-import org.jclouds.vcloud.director.v1_5.features.MetadataClient.Writeable;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminVdcClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
@@ -47,7 +45,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "vdc" }, singleThreaded = true, testName = "AdminVdcClientLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "AdminVdcClientLiveTest")
 public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String VDC = "admin vdc";
@@ -77,7 +75,7 @@ public class AdminVdcClientLiveTest extends BaseVCloudDirectorClientLiveTest {
       if (metadataKey != null) {
          try {
             Task task = metadataClient.deleteMetadataEntry(adminVdcUri, metadataKey);
-            assertTaskSucceeds(task);
+            taskDoneEventually(task);
          } catch (VCloudDirectorException e) {
             logger.warn(e, "Error deleting metadata-value (perhaps it doesn't exist?); continuing...");
          }

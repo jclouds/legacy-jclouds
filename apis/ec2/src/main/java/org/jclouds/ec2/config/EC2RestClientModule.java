@@ -41,7 +41,6 @@ import org.jclouds.ec2.services.WindowsAsyncClient;
 import org.jclouds.ec2.services.WindowsClient;
 import org.jclouds.ec2.suppliers.DescribeAvailabilityZonesInRegion;
 import org.jclouds.ec2.suppliers.DescribeRegionsForConfiguredRegions;
-import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.config.LocationModule;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.location.suppliers.RegionIdToZoneIdsSupplier;
@@ -57,7 +56,6 @@ import com.google.inject.Scopes;
  * 
  * @author Adrian Cole (EDIT: Nick Terry nterry@familysearch.org)
  */
-@RequiresHttp
 @ConfiguresRestClient
 public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> extends
          WithZonesFormSigningRestClientModule<S, A> {
@@ -73,8 +71,9 @@ public class EC2RestClientModule<S extends EC2Client, A extends EC2AsyncClient> 
             .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
             .build();
 
-   public static EC2RestClientModule<EC2Client, EC2AsyncClient> create() {
-      return new EC2RestClientModule<EC2Client, EC2AsyncClient>(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
+   @SuppressWarnings("unchecked")
+   public EC2RestClientModule() {
+      this((Class) EC2Client.class, (Class) EC2AsyncClient.class, DELEGATE_MAP);
    }
 
    public EC2RestClientModule(Class<S> sync, Class<A> async, Map<Class<?>, Class<?>> delegateMap) {

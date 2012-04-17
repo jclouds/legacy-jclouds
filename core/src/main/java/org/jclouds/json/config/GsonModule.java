@@ -185,7 +185,7 @@ public class GsonModule extends AbstractModule {
 
       @Override
       public void write(JsonWriter out, Properties value) throws IOException {
-         Builder<String, String> srcMap = ImmutableMap.<String, String> builder();
+         Builder<String, String> srcMap = ImmutableMap.builder();
          for (Enumeration<?> propNames = value.propertyNames(); propNames.hasMoreElements();) {
             String propName = (String) propNames.nextElement();
             srcMap.put(propName, value.getProperty(propName));

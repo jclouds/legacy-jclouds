@@ -90,9 +90,9 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       Network network = null;
       Set<? extends NodeMetadata> nodes = null;
       try {
-         assert computeContext.getComputeService().listAssignableLocations().size() > 0;
+         assert context.getComputeService().listAssignableLocations().size() > 0;
 
-         Template template = computeContext.getComputeService().templateBuilder().build();
+         Template template = context.getComputeService().templateBuilder().build();
 
          // get the zone we are launching into
          long zoneId = Long.parseLong(template.getLocation().getId());
@@ -102,7 +102,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
          // find a network offering that supports vlans in our zone
          long offeringId = get(
-            context.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zoneId)), 0).getId();
+            cloudStackContext.getApi().getOfferingClient().listNetworkOfferings(specifyVLAN(true).zoneId(zoneId)), 0).getId();
 
          // create an arbitrary network
          network = domainAdminContext.getApi()
@@ -115,7 +115,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          template.getOptions().as(CloudStackTemplateOptions.class).networkId(network.getId());
 
          // launch the VM
-         nodes = computeContext.getComputeService().createNodesInGroup(group, 1, template);
+         nodes = context.getComputeService().createNodesInGroup(group, 1, template);
 
          assert nodes.size() > 0;
 
@@ -124,7 +124,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
       } finally {
          if (nodes != null)
-            computeContext.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
+            context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
          if (network != null)
             domainAdminContext.getApi().getNetworkClient().deleteNetwork(network.getId());
       }
@@ -143,14 +143,14 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       SshKeyPair keyPair = client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
 
       String group = prefix + "-windows-test";
-      Template template = computeContext.getComputeService().templateBuilder()
+      Template template = context.getComputeService().templateBuilder()
          .imageId("290").locationId("1")
          .options(new CloudStackTemplateOptions().setupStaticNat(false).keyPair(keyPairName))
          .build();
 
       NodeMetadata node = null;
       try {
-         node = getOnlyElement(computeContext.getComputeService()
+         node = getOnlyElement(context.getComputeService()
             .createNodesInGroup(group, 1, template));
 
          String encryptedPassword = client.getVirtualMachineClient()
@@ -165,7 +165,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
       } finally {
          if (node != null) {
-            computeContext.getComputeService().destroyNode(node.getId());
+            context.getComputeService().destroyNode(node.getId());
          }
 
       }

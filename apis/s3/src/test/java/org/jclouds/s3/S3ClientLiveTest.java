@@ -32,6 +32,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
@@ -41,13 +42,13 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.s3.domain.AccessControlList;
+import org.jclouds.s3.domain.CannedAccessPolicy;
+import org.jclouds.s3.domain.ObjectMetadata;
+import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.s3.domain.AccessControlList.Permission;
-import org.jclouds.s3.domain.CannedAccessPolicy;
-import org.jclouds.s3.domain.ObjectMetadata;
-import org.jclouds.s3.domain.S3Object;
 import org.jclouds.s3.options.PutObjectOptions;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
@@ -62,8 +63,12 @@ import com.google.common.collect.Maps;
  */
 @Test(groups = { "integration", "live" })
 public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
+   public S3ClientLiveTest() {
+      this.provider = "s3";
+   }
+   
    public S3Client getApi() {
-      return (S3Client) context.getProviderSpecificContext().getApi();
+      return context.unwrap(S3ApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    /**
@@ -86,8 +91,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    protected URL getObjectURL(String containerName, String key) throws Exception {
-      URL url = new URL(String.format("http://%s.%s/%s", containerName, context.getProviderSpecificContext()
-               .getEndpoint().getHost(), key));
+      URL url = new URL(String.format("http://%s.%s/%s", containerName, URI.create(endpoint).getHost(), key));
       return url;
    }
 

@@ -18,47 +18,41 @@
  */
 package org.jclouds.opsource.servers.internal;
 
-import java.util.Properties;
-
-import org.jclouds.compute.BaseVersionedServiceLiveTest;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.opsource.servers.OpSourceServersApiMetadata;
 import org.jclouds.opsource.servers.OpSourceServersAsyncClient;
 import org.jclouds.opsource.servers.OpSourceServersClient;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.sshj.config.SshjSshClientModule;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.reflect.TypeToken;
 
 /**
- * Tests behavior of {@link OpSourceServersClient} and acts as parent for other
- * client live tests.
+ * Tests behavior of {@link OpSourceServersClient} and acts as parent for other client live tests.
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public abstract class BaseOpSourceServersClientLiveTest extends BaseVersionedServiceLiveTest {
+public abstract class BaseOpSourceServersClientLiveTest extends
+         BaseContextLiveTest<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>> {
 
    protected BaseOpSourceServersClientLiveTest() {
       provider = "opsource-servers";
    }
 
-   protected RestContext<OpSourceServersClient, OpSourceServersAsyncClient> context;
+   protected RestContext<OpSourceServersClient, OpSourceServersAsyncClient> restContext;
 
-   @BeforeClass(groups = { "live" })
+   @BeforeGroups(groups = { "integration", "live" })
+   @Override
    public void setupContext() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-
-      context = new RestContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new SshjSshClientModule()), overrides);
+      super.setupContext();
+      restContext = context;
+   }
+   
+   @Override
+   protected TypeToken<RestContext<OpSourceServersClient, OpSourceServersAsyncClient>> contextType() {
+      return OpSourceServersApiMetadata.CONTEXT_TOKEN;
    }
 
-   protected void tearDown() {
-      if (context != null)
-         context.close();
-   }
 }

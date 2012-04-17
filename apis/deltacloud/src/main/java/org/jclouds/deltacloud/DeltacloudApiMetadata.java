@@ -19,50 +19,77 @@
 package org.jclouds.deltacloud;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.deltacloud.compute.config.DeltacloudComputeServiceContextModule;
+import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Module;
 
 /**
  * Implementation of {@link ApiMetadata} for Apache Deltacloud API
  * 
  * @author Adrian Cole
  */
-public class DeltacloudApiMetadata extends BaseApiMetadata {
+public class DeltacloudApiMetadata extends BaseRestApiMetadata {
+   
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 6725672099385580694L;
 
-   public DeltacloudApiMetadata() {
-      this(builder()
-            .id("deltacloud")
-            .type(ApiType.COMPUTE)
-            .name("Apache Deltacloud API")
-            .identityName("Username")
-            .credentialName("Password")
-            .documentation(URI.create("http://deltacloud.apache.org/api.html")));
+   public static final TypeToken<RestContext<DeltacloudClient, DeltacloudAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<DeltacloudClient, DeltacloudAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+
+   @Override
+   public Builder toBuilder() {
+      return new Builder().fromApiMetadata(this);
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected DeltacloudApiMetadata(Builder<?> builder) {
+   public DeltacloudApiMetadata() {
+      this(new Builder());
+   }
+
+   protected DeltacloudApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      return BaseRestApiMetadata.defaultProperties();
+   }
+
+   public static class Builder extends BaseRestApiMetadata.Builder {
+
+      protected Builder() {
+         super(DeltacloudClient.class, DeltacloudAsyncClient.class);
+            id("deltacloud")
+            .name("Apache Deltacloud API")
+            .identityName("Username")
+            .credentialName("Password")
+            .documentation(URI.create("http://deltacloud.apache.org/api.html"))
+            .version("0.3.0")
+            .defaultEndpoint("http://localhost:3001/api")
+            .defaultProperties(DeltacloudApiMetadata.defaultProperties())
+            .wrapper(TypeToken.of(ComputeServiceContext.class))
+            .defaultModules(ImmutableSet.<Class<? extends Module>>of(DeltacloudRestClientModule.class, DeltacloudComputeServiceContextModule.class));
+      }
 
       @Override
       public DeltacloudApiMetadata build() {
          return new DeltacloudApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
 
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

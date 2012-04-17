@@ -28,10 +28,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
@@ -41,6 +41,7 @@ import org.jclouds.lifecycle.Closer;
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;
@@ -74,12 +75,19 @@ public class LifeCycleModule extends AbstractModule {
          @Inject
          @Named(Constants.PROPERTY_IO_WORKER_THREADS)
          ExecutorService ioExecutor;
+         // ScheduledExecutor is defined in an optional module
+         @Inject(optional = true)
+         @Named(Constants.PROPERTY_SCHEDULER_THREADS)
+         ScheduledExecutorService scheduledExecutor;
 
          public void close() throws IOException {
             assert userExecutor != null;
             userExecutor.shutdownNow();
             assert ioExecutor != null;
             ioExecutor.shutdownNow();
+            // ScheduledExecutor is defined in an optional module
+            if (scheduledExecutor != null)
+                scheduledExecutor.shutdownNow();
          }
       };
 

@@ -18,13 +18,17 @@
  */
 package org.jclouds.providers;
 
+import java.io.Closeable;
+
+import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
+import org.jclouds.apis.ApiPredicates;
 import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Container for provider filters (predicates).
@@ -32,6 +36,56 @@ import com.google.common.base.Predicates;
  * @author Jeremy Whitlock <jwhitlock@apache.org>
  */
 public class ProviderPredicates {
+
+   public static class ContextAssignableFrom implements Predicate<ProviderMetadata> {
+      private final TypeToken<? extends Closeable> type;
+
+      public ContextAssignableFrom(TypeToken<? extends Closeable> type) {
+         Preconditions.checkNotNull(type, "context must be defined");
+         this.type = type;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean apply(ProviderMetadata providerMetadata) {
+         return ApiPredicates.contextAssignableFrom(type).apply(providerMetadata.getApiMetadata());
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public String toString() {
+         return "contextAssignableFrom(" + type + ")";
+      }
+   }
+   
+   public static class TransformableTo implements Predicate<ProviderMetadata> {
+      private final TypeToken<? extends Wrapper> type;
+
+      public TransformableTo(TypeToken<? extends Wrapper> type) {
+         Preconditions.checkNotNull(type, "context must be defined");
+         this.type = type;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean apply(ProviderMetadata providerMetadata) {
+         return ApiPredicates.contextWrappableAs(type).apply(providerMetadata.getApiMetadata());
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public String toString() {
+         return "contextWrappableAs(" + type + ")";
+      }
+   }
 
    /**
     * Returns all providers available to jclouds regardless of type.
@@ -69,43 +123,6 @@ public class ProviderPredicates {
             return "id(" + id + ")";
          }
       };
-   }
-
-   /**
-    * Returns all providers with the given type.
-    * 
-    * @param type
-    *           the type of the provider to return
-    * 
-    * @return the providers with the given type
-    */
-   public static Predicate<ProviderMetadata> type(final ApiType type) {
-      Preconditions.checkNotNull(type, "type must be defined");
-      return new Predicate<ProviderMetadata>() {
-         /**
-          * {@inheritDoc}
-          */
-         @Override
-         public boolean apply(ProviderMetadata providerMetadata) {
-            return providerMetadata.getApi().getType().equals(type);
-         }
-
-         /**
-          * {@inheritDoc}
-          */
-         @Override
-         public String toString() {
-            return "type(" + type + ")";
-         }
-      };
-   }
-
-   /**
-    * @see #type(ApiMetadata)
-    */
-   @Deprecated
-   public static Predicate<ProviderMetadata> type(final String type) {
-      return type(ApiType.fromValue(type));
    }
 
    /**
@@ -148,7 +165,8 @@ public class ProviderPredicates {
     * 
     * @return the providers that have at least one ISO 3166 code in common
     */
-   public static Predicate<ProviderMetadata> intersectingIso3166Code(final ProviderMetadata refProviderMetadata) {
+   public static Predicate<ProviderMetadata> intersectingIso3166Code(
+         final ProviderMetadata refProviderMetadata) {
       Preconditions.checkNotNull(refProviderMetadata, "refProviderMetadata must not be null");
 
       return new Predicate<ProviderMetadata>() {
@@ -206,14 +224,15 @@ public class ProviderPredicates {
    }
 
    /**
-    * Returns all providers with an instance of the given api.
+    * Returns all providers with an apimetadata assignable from the given api.
     * 
     * @param apiClass
     *           the api of the provider to return
     * 
-    * @return the providers with the given api
+    * @return the providers with an apimetadata assignable from the given api.
     */
-   public static Predicate<ProviderMetadata> apiInstanceOf(final Class<? extends ApiMetadata> apiClass) {
+   public static  Predicate<ProviderMetadata> apiMetadataAssignableFrom(
+         final TypeToken<? extends ApiMetadata> apiClass) {
       Preconditions.checkNotNull(apiClass, "api must be defined");
       return new Predicate<ProviderMetadata>() {
          /**
@@ -221,7 +240,7 @@ public class ProviderPredicates {
           */
          @Override
          public boolean apply(ProviderMetadata providerMetadata) {
-            return Predicates.instanceOf(apiClass).apply(providerMetadata.getApi());
+            return apiClass.isAssignableFrom(providerMetadata.getApiMetadata().getClass());
          }
 
          /**
@@ -229,8 +248,33 @@ public class ProviderPredicates {
           */
          @Override
          public String toString() {
-            return "apiInstanceOf(" + apiClass + ")";
+            return "apiAssignableFrom(" + apiClass + ")";
          }
       };
    }
+
+   /**
+    * Returns all providers with an context assignable from the given type.
+    * 
+    * @param type
+    *           the context of the provider to return
+    * 
+    * @return the providers with an context assignable from the given type.
+    */
+   public static Predicate<ProviderMetadata> contextAssignableFrom(final TypeToken<? extends Closeable> type) {
+      return new ContextAssignableFrom(type);
+   }
+
+   /**
+    * Returns all providers with an context transformable to the given type.
+    * 
+    * @param type
+    *           the context you wish to achieve ex. {@code BlobStoreContext}
+    * 
+    * @return the providers with an context transformable to from the given type.
+    */
+   public static Predicate<ProviderMetadata> contextWrappableAs(final TypeToken<? extends Wrapper> type) {
+      return new TransformableTo(type);
+   }
+
 }

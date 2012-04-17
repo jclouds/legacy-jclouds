@@ -21,8 +21,9 @@ package org.jclouds.filesystem;
 import java.net.URI;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.apis.internal.BaseApiMetadata;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.filesystem.config.FilesystemBlobStoreContextModule;
 
 /**
  * Implementation of {@link ApiMetadata} for jclouds Filesystem-based BlobStore
@@ -31,37 +32,46 @@ import org.jclouds.apis.BaseApiMetadata;
  */
 public class FilesystemApiMetadata extends BaseApiMetadata {
 
-   public FilesystemApiMetadata() {
-      this(builder()
-            .id("filesystem")
-            .type(ApiType.BLOBSTORE)
-            .name("Filesystem-based BlobStore")
-            .identityName("Unused")
-            .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide")));
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -2625620001657309404L;
+
+   public static Builder builder() {
+      return new Builder();
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected FilesystemApiMetadata(ConcreteBuilder builder) {
+   @Override
+   public Builder toBuilder() {
+      return Builder.class.cast(builder().fromApiMetadata(this));
+   }
+
+   public FilesystemApiMetadata() {
+      super(builder());
+   }
+
+   protected FilesystemApiMetadata(Builder builder) {
       super(builder);
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static class Builder extends BaseApiMetadata.Builder {
+
+      protected Builder() {
+         id("filesystem")
+         .name("Filesystem-based BlobStore")
+         .identityName("Unused")
+         .defaultEndpoint("http://localhost/transient")
+         .defaultIdentity(System.getProperty("user.name"))
+         .defaultCredential("bar")
+         .version("1")
+         .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"))
+         .wrapper(BlobStoreContext.class)
+         .defaultModule(FilesystemBlobStoreContextModule.class);
+      }
 
       @Override
       public FilesystemApiMetadata build() {
          return new FilesystemApiMetadata(this);
       }
-   }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
    }
 
 }

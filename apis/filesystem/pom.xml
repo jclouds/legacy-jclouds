@@ -67,10 +67,6 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <test.initializer>org.jclouds.filesystem.integration.FilesystemTestInitializer</test.initializer>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -84,6 +80,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                            <threadCount>1</threadCount>
                             <excludes>
                                 <exclude>**/*LiveTest.java</exclude>
                                 <exclude>**/Base*Test.java</exclude>
@@ -92,7 +89,6 @@
                                 <include>**/*IntegrationTest.java</include>
                             </includes>
                             <systemPropertyVariables>
-                                <test.initializer>${test.initializer}</test.initializer>
                                 <jclouds.blobstore.httpstream.url>${jclouds.blobstore.httpstream.url}</jclouds.blobstore.httpstream.url>
                                 <jclouds.blobstore.httpstream.md5>${jclouds.blobstore.httpstream.md5}</jclouds.blobstore.httpstream.md5>
                             </systemPropertyVariables>

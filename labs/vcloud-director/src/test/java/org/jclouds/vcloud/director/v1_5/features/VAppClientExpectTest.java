@@ -22,34 +22,34 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import org.jclouds.dmtf.ovf.NetworkSection;
+import org.jclouds.dmtf.ovf.StartupSection;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
-import org.jclouds.vcloud.director.v1_5.domain.ControlAccessParams;
-import org.jclouds.vcloud.director.v1_5.domain.DeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Error;
-import org.jclouds.vcloud.director.v1_5.domain.GuestCustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.LeaseSettingsSection;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
-import org.jclouds.vcloud.director.v1_5.domain.MediaInsertOrEjectParams;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfigSection;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Owner;
 import org.jclouds.vcloud.director.v1_5.domain.ProductSectionList;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
-import org.jclouds.vcloud.director.v1_5.domain.RecomposeVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.RelocateParams;
-import org.jclouds.vcloud.director.v1_5.domain.RuntimeInfoSection;
 import org.jclouds.vcloud.director.v1_5.domain.ScreenTicket;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
-import org.jclouds.vcloud.director.v1_5.domain.UndeployVAppParams;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VmPendingQuestion;
 import org.jclouds.vcloud.director.v1_5.domain.VmQuestionAnswer;
-import org.jclouds.vcloud.director.v1_5.domain.cim.ResourceAllocationSettingData;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.NetworkSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.OperatingSystemSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.StartupSection;
-import org.jclouds.vcloud.director.v1_5.domain.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.DeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.MediaInsertOrEjectParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.RecomposeVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.RelocateParams;
+import org.jclouds.vcloud.director.v1_5.domain.params.UndeployVAppParams;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.LeaseSettingsSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConfigSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.OperatingSystemSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.RuntimeInfoSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.VirtualHardwareSection;
 import org.jclouds.vcloud.director.v1_5.internal.VCloudDirectorAdminClientExpectTest;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeClass;
@@ -64,7 +64,7 @@ import com.google.common.collect.Multimaps;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "unit", "user", "vapp" }, singleThreaded = true, testName = "VAppClientExpectTest")
+@Test(groups = { "unit", "user" }, singleThreaded = true, testName = "VAppClientExpectTest")
 public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
    
    private String vAppId = "vapp-d0e2b6b9-4381-4ddc-9572-cdfae54059be";
@@ -898,7 +898,7 @@ public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
             .xmlFilePayload("/vApp/getVirtualHardwareSectionCpu.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
             .httpResponseBuilder().build());
 
-      ResourceAllocationSettingData expected = getVirtualHardwareSectionCpu();
+      RasdItem expected = getVirtualHardwareSectionCpu();
 
          assertEquals(client.getVAppClient().getVirtualHardwareSectionCpu(vAppURI), expected);
    }
@@ -915,7 +915,7 @@ public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionCpuTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
-      ResourceAllocationSettingData cpu = getVirtualHardwareSectionCpu(); // .toBuilder();
+      RasdItem cpu = getVirtualHardwareSectionCpu(); // .toBuilder();
 //               .build();
 
          Task expected = modifyVirtualHardwareSectionCpuTask();
@@ -986,7 +986,7 @@ public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
             .xmlFilePayload("/vApp/getVirtualHardwareSectionMemory.xml", VCloudDirectorMediaType.OVF_RASD_ITEM)
             .httpResponseBuilder().build());
 
-      ResourceAllocationSettingData expected = getVirtualHardwareSectionMemory();
+      RasdItem expected = getVirtualHardwareSectionMemory();
 
          assertEquals(client.getVAppClient().getVirtualHardwareSectionMemory(vAppURI), expected);
    }
@@ -1003,7 +1003,7 @@ public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
             .xmlFilePayload("/vApp/modifyVirtualHardwareSectionMemoryTask.xml", VCloudDirectorMediaType.TASK)
             .httpResponseBuilder().build());
 
-      ResourceAllocationSettingData memory = getVirtualHardwareSectionCpu(); // .toBuilder();
+      RasdItem memory = getVirtualHardwareSectionCpu(); // .toBuilder();
 //               .build();
 
          Task expected = modifyVirtualHardwareSectionMemoryTask();
@@ -1414,8 +1414,8 @@ public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
       return task;
    }
 
-   public static ResourceAllocationSettingData getVirtualHardwareSectionCpu() {
-      ResourceAllocationSettingData cpu = ResourceAllocationSettingData.builder()
+   public static RasdItem getVirtualHardwareSectionCpu() {
+      RasdItem cpu = RasdItem.builder()
             .build();
 
       return cpu;
@@ -1449,8 +1449,8 @@ public class VAppClientExpectTest extends VCloudDirectorAdminClientExpectTest {
       return media;
    }
 
-   public static ResourceAllocationSettingData getVirtualHardwareSectionMemory() {
-      ResourceAllocationSettingData memory = ResourceAllocationSettingData.builder()
+   public static RasdItem getVirtualHardwareSectionMemory() {
+      RasdItem memory = RasdItem.builder()
             .build();
 
       return memory;

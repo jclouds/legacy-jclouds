@@ -18,8 +18,7 @@
  */
 package org.jclouds.openstack.nova.ec2;
 
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadataTest;
+import org.jclouds.compute.internal.BaseComputeServiceApiMetadataTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,9 +26,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "NovaEC2ApiMetadataTest")
-public class NovaEC2ApiMetadataTest extends BaseApiMetadataTest {
+public class NovaEC2ApiMetadataTest extends BaseComputeServiceApiMetadataTest {
 
    public NovaEC2ApiMetadataTest() {
-      super(new NovaEC2ApiMetadata(), ApiType.COMPUTE);
+      super(new NovaEC2ApiMetadata());
    }
 }

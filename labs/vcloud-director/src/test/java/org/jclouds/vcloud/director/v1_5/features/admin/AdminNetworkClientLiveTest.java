@@ -28,17 +28,19 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.util.Collections;
+
 import org.jclouds.vcloud.director.v1_5.domain.Checks;
-import org.jclouds.vcloud.director.v1_5.domain.ExternalNetwork;
-import org.jclouds.vcloud.director.v1_5.domain.IpScope;
-import org.jclouds.vcloud.director.v1_5.domain.Network;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkConfiguration;
-import org.jclouds.vcloud.director.v1_5.domain.NetworkFeatures;
-import org.jclouds.vcloud.director.v1_5.domain.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
-import org.jclouds.vcloud.director.v1_5.domain.RouterInfo;
-import org.jclouds.vcloud.director.v1_5.domain.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
+import org.jclouds.vcloud.director.v1_5.domain.network.ExternalNetwork;
+import org.jclouds.vcloud.director.v1_5.domain.network.IpScope;
+import org.jclouds.vcloud.director.v1_5.domain.network.Network;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
+import org.jclouds.vcloud.director.v1_5.domain.network.NetworkFeatures;
+import org.jclouds.vcloud.director.v1_5.domain.network.RouterInfo;
+import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.BeforeClass;
@@ -49,7 +51,7 @@ import org.testng.annotations.Test;
  * 
  * @author danikov
  */
-@Test(groups = { "live", "admin", "network" }, singleThreaded = true, testName = "AdminNetworkLiveTest")
+@Test(groups = { "live", "admin" }, singleThreaded = true, testName = "AdminNetworkLiveTest")
 public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest {
    
    public static final String NETWORK = "AdminNetwork";
@@ -94,9 +96,10 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
       //TODO: ensure network instanceof OrgNetwork, may require queries
       assertTrue(network instanceof OrgNetwork, String.format(REF_REQ_LIVE, "OrgNetwork"));
       
-      OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network).toBuilder()
-         .tasks(null)
-         .build();
+      OrgNetwork oldNetwork = Network.<OrgNetwork>toSubType(network)
+            .toBuilder()
+            .tasks(Collections.<Task>emptySet())
+            .build();
       
       OrgNetwork updateNetwork = getMutatedOrgNetwork(oldNetwork);
       
@@ -159,8 +162,8 @@ public class AdminNetworkClientLiveTest extends BaseVCloudDirectorClientLiveTest
    
    private static OrgNetwork getMutatedOrgNetwork(OrgNetwork network) {
        OrgNetwork.Builder<?> networkBuilder = OrgNetwork.builder().fromNetwork(network)
-          .tasks(null)
-//          .name("new "+network.getName())
+             .tasks(Collections.<Task>emptySet())
+//           .name("new "+network.getName())
           .description("new "+network.getDescription())
           .configuration(getMutatedNetworkConfiguration(network.getConfiguration()));
        

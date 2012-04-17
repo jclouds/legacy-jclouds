@@ -64,7 +64,7 @@ public class ParseEventTypesFromHttpResponse implements Function<HttpResponse, S
       checkNotNull(response, "response");
       Set<EventType> toParse = parser.apply(response);
       checkNotNull(toParse, "parsed result from %s", response);
-      Builder<String> builder = ImmutableSet.<String>builder();
+      Builder<String> builder = ImmutableSet.builder();
       for (EventType entry : toParse)
          builder.add(entry.name);
       return builder.build();

@@ -35,6 +35,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -150,9 +151,9 @@ public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
    }
 
    @Override
-   protected void tearDown() {
+   @AfterClass(groups = { "integration", "live" })
+   protected void tearDownContext() {
       testDestroyInstance();
-      super.tearDown();
+      super.tearDownContext();
    }
-
 }

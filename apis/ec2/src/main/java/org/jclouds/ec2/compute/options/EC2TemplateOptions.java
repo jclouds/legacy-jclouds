@@ -87,7 +87,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    private String keyPair = null;
    private boolean noKeyPair;
    private byte[] userData;
-   private ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.<BlockDeviceMapping> builder();
+   private ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.builder();
 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 

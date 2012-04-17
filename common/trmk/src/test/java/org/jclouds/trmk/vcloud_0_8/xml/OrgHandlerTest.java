@@ -18,22 +18,20 @@
  */
 package org.jclouds.trmk.vcloud_0_8.xml;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType.CATALOG_XML;
 import static org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType.TASKSLIST_XML;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Properties;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudMediaType;
-import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.trmk.vcloud_0_8.domain.Org;
 import org.jclouds.trmk.vcloud_0_8.domain.internal.ReferenceTypeImpl;
+import org.jclouds.trmk.vcloud_0_8.internal.TerremarkVCloudApiMetadata;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -56,9 +54,7 @@ public class OrgHandlerTest extends BaseHandlerTest {
          @Override
          public void configure() {
             super.configure();
-            Properties props = new Properties();
-            Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props).build(),
-                     "properties"));
+            Names.bindProperties(binder(), TerremarkVCloudApiMetadata.defaultProperties());
          }
       });
       factory = injector.getInstance(ParseSax.Factory.class);

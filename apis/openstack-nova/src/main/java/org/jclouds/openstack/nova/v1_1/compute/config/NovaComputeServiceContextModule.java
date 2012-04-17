@@ -44,8 +44,6 @@ import org.jclouds.compute.strategy.impl.CreateNodesWithGroupEncodedIntoNameThen
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
 import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupIfNeeded;
@@ -91,12 +89,8 @@ import com.google.inject.name.Names;
  * 
  * @author Matt Stephenson
  */
-public class NovaComputeServiceContextModule
-         extends
-         ComputeServiceAdapterContextModule<NovaClient, NovaAsyncClient, ServerInZone, FlavorInZone, ImageInZone, Location> {
-   public NovaComputeServiceContextModule() {
-      super(NovaClient.class, NovaAsyncClient.class);
-   }
+public class NovaComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<ServerInZone, FlavorInZone, ImageInZone, Location> {
 
    @SuppressWarnings("unchecked")
    @Override

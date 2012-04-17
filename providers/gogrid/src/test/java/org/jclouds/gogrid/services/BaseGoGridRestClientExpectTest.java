@@ -3,9 +3,8 @@ package org.jclouds.gogrid.services;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.config.GoGridRestClientModule;
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.BaseRestClientExpectTest;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.internal.BaseRestClientExpectTest;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
@@ -20,8 +19,7 @@ public class BaseGoGridRestClientExpectTest extends BaseRestClientExpectTest<GoG
       provider = "gogrid";
    }
 
-   @RequiresHttp
-   @ConfiguresRestClient
+      @ConfiguresRestClient
    protected static final class TestGoGridRestClientModule extends GoGridRestClientModule {
 
       @Override

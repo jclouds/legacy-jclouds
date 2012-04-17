@@ -18,50 +18,78 @@
  */
 package org.jclouds.cloudwatch;
 
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.ApiType;
-import org.jclouds.apis.BaseApiMetadata;
+import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+
+import com.google.common.reflect.TypeToken;
 
 /**
  * Implementation of {@link ApiMetadata} for Amazon's CloudWatch api.
  * 
  * @author Adrian Cole
  */
-public class CloudWatchApiMetadata extends BaseApiMetadata {
+public class CloudWatchApiMetadata extends BaseRestApiMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 3450830053589179249L;
+
+   public static final TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<CloudWatchClient, CloudWatchAsyncClient>>() {
+      private static final long serialVersionUID = -5070937833892503232L;
+   };
+
+   @Override
+   public Builder toBuilder() {
+      return new Builder(getApi(), getAsyncApi()).fromApiMetadata(this);
+   }
 
    public CloudWatchApiMetadata() {
-      this(builder()
-            .id("cloudwatch")
-            .type(ApiType.MONITOR)
-            .name("Amazon CloudWatch Api")
-            .identityName("Access Key ID")
-            .credentialName("Secret Access Key")
-            .documentation(URI.create("http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/")));
+      this(new Builder(CloudWatchClient.class, CloudWatchAsyncClient.class));
    }
 
-   // below are so that we can reuse builders, toString, hashCode, etc.
-   // we have to set concrete classes here, as our base class cannot be
-   // concrete due to serviceLoader
-   protected CloudWatchApiMetadata(Builder<?> builder) {
-      super(builder);
+   protected CloudWatchApiMetadata(Builder builder) {
+      super(Builder.class.cast(builder));
    }
 
-   private static class ConcreteBuilder extends Builder<ConcreteBuilder> {
+   public static Properties defaultProperties() {
+      Properties properties = BaseRestApiMetadata.defaultProperties();
+      properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
+      properties.setProperty(PROPERTY_HEADER_TAG, "amz");
+      return properties;
+   }
+
+   public static class Builder extends BaseRestApiMetadata.Builder {
+
+      protected Builder(Class<?> client, Class<?> asyncClient) {
+         super(client, asyncClient);
+         id("cloudwatch")
+         .name("Amazon CloudWatch Api")
+         .identityName("Access Key ID")
+         .credentialName("Secret Access Key")
+         .version(CloudWatchAsyncClient.VERSION)
+         .documentation(URI.create("http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/"))
+         .defaultEndpoint("https://monitoring.us-east-1.amazonaws.com")
+         .defaultProperties(CloudWatchApiMetadata.defaultProperties())
+         .defaultModule(CloudWatchRestClientModule.class);
+      }
 
       @Override
       public CloudWatchApiMetadata build() {
          return new CloudWatchApiMetadata(this);
       }
+      
+      @Override
+      public Builder fromApiMetadata(ApiMetadata in) {
+         super.fromApiMetadata(in);
+         return this;
+      }
    }
 
-   public static ConcreteBuilder builder() {
-      return new ConcreteBuilder();
-   }
-
-   @Override
-   public ConcreteBuilder toBuilder() {
-      return builder().fromApiMetadata(this);
-   }
 }

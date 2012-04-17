@@ -18,8 +18,8 @@
  */
 package org.jclouds.vcloud.compute;
 
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 

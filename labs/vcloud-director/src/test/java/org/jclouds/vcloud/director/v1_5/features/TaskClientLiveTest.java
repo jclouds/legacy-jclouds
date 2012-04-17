@@ -25,11 +25,11 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.director.v1_5.domain.OrgList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.TasksList;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -43,7 +43,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author grkvlt@apache.org
  */
-@Test(groups = { "live", "user", "task" }, singleThreaded = true, testName = "TaskClientLiveTest")
+@Test(groups = { "live", "user" }, singleThreaded = true, testName = "TaskClientLiveTest")
 public class TaskClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
    /*

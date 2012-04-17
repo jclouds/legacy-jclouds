@@ -52,7 +52,7 @@ public class BinderUtils {
     * @param asyncClientType
     *           interface for the async client
     */
-   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<S> syncClientType, Class<A> asyncClientType) {
+   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<?> syncClientType, Class<?> asyncClientType) {
       bindClientAndAsyncClient(binder, syncClientType, asyncClientType, ImmutableMap.<Class<?>, Class<?>> of());
    }
 
@@ -75,7 +75,7 @@ public class BinderUtils {
     *           presuming your clients are annotated with @Delegate, contains the sync to async
     *           classes relating to these methods
     */
-   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<S> syncClientType, Class<A> asyncClientType,
+   public static <S, A> void bindClientAndAsyncClient(Binder binder, Class<?> syncClientType, Class<?> asyncClientType,
             Map<Class<?>, Class<?>> sync2Async) {
       bindClient(binder, syncClientType, asyncClientType, sync2Async);
       bindAsyncClient(binder, asyncClientType);

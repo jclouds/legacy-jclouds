@@ -32,7 +32,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnStringIf2xx;
-import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.internal.BaseAsyncClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -52,7 +52,7 @@ import com.google.inject.TypeLiteral;
  * @author ${author}
  */
 @Test(groups = "unit", testName = "${lcaseProviderName}.${providerName}AsyncClientTest")
-public class ${providerName}AsyncClientTest extends RestClientTest<${providerName}AsyncClient> {
+public class ${providerName}AsyncClientTest extends BaseAsyncClientTest<${providerName}AsyncClient> {
 
 
    public void testList() throws SecurityException, NoSuchMethodException, IOException {

@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
 import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.compute.CloudSigmaComputeServiceAdapter;
 import org.jclouds.cloudsigma.compute.CloudSigmaTemplateBuilderImpl;
@@ -68,13 +67,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class CloudSigmaComputeServiceContextModule
-      extends
-      ComputeServiceAdapterContextModule<CloudSigmaClient, CloudSigmaAsyncClient, ServerInfo, Hardware, DriveInfo, Location> {
-
-   public CloudSigmaComputeServiceContextModule() {
-      super(CloudSigmaClient.class, CloudSigmaAsyncClient.class);
-   }
+public class CloudSigmaComputeServiceContextModule extends
+         ComputeServiceAdapterContextModule<ServerInfo, Hardware, DriveInfo, Location> {
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
