@@ -14,8 +14,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
-import org.jclouds.openstack.swift.SwiftAsyncClient;
-import org.jclouds.openstack.swift.SwiftClient;
+import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.util.Throwables2;
@@ -147,7 +146,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                         long chunkSize = algorithm.getChunkSize();
                         long remaining = algorithm.getRemaining();
                         if (parts > 0) {
-                            SwiftClient client = (SwiftClient) ablobstore
+                            CommonSwiftClient client = (CommonSwiftClient) ablobstore
                                     .getContext().getProviderSpecificContext().getApi();
                             final Map<Integer, ListenableFuture<String>> futureParts =
                                     new ConcurrentHashMap<Integer, ListenableFuture<String>>();
