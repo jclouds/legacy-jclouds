@@ -60,10 +60,11 @@ public class CloudFilesBlobStore extends SwiftBlobStore {
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache) {
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, EnableCDNAndCache enableCDNAndCache,
+            Provider<MultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, defaultLocation, locations, sync, container2ResourceMd, container2ContainerListOptions,
                container2ResourceList, object2Blob, blob2Object, object2BlobMd, blob2ObjectGetOptions,
-               fetchBlobMetadataProvider, null);
+               fetchBlobMetadataProvider, multipartUploadStrategy);
       this.enableCDNAndCache = enableCDNAndCache;
 
    }
