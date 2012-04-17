@@ -13,6 +13,7 @@ import org.jclouds.concurrent.Futures;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
+import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.SwiftAsyncClient;
 import org.jclouds.openstack.swift.SwiftClient;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
@@ -91,7 +92,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
             latch.countDown();
             return;
         }
-        final SwiftAsyncClient client = (SwiftAsyncClient) ablobstore.getContext()
+        final CommonSwiftAsyncClient client = (CommonSwiftAsyncClient) ablobstore.getContext()
                 .getProviderSpecificContext().getAsyncApi();
         Payload chunkedPart = slicer.slice(payload, offset, size);
         logger.debug(String.format("async uploading part %s of %s to container %s", part, key, container));

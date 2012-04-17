@@ -12,6 +12,7 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
+import org.jclouds.openstack.swift.CommonSwiftClient;
 import org.jclouds.openstack.swift.SwiftClient;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
@@ -52,7 +53,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
         int parts = algorithm.getParts();
         long chunkSize = algorithm.getChunkSize();
         if (parts > 0) {
-            SwiftClient client = (SwiftClient) ablobstore.getContext()
+            CommonSwiftClient client = (CommonSwiftClient) ablobstore.getContext()
                     .getProviderSpecificContext().getApi();
 
             try {
