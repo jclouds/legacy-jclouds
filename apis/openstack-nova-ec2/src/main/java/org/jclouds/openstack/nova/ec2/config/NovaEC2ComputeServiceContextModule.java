@@ -22,8 +22,10 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.ec2.compute.loaders.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
+import org.jclouds.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.openstack.nova.ec2.loaders.NovaCreateSecurityGroupIfNeeded;
 import org.jclouds.openstack.nova.ec2.strategy.NovaReviseParsedImage;
+import org.jclouds.openstack.nova.ec2.xml.NovaDescribeImagesResponseHandler;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ImageToOperatingSystem;
 
 import com.google.common.base.Function;
@@ -42,6 +44,7 @@ public class NovaEC2ComputeServiceContextModule extends EC2ComputeServiceContext
       }).to(ImageToOperatingSystem.class);
       bind(ReviseParsedImage.class).to(NovaReviseParsedImage.class);
       bind(CreateSecurityGroupIfNeeded.class).to(NovaCreateSecurityGroupIfNeeded.class);
+      bind(DescribeImagesResponseHandler.class).to(NovaDescribeImagesResponseHandler.class);
    }
 
 }
