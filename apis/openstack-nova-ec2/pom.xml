@@ -29,8 +29,8 @@
   </parent>
   <groupId>org.jclouds.api</groupId>
   <artifactId>openstack-nova-ec2</artifactId>
-  <name>jclouds Eucalyptus api</name>
-  <description>EC2 implementation based on Eucalyptus</description>
+  <name>jclouds openstack-nova-ec2 api</name>
+  <description>EC2 interface to Openstack Nova</description>
   <packaging>bundle</packaging>
 
   <properties>
