@@ -42,7 +42,6 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
 
     @Override
     public String execute(String container, Blob blob, PutOptions options, BlobToObject blob2Object) {
-        System.out.println("here we go");
         String key = blob.getMetadata().getName();
         Payload payload = blob.getPayload();
         MultipartUploadSlicingAlgorithm algorithm = new MultipartUploadSlicingAlgorithm();
@@ -57,10 +56,8 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
                     .getProviderSpecificContext().getApi();
 
             try {
-                SortedMap<Integer, String> etags = Maps.newTreeMap();
                 int part;
                 while ((part = algorithm.getNextPart()) <= parts) {
-                    System.out.println("Uploading part " + part);
                     Payload chunkedPart = slicer.slice(payload,
                             algorithm.getNextChunkOffset(), chunkSize);
                     Blob blobPart = ablobstore.blobBuilder(blob.getMetadata().getName() + PART_SEPARATOR +
@@ -70,7 +67,6 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
                 }
                 long remaining = algorithm.getRemaining();
                 if (remaining > 0) {
-                    System.out.println("Uploading tail.");
                     Payload chunkedPart = slicer.slice(payload,
                             algorithm.getNextChunkOffset(), remaining);
                     Blob blobPart = ablobstore.blobBuilder(blob.getMetadata().getName() + PART_SEPARATOR + 
@@ -84,11 +80,10 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
                 if (rtex == null) {
                     rtex = new RuntimeException(ex);
                 }
-                //client.abortMultipartUpload(container, key, uploadId);
                 throw rtex;
             }
-
+        } else {
+            return ablobstore.putBlob(container, blob, PutOptions.NONE);
         }
-        return "NOT IMPLEMENTED";
     }
 }
