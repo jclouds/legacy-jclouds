@@ -33,6 +33,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
+import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ImageInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
 
@@ -42,7 +43,7 @@ import com.google.common.collect.Iterables;
 
 @Singleton
 public class NovaImageExtension implements ImageExtension {
-
+   
    private final NovaClient novaClient;
    private final Function<ImageInZone, Image> imageInZoneToImage;
 
@@ -55,9 +56,9 @@ public class NovaImageExtension implements ImageExtension {
    @Override
    public ImageTemplate buildImageTemplateFromNode(String name, final String id) {
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
-      org.jclouds.openstack.nova.v1_1.domain.Image original = findImage(zoneAndId);
-      if (original == null)
-         throw new NoSuchElementException();
+      Server server = novaClient.getServerClientForZone(zoneAndId.getZone()).getServer(zoneAndId.getId());
+      if (server == null)
+         throw new NoSuchElementException("Cannot find server with id: " + zoneAndId);
       CloneImageTemplate template = new ImageTemplateBuilder.CloneImageTemplateBuilder().nodeId(id).name(name).build();
       return template;
    }
@@ -69,7 +70,7 @@ public class NovaImageExtension implements ImageExtension {
       CloneImageTemplate cloneTemplate = (CloneImageTemplate) template;
       ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(cloneTemplate.getSourceNodeId());
       String newImageId = novaClient.getServerClientForZone(zoneAndId.getZone()).createImageFromServer(
-               cloneTemplate.getName(), cloneTemplate.getSourceNodeId());
+               cloneTemplate.getName(), zoneAndId.getId());
       org.jclouds.openstack.nova.v1_1.domain.Image newImage = checkNotNull(findImage(ZoneAndId.fromZoneAndId(
                zoneAndId.getZone(), newImageId)));
       return imageInZoneToImage.apply(new ImageInZone(newImage, zoneAndId.getZone()));
@@ -77,8 +78,13 @@ public class NovaImageExtension implements ImageExtension {
 
    @Override
    public boolean deleteImage(String id) {
-      // TODO
-      return false;
+      ZoneAndId zoneAndId = ZoneAndId.fromSlashEncoded(id);
+      try {
+         this.novaClient.getImageClientForZone(zoneAndId.getZone()).deleteImage(zoneAndId.getId());
+      } catch (Exception e) {
+         return false;
+      }
+      return true;
    }
 
    private org.jclouds.openstack.nova.v1_1.domain.Image findImage(final ZoneAndId zoneAndId) {

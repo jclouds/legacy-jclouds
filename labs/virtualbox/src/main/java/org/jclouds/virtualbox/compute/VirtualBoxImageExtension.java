@@ -36,6 +36,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.domain.CloneImageTemplate;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageTemplate;
 import org.jclouds.compute.domain.ImageTemplateBuilder;
@@ -66,7 +67,7 @@ public class VirtualBoxImageExtension implements ImageExtension {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    private Logger logger = Logger.NULL;
-   private ComputeServiceAdapter<IMachine, IMachine, Image, Location> vboxAdapter;
+   private ComputeServiceAdapter<IMachine, Hardware, Image, Location> vboxAdapter;
    private Function<IMachine, NodeMetadata> machineToNode;
    private Supplier<VirtualBoxManager> manager;
    private String workingDir;
@@ -75,7 +76,7 @@ public class VirtualBoxImageExtension implements ImageExtension {
    private MachineUtils machineUtils;
 
    @Inject
-   public VirtualBoxImageExtension(ComputeServiceAdapter<IMachine, IMachine, Image, Location> vboxAdapter,
+   public VirtualBoxImageExtension(ComputeServiceAdapter<IMachine, Hardware, Image, Location> vboxAdapter,
             Function<IMachine, NodeMetadata> machineToNode, Supplier<VirtualBoxManager> manager,
             @Named(VIRTUALBOX_WORKINGDIR) String workingDir, Function<IMachine, Image> imachineToImage,
             MachineUtils machineUtils) {

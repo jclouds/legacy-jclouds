@@ -108,16 +108,18 @@ import com.google.inject.TypeLiteral;
  */
 @SuppressWarnings("unchecked")
 public class VirtualBoxComputeServiceContextModule extends
-         ComputeServiceAdapterContextModule<IMachine, IMachine, Image, Location> {
+         ComputeServiceAdapterContextModule<IMachine, Hardware, Image, Location> {
 
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, IMachine, Image, Location>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<IMachine, Hardware, Image, Location>>() {
       }).to(VirtualBoxComputeServiceAdapter.class);
       bind(new TypeLiteral<Function<IMachine, NodeMetadata>>() {
       }).to(IMachineToNodeMetadata.class);
       bind(new TypeLiteral<Function<Location, Location>>() {
+      }).to((Class) IdentityFunction.class);
+      bind(new TypeLiteral<Function<Hardware, Hardware>>() {
       }).to((Class) IdentityFunction.class);
       bind(new TypeLiteral<Function<Image, Image>>() {
       }).to((Class) IdentityFunction.class);
@@ -141,7 +143,7 @@ public class VirtualBoxComputeServiceContextModule extends
       // the master machines cache
       bind(new TypeLiteral<LoadingCache<Image, Master>>() {
       }).to(MastersLoadingCache.class);
-      
+
       // the vbox image extension
       bind(new TypeLiteral<ImageExtension>() {
       }).to(VirtualBoxImageExtension.class);
@@ -173,10 +175,9 @@ public class VirtualBoxComputeServiceContextModule extends
    @Host
    @Singleton
    protected ComputeServiceContext provideHostController() {
-      return ContextBuilder.newBuilder(new BYONApiMetadata())
-            .credentials("", "")
-            .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()))
-            .build(ComputeServiceContext.class);
+      return ContextBuilder.newBuilder(new BYONApiMetadata()).credentials("", "")
+               .modules(ImmutableSet.<Module> of(new SLF4JLoggingModule(), new SshjSshClientModule()))
+               .build(ComputeServiceContext.class);
    }
 
    @Provides
@@ -210,18 +211,6 @@ public class VirtualBoxComputeServiceContextModule extends
    }
 
    @Override
-   protected Supplier provideHardware(ComputeServiceAdapter<IMachine, IMachine, Image, Location> adapter,
-            Function<IMachine, Hardware> transformer) {
-      // since no vms might be available we need to list images
-      Iterable<Image> images = adapter.listImages();
-      Set<Hardware> hardware = Sets.newHashSet();
-      for (Image image : images) {
-         hardware.add(new HardwareBuilder().ids(image.getId()).hypervisor("VirtualBox").name(image.getName()).build());
-      }
-      return Suppliers.ofInstance(hardware);
-   }
-
-   @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(VIRTUALBOX_DEFAULT_IMAGE_OS).osVersionMatches(VIRTUALBOX_DEFAULT_IMAGE_VERSION)
                .osArchMatches(VIRTUALBOX_DEFAULT_IMAGE_ARCH);
@@ -239,7 +228,7 @@ public class VirtualBoxComputeServiceContextModule extends
          }
       }), nodes);
    }
-   
+
    @Override
    protected Optional<ImageExtension> provideImageExtension(Injector i) {
       return Optional.of(i.getInstance(ImageExtension.class));

@@ -26,7 +26,6 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import java.net.URI;
 
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;

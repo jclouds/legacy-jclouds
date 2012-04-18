@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jclouds.virtualbox.compute;
+package org.jclouds.hpcloud.compute.compute;
 
 import org.jclouds.compute.internal.BaseImageExtensionLiveTest;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -25,16 +25,20 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
-@Test(groups = "live", singleThreaded = true, testName = "VirtualBoxImageExtensionLiveTest")
-public class VirtualBoxImageExtensionLiveTest extends BaseImageExtensionLiveTest {
+/**
+ * 
+ * @author David Alves
+ * 
+ */
+@Test(groups = "live", singleThreaded = true, testName = "HPCloudComputeImageExtensionLivetest")
+public class HPCloudComputeImageExtensionLivetest extends BaseImageExtensionLiveTest {
 
-   public VirtualBoxImageExtensionLiveTest() {
-      provider = "virtualbox";
+   public HPCloudComputeImageExtensionLivetest() {
+      provider = "hpcloud-compute";
    }
 
    @Override
    protected Module getSshModule() {
       return new SshjSshClientModule();
    }
-
 }

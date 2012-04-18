@@ -34,6 +34,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -69,7 +71,7 @@ import com.google.inject.Singleton;
  * @author Mattias Holmqvist, Andrea Turli, David Alves
  */
 @Singleton
-public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, IMachine, Image, Location> {
+public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IMachine, Hardware, Image, Location> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -121,8 +123,13 @@ public class VirtualBoxComputeServiceAdapter implements ComputeServiceAdapter<IM
    }
 
    @Override
-   public Iterable<IMachine> listHardwareProfiles() {
-      return imageMachines();
+   public Iterable<Hardware> listHardwareProfiles() {
+      Set<Hardware> hardware = Sets.newLinkedHashSet();
+      hardware.add(new HardwareBuilder().ids("t1.micro").hypervisor("VirtualBox").name("t1.micro").ram(512).build());
+      hardware.add(new HardwareBuilder().ids("m1.small").hypervisor("VirtualBox").name("m1.small").ram(1024).build());
+      hardware.add(new HardwareBuilder().ids("m1.medium").hypervisor("VirtualBox").name("m1.medium").ram(3840).build());
+      hardware.add(new HardwareBuilder().ids("m1.large").hypervisor("VirtualBox").name("m1.large").ram(7680).build());
+      return hardware;
    }
 
    @Override
