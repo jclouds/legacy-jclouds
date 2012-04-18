@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.v1_1.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -29,20 +28,14 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.openstack.domain.Link;
 import org.jclouds.openstack.domain.Resource;
-import org.jclouds.openstack.nova.v1_1.domain.Address.Type;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.jclouds.util.InetAddresses2;
 import org.jclouds.util.Multimaps2;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -122,7 +115,7 @@ public class Server extends Resource {
       private Resource flavor;
       private Map<String, String> metadata = Maps.newHashMap();
       // TODO: get gson multimap ad
-      private Multimap<Address.Type, Address> addresses = LinkedHashMultimap.create();
+      private Multimap<String, Address> addresses = LinkedHashMultimap.create();
       private String adminPass;
       private String keyName;
 
@@ -233,59 +226,11 @@ public class Server extends Resource {
       /**
        * @see Server#getAddresses()
        */
-      public Builder addresses(Multimap<Address.Type, Address> addresses) {
+      public Builder addresses(Multimap<String, Address> addresses) {
          this.addresses = ImmutableMultimap.copyOf(checkNotNull(addresses, "addresses"));
          return this;
       }
-
-      /**
-       * @see Server#getPrivateAddresses()
-       */
-      public Builder privateAddresses(Address... privateAddresses) {
-         return privateAddresses(ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses")));
-      }
-
-      /**
-       * @see Server#getPrivateAddresses()
-       */
-      public Builder privateAddresses(Set<Address> privateAddresses) {
-         this.addresses.replaceValues(Address.Type.PRIVATE, ImmutableSet.copyOf(checkNotNull(privateAddresses,
-                  "privateAddresses")));
-         return this;
-      }
       
-      /**
-       * @see Server#getInternetAddresses()
-       */
-      public Builder internetAddresses(Address... internetAddresses) {
-         return internetAddresses(ImmutableSet.copyOf(checkNotNull(internetAddresses, "internetAddresses")));
-      }
-
-      /**
-       * @see Server#getInternetAddresses()
-       */
-      public Builder internetAddresses(Set<Address> internetAddresses) {
-         this.addresses.replaceValues(Address.Type.INTERNET, ImmutableSet.copyOf(checkNotNull(internetAddresses,
-                  "internetAddresses")));
-         return this;
-      }
-      
-      /**
-       * @see Server#getPublicAddresses()
-       */
-      public Builder publicAddresses(Address... publicAddresses) {
-         return publicAddresses(ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses")));
-      }
-
-      /**
-       * @see Server#getPublicAddresses()
-       */
-      public Builder publicAddresses(Set<Address> publicAddresses) {
-         this.addresses.replaceValues(Address.Type.PUBLIC, ImmutableSet.copyOf(checkNotNull(publicAddresses,
-                  "publicAddresses")));
-         return this;
-      }
-
       /**
        * @see Server#getAdminPass()
        */
@@ -376,13 +321,13 @@ public class Server extends Resource {
    @SerializedName("config_drive")
    protected final String configDrive;
    // TODO: get gson multimap adapter!
-   protected final Map<Address.Type, Set<Address>> addresses;
+   protected final Map<String, Set<Address>> addresses;
    protected final Map<String, String> metadata;
 
    protected Server(String id, String name, Set<Link> links, @Nullable String uuid, String tenantId, String userId,
             Date updated, Date created, @Nullable String hostId, @Nullable String accessIPv4,
             @Nullable String accessIPv6, Status status, @Nullable String configDrive, Resource image, Resource flavor,
-            String adminPass, @Nullable String keyName, Multimap<Address.Type, Address> addresses,
+            String adminPass, @Nullable String keyName, Multimap<String, Address> addresses,
             Map<String, String> metadata) {
       super(id, name, links);
       this.uuid = uuid; // TODO: see what version this came up in
@@ -471,74 +416,10 @@ public class Server extends Resource {
    }
 
    /**
-    * @return the private ip addresses assigned to the server
-    */
-   public Set<Address> getPrivateAddresses() {
-      Collection<Address> privateAddresses = getAddresses().get(Address.Type.PRIVATE);
-      if (privateAddresses == null) {
-         return ImmutableSet.<Address> of();
-      } else {
-         return ImmutableSet.copyOf(privateAddresses);
-      }
-   }
-   
-   /**
-    * @return the internet ip addresses assigned to the server
-    * @since essex
-    */
-   public Set<Address> getInternetAddresses() {
-      Collection<Address> internetAddrs = getAddresses().get(Address.Type.INTERNET);
-      if (internetAddrs == null) {
-         return ImmutableSet.<Address> of();
-      } else {
-         return ImmutableSet.copyOf(internetAddrs);
-      }
-   }
-
-   /**
-    * @return the public ip addresses assigned to the server
-    */
-   public Set<Address> getPublicAddresses() {
-      Collection<Address> publicAddrs = getAddresses().get(Address.Type.PUBLIC);
-      if (publicAddrs == null) {
-         return ImmutableSet.<Address> of();
-      } else {
-         return ImmutableSet.copyOf(publicAddrs);
-      }
-   }
-
-   /**
     * @return the ip addresses assigned to the server
     */
-   public Multimap<Type, Address> getAddresses() {
-
-      Set<Address> privateAddresses = addresses.get(Address.Type.PRIVATE);
-
-      if (privateAddresses != null && privateAddresses.size() > 1) {
-         return hackNeededForFloatingIpsFixedInEssex(privateAddresses);
-      } else {
-         return Multimaps2.fromOldSchool(addresses);
-      }
-
-   }
-
-   private Multimap<Type, Address> hackNeededForFloatingIpsFixedInEssex(Set<Address> privateAddresses) {
-      Set<Address> publicAddresses = addresses.get(Address.Type.PUBLIC);
-      ImmutableSetMultimap.Builder<Type, Address> returnMapBuilder = new ImmutableSetMultimap.Builder<Type, Address>();
-      if (publicAddresses != null) {
-         returnMapBuilder.putAll(Address.Type.PUBLIC, publicAddresses);
-      }
-      returnMapBuilder.putAll(Address.Type.PRIVATE, Iterables.filter(privateAddresses, IsPrivateAddress.INSTANCE));
-      returnMapBuilder.putAll(Address.Type.PUBLIC, Iterables.filter(privateAddresses, Predicates
-               .not(IsPrivateAddress.INSTANCE)));
-      return returnMapBuilder.build();
-   }
-
-   private static enum IsPrivateAddress implements Predicate<Address> {
-      INSTANCE;
-      public boolean apply(Address in) {
-         return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
-      }
+   public Multimap<String, Address> getAddresses() {
+      return Multimaps2.fromOldSchool(addresses);
    }
 
    /**

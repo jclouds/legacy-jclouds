@@ -22,11 +22,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
@@ -57,11 +59,13 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
+import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestApiMetadata;
+import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 import org.w3c.dom.Node;
@@ -74,6 +78,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.InputSupplier;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.inject.AbstractModule;
@@ -540,11 +545,13 @@ public abstract class BaseRestClientExpectTest<S> {
 
       this.api = RestApiMetadata.class.cast(builder.getApiMetadata()).getApi();
 
+      // isolate tests from eachother, as default credentialStore is static
       return builder.credentials(identity, credential).modules(
-               ImmutableSet.of(new ExpectModule(fn), new NullLoggingModule(), module)).overrides(setupProperties())
+               ImmutableSet.of(new ExpectModule(fn), new NullLoggingModule(), new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
+                     new ConcurrentHashMap<String, InputSupplier<InputStream>>())), module)).overrides(setupProperties())
                .buildInjector();
    }
-
+   
    /**
     * override this to supply context-specific parameters during tests.
     */

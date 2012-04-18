@@ -36,6 +36,7 @@ import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
 import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -90,7 +91,7 @@ public class ParseServerWithInternetAddressesTest extends BaseItemParserTest<Ser
                   Link.create(
                          Relation.BOOKMARK,
                          URI.create("https://nova-api.trystack.org:9774/37/servers/1459")))
-            .internetAddresses(Address.createV4("8.21.28.47")).build();
+            .addresses(ImmutableMultimap.of("internet", Address.createV4("8.21.28.47"))).build();
    }
   
 

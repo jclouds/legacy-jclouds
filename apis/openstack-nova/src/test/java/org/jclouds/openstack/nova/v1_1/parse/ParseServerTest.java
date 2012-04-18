@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -96,9 +97,11 @@ public class ParseServerTest extends BaseItemParserTest<Server> {
             .metadata(
                   new ImmutableMap.Builder<String, String>().put("Server Label", "Web Head 1")
                         .put("Image Version", "2.1").build())
-            .publicAddresses(Address.createV4("67.23.10.132"), Address.createV6("::babe:67.23.10.132"),
+            .addresses(ImmutableMultimap.<String, Address>builder()
+                  .putAll("public", Address.createV4("67.23.10.132"), Address.createV6("::babe:67.23.10.132"),
                   Address.createV4("67.23.10.131"), Address.createV6("::babe:4317:0A83"))
-            .privateAddresses(Address.createV4("10.176.42.16"), Address.createV6("::babe:10.176.42.16")).build();
+                  .putAll("private", Address.createV4("10.176.42.16"), Address.createV6("::babe:10.176.42.16"))
+                  .build()).build();
 
    }
 
