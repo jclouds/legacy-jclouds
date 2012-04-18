@@ -141,13 +141,50 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
          return masters.get(key.getId());
       }
 
-      // the yaml image
-      YamlImage currentImage = imageMapping.get(key.getId());
-
-      checkNotNull(currentImage, "could not find yaml image for image: " + key);
-      
-      checkState(!currentImage.id.contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "master image names cannot contain \""
+      checkState(!key.getId().contains(VIRTUALBOX_NODE_NAME_SEPARATOR), "master image names cannot contain \""
                + VIRTUALBOX_NODE_NAME_SEPARATOR + "\"");
+
+      String vmName = VIRTUALBOX_IMAGE_PREFIX + key.getId();
+
+      IMachine masterMachine;
+
+      Master master;
+
+      // ready the preseed file server
+      PreseedCfgServer server = new PreseedCfgServer();
+      try {
+         // try and find a master machine in vbox
+         masterMachine = manager.get().getVBox().findMachine(vmName);
+         master = Master.builder().machine(masterMachine).build();
+
+      } catch (VBoxException e) {
+         if (machineNotFoundException(e)) {
+            // machine was not found try to build one from a yaml file
+            YamlImage currentImage = imageMapping.get(key.getId());
+
+            checkNotNull(currentImage);
+
+            server.start(preconfigurationUrl, currentImage.preseed_cfg);
+
+            MasterSpec masterSpec = buildMasterSpecFromYaml(currentImage, vmName);
+
+            // create the master machine if it can't be found
+            masterMachine = masterCreatorAndInstaller.apply(masterSpec);
+
+            // build the master
+            master = Master.builder().machine(masterMachine).spec(masterSpec).build();
+         } else {
+            throw e;
+         }
+      } finally {
+         server.stop();
+      }
+
+      masters.put(key.getId(), master);
+      return master;
+   }
+
+   private MasterSpec buildMasterSpecFromYaml(YamlImage currentImage, String vmName) throws ExecutionException {
 
       String guestAdditionsFileName = String.format("VBoxGuestAdditions_%s.iso", version);
       String guestAdditionsIso = String.format("%s/%s", isosDir, guestAdditionsFileName);
@@ -159,8 +196,6 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
 
       // check if the iso is here, download if not
       String localIsoUrl = getFilePathOrDownload(currentImage.iso);
-
-      String vmName = VIRTUALBOX_IMAGE_PREFIX + currentImage.id;
 
       String adminDisk = workingDir + File.separator + vmName + ".vdi";
 
@@ -174,46 +209,19 @@ public class MastersLoadingCache extends AbstractLoadingCache<Image, Master> {
                .controller(ideController).forceOverwrite(true).cleanUpMode(CleanupMode.Full).build();
 
       NetworkAdapter networkAdapter = NetworkAdapter.builder().networkAttachmentType(NetworkAttachmentType.NAT)
-               .tcpRedirectRule("127.0.0.1", MASTER_PORT , "", 22).build();
+               .tcpRedirectRule("127.0.0.1", MASTER_PORT, "", 22).build();
 
       NetworkInterfaceCard networkInterfaceCard = NetworkInterfaceCard.builder().addNetworkAdapter(networkAdapter)
                .slot(0L).build();
-      
+
       NetworkSpec networkSpec = NetworkSpec.builder().addNIC(networkInterfaceCard).build();
 
-      MasterSpec masterSpec = MasterSpec
+      return MasterSpec
                .builder()
                .vm(vmSpecification)
                .iso(IsoSpec.builder().sourcePath(localIsoUrl)
                         .installationScript(installationKeySequence.replace("HOSTNAME", vmSpecification.getVmName()))
                         .build()).network(networkSpec).build();
-
-      IMachine masterMachine;
-
-      
-      // ready the preseed file server
-      PreseedCfgServer server = new PreseedCfgServer();
-      try {
-         // try and find a master machine in vbox
-         masterMachine = manager.get().getVBox().findMachine(vmName);
-      } catch (VBoxException e) {
-         if (machineNotFoundException(e)) {
-            server.start(preconfigurationUrl,currentImage.preseed_cfg);
-            // create the master machine if it can't be found
-            masterMachine = masterCreatorAndInstaller.apply(masterSpec);
-         } else {
-            throw e;
-         }
-      } finally {
-         server.stop();
-      }
-      
-
-      Master master = Master.builder().machine(masterMachine).spec(masterSpec).build();
-
-      masters.put(key.getId(), master);
-
-      return master;
    }
 
    @Override

@@ -51,6 +51,7 @@ import org.jclouds.Constants;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.callables.RunScriptOnNode;
@@ -90,6 +91,7 @@ import org.jclouds.scriptbuilder.functions.InitAdminAccess;
 import org.jclouds.util.Maps2;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -134,6 +136,7 @@ public class BaseComputeService implements ComputeService {
    private final PersistNodeCredentials persistNodeCredentials;
    private final RunScriptOnNode.Factory runScriptOnNodeFactory;
    private final ExecutorService executor;
+   private final Optional<ImageExtension> imageExtension;
 
    @Inject
    protected BaseComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
@@ -148,7 +151,8 @@ public class BaseComputeService implements ComputeService {
          @Named("NODE_SUSPENDED") Predicate<AtomicReference<NodeMetadata>> nodeSuspended,
          InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
          RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
-         Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+         Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+         Optional<ImageExtension> imageExtension) {
       this.context = checkNotNull(context, "context");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
@@ -172,6 +176,7 @@ public class BaseComputeService implements ComputeService {
       this.runScriptOnNodeFactory = checkNotNull(runScriptOnNodeFactory, "runScriptOnNodeFactory");
       this.persistNodeCredentials = checkNotNull(persistNodeCredentials, "persistNodeCredentials");
       this.executor = checkNotNull(executor, "executor");
+      this.imageExtension = imageExtension;
    }
 
    /**
@@ -238,7 +243,7 @@ public class BaseComputeService implements ComputeService {
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> destroying nodes matching(%s)", filter);
       Set<NodeMetadata> set = newLinkedHashSet(filter(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
-            new Function<NodeMetadata, Future<NodeMetadata>>() {
+            new Function<NodeMetadata, Future<? extends NodeMetadata>>() {
 
                // TODO make an async interface instead of re-wrapping
                @Override
@@ -403,7 +408,7 @@ public class BaseComputeService implements ComputeService {
    public void rebootNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> rebooting nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
+            new Function<NodeMetadata, Future<? extends Void>>() {
                // TODO use native async
                @Override
                public Future<Void> apply(NodeMetadata from) {
@@ -434,7 +439,7 @@ public class BaseComputeService implements ComputeService {
    public void resumeNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> resuming nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
+            new Function<NodeMetadata, Future<? extends Void>>() {
                // TODO use native async
                @Override
                public Future<Void> apply(NodeMetadata from) {
@@ -465,7 +470,7 @@ public class BaseComputeService implements ComputeService {
    public void suspendNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> suspending nodes matching(%s)", filter);
       transformParallel(nodesMatchingFilterAndNotTerminatedExceptionIfNotFound(filter),
-            new Function<NodeMetadata, Future<Void>>() {
+            new Function<NodeMetadata, Future<? extends Void>>() {
                // TODO use native async
                @Override
                public Future<Void> apply(NodeMetadata from) {
@@ -649,7 +654,7 @@ public class BaseComputeService implements ComputeService {
    }
 
    private final class TransformNodesIntoInitializedScriptRunners implements
-         Function<NodeMetadata, Future<RunScriptOnNode>> {
+         Function<NodeMetadata, Future<? extends RunScriptOnNode>> {
       private final Map<NodeMetadata, Exception> badNodes;
       private final Statement script;
       private final RunScriptOptions options;
@@ -667,6 +672,14 @@ public class BaseComputeService implements ComputeService {
          return executor.submit(initScriptRunnerFactory.create(node, script, options, badNodes));
       }
 
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Optional<ImageExtension> getImageExtension() {
+      return imageExtension;
    }
 
 }

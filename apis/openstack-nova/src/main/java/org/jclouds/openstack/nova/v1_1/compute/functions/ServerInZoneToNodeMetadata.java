@@ -20,7 +20,6 @@ package org.jclouds.openstack.nova.v1_1.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.transform;
@@ -51,9 +50,11 @@ import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ServerInZone;
 import org.jclouds.openstack.nova.v1_1.domain.zonescoped.ZoneAndId;
+import org.jclouds.util.InetAddresses2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.net.InetAddresses;
 
@@ -103,14 +104,20 @@ public class ServerInZoneToNodeMetadata implements Function<ServerInZone, NodeMe
       builder.hardware(findHardwareForServerOrNull(serverInZone));
       builder.state(from.getStatus().getNodeState());
       builder.publicAddresses(filter(
-            transform(concat(from.getPublicAddresses(), from.getInternetAddresses()),
+            transform(filter(from.getAddresses().values(), Predicates.not(isPrivateAddress)),
                   AddressToStringTransformationFunction.INSTANCE), isInet4Address));
       builder.privateAddresses(filter(
-            transform(from.getPrivateAddresses(), AddressToStringTransformationFunction.INSTANCE), isInet4Address));
+            transform(filter(from.getAddresses().values(), isPrivateAddress), AddressToStringTransformationFunction.INSTANCE), isInet4Address));
 
       return builder.build();
    }
-
+   
+   private static final Predicate<Address> isPrivateAddress = new Predicate<Address>() {
+      public boolean apply(Address in) {
+         return InetAddresses2.IsPrivateIPAddress.INSTANCE.apply(in.getAddr());
+      }
+   };
+   
    public static final Predicate<String> isInet4Address = new Predicate<String>() {
       @Override
       public boolean apply(String input) {

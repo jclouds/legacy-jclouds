@@ -18,22 +18,17 @@
  */
 package org.jclouds.openstack.nova.v1_1.internal;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.io.CopyInputStreamInputSupplierMap;
 import org.jclouds.openstack.nova.v1_1.NovaApiMetadata;
-import org.jclouds.rest.config.CredentialStoreModule;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.io.InputSupplier;
 import com.google.inject.Module;
 
 /**
@@ -91,12 +86,4 @@ public abstract class BaseNovaComputeServiceContextExpectTest<T> extends BaseNov
       return new NovaApiMetadata();
    }
 
-   // isolate tests from eachother, as default credentialStore is static
-   protected Module credentialStoreModule = new CredentialStoreModule(new CopyInputStreamInputSupplierMap(
-         new ConcurrentHashMap<String, InputSupplier<InputStream>>()));
-
-   @Override
-   protected Module createModule() {
-      return credentialStoreModule;
-   }
 }

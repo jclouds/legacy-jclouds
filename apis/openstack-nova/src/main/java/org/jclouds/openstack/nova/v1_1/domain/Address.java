@@ -30,42 +30,7 @@ import com.google.common.base.Objects;
  * @author AdrianCole
  */
 public class Address {
-
-   /**
-    * Relations associated with resources.
-    */
-   public static enum Type {
-      /**
-       * internet routable address
-       */
-      INTERNET,
-      /**
-       * publically routable address
-       */
-      PUBLIC,
-      /**
-       * address that is not publicly routable.
-       */
-      PRIVATE,
-      /**
-       * the value returned by the OpenStack service was not recognized.
-       */
-      UNRECOGNIZED;
-
-      public String value() {
-         return name().toLowerCase();
-      }
-
-      public static Type fromValue(String v) {
-         try {
-            return valueOf(v.toUpperCase());
-         } catch (IllegalArgumentException e) {
-            return UNRECOGNIZED;
-         }
-      }
-
-   }
-
+  
    public static Builder builder() {
       return new Builder();
    }

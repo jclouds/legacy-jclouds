@@ -181,7 +181,7 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
          try {
             Server server = client.getServer(serverId);
             boolean ipInServerAddresses = false;
-            Multimap<Address.Type, Address> addresses = server.getAddresses();
+            Multimap<String, Address> addresses = server.getAddresses();
             for (Address address : addresses.values()) {
                if (address.getAddr().equals(floatingIP)) {
                   ipInServerAddresses = true;

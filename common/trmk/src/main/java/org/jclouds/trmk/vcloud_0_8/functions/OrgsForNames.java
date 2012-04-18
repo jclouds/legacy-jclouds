@@ -53,12 +53,10 @@ public class OrgsForNames implements Function<Iterable<String>, Iterable<? exten
 
    @Override
    public Iterable<? extends Org> apply(Iterable<String> from) {
-      return transformParallel(from, new Function<String, Future<Org>>() {
-
-         @SuppressWarnings("unchecked")
+      return transformParallel(from, new Function<String, Future<? extends Org>>() {
          @Override
-         public Future<Org> apply(String from) {
-            return (Future<Org>) aclient.findOrgNamed(from);
+         public Future<? extends Org> apply(String from) {
+            return aclient.findOrgNamed(from);
          }
 
       }, executor, null, logger, "organizations for names");

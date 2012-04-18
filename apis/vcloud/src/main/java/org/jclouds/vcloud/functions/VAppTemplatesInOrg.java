@@ -25,6 +25,7 @@ import static com.google.common.collect.Iterables.filter;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.util.Iterables2;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Status;
@@ -53,7 +54,7 @@ public class VAppTemplatesInOrg implements Function<Org, Iterable<VAppTemplate>>
    @Override
    public Iterable<VAppTemplate> apply(Org from) {
       Iterable<CatalogItem> catalogs = allCatalogItemsInOrg.apply(from);
-      Iterable<VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
+      Iterable<VAppTemplate> vAppTemplates = Iterables2.concreteCopy(vAppTemplatesForCatalogItems.apply(catalogs));
       return filter(vAppTemplates, and(notNull(), new Predicate<VAppTemplate>(){
 
          //TODO: test this

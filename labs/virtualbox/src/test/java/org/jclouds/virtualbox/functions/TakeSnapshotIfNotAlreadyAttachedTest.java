@@ -24,6 +24,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
+import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.IConsole;
 import org.virtualbox_4_1.IMachine;
@@ -31,6 +32,7 @@ import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.ISnapshot;
 import org.virtualbox_4_1.IVirtualBox;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Suppliers;
@@ -55,6 +57,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       IProgress progress = createNiceMock(IProgress.class);
       ISnapshot snapshot = createNiceMock(ISnapshot.class);
       expect(machine.getCurrentSnapshot()).andReturn(snapshot).anyTimes();
+      expect(machine.getState()).andReturn(MachineState.PoweredOff).anyTimes();
 
       expect(manager.openMachineSession(machine)).andReturn(session);
 
@@ -66,7 +69,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       session.unlockMachine();
       replay(manager, machine, vBox, session, console, progress);
 
-      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc)
+      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc, Logger.CONSOLE)
             .apply(machine);
 
       verify(machine);
@@ -87,6 +90,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       expect(progress.getCompleted()).andReturn(true);
       expect(machine.getCurrentSnapshot()).andReturn(null).anyTimes();
       expect(manager.openMachineSession(machine)).andReturn(session);
+      expect(machine.getState()).andReturn(MachineState.PoweredOff).anyTimes();
 
       expect(machine.getName()).andReturn("machine").anyTimes();
       expect(session.getConsole()).andReturn(console);
@@ -96,7 +100,7 @@ public class TakeSnapshotIfNotAlreadyAttachedTest {
       session.unlockMachine();
       replay(manager, machine, vBox, session, console, progress);
 
-      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc)
+      new TakeSnapshotIfNotAlreadyAttached(Suppliers.ofInstance(manager), snapshotName, snapshotDesc, Logger.CONSOLE)
             .apply(machine);
 
       verify(machine);

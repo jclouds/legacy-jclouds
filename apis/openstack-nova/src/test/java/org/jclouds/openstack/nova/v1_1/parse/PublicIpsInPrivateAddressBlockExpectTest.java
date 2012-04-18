@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.SelectJson;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -44,7 +45,7 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ParseCreatedServerTest")
-public class PublicIpsInPrivateAddressBlockShouldRerouteToPublicBlockExpectTest extends BaseItemParserTest<Server> {
+public class PublicIpsInPrivateAddressBlockExpectTest extends BaseItemParserTest<Server> {
 
    @Override
    public String resource() {
@@ -86,8 +87,8 @@ public class PublicIpsInPrivateAddressBlockShouldRerouteToPublicBlockExpectTest 
                                     URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/flavors/100")))
                         .build())
             .metadata(ImmutableMap.of("Name", "hpcloud-computes"))
-            .privateAddresses(Address.createV4("10.6.39.189"))
-            .publicAddresses(Address.createV4("15.185.181.94"))
+            .addresses(ImmutableMultimap.<String, Address>builder()
+                  .putAll("private", Address.createV4("10.6.39.189"), Address.createV4("15.185.181.94")).build())
             .links(
                      Link.create(Relation.SELF, URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/servers/59662")),
                      Link.create(Relation.BOOKMARK, URI.create("https://az-2.region-a.geo-1.compute.hpcloudsvc.com/37936628937291/servers/59662"))).build();

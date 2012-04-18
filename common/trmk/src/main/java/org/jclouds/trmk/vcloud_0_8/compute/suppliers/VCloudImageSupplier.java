@@ -69,8 +69,8 @@ public class VCloudImageSupplier implements Supplier<Set<? extends Image>> {
    @Override
    public Set<? extends Image> get() {
       Iterable<? extends Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
-      Iterable<Iterable<? extends Image>> images = transformParallel(orgs,
-               new Function<Org, Future<Iterable<? extends Image>>>() {
+      Iterable<? extends Iterable<? extends Image>> images = transformParallel(orgs,
+               new Function<Org, Future<? extends Iterable<? extends Image>>>() {
 
                   @Override
                   public Future<Iterable<? extends Image>> apply(final Org from) {

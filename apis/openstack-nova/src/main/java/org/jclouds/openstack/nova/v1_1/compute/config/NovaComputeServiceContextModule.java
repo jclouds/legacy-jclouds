@@ -33,6 +33,7 @@ import javax.inject.Singleton;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -46,6 +47,7 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeService;
 import org.jclouds.openstack.nova.v1_1.compute.NovaComputeServiceAdapter;
+import org.jclouds.openstack.nova.v1_1.compute.NovaImageExtension;
 import org.jclouds.openstack.nova.v1_1.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.openstack.nova.v1_1.compute.functions.FlavorInZoneToHardware;
 import org.jclouds.openstack.nova.v1_1.compute.functions.ImageInZoneToImage;
@@ -69,6 +71,7 @@ import org.jclouds.openstack.nova.v1_1.predicates.FindSecurityGroupWithNameAndRe
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -135,6 +138,9 @@ public class NovaComputeServiceContextModule extends
 
       bind(new TypeLiteral<CacheLoader<ZoneAndName, KeyPair>>() {
       }).to(CreateUniqueKeyPair.class);
+      
+      bind(new TypeLiteral<ImageExtension>() {
+      }).to(NovaImageExtension.class);
    }
 
    @Override
@@ -205,5 +211,10 @@ public class NovaComputeServiceContextModule extends
          }
       }, locations);
 
+   }
+   
+   @Override
+   protected Optional<ImageExtension> provideImageExtension(Injector i) {
+      return Optional.of(i.getInstance(ImageExtension.class));
    }
 }

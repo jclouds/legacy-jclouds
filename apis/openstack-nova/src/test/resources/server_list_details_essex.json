@@ -1,0 +1,152 @@
+{
+    "servers": [{
+        "OS-EXT-STS:task_state": null,
+        "addresses": {
+            "Net TenantA Front-Middle": [{
+                "version": 4,
+                "addr": "172.16.11.5"
+            }],
+            "Public network": [{
+                "version": 4,
+                "addr": "172.16.1.13"
+            }, {
+                "version": 4,
+                "addr": "10.193.112.119"
+            }]
+        },
+        "links": [{
+            "href": "http://nova:8774/v1.1/8d10e6646d5d4585937395b04839a353/servers/0c80b392-db30-4736-ae02-4480090f1207",
+            "rel": "self"
+        }, {
+            "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/servers/0c80b392-db30-4736-ae02-4480090f1207",
+            "rel": "bookmark"
+        }],
+        "image": {
+            "id": "416af940-2d3c-4a7c-977c-a9030685ad5e",
+            "links": [{
+                "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/images/416af940-2d3c-4a7c-977c-a9030685ad5e",
+                "rel": "bookmark"
+            }]
+        },
+        "OS-EXT-STS:vm_state": "active",
+        "flavor": {
+            "id": "1",
+            "links": [{
+                "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/flavors/1",
+                "rel": "bookmark"
+            }]
+        },
+        "id": "0c80b392-db30-4736-ae02-4480090f1207",
+        "user_id": "df13814f6c354d00a8acf66502836323",
+        "OS-DCF:diskConfig": "MANUAL",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "progress": 0,
+        "OS-EXT-STS:power_state": 1,
+        "config_drive": "",
+        "status": "ACTIVE",
+        "updated": "2012-04-12T11:21:33Z",
+        "hostId": "03d796ebb52b1b555e5f6d9262f7dbd52b3f7c181e3aa89b34ca5408",
+        "key_name": "",
+        "name": "VM proxy",
+        "created": "2012-04-12T11:21:23Z",
+        "tenant_id": "8d10e6646d5d4585937395b04839a353",
+        "metadata": {}
+    }, {
+        "OS-EXT-STS:task_state": null,
+        "addresses": {
+            "Net TenantA Front-Middle": [{
+                "version": 4,
+                "addr": "172.16.11.4"
+            }],
+            "Net TenantA Middle-Back": [{
+                "version": 4,
+                "addr": "172.16.12.5"
+            }]
+        },
+        "links": [{
+            "href": "http://nova:8774/v1.1/8d10e6646d5d4585937395b04839a353/servers/b332b5cd-535e-4677-b68e-fc8badc13236",
+            "rel": "self"
+        }, {
+            "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/servers/b332b5cd-535e-4677-b68e-fc8badc13236",
+            "rel": "bookmark"
+        }],
+        "image": {
+            "id": "416af940-2d3c-4a7c-977c-a9030685ad5e",
+            "links": [{
+                "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/images/416af940-2d3c-4a7c-977c-a9030685ad5e",
+                "rel": "bookmark"
+            }]
+        },
+        "OS-EXT-STS:vm_state": "active",
+        "flavor": {
+            "id": "1",
+            "links": [{
+                "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/flavors/1",
+                "rel": "bookmark"
+            }]
+        },
+        "id": "b332b5cd-535e-4677-b68e-fc8badc13236",
+        "user_id": "df13814f6c354d00a8acf66502836323",
+        "OS-DCF:diskConfig": "MANUAL",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "progress": 0,
+        "OS-EXT-STS:power_state": 1,
+        "config_drive": "",
+        "status": "ACTIVE",
+        "updated": "2012-04-12T11:18:58Z",
+        "hostId": "e5bbff80bebacfe1db63951e787b5341427060a602d33abfefb6a1bc",
+        "key_name": "",
+        "name": "VM blog",
+        "created": "2012-04-12T11:18:48Z",
+        "tenant_id": "8d10e6646d5d4585937395b04839a353",
+        "metadata": {}
+    }, {
+        "OS-EXT-STS:task_state": null,
+        "addresses": {
+            "Net TenantA Middle-Back": [{
+                "version": 4,
+                "addr": "172.16.12.4"
+            }]
+        },
+        "links": [{
+            "href": "http://nova:8774/v1.1/8d10e6646d5d4585937395b04839a353/servers/f9d43436-4572-4c9b-9b74-5fa6890a2f21",
+            "rel": "self"
+        }, {
+            "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/servers/f9d43436-4572-4c9b-9b74-5fa6890a2f21",
+            "rel": "bookmark"
+        }],
+        "image": {
+            "id": "416af940-2d3c-4a7c-977c-a9030685ad5e",
+            "links": [{
+                "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/images/416af940-2d3c-4a7c-977c-a9030685ad5e",
+                "rel": "bookmark"
+            }]
+        },
+        "OS-EXT-STS:vm_state": "active",
+        "flavor": {
+            "id": "1",
+            "links": [{
+                "href": "http://nova:8774/8d10e6646d5d4585937395b04839a353/flavors/1",
+                "rel": "bookmark"
+            }]
+        },
+        "id": "f9d43436-4572-4c9b-9b74-5fa6890a2f21",
+        "user_id": "df13814f6c354d00a8acf66502836323",
+        "OS-DCF:diskConfig": "MANUAL",
+        "accessIPv4": "",
+        "accessIPv6": "",
+        "progress": 0,
+        "OS-EXT-STS:power_state": 1,
+        "config_drive": "",
+        "status": "ACTIVE",
+        "updated": "2012-04-12T11:15:09Z",
+        "hostId": "03d796ebb52b1b555e5f6d9262f7dbd52b3f7c181e3aa89b34ca5408",
+        "key_name": "",
+        "name": "VM MySQL",
+        "created": "2012-04-12T11:14:56Z",
+        "tenant_id": "8d10e6646d5d4585937395b04839a353",
+        "metadata": {}
+    }]
+}
