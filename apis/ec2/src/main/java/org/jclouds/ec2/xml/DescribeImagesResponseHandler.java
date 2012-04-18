@@ -61,7 +61,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private Set<Image> contents = Sets.newLinkedHashSet();
+   protected Set<Image> contents = Sets.newLinkedHashSet();
    private StringBuilder currentText = new StringBuilder();
    private final Supplier<String> defaultRegion;
 
