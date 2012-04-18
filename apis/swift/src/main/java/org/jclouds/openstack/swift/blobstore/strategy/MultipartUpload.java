@@ -1,9 +1,5 @@
 package org.jclouds.openstack.swift.blobstore.strategy;
 
-/*
-@author Roman Bogorodskiy
- */
-
 public interface MultipartUpload {
 
     /* Maximum number of parts per upload */
