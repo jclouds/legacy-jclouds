@@ -21,6 +21,7 @@ package org.jclouds.virtualbox.functions.admin;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
@@ -58,10 +59,9 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       String identity = "adminstrator";
       String credential = "12345";
       expect(client.seconds(3)).andReturn(client);
-
-      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(true);
-
+      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(true).anyTimes();
       manager.connect(provider.toASCIIString(), "", "");
+      expectLastCall().anyTimes();
 
       replay(manager, runScriptOnNodeFactory, client);
 
@@ -87,17 +87,18 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       String credential = "12345";
       
       expect(client.seconds(3)).andReturn(client);
-      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(false);
+      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(false).once().andReturn(true).once();
       expect(
                runScriptOnNodeFactory.create(host, Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
                         runAsRoot(false).wrapInInitScript(false))).andReturn(runScriptOnNode);
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
-      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(true);
+      
       expect(
                runScriptOnNodeFactory.create(host, Statements.exec("vboxwebsrv -t 10000 -v -b"), runAsRoot(false)
                         .wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv"))).andReturn(
                runScriptOnNode);
+      
       expect(runScriptOnNode.init()).andReturn(runScriptOnNode);
       expect(runScriptOnNode.call()).andReturn(new ExecResponse("", "", 0));
       
@@ -105,7 +106,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
 
       replay(manager, runScriptOnNodeFactory, runScriptOnNode, client);
       new StartVBoxIfNotAlreadyRunning((Function) Functions.constant(manager), runScriptOnNodeFactory, client,
-               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential).start();
+               Suppliers.ofInstance(host), Suppliers.ofInstance(provider), identity, credential);
       verify(manager, runScriptOnNodeFactory, runScriptOnNode, client);
 
    }

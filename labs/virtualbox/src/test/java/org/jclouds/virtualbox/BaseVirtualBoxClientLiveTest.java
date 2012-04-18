@@ -39,6 +39,7 @@ import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.config.ValueOfConfigurationKeyOrNull;
 import org.jclouds.rest.annotations.BuildVersion;
+import org.jclouds.sshj.config.SshjSshClientModule;
 import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.jclouds.virtualbox.domain.HardDisk;
 import org.jclouds.virtualbox.domain.IsoSpec;
@@ -216,6 +217,11 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       Map<Image, YamlImage> images = new ImagesToYamlImagesFromYamlDescriptor(new YamlImagesFromFileConfig(
                "/default-images.yaml")).get();
       return images.get(Iterables.getOnlyElement(Iterables.filter(images.keySet(), new DefaultImagePredicate())));
+   }
+   
+   @Override
+   protected Module getSshModule() {
+      return new SshjSshClientModule();
    }
 
    @AfterClass(groups = "live")

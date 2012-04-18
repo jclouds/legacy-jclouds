@@ -17,7 +17,7 @@
  * under the License.
  */
 /*
-U * Licensed to jclouds, Inc. (jclouds) under one or more
+ U * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  jclouds licenses this file
@@ -93,8 +93,8 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
          }
       }
 
-      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(transform(filter(mediaToBeDeleted,
-               new AutoDeleteHardDiskPredicate(vmSpec)), new DeleteChildrenOfMedium()));
+      List<IMedium> filteredMediaToBeDeleted = Lists.newArrayList(transform(
+               filter(mediaToBeDeleted, new AutoDeleteHardDiskPredicate(vmSpec)), new DeleteChildrenOfMedium()));
 
       if (!filteredMediaToBeDeleted.isEmpty()) {
          try {
@@ -105,7 +105,7 @@ public class UnregisterMachineIfExistsAndDeleteItsMedia implements Function<IMac
             Throwables.propagate(e);
          }
       }
-      
+
       return null;
    }
 
