@@ -61,14 +61,14 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    @Override
    public Iterable<? extends CatalogItem> apply(Catalog from) {
 
-      Iterable<CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
+      Iterable<? extends CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
 
          @Override
          public boolean apply(ReferenceType input) {
             return input.getType().equals(TerremarkVCloudMediaType.CATALOGITEM_XML);
          }
 
-      }), new Function<ReferenceType, Future<CatalogItem>>() {
+      }), new Function<ReferenceType, Future<? extends CatalogItem>>() {
 
          @SuppressWarnings("unchecked")
          @Override

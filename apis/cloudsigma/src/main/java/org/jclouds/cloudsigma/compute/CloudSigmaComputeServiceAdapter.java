@@ -56,6 +56,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Iterables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -170,8 +171,8 @@ public class CloudSigmaComputeServiceAdapter implements
     */
    @Override
    public Iterable<DriveInfo> listImages() {
-      Iterable<DriveInfo> drives = transformParallel(client.listStandardDrives(),
-            new Function<String, Future<DriveInfo>>() {
+      Iterable<? extends DriveInfo> drives = transformParallel(client.listStandardDrives(),
+            new Function<String, Future<? extends DriveInfo>>() {
 
                @Override
                public Future<DriveInfo> apply(String input) {
@@ -190,7 +191,7 @@ public class CloudSigmaComputeServiceAdapter implements
                   return "seedDriveCache()";
                }
             }, executor, null, logger, "drives");
-      return filter(drives, PREINSTALLED_DISK);
+      return Iterables2.concreteCopy(filter(drives, PREINSTALLED_DISK));
    }
 
    @SuppressWarnings("unchecked")

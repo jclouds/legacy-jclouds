@@ -56,8 +56,8 @@ public class AllCatalogsInOrg implements Function<Org, Iterable<? extends Catalo
 
    @Override
    public Iterable<? extends Catalog> apply(final Org org) {
-      Iterable<Catalog> catalogs = transformParallel(org.getCatalogs().values(),
-            new Function<ReferenceType, Future<Catalog>>() {
+      Iterable<? extends Catalog> catalogs = transformParallel(org.getCatalogs().values(),
+            new Function<ReferenceType, Future<? extends Catalog>>() {
                @SuppressWarnings("unchecked")
                @Override
                public Future<Catalog> apply(ReferenceType from) {

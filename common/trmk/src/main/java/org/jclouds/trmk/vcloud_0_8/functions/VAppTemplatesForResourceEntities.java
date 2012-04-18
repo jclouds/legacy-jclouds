@@ -69,12 +69,10 @@ public class VAppTemplatesForResourceEntities implements
             return input.getType().equals(TerremarkVCloudMediaType.VAPPTEMPLATE_XML);
          }
 
-      }), new Function<ReferenceType, Future<VAppTemplate>>() {
-
-         @SuppressWarnings("unchecked")
+      }), new Function<ReferenceType, Future<? extends VAppTemplate>>() {
          @Override
-         public Future<VAppTemplate> apply(ReferenceType from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getHref());
+         public Future<? extends VAppTemplate> apply(ReferenceType from) {
+            return aclient.getVAppTemplate(from.getHref());
          }
 
       }, executor, null, logger, "vappTemplates in");

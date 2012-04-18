@@ -68,12 +68,10 @@ public class VAppTemplatesForCatalogItems implements
             return input.getEntity().getType().equals(TerremarkVCloudMediaType.VAPPTEMPLATE_XML);
          }
 
-      }), new Function<CatalogItem, Future<VAppTemplate>>() {
-
-         @SuppressWarnings("unchecked")
+      }), new Function<CatalogItem, Future<? extends VAppTemplate>>() {
          @Override
-         public Future<VAppTemplate> apply(CatalogItem from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getEntity().getHref());
+         public Future<? extends VAppTemplate> apply(CatalogItem from) {
+            return aclient.getVAppTemplate(from.getEntity().getHref());
          }
 
       }, executor, null, logger, "vappTemplates in");
