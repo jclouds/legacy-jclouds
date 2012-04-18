@@ -48,9 +48,9 @@ public class AllCatalogItemsInOrg implements Function<Org, Iterable<CatalogItem>
    @Override
    public Iterable<CatalogItem> apply(Org from) {
       return Iterables.concat(Iterables.transform(allCatalogsInOrg.apply(from),
-               new Function<Catalog, Iterable<CatalogItem>>() {
+               new Function<Catalog, Iterable<? extends CatalogItem>>() {
                   @Override
-                  public Iterable<CatalogItem> apply(Catalog from) {
+                  public Iterable<? extends CatalogItem> apply(Catalog from) {
                      return allCatalogItemsInCatalog.apply(from);
                   }
 

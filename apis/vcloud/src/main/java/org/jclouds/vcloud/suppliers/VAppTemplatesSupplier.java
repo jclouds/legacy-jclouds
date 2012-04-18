@@ -69,8 +69,8 @@ public class VAppTemplatesSupplier implements Supplier<Set<VAppTemplate>> {
    @Override
    public Set<VAppTemplate> get() {
       Iterable<Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
-      Iterable<Iterable<VAppTemplate>> images = transformParallel(orgs,
-               new Function<Org, Future<Iterable<VAppTemplate>>>() {
+      Iterable<? extends Iterable<VAppTemplate>> images = transformParallel(orgs,
+               new Function<Org, Future<? extends Iterable<VAppTemplate>>>() {
 
                   @Override
                   public Future<Iterable<VAppTemplate>> apply(final Org from) {

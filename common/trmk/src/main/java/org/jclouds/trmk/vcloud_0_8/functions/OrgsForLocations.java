@@ -79,12 +79,10 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
             return URI.create(from.getParent().getId());
          }
 
-      })), new Function<URI, Future<Org>>() {
-
-         @SuppressWarnings("unchecked")
+      })), new Function<URI, Future<? extends Org>>() {
          @Override
-         public Future<Org> apply(URI from) {
-            return (Future<Org>) aclient.getOrg(from);
+         public Future<? extends Org> apply(URI from) {
+            return aclient.getOrg(from);
          }
 
       }, executor, null, logger, "organizations for uris");

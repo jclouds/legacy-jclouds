@@ -65,7 +65,7 @@ public class DescribeImagesParallel implements
             Iterable<Entry<String, DescribeImagesOptions>> queries) {
       return concat(transformParallel(
                queries,
-               new Function<Entry<String, DescribeImagesOptions>, Future<Set<? extends org.jclouds.ec2.domain.Image>>>() {
+               new Function<Entry<String, DescribeImagesOptions>, Future<? extends Set<? extends org.jclouds.ec2.domain.Image>>>() {
 
                   @Override
                   public Future<Set<? extends org.jclouds.ec2.domain.Image>> apply(
