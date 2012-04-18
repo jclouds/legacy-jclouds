@@ -19,8 +19,6 @@ import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
-import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;

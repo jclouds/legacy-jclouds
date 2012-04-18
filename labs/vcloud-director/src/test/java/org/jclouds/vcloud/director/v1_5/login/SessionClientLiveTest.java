@@ -24,11 +24,13 @@ import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 
-import org.jclouds.apis.ApiMetadata;
+import org.jclouds.ContextBuilder;
 import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.rest.AnonymousRestApiMetadata;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
@@ -84,17 +86,22 @@ public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<Sessi
    public void testLogout() {
       client.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
-   
-   @Override
-   protected ApiMetadata createApiMetadata() {
-      return AnonymousRestApiMetadata.forClientMappedToAsyncClient(SessionClient.class, SessionAsyncClient.class);
-   }
 
    @Override
    protected TypeToken<RestContext<SessionClient, SessionAsyncClient>> contextType() {
-      return new TypeToken<RestContext<SessionClient, SessionAsyncClient>>(){
-
-         /** The serialVersionUID */
-         private static final long serialVersionUID = -3625362618882122604L;};
+      return VCloudDirectorConstants.SESSION_CONTEXT_TYPE;
    }
+
+   @Override
+   protected ProviderMetadata createProviderMetadata() {
+      return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(SessionClient.class, SessionAsyncClient.class, endpoint);
+   }
+
+   @Override
+   protected ContextBuilder newBuilder() {
+      ProviderMetadata pm = createProviderMetadata();
+      ContextBuilder builder = ContextBuilder.newBuilder(pm);
+      return builder;
+   }
+
 }
