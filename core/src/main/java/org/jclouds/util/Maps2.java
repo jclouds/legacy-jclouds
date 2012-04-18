@@ -162,7 +162,7 @@ public class Maps2 {
     */
    public static <K, V> ImmutableMap<K, V> uniqueIndex(
          Iterable<? extends V> values, Function<? super V, ? extends K> keyFunction) {
-      return uniqueIndex(values, keyFunction);
+      return ImmutableMap.copyOf(Maps.uniqueIndex(values, keyFunction));
    }
 
 }
