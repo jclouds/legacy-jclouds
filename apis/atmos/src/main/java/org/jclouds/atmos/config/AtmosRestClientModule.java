@@ -50,9 +50,6 @@ import com.google.inject.Provides;
  */
 @ConfiguresRestClient
 public class AtmosRestClientModule extends RestClientModule<AtmosClient, AtmosAsyncClient> {
-   public AtmosRestClientModule() {
-      super(AtmosClient.class, AtmosAsyncClient.class);
-   }
 
    @Override
    protected void configure() {

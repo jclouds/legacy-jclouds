@@ -46,6 +46,7 @@ import org.jclouds.s3.handlers.S3RedirectionRetryHandler;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Maps;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
@@ -59,11 +60,11 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
 
    @SuppressWarnings("unchecked")
    public S3RestClientModule() {
-      this((Class) S3Client.class, (Class) S3AsyncClient.class);
+      this((TypeToken) TypeToken.of(S3Client.class), (TypeToken) TypeToken.of(S3AsyncClient.class));
    }
 
-   public S3RestClientModule(Class<S> sync, Class<A> async) {
-      super(sync, async);
+   protected S3RestClientModule(TypeToken<S> syncClientType, TypeToken<A> asyncClientType) {
+      super(syncClientType, asyncClientType);
    }
 
    @Provides
@@ -82,10 +83,10 @@ public class S3RestClientModule<S extends S3Client, A extends S3AsyncClient> ext
 
    @Override
    protected void configure() {
+      super.configure();
       install(new S3ObjectModule());
       install(new S3ParserModule());
       bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
-      super.configure();
    }
 
    @Override

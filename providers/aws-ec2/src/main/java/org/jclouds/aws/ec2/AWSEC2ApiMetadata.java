@@ -82,6 +82,7 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
          .version(AWSEC2AsyncClient.VERSION)
          .name("Amazon-specific EC2 API")
          .wrapper(AWSEC2ComputeServiceContext.class)
+         .context(CONTEXT_TOKEN)
          .defaultProperties(AWSEC2ApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSEC2RestClientModule.class, EC2ResolveImagesModule.class, AWSEC2ComputeServiceContextModule.class));
       }

@@ -39,6 +39,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -140,8 +141,9 @@ public class SharedKeyLiteAuthenticationTest {
             .credentials(ACCOUNT, "credential")
             .modules(
                   ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(),
-                        new AzureStorageRestClientModule<IntegrationTestClient, IntegrationTestAsyncClient>(
-                              IntegrationTestClient.class, IntegrationTestAsyncClient.class))).buildInjector();
+                        new AzureStorageRestClientModule<IntegrationTestClient, IntegrationTestAsyncClient>(TypeToken
+                                 .of(IntegrationTestClient.class), TypeToken.of(IntegrationTestAsyncClient.class))))
+               .buildInjector();
       filter = injector.getInstance(SharedKeyLiteAuthentication.class);
    }
 }

@@ -118,10 +118,6 @@ public class S3BlobRequestSignerTest extends BaseS3AsyncClientTest<S3AsyncClient
    @ConfiguresRestClient
    private static final class TestS3RestClientModule extends S3RestClientModule<S3Client, S3AsyncClient> {
 
-      public TestS3RestClientModule() {
-         super(S3Client.class, S3AsyncClient.class);
-      }
-
       @Override
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
          return "Thu, 05 Jun 2008 16:38:19 GMT";

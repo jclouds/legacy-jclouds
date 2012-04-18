@@ -62,7 +62,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 4424763314988423886L;
    
-   public static final TypeToken<RestContext<EC2Client, EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<EC2Client, EC2AsyncClient>>() {
+   public static final TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>> CONTEXT_TOKEN = new TypeToken<RestContext<? extends EC2Client, ? extends EC2AsyncClient>>() {
       private static final long serialVersionUID = -5070937833892503232L;
    };
 
@@ -103,6 +103,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://docs.amazonwebservices.com/AWSEC2/latest/APIReference"))
          .version(EC2AsyncClient.VERSION)
          .defaultProperties(EC2ApiMetadata.defaultProperties())
+         .context(CONTEXT_TOKEN)
          .wrapper(EC2ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(EC2RestClientModule.class, EC2ResolveImagesModule.class, EC2ComputeServiceContextModule.class));
       }

@@ -35,10 +35,6 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class SwiftRestClientModule extends BaseSwiftRestClientModule<SwiftClient, SwiftAsyncClient> {
 
-   public SwiftRestClientModule() {
-      super(SwiftClient.class, SwiftAsyncClient.class);
-   }
-
    @Provides
    @Singleton
    CommonSwiftClient provideCommonSwiftClient(SwiftClient in) {

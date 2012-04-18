@@ -478,12 +478,8 @@ public abstract class S3AsyncClientTest<T extends S3AsyncClient> extends BaseS3A
       checkFilters(request);
    }
 
-      @ConfiguresRestClient
+   @ConfiguresRestClient
    private static final class TestS3RestClientModule extends S3RestClientModule<S3Client, S3AsyncClient> {
-
-      public TestS3RestClientModule() {
-         super(S3Client.class, S3AsyncClient.class);
-      }
 
       @Override
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {

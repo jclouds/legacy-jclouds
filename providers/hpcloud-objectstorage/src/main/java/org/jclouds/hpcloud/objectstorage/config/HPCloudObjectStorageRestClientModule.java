@@ -67,7 +67,7 @@ public class HPCloudObjectStorageRestClientModule extends
             HPCloudCDNClient.class, HPCloudCDNAsyncClient.class).build();
 
    public HPCloudObjectStorageRestClientModule() {
-      super(HPCloudObjectStorageClient.class, HPCloudObjectStorageAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    protected void configure() {

@@ -68,6 +68,8 @@ import org.jclouds.rest.config.BindPropertiesToAnnotations;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.BaseRestApiMetadata;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.nnsoft.guice.rocoto.Rocoto;
 import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 
@@ -93,6 +95,7 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 /**
  * Creates {@link RestContext} or {@link Injector} instances based on the most commonly requested
@@ -108,6 +111,37 @@ import com.google.inject.TypeLiteral;
  * @see RestContext
  */
 public final class ContextBuilder {
+
+   static class ResolveRestContextModule extends AbstractModule {
+      private final RestApiMetadata restApiMetadata;
+
+      ResolveRestContextModule(RestApiMetadata restApiMetadata) {
+         this.restApiMetadata = restApiMetadata;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      protected void configure() {
+         if (restApiMetadata.getContext().getRawType().equals(RestContext.class)) {
+            TypeToken concreteType = BaseRestApiMetadata.contextToken(TypeToken.of(restApiMetadata.getApi()), TypeToken
+                     .of(restApiMetadata.getAsyncApi()));
+            // bind explicit type
+            bind(TypeLiteral.get(concreteType.getType())).to(
+                     (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, restApiMetadata
+                              .getApi(), restApiMetadata.getAsyncApi())));
+            // bind potentially wildcard type
+            if (!concreteType.equals(restApiMetadata.getContext())) {
+               bind(TypeLiteral.get(restApiMetadata.getContext().getType())).to(
+                        (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, restApiMetadata
+                                 .getApi(), restApiMetadata.getAsyncApi())));
+            }
+            // bind w/o types
+            bind(TypeLiteral.get(RestContext.class)).to(
+                     (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, restApiMetadata
+                              .getApi(), restApiMetadata.getAsyncApi())));
+         }
+      }
+   }
 
    private final class BindDefaultContextQualifiedToProvider extends AbstractModule {
       @Override
@@ -301,6 +335,7 @@ public final class ContextBuilder {
       Iterable<Module> defaultModules = ifSpecifiedByUserDontIncludeDefaultRestModule(restModuleSpecifiedByUser);
       Iterables.addAll(modules, defaultModules);
       addClientModuleIfNotPresent(modules);
+      addRestContextBinding();
       addLoggingModuleIfNotPresent(modules);
       addHttpModuleIfNeededAndNotPresent(modules);
       addExecutorServiceIfNotPresent(modules);
@@ -312,6 +347,12 @@ public final class ContextBuilder {
       Injector returnVal = Guice.createInjector(Stage.PRODUCTION, modules);
       returnVal.getInstance(ExecutionList.class).execute();
       return returnVal;
+   }
+
+   void addRestContextBinding() {
+      if (apiMetadata instanceof RestApiMetadata) {
+         modules.add(new ResolveRestContextModule(RestApiMetadata.class.cast(apiMetadata)));
+      }
    }
 
    private Iterable<Module> ifSpecifiedByUserDontIncludeDefaultRestModule(boolean restModuleSpecifiedByUser) {
@@ -384,13 +425,13 @@ public final class ContextBuilder {
    protected void addClientModule(List<Module> modules) {
       // TODO: move this up
       if (apiMetadata instanceof RestApiMetadata) {
-         final RestApiMetadata rest = RestApiMetadata.class.cast(apiMetadata);
-         modules.add(new RestClientModule(rest.getApi(), rest.getAsyncApi()));
+         RestApiMetadata rest = RestApiMetadata.class.cast(apiMetadata);
+         modules.add(new RestClientModule(TypeToken.of(rest.getApi()), TypeToken.of(rest.getAsyncApi())));
       } else {
          modules.add(new RestModule());
       }
    }
-
+   
    @VisibleForTesting
    protected void addEventBusIfNotPresent(List<Module> modules) {
       if (!any(modules, new Predicate<Module>() {

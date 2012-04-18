@@ -16,19 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.cloudwatch.config;
+package org.jclouds.util;
 
-import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.cloudwatch.CloudWatchAsyncClient;
-import org.jclouds.cloudwatch.CloudWatchClient;
-import org.jclouds.rest.ConfiguresRestClient;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.lang.reflect.TypeVariable;
+
+import com.google.common.reflect.TypeToken;
 
 /**
- * Configures the Monitoring connection.
  * 
  * @author Adrian Cole
  */
-@ConfiguresRestClient
-public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
-
+public class TypeTokens2 {
+   /**
+    * @throws IllegalStateException if the type is an instanceof {@link TypeVariable}
+    */
+   public static <T> TypeToken<T> checkBound(TypeToken<T> type) throws IllegalStateException {
+      checkState(!(type.getType() instanceof TypeVariable<?>),
+               "unbound type variable: %s, use ctor that explicitly assigns this", type);
+      return type;
+   }
 }

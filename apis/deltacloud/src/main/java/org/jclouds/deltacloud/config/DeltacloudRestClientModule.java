@@ -63,10 +63,6 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClient, DeltacloudAsyncClient> {
 
-   public DeltacloudRestClientModule() {
-      super(DeltacloudClient.class, DeltacloudAsyncClient.class);
-   }
-
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(DeltacloudErrorHandler.class);

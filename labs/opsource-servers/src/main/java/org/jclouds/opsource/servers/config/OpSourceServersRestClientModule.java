@@ -56,7 +56,7 @@ public class OpSourceServersRestClientModule extends
          .build();
 
    public OpSourceServersRestClientModule() {
-      super(OpSourceServersClient.class, OpSourceServersAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Override

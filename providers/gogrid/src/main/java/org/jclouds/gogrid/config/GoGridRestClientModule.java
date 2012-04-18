@@ -71,7 +71,7 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
          .build();
 
    public GoGridRestClientModule() {
-      super(GoGridClient.class, GoGridAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Provides

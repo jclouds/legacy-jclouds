@@ -147,7 +147,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
             .build();
 
    public VPDCRestClientModule() {
-      super(VPDCClient.class, VPDCAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Singleton

@@ -39,10 +39,6 @@ import com.google.inject.Provides;
 public class TerremarkVCloudExpressRestClientModule extends
       TerremarkVCloudRestClientModule<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
 
-   public TerremarkVCloudExpressRestClientModule() {
-      super(TerremarkVCloudExpressClient.class, TerremarkVCloudExpressAsyncClient.class);
-   }
-
    @Provides
    @Singleton
    protected TerremarkVCloudAsyncClient provideVCloudAsyncClient(TerremarkVCloudExpressAsyncClient in) {

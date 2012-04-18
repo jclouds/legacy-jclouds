@@ -67,7 +67,7 @@ public abstract class CommonSwiftClientTest extends BaseAsyncClientTest<SwiftAsy
    protected static class TestSwiftRestClientModule extends
             BaseSwiftRestClientModule<SwiftClient, SwiftAsyncClient> {
       private TestSwiftRestClientModule() {
-         super(new TestOpenStackAuthenticationModule(), SwiftClient.class, SwiftAsyncClient.class);
+         super(new TestOpenStackAuthenticationModule());
       }
       @Provides
       @Singleton

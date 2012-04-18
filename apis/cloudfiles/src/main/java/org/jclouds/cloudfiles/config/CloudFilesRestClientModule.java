@@ -54,10 +54,6 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class CloudFilesRestClientModule extends RestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
 
-   public CloudFilesRestClientModule() {
-      super(CloudFilesClient.class, CloudFilesAsyncClient.class);
-   }
-
    @Provides
    @Singleton
    CommonSwiftClient provideCommonSwiftClient(CloudFilesClient in) {

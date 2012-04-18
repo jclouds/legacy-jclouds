@@ -57,10 +57,6 @@ import com.google.inject.TypeLiteral;
 @ConfiguresRestClient
 public class CloudSigmaRestClientModule extends RestClientModule<CloudSigmaClient, CloudSigmaAsyncClient> {
 
-   public CloudSigmaRestClientModule() {
-      super(CloudSigmaClient.class, CloudSigmaAsyncClient.class);
-   }
-
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(CloudSigmaErrorHandler.class);

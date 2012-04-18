@@ -67,6 +67,14 @@ public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetad
       return props;
    }
    
+   public static <S, A> TypeToken<RestContext<S, A>> contextToken(TypeToken<S> apiToken, TypeToken<A> asyncApiToken) {
+      return new TypeToken<RestContext<S, A>>() {
+         private static final long serialVersionUID = 1L;
+      }.where(new TypeParameter<S>() {
+      }, apiToken).where(new TypeParameter<A>() {
+      }, asyncApiToken);
+   }
+   
    public static class Builder extends BaseApiMetadata.Builder implements RestApiMetadata.Builder {
       protected Class<?> api;
       protected Class<?> asyncApi;
@@ -79,14 +87,6 @@ public class BaseRestApiMetadata extends BaseApiMetadata implements RestApiMetad
          .name(String.format("%s->%s", api.getSimpleName(), asyncApi.getSimpleName()))
          .context(contextToken(TypeToken.of(api), TypeToken.of(asyncApi)))
          .defaultProperties(BaseRestApiMetadata.defaultProperties());
-      }
-      
-      protected <S, A> TypeToken<RestContext<S, A>> contextToken(TypeToken<S> apiToken, TypeToken<A> asyncApiToken) {
-         return new TypeToken<RestContext<S, A>>() {
-            private static final long serialVersionUID = 1L;
-         }.where(new TypeParameter<S>() {
-         }, apiToken).where(new TypeParameter<A>() {
-         }, asyncApiToken);
       }
 
       /**

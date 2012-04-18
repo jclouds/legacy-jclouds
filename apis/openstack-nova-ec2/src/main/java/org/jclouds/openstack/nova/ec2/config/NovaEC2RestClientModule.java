@@ -41,10 +41,6 @@ import com.google.inject.Scopes;
 @ConfiguresRestClient
 public class NovaEC2RestClientModule extends EC2RestClientModule<EC2Client, EC2AsyncClient> {
 
-   public NovaEC2RestClientModule() {
-      super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
-   }
-
    @Override
    protected void configure() {
       super.configure();

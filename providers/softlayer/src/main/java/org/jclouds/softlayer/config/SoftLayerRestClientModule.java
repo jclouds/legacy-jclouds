@@ -62,7 +62,7 @@ public class SoftLayerRestClientModule extends RestClientModule<SoftLayerClient,
             .build();
 
    public SoftLayerRestClientModule() {
-      super(SoftLayerClient.class, SoftLayerAsyncClient.class, DELEGATE_MAP);
+      super(DELEGATE_MAP);
    }
 
    @Override
