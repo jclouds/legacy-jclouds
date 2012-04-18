@@ -20,15 +20,13 @@
 package org.jclouds.virtualbox.functions;
 
 import javax.annotation.Nullable;
-import javax.annotation.Resource;
-import javax.inject.Named;
 
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.IProgress;
 import org.virtualbox_4_1.ISession;
 import org.virtualbox_4_1.ISnapshot;
+import org.virtualbox_4_1.MachineState;
 import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
@@ -40,55 +38,80 @@ import com.google.common.base.Throwables;
  */
 public class TakeSnapshotIfNotAlreadyAttached implements Function<IMachine, ISnapshot> {
 
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
-
    private Supplier<VirtualBoxManager> manager;
    private String snapshotName;
    private String snapshotDesc;
+   private Logger logger;
 
-   public TakeSnapshotIfNotAlreadyAttached(Supplier<VirtualBoxManager> manager, String snapshotName, String snapshotDesc) {
+   public TakeSnapshotIfNotAlreadyAttached(Supplier<VirtualBoxManager> manager, String snapshotName,
+            String snapshotDesc, Logger logger) {
       this.manager = manager;
       this.snapshotName = snapshotName;
       this.snapshotDesc = snapshotDesc;
+      this.logger = logger;
    }
 
    @Override
    public ISnapshot apply(@Nullable IMachine machine) {
       // Snapshot a machine
       ISession session = null;
-      if (machine.getCurrentSnapshot() == null) {
-         int retries = 10;
-         while (true) {
-            try {
-               session = manager.get().openMachineSession(machine);
-               IProgress progress = session.getConsole().takeSnapshot(snapshotName, snapshotDesc);
-               progress.waitForCompletion(-1);
-               logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc,
-                        machine.getName());
-               break;
-            } catch (Exception e) {
-               if (e.getMessage().contains("VirtualBox error: The object is not ready")) {
-                  retries--;
-                  if (retries == 0) {
-                     logger.error(e,
-                              "Problem creating snapshot (too many retries) %s (descripton: %s) from machine %s",
-                              snapshotName, snapshotDesc, machine.getName());
-                     throw Throwables.propagate(e);
+      ISnapshot snap = machine.getCurrentSnapshot();
+
+      if (snap == null) {
+         try {
+            session = manager.get().openMachineSession(machine);
+            logger.debug("No snapshot available taking new one: %s (description: %s) taken from %s", snapshotName,
+                     snapshotDesc, machine.getName());
+            int retries = 10;
+            while (true) {
+               try {
+
+                  // running machines need to be pause before a snapshot can be taken
+                  // due to a vbox bug see https://www.virtualbox.org/ticket/9255
+                  boolean paused = false;
+                  if (machine.getState() == MachineState.Running) {
+                     session.getConsole().pause();
+                     paused = true;
                   }
-               }
-               logger.error(e, "Problem creating snapshot %s (descripton: %s) from machine %s", snapshotName,
-                        snapshotDesc, machine.getName());
-               throw Throwables.propagate(e);
-            } finally {
-               if (session != null) {
-                  session.unlockMachine();
+
+                  IProgress progress = session.getConsole().takeSnapshot(snapshotName, snapshotDesc);
+                  progress.waitForCompletion(-1);
+
+                  if (paused) {
+                     session.getConsole().resume();
+                  }
+
+                  snap = machine.getCurrentSnapshot();
+                  logger.debug("Snapshot %s (description: %s) taken from %s", snapshotName, snapshotDesc,
+                           machine.getName());
+                  break;
+               } catch (Exception e) {
+                  if (e.getMessage().contains("VirtualBox error: The object is not ready")
+                           || e.getMessage().contains("This machine does not have any snapshots")) {
+                     retries--;
+                     if (retries == 0) {
+                        logger.error(e,
+                                 "Problem creating snapshot (too many retries) %s (descripton: %s) from machine %s",
+                                 snapshotName, snapshotDesc, machine.getName());
+                        throw Throwables.propagate(e);
+                     }
+                     Thread.sleep(1000L);
+                     continue;
+                  }
+                  logger.error(e, "Problem creating snapshot %s (descripton: %s) from machine %s", snapshotName,
+                           snapshotDesc, machine.getName());
+                  throw Throwables.propagate(e);
                }
             }
+         } catch (Exception e) {
+            Throwables.propagate(e);
+         } finally {
+            if (session != null) {
+               manager.get().closeMachineSession(session);
+            }
          }
-      }
-      return machine.getCurrentSnapshot();
-   }
 
+      }
+      return snap;
+   }
 }

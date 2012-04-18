@@ -33,6 +33,7 @@ import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.virtualbox.config.VirtualBoxConstants;
 import org.virtualbox_4_1.IGuestOSType;
 import org.virtualbox_4_1.IMachine;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -63,7 +64,9 @@ public class IMachineToImage implements Function<IMachine, Image> {
       OperatingSystem os = OperatingSystem.builder().description(guestOSType.getDescription()).family(family)
                .version(version).is64Bit(guestOSType.getIs64Bit()).build();
 
-      return new ImageBuilder().id("" + from.getId()).name(from.getName()).description(from.getDescription())
+      return new ImageBuilder()
+               .id(from.getName().substring(VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX.length(),
+                        from.getName().length())).name(from.getName()).description(from.getDescription())
                .operatingSystem(os).build();
    }
 

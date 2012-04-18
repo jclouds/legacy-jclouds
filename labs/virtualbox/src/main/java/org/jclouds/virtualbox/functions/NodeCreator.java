@@ -118,12 +118,18 @@ public class NodeCreator implements Function<NodeSpec, NodeAndInitialCredentials
          progress.waitForCompletion(-1);
          session.unlockMachine();
       }
-      String masterNameWithoutPrefix = master.getSpec().getVmSpec().getVmName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
+      String masterNameWithoutPrefix = master.getMachine().getName().replace(VIRTUALBOX_IMAGE_PREFIX, "");
 
       String cloneName = VIRTUALBOX_NODE_PREFIX + masterNameWithoutPrefix + VIRTUALBOX_NODE_NAME_SEPARATOR
                + nodeSpec.getTag() + VIRTUALBOX_NODE_NAME_SEPARATOR + nodeSpec.getName();
 
-      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(512).cleanUpMode(CleanupMode.Full)
+      int ram = 512;
+      if (nodeSpec.getTemplate() != null && nodeSpec.getTemplate().getHardware() != null
+               && nodeSpec.getTemplate().getHardware().getRam() > 0) {
+         ram = nodeSpec.getTemplate().getHardware().getRam();
+      }
+      
+      VmSpec cloneVmSpec = VmSpec.builder().id(cloneName).name(cloneName).memoryMB(ram).cleanUpMode(CleanupMode.Full)
                .forceOverwrite(true).build();
 
       // CASE NAT + HOST-ONLY
