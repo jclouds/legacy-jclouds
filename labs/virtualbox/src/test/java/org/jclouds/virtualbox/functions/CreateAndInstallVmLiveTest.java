@@ -20,7 +20,7 @@
 package org.jclouds.virtualbox.functions;
 
 import static com.google.common.base.Preconditions.checkState;
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_IMAGE_PREFIX;
 import static org.jclouds.virtualbox.config.VirtualBoxConstants.VIRTUALBOX_INSTALLATION_KEY_SEQUENCE;
 
@@ -56,9 +56,7 @@ import org.virtualbox_4_1.StorageBus;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -166,15 +164,14 @@ public class CreateAndInstallVmLiveTest extends BaseVirtualBoxClientLiveTest {
          checkState(sshResponds.apply(client), "timed out waiting for guest %s to be accessible via ssh",
                   machine.getName());
 
-         String vboxVersion = Iterables.get(
-                  Splitter.on('r').split(context.getProviderSpecificContext().getBuildVersion()), 0);
-         assertEquals(vboxVersion,
-                  machineUtils.sharedLockMachineAndApplyToSession(machine.getName(), new Function<ISession, String>() {
-                     @Override
-                     public String apply(ISession session) {
-                        return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestAdd/Version");
-                     }
-                  }));
+         String version = machineUtils.sharedLockMachineAndApplyToSession(machine.getName(), new Function<ISession, String>() {
+            @Override
+            public String apply(ISession session) {
+               return session.getMachine().getGuestPropertyValue("/VirtualBox/GuestAdd/Version");
+            }
+         });
+         
+         assertTrue(version != null && !version.isEmpty());
       } finally {
          for (VmSpec spec : ImmutableSet.of(machineSpec.getVmSpec())) {
             machineController.ensureMachineIsShutdown(spec.getVmName());

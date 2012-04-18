@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -55,6 +56,7 @@ import org.libvirt.Connect;
 import org.libvirt.StorageVol;
 import org.xml.sax.InputSource;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
@@ -85,12 +87,13 @@ public class LibvirtComputeService extends BaseComputeService {
             @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
             InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory, InitAdminAccess initAdminAccess,
             RunScriptOnNode.Factory runScriptOnNodeFactory, PersistNodeCredentials persistNodeCredentials,
-            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, Connect client) {
+            Timeouts timeouts, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, Connect client,
+            Optional<ImageExtension> imageExtension) {
       super(context, credentialStore, images, hardwareProfiles, locations, listNodesStrategy, getNodeMetadataStrategy,
                runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, resumeNodeStrategy,
                suspendNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
                nodeSuspended, initScriptRunnerFactory, initAdminAccess, runScriptOnNodeFactory, persistNodeCredentials,
-               timeouts, executor);
+               timeouts, executor, imageExtension);
       this.client = client;
    }
 

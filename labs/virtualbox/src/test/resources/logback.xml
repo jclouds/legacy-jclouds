@@ -39,7 +39,7 @@
     </appender>
 
     <root>
-        <level value="debug" />
+        <level value="DEBUG" />
         <appender-ref ref="CONSOLE" />
     </root>
 
@@ -49,7 +49,7 @@
     </logger>
 
     <logger name="jclouds.wire">
-        <level value="INFO" />
+        <level value="DEBUG" />
         <appender-ref ref="WIREFILE" />
     </logger>
 

@@ -26,7 +26,6 @@ import static org.jclouds.compute.options.RunScriptOptions.Builder.runAsRoot;
 import java.net.URI;
 
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -74,10 +73,10 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
       this.host = checkNotNull(host, "host");
       this.providerSupplier = checkNotNull(providerSupplier, "endpoint to virtualbox websrvd is needed");
       this.managerForNode = checkNotNull(managerForNode, "managerForNode");
+      start();
    }
 
-   @PostConstruct
-   public void start() {
+   public synchronized void start() {
       URI provider = providerSupplier.get();
       if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))) {
          logger.debug("disabling password access");

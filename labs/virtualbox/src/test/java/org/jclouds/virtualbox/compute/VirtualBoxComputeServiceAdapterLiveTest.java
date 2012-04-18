@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
 import org.jclouds.compute.domain.ExecResponse;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.LoginCredentials;
@@ -76,7 +77,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
 
    @Test
    public void testListHardwareProfiles() {
-      Iterable<IMachine> profiles = adapter.listHardwareProfiles();
+      Iterable<Hardware> profiles = adapter.listHardwareProfiles();
       assertTrue(!Iterables.isEmpty(profiles));
    }
 
