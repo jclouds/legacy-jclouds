@@ -32,7 +32,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgList;
-import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.xml.internal.JAXBParser;
 import org.testng.annotations.Test;
@@ -41,7 +40,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests live behavior of {@link AdminCatalogClient}.
+ * Tests live behavior of operations that use {@link HttpClient}.
  * 
  * @author danikov
  */

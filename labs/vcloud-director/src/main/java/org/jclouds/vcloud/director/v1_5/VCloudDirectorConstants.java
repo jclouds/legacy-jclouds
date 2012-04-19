@@ -18,6 +18,12 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
+import org.jclouds.rest.RestContext;
+import org.jclouds.vcloud.director.v1_5.login.SessionAsyncClient;
+import org.jclouds.vcloud.director.v1_5.login.SessionClient;
+
+import com.google.common.reflect.TypeToken;
+
 /**
  * Constants used by VCloudDirector clients
  *
@@ -63,4 +69,11 @@ public class VCloudDirectorConstants {
 
    /** TODO javadoc */
    public static final String PROPERTY_NS_NAME_LEN_MAX = "jclouds.dns_name_length_max";
+
+   /** TODO javadoc */
+   public static final TypeToken<RestContext<SessionClient, SessionAsyncClient>> SESSION_CONTEXT_TYPE =
+         new TypeToken<RestContext<SessionClient, SessionAsyncClient>>() {
+				/** The serialVersionUID */
+				private static final long serialVersionUID = -3625362618882122604L;
+		   };
 }

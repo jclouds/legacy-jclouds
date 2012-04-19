@@ -196,6 +196,8 @@ public class VCloudDirectorMediaType {
    public static final String NETWORK_POOL = "application/vnd.vmware.admin.networkPool+xml";
 
    public static final String ENTITY = "application/vnd.vmware.vcloud.entity+xml";
+
+   public static final String ADMIN = "application/vnd.vmware.admin.vcloud+xml";
    
    /**
     * All acceptable media types.
@@ -220,7 +222,7 @@ public class VCloudDirectorMediaType {
          ADMIN_ORG_NETWORK, USER, ROLE, DEPLOY_VAPP_PARAMS, RECOMPOSE_VAPP_PARAMS,
          RELOCATE_VM_PARAMS, UNDEPLOY_VAPP_PARAMS, ADMIN_VDC, MEDIA_PARAMS,
          RUNTIME_INFO_SECTION, SCREEN_TICKET, VAPP_NETWORK,
-         TEXT_XML, ADMIN_VDC, NETWORK_POOL, ADMIN_ORG, ENTITY
+         TEXT_XML, ADMIN_VDC, NETWORK_POOL, ADMIN_ORG, ENTITY, ADMIN
       );
 
    // NOTE These lists must be updated whenever a new media type constant is added.

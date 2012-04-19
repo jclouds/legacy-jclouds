@@ -36,6 +36,7 @@ import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.R
 import static org.jclouds.vcloud.director.v1_5.VCloudDirectorLiveTestConstants.REQUIRED_VALUE_OBJECT_FMT;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
@@ -73,23 +74,22 @@ import org.jclouds.vcloud.director.v1_5.domain.network.NetworkServiceType;
 import org.jclouds.vcloud.director.v1_5.domain.network.RouterInfo;
 import org.jclouds.vcloud.director.v1_5.domain.network.SyslogServerSettings;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
-import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConnection.IpAddressAllocationMode;
 import org.jclouds.vcloud.director.v1_5.domain.org.AdminOrg;
 import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.AuthenticationMechanism;
+import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.ConnectorType;
 import org.jclouds.vcloud.director.v1_5.domain.org.Org;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgEmailSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgGeneralSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapGroupAttributes;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings;
+import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings.LdapMode;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapUserAttributes;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgLeaseSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgNetwork;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgPasswordPolicySettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgSettings;
 import org.jclouds.vcloud.director.v1_5.domain.org.OrgVAppTemplateLeaseSettings;
-import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.AuthenticationMechanism;
-import org.jclouds.vcloud.director.v1_5.domain.org.CustomOrgLdapSettings.ConnectorType;
-import org.jclouds.vcloud.director.v1_5.domain.org.OrgLdapSettings.LdapMode;
 import org.jclouds.vcloud.director.v1_5.domain.params.ControlAccessParams;
 import org.jclouds.vcloud.director.v1_5.domain.query.ContainerType;
 import org.jclouds.vcloud.director.v1_5.domain.query.QueryResultRecordType;
@@ -1255,9 +1255,8 @@ public class Checks {
       // Check required fields
       assertNotNull(val.getNetwork(), String.format(NOT_NULL_OBJ_FIELD_FMT, "Network", "NetworkConnection"));
       assertNotNull(val.getIpAddressAllocationMode(), String.format(NOT_NULL_OBJ_FIELD_FMT, "IpAddressAllocationMode", "NetworkConnection"));
-      IpAddressAllocationMode mode = NetworkConnection.IpAddressAllocationMode.valueOf(val.getIpAddressAllocationMode());
-      assertTrue(NetworkConnection.IpAddressAllocationMode.ALL.contains(mode), 
-               String.format(REQUIRED_VALUE_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection", val.getIpAddressAllocationMode(), Iterables.toString(NetworkConnection.IpAddressAllocationMode.ALL)));
+      assertNotEquals(val.getIpAddressAllocationMode(), NetworkConnection.IpAddressAllocationMode.UNRECOGNIZED,
+            String.format(REQUIRED_VALUE_OBJECT_FMT, "IpAddressAllocationMode", "NetworkConnection", val.getIpAddressAllocationMode(), Iterables.toString(NetworkConnection.IpAddressAllocationMode.ALL)));
       
       // Check optional fields
       if (val.getIpAddress() != null) {
