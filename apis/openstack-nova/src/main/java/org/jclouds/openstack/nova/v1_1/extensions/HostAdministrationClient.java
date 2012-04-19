@@ -32,6 +32,7 @@ import org.jclouds.openstack.services.ServiceType;
 /**
  * Provides asynchronous access to Host Administration features via the REST API.
  * <p/>
+ * TODO reboot, shutdown, startup, update
  *
  * @author Adam Lowe
  * @see HostAdministrationAsyncClient
