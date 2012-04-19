@@ -82,8 +82,7 @@ public abstract class BaseContextLiveTest<C extends Closeable> {
    }
 
    protected void initializeContext() {
-      if (context != null)
-         Closeables.closeQuietly(context);
+      Closeables.closeQuietly(context);
       context = createContext(setupProperties(), setupModules());
    }
 

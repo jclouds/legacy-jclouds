@@ -179,8 +179,6 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
             .overrides(overrides)
             .build();
 
-      System.err.println("*** " + endpoint + " ***");
-
       context = testSession.getUserContext();
       adminContext = testSession.getAdminContext();
 
@@ -407,7 +405,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
       // Build the configuration object
       NetworkConfiguration networkConfiguration = NetworkConfiguration.builder()
             .parentNetwork(parentNetwork.get())
-            .fenceMode(Network.FenceMode.ISOLATED)
+            .fenceMode(Network.FenceMode.BRIDGED)
             .build();
 
       return networkConfiguration;
@@ -452,7 +450,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
       }
 
       // Shutdown and power off the VApp if necessary
-      if (vApp.getStatus().equals(Status.POWERED_ON.getValue())) {
+      if (vApp.getStatus() == Status.POWERED_ON) {
          try {
             Task shutdownTask = vAppClient.shutdown(vAppURI);
             taskDoneEventually(shutdownTask);
