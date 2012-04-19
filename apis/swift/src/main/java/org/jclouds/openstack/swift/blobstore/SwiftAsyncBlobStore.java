@@ -55,6 +55,8 @@ import org.jclouds.openstack.swift.blobstore.functions.ContainerToResourceList;
 import org.jclouds.openstack.swift.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
+import org.jclouds.openstack.swift.blobstore.strategy.internal.AsyncMultipartUploadStrategy;
+import org.jclouds.openstack.swift.blobstore.strategy.internal.MultipartUploadStrategy;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;
@@ -81,6 +83,7 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
    private final ObjectToBlobMetadata object2BlobMd;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
+   private final Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy;
 
    @Inject
    protected SwiftAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
@@ -90,7 +93,8 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
+            Provider<AsyncMultipartUploadStrategy> multipartUploadStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.sync = sync;
       this.async = async;
@@ -102,6 +106,7 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
       this.object2BlobMd = object2BlobMd;
       this.blob2ObjectGetOptions = blob2ObjectGetOptions;
       this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider, "fetchBlobMetadataProvider");
+      this.multipartUploadStrategy = multipartUploadStrategy;
    }
 
    /**
@@ -238,8 +243,11 @@ public class SwiftAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Override
    public ListenableFuture<String> putBlob(String container, Blob blob, PutOptions options) {
-      // TODO implement options
-      return putBlob(container, blob);
+      if (options.isMultipart()) {
+          return multipartUploadStrategy.get().execute(container, blob, options, blob2Object);
+      } else {
+        return putBlob(container, blob);
+      }
    }
 
    @Override
