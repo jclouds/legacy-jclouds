@@ -20,7 +20,7 @@ END_OF_JCLOUDS_FILE
 function installOpenJDK() {
   if hash apt-get 2>/dev/null; then
     export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-6-openjdk}
-    test -d $JAVA_HOME || apt-get-install openjdk-6-jdk || ( apt-get-update && apt-get-install openjdk-6-jdk )
+    test -d $JAVA_HOME || ( apt-get-update && apt-get-install openjdk-6-jdk )
   elif hash yum 2>/dev/null; then
     export pkg=java-1.6.0-openjdk-devel
     yum --nogpgcheck -y install $pkg &&
