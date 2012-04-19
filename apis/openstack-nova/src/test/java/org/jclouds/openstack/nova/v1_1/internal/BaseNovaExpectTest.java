@@ -63,7 +63,7 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
                         .put("X-Auth-Token", authToken).build()).build();
 
       extensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/extension_list_normal.json")).build();
+            .payload(payloadFromResource("/extension_list_full.json")).build();
       
       unmatchedExtensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_list.json")).build();
