@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
@@ -37,11 +39,12 @@ public class HostResourceUsage {
       return new ConcreteBuilder().fromHostResourceUsage(this);
    }
 
-   public static abstract class Builder<T extends Builder<T>> {
+   public static abstract class Builder<T extends Builder<T>>  {
       protected abstract T self();
 
       private String host;
-      private String memoryMb;
+      private String project;
+      private int memoryMb;
       private int cpu;
       private int diskGb;
 
@@ -50,7 +53,12 @@ public class HostResourceUsage {
          return self();
       }
 
-      public T memoryMb(String memoryMb) {
+      public T project(String project) {
+         this.project = project;
+         return self();
+      }
+
+      public T memoryMb(int memoryMb) {
          this.memoryMb = memoryMb;
          return self();
       }
@@ -72,6 +80,7 @@ public class HostResourceUsage {
       public T fromHostResourceUsage(HostResourceUsage in) {
          return this
                .host(in.getHost())
+               .project(in.getProject())
                .memoryMb(in.getMemoryMb())
                .cpu(in.getCpu())
                .diskGb(in.getDiskGb())
@@ -88,22 +97,23 @@ public class HostResourceUsage {
    }
 
    private final String host;
-   @SerializedName(value = "memory_mb")
-   private final String memoryMb;
+   private final String project;
+   @SerializedName(value="memory_mb")
+   private final int memoryMb;
    private final int cpu;
-   @SerializedName(value = "disk_gb")
+   @SerializedName(value="disk_gb")
    private final int diskGb;
 
    protected HostResourceUsage(Builder<?> builder) {
-      this.host = builder.host;
-      this.memoryMb = builder.memoryMb;
-      this.cpu = builder.cpu;
-      this.diskGb = builder.diskGb;
+      this.host = checkNotNull(builder.host, "host");
+      this.project = builder.project;
+      this.memoryMb = checkNotNull(builder.memoryMb, "memoryMb");
+      this.cpu = checkNotNull(builder.cpu, "cpu");
+      this.diskGb = checkNotNull(builder.diskGb, "diskGb");
    }
 
    /**
     */
-   @Nullable
    public String getHost() {
       return this.host;
    }
@@ -111,27 +121,31 @@ public class HostResourceUsage {
    /**
     */
    @Nullable
-   public String getMemoryMb() {
+   public String getProject() {
+      return this.project;
+   }
+
+   /**
+    */
+   public int getMemoryMb() {
       return this.memoryMb;
    }
 
    /**
     */
-   @Nullable
    public int getCpu() {
       return this.cpu;
    }
 
    /**
     */
-   @Nullable
    public int getDiskGb() {
       return this.diskGb;
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(host, memoryMb, cpu, diskGb);
+      return Objects.hashCode(host, project, memoryMb, cpu, diskGb);
    }
 
    @Override
@@ -140,19 +154,19 @@ public class HostResourceUsage {
       if (obj == null || getClass() != obj.getClass()) return false;
       HostResourceUsage that = HostResourceUsage.class.cast(obj);
       return Objects.equal(this.host, that.host)
+            && Objects.equal(this.project, that.project)
             && Objects.equal(this.memoryMb, that.memoryMb)
             && Objects.equal(this.cpu, that.cpu)
-            && Objects.equal(this.diskGb, that.diskGb)
-            ;
+            && Objects.equal(this.diskGb, that.diskGb);
    }
 
    protected ToStringHelper string() {
       return Objects.toStringHelper("")
             .add("host", host)
+            .add("project", project)
             .add("memoryMb", memoryMb)
             .add("cpu", cpu)
-            .add("diskGb", diskGb)
-            ;
+            .add("diskGb", diskGb);
    }
 
    @Override
