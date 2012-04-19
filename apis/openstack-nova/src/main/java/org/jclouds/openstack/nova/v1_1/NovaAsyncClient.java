@@ -27,6 +27,7 @@ import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
@@ -110,6 +111,13 @@ public interface NovaAsyncClient {
     */
    @Delegate
    Optional<HostAdministrationAsyncClient> getHostAdministrationExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+   /**
+    * Provides asynchronous access to Simple Tenant Usage features.
+    */
+   @Delegate
+   Optional<SimpleTenantUsageAsyncClient> getSimpleTenantUsageExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }
