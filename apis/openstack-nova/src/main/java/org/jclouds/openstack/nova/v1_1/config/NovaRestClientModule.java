@@ -37,6 +37,8 @@ import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
+import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
@@ -75,7 +77,9 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
          .put(ImageClient.class, ImageAsyncClient.class).put(ExtensionClient.class, ExtensionAsyncClient.class)
          .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
          .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
-         .put(KeyPairClient.class, KeyPairAsyncClient.class).build();
+         .put(KeyPairClient.class, KeyPairAsyncClient.class)
+         .put(HostAdministrationClient.class, HostAdministrationAsyncClient.class)
+         .build();
 
    public NovaRestClientModule() {
       super(DELEGATE_MAP);
