@@ -1,0 +1,1 @@
+{"tenant_usages": [{"total_memory_mb_usage": 0.0015018666666666667, "total_vcpus_usage": 7.333333333333333e-07, "start": "2012-04-18 12:18:39.702411", "tenant_id": "f8535069c3fb404cb61c873b1a0b4921", "stop": "2012-04-18 12:18:39.702499", "total_hours": 4.888888888888889e-07, "total_local_gb_usage": 1.9555555555555557e-05}]
