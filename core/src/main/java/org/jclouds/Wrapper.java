@@ -24,7 +24,12 @@ import com.google.common.annotations.Beta;
 import com.google.common.reflect.TypeToken;
 
 /**
- * 
+ * {@link Wrapper} allows access to the provider-specific, or library-driven api
+ * behind an abstraction. One wrapped context can support multiple wrappers.
+ * <p/>
+ * For example, the {@code CloudStackContext} can be wrapped by both
+ * {@code ComputeServiceContext} and {@code LoadBalancerServiceContext}, as the
+ * api covers these features.
  * 
  * @author Adrian Cole
  * 
@@ -39,26 +44,28 @@ public interface Wrapper {
    TypeToken<?> getWrappedType();
 
    /**
-    * Return an object of the specified type to allow access to the wrapped context. If the wrapped
-    * context is not assignable from the supplied type, an {@link IllegalArgumentException} is
-    * thrown.
+    * Return an object of the specified type to allow access to the wrapped
+    * context. If the wrapped context is not assignable from the supplied type,
+    * an {@link IllegalArgumentException} is thrown.
     * 
     * @param type
-    *           the type of the context to be returned. The wrapped context must be assignable from
-    *           this type.
+    *           the type of the context to be returned. The wrapped context must
+    *           be assignable from this type.
     * @return an instance of the specified type
     * @throws IllegalArgumentException
-    *            if the wrapped context is not assignable from the specified class.
+    *            if the wrapped context is not assignable from the specified
+    *            class.
     * @see #getWrappedType()
     */
    <C extends Closeable> C unwrap(TypeToken<C> type) throws IllegalArgumentException;
-   
+
    /**
     * shortcut for {@code unwrap(TypeToken.of(clazz))}
+    * 
     * @see #unwrap(TypeToken)
     */
    <C extends Closeable> C unwrap(Class<C> clazz) throws IllegalArgumentException;
-   
+
    /**
     * shortcut for {@code unwrap(getWrappedType())}
     * 
