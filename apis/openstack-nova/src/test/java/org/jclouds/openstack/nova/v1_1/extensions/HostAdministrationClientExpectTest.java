@@ -18,16 +18,23 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
+import static org.testng.Assert.assertEquals;
+
 import java.net.URI;
+import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.openstack.nova.v1_1.domain.Host;
+import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests HostAdministrationClient guice wiring and parsing
@@ -44,9 +51,16 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/hosts_list.json")).build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
       
-      client.listHosts();
+      Host expected = Host.builder().name("ubuntu").service("compute").build();
+
+      Set<Host> result = client.listHosts();
+      Host host = Iterables.getOnlyElement(result);
+      assertEquals(host.getName(), "ubuntu");
+      assertEquals(host.getService(), "compute");
+
+      assertEquals(host, expected);
    }
 
    public void testGet() throws Exception {
@@ -55,9 +69,16 @@ public class HostAdministrationClientExpectTest extends BaseNovaClientExpectTest
             responseWithKeystoneAccess, extensionsOfNovaRequest, extensionsOfNovaResponse,
             HttpRequest.builder().method("GET").headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
                   .endpoint(endpoint).build(),
-            HttpResponse.builder().statusCode(200).build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
+            HttpResponse.builder().statusCode(200).payload(payloadFromResource("/host.json")).build()).getHostAdministrationExtensionForZone("az-1.region-a.geo-1").get();
 
-      client.getHostResourceUsage("xyz");
+      Set<HostResourceUsage> expected = ImmutableSet.of(
+            HostResourceUsage.builder().memoryMb(16083).project("(total)").cpu(4).diskGb(181).host("ubuntu").build(),
+            HostResourceUsage.builder().memoryMb(3396).project("(used_now)").cpu(3).diskGb(5).host("ubuntu").build(),
+            HostResourceUsage.builder().memoryMb(6144).project("(used_max)").cpu(3).diskGb(80).host("ubuntu").build(),
+            HostResourceUsage.builder().memoryMb(6144).project("f8535069c3fb404cb61c873b1a0b4921").cpu(3).diskGb(80).host("ubuntu").build()
+      );
+
+      assertEquals(client.getHostResourceUsage("xyz"), expected);
    }
 
 }

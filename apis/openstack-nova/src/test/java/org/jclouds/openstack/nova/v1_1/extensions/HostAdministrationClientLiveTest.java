@@ -18,11 +18,13 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
 import org.jclouds.openstack.nova.v1_1.domain.Host;
+import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -36,16 +38,18 @@ import com.google.common.base.Optional;
 @Test(groups = "live", testName = "HostAdministrationClientLiveTest")
 public class HostAdministrationClientLiveTest extends BaseNovaClientLiveTest {
 
-
    public void testListAndGet() throws Exception {
       for (String zoneId : novaContext.getApi().getConfiguredZones()) {
          Optional<HostAdministrationClient> optClient = novaContext.getApi().getHostAdministrationExtensionForZone(zoneId);
-         if (optClient.isPresent()) {
+         if (optClient.isPresent() && identity.endsWith(":admin")) {
             HostAdministrationClient client = optClient.get();
             Set<Host> hosts = client.listHosts();
             assertNotNull(hosts);
             for(Host host : hosts) {
-               client.getHostResourceUsage(host.getName());
+               for (HostResourceUsage usage : client.getHostResourceUsage(host.getName())) {
+                  assertEquals(usage.getHost(), host.getName());
+                  assertNotNull(usage);
+               }
             }
          }
       }

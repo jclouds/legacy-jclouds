@@ -1,1 +1,1 @@
-["hosts": [{"host_name": "ubuntu", "service": "compute"}]
+{"hosts": [{"host_name": "ubuntu", "service": "compute"}]}
