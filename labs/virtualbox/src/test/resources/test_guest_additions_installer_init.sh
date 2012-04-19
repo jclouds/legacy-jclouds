@@ -90,7 +90,7 @@ function ensure_cmd_or_install_package_apt(){
   local cmd=$1
   local pkg=$2
   
-  hash $cmd 2>/dev/null || apt-get-install $pkg || ( apt-get-update && apt-get-install $pkg )
+  hash $cmd 2>/dev/null || ( apt-get-update && apt-get-install $pkg )
 }
 
 function ensure_cmd_or_install_package_yum(){
