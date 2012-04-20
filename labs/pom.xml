@@ -41,5 +41,6 @@
        <module>savvis-symphonyvpdc</module>
        <module>dmtf</module>
        <module>carrenza-vcloud-director</module>
+       <module>openstack-swift</module>
     </modules>
 </project>
