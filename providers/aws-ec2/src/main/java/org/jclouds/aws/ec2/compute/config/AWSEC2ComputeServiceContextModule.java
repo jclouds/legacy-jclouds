@@ -102,10 +102,11 @@ public class AWSEC2ComputeServiceContextModule extends BaseComputeServiceContext
    }
 
    @Override
-   protected boolean shouldParseImagesOnDemand(Injector injector) {
+   protected boolean shouldEagerlyParseImages(Injector injector) {
+      Map<String, String> queries = injector.getInstance(Key.get(new TypeLiteral<Map<String, String>>() {
+      }, ImageQuery.class));
       // If no queries defined, then will never lookup all images
-      return injector.getInstance(Key.get(new TypeLiteral<Map<String, String>>() {
-      }, ImageQuery.class)).size() > 0;
+      return queries.size() > 0;
    }
 
    // duplicates EC2ComputeServiceContextModule; but that's easiest thing to do with guice; could extract to common util

@@ -59,7 +59,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
+@Test(groups = "live", testName = "AWSEC2TemplateBuilderLiveTest")
 public class AWSEC2TemplateBuilderLiveTest extends EC2TemplateBuilderLiveTest {
 
    public AWSEC2TemplateBuilderLiveTest() {

@@ -18,7 +18,8 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
-import static org.jclouds.aws.ec2.reference.AWSEC2Constants.*;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUERY;
+import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Map;
@@ -63,8 +64,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Sets;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -100,18 +101,18 @@ public class AWSEC2ComputeServiceDependenciesModule extends EC2ComputeServiceDep
    @ImageQuery
    protected Map<String, String> imageQuery(ValueOfConfigurationKeyOrNull config) {
       String amiQuery = Strings.emptyToNull(config.apply(PROPERTY_EC2_AMI_QUERY));
-      if (config.apply(PROPERTY_EC2_AMI_OWNERS) != null) {
+      String owners = config.apply(PROPERTY_EC2_AMI_OWNERS);
+      if ("".equals(owners)) {
+         amiQuery = null;
+      } else if (owners != null) {
          StringBuilder query = new StringBuilder();
-         String owners = config.apply(PROPERTY_EC2_AMI_OWNERS).toString();
          if ("*".equals(owners))
             query.append("state=available;image-type=machine");
-         else if (!"".equals(owners))
+         else
             query.append("owner-id=").append(owners).append(";state=available;image-type=machine");
-         else if ("".equals(owners))
-            query = new StringBuilder();
          Logger.getAnonymousLogger().warning(
-                  String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
-                           PROPERTY_EC2_AMI_QUERY, query.toString()));
+               String.format("Property %s is deprecated, please use new syntax: %s=%s", PROPERTY_EC2_AMI_OWNERS,
+                     PROPERTY_EC2_AMI_QUERY, query.toString()));
          amiQuery = query.toString();
       }
       Builder<String, String> builder = ImmutableMap.<String, String> builder();

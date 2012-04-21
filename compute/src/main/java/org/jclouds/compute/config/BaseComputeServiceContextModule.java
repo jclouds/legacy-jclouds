@@ -227,14 +227,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(AtomicReference<AuthorizationException> authException, @Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final Supplier<Set<? extends Image>> imageSupplier, Injector injector) {
-      if (shouldParseImagesOnDemand(injector)) {
+      if (shouldEagerlyParseImages(injector)) {
          return supplyImageCache(authException, seconds, imageSupplier);
       } else {
          return supplyNonParsingImageCache(authException, seconds, imageSupplier, injector);
       }
    }
 
-   protected boolean shouldParseImagesOnDemand(Injector injector) {
+   protected boolean shouldEagerlyParseImages(Injector injector) {
       return true;
    }
 

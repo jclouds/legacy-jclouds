@@ -22,7 +22,6 @@ import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_AMI_QUE
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_AMI_QUERY;
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_CC_REGIONS;
 import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.net.URI;
 import java.util.Properties;
@@ -63,7 +62,6 @@ public class AWSEC2ProviderMetadata extends BaseProviderMetadata {
       // from stopping->stopped state on an ec2 micro
       properties.setProperty(TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
       properties.putAll(Region.regionProperties());
-      properties.remove(PROPERTY_EC2_AMI_OWNERS);
       // amazon, alestic, canonical, and rightscale
       properties.setProperty(PROPERTY_EC2_AMI_QUERY,
                "owner-id=137112412989,063491364108,099720109477,411009282317;state=available;image-type=machine");
