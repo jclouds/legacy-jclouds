@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,37 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.vcloud.director.v1_5.functions;
+package org.jclouds.vcloud.director.v1_5.compute.functions;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.dmtf.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
-
-import com.google.common.base.Function;
+import org.jclouds.compute.domain.Volume;
+import org.jclouds.dmtf.cim.ResourceAllocationSettingData;
+import org.jclouds.dmtf.cim.functions.HardwareBuilderFromResourceAllocations;
 
 /**
- * @author danikov
+ * @author Adrian Cole
  */
 @Singleton
-public class SectionForVAppTemplate<S extends SectionType> implements Function<VAppTemplate, S> {
-   
-   private final Class<? extends SectionType> sectionType;
-
-   @Inject
-   SectionForVAppTemplate(Class<S> sectionType) {
-      this.sectionType = sectionType;
-   }
-
-   @SuppressWarnings("unchecked")
+public class VCloudHardwareBuilderFromResourceAllocations extends HardwareBuilderFromResourceAllocations {
    @Override
-   public S apply(VAppTemplate from) {
-      for (SectionType section : from.getSections()) {
-         if (sectionType.isAssignableFrom(section.getClass())) {
-            return (S)section;
-         }
-      }
+   public Volume apply(ResourceAllocationSettingData from) {
+      // FIXME: not yet implemented
+//      if (from instanceof VCloudHardDisk) {
+//         VCloudHardDisk vDisk = VCloudHardDisk.class.cast(from);
+//         return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL, vDisk.getCapacity() / 1024f, null,
+//                  "0".equals(from.getAddressOnParent()), true);
+//      } else {
+//         return super.apply(from);
+//      }
       return null;
    }
 }

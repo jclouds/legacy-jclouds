@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.dmtf.ovf.SectionType;
-import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
+import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType;
 
 import com.google.common.base.Function;
 
@@ -30,18 +30,18 @@ import com.google.common.base.Function;
  * @author danikov
  */
 @Singleton
-public class SectionForVAppTemplate<S extends SectionType> implements Function<VAppTemplate, S> {
+public class SectionForVApp<S extends SectionType> implements Function<AbstractVAppType, S> {
    
    private final Class<? extends SectionType> sectionType;
 
    @Inject
-   SectionForVAppTemplate(Class<S> sectionType) {
+   SectionForVApp(Class<S> sectionType) {
       this.sectionType = sectionType;
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public S apply(VAppTemplate from) {
+   public S apply(AbstractVAppType from) {
       for (SectionType section : from.getSections()) {
          if (sectionType.isAssignableFrom(section.getClass())) {
             return (S)section;
