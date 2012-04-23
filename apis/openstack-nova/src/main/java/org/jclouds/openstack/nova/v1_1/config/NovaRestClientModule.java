@@ -73,6 +73,7 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
          .put(KeyPairClient.class, KeyPairAsyncClient.class)
          .put(HostAdministrationClient.class, HostAdministrationAsyncClient.class)
          .put(SimpleTenantUsageClient.class, SimpleTenantUsageAsyncClient.class)
+         .put(VolumeClient.class, VolumeAsyncClient.class)
          .build();
 
    public NovaRestClientModule() {
