@@ -18,14 +18,12 @@
  */
 package org.jclouds.trmk.vcloud_0_8.config;
 
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
-
 import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.ReferenceType;
 
@@ -55,7 +53,7 @@ public class DefaultVCloudReferencesModule extends AbstractModule {
    @org.jclouds.trmk.vcloud_0_8.endpoints.Org
    @Singleton
    protected Supplier<ReferenceType> provideDefaultOrg(DefaultOrgForUser defaultOrgURIForUser,
-         @Named(PROPERTY_IDENTITY) String user) {
+         @Identity String user) {
       return defaultOrgURIForUser.apply(user);
    }
 

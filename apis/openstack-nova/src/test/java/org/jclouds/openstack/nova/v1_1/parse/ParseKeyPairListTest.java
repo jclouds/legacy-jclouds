@@ -25,7 +25,7 @@ import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.json.BaseParserTest;
+import org.jclouds.json.BaseItemParserTest;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.openstack.nova.v1_1.config.NovaParserModule;
 import org.jclouds.openstack.nova.v1_1.domain.KeyPair;
@@ -41,7 +41,7 @@ import com.google.inject.Injector;
  * @author Michael Arnold
  */
 @Test(groups = "unit", testName = "ParseKeyPairListTest")
-public class ParseKeyPairListTest extends BaseParserTest {
+public class ParseKeyPairListTest extends BaseItemParserTest<Set<Map<String, KeyPair>>> {
 
    @Override
    public String resource() {

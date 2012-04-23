@@ -32,8 +32,9 @@ import java.util.logging.Logger;
 import junit.framework.TestCase;
 
 import org.jclouds.Constants;
+import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -191,8 +192,10 @@ public class AppTest extends TestCase {
       }
       Iterable<Module> modules = ImmutableSet.<Module> of(new SshjSshClientModule(), new SLF4JLoggingModule(),
             new EnterpriseConfigurationModule());
-      this.compute = new ComputeServiceContextFactory().createContext(this.providerName, this.identity,
-            this.credential, modules, overrides).getComputeService();
+      this.compute = ContextBuilder.newBuilder(providerName)
+                                   .credentials(identity, credential)
+                                   .modules(modules)
+                                   .overrides(overrides).buildAndWrapWith(ComputeServiceContext.class).getComputeService();
    }
 
    private void createAndStartPool() {

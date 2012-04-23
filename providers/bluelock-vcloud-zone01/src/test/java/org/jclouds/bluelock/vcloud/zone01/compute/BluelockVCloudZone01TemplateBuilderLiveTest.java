@@ -67,7 +67,7 @@ public class BluelockVCloudZone01TemplateBuilderLiveTest extends BaseTemplateBui
 
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);

@@ -84,7 +84,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
@@ -103,7 +103,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "1000");
 
-         context = createContext(overrides, setupModules());
+         context = createWrapper(overrides, setupModules());
 
          // TODO add something to the template about port speed?
          context.getComputeService().templateBuilder().build();
@@ -121,7 +121,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_PORT_SPEED, "100");
 
-         context = createContext(overrides, setupModules());
+         context = createWrapper(overrides, setupModules());
 
          // TODO add something to the template about port speed?
          context.getComputeService().templateBuilder().build();
@@ -139,7 +139,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_DISK0_TYPE, "SAN");
 
-         context = createContext(overrides, setupModules());
+         context = createWrapper(overrides, setupModules());
 
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 16.0d);
@@ -159,7 +159,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "Private [0-9]+ x ([.0-9]+) GHz Core[s]?");
 
-         context = createContext(overrides, setupModules());
+         context = createWrapper(overrides, setupModules());
 
          Template template = context.getComputeService().templateBuilder().build();
          assertEquals(getCores(template.getHardware()), 1.0d);
@@ -179,7 +179,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
          Properties overrides = setupProperties();
          overrides.setProperty(PROPERTY_SOFTLAYER_VIRTUALGUEST_CPU_REGEX, "Private [0-9]+ x ([.0-9]+) GHz Core[s]?");
 
-         context = createContext(overrides, setupModules());
+         context = createWrapper(overrides, setupModules());
          
          Template template = context.getComputeService().templateBuilder().biggest().build();
          assertEquals(getCores(template.getHardware()), 8.0d);
@@ -194,7 +194,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Test
    public void testFastestTemplateBuilder() throws IOException {
-      Template template = context.getComputeService().templateBuilder().fastest().build();
+      Template template = wrapper.getComputeService().templateBuilder().fastest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
       assertEquals(template.getHardware().getRam(), 1);
       assertEquals(getSpace(template.getHardware()), 25.0d);
@@ -203,7 +203,7 @@ public class SoftLayerTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTes
 
    @Test
    public void testBiggestTemplateBuilder() throws IOException {
-      Template template = context.getComputeService().templateBuilder().biggest().build();
+      Template template = wrapper.getComputeService().templateBuilder().biggest().build();
       assertEquals(getCores(template.getHardware()), 16.0d);
       assertEquals(template.getHardware().getRam(), 16);
       assertEquals(getSpace(template.getHardware()), 100.0d);

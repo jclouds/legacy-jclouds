@@ -18,32 +18,22 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
-import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.ContextBuilder;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.openstack.nova.v1_1.NovaClient;
-import org.jclouds.openstack.nova.v1_1.domain.Ingress;
-import org.jclouds.openstack.nova.v1_1.domain.IpProtocol;
-import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
-import org.jclouds.openstack.nova.v1_1.domain.SecurityGroupRule;
-import org.jclouds.openstack.nova.v1_1.domain.Server;
 import org.jclouds.openstack.nova.v1_1.domain.SimpleServerUsage;
 import org.jclouds.openstack.nova.v1_1.domain.SimpleTenantUsage;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
-import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupListTest;
-import org.jclouds.openstack.nova.v1_1.parse.ParseSecurityGroupTest;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;

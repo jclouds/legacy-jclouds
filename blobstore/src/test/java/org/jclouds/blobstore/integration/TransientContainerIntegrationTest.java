@@ -53,7 +53,7 @@ public class TransientContainerIntegrationTest extends BaseContainerIntegrationT
       String key = "hello";
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
-      Blob blob = context.getBlobStore().blobBuilder("hello").userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+      Blob blob = wrapper.getBlobStore().blobBuilder("hello").userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
             .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).build();
 
       String containerName = getContainerName();
@@ -61,7 +61,7 @@ public class TransientContainerIntegrationTest extends BaseContainerIntegrationT
          addBlobToContainer(containerName, blob);
          validateContent(containerName, key);
 
-         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, maxResults(1));
+         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName, maxResults(1));
 
          BlobMetadata metadata = (BlobMetadata) getOnlyElement(container);
          // transient container should be lenient and not return metadata on undetailed listing.
@@ -75,7 +75,7 @@ public class TransientContainerIntegrationTest extends BaseContainerIntegrationT
 
    @Test(groups = { "integration", "live" })
    public void testDuplicateCreateContainer() {
-      BlobStore blobStore = context.getBlobStore();
+      BlobStore blobStore = wrapper.getBlobStore();
       Location location = null;
       String container = "container";
       boolean created;

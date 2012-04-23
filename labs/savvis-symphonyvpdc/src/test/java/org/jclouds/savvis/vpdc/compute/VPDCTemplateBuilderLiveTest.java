@@ -69,7 +69,7 @@ public class VPDCTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "5");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.RHEL);

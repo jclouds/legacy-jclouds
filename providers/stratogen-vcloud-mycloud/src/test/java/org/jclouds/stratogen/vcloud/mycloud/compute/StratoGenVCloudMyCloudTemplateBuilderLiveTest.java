@@ -70,7 +70,7 @@ public class StratoGenVCloudMyCloudTemplateBuilderLiveTest extends BaseTemplateB
 
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getName(), "Ubuntu server 11.04 64bit no GUI (base)");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);

@@ -20,11 +20,9 @@ package org.jclouds.ec2.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
-
-import javax.inject.Named;
 
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
+import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
@@ -52,7 +50,7 @@ import com.google.inject.Inject;
 public class BundleInstanceS3StorageOptions extends BaseEC2RequestOptions {
 
    @Inject(optional = true)
-   @Named(PROPERTY_IDENTITY)
+   @Identity
    String currentAwsAccessKeyId;
 
    @Override

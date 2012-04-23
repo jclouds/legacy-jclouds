@@ -93,12 +93,12 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
       String region = "us-west-2";
 
       AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(
-               context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getSecurityGroupServices();
+               wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getSecurityGroupServices();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      KeyPairClient keyPairClient = EC2Client.class.cast(wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getKeyPairServices();
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
       String group = this.group + "o";
@@ -230,13 +230,13 @@ public class AWSEC2ComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
    }
    
    private void runIncidentalResourcesGetCleanedUpOnlyOnLastInstanceDestroy(Function<String,Void> destroyer) throws Exception {
-      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      AWSSecurityGroupClient securityGroupClient = AWSEC2Client.class.cast(wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getSecurityGroupServices();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      KeyPairClient keyPairClient = EC2Client.class.cast(wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getKeyPairServices();
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
       String group = this.group + "incidental";

@@ -85,7 +85,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
    @Override
    public void setupContext() {
       super.setupContext();
-      Injector injector = context.utils().injector();
+      Injector injector = wrapper.utils().injector();
       client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

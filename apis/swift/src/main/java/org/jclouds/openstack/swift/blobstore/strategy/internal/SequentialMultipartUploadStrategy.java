@@ -1,11 +1,10 @@
 package org.jclouds.openstack.swift.blobstore.strategy.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-import com.google.common.collect.Maps;
-import com.google.inject.Inject;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.PutOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
@@ -13,15 +12,12 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.swift.CommonSwiftClient;
-import org.jclouds.openstack.swift.SwiftClient;
+import org.jclouds.openstack.swift.SwiftApiMetadata;
 import org.jclouds.openstack.swift.blobstore.SwiftBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
-import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.util.Throwables2;
 
-import java.util.SortedMap;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.inject.Inject;
 
 
 public class SequentialMultipartUploadStrategy implements MultipartUploadStrategy {
@@ -52,9 +48,7 @@ public class SequentialMultipartUploadStrategy implements MultipartUploadStrateg
         int parts = algorithm.getParts();
         long chunkSize = algorithm.getChunkSize();
         if (parts > 0) {
-            CommonSwiftClient client = (CommonSwiftClient) ablobstore.getContext()
-                    .getProviderSpecificContext().getApi();
-
+            CommonSwiftClient client = ablobstore.getContext().unwrap(SwiftApiMetadata.CONTEXT_TOKEN).getApi();
             try {
                 int part;
                 while ((part = algorithm.getNextPart()) <= parts) {

@@ -157,7 +157,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
    public void testCreateNodeWithGroupEncodedIntoName() throws InterruptedException {
       String group = prefix + "-foo";
       String name = group + "-node-" + new Random().nextInt();
-      Template template = context.getComputeService().templateBuilder().build();
+      Template template = wrapper.getComputeService().templateBuilder().build();
 
       if (!client
             .getTemplateClient()

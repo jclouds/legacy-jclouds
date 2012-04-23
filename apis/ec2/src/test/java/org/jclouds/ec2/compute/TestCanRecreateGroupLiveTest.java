@@ -39,18 +39,18 @@ public class TestCanRecreateGroupLiveTest extends BaseComputeServiceContextLiveT
    public void testCanRecreateGroup() throws Exception {
 
       String tag = PREFIX + "recreate";
-      context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
+      wrapper.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
 
       try {
-         Template template = context.getComputeService().templateBuilder().build();
-         context.getComputeService().createNodesInGroup(tag, 1, template);
-         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
-         context.getComputeService().createNodesInGroup(tag, 1, template);
+         Template template = wrapper.getComputeService().templateBuilder().build();
+         wrapper.getComputeService().createNodesInGroup(tag, 1, template);
+         wrapper.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
+         wrapper.getComputeService().createNodesInGroup(tag, 1, template);
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());
          Throwables.propagate(e);
       } finally {
-         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
+         wrapper.getComputeService().destroyNodesMatching(NodePredicates.inGroup(tag));
       }
    }
 

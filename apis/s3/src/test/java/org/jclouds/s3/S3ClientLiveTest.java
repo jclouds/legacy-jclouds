@@ -68,7 +68,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
    }
    
    public S3Client getApi() {
-      return context.unwrap(S3ApiMetadata.CONTEXT_TOKEN).getApi();
+      return wrapper.unwrap(S3ApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    /**

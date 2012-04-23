@@ -95,7 +95,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      Injector injector = context.utils().injector();
+      Injector injector = wrapper.utils().injector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client), 180, 5,

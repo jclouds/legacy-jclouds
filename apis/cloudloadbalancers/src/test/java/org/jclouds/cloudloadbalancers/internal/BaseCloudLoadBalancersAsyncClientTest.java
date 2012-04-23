@@ -77,6 +77,7 @@ public abstract class BaseCloudLoadBalancersAsyncClientTest<T> extends BaseAsync
             protected void configure() {
             }
 
+            @SuppressWarnings("unused")
             @Provides
             @Singleton
             GetAuth provideGetAuth() {

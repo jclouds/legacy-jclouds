@@ -24,9 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
-import org.jclouds.cloudsigma.CloudSigmaClient;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
@@ -42,9 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true, testName = "CloudSigmaZurichTemplateBuilderLiveTest")
-public class CloudSigmaZurichTemplateBuilderLiveTest
-      extends
-      BaseTemplateBuilderLiveTest {
+public class CloudSigmaZurichTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public CloudSigmaZurichTemplateBuilderLiveTest() {
       provider = "cloudsigma-zrh";
@@ -77,7 +72,7 @@ public class CloudSigmaZurichTemplateBuilderLiveTest
 
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getId(), "c9df6b90-420c-4c46-b7f2-8d9e99929a09");

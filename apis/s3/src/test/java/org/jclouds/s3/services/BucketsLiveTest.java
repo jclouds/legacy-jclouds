@@ -71,7 +71,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    public S3Client getApi() {
-      return (S3Client) context.unwrap(S3ApiMetadata.CONTEXT_TOKEN).getApi();
+      return (S3Client) wrapper.unwrap(S3ApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    /**

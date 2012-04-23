@@ -18,21 +18,13 @@
  */
 package org.jclouds.vcloud.director.v1_5.internal;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
-import org.jclouds.location.Iso3166;
-import org.jclouds.location.Provider;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
-import org.jclouds.rest.annotations.ApiVersion;
-import org.jclouds.rest.annotations.BuildVersion;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
@@ -41,7 +33,6 @@ import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorAsyncClient;
 import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 
-import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 
@@ -54,14 +45,10 @@ public class VCloudDirectorContextImpl extends RestContextImpl<VCloudDirectorCli
    private final RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext;
 
    @Inject
-   VCloudDirectorContextImpl(Closer closer, Map<String, Credentials> credentialStore, Utils utils, Injector injector,
-         TypeLiteral<VCloudDirectorClient> syncApi, TypeLiteral<VCloudDirectorAsyncClient> asyncApi, 
-         @Provider Supplier<URI> endpoint, @Provider String provider,
-         @Identity String identity, @ApiVersion String apiVersion, @BuildVersion String buildVersion,
-         @Iso3166 Set<String> iso3166Codes,
-         RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext) {
-      super(closer, credentialStore, utils, injector, syncApi, asyncApi, endpoint, provider, 
-            identity, apiVersion, buildVersion, iso3166Codes);
+   VCloudDirectorContextImpl(ProviderMetadata providerMetadata, @Identity String identity, Utils utils, Closer closer,
+            Injector injector, RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext) {
+      super(providerMetadata, identity, utils, closer, injector, TypeLiteral.get(VCloudDirectorClient.class),
+               TypeLiteral.get(VCloudDirectorAsyncClient.class));
       this.adminContext = adminContext;
    }
    

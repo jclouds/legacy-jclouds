@@ -102,13 +102,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
-      SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      SecurityGroupClient securityGroupClient = EC2Client.class.cast(wrapper.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getSecurityGroupServices();
 
-      KeyPairClient keyPairClient = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      KeyPairClient keyPairClient = EC2Client.class.cast(wrapper.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getKeyPairServices();
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(wrapper.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
       String group = this.group + "o";
@@ -181,7 +181,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          Properties overrides = setupProperties();
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS, "true");
 
-         context = createContext(overrides, setupModules());
+         context = createWrapper(overrides, setupModules());
 
          // create a node
          Set<? extends NodeMetadata> nodes =
@@ -233,19 +233,19 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true)
    public void testMapEBS() throws Exception {
 
-      InstanceClient instanceClient = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      InstanceClient instanceClient = EC2Client.class.cast(wrapper.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getInstanceServices();
 
-      ElasticBlockStoreClient ebsClient = EC2Client.class.cast(context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
+      ElasticBlockStoreClient ebsClient = EC2Client.class.cast(wrapper.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi())
                .getElasticBlockStoreServices();
 
       String group = this.group + "e";
       int volumeSize = 8;
       
-      final Template template = context.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
+      final Template template = wrapper.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
                .osFamily(OsFamily.UBUNTU).osVersionMatches("10.04").imageDescriptionMatches(".*ebs.*").build();
 
-      Location zone = Iterables.find(context.getComputeService().listAssignableLocations(), new Predicate<Location>() {
+      Location zone = Iterables.find(wrapper.getComputeService().listAssignableLocations(), new Predicate<Location>() {
 
          @Override
          public boolean apply(Location arg0) {

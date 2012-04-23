@@ -482,7 +482,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      injector = context.utils().injector();
+      injector = wrapper.utils().injector();
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
       socketTester = new RetryablePredicate<IPSocket>(injector.getInstance(SocketOpen.class), 300, 10, TimeUnit.SECONDS);// make
@@ -492,7 +492,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       // default internet
       // service timeout
       successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
-      connection = (S) RestContext.class.cast(context.unwrap()).getApi();
+      connection = (S) RestContext.class.cast(wrapper.unwrap()).getApi();
       orgs = listOrgs();
    }
 
@@ -514,7 +514,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       for (Org org : orgs) {
          RestContext<S, A> newContext = null;
          try {
-            newContext = createContext(
+            newContext = createWrapper(
                   overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName())),
                   setupModules()).unwrap();
             assertEquals(newContext.getApi().findOrgNamed(null), org);
@@ -549,7 +549,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
          for (ReferenceType cat : org.getCatalogs().values()) {
             RestContext<S, A> newContext = null;
             try {
-               newContext = createContext(
+               newContext = createWrapper(
                      overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                            VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CATALOG, cat.getName())), setupModules())
                      .unwrap();
@@ -592,7 +592,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
             for (ReferenceType net : response.getAvailableNetworks().values()) {
                RestContext<S, A> newContext = null;
                try {
-                  newContext = createContext(
+                  newContext = createWrapper(
                         overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                               VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName(),
                               VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK, net.getName())), setupModules())
@@ -671,7 +671,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
          for (ReferenceType vdc : org.getVDCs().values()) {
             RestContext<S, A> newContext = null;
             try {
-               newContext = createContext(
+               newContext = createWrapper(
                      overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                            VCloudConstants.PROPERTY_VCLOUD_DEFAULT_VDC, vdc.getName())), setupModules())
                      .unwrap();
@@ -703,7 +703,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
          for (ReferenceType tasksList : org.getTasksLists().values()) {
             RestContext<S, A> newContext = null;
             try {
-               newContext = createContext(
+               newContext = createWrapper(
                      overrideDefaults(ImmutableMap.of(VCloudConstants.PROPERTY_VCLOUD_DEFAULT_ORG, org.getName(),
                            VCloudConstants.PROPERTY_VCLOUD_DEFAULT_TASKSLIST, tasksList.getName())), setupModules())
                      .unwrap();
@@ -737,7 +737,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
 
    @AfterGroups(groups = { "live" })
    public void teardownClient() {
-      context.close();
+      wrapper.close();
    }
 
    protected Iterable<Org> listOrgs() {

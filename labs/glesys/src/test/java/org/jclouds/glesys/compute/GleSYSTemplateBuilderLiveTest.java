@@ -81,7 +81,7 @@ public class GleSYSTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getId(), "Ubuntu 11.04 64-bit");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);

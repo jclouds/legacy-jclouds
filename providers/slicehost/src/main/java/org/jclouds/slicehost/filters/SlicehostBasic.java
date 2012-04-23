@@ -21,16 +21,15 @@ package org.jclouds.slicehost.filters;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.rest.annotations.Identity;
 
 /**
  * 
@@ -41,7 +40,7 @@ public class SlicehostBasic implements HttpRequestFilter {
    private final String apikey;
 
    @Inject
-   public SlicehostBasic(@Named(Constants.PROPERTY_IDENTITY) String apikey) {
+   public SlicehostBasic(@Identity String apikey) {
       this.apikey = checkNotNull(apikey, "apikey");
    }
 

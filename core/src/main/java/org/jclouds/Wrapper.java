@@ -18,8 +18,6 @@
  */
 package org.jclouds;
 
-import java.io.Closeable;
-
 import com.google.common.annotations.Beta;
 import com.google.common.reflect.TypeToken;
 
@@ -57,14 +55,14 @@ public interface Wrapper {
     *            class.
     * @see #getWrappedType()
     */
-   <C extends Closeable> C unwrap(TypeToken<C> type) throws IllegalArgumentException;
+   <C extends Context> C unwrap(TypeToken<C> type) throws IllegalArgumentException;
 
    /**
     * shortcut for {@code unwrap(TypeToken.of(clazz))}
     * 
     * @see #unwrap(TypeToken)
     */
-   <C extends Closeable> C unwrap(Class<C> clazz) throws IllegalArgumentException;
+   <C extends Context> C unwrap(Class<C> clazz) throws IllegalArgumentException;
 
    /**
     * shortcut for {@code unwrap(getWrappedType())}
@@ -73,6 +71,6 @@ public interface Wrapper {
     *            if the user supplied {@code C} param is not assignableFrom
     *            {@link #getWrappedType()}
     */
-   <C extends Closeable> C unwrap() throws ClassCastException;
+   <C extends Context> C unwrap() throws ClassCastException;
 
 }

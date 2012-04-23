@@ -70,7 +70,7 @@ public class DeltacloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
 
    @Test
    public void testTemplateBuilder() {
-      Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = this.wrapper.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);

@@ -52,7 +52,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    public void testCreatedNodeHasExpectedNameAndWeCanConnectViaSsh() {
       String group = "foo";
       String name = "foo-ef4";
-      Template template = context.getComputeService().templateBuilder().build();
+      Template template = wrapper.getComputeService().templateBuilder().build();
       machine = adapter.createNodeWithGroupEncodedIntoName(group, name, template);
       assertTrue(machine.getNode().getName().contains(group));
       assertTrue(machine.getNode().getName().contains(name));
@@ -61,7 +61,7 @@ public class VirtualBoxComputeServiceAdapterLiveTest extends BaseVirtualBoxClien
    }
 
    protected void doConnectViaSsh(IMachine machine, LoginCredentials creds) {
-      SshClient ssh = context.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
+      SshClient ssh = wrapper.utils().injector().getInstance(IMachineToSshClient.class).apply(machine);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

@@ -63,7 +63,7 @@ public class AWSAMIClientLiveTest extends BaseComputeServiceContextLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAMIServices();
+      client = wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAMIServices();
    }
 
    public void testDescribeImageNotExists() {
@@ -76,7 +76,7 @@ public class AWSAMIClientLiveTest extends BaseComputeServiceContextLiveTest {
    }
 
    public void testDescribeImages() {
-      for (String region : context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<Image> allResults = Sets.newLinkedHashSet(client.describeImagesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();

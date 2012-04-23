@@ -126,7 +126,7 @@ public class EBSBootEC2ClientLiveTest extends BaseComputeServiceContextLiveTest 
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      Injector injector = context.utils().injector();
+      Injector injector = wrapper.utils().injector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);

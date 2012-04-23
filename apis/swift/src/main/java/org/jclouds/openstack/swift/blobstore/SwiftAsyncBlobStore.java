@@ -56,7 +56,6 @@ import org.jclouds.openstack.swift.blobstore.functions.ContainerToResourceMetada
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlob;
 import org.jclouds.openstack.swift.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.openstack.swift.blobstore.strategy.internal.AsyncMultipartUploadStrategy;
-import org.jclouds.openstack.swift.blobstore.strategy.internal.MultipartUploadStrategy;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.openstack.swift.domain.ObjectInfo;

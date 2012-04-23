@@ -43,7 +43,7 @@ public class BaseGoGridClientLiveTest extends BaseComputeServiceContextLiveTest 
    @Override
    public void setupContext() {
       super.setupContext();
-      restContext = context.unwrap();
+      restContext = wrapper.unwrap();
    }
 
 

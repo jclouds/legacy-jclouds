@@ -44,6 +44,9 @@ import com.google.common.base.Joiner;
  */
 public class CloudLoadBalancersUSProviderMetadata extends BaseProviderMetadata {
    
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -1336822093264044850L;
+
    public static Builder builder() {
       return new Builder();
    }

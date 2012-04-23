@@ -18,8 +18,7 @@
  */
 package org.jclouds.apis;
 
-import java.io.Closeable;
-
+import org.jclouds.Context;
 import org.jclouds.internal.BaseWrapper;
 import org.jclouds.location.Provider;
 
@@ -32,7 +31,7 @@ import com.google.inject.Inject;
 public class Balancer extends BaseWrapper {
 
    @Inject
-   public Balancer(@Provider Closeable ctx, @Provider TypeToken<? extends Closeable> inputType)  {
+   public Balancer(@Provider Context ctx, @Provider TypeToken<? extends Context> inputType)  {
       super(ctx, inputType);
    }
 }

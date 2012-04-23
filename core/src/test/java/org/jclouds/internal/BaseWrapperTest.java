@@ -18,12 +18,14 @@
  */
 package org.jclouds.internal;
 
+import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
-import java.io.Closeable;
-
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
@@ -34,23 +36,38 @@ import com.google.common.reflect.TypeToken;
  */
 @Test(groups = "unit", testName = "BaseWrapperTest")
 public class BaseWrapperTest {
-   private static class Water implements Closeable {
+   private static class Water extends ContextImpl {
+
+      protected Water() {
+         super(createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+      }
 
       @Override
       public void close() {
       }
+      
       @Override
       public boolean equals(Object in){
          return Objects.equal(in.getClass(), getClass());
       }
    }
 
-   private static interface PeanutButter extends Closeable {
+   private static class PeanutButter extends ContextImpl {
+
+      protected PeanutButter() {
+         super(createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+      }
 
       @Override
-      void close();
+      public void close() {
+      }
+      
+      @Override
+      public boolean equals(Object in){
+         return Objects.equal(in.getClass(), getClass());
+      }
    }
-
+   
    private static class Wine extends BaseWrapper {
 
       protected Wine() {

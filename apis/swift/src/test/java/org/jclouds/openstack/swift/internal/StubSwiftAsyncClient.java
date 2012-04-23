@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.PathParam;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.TransientAsyncBlobStore;

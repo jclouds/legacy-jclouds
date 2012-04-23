@@ -20,15 +20,13 @@ package org.jclouds.apis;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Closeable;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.jclouds.Constants;
+import org.jclouds.Context;
 import org.jclouds.ContextBuilder;
-import org.jclouds.apis.ApiMetadata;
-import org.jclouds.apis.Apis;
 import org.jclouds.logging.LoggingModules;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.providers.ProviderMetadata;
@@ -45,7 +43,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public abstract class BaseContextLiveTest<C extends Closeable> {
+public abstract class BaseContextLiveTest<C extends Context> {
    protected String prefix = System.getProperty("user.name");
    protected String provider;
 

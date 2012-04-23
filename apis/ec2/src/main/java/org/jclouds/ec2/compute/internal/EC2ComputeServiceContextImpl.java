@@ -18,15 +18,12 @@
  */
 package org.jclouds.ec2.compute.internal;
 
-import java.io.Closeable;
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.EC2ComputeServiceContext;
 import org.jclouds.location.Provider;
@@ -39,9 +36,9 @@ import com.google.common.reflect.TypeToken;
 @Singleton
 public class EC2ComputeServiceContextImpl extends ComputeServiceContextImpl implements EC2ComputeServiceContext {
    @Inject
-   public EC2ComputeServiceContextImpl(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType,
-            EC2ComputeService computeService, Map<String, Credentials> credentialStore, Utils utils){
-      super(wrapped, wrappedType, computeService, credentialStore, utils);
+   public EC2ComputeServiceContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
+            EC2ComputeService computeService, Utils utils) {
+      super(wrapped, wrappedType, computeService, utils);
    }
 
    @Override

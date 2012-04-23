@@ -56,7 +56,7 @@ public class RimuHostingClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      restContext = context.unwrap();
+      restContext = wrapper.unwrap();
       this.connection = restContext.getApi();
 
    }

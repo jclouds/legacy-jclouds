@@ -21,10 +21,10 @@ package org.jclouds.providers;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 
-import java.io.Closeable;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
+import org.jclouds.Context;
 import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
 
@@ -137,8 +137,8 @@ public class Providers {
     * 
     * @return the providers of the provided context
     */
-   public static <C extends Closeable> Iterable<ProviderMetadata> contextAssignableFrom(
-            TypeToken<? extends Closeable> context) {
+   public static <C extends Context> Iterable<ProviderMetadata> contextAssignableFrom(
+            TypeToken<? extends Context> context) {
       Preconditions.checkNotNull(context, "context must be defined");
       return filter(all(), new ProviderPredicates.ContextAssignableFrom(context));
    }

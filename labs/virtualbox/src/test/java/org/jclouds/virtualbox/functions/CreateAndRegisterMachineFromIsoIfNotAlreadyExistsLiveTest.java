@@ -84,7 +84,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
                .iso(IsoSpec.builder().sourcePath(operatingSystemIso).installationScript("").build()).vm(vmSpec)
                .network(networkSpec).build();
       // undoVm(vmSpec);
-      IMachine debianNode = context.utils().injector()
+      IMachine debianNode = wrapper.utils().injector()
                .getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(machineSpec);
       IMachine machine = manager.get().getVBox().findMachine(vmName);
       assertEquals(debianNode.getName(), machine.getName());
@@ -107,7 +107,7 @@ public class CreateAndRegisterMachineFromIsoIfNotAlreadyExistsLiveTest extends B
       NetworkSpec networkSpec = NetworkSpec.builder().build();
       MasterSpec machineSpec = MasterSpec.builder().iso(isoSpec).vm(vmSpec).network(networkSpec).build();
       try {
-         Injector injector = context.utils().injector();
+         Injector injector = wrapper.utils().injector();
          injector.getInstance(CreateAndRegisterMachineFromIsoIfNotAlreadyExists.class).apply(machineSpec);
          fail();
       } catch (VBoxException e) {

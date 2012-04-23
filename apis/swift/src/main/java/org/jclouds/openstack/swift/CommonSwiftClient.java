@@ -26,7 +26,6 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.io.Payload;
 import org.jclouds.openstack.swift.domain.AccountMetadata;
 import org.jclouds.openstack.swift.domain.ContainerMetadata;
 import org.jclouds.openstack.swift.domain.MutableObjectInfoWithMetadata;

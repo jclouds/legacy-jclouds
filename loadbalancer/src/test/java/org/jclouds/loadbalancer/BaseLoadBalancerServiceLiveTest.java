@@ -30,7 +30,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
 import org.jclouds.ContextBuilder;
-import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.apis.BaseWrapperLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -58,7 +58,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", singleThreaded = true)
-public abstract class BaseLoadBalancerServiceLiveTest extends BaseContextLiveTest<LoadBalancerServiceContext> {
+public abstract class BaseLoadBalancerServiceLiveTest extends BaseWrapperLiveTest<LoadBalancerServiceContext> {
 
    protected String imageId;
    protected String loginUser;
@@ -185,7 +185,7 @@ public abstract class BaseLoadBalancerServiceLiveTest extends BaseContextLiveTes
    }
    
    @Override
-   protected TypeToken<LoadBalancerServiceContext> contextType() {
+   protected TypeToken<LoadBalancerServiceContext> wrapperType() {
       return TypeToken.of(LoadBalancerServiceContext.class);
    }
 }

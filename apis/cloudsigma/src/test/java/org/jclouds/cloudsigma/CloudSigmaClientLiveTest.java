@@ -89,7 +89,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    @Override
    public void setupContext() {
       super.setupContext();
-      cloudSigmaContext = context.unwrap();
+      cloudSigmaContext = wrapper.unwrap();
 
       client = cloudSigmaContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
@@ -98,7 +98,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
             TimeUnit.SECONDS);
 
       if (Strings.emptyToNull(imageId) == null) {
-         imageId = context.getComputeService().templateBuilder().build().getImage().getId();
+         imageId = wrapper.getComputeService().templateBuilder().build().getImage().getId();
       }
    }
 

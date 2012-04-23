@@ -22,9 +22,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Set;
 
-import org.jclouds.openstack.nova.v1_1.domain.SecurityGroup;
 import org.jclouds.openstack.nova.v1_1.domain.SimpleTenantUsage;
-import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientExpectTest;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 

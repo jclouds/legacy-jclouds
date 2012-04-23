@@ -60,7 +60,7 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices();
+      client = wrapper.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices();
    }
 
    @Test
@@ -281,6 +281,6 @@ public class SecurityGroupClientLiveTest extends BaseComputeServiceContextLiveTe
 
    @AfterTest
    public void shutdown() {
-      context.close();
+      wrapper.close();
    }
 }

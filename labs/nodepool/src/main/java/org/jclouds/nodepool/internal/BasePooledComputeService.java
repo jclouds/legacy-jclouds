@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.ImageExtension;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -35,13 +36,12 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.nodepool.PooledComputeService;
 import org.jclouds.scriptbuilder.domain.Statement;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -260,6 +260,11 @@ public class BasePooledComputeService implements PooledComputeService {
    @Override
    public ExecResponse runScriptOnNode(String id, String runScript) {
       return backingComputeService.runScriptOnNode(id, runScript);
+   }
+
+   @Override
+   public Optional<ImageExtension> getImageExtension() {
+      return Optional.absent();
    }
 
 }

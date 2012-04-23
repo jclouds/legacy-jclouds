@@ -123,17 +123,25 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
                CacheLoader.from(Functions.forMap(ImmutableMap.of("expectedzone", extensions, "differentzone",
                         ImmutableSet.<Extension> of()))));
 
-      PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet fn = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {}  
-    	  
-         @Provides 
-    	 LoadingCache<String, Set<Extension>> getExtensions() { return extensionsForZone;}
+      PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet fn = Guice.createInjector(
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                  }
 
-    	 @Provides 
-    	 @Named("openstack.nova.extensions")
-         Multimap<URI, URI> getAliases() { return aliases;}
-      }).getInstance(PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
+                  @SuppressWarnings("unused")
+                  @Provides
+                  LoadingCache<String, Set<Extension>> getExtensions() {
+                     return extensionsForZone;
+                  }
+
+                  @SuppressWarnings("unused")
+                  @Provides
+                  @Named("openstack.nova.extensions")
+                  Multimap<URI, URI> getAliases() {
+                     return aliases;
+                  }
+               }).getInstance(PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensionsSet.class);
       
       return fn;
    }

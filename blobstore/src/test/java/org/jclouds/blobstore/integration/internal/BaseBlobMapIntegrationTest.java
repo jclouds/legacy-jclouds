@@ -73,7 +73,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    public void testValues() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
-         BlobMap map = createMap(context, bucketName);
+         BlobMap map = createMap(wrapper, bucketName);
 
          putFiveStrings(map);
          putFiveStringsUnderPath(map);
@@ -95,7 +95,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    public void testRemove() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String bucketName = getContainerName();
       try {
-         Map<String, Blob> map = createMap(context, bucketName);
+         Map<String, Blob> map = createMap(wrapper, bucketName);
          putStringWithMD5(map, "one", "two");
          assertConsistencyAwareContentEquals(map, "one", "two");
          // TODO track how often this occurs and potentially update map implementation
@@ -126,7 +126,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    public void testEntrySet() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
-         final BlobMap map = createMap(context, bucketName);
+         final BlobMap map = createMap(wrapper, bucketName);
          putFiveStrings(map);
          assertConsistencyAwareMapSize(map, 5);
          Set<Entry<String, Blob>> entries = map.entrySet();
@@ -159,9 +159,9 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    public void testContains() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String bucketName = getContainerName();
       try {
-         Map<String, Blob> map = createMap(context, bucketName);
+         Map<String, Blob> map = createMap(wrapper, bucketName);
          putStringWithMD5(map, "one", "apple");
-         Blob blob = context.getBlobStore().blobBuilder("one").payload("apple").calculateMD5().build();
+         Blob blob = wrapper.getBlobStore().blobBuilder("one").payload("apple").calculateMD5().build();
          assertConsistencyAwareContainsValue(map, blob);
       } finally {
          returnContainer(bucketName);
@@ -185,8 +185,8 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    public void testPut() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
-         Map<String, Blob> map = createMap(context, bucketName);
-         Blob blob = context.getBlobStore().blobBuilder("one").payload(Strings2.toInputStream("apple")).calculateMD5()
+         Map<String, Blob> map = createMap(wrapper, bucketName);
+         Blob blob = wrapper.getBlobStore().blobBuilder("one").payload(Strings2.toInputStream("apple")).calculateMD5()
                .build();
          Blob old = map.put(blob.getMetadata().getName(), blob);
          getOneReturnsAppleAndOldValueIsNull(map, old);
@@ -203,12 +203,12 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    public void testPutAll() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
-         Map<String, Blob> map = createMap(context, bucketName);
+         Map<String, Blob> map = createMap(wrapper, bucketName);
          ImmutableMap.Builder<String, Blob> newMap = ImmutableMap.builder();
          for (String key : fiveInputs.keySet()) {
             newMap.put(
                   key,
-                  context.getBlobStore().blobBuilder(key).payload(fiveInputs.get(key))
+                  wrapper.getBlobStore().blobBuilder(key).payload(fiveInputs.get(key))
                         .contentLength((long) fiveBytes.get(key).length).build());
          }
          map.putAll(newMap.build());
@@ -226,7 +226,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          return;
       String bucketName = getContainerName();
       try {
-         BlobMap map = createMap(context, bucketName);
+         BlobMap map = createMap(wrapper, bucketName);
          Builder<String> keySet = ImmutableSet.builder();
          for (int i = 0; i < maxResultsForTestListings() + 1; i++) {
             keySet.add(i + "");
@@ -250,7 +250,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
 
    @Override
    protected void putStringWithMD5(Map<String, Blob> map, String key, String text) throws IOException {
-      map.put(key, context.getBlobStore().blobBuilder(key).payload(text).calculateMD5().build());
+      map.put(key, wrapper.getBlobStore().blobBuilder(key).payload(text).calculateMD5().build());
    }
 
    protected void putFiveStrings(BlobMap map) {
@@ -277,7 +277,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
 
    @Override
    protected void addTenObjectsUnderPrefix(String containerName, String prefix) throws InterruptedException {
-      BlobMap blobMap = createMap(context, containerName, inDirectory(prefix));
+      BlobMap blobMap = createMap(wrapper, containerName, inDirectory(prefix));
       for (int i = 0; i < 10; i++) {
          blobMap.put(i + "", blobMap.blobBuilder().payload(i + "content").build());
       }
@@ -285,7 +285,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
 
    @Override
    protected void addTenObjectsUnderRoot(String containerName) throws InterruptedException {
-      BlobMap blobMap = createMap(context, containerName, ListContainerOptions.NONE);
+      BlobMap blobMap = createMap(wrapper, containerName, ListContainerOptions.NONE);
       for (int i = 0; i < 10; i++) {
          blobMap.put(i + "", blobMap.blobBuilder().payload(i + "content").build());
       }

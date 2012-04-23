@@ -18,11 +18,10 @@
  */
 package org.jclouds.aws.s3.blobstore.internal;
 
-import java.io.Closeable;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.aws.s3.blobstore.AWSS3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStore;
 import org.jclouds.aws.s3.blobstore.AWSS3BlobStoreContext;
@@ -45,7 +44,7 @@ import com.google.common.reflect.TypeToken;
 public class AWSS3BlobStoreContextImpl extends S3BlobStoreContextImpl implements AWSS3BlobStoreContext {
 
    @Inject
-   public AWSS3BlobStoreContextImpl(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType,
+   public AWSS3BlobStoreContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
             BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
             BlobRequestSigner blobRequestSigner) {

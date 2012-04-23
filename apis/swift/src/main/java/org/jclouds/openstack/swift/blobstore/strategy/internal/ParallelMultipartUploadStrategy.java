@@ -15,6 +15,7 @@ import org.jclouds.io.PayloadSlicer;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
 import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.SwiftApiMetadata;
 import org.jclouds.openstack.swift.blobstore.SwiftAsyncBlobStore;
 import org.jclouds.openstack.swift.blobstore.functions.BlobToObject;
 import org.jclouds.util.Throwables2;
@@ -91,8 +92,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
             latch.countDown();
             return;
         }
-        final CommonSwiftAsyncClient client = (CommonSwiftAsyncClient) ablobstore.getContext()
-                .getProviderSpecificContext().getAsyncApi();
+        final CommonSwiftAsyncClient client = ablobstore.getContext().unwrap(SwiftApiMetadata.CONTEXT_TOKEN).getAsyncApi();
         Payload chunkedPart = slicer.slice(payload, offset, size);
         logger.debug(String.format("async uploading part %s of %s to container %s", part, key, container));
         final long start = System.currentTimeMillis();
@@ -146,8 +146,7 @@ public class ParallelMultipartUploadStrategy implements AsyncMultipartUploadStra
                         long chunkSize = algorithm.getChunkSize();
                         long remaining = algorithm.getRemaining();
                         if (parts > 0) {
-                            CommonSwiftClient client = (CommonSwiftClient) ablobstore
-                                    .getContext().getProviderSpecificContext().getApi();
+                            CommonSwiftClient client = ablobstore.getContext().unwrap(SwiftApiMetadata.CONTEXT_TOKEN).getApi();
                             final Map<Integer, ListenableFuture<String>> futureParts =
                                     new ConcurrentHashMap<Integer, ListenableFuture<String>>();
                             final Map<Integer, Exception> errorMap = Maps.newHashMap();

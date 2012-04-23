@@ -20,12 +20,12 @@ package org.jclouds.compute.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Closeable;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.Utils;
@@ -34,7 +34,6 @@ import org.jclouds.internal.BaseWrapper;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
 
-import com.google.common.io.Closeables;
 import com.google.common.reflect.TypeToken;
 
 /**
@@ -44,19 +43,29 @@ import com.google.common.reflect.TypeToken;
 public class ComputeServiceContextImpl extends BaseWrapper implements ComputeServiceContext {
    private final ComputeService computeService;
    private final Utils utils;
-   private final Map<String, Credentials> credentialStore;
 
    @Inject
-   public ComputeServiceContextImpl(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType,
-            ComputeService computeService, Map<String, Credentials> credentialStore, Utils utils) {
+   public ComputeServiceContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
+            ComputeService computeService, Utils utils) {
       super(wrapped, wrappedType);
-      this.credentialStore = credentialStore;
-      this.utils = utils;
       this.computeService = checkNotNull(computeService, "computeService");
+      this.utils = checkNotNull(utils, "utils");
    }
-
+   
+   @Override
    public ComputeService getComputeService() {
       return computeService;
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public <S, A> RestContext<S, A> getProviderSpecificContext() {
+      return (RestContext<S, A>) delegate();
+   }
+
+   @Override
+   public void close() {
+      delegate().close();
    }
 
    @Override
@@ -70,38 +79,13 @@ public class ComputeServiceContextImpl extends BaseWrapper implements ComputeSer
    }
 
    @Override
-   public Map<String, Credentials> getCredentialStore() {
-      return credentialStore;
-   }
-
-   @Override
    public Map<String, Credentials> credentialStore() {
-      return credentialStore;
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) getWrapped();
+      return utils().credentialStore();
    }
 
    @Override
-   public void close() {
-      Closeables.closeQuietly(getWrapped());
-   }
-
-   public int hashCode() {
-      return getWrapped().hashCode();
-   }
-
-   @Override
-   public String toString() {
-      return getWrapped().toString();
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      return getWrapped().equals(obj);
+   public Map<String, Credentials> getCredentialStore() {
+      return utils().credentialStore();
    }
 
 }

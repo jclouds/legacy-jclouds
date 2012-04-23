@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.apis.BaseWrapperLiveTest;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
@@ -59,7 +59,7 @@ import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Module;
 
-public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreContext> {
+public class BaseBlobStoreIntegrationTest extends BaseWrapperLiveTest<BlobStoreContext> {
    protected static final String LOCAL_ENCODING = System.getProperty("file.encoding");
    protected static final String XML_STRING_FORMAT = "<apples><apple name=\"%s\"></apple> </apples>";
    protected static final String TEST_STRING = String.format(XML_STRING_FORMAT, "apple");
@@ -90,9 +90,9 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
    @BeforeSuite
    public void setUpResourcesForAllThreads(ITestContext testContext) throws Exception {
       setupContext();
-      createContainersSharedByAllThreads(context, testContext);
-      context.close();
-      context = null;
+      createContainersSharedByAllThreads(wrapper, testContext);
+      wrapper.close();
+      wrapper = null;
    }
    
    protected Iterable<Module> setupModules() {
@@ -119,7 +119,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
       if (exec != null) {
          exec.shutdownNow();
       }
-      context.close();
+      wrapper.close();
    }
 
    private static volatile boolean initialized = false;
@@ -224,7 +224,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
    }
 
    protected void assertConsistencyAware(Runnable assertion) throws InterruptedException {
-      assertConsistencyAware(context, assertion);
+      assertConsistencyAware(wrapper, assertion);
    }
 
    protected static void createContainerAndEnsureEmpty(BlobStoreContext context, final String containerName)
@@ -236,7 +236,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
    }
 
    protected void createContainerAndEnsureEmpty(String containerName) throws InterruptedException {
-      createContainerAndEnsureEmpty(context, containerName);
+      createContainerAndEnsureEmpty(wrapper, containerName);
    }
 
    protected String addBlobToContainer(String sourceContainer, String key) {
@@ -244,20 +244,20 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
    }
 
    protected String addBlobToContainer(String sourceContainer, String key, String payload, String contentType) {
-      Blob sourceObject = context.getBlobStore().blobBuilder(key).payload(payload).contentType(contentType).build();
+      Blob sourceObject = wrapper.getBlobStore().blobBuilder(key).payload(payload).contentType(contentType).build();
       return addBlobToContainer(sourceContainer, sourceObject);
    }
 
    protected void add5BlobsUnderPathAnd5UnderRootToContainer(String sourceContainer) {
       for (Entry<String, String> entry : Iterables.concat(fiveStrings.entrySet(), fiveStringsUnderPath.entrySet())) {
-         Blob sourceObject = context.getBlobStore().blobBuilder(entry.getKey()).payload(entry.getValue())
+         Blob sourceObject = wrapper.getBlobStore().blobBuilder(entry.getKey()).payload(entry.getValue())
                .contentType("text/xml").build();
          addBlobToContainer(sourceContainer, sourceObject);
       }
    }
 
    protected String addBlobToContainer(String sourceContainer, Blob object) {
-      return context.getBlobStore().putBlob(sourceContainer, object);
+      return wrapper.getBlobStore().putBlob(sourceContainer, object);
    }
 
    protected <T extends BlobMetadata> T validateMetadata(T md, String container, String name) {
@@ -269,7 +269,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
 
    protected Blob validateContent(String container, String name) throws InterruptedException {
       assertConsistencyAwareContainerSize(container, 1);
-      Blob newObject = context.getBlobStore().getBlob(container, name);
+      Blob newObject = wrapper.getBlobStore().getBlob(container, name);
       assert newObject != null;
       validateMetadata(newObject.getMetadata(), container, name);
       try {
@@ -285,9 +285,9 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert context.getBlobStore().countBlobs(containerName) == count : String.format(
+               assert wrapper.getBlobStore().countBlobs(containerName) == count : String.format(
                      "expected only %d values in %s: %s", count, containerName, ImmutableSet.copyOf(Iterables
-                           .transform(context.getBlobStore().list(containerName),
+                           .transform(wrapper.getBlobStore().list(containerName),
                                  new Function<StorageMetadata, String>() {
 
                                     public String apply(StorageMetadata from) {
@@ -307,9 +307,9 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert context.getBlobStore().blobExists(containerName, name) : String.format(
+               assert wrapper.getBlobStore().blobExists(containerName, name) : String.format(
                      "could not find %s in %s: %s", name, containerName, ImmutableSet.copyOf(Iterables.transform(
-                           context.getBlobStore().list(containerName), new Function<StorageMetadata, String>() {
+                           wrapper.getBlobStore().list(containerName), new Function<StorageMetadata, String>() {
 
                               public String apply(StorageMetadata from) {
                                  return from.getName();
@@ -328,7 +328,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert !context.getBlobStore().blobExists(containerName, name) : String.format("found %s in %s", name,
+               assert !wrapper.getBlobStore().blobExists(containerName, name) : String.format("found %s in %s", name,
                      containerName);
             } catch (Exception e) {
                Throwables.propagateIfPossible(e);
@@ -367,7 +367,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
           * *substantially* slow down tests on a real server over a network.
           */
          if (SANITY_CHECK_RETURNED_BUCKET_NAME) {
-            if (!Iterables.any(context.getBlobStore().list(), new Predicate<StorageMetadata>() {
+            if (!Iterables.any(wrapper.getBlobStore().list(), new Predicate<StorageMetadata>() {
                public boolean apply(StorageMetadata md) {
                   return containerName.equals(md.getName());
                }
@@ -382,7 +382,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
+               assert !wrapper.getBlobStore().containerExists(containerName) : "container " + containerName
                      + " still exists";
             } catch (Exception e) {
                propagateIfPossible(e);
@@ -416,7 +416,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
    private String allocateNewContainerName(final String container) {
       exec.submit(new Runnable() {
          public void run() {
-            deleteContainerOrWarnIfUnable(context, container);
+            deleteContainerOrWarnIfUnable(wrapper, container);
          }
       });
       String newScratchContainer = container + containerIndex.incrementAndGet();
@@ -429,7 +429,7 @@ public class BaseBlobStoreIntegrationTest extends BaseContextLiveTest<BlobStoreC
    }
 
    @Override
-   protected TypeToken<BlobStoreContext> contextType() {
+   protected TypeToken<BlobStoreContext> wrapperType() {
       return TypeToken.of(BlobStoreContext.class);
    }
 

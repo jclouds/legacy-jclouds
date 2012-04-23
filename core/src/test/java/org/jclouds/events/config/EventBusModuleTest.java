@@ -40,9 +40,8 @@ import com.google.inject.name.Names;
  * 
  * @author Ignasi Barrera
  */
-@Test(groups = "unit")
-public class EventBusModuleTest
-{
+@Test(groups = "unit", testName = "EventBusModuleTest")
+public class EventBusModuleTest {
     private Injector injector;
     
     @BeforeMethod

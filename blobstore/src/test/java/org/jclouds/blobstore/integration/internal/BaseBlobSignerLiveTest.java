@@ -41,15 +41,15 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       String name = "hello";
       String text = "fooooooooooooooooooooooo";
 
-      Blob blob = context.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      Blob blob = wrapper.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
       String container = getContainerName();
       try {
-         context.getBlobStore().putBlob(container, blob);
+         wrapper.getBlobStore().putBlob(container, blob);
          assertConsistencyAwareContainerSize(container, 1);
-         HttpRequest request = context.getSigner().signRemoveBlob(container, name);
+         HttpRequest request = wrapper.getSigner().signRemoveBlob(container, name);
          assertEquals(request.getFilters().size(), 0);
-         context.utils().http().invoke(request);
-         assert !context.getBlobStore().blobExists(container, name);
+         wrapper.utils().http().invoke(request);
+         assert !wrapper.getBlobStore().blobExists(container, name);
       } finally {
          returnContainer(container);
       }
@@ -60,14 +60,14 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       String name = "hello";
       String text = "fooooooooooooooooooooooo";
 
-      Blob blob = context.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      Blob blob = wrapper.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
       String container = getContainerName();
       try {
-         context.getBlobStore().putBlob(container, blob);
+         wrapper.getBlobStore().putBlob(container, blob);
          assertConsistencyAwareContainerSize(container, 1);
-         HttpRequest request = context.getSigner().signGetBlob(container, name);
+         HttpRequest request = wrapper.getSigner().signGetBlob(container, name);
          assertEquals(request.getFilters().size(), 0);
-         assertEquals(Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput()), text);
+         assertEquals(Strings2.toStringAndClose(wrapper.utils().http().invoke(request).getPayload().getInput()), text);
       } finally {
          returnContainer(container);
       }
@@ -78,14 +78,14 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       String name = "hello";
       String text = "fooooooooooooooooooooooo";
 
-      Blob blob = context.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      Blob blob = wrapper.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
       String container = getContainerName();
       try {
-         context.getBlobStore().putBlob(container, blob);
+         wrapper.getBlobStore().putBlob(container, blob);
          assertConsistencyAwareContainerSize(container, 1);
-         HttpRequest request = context.getSigner().signGetBlob(container, name, range(0, 1));
+         HttpRequest request = wrapper.getSigner().signGetBlob(container, name, range(0, 1));
          assertEquals(request.getFilters().size(), 0);
-         assertEquals(Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput()), "fo");
+         assertEquals(Strings2.toStringAndClose(wrapper.utils().http().invoke(request).getPayload().getInput()), "fo");
       } finally {
          returnContainer(container);
       }
@@ -96,12 +96,12 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       String name = "hello";
       String text = "fooooooooooooooooooooooo";
 
-      Blob blob = context.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
+      Blob blob = wrapper.getBlobStore().blobBuilder(name).payload(text).contentType("text/plain").build();
       String container = getContainerName();
       try {
-         HttpRequest request = context.getSigner().signPutBlob(container, blob);
+         HttpRequest request = wrapper.getSigner().signPutBlob(container, blob);
          assertEquals(request.getFilters().size(), 0);
-         Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput());
+         Strings2.toStringAndClose(wrapper.utils().http().invoke(request).getPayload().getInput());
          assertConsistencyAwareContainerSize(container, 1);
       } finally {
          returnContainer(container);

@@ -20,7 +20,6 @@ package org.jclouds.savvis.vpdc.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.rest.config.BinderUtils.bindClientAndAsyncClient;
 import static org.jclouds.savvis.vpdc.reference.VPDCConstants.PROPERTY_VPDC_TIMEOUT_TASK_COMPLETED;
@@ -42,6 +41,7 @@ import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.ImplicitLocationSupplier;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.MemoizedRetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.savvis.vpdc.VPDCAsyncClient;
@@ -105,7 +105,7 @@ public class VPDCRestClientModule extends RestClientModule<VPDCClient, VPDCAsync
    @org.jclouds.savvis.vpdc.internal.Org
    @Singleton
    protected Supplier<Set<org.jclouds.savvis.vpdc.domain.Resource>> provideOrgs(Supplier<VCloudSession> cache,
-            @Named(PROPERTY_IDENTITY) final String user) {
+            @Identity final String user) {
       return Suppliers.compose(new Function<VCloudSession, Set<org.jclouds.savvis.vpdc.domain.Resource>>() {
 
          @Override

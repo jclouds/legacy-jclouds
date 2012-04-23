@@ -21,15 +21,14 @@ package org.jclouds.rimuhosting.miro.filters;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.Constants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.rest.annotations.Identity;
 
 /**
  * RimuHosting Authentication is a Authorization Header.
@@ -43,7 +42,7 @@ public class RimuHostingAuthentication implements HttpRequestFilter {
    private final String header;
 
    @Inject
-   public RimuHostingAuthentication(@Named(Constants.PROPERTY_IDENTITY) String apikey) {
+   public RimuHostingAuthentication(@Identity String apikey) {
       this.header = String.format("rimuhosting apikey=%s", checkNotNull(apikey, "apikey"));
    }
 

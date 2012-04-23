@@ -18,8 +18,7 @@
  */
 package org.jclouds.rest;
 
-import java.io.Closeable;
-
+import org.jclouds.Context;
 import org.jclouds.Wrapper;
 import org.jclouds.apis.Apis;
 
@@ -48,7 +47,7 @@ public class Providers {
     * (supported-clouds).
     * 
     */
-   public static <C extends Closeable> Iterable<String> getSupportedProvidersOfType(TypeToken<? extends Wrapper> type) {
+   public static <C extends Context> Iterable<String> getSupportedProvidersOfType(TypeToken<? extends Wrapper> type) {
       Builder<String> builder = ImmutableSet.<String> builder();
       builder.addAll(Iterables.transform(Apis.contextWrappableAs(type), Apis.idFunction()));
       builder.addAll(Iterables.transform(org.jclouds.providers.Providers.contextWrappableAs(type),

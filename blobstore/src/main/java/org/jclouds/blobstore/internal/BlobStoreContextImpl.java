@@ -20,11 +20,10 @@ package org.jclouds.blobstore.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Closeable;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobRequestSigner;
@@ -55,7 +54,7 @@ public class BlobStoreContextImpl extends BaseWrapper implements BlobStoreContex
    private final BlobRequestSigner blobRequestSigner;
 
    @Inject
-   public BlobStoreContextImpl(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType,
+   public BlobStoreContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
             BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
             BlobRequestSigner blobRequestSigner) {
@@ -122,26 +121,26 @@ public class BlobStoreContextImpl extends BaseWrapper implements BlobStoreContex
    @SuppressWarnings("unchecked")
    @Override
    public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) getWrapped();
+      return (RestContext<S, A>) delegate();
    }
 
    @Override
    public void close() {
-      Closeables.closeQuietly(getWrapped());
+      Closeables.closeQuietly(delegate());
    }
 
    public int hashCode() {
-      return getWrapped().hashCode();
+      return delegate().hashCode();
    }
 
    @Override
    public String toString() {
-      return getWrapped().toString();
+      return delegate().toString();
    }
 
    @Override
    public boolean equals(Object obj) {
-      return getWrapped().equals(obj);
+      return delegate().equals(obj);
    }
 
 }

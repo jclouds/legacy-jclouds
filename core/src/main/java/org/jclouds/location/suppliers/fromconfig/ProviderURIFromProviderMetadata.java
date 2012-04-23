@@ -18,22 +18,19 @@
  */
 package org.jclouds.location.suppliers.fromconfig;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.location.suppliers.ProviderURISupplier;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.suppliers.URIFromStringSupplier;
 
 @Singleton
-public class ProviderURIFromConfiguration extends URIFromStringSupplier implements
+public class ProviderURIFromProviderMetadata extends URIFromStringSupplier implements
          ProviderURISupplier {
    @Inject
-   protected ProviderURIFromConfiguration(@Named(PROPERTY_ENDPOINT) String endpoint) {
-      super(checkNotNull(endpoint, PROPERTY_ENDPOINT));
+   protected ProviderURIFromProviderMetadata(ProviderMetadata in) {
+      super(in.getEndpoint());
    }
 
 }

@@ -19,13 +19,8 @@
 package org.jclouds.http.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
-
-import java.io.UnsupportedEncodingException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -35,6 +30,8 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 
 /**
  * Uses Basic Authentication to sign the request.
@@ -49,11 +46,10 @@ public class BasicAuthentication implements HttpRequestFilter {
    private final String header;
 
    @Inject
-   public BasicAuthentication(@Named(PROPERTY_IDENTITY) String user, @Named(PROPERTY_CREDENTIAL) String password,
-         Crypto crypto) throws UnsupportedEncodingException {
+   public BasicAuthentication(@Identity String user, @Credential String password, Crypto crypto) {
       this.header = "Basic "
-            + CryptoStreams.base64(String.format("%s:%s", checkNotNull(user, "user"),
-                  checkNotNull(password, "password")).getBytes("UTF-8"));
+               + CryptoStreams.base64(String.format("%s:%s", checkNotNull(user, "user"),
+                        checkNotNull(password, "password")).getBytes());
    }
 
    @Override

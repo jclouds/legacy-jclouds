@@ -28,19 +28,18 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTION_REUSE;
 import static org.jclouds.Constants.PROPERTY_MAX_SESSION_FAILURES;
 import static org.jclouds.Constants.PROPERTY_PRETTY_PRINT_PAYLOADS;
+import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
-import static org.jclouds.Constants.PROPERTY_SCHEDULER_THREADS;
 
-import java.io.Closeable;
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.Context;
 import org.jclouds.Wrapper;
 import org.jclouds.apis.ApiMetadata;
-import org.jclouds.lifecycle.Closer;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -95,7 +94,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
       protected Properties defaultProperties = BaseApiMetadata.defaultProperties();
       protected URI documentation;
       //
-      protected TypeToken<? extends Closeable> context = TypeToken.of(Closer.class);
+      protected TypeToken<? extends Context> context = TypeToken.of(Context.class);
       protected Set<Class<? extends Module>> defaultModules = ImmutableSet.of();
 
       /**
@@ -235,7 +234,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
        * {@inheritDoc}
        */
       @Override
-      public Builder context(TypeToken<? extends Closeable> context) {
+      public Builder context(TypeToken<? extends Context> context) {
          this.context = checkNotNull(context, "context");
          return this;
       }
@@ -289,7 +288,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
    protected final Optional<String> defaultCredential;
    protected final Properties defaultProperties;
    protected final URI documentation;
-   protected final TypeToken<? extends Closeable> context;
+   protected final TypeToken<? extends Context> context;
    protected final Set<Class<? extends Module>> defaultModules;
 
    protected BaseApiMetadata(Builder builder) {
@@ -302,7 +301,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
    public BaseApiMetadata(String id, String name, Set<TypeToken<? extends Wrapper>> wrappers, String endpointName, String identityName,
             Optional<String> credentialName, String version, Optional<String> buildVersion,
             Optional<String> defaultEndpoint, Optional<String> defaultIdentity, Optional<String> defaultCredential,
-            Properties defaultProperties, URI documentation, TypeToken<? extends Closeable> context,
+            Properties defaultProperties, URI documentation, TypeToken<? extends Context> context,
             Set<Class<? extends Module>> defaultModules) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
@@ -458,7 +457,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
     * {@inheritDoc}
     */
    @Override
-   public TypeToken<? extends Closeable> getContext() {
+   public TypeToken<? extends Context> getContext() {
       return context;
    }
 

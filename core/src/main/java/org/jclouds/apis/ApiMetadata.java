@@ -18,12 +18,12 @@
  */
 package org.jclouds.apis;
 
-import java.io.Closeable;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.Context;
 import org.jclouds.Wrapper;
 import org.jclouds.javax.annotation.Nullable;
 
@@ -56,7 +56,7 @@ public interface ApiMetadata extends Serializable {
       /**
        * @see ApiMetadata#getContext()
        */
-      Builder context(TypeToken<? extends Closeable> context);
+      Builder context(TypeToken<? extends Context> context);
 
       /**
        * @see ApiMetadata#getWrappers()
@@ -262,7 +262,7 @@ public interface ApiMetadata extends Serializable {
    /**
     * @return the primary context of this api, for example {@code RestContext<EC2Client, EC2AsyncClient>}
     */
-   TypeToken<? extends Closeable> getContext();
+   TypeToken<? extends Context> getContext();
    
    /**
     * @return types of contexts this can be transformed into, for example {@code BlobStoreContext}
