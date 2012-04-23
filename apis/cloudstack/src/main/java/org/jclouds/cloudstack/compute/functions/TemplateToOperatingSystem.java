@@ -72,14 +72,14 @@ public class TemplateToOperatingSystem implements Function<Template, OperatingSy
 
       OSType type = osTypes.get().get(from.getOSTypeId());
       if (type == null) {
-         logger.warn("type for template %s not found in %s", from, osTypes.get());
+         logger.warn("Template refers to OS type ID %s but this does not exist. Template=%s Known OS types=%s", from.getOSTypeId(), from, osTypes.get());
          return builder.build();
       }
       builder.description(type.getDescription());
       builder.is64Bit(type.getDescription().indexOf("64-bit") != -1);
       String osCategory = osCategories.get().get(type.getOSCategoryId());
       if (osCategory == null) {
-         logger.warn("category for OSType %s not found in %s", type, osCategories.get());
+         logger.warn("OS type refers to OS category ID %s but this does not exist. OS type=%s Known OS categories=%s", type.getOSCategoryId(), type, osCategories.get());
          return builder.build();
       }
       builder.name(osCategory);
