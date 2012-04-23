@@ -31,7 +31,6 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.util.logging.Logger.getAnonymousLogger;
-import static org.jclouds.compute.RunScriptData.JBOSS7_URL;
 import static org.jclouds.compute.RunScriptData.JBOSS_HOME;
 import static org.jclouds.compute.RunScriptData.installAdminUserJBossAndOpenPorts;
 import static org.jclouds.compute.RunScriptData.startJBoss;
@@ -49,8 +48,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -91,7 +88,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.scriptbuilder.domain.SaveHttpResponseTo;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.scriptbuilder.statements.java.InstallJDK;
 import org.jclouds.scriptbuilder.statements.login.AdminAccess;
@@ -109,9 +105,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.net.InetAddresses;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.annotations.SerializedName;
 import com.google.inject.Module;
 
 /**
@@ -608,21 +602,6 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    // started in 6462ms -
    public static final Pattern JBOSS_PATTERN = Pattern.compile("started in ([0-9]+)ms -");
 
-   private static class FreeGeoIPLocation {
-      private String ip;
-      @SerializedName("countrycode")
-      private String countryCode;
-      @SerializedName("regioncode")
-      private String regionCode;
-      private String city;
-
-      @Override
-      public String toString() {
-         return format("FreeGeoIPLocation [ip=%s, countryCode=%s, regionCode=%s, city=%s]", ip, countryCode,
-               regionCode, city);
-      }
-   }
-
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
@@ -671,32 +650,6 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
                            format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
                                  JBOSS_HOME)), configureSeconds));
 
-         for (Entry<String, URI> download : ImmutableMap.<String, URI> of("jboss7", JBOSS7_URL, "jdk7",
-               URI.create("http://download.oracle.com/otn-pub/java/jdk/7/jdk-7-linux-x64.tar.gz")).entrySet()) {
-            // note we cannot use nslookup until we've configured the system, as
-            // it may have not been present checking the address of the download
-            // host using the local node's DNS config
-            String downloadSourceIp = exec(
-                  nodeId,
-                  format("nslookup -query=a -timeout=5 %s|grep Address|tail -1|sed 's/.* //g'", download.getValue()
-                        .getHost()));
-            if (InetAddresses.isInetAddress(downloadSourceIp)) {
-               getAnonymousLogger().info(
-                     format("<< location of %s(%s) from perpective of node(%s): %s", download.getKey(), download
-                           .getValue().getHost(), nodeId, getLocationForIp(downloadSourceIp)));
-            }
-         }
-
-         // the current IP configuration could show NAT destinations, as opposed
-         // to the real ip address of the host, so we'll use checkip to see what
-         // the world view this host as.
-         String nodeIp = exec(nodeId, SaveHttpResponseTo.CURL + " http://checkip.amazonaws.com/");
-         if (InetAddresses.isInetAddress(nodeIp)) {
-            getAnonymousLogger()
-                  .info(format("<< location of node(%s) from perspective of amazonaws: %s", nodeId,
-                        getLocationForIp(nodeIp)));
-         }
-
          trackAvailabilityOfProcessOnNode(wrapper.utils().userExecutor().submit(new Callable<ExecResponse>() {
             @Override
             public ExecResponse call() {
@@ -731,17 +684,6 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          client.destroyNodesMatching(inGroup(group));
       }
 
-   }
-
-   protected String getLocationForIp(String ip) throws IOException {
-      InputStream json = wrapper.utils().http().get(URI.create("http://freegeoip.appspot.com/" + ip));
-      String text = null;
-      if (json != null && (text = Strings2.toStringAndClose(json)).indexOf("}") != -1) {
-         return wrapper.utils().json().fromJson(text, FreeGeoIPLocation.class).toString();
-      } else {
-         getAnonymousLogger().warning("could not get info on ip " + ip + "; check freegeoip");
-      }
-      return ip;
    }
 
    protected String exec(final String nodeId, String command) {
