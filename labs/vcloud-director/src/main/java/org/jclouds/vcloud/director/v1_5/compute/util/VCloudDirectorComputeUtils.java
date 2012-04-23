@@ -48,7 +48,7 @@ import com.google.inject.Inject;
  * 
  * @author danikov
  */
-public class VCloudComputeUtils {
+public class VCloudDirectorComputeUtils {
    
    public static OperatingSystem toComputeOs(VApp vApp, OperatingSystem defaultOs) {
       CIMOperatingSystem cimOs = toComputeOs(vApp);
@@ -109,8 +109,11 @@ public class VCloudComputeUtils {
       // TODO make this work with composite vApps
       if (vApp.getChildren().getVms().size() == 0)
          return ImmutableSet.of();
+      return getIpsFromVm(Iterables.get(vApp.getChildren().getVms(), 0));
+   }
+   
+   public static Set<String> getIpsFromVm(Vm vm) {
       Builder<String> ips = ImmutableSet.builder();
-      Vm vm = Iterables.get(vApp.getChildren().getVms(), 0);
       // TODO: figure out how to differentiate public from private ip addresses
       // assumption is that we'll do this from the network object, which may
       // have
@@ -119,7 +122,7 @@ public class VCloudComputeUtils {
       // parsing. At worst, we could have properties set per cloud provider to
       // declare the networks which are public, then check against these in
       // networkconnection.getNetwork
-      NetworkConnectionSection networkConnectionSection = findNetworkConnectionSectionForVApp.apply(vApp);
+      NetworkConnectionSection networkConnectionSection = findNetworkConnectionSectionForVApp.apply(vm);
       if (networkConnectionSection != null) {
          for (NetworkConnection connection : networkConnectionSection.getNetworkConnections()) {
             if (connection.getIpAddress() != null)
@@ -128,7 +131,7 @@ public class VCloudComputeUtils {
                ips.add(connection.getExternalIpAddress());
          }
       } else {
-         for (ResourceAllocationSettingData net : filter(findVirtualHardwareSectionForVApp.apply(vApp).getItems(),
+         for (ResourceAllocationSettingData net : filter(findVirtualHardwareSectionForVApp.apply(vm).getItems(),
                CIMPredicates.resourceTypeIn(ResourceType.ETHERNET_ADAPTER))) {
             // FIXME: not yet implemented
 //            if (net instanceof VCloudNetworkAdapter) {

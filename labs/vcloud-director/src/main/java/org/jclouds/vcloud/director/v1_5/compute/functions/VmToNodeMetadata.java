@@ -21,9 +21,9 @@ package org.jclouds.vcloud.director.v1_5.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Iterables.filter;
-import static org.jclouds.vcloud.director.v1_5.compute.util.VCloudComputeUtils.getCredentialsFrom;
-import static org.jclouds.vcloud.director.v1_5.compute.util.VCloudComputeUtils.getIpsFromVApp;
-import static org.jclouds.vcloud.director.v1_5.compute.util.VCloudComputeUtils.toComputeOs;
+import static org.jclouds.vcloud.director.v1_5.compute.util.VCloudDirectorComputeUtils.getCredentialsFrom;
+import static org.jclouds.vcloud.director.v1_5.compute.util.VCloudDirectorComputeUtils.getIpsFromVm;
+import static org.jclouds.vcloud.director.v1_5.compute.util.VCloudDirectorComputeUtils.toComputeOs;
 
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +42,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.InetAddresses2.IsPrivateIPAddress;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
-import org.jclouds.vcloud.director.v1_5.domain.VApp;
+import org.jclouds.vcloud.director.v1_5.domain.Vm;
 import org.jclouds.vcloud.director.v1_5.predicates.LinkPredicates;
 
 import com.google.common.base.Function;
@@ -52,28 +52,28 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
+public class VmToNodeMetadata implements Function<Vm, NodeMetadata> {
    @Resource
    protected static Logger logger = Logger.NULL;
 
    protected final FindLocationForResource findLocationForResourceInVDC;
-   protected final Function<VApp, Hardware> hardwareForVApp;
+   protected final Function<Vm, Hardware> hardwareForVm;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
    protected final Map<String, Credentials> credentialStore;
    protected final GroupNamingConvention nodeNamingConvention;
 
    @Inject
-   protected VAppToNodeMetadata(Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
-         FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp,
+   protected VmToNodeMetadata(Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
+         FindLocationForResource findLocationForResourceInVDC, Function<Vm, Hardware> hardwareForVm,
          GroupNamingConvention.Factory namingConvention) {
       this.nodeNamingConvention = checkNotNull(namingConvention, "namingConvention").createWithoutPrefix();
-      this.hardwareForVApp = checkNotNull(hardwareForVApp, "hardwareForVApp");
+      this.hardwareForVm = checkNotNull(hardwareForVm, "hardwareForVm");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
    }
 
-   public NodeMetadata apply(VApp from) {
+   public NodeMetadata apply(Vm from) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       builder.ids(from.getHref().toASCIIString());
       builder.uri(from.getHref());
@@ -82,10 +82,10 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.location(findLocationForResourceInVDC.apply(
             Iterables.find(from.getLinks(), LinkPredicates.typeEquals(VCloudDirectorMediaType.VDC))));
       builder.group(nodeNamingConvention.groupInUniqueNameOrNull(from.getName()));
-      builder.operatingSystem(toComputeOs(from, null));
-      builder.hardware(hardwareForVApp.apply(from));
+      builder.operatingSystem(toComputeOs(from));
+      builder.hardware(hardwareForVm.apply(from));
       builder.state(vAppStatusToNodeState.get(from.getStatus()));
-      Set<String> addresses = getIpsFromVApp(from);
+      Set<String> addresses = getIpsFromVm(from);
       builder.publicAddresses(filter(addresses, not(IsPrivateIPAddress.INSTANCE)));
       builder.privateAddresses(filter(addresses, IsPrivateIPAddress.INSTANCE));
 
