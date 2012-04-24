@@ -44,6 +44,7 @@ public class NovaCreateSecurityGroupIfNeeded extends CreateSecurityGroupIfNeeded
       super(checkNotNull(ec2Client, "ec2Client").getSecurityGroupServices(), securityGroupEventualConsistencyDelay);
    }
 
+   @Override
    protected void authorizeGroupToItself(String region, String name) {
       try {
          super.authorizeGroupToItself(region, name);

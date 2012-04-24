@@ -300,6 +300,14 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
       }
 
       /**
+       * @see AWSEC2TemplateOptions#noMarkerGroup
+       */
+      public static AWSEC2TemplateOptions noMarkerGroup() {
+         AWSEC2TemplateOptions options = new AWSEC2TemplateOptions();
+         return options.noMarkerGroup();
+      }
+
+      /**
        * @see AWSEC2TemplateOptions#placementGroup
        */
       public static AWSEC2TemplateOptions placementGroup(String placementGroup) {
@@ -465,6 +473,14 @@ public class AWSEC2TemplateOptions extends EC2TemplateOptions implements Cloneab
    @Override
    public AWSEC2TemplateOptions noKeyPair() {
       return AWSEC2TemplateOptions.class.cast(super.noKeyPair());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public AWSEC2TemplateOptions noMarkerGroup() {
+      return AWSEC2TemplateOptions.class.cast(super.noMarkerGroup());
    }
 
    /**

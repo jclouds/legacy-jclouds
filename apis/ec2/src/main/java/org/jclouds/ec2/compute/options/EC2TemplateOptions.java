@@ -86,6 +86,7 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    private Set<String> groupNames = ImmutableSet.of();
    private String keyPair = null;
    private boolean noKeyPair;
+   private boolean noMarkerGroup = false;
    private byte[] userData;
    private ImmutableSet.Builder<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.builder();
 
@@ -137,6 +138,14 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
    public EC2TemplateOptions noKeyPair() {
       checkState(keyPair == null, "you cannot specify both options keyPair and noKeyPair");
       this.noKeyPair = true;
+      return this;
+   }
+
+   /**
+    * Do not use a marker security group on instances
+    */
+   public EC2TemplateOptions noMarkerGroup() {
+      this.noMarkerGroup = true;
       return this;
    }
 
@@ -247,6 +256,14 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
       public static EC2TemplateOptions noKeyPair() {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.noKeyPair());
+      }
+
+      /**
+       * @see EC2TemplateOptions#noMarkerGroup
+       */
+      public static EC2TemplateOptions noMarkerGroup() {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.noMarkerGroup());
       }
 
       // methods that only facilitate returning the correct object type
@@ -468,6 +485,13 @@ public class EC2TemplateOptions extends TemplateOptions implements Cloneable {
     */
    public boolean shouldAutomaticallyCreateKeyPair() {
       return !noKeyPair;
+   }
+
+   /**
+    * @return true (default) if we are supposed to use a marker group
+    */
+   public boolean shouldUseMarkerGroup() {
+      return !noMarkerGroup;
    }
 
    /**
