@@ -18,13 +18,15 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
 /**
- * An Openstack Nova Volume Attachment
+ * An Openstack Nova Volume Attachment (describes how Volumes are attached to Servers)
  */
 public class VolumeAttachment {
 
@@ -92,27 +94,28 @@ public class VolumeAttachment {
    private final String device;
 
    protected VolumeAttachment(Builder<?> builder) {
-      this.id = builder.id;
-      this.volumeId = builder.volumeId;
+      this.id = checkNotNull(builder.id, "id");
+      this.volumeId = checkNotNull(builder.volumeId, "volumeId");
       this.serverId = builder.serverId;
       this.device = builder.device;
    }
 
    /**
+    * @return the attachment id (typically the same as #getVolumeId())
     */
-   @Nullable
    public String getId() {
       return this.id;
    }
 
    /**
+    * @return the id of the volume attached
     */
-   @Nullable
    public String getVolumeId() {
       return this.volumeId;
    }
 
    /**
+    * @return the id of the server the volume is attached to
     */
    @Nullable
    public String getServerId() {
@@ -120,6 +123,7 @@ public class VolumeAttachment {
    }
 
    /**
+    * @return the device name (e.g. "/dev/vdc")
     */
    @Nullable
    public String getDevice() {

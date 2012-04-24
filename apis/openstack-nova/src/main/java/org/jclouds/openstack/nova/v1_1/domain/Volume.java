@@ -193,40 +193,46 @@ public class Volume {
       this.snapshotId = builder.snapshotId;
       this.name = builder.name;
       this.description = builder.description;
-      this.metadata = ImmutableMap.copyOf(builder.metadata);
+      this.metadata = ImmutableMap.copyOf(checkNotNull(builder.metadata, "metadata"));
    }
 
    /**
+    * @return the id of this volume
     */
    public String getId() {
       return this.id;
    }
 
    /**
+    * @return the status of this volume
     */
    public Status getStatus() {
       return this.status;
    }
 
    /**
+    * @return the size in GB of this volume
     */
    public int getSize() {
       return this.size;
    }
 
    /**
+    * @return the availabilityZone containing this volume
     */
    public String getZone() {
       return this.zone;
    }
 
    /**
+    * @return the time this volume was created
     */
    public Date getCreated() {
       return this.created;
    }
 
    /**
+    * @return the set of attachments (to Servers)
     */
    @Nullable
    public Set<VolumeAttachment> getAttachments() {
@@ -234,6 +240,7 @@ public class Volume {
    }
 
    /**
+    * @return the type of this volume
     */
    @Nullable
    public String getVolumeType() {
@@ -241,6 +248,7 @@ public class Volume {
    }
 
    /**
+    * @return the snapshot id this volume is associated with.
     */
    @Nullable
    public String getSnapshotId() {
@@ -248,6 +256,7 @@ public class Volume {
    }
 
    /**
+    * @return the name of this volume - as displayed in the openstack console
     */
    @Nullable
    public String getName() {
@@ -255,14 +264,13 @@ public class Volume {
    }
 
    /**
+    * @return the description of this volume - as displayed in the openstack console
     */
    @Nullable
    public String getDescription() {
       return this.description;
    }
    
-   /**
-    */
    @Nullable
    public Map<String, String> getMetadata() {
       return Collections.unmodifiableMap(this.metadata);

@@ -18,6 +18,8 @@
  */
 package org.jclouds.openstack.nova.v1_1.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Date;
 
 import org.jclouds.javax.annotation.Nullable;
@@ -122,9 +124,9 @@ public class VolumeSnapshot {
    private final String description;
 
    protected VolumeSnapshot(Builder<?> builder) {
-      this.id = builder.id;
-      this.volumeId = builder.volumeId;
-      this.status = builder.status;
+      this.id = checkNotNull(builder.id, "id");
+      this.volumeId = checkNotNull(builder.volumeId, "volumeId");
+      this.status = checkNotNull(builder.status, "status");
       this.size = builder.size;
       this.created = builder.created;
       this.name = builder.name;
@@ -132,34 +134,35 @@ public class VolumeSnapshot {
    }
 
    /**
+    * @return the id of this snapshot
     */
-   @Nullable
    public String getId() {
       return this.id;
    }
 
    /**
+    * @return the id of the Volume this snapshot was taken from
     */
-   @Nullable
    public String getVolumeId() {
       return this.volumeId;
    }
 
    /**
+    * @return the status of this snapshot
     */
-   @Nullable
    public Volume.Status getStatus() {
       return this.status;
    }
 
    /**
+    * @return the size in GB of the volume this snapshot was taken from
     */
-   @Nullable
    public int getSize() {
       return this.size;
    }
 
    /**
+    * @return the data the snapshot was taken
     */
    @Nullable
    public Date getCreated() {
@@ -167,13 +170,16 @@ public class VolumeSnapshot {
    }
 
    /**
+    * @return the name of this snapshot - as displayed in the openstack console
     */
    @Nullable
    public String getName() {
       return this.name;
    }
 
+
    /**
+    * @return the description of this snapshot - as displayed in the openstack console
     */
    @Nullable
    public String getDescription() {
