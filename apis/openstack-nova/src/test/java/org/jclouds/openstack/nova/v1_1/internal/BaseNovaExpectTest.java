@@ -20,6 +20,8 @@ package org.jclouds.openstack.nova.v1_1.internal;
 
 import java.net.URI;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.keystone.v2_0.internal.KeystoneFixture;
@@ -67,5 +69,15 @@ public class BaseNovaExpectTest<T> extends BaseRestClientExpectTest<T> {
       
       unmatchedExtensionsOfNovaResponse = HttpResponse.builder().statusCode(200)
             .payload(payloadFromResource("/extension_list.json")).build();
+   }
+   
+   protected HttpRequest.Builder standardRequestBuilder(URI endpoint) {
+      return HttpRequest.builder().method("GET")
+            .headers(ImmutableMultimap.of("Accept", MediaType.APPLICATION_JSON, "X-Auth-Token", authToken))
+            .endpoint(endpoint);
+   }
+
+   protected HttpResponse.Builder standardResponseBuilder(int status) {
+      return HttpResponse.builder().statusCode(status);
    }
 }
