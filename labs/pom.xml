@@ -42,5 +42,6 @@
        <module>dmtf</module>
        <module>carrenza-vcloud-director</module>
        <module>openstack-swift</module>
+       <module>jenkins</module>
     </modules>
 </project>
