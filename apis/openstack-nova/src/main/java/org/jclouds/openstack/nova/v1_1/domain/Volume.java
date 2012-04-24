@@ -77,7 +77,7 @@ public class Volume {
       private int size;
       private String zone;
       private Date created;
-      private Set<Attachment> attachments = Sets.newLinkedHashSet();
+      private Set<VolumeAttachment> attachments = Sets.newLinkedHashSet();
       private String volumeType;
       private String snapshotId;
       private String name;
@@ -109,7 +109,7 @@ public class Volume {
          return self();
       }
 
-      public T attachments(Set<Attachment> attachments) {
+      public T attachments(Set<VolumeAttachment> attachments) {
          this.attachments = attachments;
          return self();
       }
@@ -173,7 +173,7 @@ public class Volume {
    private final String zone;
    @SerializedName(value="createdAt")
    private final Date created;
-   private final Set<Attachment> attachments;
+   private final Set<VolumeAttachment> attachments;
    private final String volumeType;   
    private final String snapshotId;
    @SerializedName(value="displayName")
@@ -229,7 +229,7 @@ public class Volume {
    /**
     */
    @Nullable
-   public Set<Attachment> getAttachments() {
+   public Set<VolumeAttachment> getAttachments() {
       return Collections.unmodifiableSet(this.attachments);
    }
 

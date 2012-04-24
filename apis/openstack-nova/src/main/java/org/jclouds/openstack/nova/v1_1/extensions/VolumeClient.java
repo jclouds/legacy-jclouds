@@ -22,9 +22,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.nova.v1_1.domain.Attachment;
-import org.jclouds.openstack.nova.v1_1.domain.Snapshot;
+import org.jclouds.openstack.nova.v1_1.domain.VolumeAttachment;
+import org.jclouds.openstack.nova.v1_1.domain.VolumeSnapshot;
 import org.jclouds.openstack.nova.v1_1.domain.Volume;
+import org.jclouds.openstack.nova.v1_1.options.CreateVolumeSnapshotOptions;
+import org.jclouds.openstack.nova.v1_1.options.CreateVolumeOptions;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 
@@ -64,12 +66,12 @@ public interface VolumeClient {
     *
     * @return the new Snapshot
     */
-   Volume createVolume(Volume createVolume);
+   Volume createVolume(int sizeGB, CreateVolumeOptions... options);
 
    /**
     * Delete a snapshot.
     *
-    * @return
+    * @return true if successful
     */
    Boolean deleteVolume(String volumeId);
    
@@ -78,26 +80,26 @@ public interface VolumeClient {
     * 
     * @return all Floating IPs
     */
-   Set<Attachment> listAttachments(String serverId);
+   Set<VolumeAttachment> listAttachments(String serverId);
 
    /**
     * Get a specific attached volume.
     * 
     * @return data about the given volume attachment.
     */
-   Attachment getAttachment(String serverId, String volumeId);
+   VolumeAttachment getAttachment(String serverId, String volumeId);
 
    /**
     * Attach a volume to an instance
     * 
-    * @return a new Volume
+    * @return data about the new volume attachment
     */
-   Attachment attachVolume(String serverId, Attachment attachVolume);
+   VolumeAttachment attachVolume(String serverId, String volumeId, String device);
 
    /**
     * Detach a Volume from an instance.
     * 
-    * @return
+    * @return true if successful
     */
    Boolean detachVolume(String server_id, String volumeId);
 
@@ -106,33 +108,33 @@ public interface VolumeClient {
     *
     * @return the list of snapshots
     */
-   Set<Snapshot> listSnapshots();
+   Set<VolumeSnapshot> listSnapshots();
 
    /**
     * Returns a summary list of snapshots.
     *
     * @return the list of snapshots
     */
-   Set<Snapshot> listSnapshotsInDetail();
+   Set<VolumeSnapshot> listSnapshotsInDetail();
 
    /**
     * Return data about the given snapshot.
     *
     * @return details of a specific snapshot.
     */
-   Snapshot getSnapshot(String snapshotId);
+   VolumeSnapshot getSnapshot(String snapshotId);
 
    /**
     * Creates a new Snapshot
     *
     * @return the new Snapshot
     */
-   Snapshot createSnapshot(Snapshot createSnapshot);
+   VolumeSnapshot createSnapshot(String volumeId, CreateVolumeSnapshotOptions... options);
 
    /**
     * Delete a snapshot.
     *
-    * @return
+    * @return true if successful
     */
    Boolean deleteSnapshot(String snapshotId);
    

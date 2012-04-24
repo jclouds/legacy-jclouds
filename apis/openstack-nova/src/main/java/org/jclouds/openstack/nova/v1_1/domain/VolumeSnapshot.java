@@ -29,7 +29,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * An Openstack Nova Volume Snapshot
  */
-public class Snapshot {
+public class VolumeSnapshot {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -44,7 +44,7 @@ public class Snapshot {
 
       private String id;
       private String volumeId;
-      private String status;
+      private Volume.Status status;
       private int size;
       private Date created;
       private String name;
@@ -60,7 +60,7 @@ public class Snapshot {
          return self();
       }
 
-      public T status(String status) {
+      public T status(Volume.Status status) {
          this.status = status;
          return self();
       }
@@ -85,11 +85,11 @@ public class Snapshot {
          return self();
       }
 
-      public Snapshot build() {
-         return new Snapshot(this);
+      public VolumeSnapshot build() {
+         return new VolumeSnapshot(this);
       }
 
-      public T fromSnapshot(Snapshot in) {
+      public T fromSnapshot(VolumeSnapshot in) {
          return this
                .id(in.getId())
                .volumeId(in.getVolumeId())
@@ -112,7 +112,7 @@ public class Snapshot {
 
    private final String id;
    private final String volumeId;
-   private final String status;
+   private final Volume.Status status;
    private final int size;
    @SerializedName(value="createdAt")
    private final Date created;
@@ -121,7 +121,7 @@ public class Snapshot {
    @SerializedName(value="displayDescription")
    private final String description;
 
-   protected Snapshot(Builder<?> builder) {
+   protected VolumeSnapshot(Builder<?> builder) {
       this.id = builder.id;
       this.volumeId = builder.volumeId;
       this.status = builder.status;
@@ -148,7 +148,7 @@ public class Snapshot {
    /**
     */
    @Nullable
-   public String getStatus() {
+   public Volume.Status getStatus() {
       return this.status;
    }
 
@@ -189,7 +189,7 @@ public class Snapshot {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      Snapshot that = Snapshot.class.cast(obj);
+      VolumeSnapshot that = VolumeSnapshot.class.cast(obj);
       return Objects.equal(this.id, that.id)
             && Objects.equal(this.volumeId, that.volumeId)
             && Objects.equal(this.status, that.status)

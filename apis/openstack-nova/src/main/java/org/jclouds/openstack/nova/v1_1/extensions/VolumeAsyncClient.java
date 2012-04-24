@@ -30,12 +30,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.nova.v1_1.domain.Attachment;
-import org.jclouds.openstack.nova.v1_1.domain.Snapshot;
+import org.jclouds.openstack.nova.v1_1.domain.VolumeAttachment;
+import org.jclouds.openstack.nova.v1_1.domain.VolumeSnapshot;
 import org.jclouds.openstack.nova.v1_1.domain.Volume;
+import org.jclouds.openstack.nova.v1_1.options.CreateVolumeSnapshotOptions;
+import org.jclouds.openstack.nova.v1_1.options.CreateVolumeOptions;
 import org.jclouds.openstack.services.Extension;
 import org.jclouds.openstack.services.ServiceType;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.Payload;
 import org.jclouds.rest.annotations.PayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SelectJson;
@@ -99,10 +103,12 @@ public interface VolumeAsyncClient {
     * @return the new Snapshot
     */
    @POST
-   @Path("/os-volumes/")
+   @Path("/os-volumes")
    @SelectJson("volume")
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Volume> createVolume(@PayloadParam("volume") Volume createVolume);
+   @Produces(MediaType.APPLICATION_JSON)
+   @MapBinder(CreateVolumeOptions.class)
+   ListenableFuture<Volume> createVolume(@PayloadParam("size") int sizeGB, CreateVolumeOptions... options);
 
    /**
     * Delete a volume.
@@ -111,7 +117,6 @@ public interface VolumeAsyncClient {
     */
    @DELETE
    @Path("/os-volumes/{id}")
-   @SelectJson("volumes")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> deleteVolume(@PathParam("id") String volumeId);
@@ -126,7 +131,7 @@ public interface VolumeAsyncClient {
    @SelectJson("volumeAttachments")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Attachment>> listAttachments(@PathParam("server_id") String serverId);
+   ListenableFuture<Set<VolumeAttachment>> listAttachments(@PathParam("server_id") String serverId);
 
    /**
     * Get a specific attached volume.
@@ -138,7 +143,7 @@ public interface VolumeAsyncClient {
    @SelectJson("volumeAttachment")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Attachment> getAttachment(@PathParam("server_id") String serverId, @PathParam("id") String volumeId);
+   ListenableFuture<VolumeAttachment> getAttachment(@PathParam("server_id") String serverId, @PathParam("id") String volumeId);
 
    /**
     * Attach a volume to an instance
@@ -146,11 +151,14 @@ public interface VolumeAsyncClient {
     * @return the new Attachment
     */
    @POST
-   @Path("/servers/{server_id}/os-volume_attachments/")
+   @Path("/servers/{server_id}/os-volume_attachments")
    @SelectJson("volumeAttachment")
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Attachment> attachVolume(@PathParam("server_id") String serverId, @PayloadParam("attachment") Attachment attachVolume);
+   @Payload("%7B\"volumeAttachment\":%7B\"volumeId\":\"{id}\",\"device\":\"{device}\"%7D%7D")
+   ListenableFuture<VolumeAttachment> attachVolume(@PathParam("server_id") String serverId, 
+                                             @PayloadParam("id") String volumeId,
+                                             @PayloadParam("device") String device);
 
    /**
     * Detach a Volume from an instance.
@@ -170,10 +178,10 @@ public interface VolumeAsyncClient {
     */
    @GET
    @Path("/os-snapshots")
-   @SelectJson("volumes")
+   @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Snapshot>> listSnapshots();
+   ListenableFuture<Set<VolumeSnapshot>> listSnapshots();
 
    /**
     * Returns a summary list of snapshots.
@@ -185,7 +193,7 @@ public interface VolumeAsyncClient {
    @SelectJson("snapshots")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<Snapshot>> listSnapshotsInDetail();
+   ListenableFuture<Set<VolumeSnapshot>> listSnapshotsInDetail();
 
    /**
     * Return data about the given snapshot.
@@ -194,21 +202,23 @@ public interface VolumeAsyncClient {
     */
    @GET
    @Path("/os-snapshots/{id}")
-   @SelectJson("snapshots")
+   @SelectJson("snapshot")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Snapshot> getSnapshot(@PathParam("id") String snapshotId);
+   ListenableFuture<VolumeSnapshot> getSnapshot(@PathParam("id") String snapshotId);
 
    /**
     * Creates a new Snapshot
     *
     * @return the new Snapshot
     */
-   @GET
-   @Path("/os-snapshots/detail")
-   @SelectJson("snapshots")
+   @POST
+   @Path("/os-snapshots")
+   @SelectJson("snapshot")
+   @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Snapshot> createSnapshot(@PayloadParam("snapshot") Snapshot createSnapshot);
+   @MapBinder(CreateVolumeSnapshotOptions.class)
+   ListenableFuture<VolumeSnapshot> createSnapshot(@PayloadParam("volume_id") String volumeId, CreateVolumeSnapshotOptions... options);
 
    /**
     * Delete a snapshot.

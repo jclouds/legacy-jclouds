@@ -26,7 +26,7 @@ import com.google.common.base.Objects.ToStringHelper;
 /**
  * An Openstack Nova Volume Attachment
  */
-public class Attachment {
+public class VolumeAttachment {
 
    public static Builder<?> builder() {
       return new ConcreteBuilder();
@@ -64,11 +64,11 @@ public class Attachment {
          return self();
       }
 
-      public Attachment build() {
-         return new Attachment(this);
+      public VolumeAttachment build() {
+         return new VolumeAttachment(this);
       }
 
-      public T fromAttachment(Attachment in) {
+      public T fromAttachment(VolumeAttachment in) {
          return this
                .id(in.getId())
                .volumeId(in.getVolumeId())
@@ -91,7 +91,7 @@ public class Attachment {
    private final String serverId;
    private final String device;
 
-   protected Attachment(Builder<?> builder) {
+   protected VolumeAttachment(Builder<?> builder) {
       this.id = builder.id;
       this.volumeId = builder.volumeId;
       this.serverId = builder.serverId;
@@ -135,7 +135,7 @@ public class Attachment {
    public boolean equals(Object obj) {
       if (this == obj) return true;
       if (obj == null || getClass() != obj.getClass()) return false;
-      Attachment that = Attachment.class.cast(obj);
+      VolumeAttachment that = VolumeAttachment.class.cast(obj);
       return Objects.equal(this.id, that.id)
             && Objects.equal(this.volumeId, that.volumeId)
             && Objects.equal(this.serverId, that.serverId)
