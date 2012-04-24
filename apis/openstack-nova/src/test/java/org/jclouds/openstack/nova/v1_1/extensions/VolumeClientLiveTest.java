@@ -18,17 +18,18 @@
  */
 package org.jclouds.openstack.nova.v1_1.extensions;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.jclouds.openstack.domain.Resource;
+import org.jclouds.openstack.nova.v1_1.domain.Volume;
 import org.jclouds.openstack.nova.v1_1.domain.VolumeAttachment;
 import org.jclouds.openstack.nova.v1_1.domain.VolumeSnapshot;
-import org.jclouds.openstack.nova.v1_1.domain.Volume;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
-import org.jclouds.openstack.nova.v1_1.options.CreateVolumeSnapshotOptions;
 import org.jclouds.openstack.nova.v1_1.options.CreateVolumeOptions;
+import org.jclouds.openstack.nova.v1_1.options.CreateVolumeSnapshotOptions;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -41,13 +42,13 @@ import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of VolumeClient
- *
+ * 
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "VolumeClientLiveTest", singleThreaded = true)
 public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
 
-   private VolumeClient client;
+   private Optional<VolumeClient> volumeOption;
    private String zone;
 
    private Volume testVolume;
@@ -57,58 +58,61 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
    @Override
    public void setupContext() {
       super.setupContext();
-      zone = Iterables.getFirst(novaContext.getApi().getConfiguredZones(), "nova");
-      Optional<VolumeClient> optClient = novaContext.getApi().getVolumeExtensionForZone(zone);
-      if (optClient.isPresent()) {
-         client = optClient.get();
-      }
+      zone = Iterables.getLast(novaContext.getApi().getConfiguredZones(), "nova");
+      volumeOption = novaContext.getApi().getVolumeExtensionForZone(zone);
    }
 
    @AfterGroups(groups = "live", alwaysRun = true)
    @Override
-   protected void tearDown()  {
-      if (client != null) {
+   protected void tearDown() {
+      if (volumeOption.isPresent()) {
          if (testSnapshot != null) {
             final String snapshotId = testSnapshot.getId();
-            assertTrue(client.deleteSnapshot(snapshotId));
+            assertTrue(volumeOption.get().deleteSnapshot(snapshotId));
             assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
                @Override
                public boolean apply(VolumeClient volumeClient) {
-                  return client.getSnapshot(snapshotId) == null;
+                  return volumeOption.get().getSnapshot(snapshotId) == null;
                }
-            }, 30 * 1000L).apply(client));
+            }, 30 * 1000L).apply(volumeOption.get()));
          }
          if (testVolume != null) {
             final String volumeId = testVolume.getId();
-            assertTrue(client.deleteVolume(volumeId));
+            assertTrue(volumeOption.get().deleteVolume(volumeId));
             assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
                @Override
                public boolean apply(VolumeClient volumeClient) {
-                  return client.getVolume(volumeId) == null;
+                  return volumeOption.get().getVolume(volumeId) == null;
                }
-            }, 180 * 1000L).apply(client));
+            }, 180 * 1000L).apply(volumeOption.get()));
          }
       }
       super.tearDown();
    }
 
-   public void testCreateVolume() throws Exception {
-      testVolume = client.createVolume(1, CreateVolumeOptions.Builder.name("jclouds-test-volume").description("description of test volume").availabilityZone(zone));
-      for (int i=0; i<100 && testVolume.getStatus() == Volume.Status.CREATING; i++) {
-         Thread.sleep(100);
-         testVolume = client.getVolume(testVolume.getId());
+   public void testCreateVolume() {
+      if (volumeOption.isPresent()) {
+         testVolume = volumeOption.get().createVolume(
+                  1,
+                  CreateVolumeOptions.Builder.name("jclouds-test-volume").description("description of test volume")
+                           .availabilityZone(zone));
+         assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
+            @Override
+            public boolean apply(VolumeClient volumeClient) {
+               return volumeOption.get().getVolume(testVolume.getId()).getStatus() == Volume.Status.AVAILABLE;
+            }
+         }, 180 * 1000L).apply(volumeOption.get()));
       }
-      assertEquals(testVolume.getStatus(), Volume.Status.AVAILABLE);
    }
 
    @Test(dependsOnMethods = "testCreateVolume")
-   public void testListVolumes() throws Exception {
-      if (client != null) {
-         Set<Volume> volumes = client.listVolumes();
+   public void testListVolumes() {
+      if (volumeOption.isPresent()) {
+         Set<Volume> volumes = volumeOption.get().listVolumes();
          assertNotNull(volumes);
          boolean foundIt = false;
          for (Volume vol : volumes) {
-            Volume details = client.getVolume(vol.getId());
+            Volume details = volumeOption.get().getVolume(vol.getId());
             assertNotNull(details);
             if (Objects.equal(details.getId(), testVolume.getId())) {
                foundIt = true;
@@ -119,14 +123,14 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateVolume")
-   public void testListVolumesInDetail() throws Exception {
-      if (client != null) {
-         Set<Volume> volumes = client.listVolumesInDetail();
+   public void testListVolumesInDetail() {
+      if (volumeOption.isPresent()) {
+         Set<Volume> volumes = volumeOption.get().listVolumesInDetail();
          assertNotNull(volumes);
          assertTrue(volumes.contains(testVolume));
          boolean foundIt = false;
          for (Volume vol : volumes) {
-            Volume details = client.getVolume(vol.getId());
+            Volume details = volumeOption.get().getVolume(vol.getId());
             assertNotNull(details);
             assertNotNull(details.getId());
             assertNotNull(details.getCreated());
@@ -146,9 +150,12 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateVolume")
-   public void testCreateSnapshot() throws Exception {
-      if (client != null) {
-         testSnapshot = client.createSnapshot(testVolume.getId(), CreateVolumeSnapshotOptions.Builder.name("jclouds-live-test").description("jclouds live test snapshot").force());
+   public void testCreateSnapshot() {
+      if (volumeOption.isPresent()) {
+         testSnapshot = volumeOption.get().createSnapshot(
+                  testVolume.getId(),
+                  CreateVolumeSnapshotOptions.Builder.name("jclouds-live-test").description(
+                           "jclouds live test snapshot").force());
          assertNotNull(testSnapshot);
          assertNotNull(testSnapshot.getId());
          final String snapshotId = testSnapshot.getId();
@@ -159,20 +166,20 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
          assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
             @Override
             public boolean apply(VolumeClient volumeClient) {
-               return client.getSnapshot(snapshotId).getStatus() == Volume.Status.AVAILABLE;
+               return volumeOption.get().getSnapshot(snapshotId).getStatus() == Volume.Status.AVAILABLE;
             }
-         }, 30 * 1000L).apply(client));
+         }, 30 * 1000L).apply(volumeOption.get()));
       }
    }
-   
+
    @Test(dependsOnMethods = "testCreateSnapshot")
-   public void testListSnapshots() throws Exception {
-      if (client != null) {
-         Set<VolumeSnapshot> snapshots = client.listSnapshots();
+   public void testListSnapshots() {
+      if (volumeOption.isPresent()) {
+         Set<VolumeSnapshot> snapshots = volumeOption.get().listSnapshots();
          assertNotNull(snapshots);
          boolean foundIt = false;
          for (VolumeSnapshot snap : snapshots) {
-            VolumeSnapshot details = client.getSnapshot(snap.getId());
+            VolumeSnapshot details = volumeOption.get().getSnapshot(snap.getId());
             if (Objects.equal(snap.getVolumeId(), testVolume.getId())) {
                foundIt = true;
             }
@@ -185,24 +192,24 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateSnapshot")
-   public void testListSnapshotsInDetail() throws Exception {
-      if (client != null) {
-         Set<VolumeSnapshot> snapshots = client.listSnapshotsInDetail();
+   public void testListSnapshotsInDetail() {
+      if (volumeOption.isPresent()) {
+         Set<VolumeSnapshot> snapshots = volumeOption.get().listSnapshotsInDetail();
          assertNotNull(snapshots);
          boolean foundIt = false;
          for (VolumeSnapshot snap : snapshots) {
-            VolumeSnapshot details = client.getSnapshot(snap.getId());
+            VolumeSnapshot details = volumeOption.get().getSnapshot(snap.getId());
             if (Objects.equal(snap.getVolumeId(), testVolume.getId())) {
                foundIt = true;
                assertSame(details, testSnapshot);
             }
             assertSame(details, snap);
          }
-         
+
          assertTrue(foundIt, "Failed to find the snapshot we created in listSnapshotsInDetail() response");
       }
    }
-   
+
    private void assertSame(VolumeSnapshot a, VolumeSnapshot b) {
       assertNotNull(a);
       assertNotNull(b);
@@ -212,36 +219,39 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
       assertEquals(a.getVolumeId(), b.getVolumeId());
    }
 
-   @Test(enabled=false, dependsOnMethods = "testCreateVolume") // disabled as it alters an existing server
-   public void testAttachments() throws Exception {
-      if (client != null) {
-         Set<Resource> servers = novaContext.getApi().getServerClientForZone(zone).listServers();
-         if (!servers.isEmpty()) {
-            final String serverId = Iterables.getFirst(servers, null).getId();
-            Set<VolumeAttachment> attachments = client.listAttachmentsOnServer(serverId);
+   @Test(dependsOnMethods = "testCreateVolume")
+   public void testAttachments() {
+      if (volumeOption.isPresent()) {
+         String server_id = null;
+         try {
+            final String serverId = server_id = createServerInZone(zone).getId();
+
+            Set<VolumeAttachment> attachments = volumeOption.get().listAttachmentsOnServer(serverId);
             assertNotNull(attachments);
             final int before = attachments.size();
 
-            VolumeAttachment testAttachment = client.attachVolumeToServerAsDevice(testVolume.getId(), serverId, "/dev/vdf");
+            VolumeAttachment testAttachment = volumeOption.get().attachVolumeToServerAsDevice(testVolume.getId(),
+                     serverId, "/dev/vdf");
             assertNotNull(testAttachment.getId());
             assertEquals(testAttachment.getVolumeId(), testVolume.getId());
-            
+
             assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
                @Override
                public boolean apply(VolumeClient volumeClient) {
-                  return client.listAttachmentsOnServer(serverId).size() == before+1;
+                  return volumeOption.get().listAttachmentsOnServer(serverId).size() == before + 1;
                }
-            }, 60 * 1000L).apply(client));
+            }, 60 * 1000L).apply(volumeOption.get()));
 
-            attachments = client.listAttachmentsOnServer(serverId);
+            attachments = volumeOption.get().listAttachmentsOnServer(serverId);
             assertNotNull(attachments);
-            assertEquals(attachments.size(), before+1);
-            
-            assertEquals(client.getVolume(testVolume.getId()).getStatus(), Volume.Status.IN_USE);
+            assertEquals(attachments.size(), before + 1);
+
+            assertEquals(volumeOption.get().getVolume(testVolume.getId()).getStatus(), Volume.Status.IN_USE);
 
             boolean foundIt = false;
             for (VolumeAttachment att : attachments) {
-               VolumeAttachment details = client.getAttachmentForVolumeOnServer(att.getVolumeId(), serverId);
+               VolumeAttachment details = volumeOption.get()
+                        .getAttachmentForVolumeOnServer(att.getVolumeId(), serverId);
                assertNotNull(details);
                assertNotNull(details.getId());
                assertNotNull(details.getServerId());
@@ -255,14 +265,19 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
 
             assertTrue(foundIt, "Failed to find the attachment we created in listAttachments() response");
 
-            client.detachVolumeFromServer(testVolume.getId(), serverId);
+            volumeOption.get().detachVolumeFromServer(testVolume.getId(), serverId);
             assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
                @Override
                public boolean apply(VolumeClient volumeClient) {
-                  return client.listAttachmentsOnServer(serverId).size() == before;
+                  return volumeOption.get().listAttachmentsOnServer(serverId).size() == before;
                }
-            }, 60 * 1000L).apply(client));
+            }, 60 * 1000L).apply(volumeOption.get()));
+
+         } finally {
+            if (server_id != null)
+               novaContext.getApi().getServerClientForZone(zone).deleteServer(server_id);
          }
+
       }
    }
 }

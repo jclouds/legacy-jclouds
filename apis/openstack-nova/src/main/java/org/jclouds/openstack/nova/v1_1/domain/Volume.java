@@ -284,28 +284,20 @@ public class Volume {
       return Collections.unmodifiableMap(this.metadata);
    }
 
+   // keeping fields short in eq/hashCode so that minor state differences don't affect collection membership
    @Override
    public int hashCode() {
-      return Objects.hashCode(id, status, size, zone, created, attachments, volumeType, snapshotId, name, description, metadata);
+      return Objects.hashCode(id, zone);
    }
 
    @Override
    public boolean equals(Object obj) {
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
       Volume that = Volume.class.cast(obj);
-      return Objects.equal(this.id, that.id)
-            && Objects.equal(this.status, that.status)
-            && Objects.equal(this.size, that.size)
-            && Objects.equal(this.zone, that.zone)
-            && Objects.equal(this.created, that.created)
-            && Objects.equal(this.attachments, that.attachments)
-            && Objects.equal(this.volumeType, that.volumeType)
-            && Objects.equal(this.snapshotId, that.snapshotId)
-            && Objects.equal(this.name, that.name)
-            && Objects.equal(this.description, that.description)
-            && Objects.equal(this.metadata, that.metadata)
-            ;
+      return Objects.equal(this.id, that.id) && Objects.equal(this.zone, that.zone);
    }
 
    protected ToStringHelper string() {
