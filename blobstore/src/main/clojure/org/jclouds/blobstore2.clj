@@ -118,7 +118,7 @@ Options can also be specified for extension modules
                       (modules (apply modules (concat ext-modules (opts :extensions))))
                       (overrides (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
                         (Properties.) (dissoc opts :extensions)))
-                      (build BlobStoreContext))]
+                      (buildView BlobStoreContext))]
       (if (some #(= :async %) options)
         (.getAsyncBlobStore context)
         (.getBlobStore context)))))
