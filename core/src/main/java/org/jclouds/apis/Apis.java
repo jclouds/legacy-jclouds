@@ -25,7 +25,7 @@ import static com.google.common.collect.Iterables.find;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -107,12 +107,12 @@ public class Apis {
     * 
     * @return the apis with contexts assignable from given type
     */
-   public static Iterable<ApiMetadata> contextWrappableAs(TypeToken<? extends Wrapper> type) {
-      return filter(all(), ApiPredicates.contextWrappableAs(type));
+   public static Iterable<ApiMetadata> viewableAs(TypeToken<? extends View> type) {
+      return filter(all(), ApiPredicates.viewableAs(type));
    }
    
-   public static Iterable<ApiMetadata> contextWrappableAs(Class<? extends Wrapper> type) {
-      return filter(all(), ApiPredicates.contextWrappableAs(TypeToken.of(type)));
+   public static Iterable<ApiMetadata> viewableAs(Class<? extends View> type) {
+      return filter(all(), ApiPredicates.viewableAs(TypeToken.of(type)));
    }
 
    /**
@@ -123,15 +123,15 @@ public class Apis {
     * 
     * @return the apis with contexts transformable to the given type
     */
-   public static TypeToken<?> findWrapper(final ApiMetadata apiMetadata, final TypeToken<?> wrapper)
+   public static TypeToken<?> findView(final ApiMetadata apiMetadata, final TypeToken<?> view)
             throws NoSuchElementException {
       checkNotNull(apiMetadata, "apiMetadata must be defined");
-      checkNotNull(wrapper, "context must be defined");
-      return Iterables.find(apiMetadata.getWrappers(), new Predicate<TypeToken<?>>() {
+      checkNotNull(view, "context must be defined");
+      return Iterables.find(apiMetadata.getViews(), new Predicate<TypeToken<?>>() {
 
          @Override
          public boolean apply(TypeToken<?> input) {
-            return wrapper.isAssignableFrom(input);
+            return view.isAssignableFrom(input);
          }
 
       });

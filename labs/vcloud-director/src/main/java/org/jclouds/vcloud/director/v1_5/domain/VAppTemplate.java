@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElementView;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jclouds.dmtf.ovf.DeploymentOptionSection;
@@ -146,7 +146,7 @@ public class VAppTemplate extends ResourceEntity {
 
    @XmlElement(name = "Owner")
    private Owner owner;
-   @XmlElementWrapper(name = "Children")
+   @XmlElementView(name = "Children")
    @XmlElement(name = "Vm")
    private Set<VAppTemplate> children = Sets.newLinkedHashSet();
    @XmlElementRefs({

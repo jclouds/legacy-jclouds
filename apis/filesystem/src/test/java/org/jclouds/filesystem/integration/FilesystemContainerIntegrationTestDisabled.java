@@ -62,14 +62,14 @@ public class FilesystemContainerIntegrationTestDisabled extends BaseContainerInt
 
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
-      Blob object = wrapper.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+      Blob object = view.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
             .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).build();
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
          validateContent(containerName, key);
 
-         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName, maxResults(1));
+         PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName, maxResults(1));
 
          BlobMetadata metadata = (BlobMetadata) Iterables.getOnlyElement(container);
          // transient container should be lenient and not return metadata on undetailed listing.

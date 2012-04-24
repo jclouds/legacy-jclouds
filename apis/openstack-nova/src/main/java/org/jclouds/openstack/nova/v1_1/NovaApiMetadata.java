@@ -94,7 +94,7 @@ public class NovaApiMetadata extends BaseRestApiMetadata {
          .version("1.1")
          .defaultEndpoint("http://localhost:5000")
          .defaultProperties(NovaApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(NovaRestClientModule.class, NovaComputeServiceContextModule.class));
       }
       

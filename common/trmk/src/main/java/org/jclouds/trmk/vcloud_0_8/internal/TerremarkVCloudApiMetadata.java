@@ -56,7 +56,7 @@ public abstract class TerremarkVCloudApiMetadata extends BaseRestApiMetadata {
          .credentialName("Password")
          .version("0.8")
          .defaultProperties(TerremarkVCloudApiMetadata.defaultProperties())
-         .wrapper(ComputeServiceContext.class);
+         .view(ComputeServiceContext.class);
       }
 
       @Override

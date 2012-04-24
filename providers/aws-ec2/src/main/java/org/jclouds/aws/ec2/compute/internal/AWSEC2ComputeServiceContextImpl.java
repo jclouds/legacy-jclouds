@@ -37,9 +37,9 @@ import com.google.common.reflect.TypeToken;
 public class AWSEC2ComputeServiceContextImpl extends EC2ComputeServiceContextImpl implements
          AWSEC2ComputeServiceContext {
    @Inject
-   public AWSEC2ComputeServiceContextImpl(@Provider Context wrapped,
-            @Provider TypeToken<? extends Context> wrappedType, AWSEC2ComputeService computeService, Utils utils) {
-      super(wrapped, wrappedType, computeService, utils);
+   public AWSEC2ComputeServiceContextImpl(@Provider Context backend,
+            @Provider TypeToken<? extends Context> backendType, AWSEC2ComputeService computeService, Utils utils) {
+      super(backend, backendType, computeService, utils);
    }
 
    @Override

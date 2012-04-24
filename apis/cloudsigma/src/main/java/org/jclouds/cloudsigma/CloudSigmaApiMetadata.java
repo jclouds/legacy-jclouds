@@ -82,7 +82,7 @@ public class CloudSigmaApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultEndpoint("https://api.cloudsigma.com")
          .defaultProperties(CloudSigmaApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudSigmaRestClientModule.class, CloudSigmaComputeServiceContextModule.class));
       }
 

@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElementView;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -208,19 +208,19 @@ public class AdminOrg extends Org {
 
     @XmlElement(name = "Settings", required = true)
     private OrgSettings settings;
-    @XmlElementWrapper(name = "Users")
+    @XmlElementView(name = "Users")
     @XmlElement(name = "UserReference")
     protected Set<Reference> users = Sets.newLinkedHashSet();
-    @XmlElementWrapper(name = "Groups")
+    @XmlElementView(name = "Groups")
     @XmlElement(name = "GroupReference")
     protected Set<Reference> groups = Sets.newLinkedHashSet();
-    @XmlElementWrapper(name = "Catalogs")
+    @XmlElementView(name = "Catalogs")
     @XmlElement(name = "CatalogReference")
     private Set<Reference> catalogs = Sets.newLinkedHashSet();
-    @XmlElementWrapper(name = "Vdcs")
+    @XmlElementView(name = "Vdcs")
     @XmlElement(name = "Vdc")
     protected Set<Reference> vdcs = Sets.newLinkedHashSet();
-    @XmlElementWrapper(name = "Networks")
+    @XmlElementView(name = "Networks")
     @XmlElement(name = "Network")
     protected Set<Reference> networks = Sets.newLinkedHashSet();
 

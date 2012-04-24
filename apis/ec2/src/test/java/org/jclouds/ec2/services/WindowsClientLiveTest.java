@@ -76,8 +76,8 @@ public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = wrapper.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getWindowsServices();
-      computeService = wrapper.getComputeService();
+      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getWindowsServices();
+      computeService = view.getComputeService();
    }
 
    
@@ -141,7 +141,7 @@ public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
             node.getCredentials().getPrivateKey());
 
          // And apply it to the decryption function
-         WindowsLoginCredentialsFromEncryptedData f = wrapper.getUtils().getInjector().getInstance(WindowsLoginCredentialsFromEncryptedData.class);
+         WindowsLoginCredentialsFromEncryptedData f = view.getUtils().getInjector().getInstance(WindowsLoginCredentialsFromEncryptedData.class);
          LoginCredentials credentials = f.apply(dataAndKey);
 
          assertEquals(credentials.getUser(), "Administrator");

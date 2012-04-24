@@ -75,7 +75,7 @@ public class DeltacloudApiMetadata extends BaseRestApiMetadata {
             .version("0.3.0")
             .defaultEndpoint("http://localhost:3001/api")
             .defaultProperties(DeltacloudApiMetadata.defaultProperties())
-            .wrapper(TypeToken.of(ComputeServiceContext.class))
+            .view(TypeToken.of(ComputeServiceContext.class))
             .defaultModules(ImmutableSet.<Class<? extends Module>>of(DeltacloudRestClientModule.class, DeltacloudComputeServiceContextModule.class));
       }
 

@@ -20,7 +20,7 @@ package org.jclouds.rest.internal;
 
 import java.util.Set;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.Apis;
 import org.jclouds.apis.internal.BaseApiMetadataTest;
@@ -38,8 +38,8 @@ import com.google.common.reflect.TypeToken;
 @Test(groups = "unit")
 public abstract class BaseRestApiMetadataTest extends BaseApiMetadataTest {
 
-   public BaseRestApiMetadataTest(RestApiMetadata toTest, Set<TypeToken<? extends Wrapper>> wrappers) {
-     super(toTest, wrappers);
+   public BaseRestApiMetadataTest(RestApiMetadata toTest, Set<TypeToken<? extends View>> views) {
+     super(toTest, views);
    }
 
    @Test

@@ -73,8 +73,8 @@ public class ParseNamesFromHttpResponse implements Function<HttpResponse, Set<St
    }
 
    @Inject
-   public ParseNamesFromHttpResponse(GsonWrapper gsonWrapper) {
-      this.parser = new ParseFirstJsonValueNamed<Set<Name>>(checkNotNull(gsonWrapper, "gsonWrapper"),
+   public ParseNamesFromHttpResponse(GsonWrapper gsonView) {
+      this.parser = new ParseFirstJsonValueNamed<Set<Name>>(checkNotNull(gsonView, "gsonView"),
             new TypeLiteral<Set<Name>>() {
             }, "hypervisor");
    }

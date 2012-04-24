@@ -55,7 +55,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to HP Cloud Object Storage via the REST API.
  * 
  * <p/>All commands return a ListenableFuture of the result. Any exceptions incurred
- * during processing will be wrapped in an {@link java.util.concurrent.ExecutionException} as documented in
+ * during processing will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
  * @see HPCloudObjectStorageClient

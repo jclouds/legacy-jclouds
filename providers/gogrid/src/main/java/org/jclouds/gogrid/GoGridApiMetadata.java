@@ -77,7 +77,7 @@ public class GoGridApiMetadata extends BaseRestApiMetadata {
          .version(GoGridAsyncClient.VERSION)
          .defaultEndpoint("https://api.gogrid.com/api")
          .defaultProperties(GoGridApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(GoGridRestClientModule.class, GoGridComputeServiceContextModule.class));
       }
 

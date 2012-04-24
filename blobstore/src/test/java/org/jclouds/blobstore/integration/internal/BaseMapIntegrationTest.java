@@ -106,7 +106,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    public void testClear() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(wrapper, containerNameName);
+         Map<String, V> map = createMap(view, containerNameName);
          assertConsistencyAwareMapSize(map, 0);
          putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareMapSize(map, 1);
@@ -124,7 +124,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    public void testKeySet() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(wrapper, containerNameName);
+         Map<String, V> map = createMap(view, containerNameName);
          assertConsistencyAwareKeySize(map, 0);
          putStringWithMD5(map, "one", "two");
          assertConsistencyAwareKeySize(map, 1);
@@ -136,15 +136,15 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
 
    protected void addTenObjectsUnderPrefix(String containerName, String prefix) throws InterruptedException {
       for (int i = 0; i < 10; i++) {
-         wrapper.getBlobStore().putBlob(containerName,
-               wrapper.getBlobStore().blobBuilder(prefix + "/" + i).payload(i + "content").build());
+         view.getBlobStore().putBlob(containerName,
+               view.getBlobStore().blobBuilder(prefix + "/" + i).payload(i + "content").build());
       }
    }
 
    protected void addTenObjectsUnderRoot(String containerName) throws InterruptedException {
       for (int i = 0; i < 10; i++) {
-         wrapper.getBlobStore().putBlob(containerName,
-               wrapper.getBlobStore().blobBuilder(i + "").payload(i + "content").build());
+         view.getBlobStore().putBlob(containerName,
+               view.getBlobStore().blobBuilder(i + "").payload(i + "content").build());
       }
    }
 
@@ -152,13 +152,13 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    public void testDirectory() throws InterruptedException {
       String containerName = getContainerName();
       String directory = "apps";
-      Map<String, V> rootMap = createMap(wrapper, containerName);
-      Map<String, V> rootRecursiveMap = createMap(wrapper, containerName, recursive());
-      Map<String, V> inDirectoryMap = createMap(wrapper, containerName, inDirectory(directory));
-      Map<String, V> inDirectoryRecursiveMap = createMap(wrapper, containerName, inDirectory(directory).recursive());
+      Map<String, V> rootMap = createMap(view, containerName);
+      Map<String, V> rootRecursiveMap = createMap(view, containerName, recursive());
+      Map<String, V> inDirectoryMap = createMap(view, containerName, inDirectory(directory));
+      Map<String, V> inDirectoryRecursiveMap = createMap(view, containerName, inDirectory(directory).recursive());
       try {
 
-         wrapper.getBlobStore().createDirectory(containerName, directory);
+         view.getBlobStore().createDirectory(containerName, directory);
          addTenObjectsUnderRoot(containerName);
          assertEquals(rootMap.size(), 10);
          assertEquals(ImmutableSortedSet.copyOf(rootMap.keySet()),
@@ -184,7 +184,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
          assertEquals(ImmutableSortedSet.copyOf(inDirectoryRecursiveMap.keySet()),
                ImmutableSortedSet.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"));
 
-         wrapper.getBlobStore().createDirectory(containerName, directory + "/" + directory);
+         view.getBlobStore().createDirectory(containerName, directory + "/" + directory);
          assertEquals(rootMap.size(), 10);
          assertEquals(rootRecursiveMap.size(), 20);
          assertEquals(inDirectoryMap.size(), 10);
@@ -252,7 +252,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    public void testContainsKey() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(wrapper, containerNameName);
+         Map<String, V> map = createMap(view, containerNameName);
          assertConsistencyAwareDoesntContainKey(map);
          putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareContainsKey(map);
@@ -294,7 +294,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    public void testIsEmpty() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
-         Map<String, V> map = createMap(wrapper, containerNameName);
+         Map<String, V> map = createMap(view, containerNameName);
          assertConsistencyAwareEmpty(map);
          putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareNotEmpty(map);
@@ -343,7 +343,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException {
       String containerNameName = getContainerName();
       try {
-         ListableMap<?, ?> map = (ListableMap<?, ?>) createMap(wrapper, containerNameName);
+         ListableMap<?, ?> map = (ListableMap<?, ?>) createMap(view, containerNameName);
          assertConsistencyAwareListContainer(map, containerNameName);
       } finally {
          returnContainer(containerNameName);

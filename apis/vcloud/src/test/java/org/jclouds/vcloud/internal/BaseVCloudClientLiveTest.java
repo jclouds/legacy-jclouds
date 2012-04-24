@@ -45,14 +45,14 @@ public abstract class BaseVCloudClientLiveTest extends BaseComputeServiceContext
    }
 
    protected VCloudClient getVCloudApi() {
-      return VCloudClient.class.cast(wrapper.unwrap(VCloudApiMetadata.CONTEXT_TOKEN).getApi());
+      return VCloudClient.class.cast(view.unwrap(VCloudApiMetadata.CONTEXT_TOKEN).getApi());
    }
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = wrapper.getComputeService();
+      client = view.getComputeService();
    }
 
    @Override

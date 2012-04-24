@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
 import org.jclouds.Context;
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 
 import com.google.common.base.Function;
@@ -101,19 +101,19 @@ public class Providers {
    }
 
    /**
-    * Returns the providers that are of the provided contextWrappableAs.
+    * Returns the providers that are of the provided viewableAs.
     * 
-    * @param contextWrappableAs
-    *           the contextWrappableAs to providers to return
+    * @param viewableAs
+    *           the viewableAs to providers to return
     * 
-    * @return the providers of the provided contextWrappableAs
+    * @return the providers of the provided viewableAs
     */
-   public static Iterable<ProviderMetadata> contextWrappableAs(TypeToken<? extends Wrapper> contextWrappableAs) {
-      return filter(all(), ProviderPredicates.contextWrappableAs(contextWrappableAs));
+   public static Iterable<ProviderMetadata> viewableAs(TypeToken<? extends View> viewableAs) {
+      return filter(all(), ProviderPredicates.viewableAs(viewableAs));
    }
 
-   public static Iterable<ProviderMetadata> contextWrappableAs(Class<? extends Wrapper> contextWrappableAs) {
-      return filter(all(), ProviderPredicates.contextWrappableAs(TypeToken.of(contextWrappableAs)));
+   public static Iterable<ProviderMetadata> viewableAs(Class<? extends View> viewableAs) {
+      return filter(all(), ProviderPredicates.viewableAs(TypeToken.of(viewableAs)));
    }
 
    /**
@@ -145,7 +145,7 @@ public class Providers {
 
    /**
     * Returns the providers that are bound to the same location as the given ISO 3166 code
-    * regardless of contextWrappableAs.
+    * regardless of viewableAs.
     * 
     * @param isoCode
     *           the ISO 3166 code to filter providers by
@@ -158,29 +158,29 @@ public class Providers {
 
    /**
     * Returns the providers that are bound to the same location as the given ISO 3166 code and of
-    * the given contextWrappableAs.
+    * the given viewableAs.
     * 
     * @param iso3166Code
     *           the ISO 3166 code to filter providers by
-    * @param contextWrappableAs
-    *           the contextWrappableAs to filter providers by
+    * @param viewableAs
+    *           the viewableAs to filter providers by
     * 
-    * @return the providers bound by the given ISO 3166 code and of the proper contextWrappableAs
+    * @return the providers bound by the given ISO 3166 code and of the proper viewableAs
     */
    public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code,
-            TypeToken<? extends Wrapper> contextWrappableAs) {
+            TypeToken<? extends View> viewableAs) {
       return filter(all(), Predicates.and(ProviderPredicates.boundedByIso3166Code(iso3166Code), ProviderPredicates
-               .contextWrappableAs(contextWrappableAs)));
+               .viewableAs(viewableAs)));
    }
 
    public static Iterable<ProviderMetadata> boundedByIso3166Code(String iso3166Code,
-            Class<? extends Wrapper> contextWrappableAs) {
-      return boundedByIso3166Code(iso3166Code, TypeToken.of(contextWrappableAs));
+            Class<? extends View> viewableAs) {
+      return boundedByIso3166Code(iso3166Code, TypeToken.of(viewableAs));
    }
 
    /**
     * Returns the providers that have at least one common ISO 3166 code in common regardless of
-    * contextWrappableAs.
+    * viewableAs.
     * 
     * @param providerMetadata
     *           the provider metadata to use to filter providers by
@@ -193,24 +193,24 @@ public class Providers {
 
    /**
     * Returns the providers that have at least one common ISO 3166 code and are of the given
-    * contextWrappableAs.
+    * viewableAs.
     * 
     * @param providerMetadata
     *           the provider metadata to use to filter providers by
-    * @param contextWrappableAs
-    *           the contextWrappableAs to filter providers by
+    * @param viewableAs
+    *           the viewableAs to filter providers by
     * 
     * @return the providers that share at least one common ISO 3166 code and of the given
-    *         contextWrappableAs
+    *         viewableAs
     */
    public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata,
-            TypeToken<? extends Wrapper> contextWrappableAs) {
+            TypeToken<? extends View> viewableAs) {
       return filter(all(), Predicates.and(ProviderPredicates.intersectingIso3166Code(providerMetadata),
-               ProviderPredicates.contextWrappableAs(contextWrappableAs)));
+               ProviderPredicates.viewableAs(viewableAs)));
    }
 
    public static Iterable<ProviderMetadata> collocatedWith(ProviderMetadata providerMetadata,
-            Class<? extends Wrapper> contextWrappableAs) {
-      return collocatedWith(providerMetadata, TypeToken.of(contextWrappableAs));
+            Class<? extends View> viewableAs) {
+      return collocatedWith(providerMetadata, TypeToken.of(viewableAs));
    }
 }

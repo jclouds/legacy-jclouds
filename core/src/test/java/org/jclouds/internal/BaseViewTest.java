@@ -34,8 +34,8 @@ import com.google.common.reflect.TypeToken;
 /** 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "BaseWrapperTest")
-public class BaseWrapperTest {
+@Test(groups = "unit", testName = "BaseViewTest")
+public class BaseViewTest {
    private static class Water extends ContextImpl {
 
       protected Water() {
@@ -68,7 +68,7 @@ public class BaseWrapperTest {
       }
    }
    
-   private static class Wine extends BaseWrapper {
+   private static class Wine extends BaseView {
 
       protected Wine() {
          super(new Water(), TypeToken.of(Water.class));
@@ -77,19 +77,19 @@ public class BaseWrapperTest {
 
    public void testWaterTurnedIntoWine() {
       Wine wine = new Wine();
-      assertEquals(wine.getWrappedType(), TypeToken.of(Water.class));
+      assertEquals(wine.getBackendType(), TypeToken.of(Water.class));
       assertEquals(wine.unwrap(TypeToken.of(Water.class)), new Water());
       assertEquals(wine.unwrap(), new Water());
    }
 
    public void testPeanutButterDidntTurnIntoWine() {
       Wine wine = new Wine();
-      assertNotEquals(wine.getWrappedType(), TypeToken.of(PeanutButter.class));
+      assertNotEquals(wine.getBackendType(), TypeToken.of(PeanutButter.class));
       try {
          wine.unwrap(TypeToken.of(PeanutButter.class));
          assertFalse(true);
       } catch (IllegalArgumentException e) {
-         assertEquals(e.getMessage(), "wrapped type: org.jclouds.internal.BaseWrapperTest$Water not assignable from org.jclouds.internal.BaseWrapperTest$PeanutButter");
+         assertEquals(e.getMessage(), "backend type: org.jclouds.internal.BaseViewTest$Water not assignable from org.jclouds.internal.BaseViewTest$PeanutButter");
       }
    }
    

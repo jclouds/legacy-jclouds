@@ -41,24 +41,24 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    void containerDoesntExist() {
-      Set<? extends StorageMetadata> list = wrapper.getBlobStore().list();
+      Set<? extends StorageMetadata> list = view.getBlobStore().list();
       assert !list.contains(new MutableStorageMetadataImpl());
    }
 
    @Test(groups = { "integration", "live" })
    public void testAllLocations() throws InterruptedException {
-      for (final Location location : wrapper.getBlobStore().listAssignableLocations()) {
+      for (final Location location : view.getBlobStore().listAssignableLocations()) {
          final String containerName = getScratchContainerName();
          try {
             System.err.printf(" >> creating container in location %s%n", location);
-            wrapper.getBlobStore().createContainerInLocation(location, containerName);
+            view.getBlobStore().createContainerInLocation(location, containerName);
             System.err.printf(" << call complete.. checking%n");
 
             assertConsistencyAware(new Runnable() {
 
                @Override
                public void run() {
-                  PageSet<? extends StorageMetadata> list = wrapper.getBlobStore().list();
+                  PageSet<? extends StorageMetadata> list = view.getBlobStore().list();
                   assert Iterables.any(list, new Predicate<StorageMetadata>() {
                      public boolean apply(StorageMetadata md) {
                         return containerName.equals(md.getName()) && location.equals(md.getLocation());
@@ -79,9 +79,9 @@ public class BaseServiceIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
-      if (wrapper.unwrap() instanceof Location)
-         assertProvider(Location.class.cast(wrapper.unwrap()));
-      for (Location location : wrapper.getBlobStore().listAssignableLocations()) {
+      if (view.unwrap() instanceof Location)
+         assertProvider(Location.class.cast(view.unwrap()));
+      for (Location location : view.getBlobStore().listAssignableLocations()) {
          System.err.printf("location %s%n", location);
          assert location.getId() != null : location;
          assert location != location.getParent() : location;

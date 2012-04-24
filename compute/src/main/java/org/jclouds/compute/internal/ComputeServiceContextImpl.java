@@ -30,7 +30,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.Utils;
 import org.jclouds.domain.Credentials;
-import org.jclouds.internal.BaseWrapper;
+import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
 
@@ -40,14 +40,14 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Singleton
-public class ComputeServiceContextImpl extends BaseWrapper implements ComputeServiceContext {
+public class ComputeServiceContextImpl extends BaseView implements ComputeServiceContext {
    private final ComputeService computeService;
    private final Utils utils;
 
    @Inject
-   public ComputeServiceContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
+   public ComputeServiceContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
             ComputeService computeService, Utils utils) {
-      super(wrapped, wrappedType);
+      super(backend, backendType);
       this.computeService = checkNotNull(computeService, "computeService");
       this.utils = checkNotNull(utils, "utils");
    }

@@ -48,7 +48,7 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    @Override
    public void setupContext() {
       super.setupContext();
-      novaContext = wrapper.unwrap();
+      novaContext = view.unwrap();
    }
 
    @Override

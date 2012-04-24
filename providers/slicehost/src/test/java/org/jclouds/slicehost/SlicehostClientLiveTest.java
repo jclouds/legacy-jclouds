@@ -68,7 +68,7 @@ public class SlicehostClientLiveTest extends BaseComputeServiceContextLiveTest {
    @Override
    public void setupContext() {
       super.setupContext();
-      Injector injector = wrapper.utils().injector();
+      Injector injector = view.utils().injector();
       
       client = injector.getInstance(SlicehostClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);

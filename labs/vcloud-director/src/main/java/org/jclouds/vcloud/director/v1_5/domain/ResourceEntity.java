@@ -26,7 +26,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElementView;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
@@ -171,7 +171,7 @@ public abstract class ResourceEntity extends Entity {
       }
    }
 
-   @XmlElementWrapper(name = "Files")
+   @XmlElementView(name = "Files")
    @XmlElement(name = "File")
    private Set<File> files;
    @XmlAttribute

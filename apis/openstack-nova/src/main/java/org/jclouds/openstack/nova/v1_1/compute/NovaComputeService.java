@@ -151,8 +151,8 @@ public class NovaComputeService extends BaseComputeService {
       Optional<KeyPairClient> keyPairClient = novaClient.getKeyPairExtensionForZone(zoneId);
       if (keyPairClient.isPresent()) {
          for (String group : groups) {
-            for (Map<String, KeyPair> wrapper : keyPairClient.get().listKeyPairs()) {
-               for (KeyPair pair : Iterables.filter(wrapper.values(),
+            for (Map<String, KeyPair> view : keyPairClient.get().listKeyPairs()) {
+               for (KeyPair pair : Iterables.filter(view.values(),
                         KeyPairPredicates.nameMatches(namingConvention.create().containsGroup(group)))) {
                   ZoneAndName zoneAndName = ZoneAndName.fromZoneAndName(zoneId, pair.getName());
                   logger.debug(">> deleting keypair(%s)", zoneAndName);

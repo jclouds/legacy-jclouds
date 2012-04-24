@@ -90,8 +90,8 @@ public class BindProviderMetadataContextAndCredentials extends AbstractModule {
    @Provides
    @Provider
    @Singleton
-   protected Context wrapped(Injector i, @Provider TypeToken<? extends Context> wrappedType) {
-      return Context.class.cast(i.getInstance(Key.get(TypeLiteral.get(wrappedType.getType()))));
+   protected Context backend(Injector i, @Provider TypeToken<? extends Context> backendType) {
+      return Context.class.cast(i.getInstance(Key.get(TypeLiteral.get(backendType.getType()))));
    }
 
 }

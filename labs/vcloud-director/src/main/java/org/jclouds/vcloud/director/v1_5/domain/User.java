@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElementView;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -348,7 +348,7 @@ public class User extends Entity {
    private Reference role;
    @XmlElement(name = "Password")
    private String password;
-   @XmlElementWrapper(name = "GroupReferences")
+   @XmlElementView(name = "GroupReferences")
    private List<Reference> groups;
 
    protected User(Builder<?> builder) {

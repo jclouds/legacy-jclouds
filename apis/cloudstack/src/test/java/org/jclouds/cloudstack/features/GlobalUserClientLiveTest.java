@@ -84,7 +84,7 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkAuthAsUser(ApiKeyPair keyPair) {
-      ComputeServiceContext context = createWrapper(credentialsAsProperties(keyPair), setupModules());
+      ComputeServiceContext context = createView(credentialsAsProperties(keyPair), setupModules());
 
       CloudStackClient client = context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi();
       Set<Account> accounts = client.getAccountClient().listAccounts();

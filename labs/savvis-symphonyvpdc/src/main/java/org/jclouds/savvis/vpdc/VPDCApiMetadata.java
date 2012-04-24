@@ -82,7 +82,7 @@ public class VPDCApiMetadata extends BaseRestApiMetadata {
          .buildVersion("2.3")
          .defaultEndpoint("https://api.savvis.net/vpdc")
          .defaultProperties(VPDCApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(VPDCRestClientModule.class, VPDCComputeServiceContextModule.class));
 
       }

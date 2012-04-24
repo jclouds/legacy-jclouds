@@ -208,7 +208,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
 
    public static Reference getRoleReferenceFor(String name, RestContext<VCloudDirectorAdminClient, VCloudDirectorAdminAsyncClient> adminContext) {
       RoleReferences roles = adminContext.getApi().getQueryClient().roleReferencesQueryAll();
-      // wrapped in a builder to strip out unwanted xml cruft that the api chokes on
+      // backend in a builder to strip out unwanted xml cruft that the api chokes on
       return Reference.builder().fromReference(Iterables.find(roles.getReferences(), ReferencePredicates.nameEquals(name))).build();
    }
 

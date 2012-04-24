@@ -19,7 +19,7 @@
 package org.jclouds.rimuhosting.miro.domain.internal;
 
 /**
- * Object that the payload on requests is wrapped in.
+ * Object that the payload on requests is backend in.
  *
  * @author Ivan Meredith
  */

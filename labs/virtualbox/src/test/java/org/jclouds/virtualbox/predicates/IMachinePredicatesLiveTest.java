@@ -79,7 +79,7 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
       VmSpec instanceVmSpec = VmSpec.builder().id(instanceName).name(instanceName).osTypeId("").memoryMB(512)
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
-      Injector injector = wrapper.utils().injector();
+      Injector injector = view.utils().injector();
       Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
                .builder()
@@ -111,7 +111,7 @@ public class IMachinePredicatesLiveTest extends BaseVirtualBoxClientLiveTest {
    private IMachine getVmWithGuestAdditionsInstalled() {
       MasterSpec masterSpecForTest = super.getMasterSpecForTest();
       try {
-         Injector injector = wrapper.utils().injector();
+         Injector injector = view.utils().injector();
          return injector.getInstance(CreateAndInstallVm.class).apply(masterSpecForTest);
       } catch (IllegalStateException e) {
          // already created

@@ -92,7 +92,7 @@ public class VCloudDirectorApiMetadata extends BaseRestApiMetadata {
          .defaultProperties(VCloudDirectorApiMetadata.defaultProperties())
          .context(TypeToken.of(VCloudDirectorContext.class))
          .defaultModule(VCloudDirectorRestClientModule.class);
-//         .wrapper(TypeToken.of(ComputeServiceContext.class))
+//         .view(TypeToken.of(ComputeServiceContext.class))
 //         .defaultModules(ImmutableSet.<Class<? extends Module>>of(VCloudDirectorRestClientModule.class, VCloudDirectorComputeServiceContextModule.class));
       }
 

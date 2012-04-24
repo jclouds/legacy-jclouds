@@ -150,7 +150,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
 
    protected void buildSocketTester() {
-      SocketOpen socketOpen = wrapper.utils().injector().getInstance(SocketOpen.class);
+      SocketOpen socketOpen = view.utils().injector().getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
       // wait a maximum of 60 seconds for port 8080 to open.
       long maxWait = TimeUnit.SECONDS.toMillis(60);
@@ -162,7 +162,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    @Override
    protected void initializeContext() {
       super.initializeContext();
-      client = wrapper.getComputeService();
+      client = view.getComputeService();
    }
 
    // wait up to 5 seconds for an auth exception
@@ -320,7 +320,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    }
 
    protected void checkHttpGet(NodeMetadata node) {
-      ComputeTestUtils.checkHttpGet(wrapper.utils().http(), node, 8080);
+      ComputeTestUtils.checkHttpGet(view.utils().http(), node, 8080);
    }
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
@@ -416,7 +416,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    public void testCredentialsCache() throws Exception {
       initializeContext();
       for (NodeMetadata node : nodes)
-         assert (wrapper.utils().credentialStore().get("node#" + node.getId()) != null) : "credentials for " + node.getId();
+         assert (view.utils().credentialStore().get("node#" + node.getId()) != null) : "credentials for " + node.getId();
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String group, OperatingSystem os,
@@ -431,7 +431,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
          assertNotNull(node.getGroup());
          assertEquals(node.getGroup(), group);
          assertEquals(node.getState(), NodeState.RUNNING);
-         Credentials fromStore = wrapper.utils().credentialStore().get("node#" + node.getId());
+         Credentials fromStore = view.utils().credentialStore().get("node#" + node.getId());
          assertEquals(fromStore, node.getCredentials());
          assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
          assertNotNull(node.getCredentials());
@@ -548,7 +548,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       assertEquals(toDestroy, destroyed.size());
       for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), inGroup(group))) {
          assert node.getState() == NodeState.TERMINATED : node;
-         assert wrapper.utils().credentialStore().get("node#" + node.getId()) == null : "credential should have been null for "
+         assert view.utils().credentialStore().get("node#" + node.getId()) == null : "credential should have been null for "
                + "node#" + node.getId();
       }
    }
@@ -650,7 +650,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
                            format("ls %s/bundles/org/jboss/as/osgi/configadmin/main|sed -e 's/.*-//g' -e 's/.jar//g'",
                                  JBOSS_HOME)), configureSeconds));
 
-         trackAvailabilityOfProcessOnNode(wrapper.utils().userExecutor().submit(new Callable<ExecResponse>() {
+         trackAvailabilityOfProcessOnNode(view.utils().userExecutor().submit(new Callable<ExecResponse>() {
             @Override
             public ExecResponse call() {
                return client.runScriptOnNode(nodeId, startJBoss(configuration), runAsRoot(false).blockOnComplete(false)
@@ -666,7 +666,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
          client.runScriptOnNode(nodeId, "/tmp/init-jboss stop", runAsRoot(false).wrapInInitScript(false));
 
-         trackAvailabilityOfProcessOnNode(wrapper.utils().userExecutor().submit(new Callable<ExecResponse>() {
+         trackAvailabilityOfProcessOnNode(view.utils().userExecutor().submit(new Callable<ExecResponse>() {
 
             @Override
             public ExecResponse call() {
@@ -814,7 +814,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
    }
 
    protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node, String taskName) throws IOException {
-      SshClient ssh = wrapper.utils().sshForNode().apply(node);
+      SshClient ssh = view.utils().sshForNode().apply(node);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

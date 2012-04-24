@@ -85,7 +85,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    }
    
    @Override
-   protected TypeToken<CloudStackContext> wrapperType() {
+   protected TypeToken<CloudStackContext> viewType() {
       return TypeToken.of(CloudStackContext.class);
    }
    
@@ -199,14 +199,14 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    @Override
    public void setupContext() {
       super.setupContext();
-      computeClient = wrapper.getComputeService();
-      cloudStackContext = wrapper.unwrap();
+      computeClient = view.getComputeService();
+      cloudStackContext = view.unwrap();
       client = cloudStackContext.getApi();
       user = verifyCurrentUserIsOfType(cloudStackContext, Account.Type.USER);
 
       domainAdminEnabled = setupDomainAdminProperties() != null;
       if (domainAdminEnabled) {
-         domainAdminComputeContext = createWrapper(setupDomainAdminProperties(), setupModules());
+         domainAdminComputeContext = createView(setupDomainAdminProperties(), setupModules());
          domainAdminContext = domainAdminComputeContext.getDomainContext();
          domainAdminClient = domainAdminContext.getApi();
          domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
@@ -215,7 +215,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
 
       globalAdminEnabled = setupGlobalAdminProperties() != null;
       if (globalAdminEnabled) {
-         globalAdminComputeContext = createWrapper(setupGlobalAdminProperties(), setupModules());
+         globalAdminComputeContext = createView(setupGlobalAdminProperties(), setupModules());
          globalAdminContext = globalAdminComputeContext.getGlobalContext();
          globalAdminClient = globalAdminContext.getApi();
          globalAdminUser = verifyCurrentUserIsOfType(globalAdminContext, Account.Type.ADMIN);

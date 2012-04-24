@@ -88,7 +88,7 @@ public class InternetServiceLiveTest
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      tmClient = wrapper.unwrap(TerremarkVCloudExpressApiMetadata.CONTEXT_TOKEN).getApi();
+      tmClient = view.unwrap(TerremarkVCloudExpressApiMetadata.CONTEXT_TOKEN).getApi();
 
    }
 

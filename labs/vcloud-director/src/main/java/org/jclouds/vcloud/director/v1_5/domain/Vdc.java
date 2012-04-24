@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElementView;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -223,10 +223,10 @@ public class Vdc extends Entity {
    private CapacityWithUsage storageCapacity;
    @XmlElement(name = "ComputeCapacity", required = true)
    private ComputeCapacity computeCapacity;
-   @XmlElementWrapper(name = "ResourceEntities")
+   @XmlElementView(name = "ResourceEntities")
    @XmlElement(name = "ResourceEntity")
    private Set<Reference> resourceEntities = Sets.newLinkedHashSet();
-   @XmlElementWrapper(name = "AvailableNetworks")
+   @XmlElementView(name = "AvailableNetworks")
    @XmlElement(name = "Network")
    protected Set<Reference> availableNetworks = Sets.newLinkedHashSet();
    @XmlElement(name = "Capabilities")

@@ -72,7 +72,7 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
    @BeforeClass(groups = "live")
    public void setupContext() {
       super.setupContext();
-      injector = wrapper.utils().injector();
+      injector = view.utils().injector();
 
       String instanceName = VIRTUALBOX_IMAGE_PREFIX
                + CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, getClass().getSimpleName());
@@ -152,7 +152,7 @@ public class GuestAdditionsInstallerLiveTest extends BaseVirtualBoxClientLiveTes
    private IMachine getVmWithGuestAdditionsInstalled() {
       MasterSpec masterSpecForTest = super.getMasterSpecForTest();
       try {
-         Injector injector = wrapper.utils().injector();
+         Injector injector = view.utils().injector();
          return injector.getInstance(CreateAndInstallVm.class).apply(masterSpecForTest);
       } catch (IllegalStateException e) {
          // already created

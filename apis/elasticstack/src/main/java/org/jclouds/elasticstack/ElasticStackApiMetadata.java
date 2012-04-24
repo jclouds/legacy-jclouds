@@ -85,7 +85,7 @@ public class ElasticStackApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .defaultEndpoint("https://api.lon-p.elastichosts.com")
          .defaultProperties(ElasticStackApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(ElasticStackRestClientModule.class, ElasticStackComputeServiceContextModule.class));
       }
 

@@ -50,7 +50,7 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
    
    @Test
    public void testTemplateBuilderCanUseImageIdWithoutFetchingAllImages() throws Exception {
-      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
       String defaultImageId = defaultTemplate.getImage().getId();
       String defaultImageProviderId = defaultTemplate.getImage().getProviderId();
 
@@ -58,7 +58,7 @@ public abstract class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLive
       try {
          // Track http commands
          final List<HttpCommand> commandsInvoked = Lists.newArrayList();
-         context = createWrapper(
+         context = createView(
                setupProperties(),
                ImmutableSet.<Module> of(new Log4JLoggingModule(),
                      TrackingJavaUrlHttpCommandExecutorService.newTrackingModule(commandsInvoked)));

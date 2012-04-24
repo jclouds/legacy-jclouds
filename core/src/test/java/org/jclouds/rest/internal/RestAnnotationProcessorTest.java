@@ -939,7 +939,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @Path("/{foo}")
       @MapBinder(BindToJsonPayload.class)
       @Consumes(MediaType.APPLICATION_JSON)
-      Wrapper putWithMethodBinderConsumes(@PathParam("foo") @PayloadParam("fooble") String path);
+      View putWithMethodBinderConsumes(@PathParam("foo") @PayloadParam("fooble") String path);
 
       @GET
       @Path("/")
@@ -1017,7 +1017,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       ListenableFuture<Boolean> rowdy(@PathParam("id") int path);
    }
 
-   static class Wrapper {
+   static class View {
       String foo;
    }
 
@@ -1069,7 +1069,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertResponseParserClassEquals(method, request, ParseJson.class);
       // now test that it works!
 
-      Function<HttpResponse, Wrapper> parser = (Function<HttpResponse, Wrapper>) RestAnnotationProcessor
+      Function<HttpResponse, View> parser = (Function<HttpResponse, View>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
       assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))).foo, "bar");

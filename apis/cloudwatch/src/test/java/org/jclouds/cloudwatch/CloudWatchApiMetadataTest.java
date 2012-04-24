@@ -18,7 +18,7 @@
  */
 package org.jclouds.cloudwatch;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.rest.internal.BaseRestApiMetadataTest;
 import org.testng.annotations.Test;
 
@@ -34,6 +34,6 @@ public class CloudWatchApiMetadataTest extends BaseRestApiMetadataTest {
 
    // no monitoring abstraction, yet
    public CloudWatchApiMetadataTest() {
-      super(new CloudWatchApiMetadata(), ImmutableSet.<TypeToken<? extends Wrapper>> of());
+      super(new CloudWatchApiMetadata(), ImmutableSet.<TypeToken<? extends View>> of());
    }
 }

@@ -71,25 +71,25 @@ public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest 
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getKeyPairServices();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getKeyPairServices();
    }
 
    public void testNoSsh() throws Exception {
 
       Map<String, String> keyPair = ComputeTestUtils.setupKeyPair();
 
-      AWSInstanceClient instanceClient = AWSEC2Client.class.cast(wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getInstanceServices();
+      AWSInstanceClient instanceClient = AWSEC2Client.class.cast(view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi()).getInstanceServices();
 
       String group = PREFIX + "unssh";
-      wrapper.getComputeService().destroyNodesMatching(inGroup(group));
+      view.getComputeService().destroyNodesMatching(inGroup(group));
 
-      TemplateOptions options = wrapper.getComputeService().templateOptions();
+      TemplateOptions options = view.getComputeService().templateOptions();
 
       options.authorizePublicKey(keyPair.get("public")).as(AWSEC2TemplateOptions.class);
 
       ComputeServiceContext noSshContext = null;
       try {
-         noSshContext = createWrapper(setupProperties(), ImmutableSet.<Module> of(new Log4JLoggingModule()));
+         noSshContext = createView(setupProperties(), ImmutableSet.<Module> of(new Log4JLoggingModule()));
 
          Set<? extends NodeMetadata> nodes = noSshContext.getComputeService().createNodesInGroup(group, 1, options);
 
@@ -104,7 +104,7 @@ public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest 
 
          assertEquals(instance.getKeyName(), "jclouds#" + group);
 
-         Map<? extends NodeMetadata, ExecResponse> responses = wrapper.getComputeService()
+         Map<? extends NodeMetadata, ExecResponse> responses = view.getComputeService()
                .runScriptOnNodesMatching(
                      runningInGroup(group),
                      exec("echo hello"),
@@ -117,7 +117,7 @@ public class AWSKeyPairClientLiveTest extends BaseComputeServiceContextLiveTest 
 
       } finally {
          noSshContext.close();
-         wrapper.getComputeService().destroyNodesMatching(inGroup(group));
+         view.getComputeService().destroyNodesMatching(inGroup(group));
       }
    }
 

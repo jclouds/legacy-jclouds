@@ -99,7 +99,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    private final Factory commandFactory;
 
    /**
-    * maximum duration of an unwrapped http Request
+    * maximum duration of an unbackend http Request
     */
    @Inject(optional = true)
    @Named(Constants.PROPERTY_REQUEST_TIMEOUT)

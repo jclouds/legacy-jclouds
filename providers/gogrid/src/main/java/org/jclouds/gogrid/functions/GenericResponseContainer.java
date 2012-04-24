@@ -23,7 +23,7 @@ import java.util.SortedSet;
 /**
  * General format of GoGrid's response.
  * 
- * This is the wrapper for most responses, and the actual result (or error) will
+ * This is the view for most responses, and the actual result (or error) will
  * be set to {@link #list}. Note that even the single returned item will be set
  * to {@link #list} per GoGrid's design.
  * 

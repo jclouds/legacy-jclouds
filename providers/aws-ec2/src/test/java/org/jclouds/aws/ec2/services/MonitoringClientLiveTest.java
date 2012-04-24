@@ -47,7 +47,7 @@ public class MonitoringClientLiveTest extends BaseComputeServiceContextLiveTest 
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getMonitoringServices();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getMonitoringServices();
    }
 
    @Test(enabled = false)

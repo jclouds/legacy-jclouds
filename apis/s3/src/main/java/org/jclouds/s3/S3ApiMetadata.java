@@ -108,7 +108,7 @@ public class S3ApiMetadata extends BaseRestApiMetadata {
          .version(S3AsyncClient.VERSION)
          .defaultProperties(S3ApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
-         .wrapper(TypeToken.of(S3BlobStoreContext.class))
+         .view(TypeToken.of(S3BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(S3RestClientModule.class, S3BlobStoreContextModule.class));
       }
 

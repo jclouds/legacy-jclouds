@@ -21,7 +21,7 @@ package org.jclouds.apis;
 import java.util.Properties;
 
 import org.jclouds.Context;
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 
 import com.google.common.io.Closeables;
 import com.google.common.reflect.TypeToken;
@@ -31,26 +31,26 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public abstract class BaseWrapperLiveTest<W extends Wrapper> extends BaseContextLiveTest<Context>{
+public abstract class BaseViewLiveTest<V extends View> extends BaseContextLiveTest<Context>{
 
-   protected volatile W wrapper;
+   protected volatile V view;
 
    @Override
    protected void initializeContext() {
       Closeables.closeQuietly(context);
-      wrapper = createWrapper(setupProperties(), setupModules());
-      context = wrapper.unwrap();
+      view = createView(setupProperties(), setupModules());
+      context = view.unwrap();
    }
 
-   protected abstract TypeToken<W> wrapperType();
+   protected abstract TypeToken<V> viewType();
    
    @Override
    protected TypeToken<Context> contextType() {
      return TypeToken.of(Context.class);
    }
    
-   protected W createWrapper(Properties props, Iterable<Module> modules) {
-      return newBuilder().modules(modules).overrides(props).buildAndWrapWith(wrapperType());
+   protected V createView(Properties props, Iterable<Module> modules) {
+      return newBuilder().modules(modules).overrides(props).buildView(viewType());
    }
 
 }

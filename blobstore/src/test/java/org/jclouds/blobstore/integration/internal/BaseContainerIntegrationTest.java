@@ -49,21 +49,21 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() {
-      assert !wrapper.getBlobStore().containerExists("forgetaboutit");
-      assert !wrapper.getBlobStore().containerExists("cloudcachestorefunctionalintegrationtest-first");
+      assert !view.getBlobStore().containerExists("forgetaboutit");
+      assert !view.getBlobStore().containerExists("cloudcachestorefunctionalintegrationtest-first");
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutTwiceIsOkAndDoesntOverwrite() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         wrapper.getBlobStore().createContainerInLocation(null, containerName);
+         view.getBlobStore().createContainerInLocation(null, containerName);
 
-         Blob blob = wrapper.getBlobStore().blobBuilder("hello").payload(TEST_STRING).build();
-         wrapper.getBlobStore().putBlob(containerName, blob);
+         Blob blob = view.getBlobStore().blobBuilder("hello").payload(TEST_STRING).build();
+         view.getBlobStore().putBlob(containerName, blob);
 
-         wrapper.getBlobStore().createContainerInLocation(null, containerName);
-         assertEquals(wrapper.getBlobStore().countBlobs(containerName), 1);
+         view.getBlobStore().createContainerInLocation(null, containerName);
+         assertEquals(view.getBlobStore().countBlobs(containerName), 1);
       } finally {
          returnContainer(containerName);
       }
@@ -77,11 +77,11 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          addBlobToContainer(containerName,
          // NOTE all metadata in jclouds comes out as lowercase, in an effort to
          // normalize the providers.
-               wrapper.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
+               view.getBlobStore().blobBuilder(key).userMetadata(ImmutableMap.of("Adrian", "powderpuff"))
                      .payload(TEST_STRING).contentType(MediaType.TEXT_PLAIN).calculateMD5().build());
          validateContent(containerName, key);
 
-         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName,
+         PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName,
                maxResults(1).withDetails());
 
          BlobMetadata metadata = BlobMetadata.class.cast(get(container, 0));
@@ -105,7 +105,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       String containerName = getContainerName();
       try {
          add5BlobsUnderPathAnd5UnderRootToContainer(containerName);
-         wrapper.getBlobStore().clearContainer(containerName);
+         view.getBlobStore().clearContainer(containerName);
          assertConsistencyAwareContainerSize(containerName, 0);
       } finally {
          returnContainer(containerName);
@@ -118,13 +118,13 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          addAlphabetUnderRoot(containerName);
 
-         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName, maxResults(1));
+         PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName, maxResults(1));
 
          assert container.getNextMarker() != null;
          assertEquals(container.size(), 1);
          String marker = container.getNextMarker();
 
-         container = wrapper.getBlobStore().list(containerName, afterMarker(marker));
+         container = view.getBlobStore().list(containerName, afterMarker(marker));
          assertEquals(container.getNextMarker(), null);
          assert container.size() == 25 : String.format("size should have been 25, but was %d: %s", container.size(),
                container);
@@ -142,7 +142,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          String prefix = "rootdelimeter";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
-         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName);
+         PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName);
          assert container.getNextMarker() == null;
          assertEquals(container.size(), 16);
       } finally {
@@ -157,17 +157,17 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          String directory = "directory";
 
-         assert !wrapper.getBlobStore().directoryExists(containerName, directory);
+         assert !view.getBlobStore().directoryExists(containerName, directory);
 
-         wrapper.getBlobStore().createDirectory(containerName, directory);
+         view.getBlobStore().createDirectory(containerName, directory);
 
-         assert wrapper.getBlobStore().directoryExists(containerName, directory);
-         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName);
+         assert view.getBlobStore().directoryExists(containerName, directory);
+         PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName);
          // we should have only the directory under root
          assert container.getNextMarker() == null;
          assert container.size() == 1 : container;
 
-         container = wrapper.getBlobStore().list(containerName, inDirectory(directory));
+         container = view.getBlobStore().list(containerName, inDirectory(directory));
 
          // we should have nothing in the directory
          assert container.getNextMarker() == null;
@@ -175,50 +175,50 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          addTenObjectsUnderPrefix(containerName, directory);
 
-         container = wrapper.getBlobStore().list(containerName);
+         container = view.getBlobStore().list(containerName);
          // we should still have only the directory under root
          assert container.getNextMarker() == null;
          assert container.size() == 1 : container;
 
-         container = wrapper.getBlobStore().list(containerName, inDirectory(directory));
+         container = view.getBlobStore().list(containerName, inDirectory(directory));
          // we should have only the 10 items under the directory
          assert container.getNextMarker() == null;
          assert container.size() == 10 : container;
 
          // try 2 level deep directory
-         assert !wrapper.getBlobStore().directoryExists(containerName, directory + "/" + directory);
-         wrapper.getBlobStore().createDirectory(containerName, directory + "/" + directory);
-         assert wrapper.getBlobStore().directoryExists(containerName, directory + "/" + directory);
+         assert !view.getBlobStore().directoryExists(containerName, directory + "/" + directory);
+         view.getBlobStore().createDirectory(containerName, directory + "/" + directory);
+         assert view.getBlobStore().directoryExists(containerName, directory + "/" + directory);
 
-         wrapper.getBlobStore().clearContainer(containerName, inDirectory(directory));
-         assert wrapper.getBlobStore().directoryExists(containerName, directory);
-         assert wrapper.getBlobStore().directoryExists(containerName, directory + "/" + directory);
+         view.getBlobStore().clearContainer(containerName, inDirectory(directory));
+         assert view.getBlobStore().directoryExists(containerName, directory);
+         assert view.getBlobStore().directoryExists(containerName, directory + "/" + directory);
 
          // should have only the 2 level-deep directory above
-         container = wrapper.getBlobStore().list(containerName, inDirectory(directory));
+         container = view.getBlobStore().list(containerName, inDirectory(directory));
          assert container.getNextMarker() == null;
          assert container.size() == 1 : container;
 
-         wrapper.getBlobStore().createDirectory(containerName, directory + "/" + directory);
+         view.getBlobStore().createDirectory(containerName, directory + "/" + directory);
 
-         container = wrapper.getBlobStore().list(containerName, inDirectory(directory).recursive());
+         container = view.getBlobStore().list(containerName, inDirectory(directory).recursive());
          assert container.getNextMarker() == null;
          assert container.size() == 1 : container;
 
-         wrapper.getBlobStore().clearContainer(containerName, inDirectory(directory).recursive());
+         view.getBlobStore().clearContainer(containerName, inDirectory(directory).recursive());
 
          // should no longer have the 2 level-deep directory above
-         container = wrapper.getBlobStore().list(containerName, inDirectory(directory));
+         container = view.getBlobStore().list(containerName, inDirectory(directory));
          assert container.getNextMarker() == null;
          assert container.size() == 0 : container;
 
-         container = wrapper.getBlobStore().list(containerName);
+         container = view.getBlobStore().list(containerName);
          // should only have the directory
          assert container.getNextMarker() == null;
          assert container.size() == 1 : container;
-         wrapper.getBlobStore().deleteDirectory(containerName, directory);
+         view.getBlobStore().deleteDirectory(containerName, directory);
 
-         container = wrapper.getBlobStore().list(containerName);
+         container = view.getBlobStore().list(containerName);
          // now should be completely empty
          assert container.getNextMarker() == null;
          assert container.size() == 0 : container;
@@ -236,7 +236,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
 
-         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName, inDirectory(prefix));
+         PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName, inDirectory(prefix));
          assert container.getNextMarker() == null;
          assertEquals(container.size(), 10);
       } finally {
@@ -251,7 +251,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          addAlphabetUnderRoot(containerName);
 
-         PageSet<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName, maxResults(5));
+         PageSet<? extends StorageMetadata> container = view.getBlobStore().list(containerName, maxResults(5));
          assertEquals(container.size(), 5);
          assert container.getNextMarker() != null;
       } finally {
@@ -263,7 +263,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void containerExists() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         assert wrapper.getBlobStore().containerExists(containerName);
+         assert view.getBlobStore().containerExists(containerName);
       } finally {
          returnContainer(containerName);
       }
@@ -274,7 +274,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, "test");
-         wrapper.getBlobStore().deleteContainer(containerName);
+         view.getBlobStore().deleteContainer(containerName);
          assertNotExists(containerName);
       } finally {
          recycleContainer(containerName);
@@ -285,7 +285,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    public void deleteContainerIfEmpty() throws InterruptedException {
       final String containerName = getContainerName();
       try {
-         wrapper.getBlobStore().deleteContainer(containerName);
+         view.getBlobStore().deleteContainer(containerName);
          assertNotExists(containerName);
       } finally {
          // this container is now deleted, so we can't reuse it directly
@@ -298,7 +298,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
-         Set<? extends StorageMetadata> container = wrapper.getBlobStore().list(containerName);
+         Set<? extends StorageMetadata> container = view.getBlobStore().list(containerName);
          assertEquals(container.size(), 15);
       } finally {
          returnContainer(containerName);
@@ -308,8 +308,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    protected void addAlphabetUnderRoot(String containerName) throws InterruptedException {
       for (char letter = 'a'; letter <= 'z'; letter++) {
-         wrapper.getBlobStore().putBlob(containerName,
-               wrapper.getBlobStore().blobBuilder(letter + "").payload(letter + "content").build());
+         view.getBlobStore().putBlob(containerName,
+               view.getBlobStore().blobBuilder(letter + "").payload(letter + "content").build());
       }
       assertContainerSize(containerName, 26);
 
@@ -319,7 +319,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assertEquals(wrapper.getBlobStore().countBlobs(containerName), size);
+               assertEquals(view.getBlobStore().countBlobs(containerName), size);
             } catch (Exception e) {
                propagateIfPossible(e);
             }
@@ -329,15 +329,15 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    protected void add15UnderRoot(String containerName) throws InterruptedException {
       for (int i = 0; i < 15; i++) {
-         wrapper.getBlobStore().putBlob(containerName,
-               wrapper.getBlobStore().blobBuilder(i + "").payload(i + "content").build());
+         view.getBlobStore().putBlob(containerName,
+               view.getBlobStore().blobBuilder(i + "").payload(i + "content").build());
       }
    }
 
    protected void addTenObjectsUnderPrefix(String containerName, String prefix) throws InterruptedException {
       for (int i = 0; i < 10; i++) {
-         wrapper.getBlobStore().putBlob(containerName,
-               wrapper.getBlobStore().blobBuilder(prefix + "/" + i).payload(i + "content").build());
+         view.getBlobStore().putBlob(containerName,
+               view.getBlobStore().blobBuilder(prefix + "/" + i).payload(i + "content").build());
       }
    }
 }

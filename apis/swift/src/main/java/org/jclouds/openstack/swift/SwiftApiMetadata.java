@@ -83,7 +83,7 @@ public class SwiftApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://api.openstack.org/"))
          .version(OpenStackAuthAsyncClient.VERSION)
          .defaultProperties(SwiftApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .view(TypeToken.of(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(SwiftRestClientModule.class, SwiftBlobStoreContextModule.class));
       }
 

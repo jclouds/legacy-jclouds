@@ -81,7 +81,7 @@ public class ELBApiMetadata extends BaseRestApiMetadata {
          .defaultProperties(ELBApiMetadata.defaultProperties())
          .defaultEndpoint("https://elasticloadbalancing.us-east-1.amazonaws.com")
          .documentation(URI.create("http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/APIReference"))
-         .wrapper(LoadBalancerServiceContext.class)
+         .view(LoadBalancerServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(ELBRestClientModule.class, ELBLoadBalancerContextModule.class));
       }
 

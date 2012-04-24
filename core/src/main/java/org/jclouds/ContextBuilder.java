@@ -486,37 +486,37 @@ public class ContextBuilder {
    }
 
    /**
-    * @see #buildAndWrapWith(Class)
+    * @see #buildView(Class)
     */
-   public <W extends Wrapper> W build(Class<W> wrapperType) {
-     return buildAndWrapWith(checkNotNull(wrapperType, "wrapperType"));
+   public <V extends View> V build(Class<V> viewType) {
+     return buildView(checkNotNull(viewType, "viewType"));
    }
 
    /**
-    * @see #buildAndWrapWith(TypeToken)
+    * @see #buildView(TypeToken)
     */
-   public <W extends Wrapper> W buildAndWrapWith(Class<W> wrapperType) {
-     return buildAndWrapWith(TypeToken.of(checkNotNull(wrapperType, "wrapperType")));
+   public <V extends View> V buildView(Class<V> viewType) {
+     return buildView(TypeToken.of(checkNotNull(viewType, "viewType")));
    }
    
    /**
-    * this will build any {@link ApiMetadata#getWrappers() wrapper} supported by the ApiMetadata.
+    * this will build any {@link ApiMetadata#getViews() view} supported by the ApiMetadata.
     * 
     * ex. {@code builder.build(BlobStoreContext.class) } will work, if {@code TypeToken<BlobStore>}
-    * is a configured {@link ApiMetadata#getWrappers() wrapper} of this api.
+    * is a configured {@link ApiMetadata#getViews() view} of this api.
     * 
     */
    @SuppressWarnings("unchecked")
-   public <W extends Wrapper> W buildAndWrapWith(TypeToken<W> wrapperType) {
-      TypeToken<W> returnType;
+   public <V extends View> V buildView(TypeToken<V> viewType) {
+      TypeToken<V> returnType;
       try {
-         returnType = (TypeToken<W>) Apis.findWrapper(apiMetadata, checkNotNull(wrapperType, "wrapperType"));
+         returnType = (TypeToken<V>) Apis.findView(apiMetadata, checkNotNull(viewType, "viewType"));
       } catch (NoSuchElementException e) {
          throw new IllegalArgumentException(String.format(
-                  "api %s not wrappable as %s; context: %s, wrappers: %s", apiMetadata,
-                  wrapperType, apiMetadata.getContext(), apiMetadata.getWrappers()));
+                  "api %s not wrappable as %s; context: %s, views: %s", apiMetadata,
+                  viewType, apiMetadata.getContext(), apiMetadata.getViews()));
       }
-      return (W) buildInjector().getInstance(Key.get(TypeLiteral.get(returnType.getType())));
+      return (V) buildInjector().getInstance(Key.get(TypeLiteral.get(returnType.getType())));
    }
 
    /**

@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jclouds.apis.BaseWrapperLiveTest;
+import org.jclouds.apis.BaseViewLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.domain.LoginCredentials.Builder;
@@ -39,7 +39,7 @@ import com.google.inject.util.Modules;
 /**
  * @author Jason King, Adrian Cole
  */
-public abstract class BaseGenericComputeServiceContextLiveTest<W extends ComputeServiceContext> extends BaseWrapperLiveTest<W> {
+public abstract class BaseGenericComputeServiceContextLiveTest<W extends ComputeServiceContext> extends BaseViewLiveTest<W> {
 
    protected String imageId;
    protected String loginUser;

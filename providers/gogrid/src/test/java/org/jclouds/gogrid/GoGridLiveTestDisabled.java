@@ -97,7 +97,7 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
    @Override
    public void setupContext() {
       super.setupContext();
-      gocontext = wrapper.unwrap();
+      gocontext = view.unwrap();
 
       client = gocontext.getApi();
       serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client.getJobServices()),

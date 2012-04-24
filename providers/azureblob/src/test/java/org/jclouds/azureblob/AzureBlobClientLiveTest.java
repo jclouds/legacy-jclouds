@@ -65,7 +65,7 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    public AzureBlobClient getApi() {
-      return wrapper.unwrap(AzureBlobApiMetadata.CONTEXT_TOKEN).getApi();
+      return view.unwrap(AzureBlobApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    @Test
@@ -99,7 +99,7 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
       long containerCount = response.size();
       assertTrue(containerCount >= 1);
       ListBlobsResponse list = getApi().listBlobs(privateContainer);
-      assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/%s", wrapper.unwrap(
+      assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/%s", view.unwrap(
                AzureBlobApiMetadata.CONTEXT_TOKEN).getIdentity(), privateContainer)));
       // TODO .. check to see the container actually exists
    }
@@ -155,7 +155,7 @@ public class AzureBlobClientLiveTest extends BaseBlobStoreIntegrationTest {
          }
       }
       ListBlobsResponse list = getApi().listBlobs();
-      assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/$root", wrapper.unwrap(
+      assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/$root", view.unwrap(
                AzureBlobApiMetadata.CONTEXT_TOKEN).getIdentity())));
    }
 

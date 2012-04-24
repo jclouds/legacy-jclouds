@@ -195,7 +195,7 @@ public class AppTest extends TestCase {
       this.compute = ContextBuilder.newBuilder(providerName)
                                    .credentials(identity, credential)
                                    .modules(modules)
-                                   .overrides(overrides).buildAndWrapWith(ComputeServiceContext.class).getComputeService();
+                                   .overrides(overrides).buildView(ComputeServiceContext.class).getComputeService();
    }
 
    private void createAndStartPool() {

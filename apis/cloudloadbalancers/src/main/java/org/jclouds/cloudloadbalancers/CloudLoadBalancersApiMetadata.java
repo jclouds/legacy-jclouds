@@ -78,7 +78,7 @@ public class CloudLoadBalancersApiMetadata  extends BaseRestApiMetadata {
          .version(OpenStackAuthAsyncClient.VERSION)
          .defaultEndpoint("https://auth.api.rackspacecloud.com")
          .defaultProperties(CloudLoadBalancersApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(LoadBalancerServiceContext.class))
+         .view(TypeToken.of(LoadBalancerServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudLoadBalancersRestClientModule.class, CloudLoadBalancersLoadBalancerContextModule.class));
       }
 

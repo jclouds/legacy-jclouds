@@ -61,7 +61,7 @@ public class TransientApiMetadata extends BaseApiMetadata {
          .defaultIdentity(System.getProperty("user.name"))
          .defaultCredential("bar")
          .version("1")
-         .wrapper(BlobStoreContext.class)
+         .view(BlobStoreContext.class)
          .defaultModule(TransientBlobStoreContextModule.class)
          .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"));
       }

@@ -33,7 +33,7 @@ public class SwiftClientLiveTest extends CommonSwiftClientLiveTest<SwiftClient> 
    
    @Override
    public SwiftClient getApi() {
-      return wrapper.unwrap(SwiftApiMetadata.CONTEXT_TOKEN).getApi();
+      return view.unwrap(SwiftApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
 }

@@ -19,7 +19,7 @@
 package org.jclouds.apis;
 
 import org.jclouds.Context;
-import org.jclouds.internal.BaseWrapper;
+import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
 
 import com.google.common.reflect.TypeToken;
@@ -28,7 +28,7 @@ import com.google.inject.Inject;
 /**
  * For tests
  */
-public class Storage extends BaseWrapper {
+public class Storage extends BaseView {
 
    @Inject
    public Storage(@Provider Context ctx, @Provider TypeToken<? extends Context> inputType)  {

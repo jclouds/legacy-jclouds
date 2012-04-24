@@ -76,9 +76,9 @@ public enum ErrorCode {
     * @return an ErrorCode representing the given fault code.
     */
    public static ErrorCode valueOf(VBoxException vboxException) {
-      final Throwable wrapped = vboxException.getWrapped();
-      if (wrapped instanceof RuntimeFaultMsg) {
-         final RuntimeFaultMsg faultCode = (RuntimeFaultMsg) wrapped;
+      final Throwable backend = vboxException.getWrapped();
+      if (backend instanceof RuntimeFaultMsg) {
+         final RuntimeFaultMsg faultCode = (RuntimeFaultMsg) backend;
          final int resultCode = faultCode.getFaultInfo().getResultCode();
          final ErrorCode errorCode = table.get(unsignedIntToLong(resultCode));
          if (errorCode != null) {

@@ -61,7 +61,7 @@ public class BaseGleSYSClientLiveTest extends BaseComputeServiceContextLiveTest 
    @Override
    public void setupContext() {
       super.setupContext();
-      gleContext = wrapper.unwrap();
+      gleContext = view.unwrap();
    }
 
    protected void createDomain(String domain) {

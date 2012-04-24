@@ -19,7 +19,7 @@
 package org.jclouds.rest;
 
 import org.jclouds.Context;
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.Apis;
 
 import com.google.common.collect.ImmutableSet;
@@ -39,7 +39,7 @@ public class Providers {
     * Gets a set of supported providers. Idea stolen from pallets (supported-clouds).
     */
    public static Iterable<String> getSupportedProviders() {
-      return getSupportedProvidersOfType(TypeToken.of(Wrapper.class));
+      return getSupportedProvidersOfType(TypeToken.of(View.class));
    }
 
    /**
@@ -47,10 +47,10 @@ public class Providers {
     * (supported-clouds).
     * 
     */
-   public static <C extends Context> Iterable<String> getSupportedProvidersOfType(TypeToken<? extends Wrapper> type) {
+   public static <C extends Context> Iterable<String> getSupportedProvidersOfType(TypeToken<? extends View> type) {
       Builder<String> builder = ImmutableSet.<String> builder();
-      builder.addAll(Iterables.transform(Apis.contextWrappableAs(type), Apis.idFunction()));
-      builder.addAll(Iterables.transform(org.jclouds.providers.Providers.contextWrappableAs(type),
+      builder.addAll(Iterables.transform(Apis.viewableAs(type), Apis.idFunction()));
+      builder.addAll(Iterables.transform(org.jclouds.providers.Providers.viewableAs(type),
             org.jclouds.providers.Providers.idFunction()));
       return builder.build();
    }

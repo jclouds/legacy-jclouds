@@ -72,7 +72,7 @@ public class EucalyptusPartnerCloudEucalyptusTemplateBuilderLiveTest extends Bas
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("emi-")) : defaultTemplate;
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);

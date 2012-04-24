@@ -137,7 +137,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      wrapper.utils().injector().injectMembers(this);
+      view.utils().injector().injectMembers(this);
 
       YamlImage image = getDefaultImage();
 
@@ -145,13 +145,13 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       masterVmName = VIRTUALBOX_IMAGE_PREFIX + image.id;
       isosDir = workingDir + File.separator + "isos";
 
-      hostVersion = Iterables.get(Splitter.on('r').split(wrapper.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
+      hostVersion = Iterables.get(Splitter.on('r').split(view.utils().injector().getInstance(Key.get(String.class, BuildVersion.class))), 0);
       operatingSystemIso = String.format("%s/%s.iso", isosDir, image.name);
       guestAdditionsIso = String.format("%s/VBoxGuestAdditions_%s.iso", isosDir, hostVersion);
 
       // try and get a master from the cache, this will initialize the config/download isos and
       // prepare everything IF a master is not available, subsequent calls should be pretty fast
-      Template template = wrapper.getComputeService().templateBuilder().build();
+      Template template = view.getComputeService().templateBuilder().build();
       checkNotNull(mastersCache.apply(template.getImage()));
    }
 
@@ -195,7 +195,7 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
       VmSpec sourceVmSpec = VmSpec.builder().id(masterName).name(masterName).osTypeId("").memoryMB(512)
                .cleanUpMode(CleanupMode.Full).controller(ideController).forceOverwrite(true).build();
 
-      Injector injector = wrapper.utils().injector();
+      Injector injector = view.utils().injector();
       Function<String, String> configProperties = injector.getInstance(ValueOfConfigurationKeyOrNull.class);
       IsoSpec isoSpec = IsoSpec
                .builder()
@@ -226,8 +226,8 @@ public class BaseVirtualBoxClientLiveTest extends BaseComputeServiceContextLiveT
 
    @AfterClass(groups = "live")
    protected void tearDown() throws Exception {
-      if (wrapper != null)
-         wrapper.close();
+      if (view != null)
+         view.close();
    }
 
    @AfterSuite

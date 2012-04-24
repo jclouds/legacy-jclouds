@@ -73,7 +73,7 @@ public class OpSourceServersApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("https://api.opsourcecloud.net/oec/${jclouds.api-version}")
          .defaultProperties(OpSourceServersApiMetadata.defaultProperties())
          .defaultModule(OpSourceServersRestClientModule.class);
-//         .wrapper(TypeToken.of(ComputeServiceContext.class))
+//         .view(TypeToken.of(ComputeServiceContext.class))
 //         .defaultModules(ImmutableSet.<Class<? extends Module>>of(OpSourceServersRestClientModule.class, OpSourceServersComputeServiceContextModule.class));
       }
 

@@ -46,10 +46,10 @@ public class ParseAsyncJobsFromHttpResponse implements Function<HttpResponse, Se
    private final ParseTypedAsyncJob parseTyped;
 
    @Inject
-   public ParseAsyncJobsFromHttpResponse(ParseTypedAsyncJob parseTyped, GsonWrapper gsonWrapper) {
+   public ParseAsyncJobsFromHttpResponse(ParseTypedAsyncJob parseTyped, GsonWrapper gsonView) {
       this.parseTyped = checkNotNull(parseTyped, "parseTyped");
       this.parser = new ParseFirstJsonValueNamed<Set<AsyncJob<Map<String, JsonBall>>>>(
-         checkNotNull(gsonWrapper, "gsonWrapper"),
+         checkNotNull(gsonView, "gsonView"),
          new TypeLiteral<Set<AsyncJob<Map<String, JsonBall>>>>() { },
          "asyncjobs");
    }

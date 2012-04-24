@@ -279,7 +279,7 @@ public class VMClientLiveTest extends BaseVPDCClientLiveTest {
 
    protected void checkSSH(IPSocket socket) {
       socketTester.apply(socket);
-      SshClient client = wrapper.utils().sshFactory()
+      SshClient client = view.utils().sshFactory()
             .create(socket, LoginCredentials.builder().user(username).password(password).build());
       try {
          client.connect();

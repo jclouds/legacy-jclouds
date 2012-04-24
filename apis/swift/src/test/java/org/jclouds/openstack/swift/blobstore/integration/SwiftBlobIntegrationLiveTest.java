@@ -89,7 +89,7 @@ public class SwiftBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
        String containerName = getContainerName();
 
        try {
-           BlobStore blobStore = wrapper.getBlobStore();
+           BlobStore blobStore = view.getBlobStore();
            blobStore.createContainerInLocation(null, containerName);
            Blob blob = blobStore.blobBuilder("const.txt")
                    .payload(new File("target/const.txt")).contentMD5(oneHundredOneConstitutionsMD5).build();

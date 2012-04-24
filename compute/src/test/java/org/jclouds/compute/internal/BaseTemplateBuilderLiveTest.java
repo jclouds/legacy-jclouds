@@ -66,11 +66,11 @@ import com.google.inject.Module;
 public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceContextLiveTest {
 
    public void testCompareSizes() throws Exception {
-      Hardware defaultSize = wrapper.getComputeService().templateBuilder().build().getHardware();
+      Hardware defaultSize = view.getComputeService().templateBuilder().build().getHardware();
 
-      Hardware smallest = wrapper.getComputeService().templateBuilder().smallest().build().getHardware();
-      Hardware fastest = wrapper.getComputeService().templateBuilder().fastest().build().getHardware();
-      Hardware biggest = wrapper.getComputeService().templateBuilder().biggest().build().getHardware();
+      Hardware smallest = view.getComputeService().templateBuilder().smallest().build().getHardware();
+      Hardware fastest = view.getComputeService().templateBuilder().fastest().build().getHardware();
+      Hardware biggest = view.getComputeService().templateBuilder().biggest().build().getHardware();
 
       System.out.printf("smallest %s%n", smallest);
       System.out.printf("fastest %s%n", fastest);
@@ -89,8 +89,8 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
    }
 
    public void testFromTemplate() {
-      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
-      assertEquals(wrapper.getComputeService().templateBuilder().fromTemplate(defaultTemplate).build().toString(),
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
+      assertEquals(view.getComputeService().templateBuilder().fromTemplate(defaultTemplate).build().toString(),
             defaultTemplate.toString());
    }
 
@@ -134,7 +134,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
 
    @Test(dataProvider = "osSupported")
    public void testTemplateBuilderCanFind(OsFamilyVersion64Bit matrix) throws InterruptedException {
-      TemplateBuilder builder = wrapper.getComputeService().templateBuilder().osFamily(matrix.family)
+      TemplateBuilder builder = view.getComputeService().templateBuilder().osFamily(matrix.family)
             .os64Bit(matrix.is64Bit);
       if (!matrix.version.equals(""))
          builder.osVersionMatches("^" + matrix.version + "$");
@@ -147,7 +147,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
 
    @Test(dataProvider = "osNotSupported", expectedExceptions = NoSuchElementException.class)
    public void testTemplateBuilderCannotFind(OsFamilyVersion64Bit matrix) throws InterruptedException {
-      TemplateBuilder builder = wrapper.getComputeService().templateBuilder().osFamily(matrix.family)
+      TemplateBuilder builder = view.getComputeService().templateBuilder().osFamily(matrix.family)
             .os64Bit(matrix.is64Bit);
       if (!matrix.version.equals(""))
          builder.osVersionMatches("^" + matrix.version + "$");
@@ -156,18 +156,18 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
 
    @Test
    public void testTemplateBuilderCanUseImageId() throws Exception {
-      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
-      wrapper.close();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
+      view.close();
       setupContext();
 
-      Template template = wrapper.getComputeService().templateBuilder().imageId(defaultTemplate.getImage().getId())
+      Template template = view.getComputeService().templateBuilder().imageId(defaultTemplate.getImage().getId())
             .locationId(defaultTemplate.getLocation().getId()).build();
       assertEquals(template.getImage(), defaultTemplate.getImage());
    }
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
       assert defaultTemplate.getImage().getOperatingSystem().getVersion().matches("1[012].[10][04]") : defaultTemplate
             .getImage().getOperatingSystem().getVersion();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
@@ -179,8 +179,8 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
 
    @Test(groups = { "integration", "live" })
    public void testGetAssignableLocations() throws Exception {
-      assertProvider(wrapper.unwrap());
-      for (Location location : wrapper.getComputeService().listAssignableLocations()) {
+      assertProvider(view.unwrap());
+      for (Location location : view.getComputeService().listAssignableLocations()) {
          System.err.printf("location %s%n", location);
          assert location.getId() != null : location;
          assert location != location.getParent() : location;
@@ -218,14 +218,14 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
 
    @Test
    public void testTemplateBuilderWithImageIdSpecified() throws IOException {
-      Template defaultTemplate = wrapper.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
 
       ComputeServiceContext context = null;
       try {
          Properties overrides = setupProperties();
          overrides.setProperty("jclouds.image-id", defaultTemplate.getImage().getId());
 
-         context = createWrapper(overrides, setupModules());
+         context = createView(overrides, setupModules());
 
          assertEquals(context.getComputeService().templateBuilder().build().toString(), defaultTemplate.toString());
       } finally {
@@ -238,7 +238,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
          Properties overrides = setupProperties();
          overrides.setProperty(provider + ".image-id", defaultTemplate.getImage().getId());
 
-         context = createWrapper(overrides, setupModules());
+         context = createView(overrides, setupModules());
 
          assertEquals(context.getComputeService().templateBuilder().build().toString(), defaultTemplate.toString());
       } finally {
@@ -266,7 +266,7 @@ public abstract class BaseTemplateBuilderLiveTest extends BaseComputeServiceCont
          boolean auth = authenticateSudo != null ? Boolean.valueOf(authenticateSudo) : true;
          overrides.setProperty(propertyKey + ".image.authenticate-sudo", auth + "");
 
-         context = createWrapper(overrides, ImmutableSet.<Module>of(credentialStoreModule));
+         context = createView(overrides, ImmutableSet.<Module>of(credentialStoreModule));
 
          Iterable<String> userPass = Splitter.on(':').split(login);
          String user = Iterables.get(userPass, 0);

@@ -77,7 +77,7 @@ public class SlicehostApiMetadata extends BaseRestApiMetadata {
          .version("https://api.slicehost.com")
          .defaultEndpoint("https://api.slicehost.com")
          .defaultProperties(SlicehostApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(SlicehostRestClientModule.class, SlicehostComputeServiceContextModule.class));
       }
 

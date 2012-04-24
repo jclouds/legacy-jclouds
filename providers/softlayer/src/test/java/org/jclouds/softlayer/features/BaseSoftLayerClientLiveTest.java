@@ -39,7 +39,7 @@ public class BaseSoftLayerClientLiveTest extends BaseComputeServiceContextLiveTe
    @Override
    public void setupContext() {
       super.setupContext();
-      socontext = wrapper.unwrap();
+      socontext = view.unwrap();
    }
 
 }

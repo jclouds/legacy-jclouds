@@ -1,6 +1,6 @@
 package org.jclouds.compute.internal;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadataTest;
 import org.jclouds.compute.ComputeServiceContext;
@@ -17,7 +17,7 @@ import com.google.common.reflect.TypeToken;
 public abstract class BaseComputeServiceApiMetadataTest extends BaseApiMetadataTest {
 
    public BaseComputeServiceApiMetadataTest(ApiMetadata toTest) {
-     super(toTest, ImmutableSet.<TypeToken<? extends Wrapper>>of(TypeToken.of(ComputeServiceContext.class)));
+     super(toTest, ImmutableSet.<TypeToken<? extends View>>of(TypeToken.of(ComputeServiceContext.class)));
    }
 
 }

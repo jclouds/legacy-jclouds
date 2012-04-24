@@ -22,7 +22,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.Apis;
 import org.testng.annotations.Test;
@@ -38,11 +38,11 @@ import com.google.common.reflect.TypeToken;
 public abstract class BaseApiMetadataTest {
 
    protected final ApiMetadata toTest;
-   protected final Set<TypeToken<? extends Wrapper>> wrappers;
+   protected final Set<TypeToken<? extends View>> views;
 
-   public BaseApiMetadataTest(ApiMetadata toTest, Set<TypeToken<? extends Wrapper>> wrappers) {
+   public BaseApiMetadataTest(ApiMetadata toTest, Set<TypeToken<? extends View>> views) {
       this.toTest = toTest;
-      this.wrappers = wrappers;
+      this.views = views;
    }
 
    @Test
@@ -55,10 +55,10 @@ public abstract class BaseApiMetadataTest {
    // it is ok to have multiple services in the same classpath (ex. ec2 vs elb)
    @Test
    public void testTransformableToContains() {
-      for (TypeToken<? extends Wrapper> wrapper : wrappers) {
-         ImmutableSet<ApiMetadata> ofType = ImmutableSet.copyOf(Apis.contextWrappableAs(wrapper));
+      for (TypeToken<? extends View> view : views) {
+         ImmutableSet<ApiMetadata> ofType = ImmutableSet.copyOf(Apis.viewableAs(view));
          assert ofType.contains(toTest) : String.format("%s not found in %s for %s", toTest, ofType,
-                  wrapper);
+                  view);
       }
    }
 

@@ -88,7 +88,7 @@ public class HPCloudObjectStorageApiMetadata extends BaseRestApiMetadata {
          .version("1.0")
          .documentation(URI.create("https://build.hpcloud.com/object-storage/api"))
          .defaultProperties(HPCloudObjectStorageApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .view(TypeToken.of(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(HPCloudObjectStorageRestClientModule.class, HPCloudObjectStorageBlobStoreContextModule.class));
       }
 

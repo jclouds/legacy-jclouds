@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElementView;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -129,7 +129,7 @@ public class Catalog extends Entity {
 
    @XmlElement(name = "Owner")
    private Owner owner;
-   @XmlElementWrapper(name = "CatalogItems")
+   @XmlElementView(name = "CatalogItems")
    @XmlElement(name = "CatalogItem")
    private Set<Reference> catalogItems;
    @XmlElement(name = "IsPublished")

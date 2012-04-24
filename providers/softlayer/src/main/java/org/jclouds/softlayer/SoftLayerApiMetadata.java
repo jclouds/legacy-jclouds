@@ -79,7 +79,7 @@ public class SoftLayerApiMetadata extends BaseRestApiMetadata {
          .version("3")
          .defaultEndpoint("https://api.softlayer.com/rest")
          .defaultProperties(SoftLayerApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(SoftLayerRestClientModule.class, SoftLayerComputeServiceContextModule.class));
       }
 

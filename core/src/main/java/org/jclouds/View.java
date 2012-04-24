@@ -22,10 +22,10 @@ import com.google.common.annotations.Beta;
 import com.google.common.reflect.TypeToken;
 
 /**
- * {@link Wrapper} allows access to the provider-specific, or library-driven api
- * behind an abstraction. One wrapped context can support multiple wrappers.
+ * {@link View} allows access to the provider-specific, or library-driven api
+ * behind an abstraction. One backend context can support multiple views.
  * <p/>
- * For example, the {@code CloudStackContext} can be wrapped by both
+ * For example, the {@code CloudStackContext} can be backend by both
  * {@code ComputeServiceContext} and {@code LoadBalancerServiceContext}, as the
  * api covers these features.
  * 
@@ -33,27 +33,27 @@ import com.google.common.reflect.TypeToken;
  * 
  */
 @Beta
-public interface Wrapper {
+public interface View {
 
    /**
     * 
     * @return type of the context powering the current one.
     */
-   TypeToken<?> getWrappedType();
+   TypeToken<?> getBackendType();
 
    /**
-    * Return an object of the specified type to allow access to the wrapped
-    * context. If the wrapped context is not assignable from the supplied type,
+    * Return an object of the specified type to allow access to the backend
+    * context. If the backend context is not assignable from the supplied type,
     * an {@link IllegalArgumentException} is thrown.
     * 
     * @param type
-    *           the type of the context to be returned. The wrapped context must
+    *           the type of the context to be returned. The backend context must
     *           be assignable from this type.
     * @return an instance of the specified type
     * @throws IllegalArgumentException
-    *            if the wrapped context is not assignable from the specified
+    *            if the backend context is not assignable from the specified
     *            class.
-    * @see #getWrappedType()
+    * @see #getBackendType()
     */
    <C extends Context> C unwrap(TypeToken<C> type) throws IllegalArgumentException;
 
@@ -69,7 +69,7 @@ public interface Wrapper {
     * 
     * @throws ClassCastException
     *            if the user supplied {@code C} param is not assignableFrom
-    *            {@link #getWrappedType()}
+    *            {@link #getBackendType()}
     */
    <C extends Context> C unwrap() throws ClassCastException;
 

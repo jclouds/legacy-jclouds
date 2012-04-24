@@ -36,9 +36,9 @@ import com.google.common.reflect.TypeToken;
 @Singleton
 public class EC2ComputeServiceContextImpl extends ComputeServiceContextImpl implements EC2ComputeServiceContext {
    @Inject
-   public EC2ComputeServiceContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
+   public EC2ComputeServiceContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
             EC2ComputeService computeService, Utils utils) {
-      super(wrapped, wrappedType, computeService, utils);
+      super(backend, backendType, computeService, utils);
    }
 
    @Override

@@ -18,7 +18,7 @@
  */
 package org.jclouds.openstack.swift.v1;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.internal.BaseApiMetadataTest;
 import org.testng.annotations.Test;
 
@@ -33,6 +33,6 @@ import com.google.common.reflect.TypeToken;
 // public class SwiftApiMetadataTest extends BaseBlobStoreApiMetadataTest {
 public class SwiftApiMetadataTest extends BaseApiMetadataTest {
    public SwiftApiMetadataTest() {
-      super(new SwiftApiMetadata(), ImmutableSet.<TypeToken<? extends Wrapper>> of());
+      super(new SwiftApiMetadata(), ImmutableSet.<TypeToken<? extends View>> of());
    }
 }

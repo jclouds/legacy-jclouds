@@ -70,7 +70,7 @@ public class SpotInstanceClientLiveTest  extends BaseComputeServiceContextLiveTe
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
       activeTester = new RetryablePredicate<SpotInstanceRequest>(new SpotInstanceRequestActive(client),
                SPOT_DELAY_SECONDS, 1, 1, TimeUnit.SECONDS);
    }

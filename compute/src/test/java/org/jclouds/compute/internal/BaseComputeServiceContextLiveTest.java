@@ -28,7 +28,7 @@ import com.google.common.reflect.TypeToken;
 public abstract class BaseComputeServiceContextLiveTest extends BaseGenericComputeServiceContextLiveTest<ComputeServiceContext> {
 
    @Override
-   protected TypeToken<ComputeServiceContext> wrapperType() {
+   protected TypeToken<ComputeServiceContext> viewType() {
       return TypeToken.of(ComputeServiceContext.class);
    }
    

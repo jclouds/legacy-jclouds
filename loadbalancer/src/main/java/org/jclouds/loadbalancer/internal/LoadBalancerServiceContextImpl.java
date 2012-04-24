@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.Context;
-import org.jclouds.internal.BaseWrapper;
+import org.jclouds.internal.BaseView;
 import org.jclouds.loadbalancer.LoadBalancerService;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.location.Provider;
@@ -38,14 +38,14 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Singleton
-public class LoadBalancerServiceContextImpl extends BaseWrapper implements LoadBalancerServiceContext {
+public class LoadBalancerServiceContextImpl extends BaseView implements LoadBalancerServiceContext {
    private final LoadBalancerService loadBalancerService;
    private final Utils utils;
 
    @Inject
-   public LoadBalancerServiceContextImpl(@Provider Context wrapped,
-            @Provider TypeToken<? extends Context> wrappedType, LoadBalancerService loadBalancerService, Utils utils) {
-      super(wrapped, wrappedType);
+   public LoadBalancerServiceContextImpl(@Provider Context backend,
+            @Provider TypeToken<? extends Context> backendType, LoadBalancerService loadBalancerService, Utils utils) {
+      super(backend, backendType);
       this.utils = utils;
       this.loadBalancerService = checkNotNull(loadBalancerService, "loadBalancerService");
    }

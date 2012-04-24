@@ -32,7 +32,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.internal.BaseWrapper;
+import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
@@ -44,7 +44,7 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Singleton
-public class BlobStoreContextImpl extends BaseWrapper implements BlobStoreContext {
+public class BlobStoreContextImpl extends BaseView implements BlobStoreContext {
    private final BlobMap.Factory blobMapFactory;
    private final InputStreamMap.Factory inputStreamMapFactory;
    private final AsyncBlobStore ablobStore;
@@ -54,11 +54,11 @@ public class BlobStoreContextImpl extends BaseWrapper implements BlobStoreContex
    private final BlobRequestSigner blobRequestSigner;
 
    @Inject
-   public BlobStoreContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
+   public BlobStoreContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
             BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
             BlobRequestSigner blobRequestSigner) {
-      super(wrapped, wrappedType);
+      super(backend, backendType);
       this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
       this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");

@@ -70,7 +70,7 @@ public class BYONApiMetadata extends BaseApiMetadata {
          .documentation(URI.create("https://github.com/jclouds/jclouds/tree/master/apis/byon"))
          .version(String.format("%s.%s", JcloudsVersion.get().majorVersion, JcloudsVersion.get().minorVersion))
          .buildVersion(JcloudsVersion.get().toString())
-         .wrapper(ComputeServiceContext.class)
+         .view(ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(YamlNodeStoreModule.class, BYONComputeServiceContextModule.class));
       }
 

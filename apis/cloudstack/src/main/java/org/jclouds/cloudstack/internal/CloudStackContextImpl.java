@@ -46,11 +46,11 @@ public class CloudStackContextImpl extends ComputeServiceContextImpl implements 
    private final RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext;
 
    @Inject
-   public CloudStackContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
+   public CloudStackContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
             ComputeService computeService, Utils utils,
             RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext,
             RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext) {
-      super(wrapped, wrappedType, computeService, utils);
+      super(backend, backendType, computeService, utils);
       this.domainContext = domainContext;
       this.globalContext = globalContext;
    }

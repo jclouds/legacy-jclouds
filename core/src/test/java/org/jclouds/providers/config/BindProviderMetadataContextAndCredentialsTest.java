@@ -60,7 +60,7 @@ public class BindProviderMetadataContextAndCredentialsTest {
 
    @SuppressWarnings("unused")
    private static class ExpectedBindings {
-      private final javax.inject.Provider<Context> wrapped;
+      private final javax.inject.Provider<Context> backend;
       private final ProviderMetadata providerMetadata;
       private final Credentials creds;
       private final String identity;
@@ -72,13 +72,13 @@ public class BindProviderMetadataContextAndCredentialsTest {
       private final String buildVersion;
 
       @Inject
-      private ExpectedBindings(@Provider javax.inject.Provider<Context> wrapped, ProviderMetadata providerMetadata,
+      private ExpectedBindings(@Provider javax.inject.Provider<Context> backend, ProviderMetadata providerMetadata,
                @Provider Credentials creds, @Identity String identity, @Nullable @Credential String credential,
                @Provider String providerId, @Iso3166 Set<String> iso3166Codes, @Api String apiId,
                @ApiVersion String apiVersion, @Nullable @BuildVersion String buildVersion,
-               @Provider TypeToken<? extends Context> wrappedToken, FilterStringsBoundToInjectorByName filter) {
-         this.wrapped = wrapped;
-         assertEquals(wrappedToken, providerMetadata.getApiMetadata().getContext());
+               @Provider TypeToken<? extends Context> backendToken, FilterStringsBoundToInjectorByName filter) {
+         this.backend = backend;
+         assertEquals(backendToken, providerMetadata.getApiMetadata().getContext());
          this.providerMetadata = providerMetadata;
          Properties props = new Properties();
          props.putAll(filter.apply(Predicates.<String> alwaysTrue()));

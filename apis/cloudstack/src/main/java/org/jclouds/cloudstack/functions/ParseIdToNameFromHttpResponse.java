@@ -78,8 +78,8 @@ public class ParseIdToNameFromHttpResponse implements Function<HttpResponse, Map
    }
 
    @Inject
-   public ParseIdToNameFromHttpResponse(GsonWrapper gsonWrapper) {
-      this.parser = new ParseFirstJsonValueNamed<Set<IdName>>(checkNotNull(gsonWrapper, "gsonWrapper"),
+   public ParseIdToNameFromHttpResponse(GsonWrapper gsonView) {
+      this.parser = new ParseFirstJsonValueNamed<Set<IdName>>(checkNotNull(gsonView, "gsonView"),
             new TypeLiteral<Set<IdName>>() {
             }, "oscategory");
    }

@@ -44,11 +44,11 @@ import com.google.common.reflect.TypeToken;
 public class AWSS3BlobStoreContextImpl extends S3BlobStoreContextImpl implements AWSS3BlobStoreContext {
 
    @Inject
-   public AWSS3BlobStoreContextImpl(@Provider Context wrapped, @Provider TypeToken<? extends Context> wrappedType,
+   public AWSS3BlobStoreContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
             BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
             BlobRequestSigner blobRequestSigner) {
-      super(wrapped, wrappedType, blobMapFactory, utils, consistencyModel, inputStreamMapFactory, ablobStore,
+      super(backend, backendType, blobMapFactory, utils, consistencyModel, inputStreamMapFactory, ablobStore,
                blobStore, blobRequestSigner);
    }
 

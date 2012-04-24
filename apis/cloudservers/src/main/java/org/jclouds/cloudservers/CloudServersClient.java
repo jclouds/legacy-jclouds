@@ -44,7 +44,7 @@ import org.jclouds.rest.ResourceNotFoundException;
  * Provides access to Cloud Servers via their REST API.
  * <p/>
  * All commands return a Future of the result from Cloud Servers. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
+ * processing will be backend in an {@link ExecutionException} as documented in {@link Future#get()}.
  * 
  * @see CloudServersAsyncClient
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />

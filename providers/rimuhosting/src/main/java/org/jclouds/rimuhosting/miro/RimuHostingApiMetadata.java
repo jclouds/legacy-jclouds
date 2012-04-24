@@ -87,7 +87,7 @@ public class RimuHostingApiMetadata extends BaseRestApiMetadata {
          .version("1")
          .defaultEndpoint("https://api.rimuhosting.com/r")
          .defaultProperties(RimuHostingApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(RimuHostingRestClientModule.class, RimuHostingComputeServiceContextModule.class));
 
       }

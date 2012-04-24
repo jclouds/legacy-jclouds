@@ -82,7 +82,7 @@ public class ComputeTaskUtils {
             return ContextBuilder.newBuilder(provider)
                                  .credentials(creds.identity, creds.credential)
                                  .modules(modules)
-                                 .overrides(props).buildAndWrapWith(ComputeServiceContext.class);
+                                 .overrides(props).buildView(ComputeServiceContext.class);
          }
 
       });

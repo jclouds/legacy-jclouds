@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.Providers;
@@ -42,12 +42,12 @@ public abstract class BaseProviderMetadataTest {
 
    private final ProviderMetadata toTest;
    private final ApiMetadata expectedApi;
-   private final Set<TypeToken<? extends Wrapper>> wrappers;
+   private final Set<TypeToken<? extends View>> views;
 
    public BaseProviderMetadataTest(ProviderMetadata toTest, ApiMetadata expectedApi) {
       this.toTest = checkNotNull(toTest, "toTest must be defined");
       this.expectedApi = checkNotNull(expectedApi, "expectedApi must be defined");
-      this.wrappers = expectedApi.getWrappers();
+      this.views = expectedApi.getViews();
    }
 
    @Test
@@ -68,10 +68,10 @@ public abstract class BaseProviderMetadataTest {
 
    @Test
    public void testTransformableToContains() {
-      for (TypeToken<? extends Wrapper> wrapper : wrappers) {
-         ImmutableSet<ProviderMetadata> ofType = ImmutableSet.copyOf(Providers.contextWrappableAs(wrapper));
+      for (TypeToken<? extends View> view : views) {
+         ImmutableSet<ProviderMetadata> ofType = ImmutableSet.copyOf(Providers.viewableAs(view));
          assert ofType.contains(toTest) : String.format("%s not found in %s for %s", toTest, ofType,
-                  wrapper);
+                  view);
       }
    }
 

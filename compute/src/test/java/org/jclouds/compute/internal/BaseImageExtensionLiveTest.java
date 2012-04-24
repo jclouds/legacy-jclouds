@@ -53,13 +53,13 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
     * @return
     */
    public Template getNodeTemplate() {
-      return wrapper.getComputeService().templateBuilder().any().build();
+      return view.getComputeService().templateBuilder().any().build();
    }
 
    @Test(groups = { "integration", "live" }, singleThreaded = true)
    public void testCreateImage() throws RunNodesException, InterruptedException {
 
-      ComputeService computeService = wrapper.getComputeService();
+      ComputeService computeService = view.getComputeService();
 
       Optional<ImageExtension> imageExtension = computeService.getImageExtension();
       assertTrue("image extension was not present", imageExtension.isPresent());
@@ -87,20 +87,20 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
    @Test(groups = { "integration", "live" }, singleThreaded = true, dependsOnMethods = "testCreateImage")
    public void testSpawnNodeFromImage() throws RunNodesException {
 
-      ComputeService computeService = wrapper.getComputeService();
+      ComputeService computeService = view.getComputeService();
 
       Template template = computeService.templateBuilder().fromImage(getImage().get()).build();
 
       NodeMetadata node = Iterables.getOnlyElement(computeService.createNodesInGroup("test-create-image", 1, template));
 
-      SshClient client = wrapper.utils().sshForNode().apply(node);
+      SshClient client = view.utils().sshForNode().apply(node);
       client.connect();
 
       ExecResponse hello = client.exec("echo hello");
 
       assertEquals(hello.getOutput().trim(), "hello");
 
-      wrapper.getComputeService().destroyNode(node.getId());
+      view.getComputeService().destroyNode(node.getId());
 
    }
 
@@ -108,7 +108,7 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
             "testSpawnNodeFromImage" })
    public void testDeleteImage() {
 
-      ComputeService computeService = wrapper.getComputeService();
+      ComputeService computeService = view.getComputeService();
 
       Optional<ImageExtension> imageExtension = computeService.getImageExtension();
       assertTrue("image extension was not present", imageExtension.isPresent());
@@ -123,7 +123,7 @@ public abstract class BaseImageExtensionLiveTest extends BaseComputeServiceConte
    }
 
    private Optional<? extends Image> getImage() {
-      return Iterables.tryFind(wrapper.getComputeService().listImages(), new Predicate<Image>() {
+      return Iterables.tryFind(view.getComputeService().listImages(), new Predicate<Image>() {
          @Override
          public boolean apply(Image input) {
             return input.getId().contains("test-create-image");

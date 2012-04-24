@@ -55,13 +55,13 @@ public class NovaParserModule extends AbstractModule {
 
    @Singleton
    public static class HostResourceUsageAdapter implements JsonSerializer<HostResourceUsage>, JsonDeserializer<HostResourceUsage> {
-      public HostResourceUsage apply(HostResourceUsageWrapper in) {
+      public HostResourceUsage apply(HostResourceUsageView in) {
          return in.resource.toBuilder().build();
       }
       
       @Override
       public HostResourceUsage deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
-         return apply((HostResourceUsageWrapper) context.deserialize(jsonElement, HostResourceUsageWrapper.class));
+         return apply((HostResourceUsageView) context.deserialize(jsonElement, HostResourceUsageView.class));
       }
 
       @Override
@@ -69,7 +69,7 @@ public class NovaParserModule extends AbstractModule {
          return context.serialize(hostResourceUsage);
       }
       
-      private static class HostResourceUsageWrapper {
+      private static class HostResourceUsageView {
          protected HostResourceUsageInternal resource;
       }
       private static class HostResourceUsageInternal extends HostResourceUsage {

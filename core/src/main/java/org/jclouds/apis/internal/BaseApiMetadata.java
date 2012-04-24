@@ -38,7 +38,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Context;
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 
 import com.google.common.base.Objects;
@@ -82,7 +82,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
    public static class Builder implements ApiMetadata.Builder {
       protected String id;
       protected String name;
-      protected Set<TypeToken<? extends Wrapper>> wrappers = ImmutableSet.of();
+      protected Set<TypeToken<? extends View>> views = ImmutableSet.of();
       protected String endpointName = "https endpoint";
       protected String identityName;
       protected Optional<String> credentialName = Optional.absent();
@@ -119,24 +119,24 @@ public abstract class BaseApiMetadata implements ApiMetadata {
        * {@inheritDoc}
        */
       @Override
-      public Builder wrapper(Class<? extends Wrapper> wrapper) {
-         return wrapper(TypeToken.of(checkNotNull(wrapper, "wrapper")));
+      public Builder view(Class<? extends View> view) {
+         return view(TypeToken.of(checkNotNull(view, "view")));
       }
       
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder wrapper(TypeToken<? extends Wrapper> wrapper) {
-         return wrappers(ImmutableSet.<TypeToken<? extends Wrapper>>of(checkNotNull(wrapper, "wrapper")));
+      public Builder view(TypeToken<? extends View> view) {
+         return views(ImmutableSet.<TypeToken<? extends View>>of(checkNotNull(view, "view")));
       }
       
       /**
        * {@inheritDoc}
        */
       @Override
-      public Builder wrappers(Set<TypeToken<? extends Wrapper>> wrappers) {
-         this.wrappers = ImmutableSet.copyOf(checkNotNull(wrappers, "wrappers"));
+      public Builder views(Set<TypeToken<? extends View>> views) {
+         this.views = ImmutableSet.copyOf(checkNotNull(views, "views"));
          return this;
       }
 
@@ -257,7 +257,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
       }
 
       public Builder fromApiMetadata(ApiMetadata in) {
-         return id(in.getId()).wrappers(in.getWrappers()).name(in.getName()).endpointName(in.getEndpointName()).identityName(
+         return id(in.getId()).views(in.getViews()).name(in.getName()).endpointName(in.getEndpointName()).identityName(
                   in.getIdentityName()).credentialName(in.getCredentialName().orNull()).version(in.getVersion())
                   .buildVersion(in.getBuildVersion().orNull()).defaultEndpoint(in.getDefaultEndpoint().orNull())
                   .defaultIdentity(in.getDefaultIdentity().orNull()).defaultCredential(
@@ -277,7 +277,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
 
    protected final String id;
    protected final String name;
-   protected final Set<TypeToken<? extends Wrapper>> wrappers;
+   protected final Set<TypeToken<? extends View>> views;
    protected final String endpointName;
    protected final String identityName;
    protected final Optional<String> credentialName;
@@ -292,20 +292,20 @@ public abstract class BaseApiMetadata implements ApiMetadata {
    protected final Set<Class<? extends Module>> defaultModules;
 
    protected BaseApiMetadata(Builder builder) {
-      this(builder.id, builder.name, builder.wrappers, builder.endpointName, builder.identityName, builder.credentialName,
+      this(builder.id, builder.name, builder.views, builder.endpointName, builder.identityName, builder.credentialName,
                builder.version, builder.buildVersion, builder.defaultEndpoint, builder.defaultIdentity,
                builder.defaultCredential, builder.defaultProperties, builder.documentation, builder.context,
                builder.defaultModules);
    }
 
-   public BaseApiMetadata(String id, String name, Set<TypeToken<? extends Wrapper>> wrappers, String endpointName, String identityName,
+   public BaseApiMetadata(String id, String name, Set<TypeToken<? extends View>> views, String endpointName, String identityName,
             Optional<String> credentialName, String version, Optional<String> buildVersion,
             Optional<String> defaultEndpoint, Optional<String> defaultIdentity, Optional<String> defaultCredential,
             Properties defaultProperties, URI documentation, TypeToken<? extends Context> context,
             Set<Class<? extends Module>> defaultModules) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
-      this.wrappers = ImmutableSet.copyOf(checkNotNull(wrappers, "wrappers"));
+      this.views = ImmutableSet.copyOf(checkNotNull(views, "views"));
       this.endpointName = checkNotNull(endpointName, "endpointName");
       this.identityName = checkNotNull(identityName, "identityName");
       this.credentialName = checkNotNull(credentialName, "credentialName");
@@ -330,12 +330,12 @@ public abstract class BaseApiMetadata implements ApiMetadata {
          return false;
       ApiMetadata that = ApiMetadata.class.cast(o);
       return equal(this.getId(), that.getId()) && equal(this.getName(), that.getName())
-               && equal(this.getWrappers(), that.getWrappers());
+               && equal(this.getViews(), that.getViews());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(getId(), getName(), getWrappers());
+      return Objects.hashCode(getId(), getName(), getViews());
    }
 
    @Override
@@ -344,7 +344,7 @@ public abstract class BaseApiMetadata implements ApiMetadata {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("id", getId()).add("name", getName()).add("wrappers", getWrappers()).add(
+      return Objects.toStringHelper("").add("id", getId()).add("name", getName()).add("views", getViews()).add(
                "endpointName", getEndpointName()).add("identityName", getIdentityName()).add("credentialName",
                getCredentialName()).add("documentation", getDocumentation());
    }
@@ -369,8 +369,8 @@ public abstract class BaseApiMetadata implements ApiMetadata {
     * {@inheritDoc}
     */
    @Override
-   public Set<TypeToken<? extends Wrapper>> getWrappers() {
-      return wrappers;
+   public Set<TypeToken<? extends View>> getViews() {
+      return views;
    }
 
    /**

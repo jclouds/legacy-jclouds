@@ -48,12 +48,12 @@ public class AWSInstanceClientLiveTest extends BaseComputeServiceContextLiveTest
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getInstanceServices();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getInstanceServices();
    }
 
    @Test
    void testDescribeInstances() {
-      for (String region : wrapper.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<? extends Reservation<? extends RunningInstance>> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();
