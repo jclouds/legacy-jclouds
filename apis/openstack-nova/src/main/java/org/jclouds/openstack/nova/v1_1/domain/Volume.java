@@ -84,56 +84,67 @@ public class Volume {
       private String description;
       private Map<String, String> metadata = Maps.newHashMap();
 
+      /** @see Volume#getId() */
       public T id(String id) {
          this.id = id;
          return self();
       }
 
+      /** @see Volume#getStatus() */
       public T status(Status status) {
          this.status = status;
          return self();
       }
 
+      /** @see Volume#getSize() */
       public T size(int size) {
          this.size = size;
          return self();
       }
 
+      /** @see Volume#getZone() */
       public T zone(String zone) {
          this.zone = zone;
          return self();
       }
 
+      /** @see Volume#getCreated() */
       public T created(Date created) {
          this.created = created;
          return self();
       }
 
+      /** @see Volume#getAttachments() */
       public T attachments(Set<VolumeAttachment> attachments) {
          this.attachments = attachments;
          return self();
       }
-
+      
+      /** @see Volume#getVolumeType() */
       public T volumeType(String volumeType) {
          this.volumeType = volumeType;
          return self();
       }
 
+      /** @see Volume#getSnapshotId() */
       public T snapshotId(String snapshotId) {
          this.snapshotId = snapshotId;
          return self();
       }
-
+      
+      /** @see Volume#getMetadata() */
       public T metadata(Map<String, String> metadata) {
          this.metadata = metadata;
          return self();
       }
 
+      /** @see Volume#getName() */
       public T name(String name) {
          this.name = name;
          return self();
       }
 
+      /** @see Volume#getDescription() */
       public T description(String description) {
          this.description = description;
          return self();
@@ -247,9 +258,6 @@ public class Volume {
       return this.volumeType;
    }
 
-   /**
-    * @return the snapshot id this volume is associated with.
-    */
    @Nullable
    public String getSnapshotId() {
       return this.snapshotId;

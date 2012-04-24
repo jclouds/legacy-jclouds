@@ -46,21 +46,25 @@ public class VolumeAttachment {
       private String serverId;
       private String device;
 
+      /** @see VolumeAttachment#getId() */
       public T id(String id) {
          this.id = id;
          return self();
       }
 
+      /** @see VolumeAttachment#getVolumeId() */
       public T volumeId(String volumeId) {
          this.volumeId = volumeId;
          return self();
       }
 
+      /** @see VolumeAttachment#getServerId() */
       public T serverId(String serverId) {
          this.serverId = serverId;
          return self();
       }
 
+      /** @see VolumeAttachment#getDevice() */
       public T device(String device) {
          this.device = device;
          return self();

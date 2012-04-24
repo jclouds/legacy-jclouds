@@ -52,36 +52,43 @@ public class VolumeSnapshot {
       private String name;
       private String description;
 
+      /** @see VolumeSnapshot#getId() */
       public T id(String id) {
          this.id = id;
          return self();
       }
 
+      /** @see VolumeSnapshot#getVolumeId() */
       public T volumeId(String volumeId) {
          this.volumeId = volumeId;
          return self();
       }
 
+      /** @see VolumeSnapshot#getStatus() */
       public T status(Volume.Status status) {
          this.status = status;
          return self();
       }
 
+      /** @see VolumeSnapshot#getSize() */
       public T size(int size) {
          this.size = size;
          return self();
       }
 
+      /** @see VolumeSnapshot#getCreated() */
       public T created(Date created) {
          this.created = created;
          return self();
       }
 
+      /** @see VolumeSnapshot#getName() */
       public T name(String name) {
          this.name = name;
          return self();
       }
 
+      /** @see VolumeSnapshot#getDescription() */
       public T description(String description) {
          this.description = description;
          return self();
