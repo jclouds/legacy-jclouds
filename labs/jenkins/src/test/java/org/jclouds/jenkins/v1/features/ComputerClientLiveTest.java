@@ -39,8 +39,10 @@ public class ComputerClientLiveTest extends BaseJenkinsClientLiveTest {
       assertNotNull(view.getDisplayName());
       for (Computer computerFromView : view.getComputers()) {
          assertNotNull(computerFromView.getDisplayName());
-         Computer computerFromGetRequest = getClient().getComputer(computerFromView.getDisplayName());
-         assertEquals(computerFromGetRequest, computerFromView);
+         if (!"master".equals(computerFromView.getDisplayName())) {
+            Computer computerFromGetRequest = getClient().getComputer(computerFromView.getDisplayName());
+            assertEquals(computerFromGetRequest, computerFromView);
+         }
       }
    }
 
