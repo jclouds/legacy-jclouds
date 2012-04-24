@@ -28,6 +28,7 @@ import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageAsyncClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VolumeAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageAsyncClient;
@@ -120,4 +121,10 @@ public interface NovaAsyncClient {
    Optional<SimpleTenantUsageAsyncClient> getSimpleTenantUsageExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
+   /**
+    * Provides asynchronous access to Volume features.
+    */
+   @Delegate
+   Optional<VolumeAsyncClient> getVolumeExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 }

@@ -1,0 +1,1 @@
+{"volume": {"status": "in-use", "displayDescription": "This is a test volume", "availabilityZone": "nova", "displayName": "test", "attachments": [{"device": "/dev/vdc", "serverId": "b4785058-cb80-491b-baa3-e4ee6546450e", "id": 1, "volumeId": 1}], "volumeType": null, "snapshotId": null, "size": 1, "id": 1, "createdAt": "2012-04-23 12:16:45", "metadata": {}}}
