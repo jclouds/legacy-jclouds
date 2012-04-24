@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.nova.v1_1.handlers;
+package org.jclouds.jenkins.v1.handlers;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
@@ -27,7 +27,6 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.InsufficientResourcesException;
 import org.jclouds.rest.ResourceNotFoundException;
 
 /**
@@ -38,7 +37,7 @@ import org.jclouds.rest.ResourceNotFoundException;
  */
 // TODO: is there error spec someplace? let's type errors, etc.
 @Singleton
-public class NovaErrorHandler implements HttpErrorHandler {
+public class JenkinsErrorHandler implements HttpErrorHandler {
 
    public void handleError(HttpCommand command, HttpResponse response) {
       // it is important to always read fully and close streams
@@ -51,12 +50,6 @@ public class NovaErrorHandler implements HttpErrorHandler {
                response.getStatusLine());
       switch (response.getStatusCode()) {
          case 400:
-            if (message.indexOf("quota exceeded") != -1)
-               exception = new InsufficientResourcesException(message, exception);
-            else if (message.indexOf("has no fixed_ips") != -1)
-               exception = new IllegalStateException(message, exception);
-            else if (message.indexOf("already exists") != -1)
-               exception = new IllegalStateException(message, exception);
             break;
          case 401:
          case 403:
@@ -67,11 +60,7 @@ public class NovaErrorHandler implements HttpErrorHandler {
                exception = new ResourceNotFoundException(message, exception);
             }
             break;
-         case 413:
-            exception = new InsufficientResourcesException(message, exception);
-            break;
       }
       command.setException(exception);
    }
-
 }

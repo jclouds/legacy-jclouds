@@ -28,15 +28,11 @@ import java.util.Set;
 import org.jclouds.openstack.nova.v1_1.domain.Address;
 import org.jclouds.openstack.nova.v1_1.domain.FloatingIP;
 import org.jclouds.openstack.nova.v1_1.domain.Server;
-import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
-import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
-import org.jclouds.openstack.nova.v1_1.features.ImageClient;
 import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.openstack.nova.v1_1.internal.BaseNovaClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 
 /**
@@ -110,8 +106,7 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
             continue;
          FloatingIPClient client = clientOption.get();
          ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
-         Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
-         blockUntilServerActive(server.getId(), serverClient);
+         Server server = createServerInZone(zoneId);
          FloatingIP floatingIP = client.allocate();
          assertNotNull(floatingIP);
          try {
@@ -121,25 +116,6 @@ public class FloatingIPClientLiveTest extends BaseNovaClientLiveTest {
             client.removeFloatingIPFromServer(floatingIP.getIp(), server.getId());
             serverClient.deleteServer(server.getId());
          }
-      }
-   }
-
-   private String imageIdForZone(String zoneId) {
-      ImageClient imageClient = novaContext.getApi().getImageClientForZone(zoneId);
-      return Iterables.getLast(imageClient.listImages()).getId();
-   }
-
-   private String flavorRefForZone(String zoneId) {
-      FlavorClient flavorClient = novaContext.getApi().getFlavorClientForZone(zoneId);
-      return Iterables.getLast(flavorClient.listFlavors()).getId();
-   }
-
-   private void blockUntilServerActive(String serverId, ServerClient client) throws InterruptedException {
-      Server currentDetails = null;
-      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != Status.ACTIVE; currentDetails = client
-            .getServer(serverId)) {
-         System.out.printf("blocking on status active%n%s%n", currentDetails);
-         Thread.sleep(5 * 1000);
       }
    }
 

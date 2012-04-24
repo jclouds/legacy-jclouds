@@ -66,6 +66,8 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
            URI.create("http://docs.openstack.org/compute/ext/os-simple-tenant-usage/api/v1.1"))
       .put(URI.create(ExtensionNamespaces.HOSTS),
            URI.create("http://docs.openstack.org/compute/ext/hosts/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.VOLUMES),
+           URI.create("http://docs.openstack.org/compute/ext/volumes/api/v1.1"))
       .build();
    
    @Inject

@@ -90,7 +90,7 @@ Here's an example of creating and running a small linux node in the group webser
           (modules (apply modules (concat ext-modules (opts :extensions))))
           (overrides (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
             (Properties.) (dissoc opts :extensions)))
-          (build ComputeServiceContext)
+          (buildView ComputeServiceContext)
           (getComputeService))))
   ([#^ComputeServiceContext compute-context]
     (.getComputeService compute-context)))

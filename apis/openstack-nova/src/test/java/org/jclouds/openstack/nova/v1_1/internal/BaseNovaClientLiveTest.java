@@ -25,10 +25,18 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneProperties;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.config.NovaProperties;
+import org.jclouds.openstack.nova.v1_1.domain.Server;
+import org.jclouds.openstack.nova.v1_1.domain.Server.Status;
+import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
+import org.jclouds.openstack.nova.v1_1.features.ImageClient;
+import org.jclouds.openstack.nova.v1_1.features.ServerClient;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code NovaClient}
@@ -63,6 +71,36 @@ public class BaseNovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    protected void tearDown() {
       if (novaContext != null)
          novaContext.close();
+   }
+   
+   protected Server createServerInZone(String zoneId) {
+      ServerClient serverClient = novaContext.getApi().getServerClientForZone(zoneId);
+      Server server = serverClient.createServer("test", imageIdForZone(zoneId), flavorRefForZone(zoneId));
+      blockUntilServerActive(server.getId(), serverClient);
+      return server;
+   }
+
+   private void blockUntilServerActive(String serverId, ServerClient client) {
+      Server currentDetails = null;
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != Status.ACTIVE; currentDetails = client
+            .getServer(serverId)) {
+         System.out.printf("blocking on status active%n%s%n", currentDetails);
+         try {
+            Thread.sleep(5 * 1000);
+         } catch (InterruptedException e) {
+            throw Throwables.propagate(e);
+         }
+      }
+   }
+   
+   protected String imageIdForZone(String zoneId) {
+      ImageClient imageClient = novaContext.getApi().getImageClientForZone(zoneId);
+      return Iterables.getLast(imageClient.listImages()).getId();
+   }
+
+   protected String flavorRefForZone(String zoneId) {
+      FlavorClient flavorClient = novaContext.getApi().getFlavorClientForZone(zoneId);
+      return Iterables.getLast(flavorClient.listFlavors()).getId();
    }
 
 }

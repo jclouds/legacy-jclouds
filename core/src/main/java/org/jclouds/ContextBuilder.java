@@ -231,6 +231,8 @@ public class ContextBuilder {
       try {
          return find(newArrayList(mutable.getProperty(prov + "." + key), mutable.getProperty("jclouds." + key)),
                   notNull());
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException(String.format("property %s.%s not present in properties: %s", prov, key, mutable.keySet()));
       } finally {
          mutable.remove(prov + "." + key);
          mutable.remove("jclouds." + key);

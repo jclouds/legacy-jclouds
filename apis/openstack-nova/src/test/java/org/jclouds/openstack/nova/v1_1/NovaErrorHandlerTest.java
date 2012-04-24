@@ -76,7 +76,6 @@ public class NovaErrorHandlerTest {
                IllegalStateException.class);
    }
    
-   
    @Test
    public void test400MakesInsufficientResourcesExceptionOnQuotaExceeded() {
       assertCodeMakes(
@@ -85,6 +84,17 @@ public class NovaErrorHandlerTest {
                400,
                "HTTP/1.1 400 Bad Request",
                "{\"badRequest\": {\"message\": \"AddressLimitExceeded: Address quota exceeded. You cannot allocate any more addresses\", \"code\": 400}}",
+               InsufficientResourcesException.class);
+   }
+   
+   @Test
+   public void test413MakesInsufficientResourcesException() {
+      assertCodeMakes(
+               "POST",
+               URI.create("https://az-1.region-a.geo-1.compute.hpcloudsvc.com/v1.1/37936628937291/os-volumes"),
+               413,
+               "HTTP/1.1 413 Request Entity Too Large",
+               "{\"badRequest\": {\"message\": \"Volume quota exceeded. You cannot create a volume of size 1G\", \"code\": 413, \"retryAfter\": 0}}",
                InsufficientResourcesException.class);
    }
 

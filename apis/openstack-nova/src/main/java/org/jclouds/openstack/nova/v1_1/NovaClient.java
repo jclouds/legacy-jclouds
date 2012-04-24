@@ -30,6 +30,7 @@ import org.jclouds.openstack.nova.v1_1.extensions.HostAdministrationClient;
 import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
 import org.jclouds.openstack.nova.v1_1.extensions.SimpleTenantUsageClient;
+import org.jclouds.openstack.nova.v1_1.extensions.VolumeClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorClient;
 import org.jclouds.openstack.nova.v1_1.features.ImageClient;
@@ -120,6 +121,14 @@ public interface NovaClient {
     */
    @Delegate
    Optional<SimpleTenantUsageClient> getSimpleTenantUsageExtensionForZone(
+         @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
+
+
+   /**
+    * Provides synchronous access to Volume features.
+    */
+   @Delegate
+   Optional<VolumeClient> getVolumeExtensionForZone(
          @EndpointParam(parser = ZoneToEndpoint.class) @Nullable String zone);
 
 }
