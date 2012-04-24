@@ -71,7 +71,7 @@ public class ReadOnlyDeltacloudClientLiveTest extends BaseComputeServiceContextL
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(DeltacloudApiMetadata.CONTEXT_TOKEN).getApi();
+      client = view.unwrap(DeltacloudApiMetadata.CONTEXT_TOKEN).getApi();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
       stateChanges = ImmutableMap.<Instance.State, Predicate<Instance>> of(//
                Instance.State.RUNNING, new RetryablePredicate<Instance>(new InstanceRunning(client), 600, 1,

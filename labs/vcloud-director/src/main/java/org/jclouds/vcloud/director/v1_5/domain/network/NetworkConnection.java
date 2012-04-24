@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to jclouds, Inc. (jclouds) under one or more
  * contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -37,15 +37,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-
 /**
  * Represents a network connection.
- * <p/>
- * <p/>
- * <p>Java class for NetworkConnection complex type.
- * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="NetworkConnection">
  *   &lt;complexContent>
@@ -83,7 +77,7 @@ public class NetworkConnection {
       @XmlEnumValue("dhcp") DHCP("dhcp"),
       @XmlEnumValue("manual") MANUAL("manual"),
       @XmlEnumValue("none") NONE("none"),
-      UNRECOGNIZED("unrecognized");
+      @XmlEnumValue("") UNRECOGNIZED("unrecognized");
       
       public static final List<IpAddressAllocationMode> ALL = ImmutableList.of(POOL, DHCP, MANUAL, NONE);
 
@@ -126,7 +120,7 @@ public class NetworkConnection {
       private String externalIpAddress;
       private boolean isConnected;
       private String macAddress;
-      private String ipAddressAllocationMode;
+      private IpAddressAllocationMode ipAddressAllocationMode;
       private String network;
       private Boolean needsCustomization;
 
@@ -173,8 +167,16 @@ public class NetworkConnection {
       /**
        * @see NetworkConnection#getIpAddressAllocationMode()
        */
-      public Builder ipAddressAllocationMode(String ipAddressAllocationMode) {
+      public Builder ipAddressAllocationMode(IpAddressAllocationMode ipAddressAllocationMode) {
          this.ipAddressAllocationMode = ipAddressAllocationMode;
+         return this;
+      }
+
+      /**
+       * @see NetworkConnection#getIpAddressAllocationMode()
+       */
+      public Builder ipAddressAllocationMode(String ipAddressAllocationMode) {
+         this.ipAddressAllocationMode = IpAddressAllocationMode.valueOf(ipAddressAllocationMode);
          return this;
       }
 
@@ -214,11 +216,11 @@ public class NetworkConnection {
    }
 
    public NetworkConnection(int networkConnectionIndex, String ipAddress, String externalIpAddress, boolean connected,
-                            String macAddress, String ipAddressAllocationMode, String network, Boolean needsCustomization) {
+                            String macAddress, IpAddressAllocationMode ipAddressAllocationMode, String network, Boolean needsCustomization) {
       this.networkConnectionIndex = networkConnectionIndex;
       this.ipAddress = ipAddress;
       this.externalIpAddress = externalIpAddress;
-      isConnected = connected;
+      this.isConnected = connected;
       this.macAddress = macAddress;
       this.ipAddressAllocationMode = ipAddressAllocationMode;
       this.network = network;
@@ -241,7 +243,7 @@ public class NetworkConnection {
    @XmlElement(name = "MACAddress")
    protected String macAddress;
    @XmlElement(name = "IpAddressAllocationMode", required = true)
-   protected String ipAddressAllocationMode;
+   protected IpAddressAllocationMode ipAddressAllocationMode;
    @XmlAttribute(required = true)
    protected String network;
    @XmlAttribute
@@ -297,7 +299,7 @@ public class NetworkConnection {
     * @return possible object is
     *         {@link String }
     */
-   public String getIpAddressAllocationMode() {
+   public IpAddressAllocationMode getIpAddressAllocationMode() {
       return ipAddressAllocationMode;
    }
 

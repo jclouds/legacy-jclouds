@@ -85,7 +85,7 @@ public class AtmosApiMetadata extends BaseRestApiMetadata {
          .version("1.4.0")
          .defaultEndpoint("https://accesspoint.atmosonline.com")
          .defaultProperties(AtmosApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .view(TypeToken.of(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AtmosRestClientModule.class, AtmosBlobStoreContextModule.class));
       }
 

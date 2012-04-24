@@ -23,7 +23,7 @@ public class ParseLoginResponseFromHttpResponse implements Function<HttpResponse
 
    @Inject
    ParseLoginResponseFromHttpResponse(GsonWrapper gson) {
-      this.parser = new ParseFirstJsonValueNamed<LoginResponse>(checkNotNull(gson, "gsonWrapper"),
+      this.parser = new ParseFirstJsonValueNamed<LoginResponse>(checkNotNull(gson, "gsonView"),
          new TypeLiteral<LoginResponse>(){}, "loginresponse");
    }
 

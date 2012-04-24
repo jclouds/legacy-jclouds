@@ -58,7 +58,7 @@ public class JcloudsTestBlobStoreApiMetadata extends BaseRestApiMetadata {
       protected Builder(){
          super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
          id("test-blobstore-api")
-         .wrapper(Storage.class)
+         .view(Storage.class)
          .name("Test Blobstore Api")
          .identityName("user")
          .credentialName("password")

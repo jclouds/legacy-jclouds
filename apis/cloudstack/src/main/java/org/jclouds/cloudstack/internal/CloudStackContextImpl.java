@@ -18,12 +18,10 @@
  */
 package org.jclouds.cloudstack.internal;
 
-import java.io.Closeable;
-import java.util.Map;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.Context;
 import org.jclouds.cloudstack.CloudStackAsyncClient;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackContext;
@@ -34,7 +32,6 @@ import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.Utils;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.domain.Credentials;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.RestContext;
 
@@ -49,11 +46,11 @@ public class CloudStackContextImpl extends ComputeServiceContextImpl implements 
    private final RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext;
 
    @Inject
-   public CloudStackContextImpl(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType,
-            ComputeService computeService, Map<String, Credentials> credentialStore, Utils utils,
+   public CloudStackContextImpl(@Provider Context backend, @Provider TypeToken<? extends Context> backendType,
+            ComputeService computeService, Utils utils,
             RestContext<CloudStackDomainClient, CloudStackDomainAsyncClient> domainContext,
             RestContext<CloudStackGlobalClient, CloudStackGlobalAsyncClient> globalContext) {
-      super(wrapped, wrappedType, computeService, credentialStore, utils);
+      super(backend, backendType, computeService, utils);
       this.domainContext = domainContext;
       this.globalContext = globalContext;
    }

@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.Apis;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.providers.ProviderMetadata;
@@ -122,8 +122,8 @@ public class RestContextFactory {
       Object context = builder.build();
       if (context instanceof RestContext) {
          return RestContext.class.cast(context);
-      } else if (context instanceof Wrapper) {
-         Wrapper tctx = Wrapper.class.cast(context);
+      } else if (context instanceof View) {
+         View tctx = View.class.cast(context);
          return (RestContext<S, A>) tctx.unwrap(TypeToken.of(RestContext.class));
       } else {
          throw new IllegalArgumentException("provider " + providerOrApi + " contains an unknown context type: "

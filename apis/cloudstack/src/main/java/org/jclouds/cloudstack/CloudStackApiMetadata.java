@@ -89,7 +89,7 @@ public class CloudStackApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://download.cloud.com/releases/2.2.0/api_2.2.12/TOC_User.html"))
          .defaultEndpoint("http://localhost:8080/client/api")
          .version("2.2")
-         .wrapper(TypeToken.of(CloudStackContext.class))
+         .view(TypeToken.of(CloudStackContext.class))
          .defaultProperties(CloudStackApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudStackRestClientModule.class, CloudStackComputeServiceContextModule.class));
       }

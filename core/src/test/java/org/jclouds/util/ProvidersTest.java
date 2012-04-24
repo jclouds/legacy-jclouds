@@ -32,6 +32,7 @@ import com.google.common.collect.Sets;
 public class ProvidersTest {
 
    @Test
+   @Deprecated
    public void testSupportedProviders() {
       Iterable<String> providers = org.jclouds.rest.Providers.getSupportedProviders();
       assertEquals(Sets.newLinkedHashSet(providers), ImmutableSet.<String> of("test-blobstore-api", "test-compute-api",

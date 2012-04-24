@@ -16,24 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.location.suppliers.fromconfig;
+package org.jclouds.vcloud.director.v1_5.endpoints;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.inject.Qualifier;
 
-import org.jclouds.location.suppliers.ProviderURISupplier;
-import org.jclouds.rest.suppliers.URIFromStringSupplier;
-
-@Singleton
-public class ProviderURIFromConfiguration extends URIFromStringSupplier implements
-         ProviderURISupplier {
-   @Inject
-   protected ProviderURIFromConfiguration(@Named(PROPERTY_ENDPOINT) String endpoint) {
-      super(checkNotNull(endpoint, PROPERTY_ENDPOINT));
-   }
+/**
+ * Related to a VCloud express Org List.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface OrgList {
 
 }

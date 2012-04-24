@@ -79,7 +79,7 @@ public class AMIClientLiveTest extends BaseComputeServiceContextLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAMIServices();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAMIServices();
    }
 
    public void testDescribeImageNotExists() {
@@ -92,7 +92,7 @@ public class AMIClientLiveTest extends BaseComputeServiceContextLiveTest {
    }
 
    public void testDescribeImages() {
-      for (String region : context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          Set<? extends Image> allResults = client.describeImagesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
@@ -153,7 +153,7 @@ public class AMIClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    @Test
    public void testNewlyRegisteredImageCanBeListed() throws Exception {
-      ComputeService computeService = context.getComputeService();
+      ComputeService computeService = view.getComputeService();
       Snapshot snapshot = createSnapshot(computeService);
 
       // List of images before...
@@ -184,10 +184,10 @@ public class AMIClientLiveTest extends BaseComputeServiceContextLiveTest {
       Set<? extends NodeMetadata> nodes = computeService.createNodesInGroup("jcloudstest", 1, options);
       try {
          String instanceId = Iterables.getOnlyElement(nodes).getProviderId();
-         Reservation<? extends RunningInstance> reservation = Iterables.getOnlyElement(context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getInstanceServices().describeInstancesInRegion(null, instanceId));
+         Reservation<? extends RunningInstance> reservation = Iterables.getOnlyElement(view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getInstanceServices().describeInstancesInRegion(null, instanceId));
          RunningInstance instance = Iterables.getOnlyElement(reservation);
          BlockDevice device = instance.getEbsBlockDevices().get("/dev/sda1");
-         Snapshot snapshot = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices().createSnapshotInRegion(null, device.getVolumeId());
+         Snapshot snapshot = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices().createSnapshotInRegion(null, device.getVolumeId());
          snapshotsToDelete.add(snapshot.getId());
          return snapshot;
       } finally {
@@ -269,7 +269,7 @@ public class AMIClientLiveTest extends BaseComputeServiceContextLiveTest {
       for (String imageId : imagesToDeregister)
          client.deregisterImageInRegion(null, imageId);
       for (String snapshotId : snapshotsToDelete)
-         context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices().deleteSnapshotInRegion(null, snapshotId);
+         view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices().deleteSnapshotInRegion(null, snapshotId);
    }
 
 }

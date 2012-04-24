@@ -23,15 +23,16 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.Properties;
 
-import org.jclouds.Constants;
-import org.jclouds.apis.ApiMetadata;
+import org.jclouds.ContextBuilder;
 import org.jclouds.apis.BaseContextLiveTest;
-import org.jclouds.rest.AnonymousRestApiMetadata;
+import org.jclouds.providers.AnonymousProviderMetadata;
+import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
+import org.jclouds.vcloud.director.v1_5.VCloudDirectorConstants;
 import org.jclouds.vcloud.director.v1_5.domain.SessionWithToken;
+import org.jclouds.vcloud.director.v1_5.user.VCloudDirectorClient;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -39,18 +40,20 @@ import org.testng.annotations.Test;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Tests behavior of {@code SessionClient}. Note this class is tested completely independently of
- * VCloudClient as it is a dependency of the VCloud context working.
+ * Tests behavior of {@link SessionClient}. Note this class is tested completely independently of
+ * {@link VCloudDirectorClient} as it is a dependency of the {@code vcloud-director} context working.
  * 
  * @author Adrian Cole
  */
 @Listeners(FormatApiResultsListener.class)
-@Test(groups = { "live", "user", "login" }, testName = "SessionClientLiveTest")
+@Test(groups = { "live", "user" }, testName = "SessionClientLiveTest")
 public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<SessionClient, SessionAsyncClient>> {
+
    public SessionClientLiveTest() {
       provider = "vcloud-director";
    }
 
+   @Override
    @BeforeGroups(groups = { "live" })
    public void setupContext() {
       super.setupContext();
@@ -60,25 +63,6 @@ public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<Sessi
 
    private SessionClient client;
    private SessionWithToken sessionWithToken;
-
-   //temporary until we marry up the test fixtures
-
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-
-   @Override
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      identity = setIfTestSystemPropertyPresent(overrides,  provider + ".identity");
-      credential = setIfTestSystemPropertyPresent(overrides,  provider + ".credential");
-      endpoint = setIfTestSystemPropertyPresent(overrides,  provider + ".endpoint");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".api-version");
-      setIfTestSystemPropertyPresent(overrides,  provider + ".build-version");
-      return overrides;
-   }
    
    @Test(testName = "POST /sessions")
    public void testLogin() {
@@ -103,17 +87,22 @@ public class SessionClientLiveTest extends BaseContextLiveTest<RestContext<Sessi
    public void testLogout() {
       client.logoutSessionWithToken(sessionWithToken.getSession().getHref(), sessionWithToken.getToken());
    }
-   
-   @Override
-   protected ApiMetadata createApiMetadata() {
-      return AnonymousRestApiMetadata.forClientMappedToAsyncClient(SessionClient.class, SessionAsyncClient.class);
-   }
 
    @Override
    protected TypeToken<RestContext<SessionClient, SessionAsyncClient>> contextType() {
-      return new TypeToken<RestContext<SessionClient, SessionAsyncClient>>(){
-
-         /** The serialVersionUID */
-         private static final long serialVersionUID = -3625362618882122604L;};
+      return VCloudDirectorConstants.SESSION_CONTEXT_TYPE;
    }
+
+   @Override
+   protected ProviderMetadata createProviderMetadata() {
+      return AnonymousProviderMetadata.forClientMappedToAsyncClientOnEndpoint(SessionClient.class, SessionAsyncClient.class, endpoint);
+   }
+
+   @Override
+   protected ContextBuilder newBuilder() {
+      ProviderMetadata pm = createProviderMetadata();
+      ContextBuilder builder = ContextBuilder.newBuilder(pm);
+      return builder;
+   }
+
 }

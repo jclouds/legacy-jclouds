@@ -56,6 +56,7 @@ public interface AWSS3Client extends S3Client {
     */
    String initiateMultipartUpload(String bucketName, ObjectMetadata objectMetadata, PutObjectOptions... options);
 
+
    /**
     * This operation aborts a multipart upload. After a multipart upload is aborted, no additional
     * parts can be uploaded using that upload ID. The storage consumed by any previously uploaded

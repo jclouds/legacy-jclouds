@@ -18,9 +18,8 @@
  */
 package org.jclouds.providers;
 
-import java.io.Closeable;
-
-import org.jclouds.Wrapper;
+import org.jclouds.Context;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.ApiPredicates;
 import org.jclouds.util.Preconditions2;
@@ -38,9 +37,9 @@ import com.google.common.reflect.TypeToken;
 public class ProviderPredicates {
 
    public static class ContextAssignableFrom implements Predicate<ProviderMetadata> {
-      private final TypeToken<? extends Closeable> type;
+      private final TypeToken<? extends Context> type;
 
-      public ContextAssignableFrom(TypeToken<? extends Closeable> type) {
+      public ContextAssignableFrom(TypeToken<? extends Context> type) {
          Preconditions.checkNotNull(type, "context must be defined");
          this.type = type;
       }
@@ -63,9 +62,9 @@ public class ProviderPredicates {
    }
    
    public static class TransformableTo implements Predicate<ProviderMetadata> {
-      private final TypeToken<? extends Wrapper> type;
+      private final TypeToken<? extends View> type;
 
-      public TransformableTo(TypeToken<? extends Wrapper> type) {
+      public TransformableTo(TypeToken<? extends View> type) {
          Preconditions.checkNotNull(type, "context must be defined");
          this.type = type;
       }
@@ -75,7 +74,7 @@ public class ProviderPredicates {
        */
       @Override
       public boolean apply(ProviderMetadata providerMetadata) {
-         return ApiPredicates.contextWrappableAs(type).apply(providerMetadata.getApiMetadata());
+         return ApiPredicates.viewableAs(type).apply(providerMetadata.getApiMetadata());
       }
 
       /**
@@ -83,7 +82,7 @@ public class ProviderPredicates {
        */
       @Override
       public String toString() {
-         return "contextWrappableAs(" + type + ")";
+         return "viewableAs(" + type + ")";
       }
    }
 
@@ -261,7 +260,7 @@ public class ProviderPredicates {
     * 
     * @return the providers with an context assignable from the given type.
     */
-   public static Predicate<ProviderMetadata> contextAssignableFrom(final TypeToken<? extends Closeable> type) {
+   public static Predicate<ProviderMetadata> contextAssignableFrom(final TypeToken<? extends Context> type) {
       return new ContextAssignableFrom(type);
    }
 
@@ -273,7 +272,7 @@ public class ProviderPredicates {
     * 
     * @return the providers with an context transformable to from the given type.
     */
-   public static Predicate<ProviderMetadata> contextWrappableAs(final TypeToken<? extends Wrapper> type) {
+   public static Predicate<ProviderMetadata> viewableAs(final TypeToken<? extends View> type) {
       return new TransformableTo(type);
    }
 

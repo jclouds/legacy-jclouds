@@ -72,7 +72,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    }
    
    @Override
-   protected boolean shouldParseImagesOnDemand(Injector injector) {
+   protected boolean shouldEagerlyParseImages(Injector injector) {
       // If no owners to query, then will never lookup all images
       String[] amiOwners = injector.getInstance(Key.get(String[].class, Names.named(PROPERTY_EC2_AMI_OWNERS)));
       return (amiOwners.length > 0);

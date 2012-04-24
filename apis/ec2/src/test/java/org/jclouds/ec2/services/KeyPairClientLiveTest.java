@@ -51,7 +51,7 @@ public class KeyPairClientLiveTest extends BaseComputeServiceContextLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getKeyPairServices();
+      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getKeyPairServices();
    }
 
    @Test

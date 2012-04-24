@@ -56,7 +56,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * <p/>
  * All commands return a ListenableFuture of the result. Any exceptions incurred during processing
- * will be wrapped in an {@link java.util.concurrent.ExecutionException} as documented in
+ * will be backend in an {@link java.util.concurrent.ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
  * @see HPCloudObjectStorageClient

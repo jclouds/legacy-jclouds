@@ -55,13 +55,13 @@ public class ApisTest {
 
    @Test
    public void testTransformableTo() {
-      Iterable<ApiMetadata> apisMetadata = Apis.contextWrappableAs(Storage.class);
+      Iterable<ApiMetadata> apisMetadata = Apis.viewableAs(Storage.class);
 
       for (ApiMetadata apiMetadata : apisMetadata) {
          assertEquals(testBlobstoreApi, apiMetadata);
       }
 
-      apisMetadata = Apis.contextWrappableAs(Compute.class);
+      apisMetadata = Apis.viewableAs(Compute.class);
 
       for (ApiMetadata apiMetadata : apisMetadata) {
          if (apiMetadata.getName().equals(testComputeApi.getName())) {
@@ -71,7 +71,7 @@ public class ApisTest {
          }
       }
 
-      apisMetadata = Apis.contextWrappableAs(Balancer.class);
+      apisMetadata = Apis.viewableAs(Balancer.class);
 
       assertEquals(false, apisMetadata.iterator().hasNext());
    }

@@ -43,6 +43,8 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -75,8 +77,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SharedKeyLiteAuthentication(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String identity,
-         @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider,
+   public SharedKeyLiteAuthentication(SignatureWire signatureWire, @Identity String identity,
+         @Credential String encodedKey, @TimeStamp Provider<String> timeStampProvider,
          Crypto crypto, HttpUtils utils) {
       this.crypto = crypto;
       this.utils = utils;

@@ -54,7 +54,7 @@ extends BaseComputeServiceContextLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      Injector injector = context.utils().injector();
+      Injector injector = view.utils().injector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
       allCatalogItemsInOrg = injector.getInstance(AllCatalogItemsInOrg.class);

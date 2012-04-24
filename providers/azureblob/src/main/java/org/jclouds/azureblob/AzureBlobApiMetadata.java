@@ -81,7 +81,7 @@ public class AzureBlobApiMetadata extends BaseRestApiMetadata {
          .defaultEndpoint("https://${jclouds.identity}.blob.core.windows.net")
          .documentation(URI.create("http://msdn.microsoft.com/en-us/library/dd135733.aspx"))
          .defaultProperties(AzureBlobApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .view(TypeToken.of(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AzureBlobRestClientModule.class, AzureBlobStoreContextModule.class));
       }
       

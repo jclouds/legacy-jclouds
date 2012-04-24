@@ -20,7 +20,7 @@ package org.jclouds.cloudloadbalancers.internal;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.apis.BaseContextLiveTest;
+import org.jclouds.apis.BaseViewLiveTest;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersAsyncClient;
 import org.jclouds.cloudloadbalancers.CloudLoadBalancersClient;
 import org.jclouds.cloudloadbalancers.domain.LoadBalancer;
@@ -42,7 +42,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudLoadBalancersClientLiveTest extends BaseContextLiveTest<LoadBalancerServiceContext> {
+public class BaseCloudLoadBalancersClientLiveTest extends BaseViewLiveTest<LoadBalancerServiceContext> {
 
    public BaseCloudLoadBalancersClientLiveTest() {
       provider = "cloudloadbalancers";
@@ -61,7 +61,7 @@ public class BaseCloudLoadBalancersClientLiveTest extends BaseContextLiveTest<Lo
    @Override
    public void setupContext() {
       super.setupContext();
-      lbContext = context.unwrap();
+      lbContext = view.unwrap();
 
       client = lbContext.getApi();
 
@@ -75,7 +75,7 @@ public class BaseCloudLoadBalancersClientLiveTest extends BaseContextLiveTest<Lo
    }
 
    @Override
-   protected TypeToken<LoadBalancerServiceContext> contextType() {
+   protected TypeToken<LoadBalancerServiceContext> viewType() {
       return TypeToken.of(LoadBalancerServiceContext.class);
    }
 

@@ -72,7 +72,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi();
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
             TimeUnit.SECONDS);
@@ -129,7 +129,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
 
    public void testStartCCInstance() throws Exception {
 
-      Template template = context.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX).build();
+      Template template = view.getComputeService().templateBuilder().fastest().osFamily(OsFamily.AMZN_LINUX).build();
       assert template != null : "The returned template was null, but it should have a value.";
       assertEquals(template.getHardware().getProviderId(), InstanceType.CC2_8XLARGE);
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
@@ -140,12 +140,12 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
                Statements.newStatementList(AdminAccess.standard(), InstallJDK.fromOpenJDK()));
 
       String group = PREFIX + "cccluster";
-      context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
+      view.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
       // TODO make this not lookup an explicit region
       client.getPlacementGroupServices().deletePlacementGroupInRegion(null, "jclouds#" + group + "#us-east-1");
 
       try {
-         Set<? extends NodeMetadata> nodes = context.getComputeService().createNodesInGroup(group, 1, template);
+         Set<? extends NodeMetadata> nodes = view.getComputeService().createNodesInGroup(group, 1, template);
          NodeMetadata node = getOnlyElement(nodes);
 
          getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
@@ -155,7 +155,7 @@ public class PlacementGroupClientLiveTest extends BaseComputeServiceContextLiveT
          System.err.println(e.getNodeErrors().keySet());
          Throwables.propagate(e);
       } finally {
-         context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
+         view.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
       }
    }
 

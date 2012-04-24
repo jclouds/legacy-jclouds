@@ -71,7 +71,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testResizeRam() throws Exception {
       String group = this.group + "ram";
-      RestContext<GoGridClient, GoGridAsyncClient> providerContext = context.unwrap();
+      RestContext<GoGridClient, GoGridAsyncClient> providerContext = view.unwrap();
       try {
          client.destroyNodesMatching(inGroup(group));
       } catch (Exception e) {

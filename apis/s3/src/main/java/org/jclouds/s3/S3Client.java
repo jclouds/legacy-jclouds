@@ -44,7 +44,7 @@ import com.google.inject.Provides;
  * Provides access to S3 via their REST API.
  * <p/>
  * All commands return a Future of the result from S3. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in
+ * processing will be backend in an {@link ExecutionException} as documented in
  * {@link Future#get()}.
  * 
  * @author Adrian Cole

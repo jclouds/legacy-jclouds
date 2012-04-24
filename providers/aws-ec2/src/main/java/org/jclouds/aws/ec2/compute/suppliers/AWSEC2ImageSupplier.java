@@ -97,7 +97,7 @@ public class AWSEC2ImageSupplier implements Supplier<Set<? extends Image>> {
    @Override
    public Set<? extends Image> get() {
       String amiQuery = queries.get(PROPERTY_EC2_AMI_QUERY);
-      String ccAmiQuery= queries.get(PROPERTY_EC2_CC_AMI_QUERY);
+      String ccAmiQuery = queries.get(PROPERTY_EC2_CC_AMI_QUERY);
 
       Future<Iterable<Image>> normalImages = images(regions.get(), amiQuery, PROPERTY_EC2_AMI_QUERY);
       ImmutableSet<Image> clusterImages;

@@ -53,8 +53,7 @@ public class BaseBlobMapTest {
    public void testTypes() {
       TypeLiteral<Map<String, Map<String, Blob>>> type0 = new TypeLiteral<Map<String, Map<String, Blob>>>() {
       };
-      @SuppressWarnings("rawtypes")
-      TypeLiteral type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class,
+      TypeLiteral<?> type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class,
             Types.newParameterizedType(Map.class, String.class, Blob.class)));
       assertEquals(type0, type1);
 

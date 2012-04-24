@@ -246,7 +246,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    }
 
    /**
-    * Power on a VApp.
+    * Power on a {@link VApp}s {@link Vm}s.
     */
    protected VApp powerOn(final URI testVAppURI) {
       VApp testVApp = vAppClient.getVApp(testVAppURI);

@@ -60,10 +60,10 @@ public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClien
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      Injector injector = context.utils().injector();
+      Injector injector = view.utils().injector();
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
       sshFactory = injector.getInstance(Factory.class);
-      connection = (S) RestContext.class.cast(context.unwrap()).getApi();
+      connection = (S) RestContext.class.cast(view.unwrap()).getApi();
    }
    
    protected Module getSshModule() {

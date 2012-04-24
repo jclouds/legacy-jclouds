@@ -25,8 +25,15 @@ import javax.inject.Singleton;
 
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.openstack.nova.v1_1.domain.HostResourceUsage;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -38,12 +45,38 @@ public class NovaParserModule extends AbstractModule {
    @Provides
    @Singleton
    public Map<Type, Object> provideCustomAdapterBindings() {
-      return ImmutableMap.<Type, Object> of();
+      return ImmutableMap.<Type, Object> of(HostResourceUsage.class, new HostResourceUsageAdapter());
    }
 
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(GsonModule.Iso8601DateAdapter.class);
+   }
+
+   @Singleton
+   public static class HostResourceUsageAdapter implements JsonSerializer<HostResourceUsage>, JsonDeserializer<HostResourceUsage> {
+      public HostResourceUsage apply(HostResourceUsageView in) {
+         return in.resource.toBuilder().build();
+      }
+      
+      @Override
+      public HostResourceUsage deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+         return apply((HostResourceUsageView) context.deserialize(jsonElement, HostResourceUsageView.class));
+      }
+
+      @Override
+      public JsonElement serialize(HostResourceUsage hostResourceUsage, Type type, JsonSerializationContext context) {
+         return context.serialize(hostResourceUsage);
+      }
+      
+      private static class HostResourceUsageView {
+         protected HostResourceUsageInternal resource;
+      }
+      private static class HostResourceUsageInternal extends HostResourceUsage {
+         protected HostResourceUsageInternal(Builder<?> builder) {
+            super(builder);
+         }
+      }
    }
 
 }

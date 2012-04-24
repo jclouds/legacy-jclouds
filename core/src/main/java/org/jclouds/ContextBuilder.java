@@ -19,9 +19,17 @@
 package org.jclouds;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.containsPattern;
 import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_BUILD_VERSION;
@@ -32,14 +40,12 @@ import static org.jclouds.Constants.PROPERTY_ISO3166_CODES;
 import static org.jclouds.Constants.PROPERTY_PROVIDER;
 import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
-import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-
-import javax.inject.Singleton;
+import java.util.Set;
 
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.Apis;
@@ -47,6 +53,9 @@ import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.config.BindPropertiesToExpandedValues;
+import org.jclouds.config.BindRestContextWithWildcardExtendsExplicitAndRawType;
+import org.jclouds.domain.Credentials;
 import org.jclouds.events.config.ConfiguresEventBus;
 import org.jclouds.events.config.EventBusModule;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
@@ -54,48 +63,40 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.lifecycle.config.LifeCycleModule;
-import org.jclouds.location.Provider;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.providers.AnonymousProviderMetadata;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.Providers;
+import org.jclouds.providers.config.BindProviderMetadataContextAndCredentials;
+import org.jclouds.providers.internal.UpdateProviderMetadataFromProperties;
 import org.jclouds.rest.ConfiguresCredentialStore;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.config.BindPropertiesToAnnotations;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.rest.internal.BaseRestApiMetadata;
-import org.jclouds.rest.internal.RestContextImpl;
-import org.nnsoft.guice.rocoto.Rocoto;
-import org.nnsoft.guice.rocoto.configuration.ConfigurationModule;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.base.Throwables;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.ExecutionList;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 
 /**
  * Creates {@link RestContext} or {@link Injector} instances based on the most commonly requested
@@ -110,54 +111,7 @@ import com.google.inject.util.Types;
  * @author Adrian Cole, Andrew Newdigate
  * @see RestContext
  */
-public final class ContextBuilder {
-
-   static class ResolveRestContextModule extends AbstractModule {
-      private final RestApiMetadata restApiMetadata;
-
-      ResolveRestContextModule(RestApiMetadata restApiMetadata) {
-         this.restApiMetadata = restApiMetadata;
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      protected void configure() {
-         if (restApiMetadata.getContext().getRawType().equals(RestContext.class)) {
-            TypeToken concreteType = BaseRestApiMetadata.contextToken(TypeToken.of(restApiMetadata.getApi()), TypeToken
-                     .of(restApiMetadata.getAsyncApi()));
-            // bind explicit type
-            bind(TypeLiteral.get(concreteType.getType())).to(
-                     (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, restApiMetadata
-                              .getApi(), restApiMetadata.getAsyncApi())));
-            // bind potentially wildcard type
-            if (!concreteType.equals(restApiMetadata.getContext())) {
-               bind(TypeLiteral.get(restApiMetadata.getContext().getType())).to(
-                        (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, restApiMetadata
-                                 .getApi(), restApiMetadata.getAsyncApi())));
-            }
-            // bind w/o types
-            bind(TypeLiteral.get(RestContext.class)).to(
-                     (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, restApiMetadata
-                              .getApi(), restApiMetadata.getAsyncApi())));
-         }
-      }
-   }
-
-   private final class BindDefaultContextQualifiedToProvider extends AbstractModule {
-      @Override
-      protected void configure() {
-         bind(new TypeLiteral<TypeToken<? extends Closeable>>() {
-         }).annotatedWith(Provider.class).toInstance(apiMetadata.getContext());
-      }
-
-      @SuppressWarnings("unused")
-      @Provides
-      @Provider
-      @Singleton
-      protected Closeable wrapped(Injector i, @Provider TypeToken<? extends Closeable> wrappedType) {
-         return (Closeable) i.getInstance(Key.get(TypeLiteral.get(wrappedType.getType())));
-      }
-   }
+public class ContextBuilder {
 
    /**
     * looks up a provider or api with the given id
@@ -177,8 +131,8 @@ public final class ContextBuilder {
          }
       } catch (NoSuchElementException e) {
          Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
-         builder.putAll("providers", Iterables.transform(Providers.all(), Providers.idFunction()));
-         builder.putAll("apis", Iterables.transform(Apis.all(), Apis.idFunction()));
+         builder.putAll("providers", transform(Providers.all(), Providers.idFunction()));
+         builder.putAll("apis", transform(Apis.all(), Apis.idFunction()));
          throw new NoSuchElementException(String.format("key [%s] not in the list of providers or apis: %s",
                   providerOrApi, builder.build()));
       }
@@ -200,14 +154,16 @@ public final class ContextBuilder {
       }
    }
 
-   protected ProviderMetadata providerMetadata;
-   protected String endpoint;
-   protected String identity;
+   protected Optional<ProviderMetadata> providerMetadata = Optional.absent();
+   protected final String providerId;
+   protected Optional<String> endpoint = Optional.absent();
+   protected Optional<String> identity = Optional.absent();
+   @Nullable
    protected String credential;
    protected ApiMetadata apiMetadata;
    protected String apiVersion;
    protected String buildVersion;
-   protected Properties overrides = new Properties();;
+   protected Optional<Properties> overrides = Optional.absent();
    protected List<Module> modules = new ArrayList<Module>(3);
 
    @Override
@@ -217,36 +173,37 @@ public final class ContextBuilder {
    }
 
    protected ContextBuilder(ProviderMetadata providerMetadata) {
-      this(providerMetadata, providerMetadata.getApiMetadata());
+      this(providerMetadata, checkNotNull(providerMetadata, "providerMetadata").getApiMetadata());
    }
 
    protected ContextBuilder(@Nullable ProviderMetadata providerMetadata, ApiMetadata apiMetadata) {
       this.apiMetadata = checkNotNull(apiMetadata, "apiMetadata");
-      this.providerMetadata = providerMetadata;
-      if (providerMetadata != null)
-         this.endpoint = providerMetadata.getEndpoint();
-      if (apiMetadata.getDefaultIdentity().isPresent())
-         identity = apiMetadata.getDefaultIdentity().get();
-      if (apiMetadata.getDefaultCredential().isPresent())
-         credential = apiMetadata.getDefaultCredential().get();
+      if (providerMetadata != null) {
+         this.providerMetadata = Optional.of(providerMetadata);
+         this.endpoint = Optional.of(providerMetadata.getEndpoint());
+         this.providerId = providerMetadata.getId();
+      } else {
+         this.endpoint = apiMetadata.getDefaultEndpoint();
+         this.providerId = apiMetadata.getId();
+      }
+      this.identity = apiMetadata.getDefaultIdentity();
+      this.credential = apiMetadata.getDefaultCredential().orNull();
       this.apiVersion = apiMetadata.getVersion();
       this.buildVersion = apiMetadata.getBuildVersion().or("");
-      if (endpoint == null)
-         endpoint = apiMetadata.getDefaultEndpoint().orNull();
    }
 
    public ContextBuilder(ApiMetadata apiMetadata) {
       this(null, apiMetadata);
    }
 
-   public ContextBuilder credentials(String identity, String credential) {
-      this.identity = identity;
+   public ContextBuilder credentials(String identity, @Nullable String credential) {
+      this.identity = Optional.of(checkNotNull(identity, "identity"));
       this.credential = credential;
       return this;
    }
 
    public ContextBuilder endpoint(String endpoint) {
-      this.endpoint = endpoint;
+      this.endpoint = Optional.of(checkNotNull(endpoint, "endpoint"));
       return this;
    }
 
@@ -261,102 +218,136 @@ public final class ContextBuilder {
    }
 
    public ContextBuilder modules(Iterable<? extends Module> modules) {
-      addAll(this.modules, modules);
+      addAll(this.modules, checkNotNull(modules, "modules"));
       return this;
    }
 
    public ContextBuilder overrides(Properties overrides) {
-      this.overrides.putAll(overrides);
+      this.overrides = Optional.of(checkNotNull(overrides, "overrides"));
       return this;
    }
 
-   /**
-    * @throws NoSuchElementException
-    */
-   public static String searchPropertiesForProviderScopedProperty(Properties overrides, String prov, String key,
-            String defaultVal) {
+   public static String searchPropertiesForProviderScopedProperty(Properties mutable, String prov, String key) throws NoSuchElementException {
       try {
-         return Iterables.find(Lists.newArrayList(overrides.getProperty(prov + "." + key), overrides
-                  .getProperty("jclouds." + key), defaultVal), Predicates.notNull());
-      } catch (NoSuchElementException e) {
-         throw new NoSuchElementException("no " + key + " configured for provider: " + prov);
+         return find(newArrayList(mutable.getProperty(prov + "." + key), mutable.getProperty("jclouds." + key)),
+                  notNull());
+      } finally {
+         mutable.remove(prov + "." + key);
+         mutable.remove("jclouds." + key);
       }
    }
 
    public Injector buildInjector() {
-      checkNotNull(modules, "modules");
-      checkNotNull(overrides, "overrides");
-      checkNotNull(apiMetadata, "api");
 
-      final Properties mutable = new Properties();
-      mutable.putAll(apiMetadata.getDefaultProperties());
-      String providerId;
-      if (providerMetadata != null) {
-         mutable.putAll(providerMetadata.getDefaultProperties());
-         mutable.setProperty(PROPERTY_PROVIDER, providerId = providerMetadata.getId());
-         mutable.setProperty(PROPERTY_ISO3166_CODES, Joiner.on(',').join(providerMetadata.getIso3166Codes()));
-      } else {
-         mutable.setProperty(PROPERTY_PROVIDER, providerId = apiMetadata.getId());
-      }
-      mutable.putAll(checkNotNull(overrides, "overrides"));
-      mutable.putAll(propertiesPrefixedWithJcloudsApiOrProviderId(System.getProperties(), providerId));
+      Properties unexpanded = currentStateToUnexpandedProperties();
 
-      mutable.setProperty(PROPERTY_ENDPOINT, searchPropertiesForProviderScopedProperty(mutable, providerId, "endpoint",
-               endpoint));
-      mutable.setProperty(PROPERTY_API, searchPropertiesForProviderScopedProperty(mutable, providerId, "api",
-               apiMetadata.getName()));
-      mutable.setProperty(PROPERTY_API_VERSION, searchPropertiesForProviderScopedProperty(mutable, providerId,
-               "api-version", apiVersion));
-      mutable.setProperty(PROPERTY_BUILD_VERSION, searchPropertiesForProviderScopedProperty(mutable, providerId,
-               "build-version", buildVersion));
-      mutable.setProperty(PROPERTY_IDENTITY, searchPropertiesForProviderScopedProperty(mutable, providerId, "identity",
-               identity));
+      ImmutableSet<String> keysToResolve = ImmutableSet.of(PROPERTY_ENDPOINT, PROPERTY_IDENTITY, PROPERTY_CREDENTIAL,
+               PROPERTY_API, PROPERTY_API_VERSION, PROPERTY_BUILD_VERSION);
+
+      ImmutableSet<String> optionalKeys = apiMetadata.getCredentialName().isPresent() ? ImmutableSet.<String> of()
+               : ImmutableSet.of(PROPERTY_CREDENTIAL);
+
+      Properties resolved = resolveProperties(unexpanded, providerId, keysToResolve, optionalKeys);
+
+      Properties expanded = expandProperties(resolved);
+
+      Credentials creds = new Credentials(getAndRemove(expanded, PROPERTY_IDENTITY), getAndRemove(expanded,
+               PROPERTY_CREDENTIAL));
+
+      ProviderMetadata providerMetadata = new UpdateProviderMetadataFromProperties(apiMetadata, this.providerMetadata).apply(expanded);
+
+      return buildInjector(providerMetadata, creds, modules);
+   }
+
+   private static String getAndRemove(Properties expanded, String key) {
       try {
-         mutable.setProperty(PROPERTY_CREDENTIAL, searchPropertiesForProviderScopedProperty(mutable, providerId,
-                  "credential", credential));
-      } catch (NoSuchElementException e) {
-         if (apiMetadata.getCredentialName().isPresent())
-            throw e;
+         return expanded.getProperty(key);
+      } finally {
+         expanded.remove(key);
       }
-      if (providerMetadata == null)
-         providerMetadata = AnonymousProviderMetadata.forApiWithEndpoint(apiMetadata, mutable
-                  .getProperty(PROPERTY_ENDPOINT));
+   }
+   
+   private Properties currentStateToUnexpandedProperties() {
+      Properties defaults = new Properties();
+      defaults.putAll(apiMetadata.getDefaultProperties());
+      defaults.setProperty(PROPERTY_PROVIDER,providerId);
+      if (providerMetadata.isPresent()) {
+         defaults.putAll(providerMetadata.get().getDefaultProperties());
+         defaults.setProperty(PROPERTY_ISO3166_CODES, Joiner.on(',').join(providerMetadata.get().getIso3166Codes()));
+      }
+      if (endpoint.isPresent())
+         defaults.setProperty(PROPERTY_ENDPOINT, endpoint.get());
+      defaults.setProperty(PROPERTY_API, apiMetadata.getName());
+      defaults.setProperty(PROPERTY_API_VERSION, apiVersion);
+      defaults.setProperty(PROPERTY_BUILD_VERSION, buildVersion);
+      if (identity.isPresent())
+         defaults.setProperty(PROPERTY_IDENTITY, identity.get());
+      if (credential != null)
+         defaults.setProperty(PROPERTY_CREDENTIAL, credential);
+      if (overrides.isPresent())
+         defaults.putAll(checkNotNull(overrides.get(), "overrides"));
+      defaults.putAll(propertiesPrefixedWithJcloudsApiOrProviderId(getSystemProperties(), apiMetadata.getId(), providerId));
+      return defaults;
+   }
 
-      modules.add(Rocoto.expandVariables(new ConfigurationModule() {
+   @VisibleForTesting
+   protected Properties getSystemProperties() {
+      return System.getProperties();
+   }
 
-         @Override
-         protected void bindConfigurations() {
-            bindProperties(mutable);
-         }
 
-      }));
+   private Properties expandProperties(final Properties resolved) {
+      return Guice.createInjector(new BindPropertiesToExpandedValues(resolved)).getInstance(Properties.class);
+   }
 
-      boolean restModuleSpecifiedByUser = restClientModulePresent(modules);
-      Iterable<Module> defaultModules = ifSpecifiedByUserDontIncludeDefaultRestModule(restModuleSpecifiedByUser);
-      Iterables.addAll(modules, defaultModules);
-      addClientModuleIfNotPresent(modules);
-      addRestContextBinding();
+   public static Injector buildInjector(ProviderMetadata providerMetadata, Credentials creds, List<Module> inputModules) {
+      List<Module> modules = newArrayList();
+      modules.addAll(inputModules);
+      boolean restModuleSpecifiedByUser = restClientModulePresent(inputModules);
+      Iterable<Module> defaultModules = ifSpecifiedByUserDontIncludeDefaultRestModule(
+               providerMetadata.getApiMetadata(), restModuleSpecifiedByUser);
+      addAll(modules, defaultModules);
+      addClientModuleIfNotPresent(providerMetadata.getApiMetadata(), modules);
+      addRestContextBinding(providerMetadata.getApiMetadata(), modules);
       addLoggingModuleIfNotPresent(modules);
       addHttpModuleIfNeededAndNotPresent(modules);
       addExecutorServiceIfNotPresent(modules);
       addEventBusIfNotPresent(modules);
       addCredentialStoreIfNotPresent(modules);
       modules.add(new LifeCycleModule());
-      modules.add(new BindPropertiesToAnnotations());
-      modules.add(new BindDefaultContextQualifiedToProvider());
+      modules.add(new BindProviderMetadataContextAndCredentials(providerMetadata, creds));
       Injector returnVal = Guice.createInjector(Stage.PRODUCTION, modules);
       returnVal.getInstance(ExecutionList.class).execute();
       return returnVal;
    }
 
-   void addRestContextBinding() {
+   static Properties resolveProperties(Properties mutable, String providerId, Set<String> keys, Set<String> optionalKeys) throws NoSuchElementException {
+      for (String key : keys){
+         try {
+            String scopedProperty = ImmutableList.copyOf(Splitter.on('.').split(key)).get(1);
+            mutable.setProperty(key, searchPropertiesForProviderScopedProperty(mutable, providerId,scopedProperty));
+         } catch (NoSuchElementException e){
+    if (!optionalKeys.contains(key))
+       throw e;
+         }
+      }
+      return mutable;
+   }
+
+   static void addRestContextBinding(ApiMetadata apiMetadata, List<Module> modules) {
       if (apiMetadata instanceof RestApiMetadata) {
-         modules.add(new ResolveRestContextModule(RestApiMetadata.class.cast(apiMetadata)));
+         try {
+            modules.add(new BindRestContextWithWildcardExtendsExplicitAndRawType(RestApiMetadata.class
+                     .cast(apiMetadata)));
+         } catch (IllegalArgumentException e) {
+
+         }
       }
    }
 
-   private Iterable<Module> ifSpecifiedByUserDontIncludeDefaultRestModule(boolean restModuleSpecifiedByUser) {
-      Iterable<Module> defaultModules = Iterables.transform(apiMetadata.getDefaultModules(),
+   static Iterable<Module> ifSpecifiedByUserDontIncludeDefaultRestModule(ApiMetadata apiMetadata,
+            boolean restModuleSpecifiedByUser) {
+      Iterable<Module> defaultModules = transform(apiMetadata.getDefaultModules(),
                new Function<Class<? extends Module>, Module>() {
 
                   @Override
@@ -364,37 +355,38 @@ public final class ContextBuilder {
                      try {
                         return arg0.newInstance();
                      } catch (InstantiationException e) {
-                        throw Throwables.propagate(e);
+                        throw propagate(e);
                      } catch (IllegalAccessException e) {
-                        throw Throwables.propagate(e);
+                        throw propagate(e);
                      }
                   }
 
                });
       if (restModuleSpecifiedByUser)
-         defaultModules = Iterables.filter(defaultModules, Predicates.not(configuresRest));
+         defaultModules = filter(defaultModules, not(configuresRest));
       return defaultModules;
    }
 
    @SuppressWarnings( { "unchecked" })
-   Map<String, Object> propertiesPrefixedWithJcloudsApiOrProviderId(Properties properties, String providerId) {
-      return Maps.filterKeys((Map) System.getProperties(), Predicates.containsPattern("^(jclouds|" + providerId + "|"
-               + apiMetadata.getId() + ").*"));
+   static Map<String, Object> propertiesPrefixedWithJcloudsApiOrProviderId(Properties properties, String apiId,
+            String providerId) {
+      return Maps.filterKeys((Map) properties, containsPattern("^(jclouds|" + providerId + "|" + apiId
+               + ").*"));
    }
 
    @VisibleForTesting
-   protected void addLoggingModuleIfNotPresent(List<Module> modules) {
+   static void addLoggingModuleIfNotPresent(List<Module> modules) {
       if (!any(modules, instanceOf(LoggingModule.class)))
          modules.add(new JDKLoggingModule());
    }
 
    @VisibleForTesting
-   void addHttpModuleIfNeededAndNotPresent(List<Module> modules) {
+   static void addHttpModuleIfNeededAndNotPresent(List<Module> modules) {
       if (nothingConfiguresAnHttpService(modules))
          modules.add(new JavaUrlHttpCommandExecutorServiceModule());
    }
 
-   private boolean nothingConfiguresAnHttpService(List<Module> modules) {
+   static boolean nothingConfiguresAnHttpService(List<Module> modules) {
       return (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresHttpCommandExecutorService.class);
@@ -404,25 +396,25 @@ public final class ContextBuilder {
    }
 
    @VisibleForTesting
-   protected void addClientModuleIfNotPresent(List<Module> modules) {
+   static void addClientModuleIfNotPresent(ApiMetadata apiMetadata, List<Module> modules) {
       if (!restClientModulePresent(modules)) {
-         addClientModule(modules);
+         addClientModule(apiMetadata, modules);
       }
    }
 
-   Predicate<Module> configuresRest = new Predicate<Module>() {
+   static Predicate<Module> configuresRest = new Predicate<Module>() {
       public boolean apply(Module input) {
          return input.getClass().isAnnotationPresent(ConfiguresRestClient.class);
       }
 
    };
 
-   private boolean restClientModulePresent(List<Module> modules) {
+   static boolean restClientModulePresent(List<Module> modules) {
       return any(modules, configuresRest);
    }
 
    @SuppressWarnings("unchecked")
-   protected void addClientModule(List<Module> modules) {
+   static void addClientModule(ApiMetadata apiMetadata, List<Module> modules) {
       // TODO: move this up
       if (apiMetadata instanceof RestApiMetadata) {
          RestApiMetadata rest = RestApiMetadata.class.cast(apiMetadata);
@@ -431,9 +423,9 @@ public final class ContextBuilder {
          modules.add(new RestModule());
       }
    }
-   
+
    @VisibleForTesting
-   protected void addEventBusIfNotPresent(List<Module> modules) {
+   static void addEventBusIfNotPresent(List<Module> modules) {
       if (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresEventBus.class);
@@ -446,7 +438,7 @@ public final class ContextBuilder {
    }
 
    @VisibleForTesting
-   protected void addExecutorServiceIfNotPresent(List<Module> modules) {
+   static void addExecutorServiceIfNotPresent(List<Module> modules) {
       if (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresExecutorService.class);
@@ -468,7 +460,7 @@ public final class ContextBuilder {
    }
 
    @VisibleForTesting
-   protected void addCredentialStoreIfNotPresent(List<Module> modules) {
+   static void addCredentialStoreIfNotPresent(List<Module> modules) {
       if (!any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresCredentialStore.class);
@@ -489,40 +481,55 @@ public final class ContextBuilder {
     * @see #build(TypeToken)
     */
    @SuppressWarnings("unchecked")
-   public <C extends Closeable> C build() {
+   public <C extends Context> C build() {
       return (C) build(apiMetadata.getContext());
    }
 
    /**
-    * @see #build(TypeToken)
+    * @see #buildView(Class)
     */
-   public <C extends Closeable> C build(Class<C> contextType) {
-      return build(TypeToken.of(checkNotNull(contextType, "contextType")));
+   public <V extends View> V build(Class<V> viewType) {
+     return buildView(checkNotNull(viewType, "viewType"));
    }
 
    /**
-    * this will build any context supported by the ApiMetadata. This includes the base
-    * {@link ApiMetadata#getContext() context}, or any {@link ApiMetadata#getWrappers() wrapper} it
-    * supports.
+    * @see #buildView(TypeToken)
+    */
+   public <V extends View> V buildView(Class<V> viewType) {
+     return buildView(TypeToken.of(checkNotNull(viewType, "viewType")));
+   }
+   
+   /**
+    * this will build any {@link ApiMetadata#getViews() view} supported by the ApiMetadata.
     * 
     * ex. {@code builder.build(BlobStoreContext.class) } will work, if {@code TypeToken<BlobStore>}
-    * is a configured {@link ApiMetadata#getWrappers() wrapper} of this api.
-    * 
+    * is a configured {@link ApiMetadata#getViews() view} of this api.
     * 
     */
    @SuppressWarnings("unchecked")
-   public <C extends Closeable> C build(final TypeToken<C> contextType) {
+   public <V extends View> V buildView(TypeToken<V> viewType) {
+      TypeToken<V> returnType;
+      try {
+         returnType = (TypeToken<V>) Apis.findView(apiMetadata, checkNotNull(viewType, "viewType"));
+      } catch (NoSuchElementException e) {
+         throw new IllegalArgumentException(String.format(
+                  "api %s not wrappable as %s; context: %s, views: %s", apiMetadata,
+                  viewType, apiMetadata.getContext(), apiMetadata.getViews()));
+      }
+      return (V) buildInjector().getInstance(Key.get(TypeLiteral.get(returnType.getType())));
+   }
+
+   /**
+    * this will build the {@link ApiMetadata#getContext() context} supported by the current ApiMetadata.
+    */
+   @SuppressWarnings("unchecked")
+   public <C extends Context> C build(TypeToken<C> contextType) {
       TypeToken<C> returnType = null;
       if (contextType.isAssignableFrom(apiMetadata.getContext()))
          returnType = (TypeToken<C>) apiMetadata.getContext();
       else
-         try {
-            returnType = (TypeToken<C>) Apis.findWrapper(apiMetadata, contextType);
-         } catch (NoSuchElementException e) {
-            throw new IllegalArgumentException(String.format(
-                     "api %s not assignable from or transformable to %s; context: %s, wrappers: %s", apiMetadata,
-                     contextType, apiMetadata.getContext(), apiMetadata.getWrappers()));
-         }
+         throw new IllegalArgumentException(String.format("api %s not assignable from %s; context: %s", apiMetadata,
+                  contextType, apiMetadata.getContext()));
       return (C) buildInjector().getInstance(Key.get(TypeLiteral.get(returnType.getType())));
    }
 

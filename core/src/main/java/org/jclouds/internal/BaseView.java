@@ -21,57 +21,57 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Closeable;
-
 import javax.inject.Singleton;
 
-import org.jclouds.Wrapper;
+import org.jclouds.Context;
+import org.jclouds.View;
 import org.jclouds.location.Provider;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.ForwardingObject;
 import com.google.common.reflect.TypeToken;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public abstract class BaseWrapper implements Wrapper {
+public abstract class BaseView extends ForwardingObject implements View {
 
-   private final Closeable wrapped;
-   private final TypeToken<? extends Closeable> wrappedType;
+   private final Context backend;
+   private final TypeToken<? extends Context> backendType;
 
-
-   protected BaseWrapper(@Provider Closeable wrapped, @Provider TypeToken<? extends Closeable> wrappedType) {
-      this.wrapped = checkNotNull(wrapped, "wrapped");
-      this.wrappedType = checkNotNull(wrappedType, "wrappedType");
+   protected BaseView(@Provider Context backend, @Provider TypeToken<? extends Context> backendType) {
+      this.backend = checkNotNull(backend, "backend");
+      this.backendType = checkNotNull(backendType, "backendType");
    }
-
+   
    @SuppressWarnings("unchecked")
    @Override
-   public <C extends Closeable> C unwrap(TypeToken<C> type) {
-      checkArgument(checkNotNull(type, "type").isAssignableFrom(wrappedType), "wrapped type: %s not assignable from %s", wrappedType, type);
-      return (C) wrapped;
+   public <C extends Context> C unwrap(TypeToken<C> type) {
+      checkArgument(checkNotNull(type, "type").isAssignableFrom(backendType), "backend type: %s not assignable from %s", backendType, type);
+      return (C) backend;
    }
    
    @Override
-   public <C extends Closeable> C unwrap(Class<C> clazz) {
+   public <C extends Context> C unwrap(Class<C> clazz) {
       return unwrap (TypeToken.of(checkNotNull(clazz, "clazz")));
    }
    
    @Override
-   public TypeToken<? extends Closeable> getWrappedType() {
-      return wrappedType;
+   public TypeToken<? extends Context> getBackendType() {
+      return backendType;
    }
    
    @SuppressWarnings("unchecked")
    @Override
-   public <C extends Closeable> C unwrap() throws ClassCastException {
-      return (C) unwrap(getWrappedType());
+   public <C extends Context> C unwrap() throws ClassCastException {
+      return (C) unwrap(getBackendType());
    }
    
-   public Closeable getWrapped() {
-      return wrapped;
+   @Override
+   protected Context delegate() {
+      return backend;
    }
 
    @Override
@@ -80,13 +80,13 @@ public abstract class BaseWrapper implements Wrapper {
          return true;
       if (o == null || getClass() != o.getClass())
          return false;
-      BaseWrapper that = BaseWrapper.class.cast(o);
-      return equal(this.getWrapped(), that.getWrapped()) && equal(this.getWrappedType(), that.getWrappedType());
+      BaseView that = BaseView.class.cast(o);
+      return equal(this.delegate(), that.delegate()) && equal(this.getBackendType(), that.getBackendType());
    }
 
    @Override
    public int hashCode() {
-      return Objects.hashCode(getWrapped(), getWrappedType());
+      return Objects.hashCode(delegate(), getBackendType());
    }
 
    @Override
@@ -95,8 +95,7 @@ public abstract class BaseWrapper implements Wrapper {
    }
 
    protected ToStringHelper string() {
-      return Objects.toStringHelper("").add("wrapped", getWrapped()).add("wrappedType", getWrappedType());
+      return Objects.toStringHelper("").add("backend", delegate()).add("backendType", getBackendType());
    }
-
 
 }

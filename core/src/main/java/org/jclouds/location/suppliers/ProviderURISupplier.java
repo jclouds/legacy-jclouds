@@ -20,12 +20,12 @@ package org.jclouds.location.suppliers;
 
 import java.net.URI;
 
-import org.jclouds.location.suppliers.fromconfig.ProviderURIFromConfiguration;
+import org.jclouds.location.suppliers.fromconfig.ProviderURIFromProviderMetadata;
 
 import com.google.common.base.Supplier;
 import com.google.inject.ImplementedBy;
 
-@ImplementedBy(ProviderURIFromConfiguration.class)
+@ImplementedBy(ProviderURIFromProviderMetadata.class)
 public interface ProviderURISupplier extends Supplier<URI> {
    
 }

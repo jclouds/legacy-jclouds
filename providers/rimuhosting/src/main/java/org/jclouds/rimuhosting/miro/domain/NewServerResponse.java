@@ -23,7 +23,7 @@ import org.jclouds.rimuhosting.miro.data.NewServerData;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Wrapper object to get back all data from a Instance create. The Password has been populated the NewInstance
+ * View object to get back all data from a Instance create. The Password has been populated the NewInstance
  * object.
  *
  * @author Ivan Meredith

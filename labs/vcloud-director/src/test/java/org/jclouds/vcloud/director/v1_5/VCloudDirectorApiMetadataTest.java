@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.director.v1_5;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.rest.internal.BaseRestApiMetadataTest;
 import org.testng.annotations.Test;
 
@@ -34,6 +34,6 @@ import com.google.common.reflect.TypeToken;
 public class VCloudDirectorApiMetadataTest extends BaseRestApiMetadataTest {
 
    public VCloudDirectorApiMetadataTest() {
-      super(new VCloudDirectorApiMetadata(), ImmutableSet.<TypeToken<? extends Wrapper>>of());
+      super(new VCloudDirectorApiMetadata(), ImmutableSet.<TypeToken<? extends View>>of());
    }
 }

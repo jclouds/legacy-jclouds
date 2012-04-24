@@ -38,18 +38,18 @@ public class BaseContainerLiveTest extends BaseBlobStoreIntegrationTest {
    public void testPublicAccess() throws InterruptedException, MalformedURLException, IOException {
       final String containerName = getScratchContainerName();
       try {
-         context.getBlobStore().createContainerInLocation(null, containerName, publicRead());
+         view.getBlobStore().createContainerInLocation(null, containerName, publicRead());
          assertConsistencyAwareContainerSize(containerName, 0);
 
-         context.getBlobStore().putBlob(containerName,
-                  context.getBlobStore().blobBuilder("hello").payload(TEST_STRING).build());
+         view.getBlobStore().putBlob(containerName,
+                  view.getBlobStore().blobBuilder("hello").payload(TEST_STRING).build());
          assertConsistencyAwareContainerSize(containerName, 1);
 
-         BlobMetadata metadata = context.getBlobStore().blobMetadata(containerName, "hello");
+         BlobMetadata metadata = view.getBlobStore().blobMetadata(containerName, "hello");
 
          assert metadata.getPublicUri() != null : metadata;
 
-         assertEquals(Strings2.toStringAndClose(context.utils().http().get(metadata.getPublicUri())), TEST_STRING);
+         assertEquals(Strings2.toStringAndClose(view.utils().http().get(metadata.getPublicUri())), TEST_STRING);
 
       } finally {
          // this container is now public, so we can't reuse it directly

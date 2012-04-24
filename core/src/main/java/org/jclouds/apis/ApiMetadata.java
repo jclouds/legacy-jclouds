@@ -18,13 +18,13 @@
  */
 package org.jclouds.apis;
 
-import java.io.Closeable;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.Wrapper;
+import org.jclouds.Context;
+import org.jclouds.View;
 import org.jclouds.javax.annotation.Nullable;
 
 import com.google.common.annotations.Beta;
@@ -56,22 +56,22 @@ public interface ApiMetadata extends Serializable {
       /**
        * @see ApiMetadata#getContext()
        */
-      Builder context(TypeToken<? extends Closeable> context);
+      Builder context(TypeToken<? extends Context> context);
 
       /**
-       * @see ApiMetadata#getWrappers()
+       * @see ApiMetadata#getViews()
        */
-      Builder wrapper(Class<? extends Wrapper> wrapper);
+      Builder view(Class<? extends View> view);
       
       /**
-       * @see ApiMetadata#getWrappers()
+       * @see ApiMetadata#getViews()
        */
-      Builder wrapper(TypeToken<? extends Wrapper> wrapper);
+      Builder view(TypeToken<? extends View> view);
 
       /**
-       * @see ApiMetadata#getWrappers()
+       * @see ApiMetadata#getViews()
        */
-      Builder wrappers(Set<TypeToken<? extends Wrapper>> wrappers);
+      Builder views(Set<TypeToken<? extends View>> views);
 
       /**
        * @see ApiMetadata#getEndpointName()
@@ -262,11 +262,11 @@ public interface ApiMetadata extends Serializable {
    /**
     * @return the primary context of this api, for example {@code RestContext<EC2Client, EC2AsyncClient>}
     */
-   TypeToken<? extends Closeable> getContext();
+   TypeToken<? extends Context> getContext();
    
    /**
     * @return types of contexts this can be transformed into, for example {@code BlobStoreContext}
     */
-   Set<TypeToken<? extends Wrapper>> getWrappers();
+   Set<TypeToken<? extends View>> getViews();
 
 }

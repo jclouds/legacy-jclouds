@@ -105,7 +105,7 @@ public class VirtualBoxApiMetadata extends BaseApiMetadata {
          .version("4.1.4")
          .buildVersion("4.1.8r75467")
          .defaultProperties(VirtualBoxApiMetadata.defaultProperties())
-         .wrapper(ComputeServiceContext.class)
+         .view(ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(DefaultCacheNodeStoreModule.class, VirtualBoxComputeServiceContextModule.class));
       }
 

@@ -18,7 +18,7 @@
  */
 package org.jclouds.loadbalancer.internal;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadataTest;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
@@ -35,7 +35,7 @@ import com.google.common.reflect.TypeToken;
 public abstract class BaseLoadBalancerServiceApiMetadataTest extends BaseApiMetadataTest {
 
    public BaseLoadBalancerServiceApiMetadataTest(ApiMetadata toTest) {
-     super(toTest, ImmutableSet.<TypeToken<? extends Wrapper>>of(TypeToken.of(LoadBalancerServiceContext.class)));
+     super(toTest, ImmutableSet.<TypeToken<? extends View>>of(TypeToken.of(LoadBalancerServiceContext.class)));
    }
 
 }

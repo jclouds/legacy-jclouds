@@ -40,6 +40,8 @@ import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -71,9 +73,8 @@ public class QuerySigner implements AuthenticationFilter, RequestSigner {
    private Logger signatureLog = Logger.NULL;
 
    @Inject
-   public QuerySigner(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String accessKey,
-         @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, Crypto crypto, HttpUtils utils,
-         Provider<UriBuilder> builder) {
+   public QuerySigner(SignatureWire signatureWire, @Identity String accessKey, @Credential String secretKey,
+            Crypto crypto, HttpUtils utils, Provider<UriBuilder> builder) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;

@@ -54,8 +54,8 @@ public class ParseEventTypesFromHttpResponse implements Function<HttpResponse, S
    }
 
    @Inject
-   public ParseEventTypesFromHttpResponse(GsonWrapper gsonWrapper) {
-      this.parser = new ParseFirstJsonValueNamed<Set<EventType>>(checkNotNull(gsonWrapper, "gsonWrapper"),
+   public ParseEventTypesFromHttpResponse(GsonWrapper gsonView) {
+      this.parser = new ParseFirstJsonValueNamed<Set<EventType>>(checkNotNull(gsonView, "gsonView"),
             new TypeLiteral<Set<EventType>>() {
             }, "eventtype");
    }

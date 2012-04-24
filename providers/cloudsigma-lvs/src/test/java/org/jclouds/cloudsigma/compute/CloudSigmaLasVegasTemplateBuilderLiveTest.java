@@ -24,9 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Set;
 
-import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
-import org.jclouds.cloudsigma.CloudSigmaClient;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
@@ -42,9 +39,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "CloudSigmaLasVegasTemplateBuilderLiveTest")
-public class CloudSigmaLasVegasTemplateBuilderLiveTest
-      extends
-      BaseTemplateBuilderLiveTest {
+public class CloudSigmaLasVegasTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public CloudSigmaLasVegasTemplateBuilderLiveTest() {
       provider = "cloudsigma-lvs";
@@ -81,7 +76,7 @@ public class CloudSigmaLasVegasTemplateBuilderLiveTest
 
    @Override
    public void testDefaultTemplateBuilder() throws IOException {
-      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getId(), "6aab1938-71b3-4252-ac1c-a3cb17c284ab");

@@ -77,7 +77,7 @@ public class CloudServersApiMetadata extends BaseRestApiMetadata {
          .version(OpenStackAuthAsyncClient.VERSION)
          .defaultEndpoint("https://auth.api.rackspacecloud.com")
          .defaultProperties(CloudServersApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudServersRestClientModule.class, CloudServersComputeServiceContextModule.class));
       }
 

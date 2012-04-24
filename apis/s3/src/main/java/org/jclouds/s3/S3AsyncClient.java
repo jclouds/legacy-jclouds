@@ -95,7 +95,7 @@ import com.google.inject.Provides;
  * Provides asynchronous access to S3 via their REST API.
  * <p/>
  * All commands return a ListenableFuture of the result from S3. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in
+ * processing will be backend in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
  * @author Adrian Cole

@@ -83,7 +83,7 @@ public class CloudFilesApiMetadata extends BaseRestApiMetadata {
          .documentation(URI.create("http://docs.rackspacecloud.com/files/api/v1/cfdevguide_d5/content/ch01.html"))
          .version(OpenStackAuthAsyncClient.VERSION)
          .defaultProperties(CloudFilesApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(BlobStoreContext.class))
+         .view(TypeToken.of(BlobStoreContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(CloudFilesRestClientModule.class, CloudFilesBlobStoreContextModule.class));
       }
 

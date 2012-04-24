@@ -63,13 +63,13 @@ public class ProvidersTest {
 
    @Test
    public void testTransformableTo() {
-      Iterable<ProviderMetadata> providersMetadata = Providers.contextWrappableAs(Storage.class);
+      Iterable<ProviderMetadata> providersMetadata = Providers.viewableAs(Storage.class);
 
       for (ProviderMetadata providerMetadata : providersMetadata) {
          assertEquals(testBlobstoreProvider, providerMetadata);
       }
 
-      providersMetadata = Providers.contextWrappableAs(Compute.class);
+      providersMetadata = Providers.viewableAs(Compute.class);
 
       for (ProviderMetadata providerMetadata : providersMetadata) {
          if (providerMetadata.getName().equals(testComputeProvider.getName())) {
@@ -79,7 +79,7 @@ public class ProvidersTest {
          }
       }
 
-      providersMetadata = Providers.contextWrappableAs(Balancer.class);
+      providersMetadata = Providers.viewableAs(Balancer.class);
 
       assertEquals(false, providersMetadata.iterator().hasNext());
    }

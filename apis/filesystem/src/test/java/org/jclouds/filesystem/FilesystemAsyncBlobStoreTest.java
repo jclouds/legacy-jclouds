@@ -131,7 +131,7 @@ public class FilesystemAsyncBlobStoreTest {
         // no base directory declared in properties
         try {
             Properties props = new Properties();
-            context = ContextBuilder.newBuilder(PROVIDER).overrides(props).build();
+            context = ContextBuilder.newBuilder(PROVIDER).overrides(props).build(BlobStoreContext.class);
             fail("No error if base directory is not specified");
         } catch (CreationException e) {
         }
@@ -140,7 +140,7 @@ public class FilesystemAsyncBlobStoreTest {
         try {
             Properties props = new Properties();
             props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, null);
-            context = ContextBuilder.newBuilder(PROVIDER).overrides(props).build();
+            context = ContextBuilder.newBuilder(PROVIDER).overrides(props).build(BlobStoreContext.class);
             fail("No error if base directory is null in the option");
         } catch (NullPointerException e) {
         }

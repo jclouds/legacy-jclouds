@@ -50,7 +50,7 @@ public class ElasticIPAddressClientLiveTest extends BaseComputeServiceContextLiv
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticIPAddressServices();
+      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticIPAddressServices();
    }
 
    @Test

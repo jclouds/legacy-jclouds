@@ -20,7 +20,7 @@ package org.jclouds.loadbalancer;
 
 import java.io.Closeable;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.loadbalancer.internal.LoadBalancerServiceContextImpl;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
@@ -35,7 +35,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(LoadBalancerServiceContextImpl.class)
-public interface LoadBalancerServiceContext extends Closeable, Wrapper {
+public interface LoadBalancerServiceContext extends Closeable, View {
 
    LoadBalancerService getLoadBalancerService();
 
@@ -50,8 +50,8 @@ public interface LoadBalancerServiceContext extends Closeable, Wrapper {
    /**
     * will be removed in jclouds 1.6
     * 
-    * @see Wrapper#getInputType
-    * @see Wrapper#unwrap
+    * @see View#getInputType
+    * @see View#unwrap
     */
    @Deprecated
    <S, A> RestContext<S, A> getProviderSpecificContext();

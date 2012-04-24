@@ -56,7 +56,7 @@ public class JcloudsTestComputeApiMetadata extends BaseRestApiMetadata {
       protected Builder(){
          super(IntegrationTestClient.class, IntegrationTestAsyncClient.class);
          id("test-compute-api")
-         .wrapper(Compute.class)
+         .view(Compute.class)
          .name("Test Compute Api")
          .identityName("user")
          .credentialName("password")

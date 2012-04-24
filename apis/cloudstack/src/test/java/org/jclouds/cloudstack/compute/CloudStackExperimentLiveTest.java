@@ -90,9 +90,9 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       Network network = null;
       Set<? extends NodeMetadata> nodes = null;
       try {
-         assert context.getComputeService().listAssignableLocations().size() > 0;
+         assert view.getComputeService().listAssignableLocations().size() > 0;
 
-         Template template = context.getComputeService().templateBuilder().build();
+         Template template = view.getComputeService().templateBuilder().build();
 
          // get the zone we are launching into
          long zoneId = Long.parseLong(template.getLocation().getId());
@@ -115,7 +115,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          template.getOptions().as(CloudStackTemplateOptions.class).networkId(network.getId());
 
          // launch the VM
-         nodes = context.getComputeService().createNodesInGroup(group, 1, template);
+         nodes = view.getComputeService().createNodesInGroup(group, 1, template);
 
          assert nodes.size() > 0;
 
@@ -124,7 +124,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
          nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
       } finally {
          if (nodes != null)
-            context.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
+            view.getComputeService().destroyNodesMatching(NodePredicates.inGroup(group));
          if (network != null)
             domainAdminContext.getApi().getNetworkClient().deleteNetwork(network.getId());
       }
@@ -143,14 +143,14 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
       SshKeyPair keyPair = client.getSSHKeyPairClient().createSSHKeyPair(keyPairName);
 
       String group = prefix + "-windows-test";
-      Template template = context.getComputeService().templateBuilder()
+      Template template = view.getComputeService().templateBuilder()
          .imageId("290").locationId("1")
          .options(new CloudStackTemplateOptions().setupStaticNat(false).keyPair(keyPairName))
          .build();
 
       NodeMetadata node = null;
       try {
-         node = getOnlyElement(context.getComputeService()
+         node = getOnlyElement(view.getComputeService()
             .createNodesInGroup(group, 1, template));
 
          String encryptedPassword = client.getVirtualMachineClient()
@@ -165,7 +165,7 @@ public class CloudStackExperimentLiveTest extends BaseCloudStackClientLiveTest {
 
       } finally {
          if (node != null) {
-            context.getComputeService().destroyNode(node.getId());
+            view.getComputeService().destroyNode(node.getId());
          }
 
       }

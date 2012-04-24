@@ -41,7 +41,7 @@ public class CloudFilesUKClientLiveTest extends CloudFilesClientLiveTest {
 
    @Override
    public CloudFilesClient getApi() {
-      return context.unwrap(CloudFilesApiMetadata.CONTEXT_TOKEN).getApi();
+      return view.unwrap(CloudFilesApiMetadata.CONTEXT_TOKEN).getApi();
    }
    
    @Override

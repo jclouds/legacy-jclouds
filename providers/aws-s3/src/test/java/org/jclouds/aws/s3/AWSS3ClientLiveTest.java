@@ -71,7 +71,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
 
    @Override
    public AWSS3Client getApi() {
-      return (AWSS3Client) context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
+      return (AWSS3Client) view.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi();
    }
 
    @BeforeClass(groups = { "integration", "live" })
@@ -150,7 +150,7 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
       String containerName = getContainerName();
       
       try {
-         BlobStore blobStore = context.getBlobStore();
+         BlobStore blobStore = view.getBlobStore();
          blobStore.createContainerInLocation(null, containerName);
          Blob blob = blobStore.blobBuilder("const.txt")
             .payload(new File("target/const.txt")).build();
@@ -165,14 +165,14 @@ public class AWSS3ClientLiveTest extends S3ClientLiveTest {
       String containerName = getContainerName();
       try {
          String blobName = "test-rrs";
-         BlobStore blobStore = context.getBlobStore();
+         BlobStore blobStore = view.getBlobStore();
          blobStore.createContainerInLocation(null, containerName);
 
          Blob blob = blobStore.blobBuilder(blobName).payload("something").build();
          blobStore.putBlob(containerName, blob,
             storageClass(StorageClass.REDUCED_REDUNDANCY));
 
-         S3Client s3Client = S3Client.class.cast(context.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi());
+         S3Client s3Client = S3Client.class.cast(view.unwrap(AWSS3ApiMetadata.CONTEXT_TOKEN).getApi());
          ListBucketResponse response = s3Client.listBucket(containerName, withPrefix(blobName));
 
          ObjectMetadata metadata = response.iterator().next();

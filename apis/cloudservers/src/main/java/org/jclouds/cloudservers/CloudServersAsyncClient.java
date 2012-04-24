@@ -69,7 +69,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to Cloud Servers via their REST API.
  * <p/>
  * All commands return a ListenableFuture of the result from Cloud Servers. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * during processing will be backend in an {@link ExecutionException} as documented in
  * {@link ListenableFuture#get()}.
  * 
  * @see CloudServersClient

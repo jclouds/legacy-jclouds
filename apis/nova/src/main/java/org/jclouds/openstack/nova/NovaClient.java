@@ -40,7 +40,7 @@ import org.jclouds.rest.ResourceNotFoundException;
  * Provides access to OpenStack Nova via their REST API.
  * <p/>
  * All commands return a Future of the result from OpenStack Nova. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * during processing will be backend in an {@link ExecutionException} as documented in
  * {@link Future#get()}.
  * 
  * @see NovaAsyncClient

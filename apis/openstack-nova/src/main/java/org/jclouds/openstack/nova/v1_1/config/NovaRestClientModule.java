@@ -35,12 +35,7 @@ import org.jclouds.openstack.keystone.v2_0.config.KeystoneAuthenticationModule;
 import org.jclouds.openstack.nova.v1_1.NovaAsyncClient;
 import org.jclouds.openstack.nova.v1_1.NovaClient;
 import org.jclouds.openstack.nova.v1_1.domain.Extension;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.FloatingIPClient;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.KeyPairClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupAsyncClient;
-import org.jclouds.openstack.nova.v1_1.extensions.SecurityGroupClient;
+import org.jclouds.openstack.nova.v1_1.extensions.*;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionAsyncClient;
 import org.jclouds.openstack.nova.v1_1.features.ExtensionClient;
 import org.jclouds.openstack.nova.v1_1.features.FlavorAsyncClient;
@@ -75,7 +70,10 @@ public class NovaRestClientModule extends RestClientModule<NovaClient, NovaAsync
          .put(ImageClient.class, ImageAsyncClient.class).put(ExtensionClient.class, ExtensionAsyncClient.class)
          .put(FloatingIPClient.class, FloatingIPAsyncClient.class)
          .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)
-         .put(KeyPairClient.class, KeyPairAsyncClient.class).build();
+         .put(KeyPairClient.class, KeyPairAsyncClient.class)
+         .put(HostAdministrationClient.class, HostAdministrationAsyncClient.class)
+         .put(SimpleTenantUsageClient.class, SimpleTenantUsageAsyncClient.class)
+         .build();
 
    public NovaRestClientModule() {
       super(DELEGATE_MAP);

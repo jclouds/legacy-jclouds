@@ -61,12 +61,12 @@ public class ElasticBlockStoreClientLiveTest extends BaseComputeServiceContextLi
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices();
+      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getElasticBlockStoreServices();
    }
 
    @Test
    void testDescribeVolumes() {
-      for (String region : context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
+      for (String region : view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices().describeRegions().keySet()) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {

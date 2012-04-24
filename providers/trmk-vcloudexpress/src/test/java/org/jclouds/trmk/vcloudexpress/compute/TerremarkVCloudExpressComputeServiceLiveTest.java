@@ -96,7 +96,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeSer
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
-         RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = context.unwrap();
+         RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> tmContext = view.unwrap();
          VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

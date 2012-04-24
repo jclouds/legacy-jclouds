@@ -19,8 +19,6 @@
 package org.jclouds.gogrid.filters;
 
 import static java.lang.String.format;
-import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.net.URI;
 
@@ -37,6 +35,8 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.Credential;
+import org.jclouds.rest.annotations.Identity;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -56,8 +56,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SharedKeyLiteAuthentication(@Named(PROPERTY_IDENTITY) String apiKey,
-            @Named(PROPERTY_CREDENTIAL) String secret, @TimeStamp Long timeStamp, HttpUtils utils) {
+   public SharedKeyLiteAuthentication(@Identity String apiKey, @Credential String secret, @TimeStamp Long timeStamp,
+            HttpUtils utils) {
       this.apiKey = apiKey;
       this.secret = secret;
       this.timeStamp = timeStamp;

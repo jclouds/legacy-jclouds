@@ -52,7 +52,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    @BeforeGroups(groups = { "live" })
    public void setupContext() {
       super.setupContext();
-      adapter = context.utils().injector().getInstance(SoftLayerComputeServiceAdapter.class);
+      adapter = view.utils().injector().getInstance(SoftLayerComputeServiceAdapter.class);
    }
 
    @Test
@@ -67,7 +67,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    public void testCreateNodeWithGroupEncodedIntoNameThenStoreCredentials() {
       String group = "foo";
       String name = "node" + new Random().nextInt();
-      Template template = context.getComputeService().templateBuilder().build();
+      Template template = view.getComputeService().templateBuilder().build();
 
       // test passing custom options
       template.getOptions().as(SoftLayerTemplateOptions.class).domainName("me.org");
@@ -82,7 +82,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    }
 
    protected void doConnectViaSsh(VirtualGuest guest, LoginCredentials creds) {
-      SshClient ssh = context.utils().sshFactory().create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
+      SshClient ssh = view.utils().sshFactory().create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

@@ -43,7 +43,7 @@ import com.google.common.collect.Multimap;
 /**
  * We use the annotation {@link org.jclouds.openstack.services.Extension} to
  * bind a class that is an extension to an extension found in the
- * {@link ExtensionsClient#listExtensions} call.
+ * {@link org.jclouds.openstack.nova.v1_1.features.ExtensionClient#listExtensions} call.
  * 
  * @author Adrian Cole
  * 
@@ -62,6 +62,10 @@ public class PresentWhenExtensionAnnotationNamespaceEqualsAnyNamespaceInExtensio
            URI.create("http://docs.openstack.org/compute/ext/floating_ips/api/v1.1"))
       .put(URI.create(ExtensionNamespaces.KEYPAIRS),
            URI.create("http://docs.openstack.org/compute/ext/keypairs/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.SIMPLE_TENANT_USAGE),
+           URI.create("http://docs.openstack.org/compute/ext/os-simple-tenant-usage/api/v1.1"))
+      .put(URI.create(ExtensionNamespaces.HOSTS),
+           URI.create("http://docs.openstack.org/compute/ext/hosts/api/v1.1"))
       .build();
    
    @Inject

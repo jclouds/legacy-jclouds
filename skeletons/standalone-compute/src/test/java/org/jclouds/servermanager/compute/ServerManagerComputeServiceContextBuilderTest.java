@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.lifecycle.Closer;
+import org.jclouds.internal.ContextImpl;
 import org.jclouds.servermanager.ServerManagerApiMetadata;
 import org.testng.annotations.Test;
 
@@ -66,7 +66,7 @@ public class ServerManagerComputeServiceContextBuilderTest {
    public void testUnwrapIsCorrectType() {
       ComputeServiceContext context = ContextBuilder.newBuilder("servermanager").build(ComputeServiceContext.class);
 
-      assertEquals(context.unwrap().getClass(), Closer.class);
+      assertEquals(context.unwrap().getClass(), ContextImpl.class);
 
       context.close();
    }

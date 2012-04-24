@@ -18,12 +18,14 @@
  */
 package org.jclouds.internal;
 
+import static org.easymock.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 
-import java.io.Closeable;
-
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.providers.ProviderMetadata;
+import org.jclouds.rest.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Objects;
@@ -32,26 +34,41 @@ import com.google.common.reflect.TypeToken;
 /** 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "BaseWrapperTest")
-public class BaseWrapperTest {
-   private static class Water implements Closeable {
+@Test(groups = "unit", testName = "BaseViewTest")
+public class BaseViewTest {
+   private static class Water extends ContextImpl {
+
+      protected Water() {
+         super(createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+      }
 
       @Override
       public void close() {
       }
+      
       @Override
       public boolean equals(Object in){
          return Objects.equal(in.getClass(), getClass());
       }
    }
 
-   private static interface PeanutButter extends Closeable {
+   private static class PeanutButter extends ContextImpl {
+
+      protected PeanutButter() {
+         super(createMock(ProviderMetadata.class), "identity", createMock(Utils.class), createMock(Closer.class));
+      }
 
       @Override
-      void close();
+      public void close() {
+      }
+      
+      @Override
+      public boolean equals(Object in){
+         return Objects.equal(in.getClass(), getClass());
+      }
    }
-
-   private static class Wine extends BaseWrapper {
+   
+   private static class Wine extends BaseView {
 
       protected Wine() {
          super(new Water(), TypeToken.of(Water.class));
@@ -60,19 +77,19 @@ public class BaseWrapperTest {
 
    public void testWaterTurnedIntoWine() {
       Wine wine = new Wine();
-      assertEquals(wine.getWrappedType(), TypeToken.of(Water.class));
+      assertEquals(wine.getBackendType(), TypeToken.of(Water.class));
       assertEquals(wine.unwrap(TypeToken.of(Water.class)), new Water());
       assertEquals(wine.unwrap(), new Water());
    }
 
    public void testPeanutButterDidntTurnIntoWine() {
       Wine wine = new Wine();
-      assertNotEquals(wine.getWrappedType(), TypeToken.of(PeanutButter.class));
+      assertNotEquals(wine.getBackendType(), TypeToken.of(PeanutButter.class));
       try {
          wine.unwrap(TypeToken.of(PeanutButter.class));
          assertFalse(true);
       } catch (IllegalArgumentException e) {
-         assertEquals(e.getMessage(), "wrapped type: org.jclouds.internal.BaseWrapperTest$Water not assignable from org.jclouds.internal.BaseWrapperTest$PeanutButter");
+         assertEquals(e.getMessage(), "backend type: org.jclouds.internal.BaseViewTest$Water not assignable from org.jclouds.internal.BaseViewTest$PeanutButter");
       }
    }
    

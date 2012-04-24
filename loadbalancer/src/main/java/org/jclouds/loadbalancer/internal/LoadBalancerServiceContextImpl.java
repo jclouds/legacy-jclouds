@@ -20,12 +20,11 @@ package org.jclouds.loadbalancer.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Closeable;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.internal.BaseWrapper;
+import org.jclouds.Context;
+import org.jclouds.internal.BaseView;
 import org.jclouds.loadbalancer.LoadBalancerService;
 import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.location.Provider;
@@ -39,14 +38,14 @@ import com.google.common.reflect.TypeToken;
  * @author Adrian Cole
  */
 @Singleton
-public class LoadBalancerServiceContextImpl extends BaseWrapper implements LoadBalancerServiceContext {
+public class LoadBalancerServiceContextImpl extends BaseView implements LoadBalancerServiceContext {
    private final LoadBalancerService loadBalancerService;
    private final Utils utils;
 
    @Inject
-   public LoadBalancerServiceContextImpl(@Provider Closeable wrapped,
-            @Provider TypeToken<? extends Closeable> wrappedType, LoadBalancerService loadBalancerService, Utils utils) {
-      super(wrapped, wrappedType);
+   public LoadBalancerServiceContextImpl(@Provider Context backend,
+            @Provider TypeToken<? extends Context> backendType, LoadBalancerService loadBalancerService, Utils utils) {
+      super(backend, backendType);
       this.utils = utils;
       this.loadBalancerService = checkNotNull(loadBalancerService, "loadBalancerService");
    }
@@ -69,26 +68,26 @@ public class LoadBalancerServiceContextImpl extends BaseWrapper implements LoadB
    @SuppressWarnings("unchecked")
    @Override
    public <S, A> RestContext<S, A> getProviderSpecificContext() {
-      return (RestContext<S, A>) getWrapped();
+      return (RestContext<S, A>) delegate();
    }
 
    @Override
    public void close() {
-      Closeables.closeQuietly(getWrapped());
+      Closeables.closeQuietly(delegate());
    }
 
    public int hashCode() {
-      return getWrapped().hashCode();
+      return delegate().hashCode();
    }
 
    @Override
    public String toString() {
-      return getWrapped().toString();
+      return delegate().toString();
    }
 
    @Override
    public boolean equals(Object obj) {
-      return getWrapped().equals(obj);
+      return delegate().equals(obj);
    }
 
 }

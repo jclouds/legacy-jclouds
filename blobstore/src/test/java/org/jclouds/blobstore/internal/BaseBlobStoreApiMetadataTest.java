@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore.internal;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.apis.internal.BaseApiMetadataTest;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -35,7 +35,7 @@ import com.google.common.reflect.TypeToken;
 public abstract class BaseBlobStoreApiMetadataTest extends BaseApiMetadataTest {
 
    public BaseBlobStoreApiMetadataTest(ApiMetadata toTest) {
-      super(toTest, ImmutableSet.<TypeToken<? extends Wrapper>>of(TypeToken.of(BlobStoreContext.class)));
+      super(toTest, ImmutableSet.<TypeToken<? extends View>>of(TypeToken.of(BlobStoreContext.class)));
     }
 
 }

@@ -34,7 +34,7 @@ public class VCloudDirectorClientExperimentLiveTest extends BaseVCloudDirectorCl
 
    public void testImplicitSession() {
       Session session = context.getApi().getCurrentSession();
-      assertEquals(session.getHref().toASCIIString(), context.getEndpoint().toASCIIString() + "/session/");
+      assertEquals(session.getHref().toASCIIString(), context.getProviderMetadata().getEndpoint() + "/session/");
    }
 
    /**

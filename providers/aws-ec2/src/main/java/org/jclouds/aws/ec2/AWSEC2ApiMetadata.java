@@ -19,6 +19,7 @@
 package org.jclouds.aws.ec2;
 
 import static org.jclouds.aws.ec2.reference.AWSEC2Constants.PROPERTY_EC2_GENERATE_INSTANCE_NAMES;
+import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 
 import java.util.Properties;
 
@@ -67,6 +68,7 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
    
    public static Properties defaultProperties() {
       Properties properties = EC2ApiMetadata.defaultProperties();
+      properties.remove(PROPERTY_EC2_AMI_OWNERS);
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started.  
       properties.setProperty("jclouds.ssh.max-retries", "7");
@@ -81,7 +83,7 @@ public class AWSEC2ApiMetadata extends EC2ApiMetadata {
          id("aws-ec2")
          .version(AWSEC2AsyncClient.VERSION)
          .name("Amazon-specific EC2 API")
-         .wrapper(AWSEC2ComputeServiceContext.class)
+         .view(AWSEC2ComputeServiceContext.class)
          .context(CONTEXT_TOKEN)
          .defaultProperties(AWSEC2ApiMetadata.defaultProperties())
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(AWSEC2RestClientModule.class, EC2ResolveImagesModule.class, AWSEC2ComputeServiceContextModule.class));

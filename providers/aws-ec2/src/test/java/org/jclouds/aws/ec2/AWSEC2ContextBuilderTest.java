@@ -60,12 +60,11 @@ public class AWSEC2ContextBuilderTest {
       assertEquals(queries.get(PROPERTY_EC2_AMI_QUERY), "state=available;image-type=machine");
    }
 
-   public void testStaysPutWhenBlank() {
+   public void testBlankAmiOwnersRemovesAmiQuery() {
       Properties input = new Properties();
       input.setProperty(PROPERTY_EC2_AMI_OWNERS, "");
       Map<String, String> queries = queriesForProperties(input);
       assertEquals(queries.get(PROPERTY_EC2_AMI_OWNERS), null);
-      assertEquals(queries.get(PROPERTY_EC2_AMI_QUERY), new AWSEC2ProviderMetadata().getDefaultProperties()
-               .getProperty(PROPERTY_EC2_AMI_QUERY));
+      assertEquals(queries.get(PROPERTY_EC2_AMI_QUERY), null);
    }
 }

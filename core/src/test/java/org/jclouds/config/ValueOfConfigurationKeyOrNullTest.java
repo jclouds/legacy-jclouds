@@ -20,8 +20,6 @@ package org.jclouds.config;
 
 import static org.testng.Assert.assertEquals;
 
-import java.util.concurrent.ExecutionException;
-
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -37,12 +35,12 @@ import com.google.inject.name.Names;
 public class ValueOfConfigurationKeyOrNullTest {
 
    @Test
-   public void testNotThere() throws InterruptedException, ExecutionException {
+   public void testNotThere() {
       assertEquals(new ValueOfConfigurationKeyOrNull(Guice.createInjector()).apply("foo"), null);
    }
 
    @Test
-   public void testThere() throws InterruptedException, ExecutionException {
+   public void testThere() {
       assertEquals(new ValueOfConfigurationKeyOrNull(Guice.createInjector(new AbstractModule() {
 
          @Override
@@ -53,5 +51,17 @@ public class ValueOfConfigurationKeyOrNullTest {
       })).apply("foo"), "bar");
 
    }
+   
+   @Test
+   public void testEmptyIsThere() {
+      assertEquals(new ValueOfConfigurationKeyOrNull(Guice.createInjector(new AbstractModule() {
 
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(Names.named("foo")).to("");
+         }
+
+      })).apply("foo"), "");
+
+   }
 }

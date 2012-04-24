@@ -18,9 +18,8 @@
  */
 package org.jclouds.apis;
 
-import java.io.Closeable;
-
-import org.jclouds.internal.BaseWrapper;
+import org.jclouds.Context;
+import org.jclouds.internal.BaseView;
 import org.jclouds.location.Provider;
 
 import com.google.common.reflect.TypeToken;
@@ -28,9 +27,9 @@ import com.google.common.reflect.TypeToken;
 /**
  * For tests
  */
-public class Compute extends BaseWrapper {
+public class Compute extends BaseView {
 
-   public Compute(@Provider Closeable ctx, @Provider TypeToken<? extends Closeable> inputType)  {
+   public Compute(@Provider Context ctx, @Provider TypeToken<? extends Context> inputType)  {
       super(ctx, inputType);
    }
 }

@@ -56,22 +56,22 @@ public class TagClientLiveTest extends BaseComputeServiceContextLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getTagServices();
+      client = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getTagServices();
       
       try {
-         testGroup = context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null,
+         testGroup = view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().createSecurityGroupInRegionAndReturnId(null,
                   "test-group", "test-group");
       } catch (IllegalStateException e) {
          // already exists
          testGroup = Iterables.get(
-                  context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().describeSecurityGroupsInRegion(null, "test-group"), 0)
+                  view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().describeSecurityGroupsInRegion(null, "test-group"), 0)
                   .getId();
       }
    }
 
    @AfterGroups(groups = { "live" })
    public void deleteSecurityGroup() {
-       context.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().deleteSecurityGroupInRegionById(null, testGroup);
+       view.unwrap(AWSEC2ApiMetadata.CONTEXT_TOKEN).getApi().getSecurityGroupServices().deleteSecurityGroupInRegionById(null, testGroup);
    }
 
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";

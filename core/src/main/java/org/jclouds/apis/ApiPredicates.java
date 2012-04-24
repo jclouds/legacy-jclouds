@@ -20,7 +20,7 @@ package org.jclouds.apis;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.Wrapper;
+import org.jclouds.View;
 import org.jclouds.rest.RestApiMetadata;
 import org.jclouds.util.Preconditions2;
 
@@ -139,7 +139,7 @@ public class ApiPredicates {
     * 
     * @return the apis with contexts transformable to the given type
     */
-   public static Predicate<ApiMetadata> contextWrappableAs(final TypeToken<?> type) {
+   public static Predicate<ApiMetadata> viewableAs(final TypeToken<?> type) {
       checkNotNull(type, "context must be defined");
       return new Predicate<ApiMetadata>() {
          /**
@@ -147,7 +147,7 @@ public class ApiPredicates {
           */
          @Override
          public boolean apply(ApiMetadata apiMetadata) {
-            for (TypeToken<? extends Wrapper> to : apiMetadata.getWrappers())
+            for (TypeToken<? extends View> to : apiMetadata.getViews())
                if (type.isAssignableFrom(to))
                   return true;
             return false;
@@ -158,7 +158,7 @@ public class ApiPredicates {
           */
          @Override
          public String toString() {
-            return "contextWrappableAs(" + type + ")";
+            return "viewableAs(" + type + ")";
          }
       };
    }

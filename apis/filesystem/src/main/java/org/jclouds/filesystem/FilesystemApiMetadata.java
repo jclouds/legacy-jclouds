@@ -63,7 +63,7 @@ public class FilesystemApiMetadata extends BaseApiMetadata {
          .defaultCredential("bar")
          .version("1")
          .documentation(URI.create("http://www.jclouds.org/documentation/userguide/blobstore-guide"))
-         .wrapper(BlobStoreContext.class)
+         .view(BlobStoreContext.class)
          .defaultModule(FilesystemBlobStoreContextModule.class);
       }
 

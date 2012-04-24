@@ -27,11 +27,13 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
 
 /**
  * Implementation of {@link org.jclouds.types.ProviderMetadata} for ElasticHosts London BlueSquare.
+ * 
  * @author Adrian Cole
  */
-public class ElasticHostsBlueSquareLondonProviderMetadata
-      extends
-      BaseProviderMetadata {
+public class ElasticHostsBlueSquareLondonProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 5409915816774748887L;
 
    public static Builder builder() {
       return new Builder();

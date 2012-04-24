@@ -30,9 +30,10 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
  * 
  * @author Adrian Cole
  */
-public class CloudSigmaLasVegasProviderMetadata
-      extends
-      BaseProviderMetadata {
+public class CloudSigmaLasVegasProviderMetadata extends BaseProviderMetadata {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7837335150409122683L;
 
    public static Builder builder() {
       return new Builder();

@@ -27,6 +27,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.cloudstack.CloudStackApiMetadata;
 import org.jclouds.cloudstack.CloudStackClient;
 import org.jclouds.cloudstack.CloudStackGlobalClient;
 import org.jclouds.cloudstack.domain.Account;
@@ -83,9 +84,9 @@ public class GlobalUserClientLiveTest extends BaseCloudStackClientLiveTest {
    }
 
    private void checkAuthAsUser(ApiKeyPair keyPair) {
-      ComputeServiceContext context = createContext(credentialsAsProperties(keyPair), setupModules());
+      ComputeServiceContext context = createView(credentialsAsProperties(keyPair), setupModules());
 
-      CloudStackClient client = CloudStackClient.class.cast(context.getProviderSpecificContext().getApi());
+      CloudStackClient client = context.unwrap(CloudStackApiMetadata.CONTEXT_TOKEN).getApi();
       Set<Account> accounts = client.getAccountClient().listAccounts();
 
       assert accounts.size() > 0;

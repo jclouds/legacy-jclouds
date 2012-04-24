@@ -42,6 +42,7 @@ import com.google.common.cache.LoadingCache;
  */
 @Test(groups = "unit", testName = "InvalidateSessionAndRetryOn401AndLogoutOnCloseTest")
 public class InvalidateSessionAndRetryOn401AndLogoutOnCloseTest {
+   @SuppressWarnings("unchecked")
    @Test
    public void test401ShouldInvalidateSessionAndRetry() {
       HttpCommand command = createMock(HttpCommand.class);

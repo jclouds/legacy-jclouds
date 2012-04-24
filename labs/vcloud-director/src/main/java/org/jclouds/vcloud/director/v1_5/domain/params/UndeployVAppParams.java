@@ -59,7 +59,7 @@ public class UndeployVAppParams {
       @XmlEnumValue("suspend") SUSPEND("suspend"),
       @XmlEnumValue("shutdown") SHUTDOWN("shutdown"),
       @XmlEnumValue("force") FORCE("force"),
-      UNRECOGNIZED("unrecognized");
+      @XmlEnumValue("") UNRECOGNIZED("unrecognized");
       
       public static final List<PowerAction> ALL = ImmutableList.of( POWER_OFF, SUSPEND, SHUTDOWN, FORCE );
 
@@ -97,13 +97,21 @@ public class UndeployVAppParams {
 
    public static class Builder {
 
-      private String undeployPowerAction;
+      private PowerAction undeployPowerAction;
+
+      /**
+       * @see UndeployVAppParams#getUndeployPowerAction()
+       */
+      public Builder undeployPowerAction(PowerAction undeployPowerAction) {
+         this.undeployPowerAction = undeployPowerAction;
+         return this;
+      }
 
       /**
        * @see UndeployVAppParams#getUndeployPowerAction()
        */
       public Builder undeployPowerAction(String undeployPowerAction) {
-         this.undeployPowerAction = undeployPowerAction;
+         this.undeployPowerAction = PowerAction.valueOf(undeployPowerAction);
          return this;
       }
 
@@ -123,7 +131,7 @@ public class UndeployVAppParams {
    }
 
    @XmlElement(name = "UndeployPowerAction")
-   protected String undeployPowerAction;
+   protected PowerAction undeployPowerAction;
 
    /**
     * The specified action is applied to all VMs in the vApp.
@@ -140,7 +148,7 @@ public class UndeployVAppParams {
     *
     * @since 1.5
     */
-   public String getUndeployPowerAction() {
+   public PowerAction getUndeployPowerAction() {
       return undeployPowerAction;
    }
 

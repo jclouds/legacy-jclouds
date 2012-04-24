@@ -80,7 +80,7 @@ public class GleSYSApiMetadata extends BaseRestApiMetadata {
          .version("1")
          .defaultEndpoint("https://api.glesys.com")
          .defaultProperties(GleSYSApiMetadata.defaultProperties())
-         .wrapper(TypeToken.of(ComputeServiceContext.class))
+         .view(TypeToken.of(ComputeServiceContext.class))
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(GleSYSComputeServiceContextModule.class, GleSYSRestClientModule.class));
       }
 

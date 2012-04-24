@@ -88,7 +88,7 @@ public class ElasticStackClientLiveTest
    @Override
    public void setupContext() {
       super.setupContext();
-      cloudStackContext = context.unwrap();
+      cloudStackContext = view.unwrap();
          
       client = cloudStackContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
@@ -97,7 +97,7 @@ public class ElasticStackClientLiveTest
                TimeUnit.SECONDS);
       
       if (Strings.emptyToNull(imageId) == null) {
-         imageId = context.getComputeService().templateBuilder().build().getImage().getId();
+         imageId = view.getComputeService().templateBuilder().build().getImage().getId();
       }
    }
 

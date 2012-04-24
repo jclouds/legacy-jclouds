@@ -56,7 +56,7 @@ public class AvailabilityZoneAndRegionClientLiveTest extends BaseComputeServiceC
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
-      client = context.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices();
+      client = view.unwrap(EC2ApiMetadata.CONTEXT_TOKEN).getApi().getAvailabilityZoneAndRegionServices();
    }
 
    public void testDescribeAvailabilityZones() {

@@ -104,7 +104,7 @@ public class EC2ApiMetadata extends BaseRestApiMetadata {
          .version(EC2AsyncClient.VERSION)
          .defaultProperties(EC2ApiMetadata.defaultProperties())
          .context(CONTEXT_TOKEN)
-         .wrapper(EC2ComputeServiceContext.class)
+         .view(EC2ComputeServiceContext.class)
          .defaultModules(ImmutableSet.<Class<? extends Module>>of(EC2RestClientModule.class, EC2ResolveImagesModule.class, EC2ComputeServiceContextModule.class));
       }
 

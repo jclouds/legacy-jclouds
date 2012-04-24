@@ -27,12 +27,13 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = "live", testName = "SwiftContainerLiveTest" )
 public class SwiftContainerLiveTest extends BaseContainerLiveTest {
    public SwiftContainerLiveTest() {
       provider = "swift";
    }
-   @Test(expectedExceptions=UnsupportedOperationException.class)
+
+   @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testPublicAccess() throws MalformedURLException, InterruptedException, IOException {
       super.testPublicAccess();
    }

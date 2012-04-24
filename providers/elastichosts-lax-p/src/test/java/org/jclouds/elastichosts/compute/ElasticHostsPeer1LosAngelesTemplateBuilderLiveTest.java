@@ -23,13 +23,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.internal.BaseTemplateBuilderLiveTest;
-import org.jclouds.elasticstack.ElasticStackAsyncClient;
-import org.jclouds.elasticstack.ElasticStackClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -41,9 +38,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class ElasticHostsPeer1LosAngelesTemplateBuilderLiveTest
-      extends
-      BaseTemplateBuilderLiveTest {
+public class ElasticHostsPeer1LosAngelesTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public ElasticHostsPeer1LosAngelesTemplateBuilderLiveTest() {
       provider = "elastichosts-lax-p";
@@ -75,7 +70,7 @@ public class ElasticHostsPeer1LosAngelesTemplateBuilderLiveTest
 
    @Test
    public void testTemplateBuilder() {
-      Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
+      Template defaultTemplate = this.view.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "11.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);

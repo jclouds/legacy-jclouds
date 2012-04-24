@@ -51,7 +51,7 @@ import org.jclouds.cloudstack.predicates.VirtualMachineRunning;
 import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
-import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
+import org.jclouds.compute.internal.BaseGenericComputeServiceContextLiveTest;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
@@ -65,6 +65,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -73,7 +74,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class BaseCloudStackClientLiveTest extends BaseComputeServiceContextLiveTest {
+public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceContextLiveTest<CloudStackContext> {
    protected String domainAdminIdentity;
    protected String domainAdminCredential;
    protected String globalAdminIdentity;
@@ -82,7 +83,12 @@ public class BaseCloudStackClientLiveTest extends BaseComputeServiceContextLiveT
    public BaseCloudStackClientLiveTest() {
       provider = "cloudstack";
    }
-
+   
+   @Override
+   protected TypeToken<CloudStackContext> viewType() {
+      return TypeToken.of(CloudStackContext.class);
+   }
+   
    @Override
    protected Properties setupProperties() {
       Properties overrides = super.setupProperties();
@@ -193,14 +199,14 @@ public class BaseCloudStackClientLiveTest extends BaseComputeServiceContextLiveT
    @Override
    public void setupContext() {
       super.setupContext();
-      computeClient = context.getComputeService();
-      cloudStackContext = context.unwrap();
+      computeClient = view.getComputeService();
+      cloudStackContext = view.unwrap();
       client = cloudStackContext.getApi();
       user = verifyCurrentUserIsOfType(cloudStackContext, Account.Type.USER);
 
       domainAdminEnabled = setupDomainAdminProperties() != null;
       if (domainAdminEnabled) {
-         domainAdminComputeContext = createContext(setupDomainAdminProperties(), setupModules()).unwrap();
+         domainAdminComputeContext = createView(setupDomainAdminProperties(), setupModules());
          domainAdminContext = domainAdminComputeContext.getDomainContext();
          domainAdminClient = domainAdminContext.getApi();
          domainAdminUser = verifyCurrentUserIsOfType(domainAdminContext, Account.Type.DOMAIN_ADMIN);
@@ -209,7 +215,7 @@ public class BaseCloudStackClientLiveTest extends BaseComputeServiceContextLiveT
 
       globalAdminEnabled = setupGlobalAdminProperties() != null;
       if (globalAdminEnabled) {
-         globalAdminComputeContext = createContext(setupGlobalAdminProperties(), setupModules()).unwrap();
+         globalAdminComputeContext = createView(setupGlobalAdminProperties(), setupModules());
          globalAdminContext = globalAdminComputeContext.getGlobalContext();
          globalAdminClient = globalAdminContext.getApi();
          globalAdminUser = verifyCurrentUserIsOfType(globalAdminContext, Account.Type.ADMIN);

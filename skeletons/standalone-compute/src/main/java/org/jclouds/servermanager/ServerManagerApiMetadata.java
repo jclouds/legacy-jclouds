@@ -44,7 +44,7 @@ public class ServerManagerApiMetadata extends BaseApiMetadata {
          .defaultCredential("bar")
          .defaultEndpoint("http://demo")
          .documentation(URI.create("http://www.jclouds.org/documentation/userguide/compute"))
-         .wrapper(ComputeServiceContext.class)
+         .view(ComputeServiceContext.class)
          .defaultModule(ServerManagerComputeServiceContextModule.class);
       }
 
