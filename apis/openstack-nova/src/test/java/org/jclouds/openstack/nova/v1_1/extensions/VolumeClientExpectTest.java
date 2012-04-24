@@ -199,7 +199,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(200).payload(payloadFromResource("/attachment_list.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      Set<VolumeAttachment> attachments = client.listAttachments("instance-1");
+      Set<VolumeAttachment> attachments = client.listAttachmentsOnServer("instance-1");
       assertEquals(attachments, ImmutableSet.of(testAttachment()));
       // double-check individual fields
       VolumeAttachment attachment = Iterables.getOnlyElement(attachments);
@@ -219,7 +219,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(401).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      client.listAttachments("instance-2");
+      client.listAttachmentsOnServer("instance-2");
    }
    
    public void testGetAttachment() {
@@ -231,7 +231,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(200).payload(payloadFromResource("/attachment_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      VolumeAttachment attachment = client.getAttachment("instance-1", "1");
+      VolumeAttachment attachment = client.getAttachmentForVolumeOnServer("1", "instance-1");
       assertEquals(attachment, testAttachment());
    }
 
@@ -244,7 +244,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-     assertNull(client.getAttachment("instance-1", "1"));
+     assertNull(client.getAttachmentForVolumeOnServer("1", "instance-1"));
    }
 
    public void testAttachVolume() {
@@ -257,7 +257,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(200).payload(payloadFromResource("/attachment_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      VolumeAttachment result = client.attachVolume("instance-1", "1", "/dev/vdc");
+      VolumeAttachment result = client.attachVolumeToServerAsDevice("1", "instance-1", "/dev/vdc");
       assertEquals(result, testAttachment());
    }
 
@@ -272,7 +272,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      client.attachVolume("instance-1", "1", "/dev/vdc");
+      client.attachVolumeToServerAsDevice("1", "instance-1","/dev/vdc");
    }
 
    public void testDetachVolume() {
@@ -284,7 +284,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(200).payload(payloadFromResource("/attachment_details.json")).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertTrue(client.detachVolume("instance-1", "1"));
+      assertTrue(client.detachVolumeFromServer("1", "instance-1"));
    }
 
    public void testDetachVolumeFail() {
@@ -296,7 +296,7 @@ public class VolumeClientExpectTest extends BaseNovaClientExpectTest {
             standardResponseBuilder(404).build()
       ).getVolumeExtensionForZone("az-1.region-a.geo-1").get();
 
-      assertFalse(client.detachVolume("instance-1", "1"));
+      assertFalse(client.detachVolumeFromServer("1", "instance-1"));
    }
 
    public void testListSnapshots() {

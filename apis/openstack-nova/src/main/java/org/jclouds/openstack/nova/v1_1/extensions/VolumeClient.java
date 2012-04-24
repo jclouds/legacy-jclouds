@@ -80,28 +80,28 @@ public interface VolumeClient {
     * 
     * @return all Floating IPs
     */
-   Set<VolumeAttachment> listAttachments(String serverId);
+   Set<VolumeAttachment> listAttachmentsOnServer(String serverId);
 
    /**
     * Get a specific attached volume.
     * 
     * @return data about the given volume attachment.
     */
-   VolumeAttachment getAttachment(String serverId, String volumeId);
+   VolumeAttachment getAttachmentForVolumeOnServer(String volumeId, String serverId);
 
    /**
     * Attach a volume to an instance
     * 
     * @return data about the new volume attachment
     */
-   VolumeAttachment attachVolume(String serverId, String volumeId, String device);
+   VolumeAttachment attachVolumeToServerAsDevice(String volumeId, String serverId, String device);
 
    /**
     * Detach a Volume from an instance.
     * 
     * @return true if successful
     */
-   Boolean detachVolume(String server_id, String volumeId);
+   Boolean detachVolumeFromServer(String server_id, String volumeId);
 
    /**
     * Returns a summary list of snapshots.

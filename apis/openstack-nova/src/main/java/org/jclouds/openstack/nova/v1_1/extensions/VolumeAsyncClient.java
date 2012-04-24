@@ -131,7 +131,7 @@ public interface VolumeAsyncClient {
    @SelectJson("volumeAttachments")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<Set<VolumeAttachment>> listAttachments(@PathParam("server_id") String serverId);
+   ListenableFuture<Set<VolumeAttachment>> listAttachmentsOnServer(@PathParam("server_id") String serverId);
 
    /**
     * Get a specific attached volume.
@@ -143,7 +143,8 @@ public interface VolumeAsyncClient {
    @SelectJson("volumeAttachment")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<VolumeAttachment> getAttachment(@PathParam("server_id") String serverId, @PathParam("id") String volumeId);
+   ListenableFuture<VolumeAttachment> getAttachmentForVolumeOnServer(@PathParam("id") String volumeId,
+                                                                     @PathParam("server_id") String serverId);
 
    /**
     * Attach a volume to an instance
@@ -156,9 +157,8 @@ public interface VolumeAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @Payload("%7B\"volumeAttachment\":%7B\"volumeId\":\"{id}\",\"device\":\"{device}\"%7D%7D")
-   ListenableFuture<VolumeAttachment> attachVolume(@PathParam("server_id") String serverId, 
-                                             @PayloadParam("id") String volumeId,
-                                             @PayloadParam("device") String device);
+   ListenableFuture<VolumeAttachment> attachVolumeToServerAsDevice(@PayloadParam("id") String volumeId,
+                                             @PathParam("server_id") String serverId, @PayloadParam("device") String device);
 
    /**
     * Detach a Volume from an instance.
@@ -169,7 +169,7 @@ public interface VolumeAsyncClient {
    @Path("/servers/{server_id}/os-volume_attachments/{id}")
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   ListenableFuture<Boolean> detachVolume(@PathParam("server_id") String serverId, @PathParam("id") String volumeId);
+   ListenableFuture<Boolean> detachVolumeFromServer(@PathParam("id") String volumeId, @PathParam("server_id") String serverId);
 
    /**
     * Returns a summary list of snapshots.

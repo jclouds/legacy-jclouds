@@ -218,22 +218,22 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
          Set<Resource> servers = novaContext.getApi().getServerClientForZone(zone).listServers();
          if (!servers.isEmpty()) {
             final String serverId = Iterables.getFirst(servers, null).getId();
-            Set<VolumeAttachment> attachments = client.listAttachments(serverId);
+            Set<VolumeAttachment> attachments = client.listAttachmentsOnServer(serverId);
             assertNotNull(attachments);
             final int before = attachments.size();
 
-            VolumeAttachment testAttachment = client.attachVolume(serverId, testVolume.getId(), "/dev/vdf");
+            VolumeAttachment testAttachment = client.attachVolumeToServerAsDevice(testVolume.getId(), serverId, "/dev/vdf");
             assertNotNull(testAttachment.getId());
             assertEquals(testAttachment.getVolumeId(), testVolume.getId());
             
             assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
                @Override
                public boolean apply(VolumeClient volumeClient) {
-                  return client.listAttachments(serverId).size() == before+1;
+                  return client.listAttachmentsOnServer(serverId).size() == before+1;
                }
             }, 60 * 1000L).apply(client));
 
-            attachments = client.listAttachments(serverId);
+            attachments = client.listAttachmentsOnServer(serverId);
             assertNotNull(attachments);
             assertEquals(attachments.size(), before+1);
             
@@ -241,7 +241,7 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
 
             boolean foundIt = false;
             for (VolumeAttachment att : attachments) {
-               VolumeAttachment details = client.getAttachment(serverId, att.getId());
+               VolumeAttachment details = client.getAttachmentForVolumeOnServer(att.getVolumeId(), serverId);
                assertNotNull(details);
                assertNotNull(details.getId());
                assertNotNull(details.getServerId());
@@ -255,11 +255,11 @@ public class VolumeClientLiveTest extends BaseNovaClientLiveTest {
 
             assertTrue(foundIt, "Failed to find the attachment we created in listAttachments() response");
 
-            client.detachVolume(serverId, testVolume.getId());
+            client.detachVolumeFromServer(testVolume.getId(), serverId);
             assertTrue(new RetryablePredicate<VolumeClient>(new Predicate<VolumeClient>() {
                @Override
                public boolean apply(VolumeClient volumeClient) {
-                  return client.listAttachments(serverId).size() == before;
+                  return client.listAttachmentsOnServer(serverId).size() == before;
                }
             }, 60 * 1000L).apply(client));
          }
