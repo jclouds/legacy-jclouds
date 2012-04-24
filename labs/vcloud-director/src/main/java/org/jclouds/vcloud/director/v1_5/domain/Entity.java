@@ -25,7 +25,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementView;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -124,7 +124,7 @@ public class Entity extends Resource {
 
    @XmlElement(name = "Description")
    private String description;
-   @XmlElementView(name = "Tasks")
+   @XmlElementWrapper(name = "Tasks")
    @XmlElement(name = "Task")
    private List<Task> tasks;
    @XmlAttribute

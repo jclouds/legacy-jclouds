@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementView;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import com.google.common.base.Objects;
@@ -106,7 +106,7 @@ public class Capabilities {
    }
 
 
-   @XmlElementView(name = "SupportedHardwareVersions")
+   @XmlElementWrapper(name = "SupportedHardwareVersions")
    @XmlElement(name = "SupportedHardwareVersion")
    protected Set<String> supportedHardwareVersions = Sets.newLinkedHashSet();
 

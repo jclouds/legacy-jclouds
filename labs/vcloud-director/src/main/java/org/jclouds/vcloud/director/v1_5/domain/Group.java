@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementView;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -135,7 +135,7 @@ public class Group extends Entity {
 
     @XmlElement(name = "NameInSource")
     protected String nameInSource;
-    @XmlElementView(name = "UsersList")
+    @XmlElementWrapper(name = "UsersList")
     @XmlElement(name = "UserReference")
     protected Set<Reference> usersList = Sets.newLinkedHashSet();
     @XmlElement(name = "Role")
