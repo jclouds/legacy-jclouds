@@ -42,8 +42,6 @@ import com.google.common.collect.Iterables;
 /**
  * Tests behavior of VolumeClient
  *
- * Cannot create snapshots whilst a volume is attached, hence single threaded
- * 
  * @author Adam Lowe
  */
 @Test(groups = "live", testName = "VolumeClientLiveTest", singleThreaded = true)
