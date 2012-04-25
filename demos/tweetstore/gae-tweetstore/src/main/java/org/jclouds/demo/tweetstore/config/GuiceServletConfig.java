@@ -38,8 +38,8 @@ import java.util.Set;
 
 import javax.servlet.ServletContextEvent;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.EnqueueStoresController;
@@ -73,7 +73,7 @@ import com.google.inject.servlet.ServletModule;
 public class GuiceServletConfig extends GuiceServletContextListener {
    public static final String PROPERTY_BLOBSTORE_CONTEXTS = "blobstore.contexts";
 
-   private Map<String, BlobStoreContext<?, ?>> providerTypeToBlobStoreMap;
+   private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
    private Twitter twitterClient;
    private String container;
    private Queue queue;
@@ -102,8 +102,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : getBlobstoreContexts(props)) {
-          providerTypeToBlobStoreMap.put(hint, BlobStoreContextBuilder
-                  .newBuilder(hint).modules(modules).overrides(props).build());
+          providerTypeToBlobStoreMap.put(hint, ContextBuilder.newBuilder(hint)
+                  .modules(modules).overrides(props).build(BlobStoreContext.class));
       }
 
       // get a queue for submitting store tweet requests
@@ -140,7 +140,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       return Guice.createInjector(new ServletModule() {
          @Override
          protected void configureServlets() {
-            bind(new TypeLiteral<Map<String, BlobStoreContext<?, ?>>>() {
+            bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
             }).toInstance(providerTypeToBlobStoreMap);
             bind(Twitter.class).toInstance(twitterClient);
             bind(Queue.class).toInstance(queue);
@@ -154,7 +154,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      for (BlobStoreContext<?, ?> context : providerTypeToBlobStoreMap.values()) {
+      for (BlobStoreContext context : providerTypeToBlobStoreMap.values()) {
          context.close();
       }
       queue.purge();
