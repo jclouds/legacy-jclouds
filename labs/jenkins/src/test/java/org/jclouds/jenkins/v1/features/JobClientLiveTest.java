@@ -18,8 +18,12 @@
  */
 package org.jclouds.jenkins.v1.features;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
 import java.io.IOException;
 
+import org.jclouds.jenkins.v1.domain.JobDetails;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterClass;
@@ -38,6 +42,13 @@ public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateJob")
+   public void testGetJob() throws IOException {
+      JobDetails job = getClient().get("blagoo");
+      assertNotNull(job);
+      assertEquals(job.getName(), "blagoo");
+   }
+
+   @Test(dependsOnMethods = "testGetJob")
    public void testDeleteJob() {
       getClient().delete("blagoo");
    }

@@ -18,6 +18,9 @@
  */
 package org.jclouds.jenkins.v1.features;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+
 import java.io.IOException;
 import java.net.URI;
 
@@ -25,6 +28,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.jenkins.v1.JenkinsClient;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientExpectTest;
+import org.jclouds.jenkins.v1.parse.ParseJobDetailsTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
@@ -82,5 +86,33 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
       JenkinsClient deleteJobWhenDeleted = requestSendsResponse(deleteJob, deleteJobResponse);
 
       deleteJobWhenDeleted.getJobClient().delete("blagoo");
+   }
+   
+   HttpRequest getJob = HttpRequest.builder()
+         .method("GET")
+         .endpoint(URI.create("http://localhost:8080/job/ddd/api/json"))
+         .headers(ImmutableMultimap.<String, String> builder()
+               .put("Accept", "application/json")
+               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+         .build();
+
+   public void testGetJobWhenResponseIs2xx() {
+
+      HttpResponse getJobResponse = HttpResponse.builder().statusCode(200)
+         .payload(payloadFromResource("/job.json")).build();
+      
+      JenkinsClient clientWhenJobExists = requestSendsResponse(getJob, getJobResponse);
+
+      assertEquals(clientWhenJobExists.getJobClient().get("ddd").toString(),
+               new ParseJobDetailsTest().expected().toString());
+   }
+   
+   public void testGetJobWhenResponseIs404() {
+
+      HttpResponse getJobResponse = HttpResponse.builder().statusCode(404).build();
+
+      JenkinsClient getJobWhenGetd = requestSendsResponse(getJob, getJobResponse);
+
+      assertNull(getJobWhenGetd.getJobClient().get("ddd"));
    }
 }

@@ -18,6 +18,8 @@
  */
 package org.jclouds.jenkins.v1.features;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -25,12 +27,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.jenkins.v1.domain.JobDetails;
 import org.jclouds.jenkins.v1.filters.BasicAuthenticationUnlessAnonymous;
 import org.jclouds.jenkins.v1.functions.ReturnVoidOn302Or404;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -51,7 +55,16 @@ public interface JobAsyncClient {
    @Path("/createItem")
    @Produces(MediaType.TEXT_XML)
    ListenableFuture<Void> createFromXML(@QueryParam("name") String displayName, @BinderParam(BindToStringPayload.class) String xml); 
-
+   
+   /**
+    * @see JobClient#get
+    */
+   @GET
+   @Path("/job/{displayName}/api/json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<JobDetails> get(@PathParam("displayName") String displayName);
+   
    /**
     * @see JobClient#delete
     */

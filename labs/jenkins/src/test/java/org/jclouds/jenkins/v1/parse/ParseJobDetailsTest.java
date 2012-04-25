@@ -16,33 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.jenkins.v1.features;
+package org.jclouds.jenkins.v1.parse;
 
-import java.util.concurrent.TimeUnit;
+import java.net.URI;
 
-import org.jclouds.concurrent.Timeout;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.jenkins.v1.domain.JobDetails;
+import org.jclouds.json.BaseItemParserTest;
+import org.testng.annotations.Test;
 
 /**
- * Job Services
  * 
- * @see JobAsyncClient
  * @author Adrian Cole
- * @see <a href= "http://ci.jruby.org/computer/api/" >api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface JobClient {
+@Test(groups = "unit", testName = "ParseJobDetailsTest")
+public class ParseJobDetailsTest extends BaseItemParserTest<JobDetails> {
 
-   /**
-    * creates a job, given the payload
-    * 
-    * @param displayName
-    * @param xml
-    */
-   void createFromXML(String displayName, String xml);
+   @Override
+   public String resource() {
+      return "/job.json";
+   }
 
-   JobDetails get(String displayName);
-
-   void delete(String displayName);
-
+   @Override
+   @Consumes(MediaType.APPLICATION_JSON)
+   public JobDetails expected() {
+      return JobDetails.builder()
+                  .name("ddd")
+                  .url(URI.create("http://localhost:8080/job/ddd/"))
+                  .color("grey").build();
+   }
 }
