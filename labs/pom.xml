@@ -43,5 +43,6 @@
        <module>carrenza-vcloud-director</module>
        <module>openstack-swift</module>
        <module>jenkins</module>
+       <module>cdmi</module>
     </modules>
 </project>
