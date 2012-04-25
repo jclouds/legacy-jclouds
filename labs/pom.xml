@@ -44,5 +44,6 @@
        <module>openstack-swift</module>
        <module>jenkins</module>
        <module>cdmi</module>
+       <module>openstack-glance</module>
     </modules>
 </project>
