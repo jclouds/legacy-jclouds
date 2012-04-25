@@ -174,8 +174,6 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
       
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       
-      requestStaticInjection(VCloudDirectorComputeUtils.class);
-      
       super.configure();
    }
    

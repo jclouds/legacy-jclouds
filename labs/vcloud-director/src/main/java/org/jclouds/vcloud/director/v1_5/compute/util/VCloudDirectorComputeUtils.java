@@ -60,7 +60,8 @@ public class VCloudDirectorComputeUtils {
       return vApp.getChildren().getVms().size() > 0 ? toComputeOs(Iterables.get(vApp.getChildren().getVms(), 0)) : null;
    }
    
-   @Inject private static SectionForVApp<OperatingSystemSection> findOperatingSystemSectionForVApp;
+   private static SectionForVApp<OperatingSystemSection> findOperatingSystemSectionForVApp = 
+         new SectionForVApp<OperatingSystemSection>(OperatingSystemSection.class);
    
    public static CIMOperatingSystem toComputeOs(Vm vm) {
       return toComputeOs(findOperatingSystemSectionForVApp.apply(vm));
@@ -75,7 +76,8 @@ public class VCloudDirectorComputeUtils {
             getVirtualSystemIdentifierOf(Iterables.get(vApp.getChildren().getVms(), 0)) : null;
    }
    
-   @Inject private static SectionForVApp<VirtualHardwareSection> findVirtualHardwareSectionForVApp;
+   @Inject private static SectionForVApp<VirtualHardwareSection> findVirtualHardwareSectionForVApp = 
+         new SectionForVApp<VirtualHardwareSection>(VirtualHardwareSection.class);
 
    public static String getVirtualSystemIdentifierOf(Vm vm) {
       VirtualHardwareSection virtualHardwareSection = findVirtualHardwareSectionForVApp.apply(vm);
@@ -93,7 +95,8 @@ public class VCloudDirectorComputeUtils {
       return vApp.getChildren().size() > 0 ? getCredentialsFrom(Iterables.get(vApp.getChildren(), 0)) : null;
    }
    
-   @Inject private static SectionForVApp<GuestCustomizationSection> findGuestCustomizationSectionForVApp;
+   @Inject private static SectionForVApp<GuestCustomizationSection> findGuestCustomizationSectionForVApp = 
+         new SectionForVApp<GuestCustomizationSection>(GuestCustomizationSection.class);
 
    public static LoginCredentials getCredentialsFrom(Vm vm) {
       LoginCredentials.Builder builder = LoginCredentials.builder();
@@ -103,7 +106,8 @@ public class VCloudDirectorComputeUtils {
       return builder.build();
    }
    
-   @Inject private static SectionForVApp<NetworkConnectionSection> findNetworkConnectionSectionForVApp;
+   @Inject private static SectionForVApp<NetworkConnectionSection> findNetworkConnectionSectionForVApp = 
+         new SectionForVApp<NetworkConnectionSection>(NetworkConnectionSection.class);
 
    public static Set<String> getIpsFromVApp(VApp vApp) {
       // TODO make this work with composite vApps
