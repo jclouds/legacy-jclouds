@@ -70,13 +70,6 @@ public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
    private static final String DEFAULT_BUCKET = "TODO";
    
    @Override
-   protected Properties setupProperties() {
-      Properties overrides = super.setupProperties();
-      overrides.put(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "206029621532"); /* Amazon Owner ID */
-      return overrides;
-   }
-
-   @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
@@ -124,7 +117,7 @@ public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
       Template template = computeService.templateBuilder()
          .osFamily(OsFamily.WINDOWS)
          .os64Bit(true)
-         .imageNameMatches("Windows-2008R2-SP1-English-Base-")
+         .imageNameMatches("Windows_Server-2008-R2_SP1-English-64Bit-Base-")
          .hardwareId(InstanceType.M1_LARGE)
          .options(TemplateOptions.Builder.inboundPorts(3389))
          .build();
