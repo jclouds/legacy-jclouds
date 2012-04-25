@@ -41,8 +41,7 @@ public class ContainerClientExpectTest extends BaseCDMIClientExpectTest {
    
    public void testGetContainerWhenResponseIs2xx() throws Exception {
 
-      HttpRequest getContainer = HttpRequest
-            .builder()
+      HttpRequest getContainer = HttpRequest.builder()
             .method("GET")
             .endpoint(URI.create("http://localhost:8080/MyContainer/"))
             .headers(ImmutableMultimap.<String, String> builder()
@@ -53,8 +52,10 @@ public class ContainerClientExpectTest extends BaseCDMIClientExpectTest {
                         .build())
             .build();
       
-      HttpResponse getContainerResponse = HttpResponse.builder().statusCode(200)
-            .payload(payloadFromResource("/container.json")).build();
+      HttpResponse getContainerResponse = HttpResponse.builder()
+            .statusCode(200)
+            .payload(payloadFromResource("/container.json"))
+            .build();
 
       CDMIClient clientWhenContainersExist = requestSendsResponse(getContainer, getContainerResponse);
 
