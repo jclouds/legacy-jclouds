@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.services;
+package org.jclouds.aws.ec2.services;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -44,6 +44,7 @@ import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedDat
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.PasswordData;
 import org.jclouds.ec2.reference.EC2Constants;
+import org.jclouds.ec2.services.WindowsClient;
 import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.BeforeClass;
