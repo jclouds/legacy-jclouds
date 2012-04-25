@@ -18,35 +18,40 @@
  */
 package org.jclouds.jenkins.v1.features;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import java.io.IOException;
 
-import org.jclouds.jenkins.v1.domain.Computer;
-import org.jclouds.jenkins.v1.domain.ComputerView;
+import org.jclouds.io.Payloads;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientLiveTest;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "ComputerClientLiveTest")
-public class ComputerClientLiveTest extends BaseJenkinsClientLiveTest {
+@Test(groups = "live", testName = "JobClientLiveTest")
+public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
 
-   public void testGetComputerView(){
-      ComputerView view = getClient().getView();
-      assertNotNull(view);
-      assertNotNull(view.getDisplayName());
-      for (Computer computerFromView : view.getComputers()) {
-         assertNotNull(computerFromView.getDisplayName());
-         if (!"master".equals(computerFromView.getDisplayName())) {
-            Computer computerFromGetRequest = getClient().get(computerFromView.getDisplayName());
-            assertEquals(computerFromGetRequest, computerFromView);
-         }
-      }
+   public void testCreateJob() throws IOException {
+      getClient().delete("blagoo");
+      getClient().createFromXML("blagoo",
+               Payloads.newPayload(Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml"))));
    }
 
-   private ComputerClient getClient() {
-      return context.getApi().getComputerClient();
+   @Test(dependsOnMethods = "testCreateJob")
+   public void testDeleteJob() {
+      getClient().delete("blagoo");
+   }
+   
+   @AfterClass(groups = { "integration", "live" })
+   @Override
+   protected void tearDownContext() {
+      getClient().delete("blagoo");
+      super.tearDownContext();
+   }
+
+   private JobClient getClient() {
+      return context.getApi().getJobClient();
    }
 }

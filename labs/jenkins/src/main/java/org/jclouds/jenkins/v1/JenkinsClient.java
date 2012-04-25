@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.jenkins.v1.features.ComputerClient;
+import org.jclouds.jenkins.v1.features.JobClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -40,5 +41,10 @@ public interface JenkinsClient {
     */
    @Delegate
    ComputerClient getComputerClient();
-
+   
+   /**
+    * Provides synchronous access to Job features.
+    */
+   @Delegate
+   JobClient getJobClient();
 }

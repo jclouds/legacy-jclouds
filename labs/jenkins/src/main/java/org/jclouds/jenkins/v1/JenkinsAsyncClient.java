@@ -19,6 +19,7 @@
 package org.jclouds.jenkins.v1;
 
 import org.jclouds.jenkins.v1.features.ComputerAsyncClient;
+import org.jclouds.jenkins.v1.features.JobAsyncClient;
 import org.jclouds.rest.annotations.Delegate;
 
 /**
@@ -31,11 +32,15 @@ import org.jclouds.rest.annotations.Delegate;
  */
 public interface JenkinsAsyncClient {
 
-
    /**
     * Provides asynchronous access to Computer features.
     */
    @Delegate
    ComputerAsyncClient getComputerClient();
-
+   
+   /**
+    * Provides asynchronous access to Job features.
+    */
+   @Delegate
+   JobAsyncClient getJobClient();
 }

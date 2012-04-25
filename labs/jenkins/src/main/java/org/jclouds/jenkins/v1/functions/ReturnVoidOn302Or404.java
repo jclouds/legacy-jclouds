@@ -16,33 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.jenkins.v1.features;
+package org.jclouds.jenkins.v1.functions;
 
-import java.util.concurrent.TimeUnit;
+import static com.google.common.base.Predicates.equalTo;
+import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.jenkins.v1.domain.Computer;
-import org.jclouds.jenkins.v1.domain.ComputerView;
+import javax.inject.Singleton;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.base.Throwables;
 
 /**
- * Computer Services
  * 
- * @see ComputerAsyncClient
  * @author Adrian Cole
- * @see <a href= "http://ci.jruby.org/computer/api/" >api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface ComputerClient {
+@Singleton
+public class ReturnVoidOn302Or404 implements Function<Exception, Void> {
 
-   /**
-    * @return overview of all configured computers
-    */
-   ComputerView getView();
-   
-   /**
-    * 
-    * @param displayName display name of the computer
-    * @return computer or null if not found
-    */
-   Computer get(String displayName);
+   public Void apply(Exception from) {
+      Boolean returnVal = returnValueOnCodeOrNull(from, true, Predicates.<Integer>or(equalTo(302), equalTo(404)));
+      if (returnVal != null && returnVal)
+         return null;
+      throw Throwables.propagate(from);
+   }
 }

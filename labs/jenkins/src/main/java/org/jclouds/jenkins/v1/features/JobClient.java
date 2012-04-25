@@ -21,28 +21,26 @@ package org.jclouds.jenkins.v1.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.jenkins.v1.domain.Computer;
-import org.jclouds.jenkins.v1.domain.ComputerView;
+import org.jclouds.io.Payload;
 
 /**
- * Computer Services
+ * Job Services
  * 
- * @see ComputerAsyncClient
+ * @see JobAsyncClient
  * @author Adrian Cole
  * @see <a href= "http://ci.jruby.org/computer/api/" >api doc</a>
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface ComputerClient {
+public interface JobClient {
 
    /**
-    * @return overview of all configured computers
-    */
-   ComputerView getView();
-   
-   /**
+    * creates a job, given the payload
     * 
-    * @param displayName display name of the computer
-    * @return computer or null if not found
+    * @param displayName
+    * @param xml
     */
-   Computer get(String displayName);
+   void createFromXML(String displayName, Payload xml);
+   
+   void delete(String displayName);
+
 }

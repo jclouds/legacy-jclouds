@@ -18,47 +18,46 @@
  */
 package org.jclouds.jenkins.v1.features;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.jenkins.v1.domain.Computer;
-import org.jclouds.jenkins.v1.domain.ComputerView;
+import org.jclouds.io.Payload;
 import org.jclouds.jenkins.v1.filters.BasicAuthenticationUnlessAnonymous;
+import org.jclouds.jenkins.v1.functions.ReturnVoidOn302Or404;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Computer Services
+ * Job Services
  * 
- * @see ComputerClient
+ * @see JobClient
  * @author Adrian Cole
- * @see <a href=
- *      "http://ci.jruby.org/computer/api/"
- *      >api doc</a>
+ * @see <a href="http://ci.jruby.org/computer/api/">api doc</a>
  */
 @RequestFilters(BasicAuthenticationUnlessAnonymous.class)
-public interface ComputerAsyncClient {
+public interface JobAsyncClient {
 
    /**
-    * @see ComputerClient#getView
+    * @see JobClient#createFromXML
     */
-   @GET
-   @Path("/computer/api/json")
-   @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<ComputerView> getView();
+   @POST
+   @Path("/createItem")
+   @Produces(MediaType.TEXT_XML)
+   ListenableFuture<Void> createFromXML(@QueryParam("name") String displayName, Payload xml);
    
+
    /**
-    * @see ComputerClient#get
+    * @see JobClient#getJobView
     */
-   @GET
-   @Path("/computer/{displayName}/api/json")
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Computer> get(@PathParam("displayName") String displayName);
+   @POST
+   @Path("/job/{displayName}/doDelete")
+   @ExceptionParser(ReturnVoidOn302Or404.class)
+   ListenableFuture<Void> delete(@PathParam("displayName") String displayName);
+   
 }
