@@ -41,6 +41,8 @@ public interface JobClient {
     */
    void createFromXML(String displayName, Payload xml);
    
+   void createFromXML(String displayName, String xml);
+
    void delete(String displayName);
 
 }

@@ -20,7 +20,6 @@ package org.jclouds.jenkins.v1.features;
 
 import java.io.IOException;
 
-import org.jclouds.io.Payloads;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientLiveTest;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterClass;
@@ -35,8 +34,7 @@ public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
 
    public void testCreateJob() throws IOException {
       getClient().delete("blagoo");
-      getClient().createFromXML("blagoo",
-               Payloads.newPayload(Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml"))));
+      getClient().createFromXML("blagoo", Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml")));
    }
 
    @Test(dependsOnMethods = "testCreateJob")

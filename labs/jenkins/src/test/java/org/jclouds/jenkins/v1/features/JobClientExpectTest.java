@@ -18,12 +18,14 @@
  */
 package org.jclouds.jenkins.v1.features;
 
+import java.io.IOException;
 import java.net.URI;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.jenkins.v1.JenkinsClient;
 import org.jclouds.jenkins.v1.internal.BaseJenkinsClientExpectTest;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -34,21 +36,27 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "JobClientExpectTest")
 public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
+   HttpRequest createJob = HttpRequest.builder()
+      .method("POST")
+      .endpoint(URI.create("http://localhost:8080/createItem?name=blagoo"))
+      .headers(ImmutableMultimap.<String, String> builder()
+               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+      .payload(payloadFromResourceWithContentType("/sample_job.xml", "text/xml"))
+      .build();
 
-   public void testCreateJobWhenResponseIs2xx() {
-      HttpRequest createJob = HttpRequest.builder()
-            .method("POST")
-            .endpoint(URI.create("http://localhost:8080/createItem?name=blagoo"))
-            .headers(ImmutableMultimap.<String, String> builder()
-                        .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-            .payload(payloadFromResourceWithContentType("/sample_job.xml", "text/xml"))
-            .build();
+   HttpResponse createJobResponse = HttpResponse.builder().statusCode(200).build();
 
-      HttpResponse createJobResponse = HttpResponse.builder().statusCode(200).build();
+   public void testCreateJobPayloadWhenResponseIs2xx() {
 
       JenkinsClient createJobWhenCreated = requestSendsResponse(createJob, createJobResponse);
 
       createJobWhenCreated.getJobClient().createFromXML("blagoo", payloadFromResource("/sample_job.xml"));
+   }   
+   
+   public void testCreateJobStringWhenResponseIs2xx() throws IOException {
+      JenkinsClient createJobWhenCreated = requestSendsResponse(createJob, createJobResponse);
+
+      createJobWhenCreated.getJobClient().createFromXML("blagoo", Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml")));
    }
    
    public void testDeleteJobWhenResponseIs2xx() {
