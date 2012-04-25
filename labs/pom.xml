@@ -45,5 +45,6 @@
        <module>jenkins</module>
        <module>cdmi</module>
        <module>openstack-glance</module>
+       <module>joyent-sdc</module>
     </modules>
 </project>
