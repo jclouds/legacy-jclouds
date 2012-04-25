@@ -21,7 +21,6 @@ package org.jclouds.jenkins.v1.features;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.io.Payload;
 
 /**
  * Job Services
@@ -39,8 +38,6 @@ public interface JobClient {
     * @param displayName
     * @param xml
     */
-   void createFromXML(String displayName, Payload xml);
-   
    void createFromXML(String displayName, String xml);
 
    void delete(String displayName);

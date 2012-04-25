@@ -36,24 +36,19 @@ import com.google.common.collect.ImmutableMultimap;
  */
 @Test(groups = "unit", testName = "JobClientExpectTest")
 public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
-   HttpRequest createJob = HttpRequest.builder()
-      .method("POST")
-      .endpoint(URI.create("http://localhost:8080/createItem?name=blagoo"))
-      .headers(ImmutableMultimap.<String, String> builder()
-               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
-      .payload(payloadFromResourceWithContentType("/sample_job.xml", "text/xml"))
-      .build();
 
-   HttpResponse createJobResponse = HttpResponse.builder().statusCode(200).build();
 
-   public void testCreateJobPayloadWhenResponseIs2xx() {
-
-      JenkinsClient createJobWhenCreated = requestSendsResponse(createJob, createJobResponse);
-
-      createJobWhenCreated.getJobClient().createFromXML("blagoo", payloadFromResource("/sample_job.xml"));
-   }   
-   
    public void testCreateJobStringWhenResponseIs2xx() throws IOException {
+      HttpRequest createJob = HttpRequest.builder()
+            .method("POST")
+            .endpoint(URI.create("http://localhost:8080/createItem?name=blagoo"))
+            .headers(ImmutableMultimap.<String, String> builder()
+               .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .payload(payloadFromResourceWithContentType("/sample_job.xml", "text/xml"))
+            .build();
+
+      HttpResponse createJobResponse = HttpResponse.builder().statusCode(200).build();
+   
       JenkinsClient createJobWhenCreated = requestSendsResponse(createJob, createJobResponse);
 
       createJobWhenCreated.getJobClient().createFromXML("blagoo", Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml")));

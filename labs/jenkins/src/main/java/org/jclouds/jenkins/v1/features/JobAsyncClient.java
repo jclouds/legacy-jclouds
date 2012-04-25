@@ -25,7 +25,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.io.Payload;
 import org.jclouds.jenkins.v1.filters.BasicAuthenticationUnlessAnonymous;
 import org.jclouds.jenkins.v1.functions.ReturnVoidOn302Or404;
 import org.jclouds.rest.annotations.BinderParam;
@@ -44,17 +43,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(BasicAuthenticationUnlessAnonymous.class)
 public interface JobAsyncClient {
-
-   /**
-    * @see JobClient#createFromXML(String, Payload)
-    */
-   @POST
-   @Path("/createItem")
-   @Produces(MediaType.TEXT_XML)
-   ListenableFuture<Void> createFromXML(@QueryParam("name") String displayName, Payload xml);
    
    /**
-    * @see JobClient#createFromXML(String, String)
+    * @see JobClient#createFromXML
     */
    @POST
    @Path("/createItem")
@@ -62,7 +53,7 @@ public interface JobAsyncClient {
    ListenableFuture<Void> createFromXML(@QueryParam("name") String displayName, @BinderParam(BindToStringPayload.class) String xml); 
 
    /**
-    * @see JobClient#getJobView
+    * @see JobClient#delete
     */
    @POST
    @Path("/job/{displayName}/doDelete")
