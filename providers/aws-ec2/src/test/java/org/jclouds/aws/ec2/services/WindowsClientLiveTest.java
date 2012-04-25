@@ -16,18 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.ec2.services;
+package org.jclouds.aws.ec2.services;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+import com.google.inject.Module;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
@@ -41,6 +44,8 @@ import org.jclouds.ec2.compute.functions.WindowsLoginCredentialsFromEncryptedDat
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.PasswordData;
 import org.jclouds.ec2.reference.EC2Constants;
+import org.jclouds.ec2.services.WindowsClient;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -57,7 +62,7 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", singleThreaded = true, testName = "WindowsClientLiveTest")
 public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
    public WindowsClientLiveTest() {
-      provider = "ec2";
+      provider = "aws-ec2";
    }
 
    private ComputeService computeService;
@@ -66,13 +71,6 @@ public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
    private static final String DEFAULT_BUCKET = "TODO";
    
    @Override
-   protected Properties setupProperties() {
-      Properties overrides = super.setupProperties();
-      overrides.put(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "206029621532"); /* Amazon Owner ID */
-      return overrides;
-   }
-
-   @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setupContext() {
       super.setupContext();
@@ -80,7 +78,15 @@ public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
       computeService = view.getComputeService();
    }
 
-   
+   @Override
+   protected Iterable<Module> setupModules() {
+      Iterable<Module> superModules = super.setupModules();
+      List<Module> modules = new ArrayList<Module>();
+      Iterables.addAll(modules, superModules);
+      modules.add(new BouncyCastleCryptoModule());
+      return modules;
+   }
+
    @Test(enabled = false)
    // TODO get instance
    public void testBundleInstanceInRegion() {
@@ -112,7 +118,7 @@ public class WindowsClientLiveTest extends BaseComputeServiceContextLiveTest {
       Template template = computeService.templateBuilder()
          .osFamily(OsFamily.WINDOWS)
          .os64Bit(true)
-         .imageNameMatches("Windows-2008R2-SP1-English-Base-")
+         .imageNameMatches("Windows_Server-2008-R2_SP1-English-64Bit-Base-")
          .hardwareId(InstanceType.M1_LARGE)
          .options(TemplateOptions.Builder.inboundPorts(3389))
          .build();
