@@ -37,7 +37,6 @@ import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.scriptbuilder.domain.Statements;
@@ -46,6 +45,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.net.HostAndPort;
 
 @Singleton
 public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager> {
@@ -78,7 +78,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
 
    public synchronized void start() {
       URI provider = providerSupplier.get();
-      if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))) {
+      if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))) {
          logger.debug("disabling password access");
          runScriptOnNodeFactory.create(host.get(), Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
                   runAsRoot(false).wrapInInitScript(false)).init().call();
@@ -87,7 +87,7 @@ public class StartVBoxIfNotAlreadyRunning implements Supplier<VirtualBoxManager>
          runScriptOnNodeFactory.create(host.get(), Statements.exec(vboxwebsrv),
                   runAsRoot(false).wrapInInitScript(false).blockOnComplete(false).nameTask("vboxwebsrv")).init().call();
          
-         if (!socketTester.apply(new IPSocket(provider.getHost(), provider.getPort()))){
+         if (!socketTester.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))){
             throw new RuntimeException("could not connect to virtualbox");
          }
       }

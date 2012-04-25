@@ -36,7 +36,6 @@ import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
-import org.jclouds.net.IPSocket;
 import org.jclouds.openstack.nova.domain.Flavor;
 import org.jclouds.openstack.nova.domain.Image;
 import org.jclouds.openstack.nova.domain.ImageStatus;
@@ -56,6 +55,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 
 /**
@@ -72,7 +72,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
 
    protected NovaClient client;
    protected SshClient.Factory sshFactory;
-   protected Predicate<IPSocket> socketTester;
+   protected Predicate<HostAndPort> socketTester;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
@@ -82,7 +82,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
       client = injector.getInstance(NovaClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 120, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
    }
 
@@ -296,7 +296,7 @@ public class NovaClientLiveTest extends BaseComputeServiceContextLiveTest {
    }
 
    private void doCheckPass(Server newDetails, String pass) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
+      HostAndPort socket = HostAndPort.fromParts(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0).getAddress(), 22);
       socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(pass).build());

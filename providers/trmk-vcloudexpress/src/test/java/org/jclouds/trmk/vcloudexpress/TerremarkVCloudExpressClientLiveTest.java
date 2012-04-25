@@ -21,7 +21,6 @@ package org.jclouds.trmk.vcloudexpress;
 import java.util.Map.Entry;
 
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.trmk.vcloud_0_8.TerremarkClientLiveTest;
 import org.jclouds.trmk.vcloud_0_8.domain.InternetService;
@@ -30,6 +29,8 @@ import org.jclouds.trmk.vcloud_0_8.domain.PublicIpAddress;
 import org.jclouds.trmk.vcloud_0_8.domain.VApp;
 import org.jclouds.trmk.vcloudexpress.suppliers.TerremarkVCloudExpressInternetServiceAndPublicIpAddressSupplier;
 import org.testng.annotations.Test;
+
+import com.google.common.net.HostAndPort;
 
 /**
  * Tests behavior of {@code TerremarkVCloudExpressClient}
@@ -40,7 +41,7 @@ import org.testng.annotations.Test;
 public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> {
 
    @Override
-   protected SshClient getConnectionFor(IPSocket socket) {
+   protected SshClient getConnectionFor(HostAndPort socket) {
       return sshFactory.create(socket, LoginCredentials.builder().user("vcloud").password("TmrkCl0ud1s#1!").privateKey(
                key.getPrivateKey()).authenticateSudo(true).build());
    }

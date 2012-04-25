@@ -32,7 +32,7 @@
 //import org.jclouds.cloudstack.options.CreateInstanceOptions;
 //import org.jclouds.domain.Credentials;
 //import org.jclouds.http.HttpRequest;
-//import org.jclouds.net.IPSocket;
+//import com.google.common.net.HostAndPort;
 //import org.jclouds.ssh.SshClient;
 //import org.jclouds.ssh.jsch.config.JschSshClientModule;
 //import org.testng.annotations.AfterGroups;
@@ -79,7 +79,7 @@
 //   public void testConnectivity() throws Exception {
 //      Logger.getAnonymousLogger().info("awaiting ssh");
 //      // TODO
-//      // assert socketTester.apply(new IPSocket(Iterables.get(instance.getPublicAddresses(), 0),
+//      // assert socketTester.apply(HostAndPort.fromParts(Iterables.get(instance.getPublicAddresses(), 0),
 //      // 22)) : instance;
 //      // doConnectViaSsh(instance, getSshCredentials(instance));
 //   }
@@ -119,7 +119,7 @@
 //
 //   protected void doConnectViaSsh(Instance instance, Credentials creds) throws IOException {
 //      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class)
-//            .create(new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
+//            .create(HostAndPort.fromParts(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
 //      try {
 //         ssh.connect();
 //         ExecResponse hello = ssh.exec("echo hello");

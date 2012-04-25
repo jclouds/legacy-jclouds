@@ -18,9 +18,8 @@
  */
 package org.jclouds.predicates;
 
-import org.jclouds.net.IPSocket;
-
 import com.google.common.base.Predicate;
+import com.google.common.net.HostAndPort;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -30,6 +29,6 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(SocketOpenUnsupported.class)
-public interface SocketOpen extends Predicate<IPSocket> {
+public interface SocketOpen extends Predicate<HostAndPort> {
 
 }

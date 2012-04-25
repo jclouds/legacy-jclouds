@@ -27,11 +27,11 @@ import javax.inject.Named;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 
 import com.google.common.base.Predicate;
+import com.google.common.net.HostAndPort;
 
 /**
  * 
@@ -41,7 +41,7 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  * 
  */
-public class RetryIfSocketNotYetOpen implements Predicate<IPSocket> {
+public class RetryIfSocketNotYetOpen implements Predicate<HostAndPort> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    private Logger logger = Logger.NULL;
@@ -84,11 +84,11 @@ public class RetryIfSocketNotYetOpen implements Predicate<IPSocket> {
    }
 
    @Override
-   public boolean apply(IPSocket socket) {
+   public boolean apply(HostAndPort socket) {
       logger.debug(">> blocking on socket %s for %d %s", socket, timeoutValue, timeoutUnits);
       // Specify a retry period of 1s, expressed in the same time units.
       long period = timeoutUnits.convert(1, TimeUnit.SECONDS);
-      RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, timeoutValue, period, timeoutUnits);
+      RetryablePredicate<HostAndPort> tester = new RetryablePredicate<HostAndPort>(socketTester, timeoutValue, period, timeoutUnits);
       boolean passed = tester.apply(socket);
       if (passed)
          logger.debug("<< socket %s opened", socket);

@@ -37,6 +37,7 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.ec2.domain.BlockDevice;
+import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.IpProtocol;
@@ -44,12 +45,10 @@ import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.predicates.InstanceHasIpAddress;
 import org.jclouds.ec2.predicates.InstanceStateRunning;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.scriptbuilder.ScriptBuilder;
@@ -63,6 +62,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 
 /**
@@ -88,7 +88,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
    private String instanceId;
    private String address;
 
-   private RetryablePredicate<IPSocket> socketTester;
+   private RetryablePredicate<HostAndPort> socketTester;
    private RetryablePredicate<RunningInstance> hasIpTester;
    private RetryablePredicate<RunningInstance> runningTester;
 
@@ -102,7 +102,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
             TimeUnit.SECONDS);
       hasIpTester = new RetryablePredicate<RunningInstance>(new InstanceHasIpAddress(client), 180, 5, TimeUnit.SECONDS);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 180, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 180, 1, TimeUnit.SECONDS);
    }
 
    @Test(enabled = false)
@@ -296,7 +296,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
       Thread.sleep(1000);
       instance = getInstance(instanceId);
       blockUntilWeCanSshIntoInstance(instance);
-      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
+      SshClient ssh = sshFactory.create(HostAndPort.fromParts(instance.getIpAddress(), 22),
             LoginCredentials.builder().user("root").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();
@@ -357,14 +357,14 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
       assert hasIpTester.apply(instance);
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), instance.getIpAddress());
-      assert socketTester.apply(new IPSocket(instance.getIpAddress(), 22));
+      assert socketTester.apply(HostAndPort.fromParts(instance.getIpAddress(), 22));
 
       System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance.getDnsName());
       sshPing(instance);
       System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instance.getId());
 
       System.out.printf("%d: %s awaiting http service to start%n", System.currentTimeMillis(), instance.getIpAddress());
-      assert socketTester.apply(new IPSocket(instance.getIpAddress(), 80));
+      assert socketTester.apply(HostAndPort.fromParts(instance.getIpAddress(), 80));
       System.out.printf("%d: %s http service started%n", System.currentTimeMillis(), instance.getDnsName());
       return instance;
    }
@@ -401,7 +401,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest extends BaseComputeS
    }
 
    private void doCheckKey(String address) {
-      SshClient ssh = sshFactory.create(new IPSocket(address, 22),
+      SshClient ssh = sshFactory.create(HostAndPort.fromParts(address, 22),
             LoginCredentials.builder().user("root").privateKey(keyPair.getKeyMaterial()).build());
       try {
          ssh.connect();

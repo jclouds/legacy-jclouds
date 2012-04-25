@@ -63,7 +63,6 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -142,10 +141,10 @@ public class SshjSshClient implements SshClient {
 
    private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
-   public SshjSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket,
+   public SshjSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, HostAndPort socket,
             LoginCredentials loginCredentials, int timeout) {
       this.user = checkNotNull(loginCredentials, "loginCredentials").getUser();
-      this.host = checkNotNull(socket, "socket").getAddress();
+      this.host = checkNotNull(socket, "socket").getHostText();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
       checkArgument(loginCredentials.getPassword() != null || loginCredentials.getPrivateKey() != null,
                "you must specify a password or a key");

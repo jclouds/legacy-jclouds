@@ -25,7 +25,7 @@
    org.jclouds.domain.Credentials
    org.jclouds.domain.LoginCredentials
    org.jclouds.io.Payload
-   org.jclouds.net.IPSocket
+   com.google.common.net.HostAndPort
    org.jclouds.compute.domain.ExecResponse))
 
 (defn instantiate [impl-class & args]
@@ -67,7 +67,7 @@
   (^void put [this ^String path ^String content])
   (^void put [this ^String path ^org.jclouds.io.Payload content])
   (getUsername [this] username)
-  (getHostAddress [this] (.getAddress socket)) )
+  (getHostAddress [this] (.getHostText socket)) )
 
 (defn no-op-ssh-client
   [socket username password]
@@ -79,11 +79,11 @@
   org.jclouds.ssh.SshClient$Factory
   (^org.jclouds.ssh.SshClient
      create
-     [_ ^IPSocket socket ^Credentials credentials]
+     [_ ^HostAndPort socket ^Credentials credentials]
      (factory-fn socket (.identity credentials) (.credential credentials)))
   (^org.jclouds.ssh.SshClient
      create
-     [_ ^IPSocket socket ^LoginCredentials credentials]
+     [_ ^HostAndPort socket ^LoginCredentials credentials]
      (factory-fn socket (.identity credentials) (.credential credentials)))
   )
 
