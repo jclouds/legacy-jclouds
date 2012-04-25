@@ -18,9 +18,21 @@
  */
 package org.jclouds.jenkins.v1;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.jenkins.v1.domain.Node;
 import org.jclouds.jenkins.v1.features.ComputerAsyncClient;
 import org.jclouds.jenkins.v1.features.JobAsyncClient;
+import org.jclouds.jenkins.v1.filters.BasicAuthenticationUnlessAnonymous;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides asynchronous access to Jenkins via their REST API.
@@ -30,8 +42,18 @@ import org.jclouds.rest.annotations.Delegate;
  * @see <a href="https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API">api doc</a>
  * @author Adrian Cole
  */
+@RequestFilters(BasicAuthenticationUnlessAnonymous.class)
 public interface JenkinsAsyncClient {
-
+   
+   /**
+    * @see JenkinsClient#getMaster
+    */
+   @GET
+   @Path("/api/json")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Node> getMaster();
+   
    /**
     * Provides asynchronous access to Computer features.
     */

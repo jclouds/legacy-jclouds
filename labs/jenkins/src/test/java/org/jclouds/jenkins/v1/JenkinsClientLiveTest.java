@@ -16,34 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.jenkins.v1.features;
+package org.jclouds.jenkins.v1;
 
-import java.util.concurrent.TimeUnit;
+import static org.testng.Assert.assertNotNull;
 
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.jenkins.v1.domain.Computer;
-import org.jclouds.jenkins.v1.domain.ComputerView;
+import org.jclouds.jenkins.v1.domain.Node;
+import org.jclouds.jenkins.v1.internal.BaseJenkinsClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Computer Services
  * 
- * @see ComputerAsyncClient
  * @author Adrian Cole
- * @see <a href= "http://ci.jruby.org/computer/api/" >api doc</a>
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface ComputerClient {
+@Test(groups = "live", testName = "JenkinsClientLiveTest")
+public class JenkinsClientLiveTest extends BaseJenkinsClientLiveTest {
 
-   /**
-    * @return overview of all configured computers
-    */
-   ComputerView getView();
-   
-   /**
-    * 
-    * @param displayName display name of the computer
-    * @return computer or null if not found
-    */
-   Computer get(String displayName);
-   
+   public void testGetMaster(){
+      Node master = context.getApi().getMaster();
+      assertNotNull(master);
+      assertNotNull(master.getName());
+      assertNotNull(master.getJobs());
+   }
+
 }

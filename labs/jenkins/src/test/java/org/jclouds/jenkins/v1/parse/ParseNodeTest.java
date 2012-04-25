@@ -16,40 +16,40 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.jenkins.v1;
+package org.jclouds.jenkins.v1.parse;
 
-import java.util.concurrent.TimeUnit;
+import java.net.URI;
 
-import org.jclouds.concurrent.Timeout;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.jenkins.v1.domain.Job;
 import org.jclouds.jenkins.v1.domain.Node;
-import org.jclouds.jenkins.v1.features.ComputerClient;
-import org.jclouds.jenkins.v1.features.JobClient;
-import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.json.BaseItemParserTest;
+import org.testng.annotations.Test;
 
 /**
- * Provides synchronous access to Jenkins.
- * <p/>
  * 
- * @see JenkinsAsyncClient
- * @see <a href="https://wiki.jenkins-ci.org/display/JENKINS/Remote+access+API">api doc</a>
  * @author Adrian Cole
  */
-@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface JenkinsClient {
-   /**
-    * @return the master computer
-    */
-   Node getMaster();
-   
-   /**
-    * Provides synchronous access to Computer features.
-    */
-   @Delegate
-   ComputerClient getComputerClient();
-   
-   /**
-    * Provides synchronous access to Job features.
-    */
-   @Delegate
-   JobClient getJobClient();
+@Test(groups = "unit", testName = "ParseNodeTest")
+public class ParseNodeTest extends BaseItemParserTest<Node> {
+
+   @Override
+   public String resource() {
+      return "/master.json";
+   }
+
+   @Override
+   @Consumes(MediaType.APPLICATION_JSON)
+   public Node expected() {
+      return Node.builder()
+                  .name("")
+                  .description("the master Jenkins node")
+                  .jobs(Job.builder()
+                           .name("ddd")
+                           .url(URI.create("http://localhost:8080/job/ddd/"))
+                           .color("grey").build())
+                  .build();
+   }
 }

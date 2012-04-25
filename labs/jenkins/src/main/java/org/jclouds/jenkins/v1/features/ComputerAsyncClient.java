@@ -61,4 +61,5 @@ public interface ComputerAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Computer> get(@PathParam("displayName") String displayName);
+
 }
