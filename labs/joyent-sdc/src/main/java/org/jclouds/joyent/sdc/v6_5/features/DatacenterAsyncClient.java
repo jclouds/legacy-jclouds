@@ -18,9 +18,22 @@
  */
 package org.jclouds.joyent.sdc.v6_5.features;
 
+import java.net.URI;
+import java.util.Map;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.functions.ReturnEmptyMapOnNotFoundOr404;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Datacenter Services
@@ -30,7 +43,16 @@ import org.jclouds.rest.annotations.SkipEncoding;
  * @see <a href="http://sdc.joyent.org/sdcapi.html">api doc</a>
  */
 @SkipEncoding( { '/', '=' })
+@Headers(keys="X-Api-Version", values="{jclouds.api-version}")
 @RequestFilters(BasicAuthentication.class)
 public interface DatacenterAsyncClient {
-
+   
+   /**
+    * @see DatacenterClient#getDatacenters
+    */
+   @GET
+   @Path("/my/datacenters")
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ReturnEmptyMapOnNotFoundOr404.class)
+   ListenableFuture<Map<String, URI>> getDatacenters();
 }

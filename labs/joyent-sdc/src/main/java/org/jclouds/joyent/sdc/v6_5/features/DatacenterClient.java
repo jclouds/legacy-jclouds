@@ -18,6 +18,8 @@
  */
 package org.jclouds.joyent.sdc.v6_5.features;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -31,5 +33,11 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface DatacenterClient {
-  
+
+   /**
+    * Provides a list of all datacenters this cloud is aware of.
+    * 
+    * @return keys are the datacenter name, and the value is the URL.
+    */
+   Map<String, URI> getDatacenters();
 }

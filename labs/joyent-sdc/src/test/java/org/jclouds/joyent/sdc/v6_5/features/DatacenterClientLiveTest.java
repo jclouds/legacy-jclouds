@@ -18,6 +18,12 @@
  */
 package org.jclouds.joyent.sdc.v6_5.features;
 
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import java.net.URI;
+import java.util.Map;
+
 import org.jclouds.joyent.sdc.v6_5.internal.BaseSDCClientLiveTest;
 import org.testng.annotations.Test;
 
@@ -27,4 +33,9 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "DatacenterClientLiveTest")
 public class DatacenterClientLiveTest extends BaseSDCClientLiveTest {
 
+   public void testGetDatacenters(){
+      Map<String, URI> dcs = sdcContext.getApi().getDatacenterClient().getDatacenters();
+      assertNotNull(dcs);
+      assertTrue(dcs.size() > 0);
+   }
 }
