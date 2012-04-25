@@ -73,4 +73,20 @@ public interface JobAsyncClient {
    @ExceptionParser(ReturnVoidOn302Or404.class)
    ListenableFuture<Void> delete(@PathParam("displayName") String displayName);
    
+   /**
+    * @see JobClient#buildJob
+    */
+   @POST
+   @Path("/job/{displayName}/build")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Void> build(@PathParam("displayName") String displayName);
+   
+   /**
+    * @see JobClient#fetchConfigXML
+    */
+   @GET
+   @Path("/job/{displayName}/config.xml")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<String> fetchConfigXML(@PathParam("displayName") String displayName);
+   
 }

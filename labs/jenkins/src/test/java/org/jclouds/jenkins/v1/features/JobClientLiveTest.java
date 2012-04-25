@@ -40,8 +40,16 @@ public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
       getClient().delete("blagoo");
       getClient().createFromXML("blagoo", Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml")));
    }
-
+   
    @Test(dependsOnMethods = "testCreateJob")
+   public void testFetchConfigXML() throws IOException {
+      String configXML = getClient().fetchConfigXML("blagoo");
+      assertNotNull(configXML);
+      //TODO enable this assertion
+      //assertEquals(configXML, Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml")));
+   }
+
+   @Test(dependsOnMethods = "testFetchConfigXML")
    public void testGetJob() throws IOException {
       JobDetails job = getClient().get("blagoo");
       assertNotNull(job);
@@ -49,6 +57,11 @@ public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testGetJob")
+   public void testBuildJob() throws IOException {
+      getClient().build("blagoo");
+   }
+   
+   @Test(dependsOnMethods = "testBuildJob")
    public void testDeleteJob() {
       getClient().delete("blagoo");
    }
@@ -57,6 +70,7 @@ public class JobClientLiveTest extends BaseJenkinsClientLiveTest {
    @Override
    protected void tearDownContext() {
       getClient().delete("blagoo");
+      getClient().delete("blagooCopy");
       super.tearDownContext();
    }
 
