@@ -44,5 +44,17 @@ public interface JobClient {
    JobDetails get(String displayName);
 
    void delete(String displayName);
-
+   
+   /**
+    * Build a job via API
+    * 
+    * If security is enabled, provide username/password of an account with build permission in the request.
+    * Another alternative (but deprecated) is to configure the 'Trigger builds remotely' section in the job configuration.
+    * 
+    * @param displayName
+    */
+   void build(String displayName);
+   
+   String fetchConfigXML(String displayName);
+   
 }

@@ -41,7 +41,6 @@ import com.google.common.collect.ImmutableMultimap;
 @Test(groups = "unit", testName = "JobClientExpectTest")
 public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
 
-
    public void testCreateJobStringWhenResponseIs2xx() throws IOException {
       HttpRequest createJob = HttpRequest.builder()
             .method("POST")
@@ -97,22 +96,57 @@ public class JobClientExpectTest extends BaseJenkinsClientExpectTest {
          .build();
 
    public void testGetJobWhenResponseIs2xx() {
-
       HttpResponse getJobResponse = HttpResponse.builder().statusCode(200)
          .payload(payloadFromResource("/job.json")).build();
-      
       JenkinsClient clientWhenJobExists = requestSendsResponse(getJob, getJobResponse);
-
       assertEquals(clientWhenJobExists.getJobClient().get("ddd").toString(),
                new ParseJobDetailsTest().expected().toString());
    }
    
    public void testGetJobWhenResponseIs404() {
-
       HttpResponse getJobResponse = HttpResponse.builder().statusCode(404).build();
-
       JenkinsClient getJobWhenGetd = requestSendsResponse(getJob, getJobResponse);
-
       assertNull(getJobWhenGetd.getJobClient().get("ddd"));
+   }
+
+   HttpRequest buildJob = HttpRequest.builder()
+            .method("POST")
+            .endpoint(URI.create("http://localhost:8080/job/ddd/build"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .build();
+   
+   public void testBuildJobWhenResponseIs2xx() {
+      HttpResponse buildJobResponse = HttpResponse.builder().statusCode(200).build();
+      JenkinsClient clientWhenJobExists = requestSendsResponse(buildJob, buildJobResponse);
+      clientWhenJobExists.getJobClient().build("ddd");
+   }
+   
+   public void testBuildJobWhenResponseIs404() {
+      HttpResponse getJobResponse = HttpResponse.builder().statusCode(404).build();
+      JenkinsClient getJobWhenGetd = requestSendsResponse(buildJob, getJobResponse);
+      getJobWhenGetd.getJobClient().build("ddd");
+   }
+   
+   HttpRequest fetchConfig = HttpRequest.builder()
+            .method("GET")
+            .endpoint(URI.create("http://localhost:8080/job/ddd/config.xml"))
+            .headers(ImmutableMultimap.<String, String> builder()
+                  .put("Authorization", "Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==").build())
+            .build();
+   
+   public void testFetchConfigXMLWhenResponseIs2xx() {
+      HttpResponse fetchConfigResponse = HttpResponse.builder().statusCode(200)
+               .payload(payloadFromResourceWithContentType("/sample_job.xml", "text/xml")).build();
+      JenkinsClient clientWhenJobExists = requestSendsResponse(fetchConfig, fetchConfigResponse);
+      String configXML = clientWhenJobExists.getJobClient().fetchConfigXML("ddd");
+      //TODO enable this assertion
+      //assertEquals(configXML, Strings2.toStringAndClose(getClass().getResourceAsStream("/sample_job.xml")));
+   }
+   
+   public void testFetchConfigXMLWhenResponseIs404() {
+      HttpResponse fetchConfigResponse = HttpResponse.builder().statusCode(404).build();
+      JenkinsClient getJobWhenGetd = requestSendsResponse(fetchConfig, fetchConfigResponse);
+      getJobWhenGetd.getJobClient().fetchConfigXML("ddd");
    }
 }
