@@ -38,8 +38,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.Context;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
@@ -73,7 +74,7 @@ public class TweetStoreLiveTest {
 
    RhcloudServer server;
    private URL url;
-   private Map<String, BlobStoreContext<?, ?>> contexts;
+   private Map<String, BlobStoreContext> contexts;
    private String container;
    private static final Iterable<String> blobstores = 
        Splitter.on(',').split(getRequiredSystemProperty(PROPERTY_TWEETSTORE_BLOBSTORES)); 
@@ -97,8 +98,8 @@ public class TweetStoreLiveTest {
       this.contexts = Maps.newConcurrentMap();
 
       for (String provider : blobstores) {
-          contexts.put(provider, BlobStoreContextBuilder.newBuilder(provider)
-                  .modules(wiring).overrides(props).build());
+          contexts.put(provider, ContextBuilder.newBuilder(provider)
+                  .modules(wiring).overrides(props).build(BlobStoreContext.class));
       }
 
       Configuration conf = new ConfigurationBuilder()
@@ -113,11 +114,11 @@ public class TweetStoreLiveTest {
       ResponseList<Status> statuses = client.getMentions();
 
       boolean deleted = false;
-      for (BlobStoreContext<?, ?> context : contexts.values()) {
+      for (BlobStoreContext context : contexts.values()) {
          try {
             if (context.getBlobStore().containerExists(container)) {
-               System.err.printf("deleting container %s at %s%n", container, context.getProviderSpecificContext()
-                     .getEndpoint());
+               System.err.printf("deleting container %s at %s%n", container, 
+                       context.unwrap(Context.class).getProviderMetadata().getEndpoint());
                context.getBlobStore().deleteContainer(container);
                deleted = true;
             }
@@ -129,9 +130,9 @@ public class TweetStoreLiveTest {
          System.err.println("sleeping 60 seconds to allow containers to clear");
          Thread.sleep(60000);
       }
-      for (BlobStoreContext<?, ?> context : contexts.values()) {
-         System.err.printf("creating container %s at %s%n", container, context.getProviderSpecificContext()
-               .getEndpoint());
+      for (BlobStoreContext context : contexts.values()) {
+         System.err.printf("creating container %s at %s%n", container, 
+                 context.unwrap(Context.class).getProviderMetadata().getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
 
@@ -140,7 +141,7 @@ public class TweetStoreLiveTest {
          Thread.sleep(5000);
       }
 
-      for (Entry<String, BlobStoreContext<?, ?>> entry : contexts.entrySet()) {
+      for (Entry<String, BlobStoreContext> entry : contexts.entrySet()) {
          System.err.printf("filling container %s at %s%n", container, entry.getKey());
          controller.addMyTweets(entry.getKey(), statuses);
       }
@@ -209,8 +210,8 @@ public class TweetStoreLiveTest {
 
       System.err.println("sleeping 20 seconds to allow for eventual consistency delay");
       Thread.sleep(20000);
-      for (BlobStoreContext<?, ?> context : contexts.values()) {
-         assert context.createInputStreamMap(container).size() > 0 : context.getProviderSpecificContext().getEndpoint();
+      for (BlobStoreContext context : contexts.values()) {
+         assert context.createInputStreamMap(container).size() > 0 : context.unwrap(Context.class).getProviderMetadata().getEndpoint();
       }
    }
 
