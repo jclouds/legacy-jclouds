@@ -160,6 +160,135 @@
                     </webResources>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.ning.maven.plugins</groupId>
+                <artifactId>maven-duplicate-finder-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <exceptions>
+                        <exception>
+                            <!-- Google App Engine Deps, some google classes are duplicated between packages -->
+                            <conflictingDependencies>
+                                <dependency>
+                                    <groupId>com.google.appengine</groupId>
+                                    <artifactId>appengine-api-1.0-sdk</artifactId>
+                                    <version>1.6.1</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>com.google.appengine</groupId>
+                                    <artifactId>appengine-tools-sdk</artifactId>
+                                    <version>1.6.1</version>
+                                    <scope>test</scope>
+                                </dependency>
+                            </conflictingDependencies>
+                            <packages>
+                                <package>com.google</package>
+                            </packages>
+                        </exception>
+                        <exception>
+                            <!-- Tomcat bundles the JSR250 annotations too -->
+                            <conflictingDependencies>
+                                <dependency>
+                                    <groupId>javax.annotation</groupId>
+                                    <artifactId>jsr250-api</artifactId>
+                                    <version>1.0</version>
+                                    <scope>runtime</scope>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.tomcat</groupId>
+                                    <artifactId>annotations-api</artifactId>
+                                    <version>6.0.32</version>
+                                    <scope>test</scope>
+                                </dependency>
+                            </conflictingDependencies>
+                            <packages>
+                                <package>javax.annotation</package>
+                            </packages>
+                        </exception>
+                        <exception>
+                            <!-- commons-beanutils and commons-collections duplicate classes -->
+                            <conflictingDependencies>
+                                <dependency>
+                                    <groupId>commons-beanutils</groupId>
+                                    <artifactId>commons-beanutils</artifactId>
+                                    <version>1.7.0</version>
+                                    <scope>runtime</scope>
+                                </dependency>
+                                <dependency>
+                                    <groupId>commons-collections</groupId>
+                                    <artifactId>commons-collections</artifactId>
+                                    <version>3.1</version>
+                                    <scope>runtime</scope>
+                                </dependency>
+                            </conflictingDependencies>
+                            <packages>
+                                <package>org.apache.commons.collections</package>
+                            </packages>
+                        </exception>
+                        <exception>
+                            <!-- javax.servlet is included in the appengine-tools-sdk -->
+                            <conflictingDependencies>
+                                <dependency>
+                                    <groupId>javax.servlet</groupId>
+                                    <artifactId>servlet-api</artifactId>
+                                    <version>2.5</version>
+                                    <scope>provided</scope>
+                                </dependency>
+                                <dependency>
+                                    <groupId>com.google.appengine</groupId>
+                                    <artifactId>appengine-tools-sdk</artifactId>
+                                    <version>1.6.1</version>
+                                    <scope>test</scope>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.tomcat</groupId>
+                                    <artifactId>servlet-api</artifactId>
+                                    <version>6.0.32</version>
+                                    <scope>test</scope>
+                                </dependency>
+                            </conflictingDependencies>
+                            <packages>
+                                <package>javax.servlet</package>
+                            </packages>
+                            <resources>
+                                <!-- javax.servlet is included in the appengine-tools-sdk and Tomcat -->
+                                <resource>javax/servlet/resources/XMLSchema.dtd</resource>
+                                <resource>javax/servlet/resources/datatypes.dtd</resource>
+                                <resource>javax/servlet/resources/j2ee_1_4.xsd</resource>
+                                <resource>javax/servlet/resources/j2ee_web_services_client_1_1.xsd</resource>
+                                <resource>javax/servlet/resources/web-app_2_2.dtd</resource>
+                                <resource>javax/servlet/resources/web-app_2_3.dtd</resource>
+                                <resource>javax/servlet/resources/web-app_2_4.xsd</resource>
+                                <resource>javax/servlet/resources/web-app_2_5.xsd</resource>
+                                <resource>javax/servlet/resources/xml.xsd</resource>
+                                <resource>javax/servlet/LocalStrings.properties</resource>
+                                <resource>javax/servlet/http/LocalStrings.properties</resource>
+                            </resources>
+                        </exception>
+                        <exception>
+                            <!-- Jasper and Catalina duplicate some classes -->
+                            <conflictingDependencies>
+                                <dependency>
+                                    <groupId>org.apache.tomcat</groupId>
+                                    <artifactId>catalina</artifactId>
+                                    <version>6.0.32</version>
+                                    <scope>test</scope>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.apache.tomcat</groupId>
+                                    <artifactId>jasper</artifactId>
+                                    <version>6.0.32</version>
+                                    <scope>test</scope>
+                                </dependency>
+                            </conflictingDependencies>
+                            <classes>
+                                <class>org.apache.AnnotationProcessor</class>
+                                <class>org.apache.PeriodicEventListener</class>
+                            </classes>
+                        </exception>
+                    </exceptions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     
