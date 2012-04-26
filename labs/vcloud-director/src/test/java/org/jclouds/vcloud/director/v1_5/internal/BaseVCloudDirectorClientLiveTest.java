@@ -43,12 +43,13 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.director.testng.FormatApiResultsListener;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorApiMetadata;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorContext;
-import org.jclouds.vcloud.director.v1_5.VCloudDirectorException;
 import org.jclouds.vcloud.director.v1_5.VCloudDirectorMediaType;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminAsyncClient;
 import org.jclouds.vcloud.director.v1_5.admin.VCloudDirectorAdminClient;
 import org.jclouds.vcloud.director.v1_5.domain.Link;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
+import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
+import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.RoleReferences;
 import org.jclouds.vcloud.director.v1_5.domain.Session;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
@@ -56,8 +57,6 @@ import org.jclouds.vcloud.director.v1_5.domain.User;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
-import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
-import org.jclouds.vcloud.director.v1_5.domain.Role.DefaultRoles;
 import org.jclouds.vcloud.director.v1_5.domain.network.Network;
 import org.jclouds.vcloud.director.v1_5.domain.network.NetworkConfiguration;
 import org.jclouds.vcloud.director.v1_5.domain.network.VAppNetworkConfiguration;
@@ -104,7 +103,7 @@ import com.google.inject.Guice;
 public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTest<VCloudDirectorContext> {
 
    @Resource
-   protected Logger logger = Logger.CONSOLE;
+   protected Logger logger = Logger.NULL;
 
    protected static final long TASK_TIMEOUT_SECONDS = 100L;
    protected static final long LONG_TASK_TIMEOUT_SECONDS = 300L;
@@ -429,15 +428,12 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
    protected void cleanUpVApp(URI vAppURI) {
       VAppClient vAppClient = context.getApi().getVAppClient();
 
-      VApp vApp;
-      try {
-         vApp = vAppClient.getVApp(vAppURI); // Refresh
-         logger.debug("Deleting VApp %s (%s)", vApp.getName(), vAppURI.getPath());
-      } catch (VCloudDirectorException e) {
-         // Presumably vApp has already been deleted. Ignore.
+      VApp vApp = vAppClient.getVApp(vAppURI); // Refresh
+      if (vApp == null) {
          logger.info("Cannot find VApp at %s", vAppURI.getPath());
-         return;
+         return; // Presumably vApp has already been deleted. Ignore.
       }
+      logger.debug("Deleting VApp %s (%s)", vApp.getName(), vAppURI.getPath());
 
       // Wait for busy tasks to complete (don't care if it's failed or successful)
       // Otherwise, get error on delete "entity is busy completing an operation.
@@ -463,7 +459,9 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
       // Undeploy the VApp if necessary
       if (vApp.isDeployed()) {
          try {
-            UndeployVAppParams params = UndeployVAppParams.builder().build();
+            UndeployVAppParams params = UndeployVAppParams.builder()
+                  .undeployPowerAction(UndeployVAppParams.PowerAction.SHUTDOWN)
+                  .build();
             Task undeployTask = vAppClient.undeploy(vAppURI, params);
             taskDoneEventually(undeployTask);
          } catch (Exception e) {
@@ -478,12 +476,7 @@ public abstract class BaseVCloudDirectorClientLiveTest extends BaseContextLiveTe
          vAppNames.remove(vApp.getName());
          logger.info("Deleted VApp %s", vApp.getName());
       } catch (Exception e) {
-         try {
-            vApp = vAppClient.getVApp(vAppURI); // Refresh
-         } catch (Exception e2) {
-            // Ignore
-         }
-
+         vApp = vAppClient.getVApp(vAppURI); // Refresh
          logger.warn(e, "Deleting VApp %s failed (%s)", vApp.getName(), vAppURI.getPath());
       }
    }
