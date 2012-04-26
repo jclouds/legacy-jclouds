@@ -39,8 +39,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 /**
- * Represents a media.
- * <p/>
+ * Represents removable media, such as a CD-ROM, DVD or Floppy disk.
+ *
  * <pre>
  * &lt;complexType name="Media" /&gt;
  * </pre>
@@ -53,7 +53,7 @@ public class Media extends ResourceEntity {
    public static enum ImageType {
       @XmlEnumValue("iso") ISO("iso"),
       @XmlEnumValue("floppy") FLOPPY("floppy"),
-      UNRECOGNIZED("unrecognized");
+      @XmlEnumValue("") UNRECOGNIZED("unrecognized");
       
       public static final List<ImageType> ALL = ImmutableList.of(ISO, FLOPPY);
 

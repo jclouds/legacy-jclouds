@@ -90,7 +90,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    private String key;
    private String val;
    
-   @AfterClass(alwaysRun = true)
+   @AfterClass(alwaysRun = true, dependsOnMethods = { "cleanUpEnvironment" })
    protected void tidyUp() {
       if (key != null) {
          try {
