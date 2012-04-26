@@ -18,34 +18,24 @@
  */
 package org.jclouds.demo.paas.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.inject.name.Names.bindProperties;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.ws.rs.core.UriBuilder;
 
 import org.cloudfoundry.runtime.env.ApplicationInstanceInfo;
 import org.cloudfoundry.runtime.env.CloudEnvironment;
-import org.jclouds.PropertiesBuilder;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.demo.paas.PlatformServices;
 import org.jclouds.demo.paas.service.scheduler.Scheduler;
 import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
-import org.jclouds.demo.tweetstore.config.util.PropertiesLoader;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * @author Andrew Phillips
@@ -69,27 +59,14 @@ public class PlatformServicesInitializer implements ServletContextListener {
             final ServletContext context) {
         return Guice.createInjector(new ExecutorServiceModule(),
                 new JavaUrlHttpCommandExecutorServiceModule(),
-                new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        // URL connection defaults
-                        Properties toBind = new PropertiesBuilder().build();
-                        toBind.putAll(checkNotNull(new PropertiesLoader(context).get(), "properties"));
-                        toBind.putAll(System.getProperties());
-                        bindProperties(binder(), toBind);
-                        bind(UriBuilder.class).to(UriBuilderImpl.class);
-                    }
-                }).getInstance(HttpCommandExecutorService.class);
+                new HttpClientModule(context))
+                .getInstance(HttpCommandExecutorService.class);
     }
 
     protected static String getBaseUrl(ServletContext context) {
         ApplicationInstanceInfo instanceInfo = new CloudEnvironment().getInstanceInfo();
-        // TODO: use internal address if possible. See http://support.cloudfoundry.com/requests/102117
-//        return "http://" + checkNotNull(instanceInfo.getHost(), "instanceInfo.getHost()") 
-//               + ":" + instanceInfo.getPort() + context.getContextPath();
-        checkState(!instanceInfo.getUris().isEmpty(), "instanceInfo.getUris() is empty");
-        return "http://" + checkNotNull(instanceInfo.getUris().get(0), "instanceInfo.getUris().get(0)") 
-               + context.getContextPath();
+        // using localhost instead of instanceInfo.getHost(). See http://support.cloudfoundry.com/requests/102117
+        return "http://127.0.0.1:" + instanceInfo.getPort() + context.getContextPath();
     }
 
     // TODO: make the number and names of queues configurable

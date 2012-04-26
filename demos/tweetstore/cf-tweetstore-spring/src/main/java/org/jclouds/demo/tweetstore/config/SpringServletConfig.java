@@ -42,8 +42,8 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.demo.paas.PlatformServices;
 import org.jclouds.demo.paas.service.taskqueue.TaskQueue;
 import org.jclouds.demo.tweetstore.config.util.CredentialsCollector;
@@ -85,7 +85,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
 
    private ServletConfig servletConfig;
 
-   private Map<String, BlobStoreContext<?, ?>> providerTypeToBlobStoreMap;
+   private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
    private Twitter twitterClient;
    private String container;
    private TaskQueue queue;
@@ -115,8 +115,8 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : getBlobstoreContexts(props)) {
-          providerTypeToBlobStoreMap.put(hint, BlobStoreContextBuilder
-                  .newBuilder(hint).modules(modules).overrides(props).build());
+          providerTypeToBlobStoreMap.put(hint, ContextBuilder.newBuilder(hint)
+                  .modules(modules).overrides(props).build(BlobStoreContext.class));
       }
 
       // get a queue for submitting store tweet requests and the application's base URL
@@ -212,7 +212,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
    @PreDestroy
    public void destroy() throws Exception {
       LOGGER.trace("About to close contexts.");
-      for (BlobStoreContext<?, ?> context : providerTypeToBlobStoreMap.values()) {
+      for (BlobStoreContext context : providerTypeToBlobStoreMap.values()) {
          context.close();
       }
       LOGGER.trace("Contexts closed.");
