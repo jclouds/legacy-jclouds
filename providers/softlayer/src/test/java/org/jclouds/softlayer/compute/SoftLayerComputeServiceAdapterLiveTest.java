@@ -29,7 +29,6 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.softlayer.compute.options.SoftLayerTemplateOptions;
 import org.jclouds.softlayer.compute.strategy.SoftLayerComputeServiceAdapter;
 import org.jclouds.softlayer.domain.ProductItem;
@@ -41,6 +40,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.common.net.InetAddresses;
 
 @Test(groups = "live", singleThreaded = true, testName = "SoftLayerComputeServiceAdapterLiveTest")
@@ -82,7 +82,7 @@ public class SoftLayerComputeServiceAdapterLiveTest extends BaseSoftLayerClientL
    }
 
    protected void doConnectViaSsh(VirtualGuest guest, LoginCredentials creds) {
-      SshClient ssh = view.utils().sshFactory().create(new IPSocket(guest.getPrimaryIpAddress(), 22), creds);
+      SshClient ssh = view.utils().sshFactory().create(HostAndPort.fromParts(guest.getPrimaryIpAddress(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

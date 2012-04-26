@@ -39,7 +39,6 @@ import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
@@ -54,6 +53,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.net.HostAndPort;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
@@ -80,13 +80,13 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    protected void buildSocketTester() {
       SocketOpen socketOpen = createMock(SocketOpen.class);
 
-      expect(socketOpen.apply(new IPSocket("144.175.1.1", 22))).andReturn(true).times(5);
+      expect(socketOpen.apply(HostAndPort.fromParts("144.175.1.1", 22))).andReturn(true).times(5);
       // restart of jboss
-      expect(socketOpen.apply(new IPSocket("144.175.1.1", 8080))).andReturn(true).times(2);
+      expect(socketOpen.apply(HostAndPort.fromParts("144.175.1.1", 8080))).andReturn(true).times(2);
 
       replay(socketOpen);
 
-      preciseSocketTester = socketTester = new RetryablePredicate<IPSocket>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
+      preciseSocketTester = socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 1, 1, TimeUnit.MILLISECONDS);
    }
 
    @Override
@@ -140,26 +140,26 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client5 = createMock(SshClient.class);
 
             expect(
-                  factory.create(new IPSocket("144.175.1.1", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.1", 22),
                         LoginCredentials.builder().user("root").password("password1").build())).andReturn(client1);
             expect(
-                  factory.create(new IPSocket("144.175.1.1", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.1", 22),
                         LoginCredentials.builder().user("web").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client1New)
                   .times(10);
             runScriptAndService(client1, client1New);
 
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2)
                   .times(4);
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("root").password("password2").build())).andReturn(client2New);
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("foo").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())).andReturn(client2Foo);
             expect(
-                  factory.create(new IPSocket("144.175.1.2", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.2", 22),
                         LoginCredentials.builder().user("root").password("romeo").build())).andThrow(
                   new AuthorizationException("Auth fail", null));
 
@@ -200,15 +200,15 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client2Foo.disconnect();
 
             expect(
-                  factory.create(new IPSocket("144.175.1.3", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.3", 22),
                         LoginCredentials.builder().user("root").password("password3").build())).andReturn(client3)
                   .times(2);
             expect(
-                  factory.create(new IPSocket("144.175.1.4", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.4", 22),
                         LoginCredentials.builder().user("root").password("password4").build())).andReturn(client4)
                   .times(2);
             expect(
-                  factory.create(new IPSocket("144.175.1.5", 22),
+                  factory.create(HostAndPort.fromParts("144.175.1.5", 22),
                         LoginCredentials.builder().user("root").password("password5").build())).andReturn(client5)
                   .times(2);
 
@@ -217,23 +217,23 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             runScriptAndInstallSsh(client5, "bootstrap", 5);
 
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.1", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.1", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client1);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.2", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.2", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client2);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.3", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.3", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client3);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.4", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.4", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client4);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.5", 22)),
+                  factory.create(eq(HostAndPort.fromParts("144.175.1.5", 22)),
                         eq(LoginCredentials.builder().user("defaultAdminUsername").privateKey(Pems.PRIVATE_PKCS1_MARKER).build())))
                   .andReturn(client5);
 

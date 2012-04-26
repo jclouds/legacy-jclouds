@@ -49,7 +49,6 @@ import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
@@ -63,6 +62,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 
 /**
@@ -79,7 +79,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
 
    protected CloudServersClient client;
    protected SshClient.Factory sshFactory;
-   protected Predicate<IPSocket> socketTester;
+   protected Predicate<HostAndPort> socketTester;
 
    @BeforeGroups(groups = { "integration", "live" })
    @Override
@@ -89,7 +89,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
       client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 120, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketOpen); // add logger
    }
 
@@ -374,7 +374,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
    }
 
    private void doCheckPass(Server newDetails, String pass) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
+      HostAndPort socket = HostAndPort.fromParts(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(pass).build());
@@ -390,7 +390,7 @@ public class CloudServersClientLiveTest extends BaseComputeServiceContextLiveTes
    }
 
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
+      HostAndPort socket = HostAndPort.fromParts(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, LoginCredentials.builder().user("root").password(pass).build());
       try {

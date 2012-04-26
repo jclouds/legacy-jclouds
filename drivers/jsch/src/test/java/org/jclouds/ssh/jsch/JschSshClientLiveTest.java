@@ -36,7 +36,6 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Strings2;
@@ -46,6 +45,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 import com.google.common.io.Closeables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -136,10 +136,10 @@ public class JschSshClientLiveTest {
          SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
          SshClient connection;
          if (Strings.emptyToNull(sshKeyFile) != null) {
-            connection = factory.create(new IPSocket(sshHost, port), LoginCredentials.builder().user(sshUser)
+            connection = factory.create(HostAndPort.fromParts(sshHost, port), LoginCredentials.builder().user(sshUser)
                   .privateKey(Strings2.toStringAndClose(new FileInputStream(sshKeyFile))).build());
          } else {
-            connection = factory.create(new IPSocket(sshHost, port),
+            connection = factory.create(HostAndPort.fromParts(sshHost, port),
                   LoginCredentials.builder().user(sshUser).password(sshPass).build());
          }
          connection.connect();

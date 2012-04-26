@@ -50,10 +50,10 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -84,7 +84,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
@@ -105,6 +104,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Module;
 
@@ -117,8 +117,8 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
    protected String group;
 
-   protected Predicate<IPSocket> socketTester;
-   protected Predicate<IPSocket> preciseSocketTester;
+   protected Predicate<HostAndPort> socketTester;
+   protected Predicate<HostAndPort> preciseSocketTester;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeService client;
 
@@ -151,12 +151,12 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
 
    protected void buildSocketTester() {
       SocketOpen socketOpen = view.utils().injector().getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(socketOpen, 60, 1, TimeUnit.SECONDS);
       // wait a maximum of 60 seconds for port 8080 to open.
       long maxWait = TimeUnit.SECONDS.toMillis(60);
       long interval = 50;
       // get more precise than default socket tester
-      preciseSocketTester = new RetryablePredicate<IPSocket>(socketOpen, maxWait, interval, interval,
+      preciseSocketTester = new RetryablePredicate<HostAndPort>(socketOpen, maxWait, interval, interval,
             TimeUnit.MILLISECONDS);
    }
    @Override
@@ -579,7 +579,7 @@ public abstract class BaseComputeServiceLiveTest extends BaseComputeServiceConte
       stats.backgroundProcessMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);
       watch.reset().start();
 
-      IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 8080);
+      HostAndPort socket = HostAndPort.fromParts(Iterables.get(node.getPublicAddresses(), 0), 8080);
       assert preciseSocketTester.apply(socket) : String.format("failed to open socket %s on node %s:%n%s%s", socket,
             node, init(node, processName, "stdout"), init(node, processName, "stderr"));
       stats.socketOpenMilliseconds = watch.elapsedTime(TimeUnit.MILLISECONDS);

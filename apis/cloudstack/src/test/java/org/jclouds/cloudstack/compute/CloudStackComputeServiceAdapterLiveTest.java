@@ -53,14 +53,13 @@ import org.jclouds.cloudstack.suppliers.GetCurrentUser;
 import org.jclouds.cloudstack.suppliers.NetworksForCurrentUser;
 import org.jclouds.cloudstack.suppliers.ZoneIdToZoneSupplier;
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.ComputeServiceAdapter.NodeAndInitialCredentials;
+import org.jclouds.compute.ComputeTestUtils;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.functions.DefaultCredentialsFromImageOrOverridingCredentials;
 import org.jclouds.compute.strategy.PrioritizeCredentialsFromTemplate;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.annotations.Identity;
 import org.testng.annotations.AfterGroups;
@@ -74,6 +73,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.net.HostAndPort;
 import com.google.common.net.InetAddresses;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -180,7 +180,7 @@ public class CloudStackComputeServiceAdapterLiveTest extends BaseCloudStackClien
       loginCredentials = prioritizeCredentialsFromTemplate.apply(template, vm.getCredentials());
       
       assert InetAddresses.isInetAddress(address) : vm;
-      IPSocket socket = new IPSocket(address, 22);
+      HostAndPort socket = HostAndPort.fromParts(address, 22);
       checkSSH(socket);
    }
 

@@ -34,7 +34,6 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.virtualbox.domain.BridgedIf;
 import org.jclouds.virtualbox.statements.GetIPAddressFromMAC;
@@ -48,6 +47,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Inject;
 
 @Singleton
@@ -114,7 +114,7 @@ public class IMachineToSshClient implements Function<IMachine, SshClient> {
 		
 		checkNotNull(clientIpAddress, "clientIpAddress");
 		client = sshClientFactory.create(
-				new IPSocket(clientIpAddress, Integer.parseInt(sshPort)),
+				HostAndPort.fromParts(clientIpAddress, Integer.parseInt(sshPort)),
 				loginCredentials);
 		checkNotNull(client);
 		return client;

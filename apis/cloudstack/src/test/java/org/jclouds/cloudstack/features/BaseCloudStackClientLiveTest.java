@@ -52,7 +52,6 @@ import org.jclouds.cloudstack.strategy.BlockUntilJobCompletesAndReturnResult;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseGenericComputeServiceContextLiveTest;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -65,6 +64,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -156,7 +156,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    protected CloudStackClient adminClient;
    protected User user;
 
-   protected Predicate<IPSocket> socketTester;
+   protected Predicate<HostAndPort> socketTester;
    protected RetryablePredicate<Long> jobComplete;
    protected RetryablePredicate<Long> adminJobComplete;
    protected RetryablePredicate<VirtualMachine> virtualMachineRunning;
@@ -181,7 +181,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
    protected CloudStackGlobalClient globalAdminClient;
    protected User globalAdminUser;
    
-   protected void checkSSH(IPSocket socket) {
+   protected void checkSSH(HostAndPort socket) {
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, loginCredentials);
       try {
@@ -224,7 +224,7 @@ public class BaseCloudStackClientLiveTest extends BaseGenericComputeServiceConte
 
       injector = Guice.createInjector(setupModules());
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180, 1, 1, TimeUnit.SECONDS);
       injector.injectMembers(socketTester);
       jobComplete = new RetryablePredicate<Long>(new JobComplete(client), 1200, 1, 5, TimeUnit.SECONDS);
       injector.injectMembers(jobComplete);

@@ -32,9 +32,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -43,14 +43,13 @@ import org.jclouds.cim.CIMPredicates;
 import org.jclouds.cim.ResourceAllocationSettingData;
 import org.jclouds.cim.ResourceAllocationSettingData.ResourceType;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.SshClient.Factory;
+import org.jclouds.ssh.SshException;
 import org.jclouds.trmk.vcloud_0_8.domain.Catalog;
 import org.jclouds.trmk.vcloud_0_8.domain.CatalogItem;
 import org.jclouds.trmk.vcloud_0_8.domain.CustomizationParameters;
@@ -80,6 +79,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 
 @Test(groups = "live", singleThreaded = true)
@@ -93,7 +93,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
    protected InternetService is;
    protected Node node;
    protected VApp vApp;
-   protected RetryablePredicate<IPSocket> socketTester;
+   protected RetryablePredicate<HostAndPort> socketTester;
    protected RetryablePredicate<URI> successTester;
    protected Injector injector;
 
@@ -429,7 +429,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
    }
 
    protected void doCheckPass(String address) throws IOException {
-      IPSocket socket = new IPSocket(address, 22);
+      HostAndPort socket = HostAndPort.fromParts(address, 22);
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), socket);
       assert socketTester.apply(socket);
@@ -448,7 +448,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       }
    }
 
-   protected abstract SshClient getConnectionFor(IPSocket socket);
+   protected abstract SshClient getConnectionFor(HostAndPort socket);
 
    @AfterGroups(groups = { "live" })
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
@@ -485,7 +485,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       injector = view.utils().injector();
 
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      socketTester = new RetryablePredicate<IPSocket>(injector.getInstance(SocketOpen.class), 300, 10, TimeUnit.SECONDS);// make
+      socketTester = new RetryablePredicate<HostAndPort>(injector.getInstance(SocketOpen.class), 300, 10, TimeUnit.SECONDS);// make
       // it
       // longer
       // then
