@@ -67,6 +67,8 @@ import org.jclouds.vcloud.director.v1_5.features.VAppTemplateAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
+import org.jclouds.vcloud.director.v1_5.features.VmAsyncClient;
+import org.jclouds.vcloud.director.v1_5.features.VmClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogAsyncClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminCatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.admin.AdminNetworkAsyncClient;
@@ -122,6 +124,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
          .put(VAppClient.class, VAppAsyncClient.class)
          .put(VAppTemplateClient.class, VAppTemplateAsyncClient.class)
          .put(VdcClient.class, VdcAsyncClient.class)
+         .put(VmClient.class, VmAsyncClient.class)
          .build();
    
    public static final Map<Class<?>, Class<?>> ADMIN_DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
@@ -166,6 +169,7 @@ public class VCloudDirectorRestClientModule extends RestClientModule<VCloudDirec
       bindClientAndAsyncClient(binder(), SessionClient.class, SessionAsyncClient.class);
       bindClientAndAsyncClient(binder(), TaskClient.class, TaskAsyncClient.class);
       bindClientAndAsyncClient(binder(), VAppClient.class, VAppAsyncClient.class);
+      bindClientAndAsyncClient(binder(), VmClient.class, VmAsyncClient.class);
       
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(InvalidateSessionAndRetryOn401AndLogoutOnClose.class);
       
