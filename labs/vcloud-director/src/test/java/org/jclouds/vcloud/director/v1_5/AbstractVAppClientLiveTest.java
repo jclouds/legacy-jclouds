@@ -37,23 +37,25 @@ import org.jclouds.dmtf.cim.CimBoolean;
 import org.jclouds.dmtf.cim.CimString;
 import org.jclouds.dmtf.cim.CimUnsignedInt;
 import org.jclouds.dmtf.cim.CimUnsignedLong;
+import org.jclouds.vcloud.director.v1_5.domain.AbstractVAppType;
 import org.jclouds.vcloud.director.v1_5.domain.RasdItemsList;
 import org.jclouds.vcloud.director.v1_5.domain.Reference;
 import org.jclouds.vcloud.director.v1_5.domain.ResourceEntity.Status;
-import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
-import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
-import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.domain.Task;
 import org.jclouds.vcloud.director.v1_5.domain.VApp;
 import org.jclouds.vcloud.director.v1_5.domain.VAppTemplate;
 import org.jclouds.vcloud.director.v1_5.domain.Vdc;
 import org.jclouds.vcloud.director.v1_5.domain.Vm;
+import org.jclouds.vcloud.director.v1_5.domain.dmtf.RasdItem;
+import org.jclouds.vcloud.director.v1_5.domain.section.GuestCustomizationSection;
+import org.jclouds.vcloud.director.v1_5.domain.section.NetworkConnectionSection;
 import org.jclouds.vcloud.director.v1_5.features.CatalogClient;
 import org.jclouds.vcloud.director.v1_5.features.MetadataClient;
 import org.jclouds.vcloud.director.v1_5.features.QueryClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
+import org.jclouds.vcloud.director.v1_5.features.VmClient;
 import org.jclouds.vcloud.director.v1_5.internal.BaseVCloudDirectorClientLiveTest;
 import org.jclouds.vcloud.director.v1_5.predicates.ReferencePredicates;
 import org.jclouds.xml.internal.JAXBParser;
@@ -76,9 +78,10 @@ import com.google.common.collect.Iterables;
  */
 public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClientLiveTest {
 
-   public static final String VAPP = "vApp";
-   public static final String VAPP_TEMPLATE = "vAppTemplate";
-   public static final String VDC = "vdc";
+   public static final String VAPP = "VApp";
+   public static final String VAPP_TEMPLATE = "VAppTemplate";
+   public static final String VDC = "Vdc";
+   public static final String VM = "Vm";
 
    /*
     * Convenience reference to API clients.
@@ -89,6 +92,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    protected VAppClient vAppClient;
    protected VAppTemplateClient vAppTemplateClient;
    protected VdcClient vdcClient;
+   protected VmClient vmClient;
    protected MetadataClient.Writeable metadataClient;
 
    /*
@@ -97,9 +101,10 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
 
    protected Vdc vdc;
    protected Vm vm;
-   protected URI vAppURI;
    protected VApp vApp;
    protected VAppTemplate vAppTemplate;
+   protected URI vmURI;
+   protected URI vAppURI;
 
    /**
     * Retrieves the required clients from the REST API context
@@ -116,6 +121,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       vAppClient = context.getApi().getVAppClient();
       vAppTemplateClient = context.getApi().getVAppTemplateClient();
       vdcClient = context.getApi().getVdcClient();
+      vmClient = context.getApi().getVmClient();
 
       setupEnvironment();
    }
@@ -148,6 +154,7 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
       // Get the Vm
       List<Vm> vms = vApp.getChildren().getVms();
       vm = Iterables.getOnlyElement(vms);
+      vmURI = vm.getHref();
       assertFalse(vms.isEmpty(), "The VApp must have a Vm");
    }
 
@@ -237,84 +244,116 @@ public abstract class AbstractVAppClientLiveTest extends BaseVCloudDirectorClien
    }
 
    /**
-    * Power on a {@link VApp}s {@link Vm}s.
-    * 
-    * @see #powerOn(URI)
+    * Power on a {@link VApp}.
     */
-   protected VApp powerOn(final VApp testVApp) {
-      return powerOn(testVApp.getHref());
-   }
-
-   /**
-    * Power on a {@link VApp}s {@link Vm}s.
-    */
-   protected VApp powerOn(final URI testVAppURI) {
-      VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = vm.getStatus();
+   protected VApp powerOnVApp(final URI testVAppURI) {
+      VApp test = vAppClient.getVApp(testVAppURI);
+      Status status = test.getStatus();
       if (status != Status.POWERED_ON) {
          Task powerOn = vAppClient.powerOn(vm.getHref());
          assertTaskSucceedsLong(powerOn);
       }
-      assertVAppStatus(testVAppURI, Status.POWERED_ON);
-      return testVApp;
+      test = vAppClient.getVApp(testVAppURI);
+      assertStatus(VAPP, test, Status.POWERED_ON);
+      return test;
    }
 
    /**
-    * Power off a {@link VApp}s {@link Vm}s.
-    * 
-    * @see #powerOff(URI)
+    * Power on a {@link Vm}.
     */
-   protected VApp powerOff(final VApp testVApp) {
-      return powerOff(testVApp.getHref());
+   protected Vm powerOnVm(final URI testVmURI) {
+      Vm test = vmClient.getVm(testVmURI);
+      Status status = test.getStatus();
+      if (status != Status.POWERED_ON) {
+         Task powerOn = vmClient.powerOn(vm.getHref());
+         assertTaskSucceedsLong(powerOn);
+      }
+      test = vmClient.getVm(testVmURI);
+      assertStatus(VM, test, Status.POWERED_ON);
+      return test;
    }
 
    /**
-    * Power off a {@link VApp}s {@link Vm}s.
+    * Power off a {@link VApp}.
     */
-   protected VApp powerOff(final URI testVAppURI) {
-      VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = vm.getStatus();
+   protected VApp powerOffVApp(final URI testVAppURI) {
+      VApp test = vAppClient.getVApp(testVAppURI);
+      Status status = test.getStatus();
       if (status != Status.POWERED_OFF) {
          Task powerOff = vAppClient.powerOff(vm.getHref());
          assertTaskSucceedsLong(powerOff);
       }
-      assertVAppStatus(testVAppURI, Status.POWERED_OFF);
-      return testVApp;
+      test = vAppClient.getVApp(testVAppURI);
+      assertStatus(VAPP, test, Status.POWERED_OFF);
+      return test;
    }
 
    /**
-    * Suspend a {@link VApp}s {@link Vm}s.
-    * 
-    * @see #suspend(URI)
+    * Power off a {@link Vm}.
     */
-   protected VApp suspend(final VApp testVApp) {
-      return powerOff(testVApp.getHref());
+   protected Vm powerOffVm(final URI testVmURI) {
+      Vm test = vmClient.getVm(testVmURI);
+      Status status = test.getStatus();
+      if (status != Status.POWERED_OFF) {
+         Task powerOff = vmClient.powerOff(vm.getHref());
+         assertTaskSucceedsLong(powerOff);
+      }
+      test = vmClient.getVm(testVmURI);
+      assertStatus(VM, test, Status.POWERED_OFF);
+      return test;
    }
 
    /**
-    * Suspend a {@link VApp}s {@link Vm}s.
+    * Suspend a {@link VApp}.
     */
-   protected VApp suspend(final URI testVAppURI) {
-      VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      Status status = vm.getStatus();
+   protected VApp suspendVApp(final URI testVAppURI) {
+      VApp test = vAppClient.getVApp(testVAppURI);
+      Status status = test.getStatus();
       if (status != Status.SUSPENDED) {
          Task suspend = vAppClient.suspend(vm.getHref());
          assertTaskSucceedsLong(suspend);
       }
-      assertVAppStatus(testVAppURI, Status.SUSPENDED);
-      return testVApp;
+      test = vAppClient.getVApp(testVAppURI);
+      assertStatus(VAPP, test, Status.SUSPENDED);
+      return test;
    }
 
    /**
-    * Check the {@link VApp}s {@link Vm}s current status.
+    * Suspend a {@link Vm}.
+    */
+   protected Vm suspendVm(final URI testVmURI) {
+      Vm test = vmClient.getVm(testVmURI);
+      Status status = test.getStatus();
+      if (status != Status.SUSPENDED) {
+         Task suspend = vmClient.suspend(vm.getHref());
+         assertTaskSucceedsLong(suspend);
+      }
+      test = vmClient.getVm(testVmURI);
+      assertStatus(VM, test, Status.SUSPENDED);
+      return test;
+   }
+
+   /**
+    * Check the {@link VApp}s current status.
     */
    protected void assertVAppStatus(final URI testVAppURI, final Status status) {
       VApp testVApp = vAppClient.getVApp(testVAppURI);
-      Vm vm = Iterables.getOnlyElement(testVApp.getChildren().getVms());
-      assertEquals(vm.getStatus(), status, String.format(OBJ_FIELD_EQ, VAPP, "status", status.toString(), vm.getStatus().toString()));
+      assertStatus(VAPP, testVApp, status);
+   }
+
+   /**
+    * Check the {@link Vm}s current status.
+    */
+   protected void assertVmStatus(final URI testVmURI, final Status status) {
+      Vm testVm = vmClient.getVm(testVmURI);
+      assertStatus(VM, testVm, status);
+   }
+
+   /**
+    * Check a {@link VApp} or {@link Vm}s status.
+    */
+   protected static void assertStatus(final String type, final AbstractVAppType testVApp, final Status status) {
+      assertEquals(testVApp.getStatus(), status, String.format(OBJ_FIELD_EQ, type, "status", status.toString(), testVApp.getStatus().toString()));
    }
 
    /**
