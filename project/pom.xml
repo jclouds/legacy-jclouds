@@ -284,6 +284,78 @@
         </testResources>
         <plugins>
             <plugin>
+                <groupId>com.ning.maven.plugins</groupId>
+                <artifactId>maven-duplicate-finder-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <exceptions>
+                        <exception>
+                            <!-- CloudSigma bundles conflict between api and providers-->
+                            <conflictingDependencies>
+                                <dependency>
+                                    <groupId>org.jclouds.api</groupId>
+                                    <artifactId>cloudsigma</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.jclouds.provider</groupId>
+                                    <artifactId>cloudsigma-lvs</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>org.jclouds.provider</groupId>
+                                    <artifactId>cloudsigma-zrh</artifactId>
+                                    <version>${project.version}</version>
+                                </dependency>
+                            </conflictingDependencies>
+                            <packages>
+                                <package>org.jclouds.cloudsigma</package>
+                            </packages>
+                        </exception>
+                        <exception>
+                            <!-- Google App Engine Deps, some google classes are duplicated between packages -->
+                            <conflictingDependencies>
+                                <dependency>
+                                    <groupId>com.google.appengine</groupId>
+                                    <artifactId>appengine-api-1.0-sdk</artifactId>
+                                    <version>1.4.3</version>
+                                </dependency>
+                                <dependency>
+                                    <groupId>com.google.appengine</groupId>
+                                    <artifactId>appengine-testing</artifactId>
+                                    <version>1.4.3</version>
+                                    <scope>test</scope>
+                                </dependency>
+                            </conflictingDependencies>
+                            <packages>
+                                <package>com.google</package>
+                            </packages>
+                        </exception>
+                    </exceptions>
+                    <ignoredResources>
+                        <!-- For all the jetty packages -->
+                        <ignoredResource>about\.html</ignoredResource>
+                        <!-- There are several situations where a test-jar and another test-jar or a bundle conflict on these artifacts -->
+                        <ignoredResource>log4j.xml</ignoredResource>
+                        <ignoredResource>os.xml</ignoredResource>
+                        <ignoredResource>virtualhardwaresection.xml</ignoredResource>
+                        <ignoredResource>logback.xml</ignoredResource>
+                        <ignoredResource>amzn_images.xml</ignoredResource>
+                        <ignoredResource>test.jks</ignoredResource>
+                        <ignoredResource>CreateInternetService-options-test.xml</ignoredResource>
+                    </ignoredResources>
+                    <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.theoryinpractise</groupId>
                 <artifactId>clojure-maven-plugin</artifactId>
                 <version>1.3.9</version>
