@@ -36,7 +36,6 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
-import org.jclouds.net.IPSocket;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.testng.annotations.Test;
 import org.virtualbox_4_1.VirtualBoxManager;
@@ -44,6 +43,7 @@ import org.virtualbox_4_1.VirtualBoxManager;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Suppliers;
+import com.google.common.net.HostAndPort;
 
 @Test(groups = "live", singleThreaded = true, testName = "StartVBoxIfNotAlreadyRunningLiveTest")
 public class StartVBoxIfNotAlreadyRunningLiveTest {
@@ -59,7 +59,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       String identity = "adminstrator";
       String credential = "12345";
       expect(client.seconds(3)).andReturn(client);
-      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(true).anyTimes();
+      expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(true).anyTimes();
       manager.connect(provider.toASCIIString(), "", "");
       expectLastCall().anyTimes();
 
@@ -87,7 +87,7 @@ public class StartVBoxIfNotAlreadyRunningLiveTest {
       String credential = "12345";
       
       expect(client.seconds(3)).andReturn(client);
-      expect(client.apply(new IPSocket(provider.getHost(), provider.getPort()))).andReturn(false).once().andReturn(true).once();
+      expect(client.apply(HostAndPort.fromParts(provider.getHost(), provider.getPort()))).andReturn(false).once().andReturn(true).once();
       expect(
                runScriptOnNodeFactory.create(host, Statements.exec("VBoxManage setproperty websrvauthlibrary null"),
                         runAsRoot(false).wrapInInitScript(false))).andReturn(runScriptOnNode);

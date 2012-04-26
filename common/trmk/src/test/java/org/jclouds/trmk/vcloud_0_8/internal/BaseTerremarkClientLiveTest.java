@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -33,6 +32,7 @@ import org.jclouds.trmk.vcloud_0_8.TerremarkVCloudClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.net.HostAndPort;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -51,7 +51,7 @@ public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClien
        provider = "trmk-ecloud";
    }
 
-   protected RetryablePredicate<IPSocket> socketTester;
+   protected RetryablePredicate<HostAndPort> socketTester;
    protected Factory sshFactory;
    protected S connection;
 
@@ -61,7 +61,7 @@ public abstract class BaseTerremarkClientLiveTest<S extends TerremarkVCloudClien
    public void setupContext() {
       super.setupContext();
       Injector injector = view.utils().injector();
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
       sshFactory = injector.getInstance(Factory.class);
       connection = (S) RestContext.class.cast(view.unwrap()).getApi();
    }

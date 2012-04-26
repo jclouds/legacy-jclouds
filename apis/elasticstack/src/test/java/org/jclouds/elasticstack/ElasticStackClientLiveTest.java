@@ -43,7 +43,6 @@ import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.predicates.DriveClaimed;
 import org.jclouds.elasticstack.util.Servers;
 import org.jclouds.io.Payloads;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -59,6 +58,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HostAndPort;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 
@@ -81,7 +81,7 @@ public class ElasticStackClientLiveTest
    protected String vncPassword = "Il0veVNC";
    protected ElasticStackClient client;
    protected RestContext<ElasticStackClient, ElasticStackAsyncClient> cloudStackContext;
-   protected Predicate<IPSocket> socketTester;
+   protected Predicate<HostAndPort> socketTester;
    protected Predicate<DriveInfo> driveNotClaimed;
 
    @BeforeGroups(groups = { "integration", "live" })
@@ -93,7 +93,7 @@ public class ElasticStackClientLiveTest
       client = cloudStackContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
                1, TimeUnit.SECONDS);
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
                TimeUnit.SECONDS);
       
       if (Strings.emptyToNull(imageId) == null) {
@@ -229,10 +229,10 @@ public class ElasticStackClientLiveTest
 
    @Test(dependsOnMethods = "testCreateAndStartServer")
    public void testConnectivity() throws Exception {
-      IPSocket vncsocket = new IPSocket(server.getVnc().getIp(), 5900);
+      HostAndPort vncsocket = HostAndPort.fromParts(server.getVnc().getIp(), 5900);
       Logger.getAnonymousLogger().info("awaiting vnc: " + vncsocket);
       assert socketTester.apply(vncsocket) : server;
-      IPSocket sshsocket = new IPSocket(server.getNics().get(0).getDhcp(), 22);
+      HostAndPort sshsocket = HostAndPort.fromParts(server.getNics().get(0).getDhcp(), 22);
       Logger.getAnonymousLogger().info("awaiting ssh: " + sshsocket);
       assert socketTester.apply(sshsocket) : server;
       doConnectViaSsh(server, getSshCredentials(server));
@@ -290,7 +290,7 @@ public class ElasticStackClientLiveTest
 
    protected void doConnectViaSsh(Server server, LoginCredentials creds) throws IOException {
       SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class).create(
-               new IPSocket(server.getVnc().getIp(), 22), creds);
+               HostAndPort.fromParts(server.getVnc().getIp(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

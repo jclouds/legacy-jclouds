@@ -46,7 +46,6 @@ import org.jclouds.cloudsigma.util.Servers;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.internal.BaseComputeServiceContextLiveTest;
 import org.jclouds.domain.LoginCredentials;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -61,6 +60,7 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.net.HostAndPort;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 
@@ -81,7 +81,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    protected String vncPassword = "Il0veVNC";
    protected CloudSigmaClient client;
    protected RestContext<CloudSigmaClient, CloudSigmaAsyncClient> cloudSigmaContext;
-   protected Predicate<IPSocket> socketTester;
+   protected Predicate<HostAndPort> socketTester;
 
    protected Predicate<DriveInfo> driveNotClaimed;
    
@@ -94,7 +94,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
       client = cloudSigmaContext.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
             1, TimeUnit.SECONDS);
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
+      socketTester = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
             TimeUnit.SECONDS);
 
       if (Strings.emptyToNull(imageId) == null) {
@@ -329,9 +329,9 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
    @Test(dependsOnMethods = "testCreateAndStartServer")
    public void testConnectivity() throws Exception {
       Logger.getAnonymousLogger().info("awaiting vnc");
-      assert socketTester.apply(new IPSocket(server.getVnc().getIp(), 5900)) : server;
+      assert socketTester.apply(HostAndPort.fromParts(server.getVnc().getIp(), 5900)) : server;
       Logger.getAnonymousLogger().info("awaiting ssh");
-      assert socketTester.apply(new IPSocket(server.getNics().get(0).getDhcp(), 22)) : server;
+      assert socketTester.apply(HostAndPort.fromParts(server.getNics().get(0).getDhcp(), 22)) : server;
       doConnectViaSsh(server, getSshCredentials(server));
    }
 
@@ -389,7 +389,7 @@ public class CloudSigmaClientLiveTest extends BaseComputeServiceContextLiveTest 
 
    protected void doConnectViaSsh(Server server, LoginCredentials creds) throws IOException {
       SshClient ssh = Guice.createInjector(new SshjSshClientModule()).getInstance(SshClient.Factory.class)
-            .create(new IPSocket(server.getVnc().getIp(), 22), creds);
+            .create(HostAndPort.fromParts(server.getVnc().getIp(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

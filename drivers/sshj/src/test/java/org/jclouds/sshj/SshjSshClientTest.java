@@ -42,7 +42,6 @@ import org.jclouds.domain.LoginCredentials;
 import org.jclouds.logging.BufferLogger;
 import org.jclouds.logging.BufferLogger.Record;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
-import org.jclouds.net.IPSocket;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.sshj.config.SshjSshClientModule;
@@ -50,6 +49,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.net.HostAndPort;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -83,7 +83,7 @@ public class SshjSshClientTest {
 
       }, new SLF4JLoggingModule());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      SshjSshClient ssh = SshjSshClient.class.cast(factory.create(new IPSocket("localhost", 22), LoginCredentials
+      SshjSshClient ssh = SshjSshClient.class.cast(factory.create(HostAndPort.fromParts("localhost", 22), LoginCredentials
             .builder().user("username").password("password").build()));
       return ssh;
    }

@@ -20,7 +20,7 @@ package org.jclouds.predicates;
 
 import javax.inject.Singleton;
 
-import org.jclouds.net.IPSocket;
+import com.google.common.net.HostAndPort;
 
 /**
  * 
@@ -31,7 +31,7 @@ import org.jclouds.net.IPSocket;
 public class SocketOpenUnsupported implements SocketOpen {
 
    @Override
-   public boolean apply(IPSocket socketA) {
+   public boolean apply(HostAndPort socketA) {
       throw new UnsupportedOperationException("socket testing not configured");
    }
 

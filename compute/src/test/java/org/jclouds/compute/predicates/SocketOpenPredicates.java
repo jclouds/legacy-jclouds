@@ -18,8 +18,9 @@
  */
 package org.jclouds.compute.predicates;
 
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.SocketOpen;
+
+import com.google.common.net.HostAndPort;
 
 
 /**
@@ -28,11 +29,11 @@ import org.jclouds.predicates.SocketOpen;
 public class SocketOpenPredicates {
 
     public static final SocketOpen alwaysSucceed = new SocketOpen() {
-        @Override public boolean apply(IPSocket socket) { return true; }
+        @Override public boolean apply(HostAndPort socket) { return true; }
     };
 
     public static final SocketOpen alwaysFail = new SocketOpen() {
-        @Override public boolean apply(IPSocket socket) { return false; }
+        @Override public boolean apply(HostAndPort socket) { return false; }
     };
 
 }

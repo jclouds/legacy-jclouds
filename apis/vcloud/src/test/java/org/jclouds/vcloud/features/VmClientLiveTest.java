@@ -28,7 +28,6 @@ import static org.testng.Assert.assertNotNull;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.net.IPSocket;
 import org.jclouds.vcloud.VCloudApiMetadata;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
@@ -41,6 +40,7 @@ import org.jclouds.vcloud.internal.BaseVCloudClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 
 /**
  * This tests that we can use guest customization as an alternative to bootstrapping with ssh. There
@@ -157,8 +157,8 @@ public class VmClientLiveTest extends BaseVCloudClientLiveTest {
       assertEquals(apiOutput, script.replace("\n", ""));
    }
 
-   protected IPSocket getSocket(NodeMetadata node) {
-      return new IPSocket(get(node.getPublicAddresses(), 0), 22);
+   protected HostAndPort getSocket(NodeMetadata node) {
+      return HostAndPort.fromParts(get(node.getPublicAddresses(), 0), 22);
    }
 
 }

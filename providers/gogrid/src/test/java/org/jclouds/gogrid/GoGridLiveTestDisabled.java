@@ -53,7 +53,6 @@ import org.jclouds.gogrid.options.GetImageListOptions;
 import org.jclouds.gogrid.predicates.LoadBalancerLatestJobCompleted;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -66,6 +65,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.net.HostAndPort;
 
 /**
  * End to end live test for GoGrid
@@ -341,9 +341,9 @@ public class GoGridLiveTestDisabled extends BaseComputeServiceContextLiveTest {
       LoginCredentials instanceCredentials = LoginCredentials.fromCredentials(credsMap.get(createdServer.getName()));
       assertNotNull(instanceCredentials);
 
-      IPSocket socket = new IPSocket(createdServer.getIp().getIp(), 22);
+      HostAndPort socket = HostAndPort.fromParts(createdServer.getIp().getIp(), 22);
 
-      RetryablePredicate<IPSocket> socketOpen = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180,
+      RetryablePredicate<HostAndPort> socketOpen = new RetryablePredicate<HostAndPort>(new InetSocketAddressConnect(), 180,
                5, TimeUnit.SECONDS);
 
       socketOpen.apply(socket);

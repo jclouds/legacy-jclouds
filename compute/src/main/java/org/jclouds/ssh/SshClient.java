@@ -23,7 +23,8 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.io.Payload;
-import org.jclouds.net.IPSocket;
+
+import com.google.common.net.HostAndPort;
 
 /**
  * @author Adrian Cole
@@ -35,12 +36,12 @@ public interface SshClient {
       /**
        * To be removed in jclouds 1.5.0
        * 
-       * @see #create(IPSocket, LoginCredentials)
+       * @see #create(com.google.common.net.HostAndPort, LoginCredentials)
        */
       @Deprecated
-      SshClient create(IPSocket socket, Credentials credentials);
+      SshClient create(HostAndPort socket, Credentials credentials);
 
-      SshClient create(IPSocket socket, LoginCredentials credentials);
+      SshClient create(HostAndPort socket, LoginCredentials credentials);
 
    }
 
