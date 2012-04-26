@@ -90,7 +90,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
    private String key;
    private String val;
    
-   @AfterClass(alwaysRun = true)
+   @AfterClass(alwaysRun = true, dependsOnMethods = { "cleanUpEnvironment" })
    protected void tidyUp() {
       if (key != null) {
          try {
@@ -385,7 +385,7 @@ public class VAppTemplateClientLiveTest extends AbstractVAppClientLiveTest {
       Reference network = Iterables.getLast(networks);
 
       // Copy existing section and update fields
-      NetworkConnectionSection oldSection = vAppClient.getNetworkConnectionSection(vm.getHref());
+      NetworkConnectionSection oldSection = vAppTemplateClient.getNetworkConnectionSection(vm.getHref());
       NetworkConnectionSection newSection = oldSection.toBuilder()
             .networkConnection(NetworkConnection.builder()
                   .ipAddressAllocationMode(IpAddressAllocationMode.DHCP.toString())

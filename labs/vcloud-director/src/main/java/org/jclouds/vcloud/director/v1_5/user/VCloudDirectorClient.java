@@ -33,6 +33,7 @@ import org.jclouds.vcloud.director.v1_5.features.UploadClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppClient;
 import org.jclouds.vcloud.director.v1_5.features.VAppTemplateClient;
 import org.jclouds.vcloud.director.v1_5.features.VdcClient;
+import org.jclouds.vcloud.director.v1_5.features.VmClient;
 
 import com.google.inject.Provides;
 
@@ -109,4 +110,10 @@ public interface VCloudDirectorClient {
     */
    @Delegate
    VAppTemplateClient getVAppTemplateClient();
+
+   /**
+    * @return synchronous access to {@link Vm} features
+    */
+   @Delegate
+   VmClient getVmClient();
 }
