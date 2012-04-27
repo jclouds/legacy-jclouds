@@ -67,11 +67,13 @@ public class ParseAccessTest extends BaseItemParserTest<Access> {
                Service.builder().name("Object Storage").type("object-store").endpoints(
                         Endpoint.builder().tenantId("40806637803162").publicURL(
                                  URI.create("https://objects.jclouds.org/v1.0/40806637803162"))
+                                 .adminURL(URI.create("https://objects.jclouds.org/v1.0/"))
                                  .region("region-a.geo-1").versionId("1.0").build()).build(),
 
                Service.builder().name("Identity").type("identity").endpoints(
-                        Endpoint.builder().publicURL(URI.create("https://csnode.jclouds.org/v2.0/")).region(
-                                 "region-a.geo-1").versionId("2.0").build()).build(),
+                        Endpoint.builder().publicURL(URI.create("https://csnode.jclouds.org/v2.0/"))
+                                 .adminURL(URI.create("https://csnode.jclouds.org:35357/v2.0/"))
+                                 .region("region-a.geo-1").versionId("2.0").build()).build(),
 
                Service.builder().name("Image Management").type("image").endpoints(
                         Endpoint.builder().tenantId("40806637803162").publicURL(
