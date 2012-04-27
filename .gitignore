@@ -14,3 +14,4 @@ bin/
 *.DS_STORE
 TAGS
 .metadata/
+atlassian-ide-plugin.xml
