@@ -18,24 +18,21 @@
  */
 package org.jclouds.cloudwatch;
 
-import static com.google.common.collect.Maps.transformValues;
-import static org.testng.Assert.assertEquals;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.Date;
-import java.util.Map;
-
-import javax.inject.Named;
-
+import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import org.jclouds.Constants;
 import org.jclouds.apis.ApiMetadata;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.cloudwatch.domain.Dimension;
+import org.jclouds.cloudwatch.domain.EC2Constants;
+import org.jclouds.cloudwatch.domain.Namespaces;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
@@ -48,10 +45,16 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Suppliers2;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
+import javax.inject.Named;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.Map;
+
+import static com.google.common.collect.Maps.transformValues;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Tests behavior of {@code CloudWatchAsyncClient}
@@ -62,6 +65,72 @@ import com.google.inject.TypeLiteral;
 // surefire
 @Test(groups = "unit", testName = "CloudWatchAsyncClientTest")
 public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsyncClient> {
+
+   /**
+    * Tests that {@link CloudWatchAsyncClient#listMetrics(org.jclouds.cloudwatch.options.ListMetricsOptions)} works
+    * as expected.
+    *
+    * @throws Exception if anything goes wrong
+    */
+   public void testListMetrics() throws Exception {
+      Method method = CloudWatchAsyncClient.class.getMethod("listMetrics", ListMetricsOptions.class);
+      HttpRequest request;
+
+      // Test an empty request
+      request = processor.createRequest(method, ListMetricsOptions.builder().build());
+
+      assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request,
+                          "Action=ListMetrics",
+                          "application/x-www-form-urlencoded", false);
+
+      // Note: Order of request params is as follows => Namespace, MetricName, Dimensions, NextToken
+
+      // Test a request with all (only one dimension)
+      Dimension dimension1 = new Dimension(EC2Constants.Dimension.INSTANCE_ID, "SOMEINSTANCEID");
+      String metricName = EC2Constants.MetricName.CPU_UTILIZATION;
+      String nextToken = "SOMENEXTTOKEN";
+      String namespace = Namespaces.EC2;
+      request = processor.createRequest(method, ListMetricsOptions.builder()
+                                        .dimension(dimension1)
+                                        .metricName(metricName)
+                                        .namespace(namespace)
+                                        .nextToken(nextToken)
+                                        .build());
+
+      assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request,
+                          "Action=ListMetrics" +
+                                  "&Namespace=" + URLEncoder.encode(namespace, "UTF-8") +
+                                  "&MetricName=" + metricName +
+                                  "&Dimensions.member.1.Name=" + dimension1.getName() +
+                                  "&Dimensions.member.1.Value=" + dimension1.getValue() +
+                                  "&NextToken=" + nextToken,
+                          "application/x-www-form-urlencoded", false);
+
+      // Test a request with multiple dimensions and no NextToken
+      Dimension dimension2 = new Dimension(EC2Constants.Dimension.INSTANCE_TYPE, "t1.micro");
+      request = processor.createRequest(method, ListMetricsOptions.builder()
+                                                                  .dimension(dimension1)
+                                                                  .dimension(dimension2)
+                                                                  .metricName(metricName)
+                                                                  .namespace(namespace)
+                                                                  .build());
+
+      assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request,
+                          "Action=ListMetrics" +
+                                  "&Namespace=" + URLEncoder.encode(namespace, "UTF-8") +
+                                  "&MetricName=" + metricName +
+                                  "&Dimensions.member.1.Name=" + dimension1.getName() +
+                                  "&Dimensions.member.1.Value=" + dimension1.getValue() +
+                                  "&Dimensions.member.2.Name=" + dimension2.getName() +
+                                  "&Dimensions.member.2.Value=" + dimension2.getValue(),
+                          "application/x-www-form-urlencoded", false);
+   }
 
    public void testRegisterInstancesWithMeasure() throws SecurityException, NoSuchMethodException, IOException {
       Date date = new Date(10000000l);
@@ -90,7 +159,7 @@ public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsy
       };
    }
 
-      @ConfiguresRestClient
+   @ConfiguresRestClient
    private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
 
       @Override

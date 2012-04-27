@@ -18,19 +18,16 @@
  */
 package org.jclouds.cloudwatch;
 
-import java.util.Date;
-import java.util.Set;
-
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-
+import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.functions.ISO8601Format;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
+import org.jclouds.cloudwatch.xml.ListMetricsResponseHandler;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -40,7 +37,11 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * Provides access to Amazon CloudWatch via the Query API
@@ -72,4 +73,14 @@ public interface CloudWatchAsyncClient {
          @FormParam("Period") int period,
          @FormParam("Statistics.member.1") Statistics statistics,
          GetMetricStatisticsOptions... options);
+
+   /**
+    * @see CloudWatchClient#listMetrics(org.jclouds.cloudwatch.options.ListMetricsOptions)
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(ListMetricsResponseHandler.class)
+   @FormParams(keys = "Action", values = "ListMetrics")
+   ListenableFuture<? extends ListMetricsResponse> listMetrics(ListMetricsOptions options);
+
 }
