@@ -37,8 +37,7 @@ public class VCloudHardwareBuilderFromResourceAllocations extends HardwareBuilde
 //         return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL, vDisk.getCapacity() / 1024f, null,
 //                  "0".equals(from.getAddressOnParent()), true);
 //      } else {
-//         return super.apply(from);
+         return super.apply(from);
 //      }
-      return null;
    }
 }
