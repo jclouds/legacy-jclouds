@@ -30,9 +30,11 @@
     <packaging>pom</packaging>
     <name>jclouds TweetStore demos project</name>
     <modules>
+        <module>cf-tweetstore-spring</module>
         <module>gae-tweetstore</module>
         <module>gae-tweetstore-spring</module>
         <module>runatcloud-tweetstore</module>
+        <module>rhcloud-tweetstore</module>
     </modules>
     
     <properties>
