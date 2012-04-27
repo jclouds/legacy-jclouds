@@ -41,4 +41,8 @@ public interface ServiceType {
     * Image Service (Glance)
     */
    public static final String IMAGE = "image";
+   /**
+    * Identity Service (Keystone)
+    */
+   public static final String IDENTITY = "identity";
 }
