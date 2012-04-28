@@ -31,7 +31,9 @@ import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.cloudwatch.domain.EC2Constants;
 import org.jclouds.cloudwatch.domain.Namespaces;
 import org.jclouds.cloudwatch.domain.Statistics;
+import org.jclouds.cloudwatch.domain.Unit;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.date.DateService;
@@ -65,6 +67,59 @@ import static org.testng.Assert.assertEquals;
 // surefire
 @Test(groups = "unit", testName = "CloudWatchAsyncClientTest")
 public class CloudWatchAsyncClientTest extends BaseAsyncClientTest<CloudWatchAsyncClient> {
+
+   /**
+    * Tests that {@link CloudWatchAsyncClient#getMetricStatistics(org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2)}
+    * works as expected.
+    *
+    * @throws Exception if anything goes wrong
+    */
+   public void testGetMetricStatisticsV2() throws Exception {
+      Dimension dimension1 = new Dimension(EC2Constants.Dimension.INSTANCE_ID, "SOMEINSTANCEID");
+      Dimension dimension2 = new Dimension(EC2Constants.Dimension.INSTANCE_TYPE, "t1.micro");
+      Date endTime = new Date(10000000l);
+      String metricName = EC2Constants.MetricName.CPU_UTILIZATION;
+      String namespace = Namespaces.EC2;
+      int period = 60;
+      Date startTime = new Date(10000000l);
+      Statistics statistic1 = Statistics.MAXIMUM;
+      Statistics statistic2 = Statistics.MINIMUM;
+      Unit unit = Unit.PERCENT;
+
+      GetMetricStatisticsOptionsV2 goodOptions = GetMetricStatisticsOptionsV2.builder()
+                                                                             .dimension(dimension1)
+                                                                             .dimension(dimension2)
+                                                                             .endTime(endTime)
+                                                                             .metricName(metricName)
+                                                                             .namespace(namespace)
+                                                                             .period(period)
+                                                                             .startTime(startTime)
+                                                                             .statistic(statistic1)
+                                                                             .statistic(statistic2)
+                                                                             .unit(unit).build();
+      Method method = CloudWatchAsyncClient.class.getMethod("getMetricStatistics", GetMetricStatisticsOptionsV2.class);
+      HttpRequest request = processor.createRequest(method, goodOptions);
+
+      assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
+
+      // Note: Order of request params is alphabetical
+      assertPayloadEquals(request,
+                          "Action=GetMetricStatistics" +
+                                "&Dimensions.member.1.Name=" + dimension1.getName() +
+                                "&Dimensions.member.1.Value=" + dimension1.getValue() +
+                                "&Dimensions.member.2.Name=" + dimension2.getName() +
+                                "&Dimensions.member.2.Value=" + dimension2.getValue() +
+                                "&EndTime=1970-01-01T02%3A46%3A40Z" +
+                                "&MetricName=" + metricName +
+                                "&Namespace=" + URLEncoder.encode(namespace, "UTF-8") +
+                                "&Period=" + period +
+                                "&StartTime=1970-01-01T02%3A46%3A40Z" +
+                                "&Statistics.member.1=" + statistic1 +
+                                "&Statistics.member.2=" + statistic2 +
+                                "&Unit=" + unit,
+                          "application/x-www-form-urlencoded", false);
+   }
 
    /**
     * Tests that {@link CloudWatchAsyncClient#listMetrics(org.jclouds.cloudwatch.options.ListMetricsOptions)} works

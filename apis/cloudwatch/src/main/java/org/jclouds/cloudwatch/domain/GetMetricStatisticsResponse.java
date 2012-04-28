@@ -25,38 +25,36 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_ListMetrics.html" />
+ * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html" />
  *
  * @author Jeremy Whitlock
  */
-public class ListMetricsResponse {
+public class GetMetricStatisticsResponse {
 
-   private final Set<Metric> metrics;
-   private final String nextToken;
+   private final Set<Datapoint> datapoints;
+   private final String label;
 
-   public ListMetricsResponse(@Nullable Set<Metric> metrics, @Nullable String nextToken) {
-      // Default to an empty set
-      if (metrics == null) {
-         this.metrics = Sets.newLinkedHashSet();
+   public GetMetricStatisticsResponse(@Nullable Set<Datapoint> datapoints, String label) {
+      if (datapoints == null) {
+         this.datapoints = Sets.newLinkedHashSet();
       } else {
-         this.metrics = metrics;
+         this.datapoints = datapoints;
       }
-      this.nextToken = nextToken;
+      this.label = label;
    }
 
    /**
-    * return the list of {@link Metric}
+    * return the list of {@link Datapoint} for the metric
     */
-   public Set<Metric> getMetrics() {
-      return metrics;
+   public Set<Datapoint> getDatapoints() {
+      return datapoints;
    }
 
    /**
-    * return the next token or null if there is none.
+    * return the label describing the specified metric
     */
-   @Nullable
-   public String getNextToken() {
-      return nextToken;
+   public String getLabel() {
+      return label;
    }
 
    /**
@@ -70,16 +68,16 @@ public class ListMetricsResponse {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ListMetricsResponse other = (ListMetricsResponse)obj;
-      if (metrics == null) {
-         if (other.metrics != null)
+      GetMetricStatisticsResponse other = (GetMetricStatisticsResponse)obj;
+      if (datapoints == null) {
+         if (other.datapoints != null)
             return false;
-      } else if (!metrics.equals(other.metrics))
+      } else if (!datapoints.equals(other.datapoints))
          return false;
-      if (nextToken == null) {
-         if (other.nextToken != null)
+      if (label == null) {
+         if (other.label != null)
             return false;
-      } else if (!nextToken.equals(other.nextToken))
+      } else if (!label.equals(other.label))
          return false;
       return true;
    }
@@ -91,9 +89,11 @@ public class ListMetricsResponse {
    public String toString() {
       StringBuilder builder = new StringBuilder();
 
-      builder.append("[metrics=[");
+      builder.append("[label=")
+             .append(label)
+             .append(", datapoints=[");
 
-      Iterator<Metric> iterator = metrics.iterator();
+      Iterator<Datapoint> iterator = datapoints.iterator();
 
       while (iterator.hasNext()) {
          builder.append(iterator.next());
@@ -103,11 +103,7 @@ public class ListMetricsResponse {
          }
       }
 
-      builder.append("]");
-
-      builder.append(", nextToken=")
-             .append(nextToken)
-             .append("]");
+      builder.append("]]");
 
       return builder.toString();
    }

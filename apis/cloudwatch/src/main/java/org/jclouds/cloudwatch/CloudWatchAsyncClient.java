@@ -21,12 +21,15 @@ package org.jclouds.cloudwatch;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.functions.ISO8601Format;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
+import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandlerV2;
 import org.jclouds.cloudwatch.xml.ListMetricsResponseHandler;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
@@ -60,6 +63,7 @@ public interface CloudWatchAsyncClient {
    /**
     * @see CloudWatchClient#getMetricStatisticsInRegion
     */
+   @Deprecated
    @POST
    @Path("/")
    @XMLResponseParser(GetMetricStatisticsResponseHandler.class)
@@ -82,5 +86,14 @@ public interface CloudWatchAsyncClient {
    @XMLResponseParser(ListMetricsResponseHandler.class)
    @FormParams(keys = "Action", values = "ListMetrics")
    ListenableFuture<? extends ListMetricsResponse> listMetrics(ListMetricsOptions options);
+
+   /**
+    * @see CloudWatchClient#getMetricStatistics(org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2)
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(GetMetricStatisticsResponseHandlerV2.class)
+   @FormParams(keys = "Action", values = "GetMetricStatistics")
+   ListenableFuture<? extends GetMetricStatisticsResponse> getMetricStatistics(GetMetricStatisticsOptionsV2 options);
 
 }

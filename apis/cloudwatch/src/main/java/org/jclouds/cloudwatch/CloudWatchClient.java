@@ -19,9 +19,11 @@
 package org.jclouds.cloudwatch;
 
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
@@ -79,9 +81,9 @@ public interface CloudWatchClient {
     * @param options
     *          more filtering options (e.g. instance ID)
     */
+   @Deprecated
    Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,
           Date startTime, Date endTime, int period, Statistics statistics, GetMetricStatisticsOptions... options);
-
 
    /**
     * Returns a list of valid metrics stored for the AWS account owner.
@@ -94,8 +96,17 @@ public interface CloudWatchClient {
     *
     * @param options the options describing the metrics query
     *
-    * @return the list of valid metrics based on the AWS account owner and the options passed in
+    * @return the response object
     */
    ListMetricsResponse listMetrics(ListMetricsOptions options);
+
+    /**
+     * Gets statistics for the specified metric.
+     *
+     * @param options the options describing the metric statistics query
+     *
+     * @return the response object
+     */
+   GetMetricStatisticsResponse getMetricStatistics(GetMetricStatisticsOptionsV2 options);
 
 }
