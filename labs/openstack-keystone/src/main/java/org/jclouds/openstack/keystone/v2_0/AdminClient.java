@@ -36,7 +36,7 @@ import org.jclouds.openstack.keystone.v2_0.domain.User;
  * @author Adam Lowe
  * @see AdminAsyncClient
  * @see <a href=
- *       "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
+ *       "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Admin_API_Service_Developer_Operations-d1e1356.html"
  *      />
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)

@@ -48,8 +48,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides asynchronous access to Admin via their REST API.
  * <p/>
- * 
+ *
  * @see AdminClient
+ * @see <a href=
+ *       "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Admin_API_Service_Developer_Operations-d1e1356.html"
+ *      />
  * @author Adam Lowe
  */
 @SkipEncoding({ '/', '=' })
