@@ -52,7 +52,7 @@ public class Service implements Comparable<Service> {
       protected Set<Endpoint> endpoints = ImmutableSet.of();
 
       /**
-       * @see Service#getId()
+       * @see Service#getType()
        */
       public Builder type(String type) {
          this.type = checkNotNull(type, "type");

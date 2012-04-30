@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.openstack.keystone.v2_0.ServiceClient;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
 import org.jclouds.rest.AuthorizationException;
@@ -31,10 +31,10 @@ import com.google.common.base.Function;
 
 @Singleton
 public class AuthenticateApiAccessKeyCredentials implements Function<Credentials, Access> {
-   private final ServiceClient client;
+   private final AuthenticationClient client;
 
    @Inject
-   public AuthenticateApiAccessKeyCredentials(ServiceClient client) {
+   public AuthenticateApiAccessKeyCredentials(AuthenticationClient client) {
       this.client = client;
    }
 

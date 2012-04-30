@@ -20,7 +20,7 @@ package org.jclouds.openstack.keystone.v2_0.functions;
 import javax.inject.Inject;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.openstack.keystone.v2_0.ServiceClient;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
 import org.jclouds.rest.AuthorizationException;
@@ -28,10 +28,10 @@ import org.jclouds.rest.AuthorizationException;
 import com.google.common.base.Function;
 
 public class AuthenticatePasswordCredentials implements Function<Credentials, Access> {
-   private final ServiceClient client;
+   private final AuthenticationClient client;
 
    @Inject
-   public AuthenticatePasswordCredentials(ServiceClient client) {
+   public AuthenticatePasswordCredentials(AuthenticationClient client) {
       this.client = client;
    }
 
