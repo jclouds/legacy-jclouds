@@ -107,7 +107,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
 
    public TerremarkClientLiveTest() {
       this.provider = "trmk-vcloudexpress";
-      StringBuffer name = new StringBuffer();
+      StringBuilder name = new StringBuilder();
       for (int i = 0; i < 15; i++)
          name.append("d");
       serverName = name.toString();// "adriantest";
@@ -287,7 +287,7 @@ public abstract class TerremarkClientLiveTest<S extends TerremarkVCloudClient, A
       assert successTester.apply(connection.powerOffVApp(vApp.getHref()).getHref());
       System.out.printf("%d: done powering off vApp%n", System.currentTimeMillis());
 
-      StringBuffer name = new StringBuffer();
+      StringBuilder name = new StringBuilder();
       for (int i = 0; i < 15; i++)
          name.append("b");
       String newName = name.toString();

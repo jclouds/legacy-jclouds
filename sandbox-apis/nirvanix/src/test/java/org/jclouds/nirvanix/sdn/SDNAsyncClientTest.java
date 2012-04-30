@@ -85,7 +85,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
       assertRequestLineEquals(request,
             "POST http://uploader/Upload.ashx?output=json&destFolderPath=adriansmovies&uploadToken=token HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
-      StringBuffer expects = new StringBuffer();
+      StringBuilder expects = new StringBuilder();
       expects.append("----JCLOUDS--\r\n");
       expects.append("Content-Disposition: form-data; name=\"hello\"\r\n");
       expects.append("Content-Type: text/plain\r\n\r\n");
