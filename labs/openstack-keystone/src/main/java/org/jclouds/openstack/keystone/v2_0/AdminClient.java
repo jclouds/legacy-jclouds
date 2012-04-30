@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 import org.jclouds.openstack.keystone.v2_0.domain.Role;
@@ -35,7 +34,7 @@ import org.jclouds.openstack.keystone.v2_0.domain.User;
  * <p/>
  *
  * @author Adam Lowe
- * @see UserAsyncClient
+ * @see AdminAsyncClient
  * @see <a href=
  *       "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />

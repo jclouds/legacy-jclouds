@@ -29,7 +29,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 import org.jclouds.openstack.keystone.v2_0.domain.Role;
@@ -55,9 +54,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @SkipEncoding({ '/', '=' })
 public interface AdminAsyncClient {
-
    /**
-    * @see UserClient#getApiMetadata()
+    * @see AdminClient#getApiMetadata()
     */
    @GET
    @SelectJson("version")
@@ -67,7 +65,7 @@ public interface AdminAsyncClient {
    ListenableFuture<ApiMetadata> getApiMetadata();
 
    /**
-    * @see UserClient#listTenants()
+    * @see AdminClient#listTenants()
     */
    @GET
    @SelectJson("tenants")
