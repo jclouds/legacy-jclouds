@@ -46,5 +46,6 @@
        <module>cdmi</module>
        <module>openstack-glance</module>
        <module>joyent-sdc</module>
+       <module>openstack-keystone</module>
     </modules>
 </project>
