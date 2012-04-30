@@ -367,12 +367,15 @@ public abstract class BaseRestClientExpectTest<S> {
     */
    public boolean httpRequestsAreEqual(HttpRequest a, HttpRequest b) {
       try {
+         if (a == null || b == null) {
+            return false;
+         }
+         if (a.getPayload() == null || b.getPayload() == null) {
+            return Objects.equal(a, b);
+         }
+ 
          switch (compareHttpRequestAsType(a)) {
             case XML: {
-               if (a == null || b == null || a.getPayload() == null || b.getPayload() == null) {
-                  return false;
-               }
-
                Diff diff = XMLUnit.compareXML(Strings2.toStringAndClose(a.getPayload().getInput()), Strings2
                         .toStringAndClose(b.getPayload().getInput()));
 
@@ -404,10 +407,7 @@ public abstract class BaseRestClientExpectTest<S> {
 
                return diff.identical() && Objects.equal(a.getHeaders(), b.getHeaders());
             }
-            case JSON: {
-               if (a == null || b == null || a.getPayload() == null || b.getPayload() == null) {
-                  return false;
-               }
+            case JSON: {               
                JsonParser parser = new JsonParser();
                JsonElement payloadA = parser.parse(Strings2.toStringAndClose(a.getPayload().getInput()));
                JsonElement payloadB = parser.parse(Strings2.toStringAndClose(b.getPayload().getInput()));

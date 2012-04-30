@@ -35,17 +35,17 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to Service via their REST API.
  * <p/>
  * 
- * @see ServiceClient
+ * @see AuthenticationClient
  * @see <a href=
  *      "http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />
  * @author Adrian Cole
  */
 @Path("/v1.1")
-public interface ServiceAsyncClient {
+public interface AuthenticationAsyncClient {
 
    /**
-    * @see ServiceClient#authenticate
+    * @see AuthenticationClient#authenticate
     */
    @POST
    @SelectJson("auth")
