@@ -140,8 +140,9 @@ public class ListContainerOptions extends ListOptions implements Cloneable {
     * 
     */
    public ListContainerOptions inDirectory(String dir) {
-      this.dir = checkNotNull(dir, "dir");
+      checkNotNull(dir, "dir");
       checkArgument(!dir.equals("/"), "dir must not be a slash");
+      this.dir = dir;
       return this;
    }
 
