@@ -35,8 +35,8 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.RegionIdToURISupplier;
 import org.jclouds.openstack.Authentication;
-import org.jclouds.openstack.keystone.v1_1.ServiceAsyncClient;
-import org.jclouds.openstack.keystone.v1_1.ServiceClient;
+import org.jclouds.openstack.keystone.v1_1.AuthenticationAsyncClient;
+import org.jclouds.openstack.keystone.v1_1.AuthenticationClient;
 import org.jclouds.openstack.keystone.v1_1.domain.Auth;
 import org.jclouds.openstack.keystone.v1_1.handlers.RetryOnRenew;
 import org.jclouds.openstack.keystone.v1_1.suppliers.RegionIdToURIFromAuthForServiceSupplier;
@@ -63,7 +63,7 @@ public class AuthenticationServiceModule extends AbstractModule {
       }).to(GetAuth.class);
       // ServiceClient is used directly for filters and retry handlers, so let's bind it
       // explicitly
-      bindClientAndAsyncClient(binder(), ServiceClient.class, ServiceAsyncClient.class);
+      bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
       install(new FactoryModuleBuilder().implement(RegionIdToURISupplier.class,
                RegionIdToURIFromAuthForServiceSupplier.class).build(RegionIdToURISupplier.Factory.class));
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(RetryOnRenew.class);
@@ -88,7 +88,7 @@ public class AuthenticationServiceModule extends AbstractModule {
    public static class GetAuth extends RetryOnTimeOutExceptionFunction<Credentials, Auth> {
 
       @Inject
-      public GetAuth(final ServiceClient client) {
+      public GetAuth(final AuthenticationClient client) {
          super(new Function<Credentials, Auth>() {
 
             @Override

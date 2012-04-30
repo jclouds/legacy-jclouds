@@ -16,29 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jclouds.openstack.keystone.v1_1;
+package org.jclouds.openstack.keystone.v2_0;
 
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.openstack.keystone.v1_1.domain.Auth;
+import org.jclouds.openstack.keystone.v2_0.domain.Access;
+import org.jclouds.openstack.keystone.v2_0.domain.ApiAccessKeyCredentials;
+import org.jclouds.openstack.keystone.v2_0.domain.PasswordCredentials;
 
 /**
  * Provides synchronous access to the KeyStone Service API.
  * <p/>
  * 
- * @see ServiceAsyncClient
+ * @see AuthenticationAsyncClient
  * @see <a href="http://docs.openstack.org/api/openstack-identity-service/2.0/content/Service_API_Client_Operations.html"
  *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ServiceClient {
+public interface AuthenticationClient {
 
    /**
     * Authenticate to generate a token.
     * 
     * @return access with token
     */
-   Auth authenticate(String username, String key);
+   Access authenticateTenantWithCredentials(String tenantId, PasswordCredentials passwordCredentials);
+
+   /**
+    * Authenticate to generate a token.
+    * 
+    * @return access with token
+    */
+   Access authenticateTenantWithCredentials(String tenantId, ApiAccessKeyCredentials passwordCredentials);
 }

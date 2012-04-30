@@ -40,8 +40,8 @@ import org.jclouds.location.suppliers.ZoneIdsSupplier;
 import org.jclouds.location.suppliers.derived.RegionIdsFromRegionIdToURIKeySet;
 import org.jclouds.location.suppliers.derived.ZoneIdsFromZoneIdToURIKeySet;
 import org.jclouds.openstack.Authentication;
-import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.ServiceClient;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.AuthenticationClient;
 import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticateApiAccessKeyCredentials;
 import org.jclouds.openstack.keystone.v2_0.functions.AuthenticatePasswordCredentials;
@@ -146,7 +146,7 @@ public class KeystoneAuthenticationModule extends AbstractModule {
       bind(CredentialType.class).toProvider(CredentialTypeFromPropertyOrDefault.class);
       // ServiceClient is used directly for filters and retry handlers, so let's bind it
       // explicitly
-      bindClientAndAsyncClient(binder(), ServiceClient.class, ServiceAsyncClient.class);
+      bindClientAndAsyncClient(binder(), AuthenticationClient.class, AuthenticationAsyncClient.class);
       install(locationModule);
    }
 
