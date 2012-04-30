@@ -2474,7 +2474,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, TestJAXBDomain> parser = (Function<HttpResponse, TestJAXBDomain>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      StringBuffer payload = new StringBuffer(XMLParser.DEFAULT_XML_HEADER);
+      StringBuilder payload = new StringBuilder(XMLParser.DEFAULT_XML_HEADER);
       payload.append("<test><elem>Hello World</elem></test>");
       TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
       assertEquals(domain.getElem(), "Hello World");
@@ -2492,7 +2492,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, TestJAXBDomain> parser = (Function<HttpResponse, TestJAXBDomain>) RestAnnotationProcessor
             .createResponseParser(parserFactory, injector, method, request);
 
-      StringBuffer payload = new StringBuffer(XMLParser.DEFAULT_XML_HEADER);
+      StringBuilder payload = new StringBuilder(XMLParser.DEFAULT_XML_HEADER);
       payload.append("<test><elem>Hello World</elem></test>");
       TestJAXBDomain domain = parser.apply(new HttpResponse(200, "ok", newStringPayload(payload.toString())));
       assertEquals(domain.getElem(), "Hello World");

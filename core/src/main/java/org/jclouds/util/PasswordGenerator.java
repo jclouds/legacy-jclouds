@@ -51,7 +51,7 @@ public enum PasswordGenerator implements Supplier<String> {
 
    @Override
    public String get() {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for (int i = 0; i < MIN_LENGTH; i++) {
          sb.append(goodChar[r.nextInt(goodChar.length)]);
       }
