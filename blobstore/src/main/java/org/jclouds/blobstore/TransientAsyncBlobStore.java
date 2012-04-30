@@ -179,11 +179,13 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          final String finalMarker = options.getMarker();
          StorageMetadata lastMarkerMetadata = find(contents, new Predicate<StorageMetadata>() {
             public boolean apply(StorageMetadata metadata) {
-               return metadata.getName().equals(finalMarker);
+               return metadata.getName().compareTo(finalMarker) >= 0;
             }
          });
          contents = contents.tailSet(lastMarkerMetadata);
-         contents.remove(lastMarkerMetadata);
+         if (finalMarker.equals(lastMarkerMetadata.getName())) {
+            contents.remove(lastMarkerMetadata);
+         }
       }
 
       final String prefix = options.getDir();
