@@ -32,7 +32,6 @@ import com.google.common.base.Suppliers;
  */
 @Singleton
 public class AdminURL implements EndpointToSupplierAdminURI {
-   // TODO: check accessibility and prioritize private first
    @Override
    public Supplier<URI> apply(Endpoint input) {
       return Suppliers.ofInstance(input.getAdminURL());
