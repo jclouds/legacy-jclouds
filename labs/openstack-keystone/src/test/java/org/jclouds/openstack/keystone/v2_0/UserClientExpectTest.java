@@ -46,13 +46,13 @@ import com.google.common.collect.ImmutableSet;
 public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<KeystoneClient> {
 
    public void testGetApiMetaData() {
-      UserClient client = requestsSendResponses(
+      ServiceClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             HttpRequest.builder().method("GET").endpoint(URI.create(endpoint + "/v2.0/")).
             headers(ImmutableMultimap.of("Accept", APPLICATION_JSON)).build(),
             HttpResponse.builder().statusCode(200).
                   payload(payloadFromResourceWithContentType("/api_metadata.json", APPLICATION_JSON)).build())
-            .getUserClientForRegion("region-a.geo-1");
+            .getServiceClientForRegion("region-a.geo-1");
       ApiMetadata metadata = client.getApiMetadata();
       assertNotNull(metadata);
       assertEquals(metadata.getId(), "v2.0");
@@ -74,13 +74,13 @@ public class UserClientExpectTest extends BaseKeystoneRestClientExpectTest<Keyst
    }
 
    public void testListTenants() {
-      UserClient client = requestsSendResponses(
+      ServiceClient client = requestsSendResponses(
             keystoneAuthWithUsernameAndPassword, responseWithKeystoneAccess,
             HttpRequest.builder().method("GET").endpoint(URI.create(endpoint + "/v2.0/tenants")).
                   headers(ImmutableMultimap.of("Accept", APPLICATION_JSON, "X-Auth-Token", authToken)).build(),
             HttpResponse.builder().statusCode(200).
                   payload(payloadFromResourceWithContentType("/tenant_list.json", APPLICATION_JSON)).build())
-            .getUserClientForRegion("region-a.geo-1");
+            .getServiceClientForRegion("region-a.geo-1");
       Set<Tenant> tenants = client.listTenants();
       assertNotNull(tenants);
       assertFalse(tenants.isEmpty());

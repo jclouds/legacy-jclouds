@@ -24,20 +24,17 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.location.suppliers.ImplicitLocationSupplier;
-import org.jclouds.location.suppliers.implicit.OnlyLocationOrFirstZone;
 import org.jclouds.openstack.keystone.v2_0.AdminAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.AdminClient;
 import org.jclouds.openstack.keystone.v2_0.KeystoneAsyncClient;
 import org.jclouds.openstack.keystone.v2_0.KeystoneClient;
-import org.jclouds.openstack.keystone.v2_0.UserAsyncClient;
-import org.jclouds.openstack.keystone.v2_0.UserClient;
+import org.jclouds.openstack.keystone.v2_0.ServiceAsyncClient;
+import org.jclouds.openstack.keystone.v2_0.ServiceClient;
 import org.jclouds.openstack.keystone.v2_0.handlers.KeystoneErrorHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Scopes;
 
 /**
  * Configures the Keystone connection.
@@ -48,7 +45,7 @@ import com.google.inject.Scopes;
 public class KeystoneRestClientModule extends RestClientModule<KeystoneClient, KeystoneAsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()
-         .put(UserClient.class, UserAsyncClient.class).put(AdminClient.class, AdminAsyncClient.class)
+         .put(ServiceClient.class, ServiceAsyncClient.class).put(AdminClient.class, AdminAsyncClient.class)
          .build();
 
    public KeystoneRestClientModule() {

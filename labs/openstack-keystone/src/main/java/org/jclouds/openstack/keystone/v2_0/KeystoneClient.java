@@ -49,7 +49,7 @@ public interface KeystoneClient {
 
    /** Provides synchronous access to Identity user-accessible features */
    @Delegate
-   UserClient getUserClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   ServiceClient getServiceClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
    /** Provides synchronous access to the KeyStone Admin API */
    @Delegate

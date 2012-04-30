@@ -51,7 +51,7 @@ public interface KeystoneAsyncClient {
 
    /** Provides asynchronous access to Identity user-accessible features */
    @Delegate
-   UserAsyncClient getUserClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+   ServiceAsyncClient getServiceClientForRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
    /** Provides asynchronous access to the KeyStone Admin API */
    @Delegate

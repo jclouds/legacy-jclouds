@@ -29,7 +29,6 @@ import java.util.Set;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.openstack.filters.AuthenticateRequest;
-import org.jclouds.openstack.keystone.v2_0.domain.Access;
 import org.jclouds.openstack.keystone.v2_0.domain.ApiMetadata;
 import org.jclouds.openstack.keystone.v2_0.domain.Endpoint;
 import org.jclouds.openstack.keystone.v2_0.domain.Role;
