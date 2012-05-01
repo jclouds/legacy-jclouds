@@ -36,18 +36,19 @@ public class CloudWatch {
     * List metrics based on the criteria in the {@link ListMetricsOptions} passed in.
     *
     * @param cloudWatchClient the CloudWatch client
+    * @param region the region to list metrics in
     * @param options the options describing the ListMetrics request
     *
     * @return iterable of metrics fitting the criteria
     */
    public static Iterable<Metric> listMetrics(final CloudWatchClient cloudWatchClient,
-                                              final ListMetricsOptions options) {
+                                              final String region, final ListMetricsOptions options) {
       return new Iterable<Metric>() {
          public Iterator<Metric> iterator() {
             return new AbstractIterator<Metric>() {
 
                private ListMetricsOptions lastOptions = options;
-               private ListMetricsResponse response = cloudWatchClient.listMetrics(lastOptions);
+               private ListMetricsResponse response = cloudWatchClient.listMetrics(region, lastOptions);
                private Iterator<Metric> iterator = response.getMetrics().iterator();
 
                /**
@@ -63,7 +64,7 @@ public class CloudWatch {
                                                         .namespace(lastOptions.getNamespace())
                                                         .nextToken(response.getNextToken())
                                                         .build();
-                        response = cloudWatchClient.listMetrics(lastOptions);
+                        response = cloudWatchClient.listMetrics(region, lastOptions);
                         iterator = response.getMetrics().iterator();
                      }
                      if (iterator.hasNext()) {

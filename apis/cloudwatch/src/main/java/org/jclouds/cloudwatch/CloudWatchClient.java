@@ -19,9 +19,11 @@
 package org.jclouds.cloudwatch;
 
 import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.GetMetricStatisticsResponse;
 import org.jclouds.cloudwatch.domain.ListMetricsResponse;
 import org.jclouds.cloudwatch.domain.Statistics;
 import org.jclouds.cloudwatch.options.GetMetricStatisticsOptions;
+import org.jclouds.cloudwatch.options.GetMetricStatisticsOptionsV2;
 import org.jclouds.cloudwatch.options.ListMetricsOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.javax.annotation.Nullable;
@@ -79,9 +81,9 @@ public interface CloudWatchClient {
     * @param options
     *          more filtering options (e.g. instance ID)
     */
+   @Deprecated
    Set<Datapoint> getMetricStatisticsInRegion(@Nullable String region, String metricName, String namespace,
           Date startTime, Date endTime, int period, Statistics statistics, GetMetricStatisticsOptions... options);
-
 
    /**
     * Returns a list of valid metrics stored for the AWS account owner.
@@ -90,12 +92,23 @@ public interface CloudWatchClient {
     * <h3>Note</h3> Up to 500 results are returned for any one call. To retrieve further results, use returned
     * NextToken ({@link org.jclouds.cloudwatch.domain.ListMetricsResponse#getNextToken()})
     * value with subsequent calls  .To retrieve all available metrics with one call, use
-    * {@link CloudWatch#listMetrics(CloudWatchClient, org.jclouds.cloudwatch.options.ListMetricsOptions)}.
+    * {@link CloudWatch#listMetrics(CloudWatchClient, String, org.jclouds.cloudwatch.options.ListMetricsOptions)}.
     *
+    * @param region the region to query metrics in
     * @param options the options describing the metrics query
     *
-    * @return the list of valid metrics based on the AWS account owner and the options passed in
+    * @return the response object
     */
-   ListMetricsResponse listMetrics(ListMetricsOptions options);
+   ListMetricsResponse listMetrics(@Nullable String region, ListMetricsOptions options);
+
+    /**
+     * Gets statistics for the specified metric.
+     *
+     * @param region the region to gather metrics in
+     * @param options the options describing the metric statistics query
+     *
+     * @return the response object
+     */
+   GetMetricStatisticsResponse getMetricStatistics(@Nullable String region, GetMetricStatisticsOptionsV2 options);
 
 }

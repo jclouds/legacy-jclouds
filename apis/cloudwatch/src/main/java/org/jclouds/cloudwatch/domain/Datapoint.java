@@ -18,9 +18,10 @@
  */
 package org.jclouds.cloudwatch.domain;
 
-import java.util.Date;
-
+import com.google.common.base.Objects;
 import org.jclouds.javax.annotation.Nullable;
+
+import java.util.Date;
 
 /**
  * @see <a href="http://docs.amazonwebservices.com/AmazonCloudWatch/latest/DeveloperGuide/index.html?DT_Datapoint.html"
@@ -118,17 +119,7 @@ public class Datapoint {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((average == null) ? 0 : average.hashCode());
-      result = prime * result + ((customUnit == null) ? 0 : customUnit.hashCode());
-      result = prime * result + ((maximum == null) ? 0 : maximum.hashCode());
-      result = prime * result + ((minimum == null) ? 0 : minimum.hashCode());
-      result = prime * result + ((samples == null) ? 0 : samples.hashCode());
-      result = prime * result + ((sum == null) ? 0 : sum.hashCode());
-      result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
-      result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-      return result;
+      return Objects.hashCode(average, customUnit, maximum, minimum, samples, sum, timestamp, unit);
    }
 
    @Override
@@ -140,53 +131,27 @@ public class Datapoint {
       if (getClass() != obj.getClass())
          return false;
       Datapoint other = (Datapoint) obj;
-      if (average == null) {
-         if (other.average != null)
-            return false;
-      } else if (!average.equals(other.average))
-         return false;
-      if (customUnit == null) {
-         if (other.customUnit != null)
-            return false;
-      } else if (!customUnit.equals(other.customUnit))
-         return false;
-      if (maximum == null) {
-         if (other.maximum != null)
-            return false;
-      } else if (!maximum.equals(other.maximum))
-         return false;
-      if (minimum == null) {
-         if (other.minimum != null)
-            return false;
-      } else if (!minimum.equals(other.minimum))
-         return false;
-      if (samples == null) {
-         if (other.samples != null)
-            return false;
-      } else if (!samples.equals(other.samples))
-         return false;
-      if (sum == null) {
-         if (other.sum != null)
-            return false;
-      } else if (!sum.equals(other.sum))
-         return false;
-      if (timestamp == null) {
-         if (other.timestamp != null)
-            return false;
-      } else if (!timestamp.equals(other.timestamp))
-         return false;
-      if (unit == null) {
-         if (other.unit != null)
-            return false;
-      } else if (!unit.equals(other.unit))
-         return false;
-      return true;
+      return Objects.equal(this.average, other.average) &&
+             Objects.equal(this.customUnit, other.customUnit) &&
+             Objects.equal(this.maximum, other.maximum) &&
+             Objects.equal(this.minimum, other.minimum) &&
+             Objects.equal(this.samples, other.samples) &&
+             Objects.equal(this.sum, other.sum) &&
+             Objects.equal(this.timestamp, other.timestamp) &&
+             Objects.equal(this.unit, other.unit);
    }
 
    @Override
    public String toString() {
-      return "[average=" + average + ", customUnit=" + customUnit + ", maximum=" + maximum + ", minimum=" + minimum
-               + ", samples=" + samples + ", sum=" + sum + ", timestamp=" + timestamp + ", unit=" + unit + "]";
+      return Objects.toStringHelper(this)
+                    .add("timestamp", timestamp)
+                    .add("customUnit", customUnit)
+                    .add("maximum", maximum)
+                    .add("minimum", minimum)
+                    .add("average", average)
+                    .add("sum", sum)
+                    .add("samples", samples)
+                    .add("unit", unit).toString();
    }
 
 }

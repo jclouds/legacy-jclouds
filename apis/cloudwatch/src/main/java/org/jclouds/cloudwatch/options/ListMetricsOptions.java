@@ -18,11 +18,12 @@
  */
 package org.jclouds.cloudwatch.options;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import org.jclouds.cloudwatch.domain.Dimension;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.javax.annotation.Nullable;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -92,7 +93,7 @@ public class ListMetricsOptions extends BaseHttpRequestOptions {
 
    public static class Builder {
 
-      private Set<Dimension> dimensions = new LinkedHashSet<Dimension>();
+      private Set<Dimension> dimensions = Sets.newLinkedHashSet();
       private String metricName;
       private String namespace;
       private String nextToken;
@@ -104,58 +105,62 @@ public class ListMetricsOptions extends BaseHttpRequestOptions {
       public Builder() {}
 
       /**
-       * Filter available metrics specific to the namespace provided.  To get all metrics regardless of the namespace,
-       * do not use this builder option.  Only one namespace can be specified at a time so multiple invocations of
-       * this will just overwrite what was set prior.  Available AWS namespaces are listed in the
-       * {@link org.jclouds.cloudwatch.domain.Namespaces} class.  You can also use custom namespaces if you've
-       * configured CloudWatch for such things.
+       * The namespace to filter against.  (Should be called once.  Subsequent calls will overwrite the previous value.
+       * See {@link org.jclouds.cloudwatch.domain.Namespaces} for the known list of namespaces.)
        *
-       * @param namespace the namespace to filter the returned metrics by
+       * @param namespace the namespace to filter against
        *
        * @return this {@code Builder} object
+       *
+       * @throws IllegalArgumentException if namespace is empty
        */
       public Builder namespace(String namespace) {
+         if (namespace != null) {
+            Preconditions.checkArgument(namespace.length() > 1, "namespace must not be empty.");
+         }
          this.namespace = namespace;
          return this;
       }
 
       /**
-       * Filter available metrics specific to the provided metric name.  To get all metrics regardless of the metric
-       * name, do not use this builder option.  Only one namespace can be specified at a time so multiple invocations
-       * of this will just overwrite what was set prior.  Available AWS metric names are listed in the
-       * org.jclouds.cloudwatch.domain.*Constants classes and are AWS product specific.  You can also use custom
-       * metric names if you've configured CloudWatch for such things.
+       * The name of the metric to filter against.  (Should be called once.  Subsequent calls will overwrite the
+       * previous value.)
        *
-       * @param metricName the metric name to filter the returned metrics by
+       * @param metricName the metric name to filter against
        *
        * @return this {@code Builder} object
+       *
+       * @throws IllegalArgumentException if metricName is empty
        */
       public Builder metricName(String metricName) {
+         if (metricName != null) {
+            Preconditions.checkArgument(metricName.length() > 1, "metricName must not be empty.");
+         }
          this.metricName = metricName;
          return this;
       }
 
       /**
-       * Same as {@link #dimension(org.jclouds.cloudwatch.domain.Dimension)} but replaces the current set of
-       * dimensions with the one passed in.
+       * A list of dimensions to filter against.  (Set can be 10 or less items.)
        *
-       * @see #dimension(org.jclouds.cloudwatch.domain.Dimension)
+       * @param dimensions the dimensions to filter against
+       *
+       * @return this {@code Builder} object
+       *
+       * @throws IllegalArgumentException if the number of dimensions would be greater than 10 after adding
        */
       public Builder dimensions(Set<Dimension> dimensions) {
-         if (dimensions.size() > 10) {
-            throw new IllegalArgumentException("The maximum number of dimensions for ListOptions is 10.");
+         if (dimensions != null) {
+             Preconditions.checkArgument(dimensions.size() <= 10, "dimensions can have 10 or fewer members.");
+            this.dimensions = dimensions;
          }
-         this.dimensions = dimensions;
          return this;
       }
 
       /**
-       * Filter available metrics based on the {@link Dimension} passed in.  To get all metrics regardless of the
-       * dimension, do not use this builder option.  You can specify up to 10 different dimensions per request.
-       * Available AWS dimensions are listed in the org.jclouds.cloudwatch.domain.*Constants classes and are AWS
-       * product specific.  You can also use custom dimensions if you've configured CloudWatch for such things.
+       * A dimension to filter the available metrics by.  (Can be called multiple times up to a maximum of 10 times.)
        *
-       * @param dimension the dimension to filter the returned metrics by
+       * @param dimension a dimension to filter the returned metrics by
        *
        * @return this {@code Builder} object
        *
@@ -163,19 +168,16 @@ public class ListMetricsOptions extends BaseHttpRequestOptions {
        */
       public Builder dimension(Dimension dimension) {
          if (dimension != null) {
-            if (this.dimensions.size() >= 10) {
-               throw new IllegalArgumentException("You have exceeded the maximum number of dimensions per " +
-                                                  "request.");
-            }
+            Preconditions.checkArgument(dimensions.size() < 10, "dimension member maximum count of 10 exceeded.");
             this.dimensions.add(dimension);
          }
          return this;
       }
 
       /**
-       * Specify that this request is a follow-up to retrieve more data from a paginated request.
+       * The token returned by a previous call to indicate that there is more data available.
        *
-       * @param nextToken the next token
+       * @param nextToken the next token indicating that there is more data available
        *
        * @return this {@code Builder} object
        */
@@ -192,22 +194,22 @@ public class ListMetricsOptions extends BaseHttpRequestOptions {
          ListMetricsOptions lmo = new ListMetricsOptions(namespace, metricName, dimensions, nextToken);
          int dimensionIndex = 1;
 
-         if (this.namespace != null) {
-            lmo.formParameters.put("Namespace", this.namespace);
+         if (namespace != null) {
+            lmo.formParameters.put("Namespace", namespace);
          }
 
-         if (this.metricName != null) {
-            lmo.formParameters.put("MetricName", this.metricName);
+         if (metricName != null) {
+            lmo.formParameters.put("MetricName", metricName);
          }
 
-         for (Dimension dimension : this.dimensions) {
+         for (Dimension dimension : dimensions) {
             lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Name", dimension.getName());
             lmo.formParameters.put("Dimensions.member." + dimensionIndex + ".Value", dimension.getValue());
             dimensionIndex++;
          }
 
-         if (this.nextToken != null) {
-            lmo.formParameters.put("NextToken", this.nextToken);
+         if (nextToken != null) {
+            lmo.formParameters.put("NextToken", nextToken);
          }
 
          return lmo;
